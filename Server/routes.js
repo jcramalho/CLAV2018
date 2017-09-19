@@ -9,4 +9,13 @@ module.exports = function(app) {
     app.get('/catalogo', function(req, res) {
         res.render('Pages/catalogo');
     });
+
+    app.get('/organizacao', function(req, res) {
+        /*var url = require('url');
+        
+        var parts = url.parse(req.url, true);
+        var args = parts.query;*/
+
+        res.render('Pages/organizacao');
+    });
 }

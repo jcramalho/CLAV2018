@@ -47,6 +47,7 @@ Vue.component('custom-table-2', {
             "activePage" : 1,
             "pages" : [0],
             "rowsPerPage": 10,
+            "nPages": 1,
         };
     },
     watch: {
@@ -60,6 +61,7 @@ Vue.component('custom-table-2', {
             this.loadPages();
         },
         activePage: function(){
+            this.loadPages();
             this.prepPage();
         },
     },
@@ -102,24 +104,40 @@ Vue.component('custom-table-2', {
             this.$emit('row-clicked', this.rowsShow[index]);
         },
         loadPages: function(){
+            var page=this.activePage;
             var ret = [];
             
-            var n = Math.ceil(this.rows.length/this.rowsPerPage);
+            var n = Math.ceil(this.rows.length/this.rowsPerPage);         
 
-            for(var i=1; i<=n; i++) {
-                ret.push(i);
+            this.nPages=n;
+
+            if(n>7){
+                if(page<5){
+                    ret=[1,2,3,4,5,"...",n];
+                }
+                else if(page>n-4){
+                    ret=[1,"...",n-4,n-3,n-2,n-1,n];
+                }
+                else{
+                    ret=[1,"...",page-1,page,page+1,"...",n];
+                }
+            }
+            else {
+                for(var i=1; i<=n; i++) {
+                    ret.push(i);
+                }
             }
 
             this.pages=ret;
 
-            if(this.activePage>n){
+            if(page>n){
                 this.loadPage(n);
             } else {
                 this.prepPage();
             }
         },
         loadPage: function(page){
-            if(page!=this.activePage && page>0 && page<=this.pages.length){
+            if(page!=this.activePage && page>0 && page<=this.nPages){
                 this.activePage=page;
             }
         },

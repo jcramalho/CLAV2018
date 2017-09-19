@@ -1,4 +1,4 @@
-var reis = new Vue({
+var orgs = new Vue({
     el: '#tabela-organizacoes',
     data: {
         tableHeader: [],
@@ -7,13 +7,25 @@ var reis = new Vue({
         content: [],
     },
     methods: {
+        getParameterByName: function(name, url) {
+            if (!url) url = window.location.href;
+            name = name.replace(/[\[\]]/g, "\\$&");
+            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, " "));
+        },
         rowClicked: function(row){
-            alert(row);
+            var id = this.content[row[0]-1].id.value;
+            id = id.replace(/[^#]+#(.*)/,'$1');
+            
+            window.location.href = '/organizacao?id='+id;
         },
         parse: function(){    
             // key names for table header and parsing
             var keys= Object.keys(this.content[0]);
-
+            keys=keys.slice(0,keys.length-1);
             // setting the table header
             this.tableHeader=["#"].concat(keys);
 
