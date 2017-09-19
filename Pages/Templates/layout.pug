@@ -1,0 +1,45 @@
+extends ./_bootstrap
+append head
+	title Puglicious
+
+append styles
+	link(rel="stylesheet", href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css")
+	link(rel="stylesheet" type="text/css" href="/styles/styles.css")
+	link(href='/styles/dashboard.css', rel='stylesheet')
+	link(href='/styles/theme.css', rel='stylesheet')
+	link(rel="icon" href="https://avatars2.githubusercontent.com/u/9338635?v=4&s=400")
+
+block body
+	nav.navbar.navbar-inverse.navbar-fixed-top
+		.container-fluid
+			.navbar-header
+				button.navbar-toggle.collapsed(type='button', data-toggle='collapse', data-target='#navbar', aria-expanded='false', aria-controls='navbar')
+					span.sr-only Toggle navigation
+					span.icon-bar
+					span.icon-bar
+					span.icon-bar
+				a.navbar-brand(href='#') Tomás Ferreira
+			#navbar.navbar-collapse.collapse
+				ul.nav.navbar-nav.navbar-right
+					li
+						a(href='/') Inicio
+					li
+						a(href='/catalogo') Catálogo
+				form.navbar-form.navbar-right
+					input.form-control(type='text', placeholder='WIP...')
+	.container-fluid
+		.row
+			.col-sm-3.col-md-2.sidebar
+				ul.nav.nav-sidebar
+					li
+						a(href='/') Inicio
+					li
+						a(href='/catalogo') Catálogo
+			.col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main
+				block corpo
+
+append scripts
+	script(src="https://unpkg.com/vue")
+	script(src="https://unpkg.com/axios@0.12.0/dist/axios.min.js")
+	script(src="https://unpkg.com/lodash@4.13.1/lodash.min.js")
+	script(src="./Scripts/components.vue")
