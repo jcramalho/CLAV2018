@@ -71,11 +71,13 @@ module.exports = function (app) {
         const {SparqlClient, SPARQL} = require('sparql-client-2');
         var url = require('url');
         
-        const client = new SparqlClient('http://localhost:8080/repositories/M51-CLAV')
+        const client = new SparqlClient('http://localhost:8080/repositories/M51-CLAV', {
+                updateEndpoint: 'http://localhost:8080/repositories/M51-CLAV/statements'
+            })
             .register({
                 rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
                 clav: 'http://jcr.di.uminho.pt/m51-clav#',
-            });
+        });
         
         //Check if organization Name or Initials already exist
         function checkOrg(name, initials) {
@@ -84,10 +86,10 @@ module.exports = function (app) {
                     ?o rdf:type clav:Organizacao ;
                         clav:orgSigla ?s ;
                         clav:orgNome ?n .
-                    filter (?s='`+initials+`' || ?n='`+name+`').
+                    filter (?s='${initials}' || ?n='${name}').
                 }
             `;
-
+            
             return client.query(checkQuery).execute()
             //Getting the content we want
             .then(response => Promise.resolve(response.results.bindings[0].Count.value))
@@ -101,14 +103,13 @@ module.exports = function (app) {
             var createQuery = SPARQL`
                 INSERT DATA {
                     ${{clav: id}} rdf:type clav:Organizacao ;
-                        clav:orgNome '`+name+`' ;
-                        clav:orgSigla '`+initials+`'
+                        clav:orgNome ${name} ;
+                        clav:orgSigla ${initials}
                 }
             `;
-            console.log("Querry:\n"+createQuery);
 
             return client.query(createQuery).execute()
-            .then( response => Promise.resolve(response.results.bindings))
+            .then( response => Promise.resolve(response))
             .catch( error => console.error("Error in create:\n"+error));
         }
 
@@ -118,6 +119,7 @@ module.exports = function (app) {
         var name = parts.query.name;
         var id = "org_"+initials;
 
+        //Executing queries
         checkOrg(name, initials)
         .then( function(count) {
             if (count>0) {
@@ -125,7 +127,9 @@ module.exports = function (app) {
             }
             else {
                 createOrg(id,name,initials)
-                .then( res => console.log(res))
+                .then( function() {
+                    res.send("Inserido!");
+                })
                 .catch( error => console.error(error));
             }
         })
