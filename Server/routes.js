@@ -18,4 +18,8 @@ module.exports = function(app) {
 
         res.render('Pages/organizacao');
     });
+
+    app.get('/novaorganizacao', function(req, res) {
+        res.render('Pages/novaOrg');
+    });
 }

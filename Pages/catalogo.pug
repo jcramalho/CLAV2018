@@ -10,13 +10,18 @@ block corpo
                 :header="tableHeader"
                 :complete-rows="tableData"
                 :ready="ready"
+                :cwidth="cwidth"
+                
                 class-table='table table-hover'
+                add="true"
 
                 @row-clicked="rowClicked($event)"
+                @add-clicked="addOrg"
             )
             h4(
                 v-else
             ) Loading...
+        
     //-
 
     

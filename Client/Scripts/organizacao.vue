@@ -1,4 +1,4 @@
-var orgs = new Vue({
+var org = new Vue({
     el: '#organizacao-form',
     data: {
         id: "",
@@ -21,7 +21,6 @@ var orgs = new Vue({
             return decodeURIComponent(results[2].replace(/\+/g, " "));
         },   
         parse: function(){    
-            // parsing the JSON
             this.orgName=this.content[0].Nome.value;
             this.orgInitials=this.content[0].Sigla.value;
         },
@@ -34,7 +33,6 @@ var orgs = new Vue({
             if(this.editInitials && this.newInitials){
                 args+='&initials='+this.newInitials;
             }
-
             console.log(args);
         }
     },

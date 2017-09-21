@@ -5,6 +5,7 @@ var orgs = new Vue({
         tableData: [[]],
         ready: false,
         content: [],
+        cwidth: ['4%','88%','8%'],
     },
     methods: {
         getParameterByName: function(name, url) {
@@ -21,6 +22,9 @@ var orgs = new Vue({
             id = id.replace(/[^#]+#(.*)/,'$1');
             
             window.location.href = '/organizacao?id='+id;
+        },
+        addOrg: function(row){
+            window.location.href = '/novaorganizacao';
         },
         parse: function(){    
             // key names for table header and parsing
@@ -42,8 +46,6 @@ var orgs = new Vue({
                 this.tableData[i]=temp.slice();
 
             }
-
-            this.ready=true;
         }
     },
     created: function(){

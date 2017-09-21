@@ -1,7 +1,7 @@
 Vue.component('custom-table-2', {
     template: '\
         <div>\
-            <div class="col-sm-6">\
+            <div class="col-sm-4">\
                 Mostrar \
                 <select v-model="rowsPerPage">\
                     <option>5</option>\
@@ -11,14 +11,19 @@ Vue.component('custom-table-2', {
                 </select>\
                 entradas\
             </div>\
-            <div class="col-sm-6">\
+            <div class="col-sm-7">\
                 <input class="form-control" v-model="filt" type="text" placeholder="Filtrar"/>\
+            </div>\
+            <div class="col-sm-1">\
+                <button v-if="add" type="button" class="btn btn-default btn-circle" @click="addClick">\
+                    +\
+                </button>\
             </div>\
             \
             <table :class="classTable">\
                 <thead>\
                     <tr>\
-                        <th v-for="(item,index) in header" @click="sort(index)" class="sorter">\
+                        <th v-for="(item,index) in header" @click="sort(index)" class="sorter" :style="{width: cwidth[index]}">\
                             {{ item }} <span class="caret"></span>\
                         </th>\
                     </tr>\
@@ -32,12 +37,12 @@ Vue.component('custom-table-2', {
             \
             <div class="pages">\
                 <span class="glyphicon glyphicon-chevron-left page-number" @click="prevPage"></span>\
-                <span class="page-number btn btn-xs btn-default" v-for="page in pages" :class="{active: page==activePage}" @click="loadPage(page)">\ {{ page }}\ </span>\
+                <span class="page-number btn btn-xs btn-default" v-for="page in pages" :class="{active: page==activePage}" @click="loadPage(page)" :disabled="isNaN(page)">\ {{ page }}\ </span>\
                 <span class="glyphicon glyphicon-chevron-right page-number" @click="nextPage"></span>\
             </div>\
         </div>\
     ',
-    props: ['classTable','completeRows','header','ready'],
+    props: ['classTable','completeRows','header','ready','cwidth','add'],
     data: function(){ 
         return{
             "rows": [],
@@ -102,6 +107,9 @@ Vue.component('custom-table-2', {
         },
         rowClick: function(index) {
             this.$emit('row-clicked', this.rowsShow[index]);
+        },
+        addClick: function(index) {
+            this.$emit('add-clicked');
         },
         loadPages: function(){
             var page=this.activePage;

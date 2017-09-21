@@ -7,18 +7,18 @@ block corpo
             .form-group
                 table
                     tr
-                        td
+                        td(style="width:10%")
                             label Nome: 
-                        td(v-if="editName")
+                        td(v-if="editName" style="width:80%")
                             input(
                                 size="50"
                                 v-model="newName"
                                 :placeholder="orgName"
                             )
-                        td(v-else)
+                        td(v-else style="width:80%")
                             | {{ orgName }}  
-                        td 
-                            label Editar
+                        td(style="width:10%")
+                            label(style="padding-right:5px") Editar
                             input(
                                 type="checkbox"
                                 v-model="editName"
@@ -35,12 +35,17 @@ block corpo
                         td(v-else)
                             | {{ orgInitials }}  
                         td
-                            label Editar
+                            label(style="padding-right:5px") Editar
                             input(
                                 type="checkbox"
                                 v-model="editInitials"
                             )
-            input(type="button" @click="update" value="Confirmar")
+            input.btn.btn-xs.btn-default(
+                type="button" 
+                @click="update" 
+                value="Confirmar" 
+                :disabled="!((editName && newName) || (editInitials && newInitials))"
+            )
     //-
 
     
