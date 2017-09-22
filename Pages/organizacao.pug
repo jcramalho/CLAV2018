@@ -40,12 +40,13 @@ block corpo
                                 type="checkbox"
                                 v-model="editInitials"
                             )
-            input.btn.btn-xs.btn-default(
+            input.btn.btn-xs.btn-default.col-sm-2(
                 type="button" 
                 @click="update" 
                 value="Confirmar" 
                 :disabled="!((editName && newName) || (editInitials && newInitials))"
             )
+            p.col-sm-7 {{ message }}
     //-
 
     

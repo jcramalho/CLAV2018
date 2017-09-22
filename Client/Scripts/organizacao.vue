@@ -9,6 +9,7 @@ var org = new Vue({
         newInitials: "",
         editInitials: false,
         content: [],
+        message: "",
     },
     methods: {
         getParameterByName: function(name, url) {
@@ -33,7 +34,14 @@ var org = new Vue({
             if(this.editInitials && this.newInitials){
                 args+='&initials='+this.newInitials;
             }
-            console.log(args);
+
+            this.$http.get('/updateOrg'+args)
+            .then( function(response) { 
+                this.message = response.body;
+            })
+            .catch( function(error) { 
+                console.error(error); 
+            });
         }
     },
     created: function(){
