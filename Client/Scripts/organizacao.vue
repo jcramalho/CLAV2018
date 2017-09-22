@@ -10,6 +10,7 @@ var org = new Vue({
         editInitials: false,
         content: [],
         message: "",
+        delConfirm: false,
     },
     methods: {
         getParameterByName: function(name, url) {
@@ -42,7 +43,24 @@ var org = new Vue({
             .catch( function(error) { 
                 console.error(error); 
             });
-        }
+        },
+        delReady: function(){
+            this.message="Tem a certeza que deseja apagar?";
+            this.delConfirm=true;
+        },
+        delNotReady: function(){
+            this.message= "";
+            this.delConfirm=false;
+        },
+        deleteOrg: function(){
+            this.$http.get('/deleteOrg?id='+this.id)
+            .then( function(response) { 
+                this.message = response.body;
+            })
+            .catch( function(error) { 
+                console.error(error); 
+            });
+        } 
     },
     created: function(){
         this.id=this.getParameterByName('id');
