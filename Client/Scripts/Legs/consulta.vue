@@ -42,8 +42,22 @@ var org = new Vue({
         },
         content: [],
         message: "",
+        updateReady: false,
         delConfirm: false,
         ready: false,
+    },
+    watch: {
+        legData: function(){
+            keys=["year","date","number","type","title","link"];
+                        
+            var ret = false;
+            
+            for(var i=0;i<6;i++){
+                ret = ret || this.legData[keys[i]].edit || this.legData[keys[i]].new;
+                console.log(ret);
+            }
+            this.updateReady=ret;
+        }
     },
     methods: {
         getParameterByName: function(name, url) {
@@ -95,14 +109,17 @@ var org = new Vue({
             this.message= "";
             this.delConfirm=false;
         },
-        deleteOrg: function(){
-            this.$http.get('/deleteOrg?id='+this.id)
+        deleteLeg: function(){
+            console.log("WIP...");
+            /*
+            this.$http.get('/deleteLeg?id='+this.id)
             .then( function(response) { 
                 this.message = response.body;
             })
             .catch( function(error) { 
                 console.error(error); 
             });
+            */
         } 
     },
     created: function(){

@@ -30,12 +30,13 @@ block corpo
                 type="button" 
                 @click="update" 
                 value="Confirmar" 
+                :disabled="!updateReady"
             )
             input.btn.btn-xs.btn-warning.col-sm-1(
                 type="button" 
                 @click="delReady" 
                 value="Apagar" 
-                :disabled="(editName || editInitials)"
+                :disabled="updateReady"
             )
             p.col-sm-5 {{ message }}
 
