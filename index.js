@@ -3,7 +3,7 @@ var express = require('express'),
     app = express();
 
 require('./Server/routes')(app);
-require('./Server/api')(app);
+require('./Server/apiOrgs')(app);
 
 module.exports = app;
 
