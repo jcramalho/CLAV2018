@@ -30,7 +30,7 @@ Vue.component('custom-table-2', {
                 </thead>\
                 <tbody name="table">\
                     <tr v-for="(row,index) in rowsShow" :key="row[0]" @click="rowClick(index)">\
-                        <td v-for="item in row">{{ item }}</td>\
+                        <td v-for="item in row" style="max-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ item }}</td>\
                     </tr>\
                 </tbody>\
             </table>\

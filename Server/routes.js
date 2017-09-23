@@ -7,19 +7,22 @@ module.exports = function(app) {
     });
 
     app.get('/catalogo', function(req, res) {
-        res.render('Pages/catalogo');
+        res.render('Pages/Orgs/catalogo');
     });
 
     app.get('/organizacao', function(req, res) {
-        /*var url = require('url');
-        
-        var parts = url.parse(req.url, true);
-        var args = parts.query;*/
-
-        res.render('Pages/organizacao');
+        res.render('Pages/Orgs/organizacao');
     });
 
     app.get('/novaorganizacao', function(req, res) {
-        res.render('Pages/novaOrg');
+        res.render('Pages/Orgs/novaOrg');
+    });
+
+    app.get('/legislacoes', function(req, res) {
+        res.render('Pages/Legs/legislacoes');
+    });
+
+    app.get('/legislacao', function(req, res) {
+        res.render('Pages/Legs/consultaLegislacao');
     });
 }

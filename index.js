@@ -4,6 +4,7 @@ var express = require('express'),
 
 require('./Server/routes')(app);
 require('./Server/apiOrgs')(app);
+require('./Server/apiLegs')(app);
 
 module.exports = app;
 

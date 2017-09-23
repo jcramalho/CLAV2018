@@ -1,9 +1,9 @@
-extends ./Templates/layout
+extends ../Templates/layout
 block corpo
-    h1.page-header Catálogo
+    h1.page-header Legislações
     .row
-        h3.sub-header Organizações
-        #tabela-organizacoes.row.placeholders
+        h3.sub-header Lista
+        #tabela-legislacoes.row.placeholders
             custom-table-2(
                 v-if="ready"
 
@@ -16,7 +16,7 @@ block corpo
                 add="true"
 
                 @row-clicked="rowClicked($event)"
-                @add-clicked="addOrg"
+                @add-clicked="addLeg"
             )
             h4(
                 v-else
@@ -29,4 +29,4 @@ block corpo
 append scripts    
     script(src="https://cdn.jsdelivr.net/npm/vue-resource@1.3.4")
     script(src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.14.1/lodash.min.js")
-    script(src="/Scripts/catalogo.vue")
+    script(src="/Scripts/Legs/listagem.vue")
