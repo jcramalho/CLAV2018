@@ -30,13 +30,27 @@ block corpo
                 type="button" 
                 @click="update" 
                 value="Confirmar" 
-                :disabled="!updateReady"
+                :disabled="!(\
+                    legData.year.edit && legData.year.new ||\
+                    legData.date.edit && legData.date.new ||\
+                    legData.number.edit && legData.number.new ||\
+                    legData.type.edit && legData.type.new ||\
+                    legData.title.edit && legData.title.new ||\
+                    legData.link.edit && legData.link.new \
+                )"
             )
             input.btn.btn-xs.btn-warning.col-sm-1(
                 type="button" 
                 @click="delReady" 
                 value="Apagar" 
-                :disabled="updateReady"
+                :disabled="(\
+                    legData.year.edit && legData.year.new ||\
+                    legData.date.edit && legData.date.new ||\
+                    legData.number.edit && legData.number.new ||\
+                    legData.type.edit && legData.type.new ||\
+                    legData.title.edit && legData.title.new ||\
+                    legData.link.edit && legData.link.new \
+                )"
             )
             p.col-sm-5 {{ message }}
 

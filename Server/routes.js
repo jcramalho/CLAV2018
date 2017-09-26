@@ -21,8 +21,12 @@ module.exports = function(app) {
     app.get('/legislacoes', function(req, res) {
         res.render('Pages/Legs/legislacoes');
     });
-
+    
     app.get('/legislacao', function(req, res) {
         res.render('Pages/Legs/consultaLegislacao');
+    });
+        
+    app.get('/novalegislacao', function(req, res) {
+        res.render('Pages/Legs/adicionaLegislacao');
     });
 }

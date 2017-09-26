@@ -57,6 +57,8 @@ module.exports = function (app) {
                         clav:diplomaLink ?Link;
                 }`;
             
+            console.log("fetch query: \n"+fetchQuery);
+
             return client.query(fetchQuery)
                 .execute()
                 //getting the content we want
@@ -75,6 +77,224 @@ module.exports = function (app) {
                 console.error(error);
             });
     })
+    
+    //TODO finish this
+    app.get('/updateleg', function (req, res) {
+        const { SparqlClient, SPARQL } = require('sparql-client-2');
+        var url = require('url');
+
+        const client = new SparqlClient('http://localhost:8080/repositories/M51-CLAV', {
+            updateEndpoint: 'http://localhost:8080/repositories/M51-CLAV/statements'
+        })
+            .register({
+                rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+                clav: 'http://jcr.di.uminho.pt/m51-clav#',
+            });
+
+        //Check if legislation Initials already exists
+        function checkNumber(number) {
+            var checkQuery = `
+                SELECT (count(*) AS ?Count) WHERE {
+                    ?org rdf:type clav:Legislacao ;
+                        clav:diplomaNumero '${number}'
+                }
+            `;
+            return client.query(checkQuery).execute()
+                //Getting the content we want
+                .then(response => Promise.resolve(response.results.bindings[0].Count.value))
+                .catch(function (error) {
+                    console.error("Error in check:\n" + error);
+                });
+        }
+
+        //Update organization
+        function updateLeg(id, year, date, number, type, title, link) {
+            var del= SPARQL`DELETE {`;
+            var ins= SPARQL`INSERT {`;
+            
+            if (year) {
+                del+= SPARQL`${{clav: id}} clav:diplomaAno ?y .\n`;
+                ins+= SPARQL`${{clav: id}} clav:diplomaAno ${year} .\n`;
+            }
+            if (date) {
+                del+= SPARQL`${{clav: id}} clav:diplomaData ?d .\n`;
+                ins+= SPARQL`${{clav: id}} clav:diplomaData ${date} .\n`;
+            }
+            if (number) {
+                del+= SPARQL`${{clav: id}} clav:diplomaNumero ?n .\n`;
+                ins+= SPARQL`${{clav: id}} clav:diplomaNumero ${number} .\n`;
+            }
+            if (type) {
+                del+= SPARQL`${{clav: id}} clav:diplomaTipo ?t .\n`;
+                ins+= SPARQL`${{clav: id}} clav:diplomaTipo ${type} .\n`;
+            }
+            if (title) {
+                del+= SPARQL`${{clav: id}} clav:diplomaTitulo ?tit .\n`;
+                ins+= SPARQL`${{clav: id}} clav:diplomaTitulo ${title} .\n`;
+            }
+            if (link) {
+                del+= SPARQL`${{clav: id}} clav:diplomaLink ?l .\n`;
+                ins+= SPARQL`${{clav: id}} clav:diplomaLink ${link} .\n`;
+            }
+
+            del+= '}\n';
+            ins+= '}\n';
+            
+
+            var updateQuery = del + ins + SPARQL`WHERE  {${{ clav: id }} ?p ?o }`;
+
+            console.log("update: \n"+updateQuery);
+
+            return client.query(updateQuery).execute()
+                .then(response => Promise.resolve(response))
+                .catch(error => console.error("Error in update:\n" + error));
+        }
+
+        //Parsing url to get parameters
+        var parts = url.parse(req.url, true);
+        var id = parts.query.id;
+        var year = parts.query.year;
+        var date = parts.query.date;
+        var number = parts.query.number;
+        var type = parts.query.type;
+        var title = parts.query.title;
+        var link = parts.query.link;
+
+        //Executing queries
+        if (number) {
+            checkNumber(number)
+                .then(function (count) {
+                    if (count > 0) {
+                        res.send("Número já existente!");
+                    }
+                    else {
+                        updateLeg(id, year, date, number, type, title, link)
+                            .then(function () {
+                                res.send("Actualizado!");
+                            })
+                            .catch(error => console.error(error));
+                    }
+                })
+                .catch(error => console.error("Check error:\n" + error));
+        }
+        else {
+            updateLeg(id, year, date, number, type, title, link)
+                .then(function () {
+                    res.send("Actualizado!");
+                })
+                .catch(error => console.error(error));
+        }
+    })
+
+    app.get('/createLeg', function (req, res) {
+        const { SparqlClient, SPARQL } = require('sparql-client-2');
+        var url = require('url');
+
+        const client = new SparqlClient('http://localhost:8080/repositories/M51-CLAV', {
+                updateEndpoint: 'http://localhost:8080/repositories/M51-CLAV/statements'
+            })
+            .register({
+                rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+                clav: 'http://jcr.di.uminho.pt/m51-clav#',
+                owl: 'http://www.w3.org/2002/07/owl#',
+        });
+
+        //Check if legislation Initials already exists
+        function checkNumber(number) {
+            var checkQuery = `
+                SELECT (count(*) AS ?Count) WHERE {
+                    ?org rdf:type clav:Legislacao ;
+                        clav:diplomaNumero '${number}'
+                }
+            `;
+
+            return client.query(checkQuery).execute()
+                //Getting the content we want
+                .then(response => Promise.resolve(response.results.bindings[0].Count.value))
+                .catch(function (error) {
+                    console.error("Error in check:\n" + error);
+                });
+        }
+
+        //TODO find better solution
+        //Generates new ID number
+        function newID(){
+            var countQuery = SPARQL`
+                SELECT (count(*) AS ?Count)
+                WHERE {
+                    ?s rdf:type clav:Legislacao .
+                }
+            `;
+
+            console.log("count query: \n"+countQuery);
+
+            return client.query(countQuery).execute()
+            //Getting the content we want
+            .then(response => Promise.resolve(response.results.bindings[0].Count.value))
+            .catch(function (error) {
+                console.error("Error in check:\n" + error);
+            });
+        }
+
+        //Create new organization
+        function createLeg(newID, year, date, number, type, title, link) {            
+            console.log("ola");
+
+            var createQuery = SPARQL`
+                INSERT DATA {
+                    ${{ clav: newID }} rdf:type owl:NamedIndividual ,
+                            clav:Legislacao ;
+                        clav:diplomaAno ${year} ;
+                        clav:diplomaData ${date} ;
+                        clav:diplomaNumero ${number} ;
+                        clav:diplomaTipo ${type} ;
+                        clav:diplomaTitulo ${title} ;
+                        clav:diplomaLink ${link} ;
+                }
+            `;
+            
+            console.log("create query: \n"+createQuery);
+
+            return client.query(createQuery).execute()
+                .then(response => Promise.resolve(response))
+                .catch(error => console.error("Error in create:\n" + error));
+        }
+
+        //Parsing url to get parameters
+        var parts = url.parse(req.url, true);
+        var year = parts.query.year;
+        var date = parts.query.date;
+        var number = parts.query.number;
+        var type = parts.query.type;
+        var title = parts.query.title;
+        var link = parts.query.link;
+
+        
+        //Executing queries
+        checkNumber(number)
+            .then(function (count) {
+                if (count > 0) {
+                    res.send("Número já existente!");
+                }
+                else {
+
+                    newID()
+                    .then(function(ids){
+                        var newID = "leg_"+(parseInt(ids)+1);
+                        console.log("\nnewID: "+newID);
+
+                        createLeg(newID, year, date, number, type, title, link)
+                            .then(function () {
+                                res.send("Inserido!");
+                            })
+                            .catch(error => console.error(error));
+                    })
+                    .catch(error => console.error("newID error: \n\t"+error))
+                }
+            })
+            .catch(error => console.error("General error:\n" + error));
+    })
+
 /*
     app.get('/createOrg', function (req, res) {
         const { SparqlClient, SPARQL } = require('sparql-client-2');
@@ -143,170 +363,6 @@ module.exports = function (app) {
                 }
             })
             .catch(error => console.error("General error:\n" + error));
-    })
-
-    app.get('/updateOrg', function (req, res) {
-        const { SparqlClient, SPARQL } = require('sparql-client-2');
-        var url = require('url');
-
-        const client = new SparqlClient('http://localhost:8080/repositories/M51-CLAV', {
-            updateEndpoint: 'http://localhost:8080/repositories/M51-CLAV/statements'
-        })
-            .register({
-                rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-                clav: 'http://jcr.di.uminho.pt/m51-clav#',
-            });
-
-        //Check if organization Initials already exists
-        function checkInitials(initials) {
-            var checkQuery = `
-                SELECT (count(*) AS ?Count) WHERE {
-                    ?org rdf:type clav:Organizacao ;
-                        clav:orgSigla '${initials}'
-                }
-            `;
-            return client.query(checkQuery).execute()
-                //Getting the content we want
-                .then(response => Promise.resolve(response.results.bindings[0].Count.value))
-                .catch(function (error) {
-                    console.error("Error in check:\n" + error);
-                });
-        }
-
-        //Check if organization Name already exists
-        function checkName(name) {
-            var checkQuery = `
-                SELECT (count(*) AS ?Count) WHERE {
-                    ?org rdf:type clav:Organizacao ;
-                        clav:orgNome '${name}'
-                }
-            `;
-            return client.query(checkQuery).execute()
-                //Getting the content we want
-                .then(response => Promise.resolve(response.results.bindings[0].Count.value))
-                .catch(function (error) {
-                    console.error("Error in check:\n" + error);
-                });
-        }
-
-        //Check if organization Name and Initials already exist
-        function checkOrg(name, initials) {
-            var checkQuery = `
-                SELECT (count(*) as ?Count) where { 
-                    ?o rdf:type clav:Organizacao ;
-                        clav:orgSigla ?s ;
-                        clav:orgNome ?n .
-                    filter (?s='${initials}' || ?n='${name}').
-                }
-            `;
-
-            return client.query(checkQuery).execute()
-                //Getting the content we want
-                .then(response => Promise.resolve(response.results.bindings[0].Count.value))
-                .catch(function (error) {
-                    console.error("Error in check:\n" + error);
-                });
-        }
-
-        //Update organization
-        function updateOrg(id, name, initials) {
-            if (name && !initials) {
-                var updateQuery = SPARQL`
-                    DELETE {${{ clav: id }} clav:orgNome ?o }
-                    INSERT {${{ clav: id }} clav:orgNome ${name} }
-                    WHERE  {${{ clav: id }} ?p ?o }
-                `;
-            }
-            else if (!name && initials) {
-                var newID = "org_" + initials;
-
-                var updateQuery = SPARQL`
-                    DELETE {${{ clav: id }} ?p ?o }
-                    INSERT {
-                        ${{ clav: newID }} rdf:type clav:Organizacao ;
-                            clav:orgNome ?nome ;
-                            clav:orgSigla ${initials}
-                    }
-                    WHERE  {${{ clav: id }} clav:orgNome ?nome };
-                    DELETE {${{ clav: id }} ?p ?o }
-                    WHERE {?s ?p ?o}
-                `;
-            }
-            else {
-                var newID = "org_" + initials;
-
-                var updateQuery = SPARQL`
-                    DELETE {${{ clav: id }} ?p ?o }
-                    INSERT {
-                        ${{ clav: newID }} rdf:type clav:Organizacao ;
-                            clav:orgNome ${name} ;
-                            clav:orgSigla ${initials}
-                    }
-                    WHERE  {${{ clav: id }} ?p ?o };
-                    DELETE {${{ clav: id }} ?p ?o }
-                    WHERE {?s ?p ?o}
-                `;
-            }
-            return client.query(updateQuery).execute()
-                .then(response => Promise.resolve(response))
-                .catch(error => console.error("Error in update:\n" + error));
-        }
-
-        //Parsing url to get parameters
-        var parts = url.parse(req.url, true);
-        var initials = parts.query.initials;
-        var name = parts.query.name;
-        var id = parts.query.id;
-
-        //Executing queries
-        if (name && !initials) {
-            checkName(name)
-                .then(function (count) {
-                    if (count > 0) {
-                        res.send("Nome já existente!");
-                    }
-                    else {
-                        updateOrg(id, name, initials)
-                            .then(function () {
-                                res.send("Actualizado!");
-                            })
-                            .catch(error => console.error(error));
-                    }
-                })
-                .catch(error => console.error("Name error:\n" + error));
-        }
-        else if (!name && initials) {
-            checkInitials(initials)
-                .then(function (count) {
-                    if (count > 0) {
-                        res.send("Sigla já existente!");
-                    }
-                    else {
-                        updateOrg(id, name, initials)
-                            .then(function () {
-                                res.send("Actualizado!");
-                            })
-                            .catch(error => console.error(error));
-                    }
-                })
-                .catch(error => console.error("Initials error:\n" + error));
-        }
-        else if (name && initials) {
-            checkOrg(name, initials)
-                .then(function (count) {
-                    if (count > 0) {
-                        res.send("Nome e/ou Sigla já existentente(s)!");
-                    }
-                    else {
-                        updateOrg(id, name, initials)
-                            .then(function () {
-                                res.send("Actualizado!");
-                            })
-                            .catch(error => console.error(error));
-                    }
-                })
-                .catch(error => console.error("Initials error:\n" + error));
-        }
     })
 
     app.get('/deleteOrg', function (req, res) {

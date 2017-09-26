@@ -16,8 +16,7 @@ var legs = new Vue({
             //console.log("WIP..."+id);
         },
         addLeg: function(row){
-            //window.location.href = '/novalegislacao';
-            console.log("WIP...");
+            window.location.href = '/novalegislacao';
         },
         parse: function(){    
             // key names for table header and parsing

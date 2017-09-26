@@ -1,4 +1,4 @@
-var org = new Vue({
+var leg = new Vue({
     el: '#legislacao-form',
     data: {
         id: "",
@@ -46,19 +46,6 @@ var org = new Vue({
         delConfirm: false,
         ready: false,
     },
-    watch: {
-        legData: function(){
-            keys=["year","date","number","type","title","link"];
-                        
-            var ret = false;
-            
-            for(var i=0;i<6;i++){
-                ret = ret || this.legData[keys[i]].edit || this.legData[keys[i]].new;
-                console.log(ret);
-            }
-            this.updateReady=ret;
-        }
-    },
     methods: {
         getParameterByName: function(name, url) {
             if (!url) url = window.location.href;
@@ -90,8 +77,6 @@ var org = new Vue({
                 }
             }
 
-            console.log("WIP..."+args);
-            /*
             this.$http.get('/updateLeg'+args)
             .then( function(response) { 
                 this.message = response.body;
@@ -99,7 +84,6 @@ var org = new Vue({
             .catch( function(error) { 
                 console.error(error); 
             });
-            */
         },
         delReady: function(){
             this.message="Tem a certeza que deseja apagar?";
