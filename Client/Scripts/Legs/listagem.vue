@@ -13,7 +13,6 @@ var legs = new Vue({
             id = id.replace(/[^#]+#(.*)/,'$1');
             
             window.location.href = '/legislacao?id='+id;
-            //console.log("WIP..."+id);
         },
         addLeg: function(row){
             window.location.href = '/novalegislacao';

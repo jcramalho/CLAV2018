@@ -94,8 +94,6 @@ var leg = new Vue({
             this.delConfirm=false;
         },
         deleteLeg: function(){
-            console.log("WIP...");
-            /*
             this.$http.get('/deleteLeg?id='+this.id)
             .then( function(response) { 
                 this.message = response.body;
@@ -103,7 +101,6 @@ var leg = new Vue({
             .catch( function(error) { 
                 console.error(error); 
             });
-            */
         } 
     },
     created: function(){
