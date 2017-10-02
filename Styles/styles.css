@@ -58,3 +58,31 @@
 .pages {
     text-align: center;
 }
+
+
+
+.cascata {
+    margin-bottom: 0px;
+}
+
+.cascata-row {
+    padding:0px !important; 
+    padding-left:30px !important; 
+    border:0px !important
+}
+
+.cascata-row-root {
+    padding:0px !important; 
+    border:0px !important
+}
+
+.cascata-drop {
+    border-right:1px solid #ddd; 
+    margin-right: 5px;
+    width: 4%;
+}
+
+.drop-row {
+    position: absolute;
+    left: -9999px;
+}

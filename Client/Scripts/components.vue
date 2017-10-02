@@ -281,8 +281,8 @@ Vue.component('row-waterfall', {
 
 Vue.component('custom-table-waterfall', {
     template: `
-        <div>
-            <div class="col-sm-6" v-if="pagesOn">
+        <div id="root">
+            <div id="pages" class="col-sm-4" v-if="pagesOn">
                 Mostrar 
                 <select v-model="rowsPerPage">
                     <option>5</option>
@@ -292,7 +292,7 @@ Vue.component('custom-table-waterfall', {
                 </select>
                 entradas
             </div>
-            <div class="col-sm-6" v-if="filterOn">
+            <div id="filter" class="col-sm-7" v-if="filterOn">
                 <input 
                     class="form-control" 
                     v-model="filt" type="text" 
@@ -300,7 +300,7 @@ Vue.component('custom-table-waterfall', {
                 />
             </div>
             
-            <table :class="tableClass">
+            <table id="masterTable" :class="tableClass">
                 <thead>
                     <tr>
                         <th style="width: 4%"></th>
@@ -348,7 +348,8 @@ Vue.component('custom-table-waterfall', {
         'ready',
         'subReady',
         'pagesOn',
-        'filterOn'
+        'filterOn',
+        'add'
     ],
     data: function () {
         return {
@@ -407,18 +408,34 @@ Vue.component('custom-table-waterfall', {
                 this.order = index;
             }
         },
-        loadPages: function () { //process page numbers 
+        loadPages: function(){ //process page numbers
+            var page=this.activePage;
             var ret = [];
+            
+            var n = Math.ceil(this.rows.length/this.rowsPerPage);         
 
-            var n = Math.ceil(this.rows.length / this.rowsPerPage);
+            this.nPages=n;
 
-            for (var i = 1; i <= n; i++) {
-                ret.push(i);
+            if(n>7){
+                if(page<5){
+                    ret=[1,2,3,4,5,"...",n];
+                }
+                else if(page>n-4){
+                    ret=[1,"...",n-4,n-3,n-2,n-1,n];
+                }
+                else{
+                    ret=[1,"...",page-1,page,page+1,"...",n];
+                }
+            }
+            else {
+                for(var i=1; i<=n; i++) {
+                    ret.push(i);
+                }
             }
 
-            this.pages = ret;
+            this.pages=ret;
 
-            if (this.activePage > n) {
+            if(page>n){
                 this.loadPage(n);
             } else {
                 this.prepPage();
@@ -467,6 +484,9 @@ Vue.component('custom-table-waterfall', {
         },
         dropClick: function (params) { //emit event when a row is expanded
             this.$emit('drop-clicked', params);
+        },
+        addClick: function(index) { //emit event when the '+' button is clicked
+            this.$emit('add-clicked');
         },
     },
     beforeMount: function () {

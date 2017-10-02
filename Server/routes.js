@@ -29,4 +29,8 @@ module.exports = function(app) {
     app.get('/novalegislacao', function(req, res) {
         res.render('Pages/Legs/adicionaLegislacao');
     });
+
+    app.get('/classes', function(req, res) {
+        res.render('Pages/Classes/classes');
+    });
 }
