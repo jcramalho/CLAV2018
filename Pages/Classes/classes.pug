@@ -1,0 +1,36 @@
+extends ../Templates/layout
+block corpo
+    h1.page-header Classes
+    .row
+        h3.sub-header Lista
+        #tabela-classes.row.placeholders
+            custom-table-waterfall(
+                v-if="ready"
+
+                pages-on=true
+                filter-on=true
+                add=false
+
+                :header="tableHeader"
+                :complete-rows="tableData"
+                :sub-ready="subReady"
+                :ready="ready"
+                :cwidth="cwidth"
+                
+                table-class='table table-hover'
+                
+                @row-clicked="rowClicked($event)"
+                @drop-clicked="dropClicked($event)"
+            )
+            h4(
+                v-else
+            ) Loading...
+        
+    //-
+
+    
+
+append scripts    
+    script(src="https://cdn.jsdelivr.net/npm/vue-resource@1.3.4")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.14.1/lodash.min.js")
+    script(src="/Scripts/Classes/listagem.vue")
