@@ -4,7 +4,7 @@ module.exports = function (app) {
         app.get('/classesN1', function (req, res) {
             const { SparqlClient, SPARQL } = require('sparql-client-2');
     
-            const client = new SparqlClient('http://localhost:8080/repositories/M51-CLAV')
+            const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV')
                 .register({
                     rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
                     clav: 'http://jcr.di.uminho.pt/m51-clav#',
@@ -15,11 +15,12 @@ module.exports = function (app) {
     
             function fetchClasses() {
                 var listQuery=`
-                    SELECT ?N1 (count(?sub) as ?NChilds) FROM noInferences:
+                    SELECT ?N1 ?Code (count(?sub) as ?NChilds) FROM noInferences:
                     WHERE {
                         ?N1 rdf:type clav:Classe_N1 .
+                        ?N1 clav:codigo ?Code
                         optional {?sub clav:temPai ?N1}
-                    }Group by(?N1)
+                    }Group by ?N1 ?Code
                 `;
 
                 return client.query(listQuery).execute()
@@ -43,7 +44,7 @@ module.exports = function (app) {
         const { SparqlClient, SPARQL } = require('sparql-client-2');
         var url = require('url');
 
-        const client = new SparqlClient('http://localhost:8080/repositories/M51-CLAV')
+        const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV')
             .register({
                 rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
                 clav: 'http://jcr.di.uminho.pt/m51-clav#',
@@ -53,13 +54,15 @@ module.exports = function (app) {
 
         function fetchChilds(parent) {
             var fetchQuery =SPARQL`
-                SELECT ?Child (count(?sub) as ?NChilds) FROM noInferences:
+                SELECT ?Child ?Code (count(?sub) as ?NChilds)
                 WHERE {
-                    ?Child clav:temPai ${{clav: parent}} .
+                    ?Child clav:temPai ${{clav: parent}} ;
+                           clav:codigo ?Code .
                     optional {?sub clav:temPai ?Child}
-                }Group by(?Child)
+                }Group by ?Child ?Code
             `;
             
+
             return client.query(fetchQuery)
                 .execute()
                 //getting the content we want

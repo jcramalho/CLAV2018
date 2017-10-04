@@ -4,7 +4,7 @@ module.exports = function (app) {
     app.get('/legs', function (req, res) {
         const { SparqlClient, SPARQL } = require('sparql-client-2');
 
-        const client = new SparqlClient('http://localhost:8080/repositories/M51-CLAV')
+        const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV')
             .register({
                 rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
                 clav: 'http://jcr.di.uminho.pt/m51-clav#',
@@ -40,7 +40,7 @@ module.exports = function (app) {
         const { SparqlClient, SPARQL } = require('sparql-client-2');
         var url = require('url');
 
-        const client = new SparqlClient('http://localhost:8080/repositories/M51-CLAV')
+        const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV')
             .register({
                 rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
                 clav: 'http://jcr.di.uminho.pt/m51-clav#',
@@ -80,8 +80,8 @@ module.exports = function (app) {
         const { SparqlClient, SPARQL } = require('sparql-client-2');
         var url = require('url');
 
-        const client = new SparqlClient('http://localhost:8080/repositories/M51-CLAV', {
-                updateEndpoint: 'http://localhost:8080/repositories/M51-CLAV/statements'
+        const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV', {
+                updateEndpoint: 'http://localhost:7200/repositories/M51-CLAV/statements'
             })
             .register({
                 rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
@@ -182,8 +182,8 @@ module.exports = function (app) {
         const { SparqlClient, SPARQL } = require('sparql-client-2');
         var url = require('url');
 
-        const client = new SparqlClient('http://localhost:8080/repositories/M51-CLAV', {
-            updateEndpoint: 'http://localhost:8080/repositories/M51-CLAV/statements'
+        const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV', {
+            updateEndpoint: 'http://localhost:7200/repositories/M51-CLAV/statements'
         })
             .register({
                 rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
@@ -288,8 +288,8 @@ module.exports = function (app) {
         const { SparqlClient, SPARQL } = require('sparql-client-2');
         var url = require('url');
 
-        const client = new SparqlClient('http://localhost:8080/repositories/M51-CLAV', {
-                updateEndpoint: 'http://localhost:8080/repositories/M51-CLAV/statements'
+        const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV', {
+                updateEndpoint: 'http://localhost:7200/repositories/M51-CLAV/statements'
             })
             .register({
                 rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',

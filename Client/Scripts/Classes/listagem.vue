@@ -1,4 +1,3 @@
-
 var classes = new Vue({
     el: '#tabela-classes',
     data: {
@@ -31,7 +30,7 @@ var classes = new Vue({
         },
         loadSub: function(indexes,location,params){
             if(indexes.length==1){
-                this.$http.get("/childClasses?parent="+params.rowData[0])
+                this.$http.get("/childClasses?parent="+params.rowData.codeID)
                 .then( function(response) { 
                     this.subTemp = response.body;
                 })
@@ -63,10 +62,12 @@ var classes = new Vue({
             var temp={content:"",sublevel:false};
             // parsing the JSON
             for (var i=0; i<this.content.length; i++) {
-                var classN1= this.content[i].N1.value;
+                var id= this.content[i].N1.value.replace(/[^#]+#(.*)/,'$1');
+                var code= this.content[i].Code.value;
 
-                temp.content = [classN1.replace(/[^#]+#(.*)/,'$1')];
-                
+                temp.content = [code];
+                temp.codeID=id;
+
                 if(this.content[i].NChilds.value>0){
                     temp.sublevel=true;
                 }
@@ -79,10 +80,13 @@ var classes = new Vue({
             var temp={content:"",sublevel:false};
             // parsing the JSON
             for (var i=0; i<this.subTemp.length; i++) {
-                var classNx= this.subTemp[i].Child.value;
 
-                temp.content = [classNx.replace(/[^#]+#(.*)/,'$1')];
-                
+                var id= this.subTemp[i].Child.value.replace(/[^#]+#(.*)/,'$1');
+                var code= this.subTemp[i].Code.value;
+
+                temp.content = [code];
+                temp.codeID=id;
+
                 if(this.subTemp[i].NChilds.value>0){
                     temp.sublevel=true;
                 }

@@ -242,7 +242,14 @@ Vue.component('row-waterfall', {
             </td>
         </tr> 
     `,
-    props: ['row', 'tableClass', 'cwidth', 'id', 'subReady', 'root'],
+    props: [
+        'row', 
+        'tableClass', 
+        'cwidth', 
+        'id', 
+        'subReady', 
+        'root'
+    ],
     data: function () {
         return {
             drop: false,
@@ -254,7 +261,7 @@ Vue.component('row-waterfall', {
                 type: "drop",
                 params: {
                     id: this.id,
-                    rowData: this.row.content
+                    rowData: this.row
                 }
             };
             this.$emit('eventWaterfall', eventContent);
