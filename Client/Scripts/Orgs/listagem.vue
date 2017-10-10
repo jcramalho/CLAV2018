@@ -28,8 +28,7 @@ var orgs = new Vue({
         },
         parse: function(){    
             // key names for table header and parsing
-            var keys= Object.keys(this.content[0]);
-            keys=keys.slice(0,keys.length-1);
+            var keys=["Nome","Sigla"];
             // setting the table header
             this.tableHeader=["#"].concat(keys);
 

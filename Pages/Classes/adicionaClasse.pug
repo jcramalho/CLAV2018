@@ -1,0 +1,138 @@
+extends ../Templates/layout
+block corpo
+    #nova-classe-form.panel.panel-default
+        .panel-heading
+            h1.page-header Nova Classe  
+        .panel-body
+            .form-group
+                table
+                    tr
+                        td(style="width:10%")
+                            label Tipo: 
+                        td(style="width:80%")
+                            select( v-model="type")
+                                option(value=1) Classe_N1
+                                option(value=2) Classe_N2
+                                option(value=3) Classe_N3
+                                option(value=4) Classe_N4
+                    tr(v-if="type>1 && parentsReady")
+                        td(style="width:10%")
+                            label Pai: 
+                        td(style="width:80%")
+                            select( v-model="parent")
+                                option(v-for="(p,index) in parents" :value="p.id")
+                                    | {{ p.Code }}
+                    tr
+                        td(style="padding-top:10px")
+                            label Código: 
+                        td
+                            input(
+                                size="70"
+                                v-model="code"
+                                :placeholder="+'.000'"
+                            )
+                    tr(v-if="type==3 && orgsReady")
+                        td(style="padding-top:10px")
+                            label Dono: 
+                        td
+                            select( v-model="newOwner")
+                                option(v-for="(o,index) in orgList" :value="o")
+                                    | {{ o.Sigla }}
+                            button(
+                                @click="addOwner(orgList.indexOf(newOwner))"
+                            ) +
+                    tr(v-if="type==3 && ownerList")
+                        td(style="padding-top:10px")
+                        td
+                            ul
+                                li(v-for="(o,index) in ownerList")
+                                    | {{ o.Sigla }}
+                                    button(
+                                        @click="remOwner(index)"
+                                    ) x
+                    tr(v-if="type==3 && legsReady")
+                        td(style="padding-top:10px")
+                            label Legislação: 
+                        td
+                            select( v-model="newLegislation")
+                                option(v-for="(l,index) in legList" :value="l")
+                                    | {{ l.Número }}
+                            button(
+                                @click="addLeg(legList.indexOf(newLegislation))"
+                            ) +
+                    tr(v-if="type==3 && newLegList")
+                        td(style="padding-top:10px")
+                        td
+                            ul
+                                li(v-for="(l,index) in newLegList")
+                                    | {{ l.Número }}
+                                    button(
+                                        @click="remLeg(index)"
+                                    ) x
+                    tr
+                        td(style="padding-top:10px")
+                            label Status: 
+                        td
+                            input(
+                                size="70"
+                                v-model="status"
+                            )
+                    tr
+                        td(style="padding-top:10px")
+                            label Descrição: 
+                        td
+                            textarea(
+                                cols="72"
+                                lines="5"
+                                v-model="description"
+                            )
+                    tr
+                        td(style="padding-top:10px")
+                            label Nota de Aplicação: 
+                        td
+                            textarea(
+                                cols="72"
+                                lines="5"
+                                v-model="newAppNote"
+                                @keyup.ctrl.enter="addNewAppNote" 
+                            )
+                            button(@click="addNewAppNote") Ok
+                                   
+                            ul
+                                li(v-for="(note,index) in appNotes")
+                                    button(@click="appNotes.splice(index,1)") x
+                                    | {{note}}
+                    tr
+                        td(style="padding-top:10px")
+                            label Nota de Exclusão: 
+                        td
+                            textarea(
+                                cols="72"
+                                lines="5"
+                                v-model="newDelNote"
+                                @keyup.ctrl.enter="addNewDelNote" 
+                            )
+                            button(@click="addNewDelNote") Ok
+                                   
+                            ul
+                                li(v-for="(note,index) in delNotes")
+                                    button(@click="delNotes.splice(index,1)") x
+                                    | {{note}}
+            input.btn.btn-xs.btn-default.col-sm-2(
+                type="button" 
+                @click="add" 
+                value="Adicionar" 
+                :disabled=`!(
+                    ((type>1 && parent) || type==1) && 
+                    code
+                )`
+            )
+            p.col-sm-7 {{ message }}
+    //-
+
+    
+
+append scripts    
+    script(src="https://cdn.jsdelivr.net/npm/vue-resource@1.3.4")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.14.1/lodash.min.js")
+    script(src="/Scripts/Classes/adicao.vue")

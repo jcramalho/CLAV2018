@@ -6,7 +6,7 @@ var classes = new Vue({
         tableData: [],
         ready: false,
         content: [],
-        cwidth: ['96%'],
+        cwidth: ['15%','81%'],
         subTemp: []
     },
     methods: {
@@ -62,10 +62,11 @@ var classes = new Vue({
             var temp={content:"",sublevel:false};
             // parsing the JSON
             for (var i=0; i<this.content.length; i++) {
-                var id= this.content[i].N1.value.replace(/[^#]+#(.*)/,'$1');
+                var id= this.content[i].id.value.replace(/[^#]+#(.*)/,'$1');
                 var code= this.content[i].Code.value;
+                var title= this.content[i].Title.value;
 
-                temp.content = [code];
+                temp.content = [code, title];
                 temp.codeID=id;
 
                 if(this.content[i].NChilds.value>0){
@@ -74,6 +75,9 @@ var classes = new Vue({
 
                 this.tableData[i]=JSON.parse(JSON.stringify(temp));
             }
+            this.tableData.sort(function(a,b) {
+                return a.content[0].localeCompare(b.content[0]);
+            })
         },
         parseSub: function(location){
             var ret=[]
@@ -83,26 +87,42 @@ var classes = new Vue({
 
                 var id= this.subTemp[i].Child.value.replace(/[^#]+#(.*)/,'$1');
                 var code= this.subTemp[i].Code.value;
+                var title= this.subTemp[i].Title.value;
 
-                temp.content = [code];
+                temp.content = [code, title];
                 temp.codeID=id;
 
-                if(this.subTemp[i].NChilds.value>0){
+                if(parseInt(this.subTemp[i].NChilds.value)>0){
                     temp.sublevel=true;
+                } 
+                else {
+                    temp.sublevel=false;
                 }
 
                 ret[i]=JSON.parse(JSON.stringify(temp));
             }
+            
+            ret.sort(function(a,b) {
+                a1=parseInt(a.content[0].replace(/([0-9]+\.)*([0-9]+)/,'$2'));
+                b1=parseInt(b.content[0].replace(/([0-9]+\.)*([0-9]+)/,'$2'));
+    
+                return a1-b1;
+            })
+            
             return ret;
-        }
+        },
+        addClass: function(row){
+            window.location.href = '/novaClasse';
+        },
     },
     created: function(){
         this.tableHeader=[
-            "CLASSE"
+            "CLASSE",
+            "TÍTULO"
         ];
 
-        this.$http.get("/classesN1")
-        .then( function(response) { 
+        this.$http.get("/classesn")
+        .then( function(response) {
             this.content = response.body;
         })
         .then( function() {

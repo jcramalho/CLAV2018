@@ -197,12 +197,12 @@ Vue.component('row-waterfall', {
                             >
                                 <label
                                     :for="'toggle'+id"
-                                    :class="[drop ? 'glyphicon glyphicon-chevron-down' : 'glyphicon glyphicon-chevron-right']"
+                                    :class="[drop[id] ? 'glyphicon glyphicon-chevron-down' : 'glyphicon glyphicon-chevron-right']"
                                 />
                                 <input
                                     :id="'toggle'+id" 
                                     type="checkbox" 
-                                    v-model="drop" 
+                                    v-model="drop[id]" 
                                     @click="dropClicked"
                                     class="drop-row"
                                 /> 
@@ -220,7 +220,7 @@ Vue.component('row-waterfall', {
                             </td>
                         </tr>
                         
-                        <row-waterfall v-if="drop && subReady[id]" 
+                        <row-waterfall v-if="drop[id] && subReady[id]" 
                             v-for="(line,index) in row.sublevel"
 
                             :id="genId(index)" 
@@ -234,7 +234,7 @@ Vue.component('row-waterfall', {
                             :table-class="tableClass+' cascata'"
                         />
                         
-                        <tr v-if="drop && !subReady[id]">
+                        <tr v-if="drop[id] && !subReady[id]">
                             <td colspan=4> Loading... </td>
                         </tr>
                     </tbody>
@@ -252,7 +252,7 @@ Vue.component('row-waterfall', {
     ],
     data: function () {
         return {
-            drop: false,
+            drop: {},
         }
     },
     methods: {
@@ -306,6 +306,11 @@ Vue.component('custom-table-waterfall', {
                     placeholder="Filtrar"
                 />
             </div>
+            <div class="col-sm-1"  v-if="add">
+                <button type="button" class="btn btn-default btn-circle" @click="addClick">
+                    <span class="glyphicon glyphicon-plus"/>
+                </button>
+            </div>
             
             <table id="masterTable" :class="tableClass">
                 <thead>
@@ -352,7 +357,6 @@ Vue.component('custom-table-waterfall', {
         'url',
         'completeRows',
         'header',
-        'ready',
         'subReady',
         'pagesOn',
         'filterOn',
@@ -396,7 +400,6 @@ Vue.component('custom-table-waterfall', {
                 }
                 return false;
             })
-            console.log("ola");
             if (this.rows.length == 0) {
                 this.rows = [{ content: ["Sem resultados correspondentes..."] }];
             }
@@ -499,6 +502,11 @@ Vue.component('custom-table-waterfall', {
     beforeMount: function () {
         this.firstLoad();
         this.rows = this.completeRows;
+    },
+    created: function(){
+        if(!this.pagesOn){
+            this.rowsPerPage=this.completeRows.length;
+        }
     }
 })
 

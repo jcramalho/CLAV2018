@@ -35,7 +35,7 @@ module.exports = function(app) {
     });
         
     app.get('/novaClasse', function(req, res) {
-        res.render('Pages/Classes/novaClasse');
+        res.render('Pages/Classes/adicionaClasse');
     });
     
     app.get('/consultaClasse', function(req, res) {

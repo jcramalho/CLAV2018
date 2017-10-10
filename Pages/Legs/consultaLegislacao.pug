@@ -7,7 +7,7 @@ block corpo
             .form-group
                 table(v-if="ready")
                     tr(v-for="item in legData")
-                        td(style="width:10%")
+                        td(style="width:12%")
                             label {{ item.label }}: 
                         td(v-if="item.edit" style="width:80%")
                             input(
@@ -17,7 +17,7 @@ block corpo
                             )
                         td(v-else style="width:80%")
                             | {{ item.original }}  
-                        td(style="width:10%")
+                        td
                             label(style="padding-right:5px") Editar
                             input(
                                 type="checkbox"
