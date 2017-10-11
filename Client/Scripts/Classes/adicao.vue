@@ -172,7 +172,6 @@ var newClass = new Vue({
             var owners= this.prepList("owners",this.ownerList);
             var legs= this.prepList("legs",this.ownerList);
 
-
             alert("WIP");
 
             /* 
