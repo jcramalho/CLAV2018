@@ -174,6 +174,7 @@ var newClass = new Vue({
 
             alert("WIP");
 
+            
             /* 
                 var params = "?name="+this.name+"&initials="+this.initials;
                     
