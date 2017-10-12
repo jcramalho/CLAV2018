@@ -1,5 +1,9 @@
 var newClass = new Vue({
     el: '#nova-classe-form',
+    http: {
+        emulateJSON: true,
+        emulateHTTP: true
+    },
     data: {
         type: 1,
 
@@ -130,51 +134,87 @@ var newClass = new Vue({
                 this.newDelNote = '';
             }
         },
-        createAppNotes: function (code) {
-            var ids = "ids=";
-            var content = "&content=";
+        createAppNotes: function (code, list) {
+            var dataObj = [];
 
-            for (var i = 0; i < this.appNotes.length; i++) {
-                ids += "ne." + code + "_" + (i + 1) + "+";
-                content += this.appNotes[i] + "+";
+            for (var i = 0; i < list.length; i++) {
+                var temp = {
+                    id: "",
+                    text: "",
+                };
+
+                temp.id = "na_c" + code + "_" + (i + 1);
+                temp.text = list[i];
+
+                dataObj[i] = JSON.parse(JSON.stringify(temp));
             }
 
-            var params = "?" + ids + content
-
-            console.log(params);
+            this.$http.post('/createAppNotes', { "list": dataObj },{
+                headers: {
+                    'content-type' : 'application/json'
+                }
+            })
+            .then(function (response) {
+                this.message = response.body;
+            })
+            .catch(function (error) {
+                console.error(error);
+            });
         },
-        createDelNotes: function (code) {
-            var ids = "ids=";
-            var content = "&content=";
+        createDelNotes: function (code, list) {
+            var dataObj = [];
+            
+            for (var i = 0; i < list.length; i++) {
+                var temp = {
+                    id: "",
+                    text: "",
+                };
 
-            for (var i = 0; i < this.delNotes.length; i++) {
-                ids += "ne." + code + "_" + (i + 1) + "+";
-                content += this.delNotes[i] + "+";
+                temp.id = "ne_c" + code + "_" + (i + 1);
+                temp.text = list[i];
+
+                dataObj[i] = JSON.parse(JSON.stringify(temp));
             }
 
-            var params = "?" + ids + content
-
-            console.log(params);
-        },
-        prepList: function (pref, list) {
-            var ret = pref+"=";
-
-            for (var i = 0; i < list.length(); i++) {
-                ret += list[i].id + "-";
-            }
-
-            return ret;
+            this.$http.post('/createDelNotes', { "list": dataObj },{
+                headers: {
+                    'content-type' : 'application/json'
+                }
+            })
+            .then(function (response) {
+                this.message = response.body;
+            })
+            .catch(function (error) {
+                console.error(error);
+            });
         },
         add: function () {
-            this.createAppNotes('c' + this.code);
-            this.createDelNotes('c' + this.code);
 
-            var owners= this.prepList("owners",this.ownerList);
-            var legs= this.prepList("legs",this.ownerList);
+            var appNotesList = [];
+            var delNotesList = [];
+
+            for (var i = 0; i < this.appNotes.length; i++) {
+                appNotesList[i] = "na_c" + this.code + "_" + (i + 1);
+            }
+            for (var i = 0; i < this.delNotes.length; i++) {
+                delNotesList[i] = "ne_c" + this.code + "_" + (i + 1);
+            }
+
+            var dataObj = {
+                "level": this.type,
+                "parent": this.parent,
+                "code": this.code,
+                "status": this.status,
+                "owners": this.ownerList,
+                "legislations": this.newLegList,
+                "description": this.description,
+                "appNotes": appNotesList,
+                "delNotes": delNotesList,
+            };
 
             alert("WIP");
 
-            
+
             /* 
                 var params = "?name="+this.name+"&initials="+this.initials;
                     

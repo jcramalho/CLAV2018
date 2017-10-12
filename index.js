@@ -2,6 +2,12 @@
 var express = require('express'),
     app = express();
 
+var bodyParser = require('body-parser')
+app.use( bodyParser.json() );       // to support JSON-encoded bodies
+app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
+    extended: true
+}));
+
 require('./Server/routes')(app);
 require('./Server/apiOrgs')(app);
 require('./Server/apiLegs')(app);
