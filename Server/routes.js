@@ -33,6 +33,10 @@ module.exports = function(app) {
     app.get('/classes', function(req, res) {
         res.render('Pages/Classes/classes');
     });
+
+    app.get('/classe', function(req, res) {
+        res.render('Pages/Classes/consultaClasse');
+    });
         
     app.get('/novaClasse', function(req, res) {
         res.render('Pages/Classes/adicionaClasse');

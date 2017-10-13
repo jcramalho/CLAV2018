@@ -6,11 +6,11 @@ var newClass = new Vue({
     },
     data: {
         type: 1,
-
         parent: "",
         parents: [],
         parentsReady: false,
         code: "",
+        title: "",
         newOwner: "",
         ownerList: [],
         orgList: [],
@@ -20,6 +20,8 @@ var newClass = new Vue({
         legList: [],
         legsReady: false,
         description: "",
+        newExAppNote: "",
+        exAppNotes: [],
         newAppNote: "",
         appNotes: [],
         newDelNote: "",
@@ -122,6 +124,12 @@ var newClass = new Vue({
 
             return dest;
         },
+        addNewExAppNote: function () {
+            if (this.newExAppNote) {
+                this.exAppNotes.push(this.newExAppNote);
+                this.newExAppNote = '';
+            }
+        },
         addNewAppNote: function () {
             if (this.newAppNote) {
                 this.appNotes.push(this.newAppNote);
@@ -165,10 +173,7 @@ var newClass = new Vue({
             var dataObj = [];
             
             for (var i = 0; i < list.length; i++) {
-                var temp = {
-                    id: "",
-                    text: "",
-                };
+                var temp = { id: "", text: "" };
 
                 temp.id = "ne_c" + code + "_" + (i + 1);
                 temp.text = list[i];
@@ -189,6 +194,12 @@ var newClass = new Vue({
             });
         },
         add: function () {
+            if(this.appNotes.length>0){
+                this.createAppNotes(this.code,this.appNotes);
+            }
+            if(this.delNotes.length>0){
+                this.createDelNotes(this.code,this.delNotes);
+            }
 
             var appNotesList = [];
             var delNotesList = [];
@@ -204,28 +215,27 @@ var newClass = new Vue({
                 "level": this.type,
                 "parent": this.parent,
                 "code": this.code,
+                "title": this.title,
                 "status": this.status,
                 "owners": this.ownerList,
                 "legislations": this.newLegList,
                 "description": this.description,
+                "exAppNotes": this.exAppNotes,
                 "appNotes": appNotesList,
                 "delNotes": delNotesList,
             };
 
-            alert("WIP");
-
-
-            /* 
-                var params = "?name="+this.name+"&initials="+this.initials;
-                    
-                this.$http.get('/createClasse'+params)
-                .then( function(response) { 
-                    this.message = response.body;
-                })
-                .catch( function(error) { 
-                    console.error(error); 
-                });
-            */
+            this.$http.post('/createClass',dataObj,{
+                headers: {
+                    'content-type' : 'application/json'
+                }
+            })
+            .then( function(response) { 
+                this.message = response.body;
+            })
+            .catch( function(error) { 
+                console.error(error); 
+            });
         }
     },
     created: function () {

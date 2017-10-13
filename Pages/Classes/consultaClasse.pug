@@ -1,0 +1,178 @@
+extends ../Templates/layout
+block corpo
+    #classe-form.panel.panel-default
+        .panel-heading
+            h1.page-header {{ clas.Title }}  
+        .panel-body
+            .form-group
+                table
+                    tr
+                        td(style="width:10%")
+                            label Código: 
+                        td(style="width:80%")
+                            | {{ clas.Code }}  
+    
+                    tr
+                        td(style="width:10%")
+                            label Título: 
+                        td(v-if="edit.Title" style="width:80%")
+                            input(
+                                size="50"
+                                v-model="newClass.Title"
+                                :placeholder="clas.Title"
+                            )
+                        td(v-else style="width:80%")
+                            | {{ clas.Title }}  
+                        td(style="width:10%")
+                            label(style="padding-right:5px") Editar
+                            input(
+                                type="checkbox"
+                                v-model="edit.Title"
+                            )
+
+                    tr
+                        td(style="width:10%")
+                            label Classe Pai: 
+                        td(style="width:80%")
+                            | {{ clas.Parent.code }} - {{ clas.Parent.title }}
+
+                    tr
+                        td(style="width:10%")
+                            label Status: 
+                        td(v-if="edit.Status" style="width:80%")
+                            input(
+                                size="50"
+                                v-model="newClass.Status"
+                                :placeholder="clas.Status"
+                            )
+                        td(v-else style="width:80%")
+                            | {{ clas.Status }}  
+                        td(style="width:10%")
+                            label(style="padding-right:5px") Editar
+                            input(
+                                type="checkbox"
+                                v-model="edit.Status"
+                            )
+
+                    tr
+                        td(style="width:10%")
+                            label Descrição: 
+                        td(v-if="edit.Desc" style="width:80%")
+                            input(
+                                size="50"
+                                v-model="newClass.Desc"
+                                :placeholder="clas.Desc"
+                            )
+                        td(v-else style="width:80%")
+                            | {{ clas.Desc }}  
+                        td(style="width:10%")
+                            label(style="padding-right:5px") Editar
+                            input(
+                                type="checkbox"
+                                v-model="edit.Desc"
+                            )
+
+                    tr
+                        td(style="width:10%")
+                            label Tipo de Processo: 
+                        td(v-if="edit.ProcType" style="width:80%")
+                            input(
+                                size="50"
+                                v-model="newClass.ProcType"
+                                :placeholder="clas.ProcType"
+                            )
+                        td(v-else style="width:80%")
+                            | {{ clas.ProcType }}  
+                        td(style="width:10%")
+                            label(style="padding-right:5px") Editar
+                            input(
+                                type="checkbox"
+                                v-model="edit.ProcType"
+                            )
+
+                    tr
+                        td(style="width:10%")
+                            label Processo Transversal: 
+                        td(v-if="edit.ProcTrans" style="width:80%")
+                            input(
+                                size="50"
+                                v-model="newClass.ProcTrans"
+                                :placeholder="clas.ProcTrans"
+                            )
+                        td(v-else style="width:80%")
+                            | {{ clas.ProcTrans }}  
+                        td(style="width:10%")
+                            label(style="padding-right:5px") Editar
+                            input(
+                                type="checkbox"
+                                v-model="edit.ProcTrans"
+                            )
+
+                    tr(v-if="clas.Level==3")
+                        td(style="width:10%")
+                            label Donos:
+                        td(v-if="edit.Owners" style="width:80%")
+                            table
+                                tr
+                                    td
+                                        select( v-model="newClass.Owner")
+                                            option(v-for="(o,index) in orgList" :value="o")
+                                                | {{ o.Sigla }}
+                                        button(
+                                            @click="addOwner(orgList.indexOf(newOwner))"
+                                        ) +
+                                tr(v-if="clas.Owners")
+                                    td
+                                        ul(style="padding-left:20px")
+                                            li(v-for="(o,index) in clas.Owners")
+                                                | {{ o.Sigla }}
+                                                button(
+                                                    @click="remOwner(index)"
+                                                ) x
+                        td(v-else style="width:80%")
+                            ul(v-if="ownersReady" style="padding-left:20px")
+                                li(v-for="o in clas.Owners")
+                                    | {{ o.Sigla }}
+                        td(style="width:10%")
+                            label(style="padding-right:5px") Editar
+                            input(
+                                type="checkbox"
+                                v-model="edit.Owners"
+                            )
+                            
+
+
+                    
+        //-
+            input.btn.btn-xs.btn-default.col-sm-1(
+                type="button" 
+                @click="update" 
+                value="Confirmar" 
+                :disabled="!((editName && newClass.Name) || (editInitials && newClass.Initials))"
+            )
+            input.btn.btn-xs.btn-warning.col-sm-1(
+                type="button" 
+                @click="delReady" 
+                value="Apagar" 
+                :disabled="(editName || editInitials)"
+            )
+            p.col-sm-5 {{ message }}
+
+            input.btn.btn-xs.btn-danger(
+                v-if="delConfirm"
+                type="button" 
+                @click="deleteOrg" 
+                value="OK" 
+            )
+            input.btn.btn-xs.btn-info(
+                v-if="delConfirm"
+                type="button" 
+                @click="delNotReady" 
+                value="<-" 
+            )
+    //-
+
+append scripts    
+    script(src="https://cdn.jsdelivr.net/npm/vue-resource@1.3.4")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.14.1/lodash.min.js")
+    script(src="/Scripts/Classes/consulta.vue")

@@ -33,7 +33,7 @@ block corpo
                             )
                     tr(v-if="type==3 && orgsReady")
                         td(style="padding-top:10px")
-                            label Dono: 
+                            label Dono(s): 
                         td
                             select( v-model="newOwner")
                                 option(v-for="(o,index) in orgList" :value="o")
@@ -71,6 +71,14 @@ block corpo
                                     ) x
                     tr
                         td(style="padding-top:10px")
+                            label Título: 
+                        td
+                            input(
+                                size="70"
+                                v-model="title"
+                            )
+                    tr
+                        td(style="padding-top:10px")
                             label Status: 
                         td
                             input(
@@ -88,7 +96,23 @@ block corpo
                             )
                     tr
                         td(style="padding-top:10px")
-                            label Nota de Aplicação: 
+                            label Exemplo(s) de Nota(s) de Aplicação: 
+                        td
+                            textarea(
+                                cols="72"
+                                lines="5"
+                                v-model="newExAppNote"
+                                @keyup.ctrl.enter="addNewExAppNote" 
+                            )
+                            button(@click="addNewExAppNote") Ok
+                                   
+                            ul
+                                li(v-for="(ex,index) in exAppNotes")
+                                    button(@click="exAppNotes.splice(index,1)") x
+                                    | {{ex}}
+                    tr
+                        td(style="padding-top:10px")
+                            label Nota(s) de Aplicação: 
                         td
                             textarea(
                                 cols="72"
@@ -104,7 +128,7 @@ block corpo
                                     | {{note}}
                     tr
                         td(style="padding-top:10px")
-                            label Nota de Exclusão: 
+                            label Nota(s) de Exclusão: 
                         td
                             textarea(
                                 cols="72"
@@ -118,6 +142,7 @@ block corpo
                                 li(v-for="(note,index) in delNotes")
                                     button(@click="delNotes.splice(index,1)") x
                                     | {{note}}
+                                    
             input.btn.btn-xs.btn-default.col-sm-2(
                 type="button" 
                 @click="add" 
