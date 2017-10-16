@@ -56,7 +56,7 @@ var classes = new Vue({
             }
         },
         rowClicked: function(params){
-            console.log(params);
+            window.location.href = '/classe?id=c'+params.rowData[0];
         },
         parse: function(){
             var temp={content:"",sublevel:false};

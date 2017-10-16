@@ -2,12 +2,14 @@
 var express = require('express'),
     app = express();
 
+//body parser for post requests
 var bodyParser = require('body-parser')
-app.use( bodyParser.json() );       // to support JSON-encoded bodies
+app.use(bodyParser.json());         // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
     extended: true
 }));
 
+//routes and API
 require('./Server/routes')(app);
 require('./Server/apiOrgs')(app);
 require('./Server/apiLegs')(app);
@@ -26,5 +28,5 @@ app.use("/styles", express.static(__dirname + '/Styles'));
 //Starts and listens
 var port = process.env.PORT || 3000;
 app.listen(port, function() {
-    console.log("Listening on " + port + " | In folder " + __dirname + '\\public');
+    console.log("Listening on " + port );
 });

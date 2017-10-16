@@ -86,3 +86,15 @@
     position: absolute;
     left: -9999px;
 }
+
+
+.consulta tr{
+    vertical-align: top;
+    border-bottom: 1px solid #ddd;
+}
+
+
+.consulta td{
+    padding-bottom: 5px;
+    padding-top: 10px;
+}

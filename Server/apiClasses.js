@@ -185,6 +185,244 @@ module.exports = function (app) {
             });
     })
 
+    //get list of legislations associated with a class
+    app.get('/legsClass', function (req, res) {
+        const { SparqlClient, SPARQL } = require('sparql-client-2');
+        var url = require('url');
+
+        const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV')
+            .register({
+                rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+                clav: 'http://jcr.di.uminho.pt/m51-clav#',
+            });
+
+        function fetchLegs(id) {
+            var fetchQuery =`
+                SELECT * WHERE { 
+                    clav:`+id+` clav:temLegislacao ?id.
+                    ?id clav:diplomaNumero ?Número;
+                        clav:diplomaTitulo ?Titulo;
+                }`;
+            
+            console.log(fetchQuery);
+
+            return client.query(fetchQuery).execute()
+                .then(response => Promise.resolve(response.results.bindings))
+                .catch(function (error) {
+                    console.error(error);
+                });
+        }
+
+        var parts = url.parse(req.url, true);
+        var id = parts.query.id;
+
+        //Answer the request
+        fetchLegs(id).then(legs => res.send(legs))
+            .catch(function (error) {
+                console.error(error);
+            });
+    })
+
+    //get list of a class' example(s) of application notes
+    app.get('/exAppNotesClass', function (req, res) {
+        const { SparqlClient, SPARQL } = require('sparql-client-2');
+        var url = require('url');
+
+        const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV')
+            .register({
+                rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+                clav: 'http://jcr.di.uminho.pt/m51-clav#',
+            });
+
+        function fetchExamples(id) {
+            var fetchQuery =`
+                SELECT * WHERE { 
+                    clav:`+id+` clav:exemploNA ?Exemplo.
+                }`;
+            
+            console.log(fetchQuery);
+
+            return client.query(fetchQuery).execute()
+                .then(response => Promise.resolve(response.results.bindings))
+                .catch(function (error) {
+                    console.error(error);
+                });
+        }
+
+        var parts = url.parse(req.url, true);
+        var id = parts.query.id;
+
+        //Answer the request
+        fetchExamples(id).then(list => res.send(list))
+            .catch(function (error) {
+                console.error(error);
+            });
+    })
+
+    //get list of a class' application notes
+    app.get('/appNotesClass', function (req, res) {
+        const { SparqlClient, SPARQL } = require('sparql-client-2');
+        var url = require('url');
+
+        const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV')
+            .register({
+                rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+                clav: 'http://jcr.di.uminho.pt/m51-clav#',
+            });
+
+        function fetchAppNotes(id) {
+            var fetchQuery =`
+                SELECT * WHERE { 
+                    clav:`+id+` clav:temNotaAplicacao ?id.
+                    ?id clav:conteudo ?Nota .
+                }`;
+            
+            console.log(fetchQuery);
+
+            return client.query(fetchQuery).execute()
+                .then(response => Promise.resolve(response.results.bindings))
+                .catch(function (error) {
+                    console.error(error);
+                });
+        }
+
+        var parts = url.parse(req.url, true);
+        var id = parts.query.id;
+
+        //Answer the request
+        fetchAppNotes(id).then(list => res.send(list))
+            .catch(function (error) {
+                console.error(error);
+            });
+    })
+
+    //get list of a class' deletion notes
+    app.get('/delNotesClass', function (req, res) {
+        const { SparqlClient, SPARQL } = require('sparql-client-2');
+        var url = require('url');
+
+        const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV')
+            .register({
+                rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+                clav: 'http://jcr.di.uminho.pt/m51-clav#',
+            });
+
+        function fetchDelNotes(id) {
+            var fetchQuery =`
+                SELECT * WHERE { 
+                    clav:`+id+` clav:temNotaExclusao ?id.
+                    ?id clav:conteudo ?Nota .
+                }`;
+            
+            console.log(fetchQuery);
+
+            return client.query(fetchQuery).execute()
+                .then(response => Promise.resolve(response.results.bindings))
+                .catch(function (error) {
+                    console.error(error);
+                });
+        }
+
+        var parts = url.parse(req.url, true);
+        var id = parts.query.id;
+
+        //Answer the request
+        fetchDelNotes(id).then(list => res.send(list))
+            .catch(function (error) {
+                console.error(error);
+            });
+    })
+
+    //get list of a classes related to a given class
+    app.get('/relProcsClass', function (req, res) {
+        const { SparqlClient, SPARQL } = require('sparql-client-2');
+        var url = require('url');
+
+        const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV')
+            .register({
+                rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+                clav: 'http://jcr.di.uminho.pt/m51-clav#',
+            });
+
+        function fetchRelProc(id) {
+            var fetchQuery =`
+                select DISTINCT ?id ?Code ?Title {
+                    {
+                        select * where{
+                            clav:`+id+` clav:temRelProc ?id.
+                        }
+                    } union {
+                        select * where{
+                            ?id clav:temRelProc clav:`+id+`.
+                        } 
+                    }
+                    ?id clav:codigo ?Code;
+                            clav:titulo ?Title
+                }
+            `;
+            
+            console.log(fetchQuery);
+
+            return client.query(fetchQuery).execute()
+                .then(response => Promise.resolve(response.results.bindings))
+                .catch(function (error) {
+                    console.error(error);
+                });
+        }
+
+        var parts = url.parse(req.url, true);
+        var id = parts.query.id;
+
+        //Answer the request
+        fetchRelProc(id).then(list => res.send(list))
+            .catch(function (error) {
+                console.error(error);
+            });
+    })
+
+    //get list of participants in a class
+    app.get('/participantsClass', function (req, res) {
+        const { SparqlClient, SPARQL } = require('sparql-client-2');
+        var url = require('url');
+
+        const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV')
+            .register({
+                rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+                clav: 'http://jcr.di.uminho.pt/m51-clav#',
+            });
+
+        function fetchParticipant(id) {
+            var fetchQuery =`
+                select * where { 
+                    clav:`+id+` clav:temParticipante ?id ;
+                        ?Type ?id .
+                    
+                    ?id clav:orgNome ?Name ;
+                        clav:orgSigla ?Initials .
+                    
+                    filter (?Type!=clav:temParticipante)
+                }
+            `;
+            
+            console.log(fetchQuery);
+
+            return client.query(fetchQuery).execute()
+                .then(response => Promise.resolve(response.results.bindings))
+                .catch(function (error) {
+                    console.error(error);
+                });
+        }
+
+        var parts = url.parse(req.url, true);
+        var id = parts.query.id;
+
+        //Answer the request
+        fetchParticipant(id).then(list => res.send(list))
+            .catch(function (error) {
+                console.error(error);
+            });
+    })
+
     //inserts a list of 'NotaAplicacao' into the DB
     app.post('/createAppNotes', function (req, res) {
         const { SparqlClient, SPARQL } = require('sparql-client-2');

@@ -21,7 +21,7 @@ Vue.component('custom-table-simple', {
             </div>
             
             <table :class="classTable">
-                <thead>
+                <thead v-if="header">
                     <tr>
                         <th v-for="(item,index) in header" @click="sort(index)" class="sorter" :style="{width: cwidth[index]}">
                             {{ item }} <span class="caret"></span>

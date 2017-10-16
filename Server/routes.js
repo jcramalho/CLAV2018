@@ -1,7 +1,5 @@
 module.exports = function(app) {
 
-    var coretitle = "Node.js :: Test";
-
     app.get('/', function(req, res) {
         res.render('Pages/pugdex');
     });
@@ -44,5 +42,9 @@ module.exports = function(app) {
     
     app.get('/consultaClasse', function(req, res) {
         res.render('Pages/Classes/consultaClasse');
+    });
+
+    app.get('/test', function(req, res) {
+        res.send('Ola');
     });
 }
