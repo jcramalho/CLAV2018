@@ -37,7 +37,8 @@ block corpo
                         td(style="width:10%")
                             label Classe Pai: 
                         td(style="width:80%")
-                            | {{ clas.Parent.code }} - {{ clas.Parent.title }}
+                            a(:href="'/classe?id='+clas.Parent.id") {{ clas.Parent.code }}
+                            |  - {{ clas.Parent.title }}
 
                     //- STATUS
                     tr
@@ -58,27 +59,8 @@ block corpo
                                 v-model="edit.Status"
                             )
 
-                    //- DESCRIÇÃO
-                    tr
-                        td(style="width:10%")
-                            label Descrição: 
-                        td(v-if="edit.Desc" style="width:80%")
-                            input(
-                                size="50"
-                                v-model="newClass.Desc"
-                                :placeholder="clas.Desc"
-                            )
-                        td(v-else style="width:80%")
-                            | {{ clas.Desc }}  
-                        td(style="width:10%")
-                            label(style="padding-right:5px") Editar
-                            input(
-                                type="checkbox"
-                                v-model="edit.Desc"
-                            )
-
                     //- TIPO DE PROCESSO
-                    tr
+                    tr(v-if="clas.Level==3")
                         td(style="width:10%")
                             label Tipo de Processo: 
                         td(v-if="edit.ProcType" style="width:80%")
@@ -97,7 +79,7 @@ block corpo
                             )
 
                     //- PROCESSO TRANVERSAL
-                    tr
+                    tr(v-if="clas.Level==3")
                         td(style="width:10%")
                             label Processo Transversal: 
                         td(v-if="edit.ProcTrans" style="width:80%")
@@ -113,6 +95,25 @@ block corpo
                             input(
                                 type="checkbox"
                                 v-model="edit.ProcTrans"
+                            )
+
+                    //- DESCRIÇÃO
+                    tr
+                        td(style="width:10%")
+                            label Descrição: 
+                        td(v-if="edit.Desc" style="width:80%")
+                            input(
+                                size="50"
+                                v-model="newClass.Desc"
+                                :placeholder="clas.Desc"
+                            )
+                        td(v-else style="width:80%")
+                            | {{ clas.Desc }}  
+                        td(style="width:10%")
+                            label(style="padding-right:5px") Editar
+                            input(
+                                type="checkbox"
+                                v-model="edit.Desc"
                             )
 
                     //- DONOS
@@ -187,7 +188,7 @@ block corpo
                             )
 
                     //- EXEMPLOS NOTAS DE APLICAçÃO                        
-                    tr(v-if="clas.Level==3")
+                    tr
                         td(style="width:10%" )
                             label Exemplo(s) de Nota(s) de Aplicação:
                         td(v-if="edit.ExAppNotes" style="width:80%")
@@ -218,7 +219,7 @@ block corpo
                             )
 
                     //- NOTAS DE APLICAçÃO                        
-                    tr(v-if="clas.Level==3")
+                    tr
                         td(style="width:10%" )
                             label Nota(s) de Aplicação:
                         td(v-if="edit.AppNotes" style="width:80%")
@@ -249,7 +250,7 @@ block corpo
                             )
 
                     //- NOTAS DE EXCLUSÃO                        
-                    tr(v-if="clas.Level==3")
+                    tr
                         td(style="width:10%")
                             label Nota(s) de Exclusão:
                         td(v-if="edit.DelNotes" style="width:80%")
@@ -314,11 +315,10 @@ block corpo
                                 v-model="edit.RelProcs"
                             )
 
-
                     //- PARTICIPANTES
                     tr(v-if="clas.Level==3")
                         td(style="width:10%")
-                            label Participantes:
+                            label Participante(s):
                         //- TODO - editar participantes
                             td(v-if="edit.RelProcs" style="width:80%")
                             table
@@ -340,8 +340,9 @@ block corpo
                                                 ) x
                         td(style="width:80%")
                             ul(v-if="relProcsReady" style="padding-left:20px")
-                                li(v-for="key in Object.keys(clas.Participants)")
+                                li(v-for="key in Object.keys(clas.Participants)" v-if="clas.Participants[key].length>0")
                                     b {{ key }}
+                                        span(v-if="clas.Participants[key].length>1") es
                                     ul
                                         li(v-for="p in clas.Participants[key]")
                                             a(:href="'/organizacao?id='+p.id") {{ p.Initials }}
