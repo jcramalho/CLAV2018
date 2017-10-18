@@ -397,8 +397,8 @@ module.exports = function (app) {
                     clav:`+id+` clav:temParticipante ?id ;
                         ?Type ?id .
                     
-                    ?id clav:orgNome ?Name ;
-                        clav:orgSigla ?Initials .
+                    ?id clav:orgNome ?Nome ;
+                        clav:orgSigla ?Sigla .
                     
                     filter (?Type!=clav:temParticipante)
                 }
@@ -421,6 +421,117 @@ module.exports = function (app) {
             .catch(function (error) {
                 console.error(error);
             });
+    })
+
+    //updates a class's info
+    app.put('/updateClass', function (req, res) {
+        const { SparqlClient, SPARQL } = require('sparql-client-2');
+
+        const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV', {
+                updateEndpoint: 'http://localhost:7200/repositories/M51-CLAV/statements'
+            })
+            .register({
+                rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+                clav: 'http://jcr.di.uminho.pt/m51-clav#',
+        });
+
+        function prepDelete(dataObj) {
+            var deletePart="\n";
+
+            //atributes
+            if(dataObj.Title){
+                deletePart+="\tclav:"+dataObj.id+" clav:titulo ?tit .\n";
+            }
+            if(dataObj.Status){
+                deletePart+="\tclav:"+dataObj.id+" clav:status ?status .\n";
+            }
+            if(dataObj.Desc){
+                deletePart+="\tclav:"+dataObj.id+" clav:descricao ?desc .\n";
+            }
+            if(dataObj.ProcType){
+                deletePart+="\tclav:"+dataObj.id+" clav:processoTipo ?ptipo .\n";
+            }
+            if(dataObj.ProcTrans){
+                deletePart+="\tclav:"+dataObj.id+" clav:processoTransversal ?ptrans .\n";
+            }
+            if(dataObj.ExAppNotes && dataObj.ExAppNotes.length){
+                deletePart+="\tclav:"+dataObj.id+" clav:exemploNA ?exNA .\n";
+            }
+
+            //relations
+            if(dataObj.Owners.Delete && dataObj.Owners.Delete.length){
+                for(var i=0; i<dataObj.Owners.Delete.length; i++){
+                    deletePart+="\tclav:"+dataObj.id+" clav:temDono clav:"+dataObj.Owners.Delete[i].id+" .\n";
+                }
+            }
+            if(dataObj.Legs.Delete && dataObj.Legs.Delete.length){
+                for(var i=0; i<dataObj.Legs.Delete.length; i++){
+                    deletePart+="\tclav:"+dataObj.id+" clav:temLegislacao clav:"+dataObj.Legs.Delete[i].id+" .\n";
+                }
+            }
+            if(dataObj.Legs.Delete && dataObj.Legs.Delete.length){
+                for(var i=0; i<dataObj.Legs.Delete.length; i++){
+                    deletePart+="\tclav:"+dataObj.id+" clav:temLegislacao clav:"+dataObj.Legs.Delete[i].id+" .\n";
+                }
+            }
+            if(dataObj.AppNotes.Delete && dataObj.AppNotes.Delete.length){
+                for(var i=0; i<dataObj.AppNotes.Delete.length; i++){
+                    deletePart+="\tclav:"+dataObj.id+" clav:temNotaAplicacao clav:"+dataObj.AppNotes.Delete[i].id+" .\n";
+                }
+            }
+            if(dataObj.DelNotes.Delete && dataObj.DelNotes.Delete.length){
+                for(var i=0; i<dataObj.DelNotes.Delete.length; i++){
+                    deletePart+="\tclav:"+dataObj.id+" clav:temNotaExclusao clav:"+dataObj.DelNotes.Delete[i].id+" .\n";
+                }
+            }
+            if(dataObj.RelProcs.Delete && dataObj.RelProcs.Delete.length){
+                for(var i=0; i<dataObj.RelProcs.Delete.length; i++){
+                    deletePart+="\tclav:"+dataObj.id+" clav:temRelProc clav:"+dataObj.RelProc.Delete[i].id+" .\n";
+                    deletePart+="\tclav:"+dataObj.RelProc.Delete[i].id+" clav:temRelProc clav:"+dataObj.id+" .\n";
+                }
+            }
+
+            var partKeys = Object.keys(dataObj.Participants);
+
+            for(var k=0; k<partKeys.length; k++){
+                if(dataObj.Participants[partKeys[k]].Delete && dataObj.Participants[partKeys[k]].Delete.length){
+                    for(var i=0; i<dataObj.Participants[partKeys[k]].Delete.length; i++){
+                        deletePart+="\tclav:"+dataObj.id+" clav:temParticipante clav:"+dataObj.Participants[partKeys[k]].Delete[i].id+" .\n";
+                    }
+                }
+            }
+                        
+        }
+
+        //Update organization
+        function updateOrg(dataObj) {
+            var deletePart = "DELETE {"+prepDelete(dataObj)+"}";
+
+
+
+            if (name && !initials) {
+                var updateQuery = SPARQL`
+                    DELETE {${{ clav: id }} clav:orgNome ?o }
+                    INSERT {${{ clav: id }} clav:orgNome ${name} }
+                    WHERE  {${{ clav: id }} ?p ?o }
+                `;
+            }
+            
+            return client.query(updateQuery).execute()
+                .then(response => Promise.resolve(response))
+                .catch(error => console.error("Error in update:\n" + error));
+        }
+
+        //Getting data
+        var dataObj= req.body.dataObj;
+
+        //Executing queries
+        updateClass(dataObj)
+        .then(function () {
+            res.send("Actualizado!");
+        })
+        .catch(error => console.error(error));
+        
     })
 
     //inserts a list of 'NotaAplicacao' into the DB

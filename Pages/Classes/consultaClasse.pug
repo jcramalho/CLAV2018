@@ -6,6 +6,15 @@ block corpo
         .panel-body
             .form-group
                 table.consulta
+                    
+                    //- CLASSE PAI
+                    tr(v-if="clas.Level>1")
+                        td(style="width:10%")
+                            label Classe Pai: 
+                        td(style="width:80%")
+                            a(:href="'/classe?id='+clas.Parent.id") {{ clas.Parent.code }}
+                            |  - {{ clas.Parent.title }}
+
                     //- CÓDIGO
                     tr 
                         td(style="width:10%")
@@ -32,31 +41,116 @@ block corpo
                                 v-model="edit.Title"
                             )
 
-                    //- CLASSE PAI
-                    tr(v-if="clas.Level>1")
-                        td(style="width:10%")
-                            label Classe Pai: 
-                        td(style="width:80%")
-                            a(:href="'/classe?id='+clas.Parent.id") {{ clas.Parent.code }}
-                            |  - {{ clas.Parent.title }}
-
-                    //- STATUS
+                    //- DESCRIÇÃO
                     tr
                         td(style="width:10%")
-                            label Status: 
-                        td(v-if="edit.Status" style="width:80%")
-                            input(
-                                size="50"
-                                v-model="newClass.Status"
-                                :placeholder="clas.Status"
+                            label Descrição: 
+                        td(v-if="edit.Desc" style="width:80%")
+                            textarea(
+                                cols="72"
+                                lines="5"
+                                v-model="newClass.Desc"
                             )
                         td(v-else style="width:80%")
-                            | {{ clas.Status }}  
+                            | {{ clas.Desc }}  
                         td(style="width:10%")
                             label(style="padding-right:5px") Editar
                             input(
                                 type="checkbox"
-                                v-model="edit.Status"
+                                v-model="edit.Desc"
+                            )
+
+                    //- NOTAS DE APLICAçÃO                        
+                    tr
+                        td(style="width:10%" )
+                            label Nota(s) de Aplicação:
+                        td(v-if="edit.AppNotes" style="width:80%")
+                            table
+                                tr
+                                    td
+                                        textarea(
+                                            cols="72"
+                                            lines="5"
+                                            v-model="newClass.AppNote"
+                                            @keyup.ctrl.enter="addNewAppNote" 
+                                        )
+                                        button(@click="addNewAppNote") Ok
+
+                                        ul(style="padding-left:20px")
+                                            li(v-for="(note,index) in newClass.AppNotes")
+                                                button(@click="newClass.AppNotes.splice(index,1)") x
+                                                | {{note.Nota}}
+                        td(v-else style="width:80%")
+                            ul(style="padding-left:20px")
+                                li(v-for="note in clas.AppNotes")
+                                    | {{note.Nota}}
+                        td(style="width:10%")
+                            label(style="padding-right:5px") Editar
+                            input(
+                                type="checkbox"
+                                v-model="edit.AppNotes"
+                            )
+
+                    //- EXEMPLOS NOTAS DE APLICAçÃO                        
+                    tr
+                        td(style="width:10%" )
+                            label Exemplo(s) de Nota(s) de Aplicação:
+                        td(v-if="edit.ExAppNotes" style="width:80%")
+                            table
+                                tr
+                                    td
+                                        textarea(
+                                            cols="72"
+                                            lines="5"
+                                            v-model="newClass.ExAppNote"
+                                            @keyup.ctrl.enter="addNewExAppNote" 
+                                        )
+                                        button(@click="addNewExAppNote") Ok
+
+                                        ul(style="padding-left:20px")
+                                            li(v-for="(note,index) in newClass.ExAppNotes")
+                                                button(@click="newClass.ExAppNotes.splice(index,1)") x
+                                                | {{note.Exemplo}}
+                        td(v-else style="width:80%")
+                            ul(style="padding-left:20px")
+                                li(v-for="note in clas.ExAppNotes")
+                                    | {{note.Exemplo}}
+                        td(style="width:10%")
+                            label(style="padding-right:5px") Editar
+                            input(
+                                type="checkbox"
+                                v-model="edit.ExAppNotes"
+                            )
+
+                    //- NOTAS DE EXCLUSÃO                        
+                    tr
+                        td(style="width:10%")
+                            label Nota(s) de Exclusão:
+                        td(v-if="edit.DelNotes" style="width:80%")
+                            table
+                                tr
+                                    td
+                                        textarea(
+                                            cols="72"
+                                            lines="5"
+                                            v-model="newClass.DelNote"
+                                            @keyup.ctrl.enter="addNewDelNote" 
+                                        )
+                                        button(@click="addNewDelNote") Ok
+
+                                        ul(style="padding-left:20px")
+                                            li(v-for="(note,index) in newClass.DelNotes")
+                                                button(@click="newClass.DelNotes.splice(index,1)") x
+                                                | {{note.Nota}}
+                        td(v-else style="width:80%")
+                            ul(style="padding-left:20px")
+                                li(v-for="note in clas.DelNotes")
+                                    | {{note.Nota}}
+                        td(style="width:10%")
+                            label(style="padding-right:5px") Editar
+                            input(
+                                type="checkbox"
+                                v-model="edit.DelNotes"
                             )
 
                     //- TIPO DE PROCESSO
@@ -65,10 +159,19 @@ block corpo
                             label Tipo de Processo: 
                         td(v-if="edit.ProcType" style="width:80%")
                             input(
-                                size="50"
+                                type="radio"
+                                value="PC"
                                 v-model="newClass.ProcType"
-                                :placeholder="clas.ProcType"
+                            ) 
+                            |  Processo Comum
+                            br
+                            input(
+                                type="radio"
+                                value="PE"
+                                v-model="newClass.ProcType"
                             )
+                            |  Processo Específico
+
                         td(v-else style="width:80%")
                             | {{ clas.ProcType }}  
                         td(style="width:10%")
@@ -84,10 +187,18 @@ block corpo
                             label Processo Transversal: 
                         td(v-if="edit.ProcTrans" style="width:80%")
                             input(
-                                size="50"
+                                type="radio"
+                                value="S"
                                 v-model="newClass.ProcTrans"
-                                :placeholder="clas.ProcTrans"
+                            ) 
+                            |  Sim
+                            br
+                            input(
+                                type="radio"
+                                value="N"
+                                v-model="newClass.ProcTrans"
                             )
+                            |  Não
                         td(v-else style="width:80%")
                             | {{ clas.ProcTrans }}  
                         td(style="width:10%")
@@ -95,25 +206,6 @@ block corpo
                             input(
                                 type="checkbox"
                                 v-model="edit.ProcTrans"
-                            )
-
-                    //- DESCRIÇÃO
-                    tr
-                        td(style="width:10%")
-                            label Descrição: 
-                        td(v-if="edit.Desc" style="width:80%")
-                            input(
-                                size="50"
-                                v-model="newClass.Desc"
-                                :placeholder="clas.Desc"
-                            )
-                        td(v-else style="width:80%")
-                            | {{ clas.Desc }}  
-                        td(style="width:10%")
-                            label(style="padding-right:5px") Editar
-                            input(
-                                type="checkbox"
-                                v-model="edit.Desc"
                             )
 
                     //- DONOS
@@ -148,136 +240,55 @@ block corpo
                         td(style="width:10%")
                             label(style="padding-right:5px") Editar
                             input(
-                                @click="cleanOrgs"
                                 type="checkbox"
                                 v-model="edit.Owners"
                             )
 
-                    //- LEGISLAÇÕES
-                    tr(v-if="clas.Level==3")
+                    //- PARTICIPANTES
+                    tr(v-if="clas.Level==3 && (clas.ProcTrans=='S' || (edit.ProcTrans && newClass.ProcTrans=='S'))")
                         td(style="width:10%")
-                            label Legislações:
-                        td(v-if="edit.Legs" style="width:80%")
+                            label Participante(s):
+                            
+                        td(v-if="edit.Participants" style="width:80%")
                             table
                                 tr
                                     td
-                                        select( v-model="newClass.Leg")
-                                            option(v-for="(l,index) in legList" :value="l")
-                                                | {{ l.Número }}
+                                        select( v-model="newClass.ParticipantType")
+                                            option(v-for="key in Object.keys(clas.Participants)")
+                                                | {{ key }}
+                                        select( v-model="newClass.Participant")
+                                            option(v-for="(o,index) in orgList" :value="o")
+                                                | {{ o.Sigla }}
                                         button(
-                                            @click="addLeg(legList.indexOf(newClass.Leg))"
+                                            @click="addParticipant()"
                                         ) +
-                                tr(v-if="clas.Legs")
-                                    td
-                                        ul(style="padding-left:20px")
-                                            li(v-for="(l,index) in newClass.Legs")
-                                                | {{ l.Número }} - {{ l.Titulo }}
-                                                button(
-                                                    @click="remLeg(index)"
-                                                ) x
-                        td(v-else style="width:80%")
-                            ul(v-if="legsReady" style="padding-left:20px")
-                                li(v-for="l in clas.Legs")
-                                    a(:href="'/legislacao?id='+l.id") {{ l.Número }} 
-                                    | - {{ l.Titulo }}
-                        td(style="width:10%")
-                            label(style="padding-right:5px") Editar
-                            input(
-                                type="checkbox"
-                                v-model="edit.Legs"
-                            )
-
-                    //- EXEMPLOS NOTAS DE APLICAçÃO                        
-                    tr
-                        td(style="width:10%" )
-                            label Exemplo(s) de Nota(s) de Aplicação:
-                        td(v-if="edit.ExAppNotes" style="width:80%")
-                            table
                                 tr
                                     td
-                                        textarea(
-                                            cols="72"
-                                            lines="5"
-                                            v-model="newClass.ExAppNote"
-                                            @keyup.ctrl.enter="addNewExAppNote" 
-                                        )
-                                        button(@click="addNewExAppNote") Ok
-
-                                        ul(style="padding-left:20px")
-                                            li(v-for="(note,index) in newClass.ExAppNotes")
-                                                button(@click="newClass.ExAppNotes.splice(index,1)") x
-                                                | {{note.Exemplo}}
+                                        ul(v-if="relProcsReady" style="padding-left:20px")
+                                            li(v-for="key in Object.keys(newClass.Participants)" v-if="newClass.Participants[key].length>0")
+                                                b {{ key }}
+                                                    span(v-if="newClass.Participants[key].length>1") es
+                                                ul
+                                                    li(v-for="(p, index) in newClass.Participants[key]")
+                                                        | {{ p.Sigla }} - {{ p.Nome }}
+                                                        button(
+                                                            @click="remParticipant(key, index)"
+                                                        ) x
                         td(v-else style="width:80%")
-                            ul(style="padding-left:20px")
-                                li(v-for="note in clas.ExAppNotes")
-                                    | {{note.Exemplo}}
+                            ul(v-if="relProcsReady" style="padding-left:20px")
+                                li(v-for="key in Object.keys(clas.Participants)" v-if="clas.Participants[key].length>0")
+                                    b {{ key }}
+                                        span(v-if="clas.Participants[key].length>1") es
+                                    ul
+                                        li(v-for="p in clas.Participants[key]")
+                                            a(:href="'/organizacao?id='+p.id") {{ p.Sigla }}
+                                            |  - {{ p.Nome }}
+
                         td(style="width:10%")
                             label(style="padding-right:5px") Editar
                             input(
                                 type="checkbox"
-                                v-model="edit.ExAppNotes"
-                            )
-
-                    //- NOTAS DE APLICAçÃO                        
-                    tr
-                        td(style="width:10%" )
-                            label Nota(s) de Aplicação:
-                        td(v-if="edit.AppNotes" style="width:80%")
-                            table
-                                tr
-                                    td
-                                        textarea(
-                                            cols="72"
-                                            lines="5"
-                                            v-model="newClass.AppNote"
-                                            @keyup.ctrl.enter="addNewAppNote" 
-                                        )
-                                        button(@click="addNewAppNote") Ok
-
-                                        ul(style="padding-left:20px")
-                                            li(v-for="(note,index) in newClass.AppNotes")
-                                                button(@click="newClass.AppNotes.splice(index,1)") x
-                                                | {{note.Nota}}
-                        td(v-else style="width:80%")
-                            ul(style="padding-left:20px")
-                                li(v-for="note in clas.AppNotes")
-                                    | {{note.Nota}}
-                        td(style="width:10%")
-                            label(style="padding-right:5px") Editar
-                            input(
-                                type="checkbox"
-                                v-model="edit.AppNotes"
-                            )
-
-                    //- NOTAS DE EXCLUSÃO                        
-                    tr
-                        td(style="width:10%")
-                            label Nota(s) de Exclusão:
-                        td(v-if="edit.DelNotes" style="width:80%")
-                            table
-                                tr
-                                    td
-                                        textarea(
-                                            cols="72"
-                                            lines="5"
-                                            v-model="newClass.DelNote"
-                                            @keyup.ctrl.enter="addNewDelNote" 
-                                        )
-                                        button(@click="addNewDelNote") Ok
-
-                                        ul(style="padding-left:20px")
-                                            li(v-for="(note,index) in newClass.DelNotes")
-                                                button(@click="newClass.DelNotes.splice(index,1)") x
-                                                | {{note.Nota}}
-                        td(v-else style="width:80%")
-                            ul(style="padding-left:20px")
-                                li(v-for="note in clas.DelNotes")
-                                    | {{note.Nota}}
-                        td(style="width:10%")
-                            label(style="padding-right:5px") Editar
-                            input(
-                                type="checkbox"
-                                v-model="edit.DelNotes"
+                                v-model="edit.Participants"
                             )
 
                     //- PROCESSOS RELACIONADOS
@@ -315,66 +326,78 @@ block corpo
                                 v-model="edit.RelProcs"
                             )
 
-                    //- PARTICIPANTES
-                    tr(v-if="clas.Level==3")
+                    //- STATUS
+                    tr
                         td(style="width:10%")
-                            label Participante(s):
-                        //- TODO - editar participantes
-                            td(v-if="edit.RelProcs" style="width:80%")
-                            table
-                                tr
-                                    td
-                                        select( v-model="newClass.RelProc")
-                                            option(v-for="(c,index) in classList" :value="c")
-                                                | {{ c.Code }}
-                                        button(
-                                            @click="addRelProc(classList.indexOf(newClass.RelProc))"
-                                        ) +
-                                tr
-                                    td
-                                        ul(style="padding-left:20px")
-                                            li(v-for="(c,index) in newClass.RelProcs")
-                                                | {{ c.Code }} - {{ c.Title }}
-                                                button(
-                                                    @click="remRelProc(index)"
-                                                ) x
-                        td(style="width:80%")
-                            ul(v-if="relProcsReady" style="padding-left:20px")
-                                li(v-for="key in Object.keys(clas.Participants)" v-if="clas.Participants[key].length>0")
-                                    b {{ key }}
-                                        span(v-if="clas.Participants[key].length>1") es
-                                    ul
-                                        li(v-for="p in clas.Participants[key]")
-                                            a(:href="'/organizacao?id='+p.id") {{ p.Initials }}
-                                            |  - {{ p.Name }}
-
+                            label Status: 
+                        td(v-if="edit.Status" style="width:80%")
+                            input(
+                                size="50"
+                                v-model="newClass.Status"
+                                :placeholder="clas.Status"
+                            )
+                        td(v-else style="width:80%")
+                            | {{ clas.Status }}  
                         td(style="width:10%")
                             label(style="padding-right:5px") Editar
                             input(
                                 type="checkbox"
-                                v-model="edit.RelProcs"
+                                v-model="edit.Status"
+                            )
+
+                    //- LEGISLAÇÕES
+                    tr(v-if="clas.Level==3")
+                        td(style="width:10%")
+                            label Legislações:
+                        td(v-if="edit.Legs" style="width:80%")
+                            table
+                                tr
+                                    td
+                                        select( v-model="newClass.Leg")
+                                            option(v-for="(l,index) in legList" :value="l")
+                                                | {{ l.Número }}
+                                        button(
+                                            @click="addLeg(legList.indexOf(newClass.Leg))"
+                                        ) +
+                                tr(v-if="clas.Legs")
+                                    td
+                                        ul(style="padding-left:20px")
+                                            li(v-for="(l,index) in newClass.Legs")
+                                                | {{ l.Número }} - {{ l.Titulo }}
+                                                button(
+                                                    @click="remLeg(index)"
+                                                ) x
+                        td(v-else style="width:80%")
+                            ul(v-if="legsReady" style="padding-left:20px")
+                                li(v-for="l in clas.Legs")
+                                    a(:href="'/legislacao?id='+l.id") {{ l.Número }} 
+                                    | - {{ l.Titulo }}
+                        td(style="width:10%")
+                            label(style="padding-right:5px") Editar
+                            input(
+                                type="checkbox"
+                                v-model="edit.Legs"
                             )
 
 
-        //-
             input.btn.btn-xs.btn-default.col-sm-1(
                 type="button" 
-                @click="update" 
+                @click="updateClass" 
                 value="Confirmar" 
-                :disabled="!((editName && newClass.Name) || (editInitials && newClass.Initials))"
+                :disabled="!readyToUpdate()"
             )
             input.btn.btn-xs.btn-warning.col-sm-1(
                 type="button" 
                 @click="delReady" 
                 value="Apagar" 
-                :disabled="(editName || editInitials)"
+                :disabled="readyToUpdate()"
             )
             p.col-sm-5 {{ message }}
 
             input.btn.btn-xs.btn-danger(
                 v-if="delConfirm"
                 type="button" 
-                @click="deleteOrg" 
+                @click="deleteClass" 
                 value="OK" 
             )
             input.btn.btn-xs.btn-info(

@@ -1,6 +1,8 @@
 var classe = new Vue({
     el: '#classe-form',
     data: {
+        message: "",
+        delConfirm: false,
         id: "",
         orgList: [],
         legList: [],
@@ -42,6 +44,9 @@ var classe = new Vue({
             DelNotes: [],
             RelProc: "",
             RelProcs: [],
+            Participant: "",
+            ParticipantType: "",
+            Participants: [],
         },
         edit: {
             Title: false,
@@ -55,6 +60,7 @@ var classe = new Vue({
             AppNotes: false,
             DelNotes: false,
             RelProcs: false,
+            Participants: false,
         },  
         orgsReady: false,
         ownersReady: false,
@@ -76,15 +82,6 @@ var classe = new Vue({
             if (!results[2]) return '';
             return decodeURIComponent(results[2].replace(/\+/g, " "));
         },
-        cleanOrgs: function(){
-            for(var i=0; i<this.newClass.Owners.length;i++){
-                for(var j=0; j<this.orgList.length; j++) {
-                    if(this.orgList[j].id==this.newClass.Owners[i].id){
-                        this.orgList.splice(j,1);
-                    }
-                }
-            }
-        },
         loadOrgs: function () {
             var orgsToParse = [];
             var keys = ["id", "Sigla", "Nome"];
@@ -94,12 +91,8 @@ var classe = new Vue({
                     orgsToParse = response.body;
                 })
                 .then(function () {
-                    this.orgList = this.parse(orgsToParse, keys);
+                    this.orgList = JSON.parse(JSON.stringify(this.parse(orgsToParse, keys)));
                     this.orgsReady = true;
-
-                    if(this.ownersReady){
-                        this.cleanOrgs;
-                    }
                 })
                 .catch(function (error) {
                     console.error(error);
@@ -114,14 +107,10 @@ var classe = new Vue({
                     orgsToParse = response.body;
                 })
                 .then(function () {
-                    this.clas.Owners = this.parse(orgsToParse, keys);
-                    this.newClass.Owners = this.parse(orgsToParse, keys);
+                    this.clas.Owners = JSON.parse(JSON.stringify(this.parse(orgsToParse, keys)));
+                    this.newClass.Owners = JSON.parse(JSON.stringify(this.parse(orgsToParse, keys)));
                     
                     this.ownersReady = true;
-                    
-                    if(this.orgsReady){
-                        this.cleanOrgs;
-                    }
                 })
                 .catch(function (error) {
                     console.error(error);
@@ -136,7 +125,7 @@ var classe = new Vue({
                     legsToParse = response.body;
                 })
                 .then(function () {
-                    this.legList = this.parse(legsToParse, keys);
+                    this.legList = JSON.parse(JSON.stringify(this.parse(legsToParse, keys)));
                     this.legListReady = true;
                 })
                 .catch(function (error) {
@@ -152,8 +141,8 @@ var classe = new Vue({
                     legsToParse = response.body;
                 })
                 .then(function () {
-                    this.clas.Legs = this.parse(legsToParse, keys);
-                    this.newClass.Legs = this.parse(legsToParse, keys);
+                    this.clas.Legs = JSON.parse(JSON.stringify(this.parse(legsToParse, keys)));
+                    this.newClass.Legs = JSON.parse(JSON.stringify(this.parse(legsToParse, keys)));
                     
                     this.legsReady = true;
                 })
@@ -170,8 +159,8 @@ var classe = new Vue({
                     notesToParse = response.body;
                 })
                 .then(function () {
-                    this.clas.AppNotes = this.parse(notesToParse, keys);
-                    this.newClass.AppNotes = this.parse(notesToParse, keys);
+                    this.clas.AppNotes = JSON.parse(JSON.stringify(this.parse(notesToParse, keys)));
+                    this.newClass.AppNotes = JSON.parse(JSON.stringify(this.parse(notesToParse, keys)));
                     
                     this.appNotesReady = true;
                 })
@@ -188,8 +177,8 @@ var classe = new Vue({
                     notesToParse = response.body;
                 })
                 .then(function () {
-                    this.clas.DelNotes = this.parse(notesToParse, keys);
-                    this.newClass.DelNotes = this.parse(notesToParse, keys);
+                    this.clas.DelNotes = JSON.parse(JSON.stringify(this.parse(notesToParse, keys)));
+                    this.newClass.DelNotes = JSON.parse(JSON.stringify(this.parse(notesToParse, keys)));
                     
                     this.DelNotesReady = true;
                 })
@@ -206,8 +195,8 @@ var classe = new Vue({
                     notesToParse = response.body;
                 })
                 .then(function () {
-                    this.clas.ExAppNotes = this.parse(notesToParse, keys);
-                    this.newClass.ExAppNotes = this.parse(notesToParse, keys);
+                    this.clas.ExAppNotes = JSON.parse(JSON.stringify(this.parse(notesToParse, keys)));
+                    this.newClass.ExAppNotes = JSON.parse(JSON.stringify(this.parse(notesToParse, keys)));
                     
                     this.exAppNotesReady = true;
                 })
@@ -224,7 +213,7 @@ var classe = new Vue({
                     classesToParse = response.body;
                 })
                 .then(function () {
-                    this.classList = this.parse(classesToParse, keys);
+                    this.classList = JSON.parse(JSON.stringify(this.parse(classesToParse, keys)));
                     this.classesReady = true;
                 })
                 .catch(function (error) {
@@ -240,8 +229,8 @@ var classe = new Vue({
                     relProcsToParse = response.body;
                 })
                 .then(function () {
-                    this.clas.RelProcs = this.parse(relProcsToParse, keys);
-                    this.newClass.RelProcs = this.parse(relProcsToParse, keys);
+                    this.clas.RelProcs = JSON.parse(JSON.stringify(this.parse(relProcsToParse, keys)));
+                    this.newClass.RelProcs = JSON.parse(JSON.stringify(this.parse(relProcsToParse, keys)));
                     
                     this.relProcsReady = true;
                 })
@@ -251,7 +240,7 @@ var classe = new Vue({
         },
         loadParticipants: function () {
             var participantsToParse = [];
-            var keys = ['id', 'Name', 'Initials'];
+            var keys = ['id', 'Nome', 'Sigla'];
 
             this.$http.get("/participantsClass?id="+this.id)
                 .then(function (response) {
@@ -327,15 +316,19 @@ var classe = new Vue({
             }
             if(dataObj.Status){
                 this.clas.Status=dataObj.Status.value;
+                this.newClass.Status=dataObj.Status.value;
             }
             if(dataObj.Desc){
                 this.clas.Desc=dataObj.Desc.value;
+                this.newClass.Desc=dataObj.Desc.value;
             }
             if(dataObj.ProcTipo){
                 this.clas.ProcType=dataObj.ProcTipo.value;
+                this.newClass.ProcType=dataObj.ProcTipo.value;
             }
             if(dataObj.ProcTrans){
                 this.clas.ProcTrans=dataObj.ProcTrans.value;
+                this.newClass.ProcTrans=dataObj.ProcTrans.value;
             }
             
             this.loadOwners();
@@ -353,35 +346,11 @@ var classe = new Vue({
             
             this.loadParticipants();
         },
-        update: function(){
-            /*var args='?id='+this.id;
-
-            if(this.editName && this.newName){
-                args+='&name='+this.newName;
-            }
-            if(this.editInitials && this.newInitials){
-                args+='&initials='+this.newInitials;
-            }
-
-            this.$http.get('/updateOrg'+args)
-            .then( function(response) { 
-                this.message = response.body;
-            })
-            .catch( function(error) { 
-                console.error(error); 
-            });*/
-        },
         addOwner: function (index) {
             this.newClass.Owners.push(this.orgList[index]);
-            this.orgList.splice(index, 1);
         },
         remOwner: function (index) {
-            this.orgList.push(this.newClass.Owners[index]);
             this.newClass.Owners.splice(index, 1);
-
-            this.orgList.sort(function(a,b) {
-                return a.Sigla.localeCompare(b.Sigla);
-            });
         },
         addLeg: function (index) {
             this.newClass.Legs.push(this.legList[index]);
@@ -409,6 +378,130 @@ var classe = new Vue({
                 this.newClass.DelNote = '';
             }
         },
+        addParticipant: function() {
+            this.newClass.Participants[this.newClass.ParticipantType].push(this.newClass.Participant);
+        },
+        remParticipant: function(key, index) {
+            this.newClass.Participants[key].splice(index, 1);
+        },
+        addRelProc: function (index) {
+            this.newClass.RelProcs.push(this.classList[index]);
+        },
+        remRelProc: function (index) {
+            this.newClass.RelProcs.splice(index, 1);
+        },
+        readyToUpdate: function() {
+            var keys= Object.keys(this.edit);
+
+            for(var i=0;i<keys.length;i++){
+                if(this.edit[keys[i]] && this.newClass[keys[i]]!=this.clas[keys[i]]){
+                    return true;
+                }
+            }
+
+            if(this.edit.Participants){
+                var keys= Object.keys(this.clas.Participants);
+                
+                for(var i=0;i<keys.length;i++){
+                    if(this.newClass.Participants[keys[i]]!=this.clas.Participants[keys[i]]){
+                        return true;
+                    }
+                }
+            }
+
+        },
+        subtractArray: function(from, minus){
+            var ret;
+            
+            if(!from){
+                ret= null;
+            }
+            else if(!minus){
+                ret= JSON.parse(JSON.stringify(from));
+            }
+            else{
+                ret = from.filter(function (item) {
+                    for(var i=0; i<minus.length; i++){
+                        if (minus[i].id==item.id){
+                            return false;
+                        }
+                    }
+                    return true;
+                });
+            }
+
+            return ret;
+        },
+        updateClass: function() {
+            console.log("update");
+            this.message="I'm working on it";
+            
+            var dataObj= {
+                id: this.id,
+                Title: null,
+                Status: null,
+                Desc: null,
+                ProcType: null,
+                ProcTrans: null,
+                Owners: null,
+                Legs: null,
+                ExAppNotes: null,
+                AppNotes: null,
+                DelNotes: null,
+                RelProcs: null,
+                Participants: {
+                    Apreciador: null,
+                    Assessor: null,
+                    Comunicador: null,
+                    Decisor: null,
+                    Executor: null,
+                    Iniciador: null,
+                }
+            };
+
+            var keys= ["Title","Status","Desc","ProcType","ProcTrans","ExAppNotes"];      
+            
+            for(var i=0;i<keys.length;i++){
+                if(this.edit[keys[i]]){
+                    dataObj[keys[i]]=this.newClass[keys[i]];
+                }
+            }
+
+            var arraysKeys=["Owners","Legs","AppNotes","DelNotes","RelProcs"];
+
+            for(var i=0;i<arraysKeys.length;i++){
+                if(this.edit[arraysKeys[i]]){
+
+                    var temp = {
+                        Add: null,
+                        Delete: null,
+                    };
+
+                    temp.Add=this.subtractArray(this.newClass[arraysKeys[i]],this.clas[arraysKeys[i]]);
+                    temp.Delete=this.subtractArray(this.clas[arraysKeys[i]],this.newClass[arraysKeys[i]]);
+                    
+                    dataObj[arraysKeys[i]]=JSON.parse(JSON.stringify(temp));
+                }
+            }
+
+            var participantKeys=["Apreciador","Assessor","Comunicador","Decisor","Executor","Iniciador"];
+
+            if(this.edit.Participants){
+                for(var i=0;i<participantKeys.length;i++){
+
+                    var temp = {
+                        Add: null,
+                        Delete: null,
+                    };
+
+                    temp.Add=this.subtractArray(this.newClass.Participants[participantKeys[i]],this.clas.Participants[participantKeys[i]]);
+                    temp.Delete=this.subtractArray(this.clas.Participants[participantKeys[i]],this.newClass.Participants[participantKeys[i]]);
+                    
+                    dataObj.Participants[participantKeys[i]]=JSON.parse(JSON.stringify(temp));
+                }
+            }
+            console.log(dataObj);
+        },
         delReady: function(){
             this.message="Tem a certeza que deseja apagar?";
             this.delConfirm=true;
@@ -418,6 +511,9 @@ var classe = new Vue({
             this.delConfirm=false;
         },
         deleteClass: function(){
+            console.log("delete");
+            this.message="It no wurk yet!";
+            /*
             this.$http.post('/deleteClass',{id: this.id})
             .then( function(response) { 
                 this.message = response.body;
@@ -425,6 +521,7 @@ var classe = new Vue({
             .catch( function(error) { 
                 console.error(error); 
             });
+            */
         } 
     },
     created: function(){
