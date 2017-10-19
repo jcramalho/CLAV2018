@@ -61,19 +61,19 @@ var classe = new Vue({
             DelNotes: false,
             RelProcs: false,
             Participants: false,
-        },  
+        },
         orgsReady: false,
         ownersReady: false,
         legListReady: false,
-        legsReady: false, 
+        legsReady: false,
         exAppNotesReady: false,
         appNotesReady: false,
-        delNotesReady: false, 
+        delNotesReady: false,
         classesReady: false,
-        relProcsReady: false, 
+        relProcsReady: false,
     },
     methods: {
-        getParameterByName: function(name, url) {
+        getParameterByName: function (name, url) {
             if (!url) url = window.location.href;
             name = name.replace(/[\[\]]/g, "\\$&");
             var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
@@ -97,19 +97,19 @@ var classe = new Vue({
                 .catch(function (error) {
                     console.error(error);
                 });
-        },   
+        },
         loadOwners: function () {
             var orgsToParse = [];
             var keys = ["id", "Sigla", "Nome"];
 
-            this.$http.get("/ownersClass?id="+this.id)
+            this.$http.get("/ownersClass?id=" + this.id)
                 .then(function (response) {
                     orgsToParse = response.body;
                 })
                 .then(function () {
                     this.clas.Owners = JSON.parse(JSON.stringify(this.parse(orgsToParse, keys)));
                     this.newClass.Owners = JSON.parse(JSON.stringify(this.parse(orgsToParse, keys)));
-                    
+
                     this.ownersReady = true;
                 })
                 .catch(function (error) {
@@ -131,19 +131,19 @@ var classe = new Vue({
                 .catch(function (error) {
                     console.error(error);
                 });
-        },   
+        },
         loadLegs: function () {
             var legsToParse = [];
             var keys = ["id", "Número", "Titulo"];
 
-            this.$http.get("/legsClass?id="+this.id)
+            this.$http.get("/legsClass?id=" + this.id)
                 .then(function (response) {
                     legsToParse = response.body;
                 })
                 .then(function () {
                     this.clas.Legs = JSON.parse(JSON.stringify(this.parse(legsToParse, keys)));
                     this.newClass.Legs = JSON.parse(JSON.stringify(this.parse(legsToParse, keys)));
-                    
+
                     this.legsReady = true;
                 })
                 .catch(function (error) {
@@ -154,14 +154,14 @@ var classe = new Vue({
             var notesToParse = [];
             var keys = ["id", "Nota"];
 
-            this.$http.get("/appNotesClass?id="+this.id)
+            this.$http.get("/appNotesClass?id=" + this.id)
                 .then(function (response) {
                     notesToParse = response.body;
                 })
                 .then(function () {
                     this.clas.AppNotes = JSON.parse(JSON.stringify(this.parse(notesToParse, keys)));
                     this.newClass.AppNotes = JSON.parse(JSON.stringify(this.parse(notesToParse, keys)));
-                    
+
                     this.appNotesReady = true;
                 })
                 .catch(function (error) {
@@ -172,14 +172,14 @@ var classe = new Vue({
             var notesToParse = [];
             var keys = ["id", "Nota"];
 
-            this.$http.get("/delNotesClass?id="+this.id)
+            this.$http.get("/delNotesClass?id=" + this.id)
                 .then(function (response) {
                     notesToParse = response.body;
                 })
                 .then(function () {
                     this.clas.DelNotes = JSON.parse(JSON.stringify(this.parse(notesToParse, keys)));
                     this.newClass.DelNotes = JSON.parse(JSON.stringify(this.parse(notesToParse, keys)));
-                    
+
                     this.DelNotesReady = true;
                 })
                 .catch(function (error) {
@@ -190,14 +190,14 @@ var classe = new Vue({
             var notesToParse = [];
             var keys = ["Exemplo"];
 
-            this.$http.get("/exAppNotesClass?id="+this.id)
+            this.$http.get("/exAppNotesClass?id=" + this.id)
                 .then(function (response) {
                     notesToParse = response.body;
                 })
                 .then(function () {
                     this.clas.ExAppNotes = JSON.parse(JSON.stringify(this.parse(notesToParse, keys)));
                     this.newClass.ExAppNotes = JSON.parse(JSON.stringify(this.parse(notesToParse, keys)));
-                    
+
                     this.exAppNotesReady = true;
                 })
                 .catch(function (error) {
@@ -219,19 +219,19 @@ var classe = new Vue({
                 .catch(function (error) {
                     console.error(error);
                 });
-        }, 
+        },
         loadRelProcs: function () {
             var relProcsToParse = [];
-            var keys = ["id","Code","Title"];
+            var keys = ["id", "Code", "Title"];
 
-            this.$http.get("/relProcsClass?id="+this.id)
+            this.$http.get("/relProcsClass?id=" + this.id)
                 .then(function (response) {
                     relProcsToParse = response.body;
                 })
                 .then(function () {
                     this.clas.RelProcs = JSON.parse(JSON.stringify(this.parse(relProcsToParse, keys)));
                     this.newClass.RelProcs = JSON.parse(JSON.stringify(this.parse(relProcsToParse, keys)));
-                    
+
                     this.relProcsReady = true;
                 })
                 .catch(function (error) {
@@ -242,14 +242,14 @@ var classe = new Vue({
             var participantsToParse = [];
             var keys = ['id', 'Nome', 'Sigla'];
 
-            this.$http.get("/participantsClass?id="+this.id)
+            this.$http.get("/participantsClass?id=" + this.id)
                 .then(function (response) {
                     participantsToParse = response.body;
                 })
                 .then(function () {
                     this.clas.Participants = this.parseParticipants(participantsToParse, keys);
-                    this.newClass.Participants =JSON.parse(JSON.stringify(this.clas.Participants));
-                    
+                    this.newClass.Participants = JSON.parse(JSON.stringify(this.clas.Participants));
+
                     this.participantsReady = true;
                 })
                 .catch(function (error) {
@@ -270,14 +270,14 @@ var classe = new Vue({
             // parsing the JSON
             for (var i = 0; i < content.length; i++) {
                 for (var j = 0; j < keys.length; j++) {
-                    
+
                     temp[keys[j]] = content[i][keys[j]].value;
 
                     if (keys[j] == "id") {
                         temp.id = temp.id.replace(/[^#]+#(.*)/, '$1');
                     }
                 }
-                var type = content[i].Type.value.replace(/.*temParticipante(.*)/,'$1');
+                var type = content[i].Type.value.replace(/.*temParticipante(.*)/, '$1');
 
                 dest[type].push(JSON.parse(JSON.stringify(temp)));
             }
@@ -303,34 +303,34 @@ var classe = new Vue({
 
             return dest;
         },
-        prepData: function(dataObj){   
-            this.clas.Title=dataObj.Titulo.value;
-            this.clas.Code=dataObj.Codigo.value;
+        prepData: function (dataObj) {
+            this.clas.Title = dataObj.Titulo.value;
+            this.clas.Code = dataObj.Codigo.value;
 
             console.log()
 
-            if(dataObj.Pai){
-                this.clas.Parent.id=dataObj.Pai.value.replace(/[^#]+#(.*)/, '$1');
-                this.clas.Parent.code=dataObj.CodigoPai.value;
-                this.clas.Parent.title=dataObj.TituloPai.value;
+            if (dataObj.Pai) {
+                this.clas.Parent.id = dataObj.Pai.value.replace(/[^#]+#(.*)/, '$1');
+                this.clas.Parent.code = dataObj.CodigoPai.value;
+                this.clas.Parent.title = dataObj.TituloPai.value;
             }
-            if(dataObj.Status){
-                this.clas.Status=dataObj.Status.value;
-                this.newClass.Status=dataObj.Status.value;
+            if (dataObj.Status) {
+                this.clas.Status = dataObj.Status.value;
+                this.newClass.Status = dataObj.Status.value;
             }
-            if(dataObj.Desc){
-                this.clas.Desc=dataObj.Desc.value;
-                this.newClass.Desc=dataObj.Desc.value;
+            if (dataObj.Desc) {
+                this.clas.Desc = dataObj.Desc.value;
+                this.newClass.Desc = dataObj.Desc.value;
             }
-            if(dataObj.ProcTipo){
-                this.clas.ProcType=dataObj.ProcTipo.value;
-                this.newClass.ProcType=dataObj.ProcTipo.value;
+            if (dataObj.ProcTipo) {
+                this.clas.ProcType = dataObj.ProcTipo.value;
+                this.newClass.ProcType = dataObj.ProcTipo.value;
             }
-            if(dataObj.ProcTrans){
-                this.clas.ProcTrans=dataObj.ProcTrans.value;
-                this.newClass.ProcTrans=dataObj.ProcTrans.value;
+            if (dataObj.ProcTrans) {
+                this.clas.ProcTrans = dataObj.ProcTrans.value;
+                this.newClass.ProcTrans = dataObj.ProcTrans.value;
             }
-            
+
             this.loadOwners();
             this.loadOrgs();
 
@@ -343,7 +343,7 @@ var classe = new Vue({
 
             this.loadClasses();
             this.loadRelProcs();
-            
+
             this.loadParticipants();
         },
         addOwner: function (index) {
@@ -362,26 +362,74 @@ var classe = new Vue({
         },
         addNewExAppNote: function () {
             if (this.newClass.ExAppNote) {
-                this.newClass.ExAppNotes.push({Exemplo: this.newClass.ExAppNote});
+                this.newClass.ExAppNotes.push({ Exemplo: this.newClass.ExAppNote });
                 this.newClass.ExAppNote = '';
             }
         },
         addNewAppNote: function () {
+            function checkID(id, list) {
+                for(var i=0;i<list.length;i++){
+                    if(id==list.id.replace(/na_.*_([0-9])/, '$1')){
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            var newID = 1;
+            for (var i = 0; i < this.clas.AppNotes.length; i++) {
+                var appID = parseInt(this.clas.AppNotes[i].id.replace(/na_.*_([0-9])/, '$1'));
+
+                if (newID !=appID){
+                    if(checkID(newID,this.newClass.AppNotes)){
+                        break;
+                    }
+                }
+                newID++;
+            }
+            
             if (this.newClass.AppNote) {
-                this.newClass.AppNotes.push({Nota: this.newClass.AppNote});
+                this.newClass.AppNotes.push({
+                    id: "na_"+this.id+"_"+newID,
+                    Nota: this.newClass.AppNote 
+                });
                 this.newClass.AppNote = '';
             }
         },
         addNewDelNote: function () {
+            function checkID(id, list) {
+                for(var i=0;i<list.length;i++){
+                    if(id==list.id.replace(/na_.*_([0-9])/, '$1')){
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            var newID = 1;
+            for (var i = 0; i < this.clas.DelNotes.length; i++) {
+                var delID = parseInt(this.clas.DellNotes[i].id.replace(/na_.*_([0-9])/, '$1'));
+
+                if (newID !=delID){
+                    if(checkID(newID,this.newClass.DelNotes)){
+                        break;
+                    }
+                }
+                newID++;
+            }
+            
             if (this.newClass.DelNote) {
-                this.newClass.DelNotes.push({Nota: this.newClass.DelNote});
+                this.newClass.DelNotes.push({
+                    id: "na_"+this.id+"_"+newID,
+                    Nota: this.newClass.DelNote 
+                });
                 this.newClass.DelNote = '';
             }
         },
-        addParticipant: function() {
+        addParticipant: function () {
             this.newClass.Participants[this.newClass.ParticipantType].push(this.newClass.Participant);
         },
-        remParticipant: function(key, index) {
+        remParticipant: function (key, index) {
             this.newClass.Participants[key].splice(index, 1);
         },
         addRelProc: function (index) {
@@ -390,129 +438,178 @@ var classe = new Vue({
         remRelProc: function (index) {
             this.newClass.RelProcs.splice(index, 1);
         },
-        readyToUpdate: function() {
-            var keys= Object.keys(this.edit);
+        readyToUpdate: function () {
+            var keys = Object.keys(this.edit);
 
-            for(var i=0;i<keys.length;i++){
-                if(this.edit[keys[i]] && this.newClass[keys[i]]!=this.clas[keys[i]]){
+            for (var i = 0; i < keys.length; i++) {
+                if (this.edit[keys[i]] && this.newClass[keys[i]] != this.clas[keys[i]]) {
                     return true;
                 }
             }
 
-            if(this.edit.Participants){
-                var keys= Object.keys(this.clas.Participants);
-                
-                for(var i=0;i<keys.length;i++){
-                    if(this.newClass.Participants[keys[i]]!=this.clas.Participants[keys[i]]){
+            if (this.edit.Participants) {
+                var keys = Object.keys(this.clas.Participants);
+
+                for (var i = 0; i < keys.length; i++) {
+                    if (this.newClass.Participants[keys[i]] != this.clas.Participants[keys[i]]) {
                         return true;
                     }
                 }
             }
 
         },
-        subtractArray: function(from, minus){
+        subtractArray: function (from, minus) {
             var ret;
-            
-            if(!from){
-                ret= null;
+
+            if (!from) {
+                ret = null;
             }
-            else if(!minus){
-                ret= JSON.parse(JSON.stringify(from));
+            else if (!minus) {
+                ret = JSON.parse(JSON.stringify(from));
             }
-            else{
+            else {
                 ret = from.filter(function (item) {
-                    for(var i=0; i<minus.length; i++){
-                        if (minus[i].id==item.id){
-                            return false;
+                    var r= true;
+                    for (var i = 0; i < minus.length; i++) {
+                        if (minus[i].id == item.id) {
+                            r= false;
+                            break;
                         }
                     }
-                    return true;
+
+                    console.log(r);
+                    return r;
                 });
             }
 
             return ret;
         },
-        updateClass: function() {
-            console.log("update");
-            this.message="I'm working on it";
-            
-            var dataObj= {
+        updateClass: function () {
+            this.message = "Updating...";
+
+            var dataObj = {
                 id: this.id,
                 Title: null,
                 Status: null,
                 Desc: null,
                 ProcType: null,
                 ProcTrans: null,
-                Owners: null,
-                Legs: null,
+                Owners: {
+                    Add: null,
+                    Delete: null,
+                },
+                Legs: {
+                    Add: null,
+                    Delete: null,
+                },
                 ExAppNotes: null,
-                AppNotes: null,
-                DelNotes: null,
-                RelProcs: null,
+                AppNotes: {
+                    Add: null,
+                    Delete: null,
+                },
+                DelNotes: {
+                    Add: null,
+                    Delete: null,
+                },
+                RelProcs: {
+                    Add: null,
+                    Delete: null,
+                },
                 Participants: {
-                    Apreciador: null,
-                    Assessor: null,
-                    Comunicador: null,
-                    Decisor: null,
-                    Executor: null,
-                    Iniciador: null,
+                    Apreciador: {
+                        Add: null,
+                        Delete: null,
+                    },
+                    Assessor: {
+                        Add: null,
+                        Delete: null,
+                    },
+                    Comunicador: {
+                        Add: null,
+                        Delete: null,
+                    },
+                    Decisor: {
+                        Add: null,
+                        Delete: null,
+                    },
+                    Executor: {
+                        Add: null,
+                        Delete: null,
+                    },
+                    Iniciador: {
+                        Add: null,
+                        Delete: null,
+                    },
                 }
             };
 
-            var keys= ["Title","Status","Desc","ProcType","ProcTrans","ExAppNotes"];      
-            
-            for(var i=0;i<keys.length;i++){
-                if(this.edit[keys[i]]){
-                    dataObj[keys[i]]=this.newClass[keys[i]];
+            var keys = ["Title", "Status", "Desc", "ProcType", "ProcTrans", "ExAppNotes"];
+
+            for (var i = 0; i < keys.length; i++) {
+                if (this.edit[keys[i]]) {
+                    dataObj[keys[i]] = this.newClass[keys[i]];
                 }
             }
 
-            var arraysKeys=["Owners","Legs","AppNotes","DelNotes","RelProcs"];
+            var arraysKeys = ["Owners", "Legs", "AppNotes", "DelNotes", "RelProcs"];
 
-            for(var i=0;i<arraysKeys.length;i++){
-                if(this.edit[arraysKeys[i]]){
+            for (var i = 0; i < arraysKeys.length; i++) {
+                if (this.edit[arraysKeys[i]]) {
 
                     var temp = {
                         Add: null,
                         Delete: null,
                     };
 
-                    temp.Add=this.subtractArray(this.newClass[arraysKeys[i]],this.clas[arraysKeys[i]]);
-                    temp.Delete=this.subtractArray(this.clas[arraysKeys[i]],this.newClass[arraysKeys[i]]);
-                    
-                    dataObj[arraysKeys[i]]=JSON.parse(JSON.stringify(temp));
+                    temp.Add = this.subtractArray(this.newClass[arraysKeys[i]], this.clas[arraysKeys[i]]);
+                    temp.Delete = this.subtractArray(this.clas[arraysKeys[i]], this.newClass[arraysKeys[i]]);
+
+                    dataObj[arraysKeys[i]] = JSON.parse(JSON.stringify(temp));
                 }
             }
 
-            var participantKeys=["Apreciador","Assessor","Comunicador","Decisor","Executor","Iniciador"];
+            var participantKeys = ["Apreciador", "Assessor", "Comunicador", "Decisor", "Executor", "Iniciador"];
 
-            if(this.edit.Participants){
-                for(var i=0;i<participantKeys.length;i++){
+            if (this.edit.Participants) {
+                for (var i = 0; i < participantKeys.length; i++) {
 
                     var temp = {
                         Add: null,
                         Delete: null,
                     };
 
-                    temp.Add=this.subtractArray(this.newClass.Participants[participantKeys[i]],this.clas.Participants[participantKeys[i]]);
-                    temp.Delete=this.subtractArray(this.clas.Participants[participantKeys[i]],this.newClass.Participants[participantKeys[i]]);
-                    
-                    dataObj.Participants[participantKeys[i]]=JSON.parse(JSON.stringify(temp));
+                    temp.Add = this.subtractArray(this.newClass.Participants[participantKeys[i]], this.clas.Participants[participantKeys[i]]);
+                    temp.Delete = this.subtractArray(this.clas.Participants[participantKeys[i]], this.newClass.Participants[participantKeys[i]]);
+
+                    dataObj.Participants[participantKeys[i]] = JSON.parse(JSON.stringify(temp));
                 }
             }
             console.log(dataObj);
+
+            this.$http.put('/updateClass', { dataObj: dataObj },{
+                headers: {
+                    'content-type' : 'application/json'
+                }
+            })
+            .then(function (response) {
+                this.message = response.body;
+                window.location.href = '/classe?id='+this.id;
+            })
+            .catch(function (error) {
+                console.error(error);
+            });
         },
-        delReady: function(){
-            this.message="Tem a certeza que deseja apagar?";
-            this.delConfirm=true;
+        delReady: function () {
+            this.message = "Tem a certeza que deseja apagar?";
+            this.delConfirm = true;
         },
-        delNotReady: function(){
-            this.message= "";
-            this.delConfirm=false;
+        delNotReady: function () {
+            this.message = "";
+            this.delConfirm = false;
         },
-        deleteClass: function(){
+        deleteClass: function () {
             console.log("delete");
-            this.message="It no wurk yet!";
+            this.message = "It no wurk yet!";
             /*
             this.$http.post('/deleteClass',{id: this.id})
             .then( function(response) { 
@@ -522,23 +619,23 @@ var classe = new Vue({
                 console.error(error); 
             });
             */
-        } 
+        }
     },
-    created: function(){
-        this.id=this.getParameterByName('id');
-        this.clas.Level=this.id.split('.').length;
+    created: function () {
+        this.id = this.getParameterByName('id');
+        this.clas.Level = this.id.split('.').length;
 
         var content;
 
-        this.$http.get("/singleClass?id="+this.id)
-        .then( function(response) { 
-            content = response.body;
-        })
-        .then( function() {
-            this.prepData(content[0]);
-        })
-        .catch( function(error) { 
-            console.error(error); 
-        });
+        this.$http.get("/singleClass?id=" + this.id)
+            .then(function (response) {
+                content = response.body;
+            })
+            .then(function () {
+                this.prepData(content[0]);
+            })
+            .catch(function (error) {
+                console.error(error);
+            });
     }
 })
