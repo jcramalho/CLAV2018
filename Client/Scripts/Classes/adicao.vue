@@ -6,27 +6,58 @@ var newClass = new Vue({
     },
     data: {
         type: 1,
+
         parent: "",
         parents: [],
         parentsReady: false,
+
         code: "",
+        
         title: "",
+        
         newOwner: "",
         ownerList: [],
         orgList: [],
         orgsReady: false,
+        
         newLegislation: "",
         newLegList: [],
         legList: [],
         legsReady: false,
+        
         description: "",
+        
         newExAppNote: "",
         exAppNotes: [],
+        
         newAppNote: "",
         appNotes: [],
+        
         newDelNote: "",
         delNotes: [],
+        
         status: "",
+        
+        procType: "",
+
+        procTrans: "",
+
+        newParticipantType: "",
+        newParticipant: "",
+        participants: {
+            Apreciador: [],
+            Assessor: [],
+            Comunicador: [],
+            Decisor: [],
+            Executor: [],
+            Iniciador: [],
+        },
+
+        newRelProc: "",
+        relProcs: [],
+        classList: [],
+        classesReady: false,
+
         message: "",
     },
     watch: {
@@ -38,28 +69,41 @@ var newClass = new Vue({
             if (this.type > 1) {
                 this.loadParents();
             }
+        },
+        code: function () {
+            if(this.type>1){
+                if(this.code.indexOf(this.parent) != 0){
+                    this.code=this.parent.slice(1, this.parent.length)+".";
+                }
+                if(this.code[this.parent.length]!='.'){
+                    this.code=this.parent.slice(1, this.parent.length)+".";   
+                }
+            }
+            else{
+                //if(this.code)
+            }
         }
     },
     methods: {
-        addOwner: function (index) {
-            this.ownerList.push(this.orgList[index]);
-            this.orgList.splice(index, 1);
-        },
-        remOwner: function (index) {
-            this.orgList.push(this.ownerList[index]);
-            this.ownerList.splice(index, 1);
-        },
-        addLeg: function (index) {
-            this.newLegList.push(this.legList[index]);
-            this.legList.splice(index, 1);
-        },
-        remLeg: function (index) {
-            this.legList.push(this.newLegList[index]);
-            this.newLegList.splice(index, 1);
+        loadClasses: function () {
+            var classesToParse = [];
+            var keys = ["id", "Code", "Title"];
+
+            this.$http.get("/classesn?level=3")
+                .then(function (response) {
+                    classesToParse = response.body;
+                })
+                .then(function () {
+                    this.classList = JSON.parse(JSON.stringify(this.parse(classesToParse, keys)));
+                    this.classesReady = true;
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
         },
         loadOrgs: function () {
             var orgsToParse = [];
-            var keys = ["id", "Sigla"];
+            var keys = ["id", "Sigla", "Nome"];
 
             this.$http.get("/orgs")
                 .then(function (response) {
@@ -75,7 +119,7 @@ var newClass = new Vue({
         },
         loadLegs: function () {
             var legsToParse = [];
-            var keys = ["id", "Número"];
+            var keys = ["id", "Número", "Titulo"];
 
             this.$http.get("/legs")
                 .then(function (response) {
@@ -132,13 +176,19 @@ var newClass = new Vue({
         },
         addNewAppNote: function () {
             if (this.newAppNote) {
-                this.appNotes.push(this.newAppNote);
+                this.appNotes.push({
+                    id: "",
+                    Note: this.newAppNote
+                });
                 this.newAppNote = '';
             }
         },
         addNewDelNote: function () {
             if (this.newDelNote) {
-                this.delNotes.push(this.newDelNote);
+                this.delNotes.push({
+                    id: "",
+                    Note: this.newDelNote
+                });
                 this.newDelNote = '';
             }
         },
@@ -194,35 +244,25 @@ var newClass = new Vue({
             });
         },
         add: function () {
-            if(this.appNotes.length>0){
-                this.createAppNotes(this.code,this.appNotes);
-            }
-            if(this.delNotes.length>0){
-                this.createDelNotes(this.code,this.delNotes);
-            }
-
-            var appNotesList = [];
-            var delNotesList = [];
-
             for (var i = 0; i < this.appNotes.length; i++) {
-                appNotesList[i] = "na_c" + this.code + "_" + (i + 1);
+                this.appNotes[i].id = "na_c" + this.code + "_" + (i + 1);
             }
             for (var i = 0; i < this.delNotes.length; i++) {
-                delNotesList[i] = "ne_c" + this.code + "_" + (i + 1);
+                this.delNotes[i].id = "ne_c" + this.code + "_" + (i + 1);
             }
 
             var dataObj = {
-                "level": this.type,
-                "parent": this.parent,
-                "code": this.code,
-                "title": this.title,
-                "status": this.status,
-                "owners": this.ownerList,
-                "legislations": this.newLegList,
-                "description": this.description,
-                "exAppNotes": this.exAppNotes,
-                "appNotes": appNotesList,
-                "delNotes": delNotesList,
+                Level: this.type,
+                Parent: this.parent,
+                Code: this.code,
+                Title: this.title,
+                Status: this.status,
+                Owners: this.ownerList,
+                Legislations: this.newLegList,
+                Description: this.description,
+                ExAppNotes: this.exAppNotes,
+                AppNotes: this.appNotes,
+                DelNotes: this.delNotes,
             };
 
             this.$http.post('/createClass',dataObj,{

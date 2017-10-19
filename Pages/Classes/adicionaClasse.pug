@@ -6,6 +6,7 @@ block corpo
         .panel-body
             .form-group
                 table
+                    //-TIPO/ NIVEL
                     tr
                         td(style="width:10%")
                             label Tipo: 
@@ -15,6 +16,8 @@ block corpo
                                 option(value=2) Classe_N2
                                 option(value=3) Classe_N3
                                 option(value=4) Classe_N4
+
+                    //-PAI
                     tr(v-if="type>1 && parentsReady")
                         td(style="width:10%")
                             label Pai: 
@@ -22,6 +25,8 @@ block corpo
                             select( v-model="parent")
                                 option(v-for="(p,index) in parents" :value="p.id")
                                     | {{ p.Code }}
+            
+                    //-CODIGO
                     tr
                         td(style="padding-top:10px")
                             label Código: 
@@ -29,46 +34,9 @@ block corpo
                             input(
                                 size="70"
                                 v-model="code"
-                                :placeholder="+'.000'"
                             )
-                    tr(v-if="type==3 && orgsReady")
-                        td(style="padding-top:10px")
-                            label Dono(s): 
-                        td
-                            select( v-model="newOwner")
-                                option(v-for="(o,index) in orgList" :value="o")
-                                    | {{ o.Sigla }}
-                            button(
-                                @click="addOwner(orgList.indexOf(newOwner))"
-                            ) +
-                    tr(v-if="type==3 && ownerList")
-                        td(style="padding-top:10px")
-                        td
-                            ul
-                                li(v-for="(o,index) in ownerList")
-                                    | {{ o.Sigla }}
-                                    button(
-                                        @click="remOwner(index)"
-                                    ) x
-                    tr(v-if="type==3 && legsReady")
-                        td(style="padding-top:10px")
-                            label Legislação: 
-                        td
-                            select( v-model="newLegislation")
-                                option(v-for="(l,index) in legList" :value="l")
-                                    | {{ l.Número }}
-                            button(
-                                @click="addLeg(legList.indexOf(newLegislation))"
-                            ) +
-                    tr(v-if="type==3 && newLegList")
-                        td(style="padding-top:10px")
-                        td
-                            ul
-                                li(v-for="(l,index) in newLegList")
-                                    | {{ l.Número }}
-                                    button(
-                                        @click="remLeg(index)"
-                                    ) x
+
+                    //-TITULO   
                     tr
                         td(style="padding-top:10px")
                             label Título: 
@@ -77,14 +45,8 @@ block corpo
                                 size="70"
                                 v-model="title"
                             )
-                    tr
-                        td(style="padding-top:10px")
-                            label Status: 
-                        td
-                            input(
-                                size="70"
-                                v-model="status"
-                            )
+
+                    //-DESCRIÇÃO
                     tr
                         td(style="padding-top:10px")
                             label Descrição: 
@@ -94,22 +56,8 @@ block corpo
                                 lines="5"
                                 v-model="description"
                             )
-                    tr
-                        td(style="padding-top:10px")
-                            label Exemplo(s) de Nota(s) de Aplicação: 
-                        td
-                            textarea(
-                                cols="72"
-                                lines="5"
-                                v-model="newExAppNote"
-                                @keyup.ctrl.enter="addNewExAppNote" 
-                            )
-                            button(@click="addNewExAppNote") Ok
-                                   
-                            ul
-                                li(v-for="(ex,index) in exAppNotes")
-                                    button(@click="exAppNotes.splice(index,1)") x
-                                    | {{ex}}
+
+                    //-NOTAS DE APLICAÇÃO
                     tr
                         td(style="padding-top:10px")
                             label Nota(s) de Aplicação: 
@@ -122,10 +70,30 @@ block corpo
                             )
                             button(@click="addNewAppNote") Ok
                                    
-                            ul
+                            ul(v-if="appNotes.length")
                                 li(v-for="(note,index) in appNotes")
                                     button(@click="appNotes.splice(index,1)") x
                                     | {{note}}
+                    
+                    //-EXEMPLOS DE NA
+                    tr
+                        td(style="padding-top:10px")
+                            label Exemplo(s) de Nota(s) de Aplicação: 
+                        td
+                            textarea(
+                                cols="72"
+                                lines="5"
+                                v-model="newExAppNote"
+                                @keyup.ctrl.enter="addNewExAppNote" 
+                            )
+                            button(@click="addNewExAppNote") Ok
+                       
+                            ul(v-if="exAppNotes.length")
+                                li(v-for="(ex,index) in exAppNotes")
+                                    button(@click="exAppNotes.splice(index,1)") x
+                                    | {{ex}}
+
+                    //-NOTAS DE EXCLUSÃO
                     tr
                         td(style="padding-top:10px")
                             label Nota(s) de Exclusão: 
@@ -138,10 +106,145 @@ block corpo
                             )
                             button(@click="addNewDelNote") Ok
                                    
-                            ul
+                            ul(v-if="delNotes.length")
                                 li(v-for="(note,index) in delNotes")
                                     button(@click="delNotes.splice(index,1)") x
                                     | {{note}}
+
+                    //-TIPO DE PROCESSO
+                    tr(v-if="type==3")
+                        td(style="padding-top:10px")
+                            label Tipo de Processo: 
+                        td
+                            input(
+                                type="radio"
+                                value="PC"
+                                v-model="procType"
+                            ) 
+                            |  Processo Comum
+                            br
+                            input(
+                                type="radio"
+                                value="PE"
+                                v-model="procType"
+                            )
+                            |  Processo Específico
+
+                    //-PROCESSO TRANSVERSAL
+                    tr(v-if="type==3")
+                        td(style="padding-top:10px")
+                            label Processo Transversal: 
+                        td
+                            input(
+                                type="radio"
+                                value="S"
+                                v-model="procTrans"
+                            ) 
+                            |  Sim
+                            br
+                            input(
+                                type="radio"
+                                value="N"
+                                v-model="procTrans"
+                            )
+                            |  Não
+
+                    //-DONOS
+                    tr(v-if="type==3 && orgsReady")
+                        td(style="padding-top:10px")
+                            label Dono(s): 
+                        td
+                            select( v-model="newOwner")
+                                option(v-for="(o,index) in orgList" :value="o")
+                                    | {{ o.Sigla }}
+                            button(
+                                @click="ownerList.push(newOwner)"
+                            ) +
+
+                            ul(v-if="ownerList")
+                                li(v-for="(o,index) in ownerList")
+                                    | {{ o.Sigla }} - {{ o.Nome }}
+                                    button(
+                                        @click="ownerList.splice(index,1)"
+                                    ) x
+
+                    //-PARTICIPANTES
+                    tr(v-if="type==3 && procTrans=='S'")
+                        td(style="padding-top:10px")
+                            label Participantes: 
+                        td
+                            table
+                                tr
+                                    td
+                                        select( v-model="newParticipantType")
+                                            option(v-for="key in Object.keys(participants)")
+                                                | {{ key }}
+                                        select( v-model="newParticipant")
+                                            option(v-for="(o,index) in orgList" :value="o")
+                                                | {{ o.Sigla }}
+                                        button(
+                                            @click="participants[newParticipantType].push(newParticipant)"
+                                        ) +
+                                tr
+                                    td
+                                        ul
+                                            li(v-for="key in Object.keys(participants)" v-if="participants[key].length>0")
+                                                b {{ key }}
+                                                    span(v-if="participants[key].length>1") es
+                                                ul
+                                                    li(v-for="(p, index) in participants[key]")
+                                                        | {{ p.Sigla }} - {{ p.Nome }}
+                                                        button(
+                                                            @click="participants[key].splice(index, 1)"
+                                                        ) x
+                    
+                    //-PROCESSOS RELACIONADOS
+                    tr(v-if="type==3 && classesReady")
+                        td(style="padding-top:10px")
+                            label Processos Relacionados: 
+                        td
+                            select( v-model="newRelProc")
+                                option(v-for="(c,index) in classList" :value="c")
+                                    | {{ c.Code }}
+                            button(
+                                @click="relProcs.push(newRelProc)"
+                            ) +
+
+                            ul(v-if="relProcs.length")
+                                li(v-for="(c,index) in relProcs")
+                                    | {{ c.Code }} - {{ c.Title }}
+                                    button(
+                                        @click="relProcs.splice(index, 1)"
+                                    ) x
+
+                    //-LEGISLAÇÕES                            
+                    tr(v-if="type==3 && legsReady")
+                        td(style="padding-top:10px")
+                            label Legislação(s): 
+                        td
+                            select( v-model="newLegislation")
+                                option(v-for="(l,index) in legList" :value="l")
+                                    | {{ l.Número }}
+                            button(
+                                @click="newLegList.push(newLegislation)"
+                            ) +
+
+                            ul(v-if="newLegList")
+                                li(v-for="(l,index) in newLegList")
+                                    | {{ l.Número }} - {{ l.Titulo }}
+                                    button(
+                                        @click="newLegList.splice(index,1)"
+                                    ) x
+
+                    //-STATUS
+                    tr
+                        td(style="padding-top:10px")
+                            label Status: 
+                        td
+                            input(
+                                size="70"
+                                v-model="status"
+                            )
                                     
             input.btn.btn-xs.btn-default.col-sm-2(
                 type="button" 
