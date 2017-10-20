@@ -73,7 +73,7 @@ block corpo
                             ul(v-if="appNotes.length")
                                 li(v-for="(note,index) in appNotes")
                                     button(@click="appNotes.splice(index,1)") x
-                                    | {{note}}
+                                    | {{note.Note}}
                     
                     //-EXEMPLOS DE NA
                     tr
@@ -109,7 +109,7 @@ block corpo
                             ul(v-if="delNotes.length")
                                 li(v-for="(note,index) in delNotes")
                                     button(@click="delNotes.splice(index,1)") x
-                                    | {{note}}
+                                    | {{note.Note}}
 
                     //-TIPO DE PROCESSO
                     tr(v-if="type==3")

@@ -738,54 +738,88 @@ module.exports = function (app) {
 
         //Create new organization
         function createClass(data) {
-            var id = "c"+data.code;
-            var type = "Classe_N"+data.level;
+            var id = "c"+data.Code;
+            var level = "Classe_N"+data.Level;
 
             var createQuery = `
                 INSERT DATA {
-                    clav:`+id+SPARQL` rdf:type owl:NamedIndividual ,
-                                           ${{clav: type}} ;
-                                  clav:classeStatus ${data.status} ;
-                                  clav:descricao `+'"'+data.description.replace(/\n/g,'\\n')+'"'+SPARQL` ;
-                                  clav:pertenceLC clav:lc1 ;
-                                  clav:titulo ${data.title} ;                    
+                    clav:`+id+` rdf:type owl:NamedIndividual ,
+                            clav:`+level+` ;
+                        clav:codigo "`+data.Code+`" ;
+                        clav:classeStatus "`+data.Status+`" ;
+                        clav:descricao "`+data.Description.replace(/\n/g,'\\n')+`" ;
+                        clav:pertenceLC clav:lc1 ;
+                        clav:titulo "`+data.Title+`" .                   
             `;
 
-            if(data.parent){
-                createQuery+='clav:temPai clav:'+data.parent+' ;\n';
+            if(data.Level>1){
+                createQuery+='clav:'+id+' clav:temPai clav:'+data.Parent+' .\n';
             }
             
-            if(data.owners){
-                for(var i=0;i<data.owners.length;i++){
-                    createQuery+='clav:temDono clav:'+data.owners[i].id+' ;\n';
+            if(data.AppNotes && data.DelNotes.length){
+                for(var i=0;i<data.AppNotes.length;i++){
+                    createQuery+=`
+                        clav:`+data.AppNotes[i].id+` rdf:type owl:NamedIndividual ,
+                                clav:NotaAplicacao ;
+                            clav:conteudo "`+data.AppNotes[i].Note.replace(/\n/g,'\\n')+`" .
+                    `; 
+                    createQuery+='clav:'+id+' clav:temNotaAplicacao clav:'+data.AppNotes[i].id+' .\n';
                 }
             }
             
-            if(data.legislations){
-                for(var i=0;i<data.legislations.length;i++){
-                    createQuery+='clav:temLegislacao clav:'+data.legislations[i].id+' ;\n';
+            if(data.ExAppNotes && data.ExAppNotes.length){
+                for(var i=0;i<data.ExAppNotes.length;i++){
+                    createQuery+='clav:'+id+' clav:exemploNA "'+data.ExAppNotes[i].replace(/\n/g,'\\n')+'" .\n';
                 }
-            }
-            
-            if(data.exAppNotes){
-                for(var i=0;i<data.exAppNotes.length;i++){
-                    createQuery+='clav:exemploNA "'+data.exAppNotes[i].replace(/\n/g,'\\n')+'" ;\n';
+            }  
+
+            if(data.DelNotes && data.DelNotes.length){
+                for(var i=0;i<data.DelNotes.length;i++){
+                    createQuery+=`
+                        clav:`+data.DelNotes[i].id+` rdf:type owl:NamedIndividual ,
+                                clav:NotaExclusao ;
+                            clav:conteudo "`+data.DelNotes[i].Note.replace(/\n/g,'\\n')+`" .
+                    `; 
+                    createQuery+='clav:'+id+' clav:temNotaExclusao clav:'+data.DelNotes[i].id+' .\n';
                 }
             }
 
-            if(data.appNotes){
-                for(var i=0;i<data.appNotes.length;i++){
-                    createQuery+='clav:temNotaAplicacao clav:'+data.appNotes[i]+' ;\n';
-                }
-            }    
+            if(data.Level==3 && data.Type){
+                createQuery+='clav:'+id+' clav:processoTipo "'+data.ProcType+'" .\n';
+            }
+
+            if(data.Level==3 && data.Trans){
+                createQuery+='clav:'+id+' clav:processoTransversal "'+data.ProcTrans+'" .\n';
+            }
             
-            if(data.delNotes){
-                for(var i=0;i<data.delNotes.length;i++){
-                    createQuery+='clav:temNotaExclusao clav:'+data.delNotes[i]+' ;\n';
+            if(data.Level==3 && data.Owners && data.Owners.length){
+                for(var i=0;i<data.Owners.length;i++){
+                    createQuery+='clav:'+id+' clav:temDono clav:'+data.Owners[i].id+' .\n';
                 }
             }
 
-            createQuery+='clav:codigo "'+data.code+'" .\n';
+            if(data.Level==3 && data.Trans=='S' && data.Participants){
+                var keys = Object.keys(data.Participants);
+
+                for(var k=0;k<keys.length;k++){
+                    for(var i=0;i<data.Participants[keys[k]].length;i++){
+                        createQuery+='clav:'+id+' clav:temParticipante'+keys[k]+' clav:'+data.Participants[keys[k]][i].id+' .\n';
+                    }
+                }
+            }
+
+            if(data.Level==3 && data.RelProcs && data.RelProcs.length){
+                for(var i=0;i<data.RelProcs.length;i++){
+                    createQuery+='clav:'+id+' clav:temRelProc clav:'+data.RelProcs[i].id+' .\n';
+                    createQuery+='clav:'+data.RelProcs[i].id+' clav:temRelProc clav:'+id+' .\n';
+                }
+            }
+            
+            if(data.Legislations && data.Legislations.length){
+                for(var i=0;i<data.Legislations.length;i++){
+                    createQuery+='clav:temLegislacao clav:'+data.Legislations[i].id+' ;\n';
+                }
+            }
 
             createQuery+='}';
 

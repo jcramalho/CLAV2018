@@ -72,10 +72,10 @@ var newClass = new Vue({
         },
         code: function () {
             if(this.type>1){
-                if(this.code.indexOf(this.parent) != 0){
+                if(this.code.indexOf(this.parent.slice(1, this.parent.length)) != 0){
                     this.code=this.parent.slice(1, this.parent.length)+".";
                 }
-                if(this.code[this.parent.length]!='.'){
+                if(this.code[this.parent.length-1]!='.'){
                     this.code=this.parent.slice(1, this.parent.length)+".";   
                 }
             }
@@ -252,17 +252,21 @@ var newClass = new Vue({
             }
 
             var dataObj = {
-                Level: this.type,
-                Parent: this.parent,
-                Code: this.code,
-                Title: this.title,
-                Status: this.status,
-                Owners: this.ownerList,
-                Legislations: this.newLegList,
-                Description: this.description,
-                ExAppNotes: this.exAppNotes,
-                AppNotes: this.appNotes,
-                DelNotes: this.delNotes,
+                Level: this.type,               //
+                Parent: this.parent,            //
+                Code: this.code,                //
+                Title: this.title,              //
+                Description: this.description,  //
+                AppNotes: this.appNotes,        //
+                ExAppNotes: this.exAppNotes,    //
+                DelNotes: this.delNotes,        //
+                Type: this.procType,            //
+                Trans: this.procTrans,          //
+                Owners: this.ownerList,         //
+                Participants: this.participants,//
+                RelProcs: this.relProcs,        //
+                Status: this.status,            //
+                Legislations: this.newLegList,  //
             };
 
             this.$http.post('/createClass',dataObj,{
