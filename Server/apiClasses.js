@@ -749,7 +749,7 @@ module.exports = function (app) {
         .catch(error => console.error(error));    
     })
 
-    //Deletes a class
+    //Deletes a class 
     app.post('/deleteClass', function (req, res) {
         const { SparqlClient, SPARQL } = require('sparql-client-2');
 
