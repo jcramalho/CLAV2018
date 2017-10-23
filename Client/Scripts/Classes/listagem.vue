@@ -59,9 +59,10 @@ var classes = new Vue({
             window.location.href = '/classe?id=c'+params.rowData[0];
         },
         parse: function(){
-            var temp={content:"",sublevel:false};
             // parsing the JSON
             for (var i=0; i<this.content.length; i++) {
+                var temp={content:"",sublevel:false};
+                
                 var id= this.content[i].id.value.replace(/[^#]+#(.*)/,'$1');
                 var code= this.content[i].Code.value;
                 var title= this.content[i].Title.value;

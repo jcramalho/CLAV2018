@@ -7,43 +7,43 @@ var newClass = new Vue({
     data: {
         type: 1,
 
-        parent: "",
-        parents: [],
+        parent: null,
+        parents: null,
         parentsReady: false,
 
-        code: "",
+        code: null,
         
-        title: "",
+        title: null,
         
-        newOwner: "",
+        newOwner: null,
         ownerList: [],
-        orgList: [],
+        orgList: null,
         orgsReady: false,
         
-        newLegislation: "",
+        newLegislation: null,
         newLegList: [],
-        legList: [],
+        legList: null,
         legsReady: false,
         
-        description: "",
+        description: null,
         
-        newExAppNote: "",
+        newExAppNote: null,
         exAppNotes: [],
         
-        newAppNote: "",
+        newAppNote: null,
         appNotes: [],
         
-        newDelNote: "",
+        newDelNote: null,
         delNotes: [],
         
-        status: "",
+        status: null,
         
-        procType: "",
+        procType: null,
 
-        procTrans: "",
+        procTrans: null,
 
-        newParticipantType: "",
-        newParticipant: "",
+        newParticipantType: null,
+        newParticipant: null,
         participants: {
             Apreciador: [],
             Assessor: [],
@@ -53,16 +53,16 @@ var newClass = new Vue({
             Iniciador: [],
         },
 
-        newRelProc: "",
+        newRelProc: null,
         relProcs: [],
-        classList: [],
+        classList: null,
         classesReady: false,
 
-        message: "",
+        message: null,
     },
     watch: {
         parent: function () {
-            this.code = this.parent.slice(1, this.parent.length);
+            this.code = this.parent.slice(1, this.parent.length)+".";
         },
         type: function () {
             this.parent = "";
@@ -78,9 +78,6 @@ var newClass = new Vue({
                 if(this.code[this.parent.length-1]!='.'){
                     this.code=this.parent.slice(1, this.parent.length)+".";   
                 }
-            }
-            else{
-                //if(this.code)
             }
         }
     },
@@ -219,6 +216,126 @@ var newClass = new Vue({
                 console.error(error);
             });
         },
+        checkready: function (dataObj){
+            if(!this.code.match(/^([0-9]+\.)*[0-9]+$/)){
+                this.message="Formato do código errado!";
+                return false;
+            }
+
+            if(this.type==1){
+                if(this.code && this.title){
+                    dataObj = {
+                        Level: this.type,               //
+                        Parent: null,                   //
+                        Code: this.code,                //
+                        Title: this.title,              //
+                        Description: this.description,  //
+                        AppNotes: this.appNotes,        //
+                        ExAppNotes: this.exAppNotes,    //
+                        DelNotes: this.delNotes,        //
+                        Type: null,                     //
+                        Trans: null,                    //
+                        Owners: null,                   //
+                        Participants: null,             //
+                        RelProcs: null,                 //
+                        Status: this.status,            //
+                        Legislations: null,             //
+                    };
+
+                    return dataObj;
+                }
+                else{
+                    this.message="Preencher campos obrigatórios!";
+                    return false;
+                }
+            }
+            else{
+                if(this.parent && this.code && this.title){
+                    if(this.type==3){
+                        if(this.procTrans=='S'){
+                            var keys = Object.keys(this.participants);
+                            var check=0;
+
+                            for (var k = 0; k < keys.length; k++) {
+                                check+=this.participants[keys[k]].length;
+                            }
+
+                            if(check==0){
+                                this.message="Um processo transversal tem de ter pelo menos um participante!";
+                                return false;
+                            }
+                            else{
+                                dataObj = {
+                                    Level: this.type,               //
+                                    Parent: this.parent,            //
+                                    Code: this.code,                //
+                                    Title: this.title,              //
+                                    Description: this.description,  //
+                                    AppNotes: this.appNotes,        //
+                                    ExAppNotes: this.exAppNotes,    //
+                                    DelNotes: this.delNotes,        //
+                                    Type: this.procType,            //
+                                    Trans: this.procTrans,          //
+                                    Owners: this.ownerList,         //
+                                    Participants: this.participants,//
+                                    RelProcs: this.relProcs,        //
+                                    Status: this.status,            //
+                                    Legislations: this.newLegList,  //
+                                };
+
+                                return dataObj;
+                            }
+                        }
+                        else{
+                            dataObj = {
+                                Level: this.type,               //
+                                Parent: this.parent,            //
+                                Code: this.code,                //
+                                Title: this.title,              //
+                                Description: this.description,  //
+                                AppNotes: this.appNotes,        //
+                                ExAppNotes: this.exAppNotes,    //
+                                DelNotes: this.delNotes,        //
+                                Type: this.procType,            //
+                                Trans: this.procTrans,          //
+                                Owners: this.ownerList,         //
+                                Participants: null,             //
+                                RelProcs: this.relProcs,        //
+                                Status: this.status,            //
+                                Legislations: this.newLegList,  //
+                            };
+
+                            return dataObj;
+                        }
+                    }
+                    else {
+                        dataObj = {
+                            Level: this.type,               //
+                            Parent: this.parent,            //
+                            Code: this.code,                //
+                            Title: this.title,              //
+                            Description: this.description,  //
+                            AppNotes: this.appNotes,        //
+                            ExAppNotes: this.exAppNotes,    //
+                            DelNotes: this.delNotes,        //
+                            Type: null,                     //
+                            Trans: null,                    //
+                            Owners: null,                   //
+                            Participants: null,             //
+                            RelProcs: null,                 //
+                            Status: this.status,            //
+                            Legislations: null,             //
+                        };
+
+                        return dataObj;
+                    }
+                }
+                else{
+                    this.message="Preencher campos obrigatórios!";
+                    return false;
+                }
+            }
+        },
         createDelNotes: function (code, list) {
             var dataObj = [];
             
@@ -244,42 +361,55 @@ var newClass = new Vue({
             });
         },
         add: function () {
-            for (var i = 0; i < this.appNotes.length; i++) {
-                this.appNotes[i].id = "na_c" + this.code + "_" + (i + 1);
+
+            if(this.appNotes){
+                for (var i = 0; i < this.appNotes.length; i++) {
+                    this.appNotes[i].id = "na_c" + this.code + "_" + (i + 1);
+                }
             }
-            for (var i = 0; i < this.delNotes.length; i++) {
-                this.delNotes[i].id = "ne_c" + this.code + "_" + (i + 1);
+            
+            if(this.delNotes){
+                for (var i = 0; i < this.delNotes.length; i++) {
+                    this.delNotes[i].id = "ne_c" + this.code + "_" + (i + 1);
+                }
             }
 
             var dataObj = {
-                Level: this.type,               //
-                Parent: this.parent,            //
-                Code: this.code,                //
-                Title: this.title,              //
-                Description: this.description,  //
-                AppNotes: this.appNotes,        //
-                ExAppNotes: this.exAppNotes,    //
-                DelNotes: this.delNotes,        //
-                Type: this.procType,            //
-                Trans: this.procTrans,          //
-                Owners: this.ownerList,         //
-                Participants: this.participants,//
-                RelProcs: this.relProcs,        //
-                Status: this.status,            //
-                Legislations: this.newLegList,  //
+                Level: null,        //
+                Parent: null,       //
+                Code: null,         //
+                Title: null,        //
+                Description: null,  //
+                AppNotes: null,     //
+                ExAppNotes: null,   //
+                DelNotes: null,     //
+                Type: null,         //
+                Trans: null,        //
+                Owners: null,       //
+                Participants: null, //
+                RelProcs: null,     //
+                Status: null,       //
+                Legislations: null, //
             };
 
-            this.$http.post('/createClass',dataObj,{
-                headers: {
-                    'content-type' : 'application/json'
-                }
-            })
-            .then( function(response) { 
-                this.message = response.body;
-            })
-            .catch( function(error) { 
-                console.error(error); 
-            });
+            if(dataObj=this.checkready(dataObj)){        
+                
+                this.$http.post('/createClass',dataObj,{
+                    headers: {
+                        'content-type' : 'application/json'
+                    }
+                })
+                .then( function(response) { 
+                    this.message = response.body;
+                    
+                    if(response.body=="Classe Inserida!"){
+                        window.location.href = '/classe?id=c'+this.code;
+                    }
+                })
+                .catch( function(error) { 
+                    console.error(error); 
+                });
+            }
         }
     },
     created: function () {

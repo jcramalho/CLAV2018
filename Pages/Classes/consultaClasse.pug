@@ -5,7 +5,7 @@ block corpo
             h1.page-header {{ clas.Title }}  
         .panel-body
             .form-group
-                table.consulta
+                table.consulta(v-if="pageReady")
                     
                     //- CLASSE PAI
                     tr(v-if="clas.Level>1")
@@ -81,7 +81,7 @@ block corpo
                                                 button(@click="newClass.AppNotes.splice(index,1)") x
                                                 | {{note.Nota}}
                         td(v-else style="width:80%")
-                            ul(style="padding-left:20px")
+                            ul(style="padding-left:20px" v-if="appNotesReady")
                                 li(v-for="note in clas.AppNotes")
                                     | {{note.Nota}}
                         td(style="width:10%")
@@ -112,7 +112,7 @@ block corpo
                                                 button(@click="newClass.ExAppNotes.splice(index,1)") x
                                                 | {{note.Exemplo}}
                         td(v-else style="width:80%")
-                            ul(style="padding-left:20px")
+                            ul(style="padding-left:20px" v-if="exAppNotesReady")
                                 li(v-for="note in clas.ExAppNotes")
                                     | {{note.Exemplo}}
                         td(style="width:10%")
@@ -143,7 +143,7 @@ block corpo
                                                 button(@click="newClass.DelNotes.splice(index,1)") x
                                                 | {{note.Nota}}
                         td(v-else style="width:80%")
-                            ul(style="padding-left:20px")
+                            ul(style="padding-left:20px" v-if="delNotesReady")
                                 li(v-for="note in clas.DelNotes")
                                     | {{note.Nota}}
                         td(style="width:10%")

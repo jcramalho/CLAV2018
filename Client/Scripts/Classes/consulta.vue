@@ -71,6 +71,7 @@ var classe = new Vue({
         delNotesReady: false,
         classesReady: false,
         relProcsReady: false,
+        pageReady: false,
     },
     methods: {
         getParameterByName: function (name, url) {
@@ -180,7 +181,7 @@ var classe = new Vue({
                     this.clas.DelNotes = JSON.parse(JSON.stringify(this.parse(notesToParse, keys)));
                     this.newClass.DelNotes = JSON.parse(JSON.stringify(this.parse(notesToParse, keys)));
 
-                    this.DelNotesReady = true;
+                    this.delNotesReady = true;
                 })
                 .catch(function (error) {
                     console.error(error);
@@ -369,7 +370,7 @@ var classe = new Vue({
         addNewAppNote: function () {
             function checkID(id, list) {
                 for(var i=0;i<list.length;i++){
-                    if(id==list.id.replace(/na_.*_([0-9])/, '$1')){
+                    if(id==list[i].id.replace(/na_.*_([0-9])/, '$1')){
                         return false;
                     }
                 }
@@ -377,17 +378,24 @@ var classe = new Vue({
             }
 
             var newID = 1;
-            for (var i = 0; i < this.clas.AppNotes.length; i++) {
-                var appID = parseInt(this.clas.AppNotes[i].id.replace(/na_.*_([0-9])/, '$1'));
+            if(this.clas.AppNotes && this.clas.AppNotes.length){
+                for (var i = 0; i < this.clas.AppNotes.length; i++) {
+                    var appID = parseInt(this.clas.AppNotes[i].id.replace(/na_.*_([0-9])/, '$1'));
 
-                if (newID !=appID){
-                    if(checkID(newID,this.newClass.AppNotes)){
-                        break;
+                    if (newID !=appID){
+                        if(checkID(newID,this.newClass.AppNotes)){
+                            break;
+                        }
                     }
+                    newID++;
                 }
-                newID++;
+                while(!checkID(newID,this.newClass.AppNotes)){
+                    newID++;
+                }
+            } else {
+                newID= this.newClass.AppNotes.length+1;
             }
-            
+
             if (this.newClass.AppNote) {
                 this.newClass.AppNotes.push({
                     id: "na_"+this.id+"_"+newID,
@@ -399,28 +407,35 @@ var classe = new Vue({
         addNewDelNote: function () {
             function checkID(id, list) {
                 for(var i=0;i<list.length;i++){
-                    if(id==list.id.replace(/na_.*_([0-9])/, '$1')){
+                    if(id==list[i].id.replace(/ne_.*_([0-9])/, '$1')){
                         return false;
                     }
                 }
                 return true;
             }
 
-            var newID = 1;
-            for (var i = 0; i < this.clas.DelNotes.length; i++) {
-                var delID = parseInt(this.clas.DellNotes[i].id.replace(/na_.*_([0-9])/, '$1'));
-
-                if (newID !=delID){
-                    if(checkID(newID,this.newClass.DelNotes)){
-                        break;
+            var newID=1;
+            if(this.clas.DelNotes && this.clas.DelNotes.length){
+                for (var i = 0; i < this.clas.DelNotes.length; i++) {
+                    var delID = parseInt(this.clas.DelNotes[i].id.replace(/ne_.*_([0-9])/, '$1'));
+                    
+                    if (newID !=delID){
+                        if(checkID(newID,this.newClass.DelNotes)){
+                            break;
+                        }
                     }
+                    newID++;
                 }
-                newID++;
+                while(!checkID(newID,this.newClass.DelNotes)){
+                    newID++;
+                }
+            } else {
+                newID=this.newClass.DelNotes.length+1;
             }
             
             if (this.newClass.DelNote) {
                 this.newClass.DelNotes.push({
-                    id: "na_"+this.id+"_"+newID,
+                    id: "ne_"+this.id+"_"+newID,
                     Nota: this.newClass.DelNote 
                 });
                 this.newClass.DelNote = '';
@@ -477,7 +492,6 @@ var classe = new Vue({
                         }
                     }
 
-                    console.log(r);
                     return r;
                 });
             }
@@ -607,18 +621,15 @@ var classe = new Vue({
             this.message = "";
             this.delConfirm = false;
         },
-        deleteClass: function () {
-            console.log("delete");
-            this.message = "It no wurk yet!";
-            /*
+        deleteClass: function () {    
             this.$http.post('/deleteClass',{id: this.id})
             .then( function(response) { 
                 this.message = response.body;
+                window.location.href = '/classes';
             })
             .catch( function(error) { 
                 console.error(error); 
             });
-            */
         }
     },
     created: function () {
@@ -633,6 +644,7 @@ var classe = new Vue({
             })
             .then(function () {
                 this.prepData(content[0]);
+                this.pageReady=true;
             })
             .catch(function (error) {
                 console.error(error);

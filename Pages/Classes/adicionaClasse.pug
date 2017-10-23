@@ -70,7 +70,7 @@ block corpo
                             )
                             button(@click="addNewAppNote") Ok
                                    
-                            ul(v-if="appNotes.length")
+                            ul(v-if="appNotes && appNotes.length")
                                 li(v-for="(note,index) in appNotes")
                                     button(@click="appNotes.splice(index,1)") x
                                     | {{note.Note}}
@@ -88,7 +88,7 @@ block corpo
                             )
                             button(@click="addNewExAppNote") Ok
                        
-                            ul(v-if="exAppNotes.length")
+                            ul(v-if="exAppNotes && exAppNotes.length")
                                 li(v-for="(ex,index) in exAppNotes")
                                     button(@click="exAppNotes.splice(index,1)") x
                                     | {{ex}}
@@ -106,7 +106,7 @@ block corpo
                             )
                             button(@click="addNewDelNote") Ok
                                    
-                            ul(v-if="delNotes.length")
+                            ul(v-if="delNotes && delNotes.length")
                                 li(v-for="(note,index) in delNotes")
                                     button(@click="delNotes.splice(index,1)") x
                                     | {{note.Note}}
@@ -188,9 +188,9 @@ block corpo
                                 tr
                                     td
                                         ul
-                                            li(v-for="key in Object.keys(participants)" v-if="participants[key].length>0")
+                                            li(v-for="key in Object.keys(participants)" v-if="participants[key] && participants[key].length>0")
                                                 b {{ key }}
-                                                    span(v-if="participants[key].length>1") es
+                                                    span(v-if="participants[key] && participants[key].length>1") es
                                                 ul
                                                     li(v-for="(p, index) in participants[key]")
                                                         | {{ p.Sigla }} - {{ p.Nome }}
@@ -210,7 +210,7 @@ block corpo
                                 @click="relProcs.push(newRelProc)"
                             ) +
 
-                            ul(v-if="relProcs.length")
+                            ul(v-if="relProcs && relProcs.length")
                                 li(v-for="(c,index) in relProcs")
                                     | {{ c.Code }} - {{ c.Title }}
                                     button(
