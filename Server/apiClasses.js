@@ -202,6 +202,7 @@ module.exports = function (app) {
                     clav:`+ id + ` clav:temLegislacao ?id.
                     ?id clav:diplomaNumero ?Número;
                         clav:diplomaTitulo ?Titulo;
+                        clav:diplomaTipo ?Tipo;
                 }`;
 
             console.log(fetchQuery);

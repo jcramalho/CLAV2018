@@ -1,0 +1,12 @@
+TODOS:
+    -passar GETs para POSTs e PUTs
+    
+    -filtrar opções em edição de legislações/organizações/classes relacionadas
+    -ordenar opções " " 
+
+    -"esconder" listas de relações
+    -ordenar listas de relações
+
+    -tabelas de seleção
+
+    -deploy no servidor

@@ -119,7 +119,7 @@ var classe = new Vue({
         },
         loadLegList: function () {
             var legsToParse = [];
-            var keys = ["id", "Número", "Titulo"];
+            var keys = ["id","Tipo", "Número", "Titulo"];
 
             this.$http.get("/legs")
                 .then(function (response) {
@@ -135,7 +135,7 @@ var classe = new Vue({
         },
         loadLegs: function () {
             var legsToParse = [];
-            var keys = ["id", "Número", "Titulo"];
+            var keys = ["id","Tipo", "Número", "Titulo"];
 
             this.$http.get("/legsClass?id=" + this.id)
                 .then(function (response) {

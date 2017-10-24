@@ -5,7 +5,8 @@ block corpo
             h1.page-header {{ orgName }}  
         .panel-body
             .form-group
-                table
+                table.consulta
+                    //-NOME
                     tr
                         td(style="width:10%")
                             label Nome: 
@@ -23,6 +24,8 @@ block corpo
                                 type="checkbox"
                                 v-model="editName"
                             )
+                    
+                    //- SIGLA
                     tr
                         td
                             label Sigla: 
@@ -40,6 +43,90 @@ block corpo
                                 type="checkbox"
                                 v-model="editInitials"
                             )
+            
+                    //- DOMINIO
+                    tr
+                        td(style="width:10%")
+                            label Domínio:
+                        //- edição
+                            td(v-if="edit.Owners" style="width:80%")
+                            table
+                                tr
+                                    td
+                                        select( v-model="newClass.Owner")
+                                            option(v-for="(o,index) in orgList" :value="o")
+                                                | {{ o.Sigla }}
+                                        button(
+                                            @click="addOwner(orgList.indexOf(newClass.Owner))"
+                                        ) +
+                                tr(v-if="clas.Owners")
+                                    td
+                                        ul(style="padding-left:20px")
+                                            li(v-for="(o,index) in newClass.Owners")
+                                                | {{ o.Sigla }}
+                                                button(
+                                                    @click="remOwner(index)"
+                                                ) x
+                        td(style="width:80%")
+                            ul(v-if="domainReady" style="padding-left:20px")
+                                li(v-for="c in domain")
+                                    a(:href="'/classe?id='+c.id") {{ c.Codigo }}
+                                    |  - {{ c.Titulo }}
+                        
+                        td(style="width:10%")
+                            label(style="padding-right:5px") Editar
+                            input(
+                                type="checkbox"
+                                v-model="editDomain"
+                            )
+
+                    //- PARTICIPAÇÕES
+                    tr
+                        td(style="width:10%")
+                            label Participações:    
+                        //- edição
+                            td(v-if="edit.Participants" style="width:80%")
+                            table
+                                tr
+                                    td
+                                        select( v-model="newClass.ParticipantType")
+                                            option(v-for="key in Object.keys(clas.Participants)")
+                                                | {{ key }}
+                                        select( v-model="newClass.Participant")
+                                            option(v-for="(o,index) in orgList" :value="o")
+                                                | {{ o.Sigla }}
+                                        button(
+                                            @click="addParticipant()"
+                                        ) +
+                                tr
+                                    td
+                                        ul(v-if="relProcsReady" style="padding-left:20px")
+                                            li(v-for="key in Object.keys(newClass.Participants)" v-if="newClass.Participants[key].length>0")
+                                                b {{ key }}
+                                                    span(v-if="newClass.Participants[key].length>1") es
+                                                ul
+                                                    li(v-for="(p, index) in newClass.Participants[key]")
+                                                        | {{ p.Sigla }} - {{ p.Nome }}
+                                                        button(
+                                                            @click="remParticipant(key, index)"
+                                                        ) x
+                        td(style="width:80%")
+                            ul(v-if="partsReady" style="padding-left:20px")
+                                li(v-for="key in Object.keys(participations)" v-if="participations[key].length>0")
+                                    b Como {{ key }}:
+                                    ul
+                                        li(v-for="p in participations[key]")
+                                            a(:href="'/classe?id='+p.id") {{ p.Codigo }}
+                                            |  - {{ p.Titulo }}
+
+                        td(style="width:10%")
+                            label(style="padding-right:5px") Editar
+                            input(
+                                type="checkbox"
+                                v-model="editParts"
+                            )
+
+
             input.btn.btn-xs.btn-default.col-sm-1(
                 type="button" 
                 @click="update" 

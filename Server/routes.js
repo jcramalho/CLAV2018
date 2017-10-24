@@ -4,7 +4,7 @@ module.exports = function(app) {
         res.render('Pages/pugdex');
     });
 
-    app.get('/catalogo', function(req, res) {
+    app.get('/organizacoes', function(req, res) {
         res.render('Pages/Orgs/organizacoes');
     });
 

@@ -67,6 +67,84 @@ module.exports = function (app) {
             });
     })
 
+    app.get('/domainOrg', function (req, res) {
+        const { SparqlClient, SPARQL } = require('sparql-client-2');
+        var url = require('url');
+
+        const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV')
+            .register({
+                rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+                clav: 'http://jcr.di.uminho.pt/m51-clav#',
+            });
+
+        function fetchDomain(id) {
+            var fetchQuery= `
+                SELECT * WHERE {
+                    ?id clav:temDono clav:`+id+` .
+                    ?id clav:codigo ?Codigo;
+                        clav:titulo ?Titulo;
+                }`
+            ;
+
+            return client.query(fetchQuery)
+                .execute()
+                .then(response => Promise.resolve(response.results.bindings))
+                .catch(function (error) {
+                    console.error(error);
+            });
+        }
+
+        var parts = url.parse(req.url, true);
+        var id = parts.query.id;
+
+        //Answer the request
+        fetchDomain(id).then(org => res.send(org))
+            .catch(function (error) {
+                console.error(error);
+            });
+    })
+
+    app.get('/partsOrg', function (req, res) {
+        const { SparqlClient, SPARQL } = require('sparql-client-2');
+        var url = require('url');
+
+        const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV')
+            .register({
+                rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+                clav: 'http://jcr.di.uminho.pt/m51-clav#',
+            });
+
+        function fetchParts(id) {
+            var fetchQuery= `
+                select * where { 
+                    ?id clav:temParticipante clav:`+id+` ;
+                        ?Type clav:`+id+` ;
+                    
+                        clav:titulo ?Titulo ;
+                        clav:codigo ?Codigo .
+                    
+                    filter (?Type!=clav:temParticipante && ?Type!=clav:temDono)
+                }`
+            ;
+
+            return client.query(fetchQuery)
+                .execute()
+                .then(response => Promise.resolve(response.results.bindings))
+                .catch(function (error) {
+                    console.error(error);
+            });
+        }
+
+        var parts = url.parse(req.url, true);
+        var id = parts.query.id;
+
+        //Answer the request
+        fetchParts(id).then(org => res.send(org))
+            .catch(function (error) {
+                console.error(error);
+            });
+    })
+
     app.get('/createOrg', function (req, res) {
         const { SparqlClient, SPARQL } = require('sparql-client-2');
         var url = require('url');

@@ -355,7 +355,7 @@ block corpo
                                     td
                                         select( v-model="newClass.Leg")
                                             option(v-for="(l,index) in legList" :value="l")
-                                                | {{ l.Número }}
+                                                | {{l.Tipo}} - {{ l.Número }}
                                         button(
                                             @click="addLeg(legList.indexOf(newClass.Leg))"
                                         ) +
@@ -363,13 +363,14 @@ block corpo
                                     td
                                         ul(style="padding-left:20px")
                                             li(v-for="(l,index) in newClass.Legs")
-                                                | {{ l.Número }} - {{ l.Titulo }}
+                                                | {{ l.Tipo }} - {{ l.Número }} - {{ l.Titulo }}
                                                 button(
                                                     @click="remLeg(index)"
                                                 ) x
                         td(v-else style="width:80%")
                             ul(v-if="legsReady" style="padding-left:20px")
                                 li(v-for="l in clas.Legs")
+                                    | {{ l.Tipo }} - 
                                     a(:href="'/legislacao?id='+l.id") {{ l.Número }} 
                                     | - {{ l.Titulo }}
                         td(style="width:10%")
