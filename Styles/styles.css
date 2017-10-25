@@ -88,3 +88,7 @@
 .custom-select span {
     margin: 0px !important;
 }
+
+.is-collapsed li:nth-child(n+5) {
+    display: none;
+}

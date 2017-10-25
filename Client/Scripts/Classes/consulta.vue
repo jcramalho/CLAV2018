@@ -95,10 +95,12 @@ var classe = new Vue({
                 .then(function () {
                     this.orgList = this.parse(orgsToParse, keys).map(function(item){
                         return {
-                            label: item.Sigla,
+                            label: item.Sigla+"",
                             value: item,
                         }
-                    });
+                    }).sort(function (a, b) {
+                        return a.label.localeCompare(b.label);
+                    });;
 
                     this.orgsReady = true;
                 })
@@ -139,6 +141,8 @@ var classe = new Vue({
                             label: item.Tipo+" - "+item.Número,
                             value: item,
                         }
+                    }).sort(function (a, b) {
+                        return a.label.localeCompare(b.label);
                     });
                     
                     this.legListReady = true;
@@ -233,6 +237,8 @@ var classe = new Vue({
                             label: item.Code+" - "+item.Title,
                             value: item,
                         }
+                    }).sort(function (a, b) {
+                        return a.label.localeCompare(b.label);
                     });
                     
                     this.classesReady = true;

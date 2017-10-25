@@ -1,14 +1,9 @@
 TODOS:
     -passar GETs para POSTs e PUTs
 
-    -filtrar subniveis da tabela de classes
-    
-    -filtrar opções em edição de legislações/organizações/classes relacionadas
-    -ordenar opções " " 
+    -filtrar subníveis da tabela de classes
 
-    -"esconder" listas de relações
-    -ordenar listas de relações
-
-    -tabelas de seleção
+    -checkbox na tabela cascata
+    -implementar tabelas de seleção
 
     -deploy no servidor

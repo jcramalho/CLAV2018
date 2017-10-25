@@ -20,9 +20,19 @@ var org = new Vue({
         newParticipations: [],
         partsReady: false,
         editParts: false,
+
+        partsCollapsed: {
+            Apreciador: true,
+            Assessor: true,
+            Comunicador: true,
+            Decisor: true,
+            Executor: true,
+            Iniciador: true,
+        },
+        domainCollapsed: true,
     },
     methods: {
-        getParameterByName: function(name, url) {
+        getParameterByName: function (name, url) {
             if (!url) url = window.location.href;
             name = name.replace(/[\[\]]/g, "\\$&");
             var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
@@ -30,7 +40,7 @@ var org = new Vue({
             if (!results) return null;
             if (!results[2]) return '';
             return decodeURIComponent(results[2].replace(/\+/g, " "));
-        },   
+        },
         loadDomain: function () {
             var classesToParse = [];
             var keys = ["id", "Codigo", "Titulo"];
@@ -67,9 +77,9 @@ var org = new Vue({
                     console.error(error);
                 });
         },
-        parse: function(){    
-            this.orgName=this.content[0].Nome.value;
-            this.orgInitials=this.content[0].Sigla.value;
+        parse: function () {
+            this.orgName = this.content[0].Nome.value;
+            this.orgInitials = this.content[0].Sigla.value;
         },
         parseList: function (content, keys) {
             var dest = [];
@@ -88,7 +98,9 @@ var org = new Vue({
                 dest[i] = JSON.parse(JSON.stringify(temp));
             }
 
-            return dest;
+            return dest.sort(function (a, b) {
+                return a.id.localeCompare(b.id);
+            });
         },
         parseParticipants: function (content, keys) {
             var dest = {
@@ -104,7 +116,7 @@ var org = new Vue({
             // parsing the JSON
             for (var i = 0; i < content.length; i++) {
                 for (var j = 0; j < keys.length; j++) {
-                    
+
                     temp[keys[j]] = content[i][keys[j]].value;
 
                     if (keys[j] == "id") {
@@ -116,58 +128,66 @@ var org = new Vue({
                 dest[type].push(JSON.parse(JSON.stringify(temp)));
             }
 
+            var types = Object.keys(dest);
+
+            for (var i = 0; i < types.length; i++) {
+                dest[types[i]] = dest[types[i]].sort(function (a, b) {
+                    return a.id.localeCompare(b.id);
+                });
+            }
+
             return dest;
         },
-        update: function(){
-            var args='?id='+this.id;
+        update: function () {
+            var args = '?id=' + this.id;
 
-            if(this.editName && this.newName){
-                args+='&name='+this.newName;
+            if (this.editName && this.newName) {
+                args += '&name=' + this.newName;
             }
-            if(this.editInitials && this.newInitials){
-                args+='&initials='+this.newInitials;
+            if (this.editInitials && this.newInitials) {
+                args += '&initials=' + this.newInitials;
             }
 
-            this.$http.get('/updateOrg'+args)
-            .then( function(response) { 
-                this.message = response.body;
-            })
-            .catch( function(error) { 
-                console.error(error); 
-            });
+            this.$http.get('/updateOrg' + args)
+                .then(function (response) {
+                    this.message = response.body;
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
         },
-        delReady: function(){
-            this.message="Tem a certeza que deseja apagar?";
-            this.delConfirm=true;
+        delReady: function () {
+            this.message = "Tem a certeza que deseja apagar?";
+            this.delConfirm = true;
         },
-        delNotReady: function(){
-            this.message= "";
-            this.delConfirm=false;
+        delNotReady: function () {
+            this.message = "";
+            this.delConfirm = false;
         },
-        deleteOrg: function(){
-            this.$http.get('/deleteOrg?id='+this.id)
-            .then( function(response) { 
-                this.message = response.body;
-            })
-            .catch( function(error) { 
-                console.error(error); 
-            });
-        } 
+        deleteOrg: function () {
+            this.$http.get('/deleteOrg?id=' + this.id)
+                .then(function (response) {
+                    this.message = response.body;
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        }
     },
-    created: function(){
-        this.id=this.getParameterByName('id');
+    created: function () {
+        this.id = this.getParameterByName('id');
 
-        this.$http.get("/singleOrg?id="+this.id)
-        .then( function(response) { 
-            this.content = response.body;
-        })
-        .then( function() {
-            this.loadDomain();
-            this.loadParticipations();
-            this.parse();
-        })
-        .catch( function(error) { 
-            console.error(error); 
-        });
+        this.$http.get("/singleOrg?id=" + this.id)
+            .then(function (response) {
+                this.content = response.body;
+            })
+            .then(function () {
+                this.loadDomain();
+                this.loadParticipations();
+                this.parse();
+            })
+            .catch(function (error) {
+                console.error(error);
+            });
     }
 })

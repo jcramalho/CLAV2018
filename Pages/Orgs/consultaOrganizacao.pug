@@ -68,10 +68,12 @@ block corpo
                                                     @click="remOwner(index)"
                                                 ) x
                         td(style="width:80%")
-                            ul(v-if="domainReady" style="padding-left:20px")
+                            ul(v-if="domainReady" style="padding-left:20px" :class="{'is-collapsed' : domainCollapsed }")
                                 li(v-for="c in domain")
                                     a(:href="'/classe?id='+c.id") {{ c.Codigo }}
                                     |  - {{ c.Titulo }}
+                            button(@click="domainCollapsed=!domainCollapsed" v-if="domain.length>4")
+                                | Mostrar mais...
                         
                         td(style="width:10%")
                             label(style="padding-right:5px") Editar
@@ -114,11 +116,12 @@ block corpo
                             ul(v-if="partsReady" style="padding-left:20px")
                                 li(v-for="key in Object.keys(participations)" v-if="participations[key].length>0")
                                     b Como {{ key }}:
-                                    ul
+                                    ul(:class="{'is-collapsed' : partsCollapsed[key] }")
                                         li(v-for="p in participations[key]")
                                             a(:href="'/classe?id='+p.id") {{ p.Codigo }}
                                             |  - {{ p.Titulo }}
-
+                                    button(@click="partsCollapsed[key]=!partsCollapsed[key]" v-if="participations[key].length>4")
+                                        | Mostrar mais...
                         td(style="width:10%")
                             label(style="padding-right:5px") Editar
                             input(
