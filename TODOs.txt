@@ -1,5 +1,7 @@
 TODOS:
     -passar GETs para POSTs e PUTs
+
+    -filtrar subniveis da tabela de classes
     
     -filtrar opções em edição de legislações/organizações/classes relacionadas
     -ordenar opções " " 
