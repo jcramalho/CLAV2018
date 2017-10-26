@@ -1,6 +1,4 @@
 TODOS:
-    -passar GETs para POSTs e PUTs
-
     -filtrar subníveis da tabela de classes
 
     -checkbox na tabela cascata

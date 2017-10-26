@@ -11,15 +11,21 @@ var org = new Vue({
         content: [],
         message: "",
         delConfirm: false,
+
         domain: [],
+        newClass: "",
         newDomain: [],
         domainReady: false,
         editDomain: false,
 
         participations: [],
+        newPartType: "",
+        newPart: "",
         newParticipations: [],
         partsReady: false,
         editParts: false,
+
+        classList: [],
 
         partsCollapsed: {
             Apreciador: true,
@@ -41,9 +47,33 @@ var org = new Vue({
             if (!results[2]) return '';
             return decodeURIComponent(results[2].replace(/\+/g, " "));
         },
+        loadClasses: function () {
+            var classesToParse = [];
+            var keys = ["id", "Code", "Title"];
+
+            this.$http.get("/classesn?level=3")
+                .then(function (response) {
+                    classesToParse = response.body;
+                })
+                .then(function () {
+                    this.classList = this.parseList(classesToParse, keys).map(function(item){
+                        return {
+                            label: item.Code+" - "+item.Title,
+                            value: item,
+                        }
+                    }).sort(function (a, b) {
+                        return a.label.localeCompare(b.label);
+                    });
+                    
+                    this.classesReady = true;
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        },
         loadDomain: function () {
             var classesToParse = [];
-            var keys = ["id", "Codigo", "Titulo"];
+            var keys = ["id", "Code", "Title"];
 
             this.$http.get("/domainOrg?id=" + this.id)
                 .then(function (response) {
@@ -61,7 +91,7 @@ var org = new Vue({
         },
         loadParticipations: function () {
             var partsToParse = [];
-            var keys = ['id', 'Titulo', 'Codigo'];
+            var keys = ['id', 'Title', 'Code'];
 
             this.$http.get("/partsOrg?id=" + this.id)
                 .then(function (response) {
@@ -139,22 +169,30 @@ var org = new Vue({
             return dest;
         },
         update: function () {
-            var args = '?id=' + this.id;
+            var dataObj={
+                id: this.id,
+                name: null,
+                initials: null,
+            }
 
             if (this.editName && this.newName) {
-                args += '&name=' + this.newName;
+                dataObj.name=this.newName;
             }
             if (this.editInitials && this.newInitials) {
-                args += '&initials=' + this.newInitials;
+                dataObj.initials=this.newInitials;
             }
 
-            this.$http.get('/updateOrg' + args)
-                .then(function (response) {
-                    this.message = response.body;
-                })
-                .catch(function (error) {
-                    console.error(error);
-                });
+            this.$http.put('/updateOrg',dataObj,{
+                headers: {
+                    'content-type' : 'application/json'
+                }
+            })
+            .then(function (response) {
+                this.message = response.body;
+            })
+            .catch(function (error) {
+                console.error(error);
+            });
         },
         delReady: function () {
             this.message = "Tem a certeza que deseja apagar?";
@@ -165,13 +203,14 @@ var org = new Vue({
             this.delConfirm = false;
         },
         deleteOrg: function () {
-            this.$http.get('/deleteOrg?id=' + this.id)
-                .then(function (response) {
-                    this.message = response.body;
-                })
-                .catch(function (error) {
-                    console.error(error);
-                });
+            this.$http.post('/deleteOrg',{id: this.id})
+            .then( function(response) { 
+                this.message = response.body;
+                window.location.href = '/organizacoes';
+            })
+            .catch( function(error) { 
+                console.error(error); 
+            });
         }
     },
     created: function () {
@@ -184,6 +223,7 @@ var org = new Vue({
             .then(function () {
                 this.loadDomain();
                 this.loadParticipations();
+                this.loadClasses();
                 this.parse();
             })
             .catch(function (error) {

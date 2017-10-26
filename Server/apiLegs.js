@@ -76,9 +76,8 @@ module.exports = function (app) {
             });
     })
 
-    app.get('/createLeg', function (req, res) {
+    app.post('/createLeg', function (req, res) {
         const { SparqlClient, SPARQL } = require('sparql-client-2');
-        var url = require('url');
 
         const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV', {
                 updateEndpoint: 'http://localhost:7200/repositories/M51-CLAV/statements'
@@ -135,23 +134,25 @@ module.exports = function (app) {
                         clav:diplomaNumero ${number} ;
                         clav:diplomaTipo ${type} ;
                         clav:diplomaTitulo ${title} ;
-                        clav:diplomaLink ${link} ;
+                        clav:diplomaLink ${link} .
                 }
             `;
+
+            console.log(createQuery);
 
             return client.query(createQuery).execute()
                 .then(response => Promise.resolve(response))
                 .catch(error => console.error("Error in create:\n" + error));
         }
 
-        //Parsing url to get parameters
-        var parts = url.parse(req.url, true);
-        var year = parts.query.year;
-        var date = parts.query.date;
-        var number = parts.query.number;
-        var type = parts.query.type;
-        var title = parts.query.title;
-        var link = parts.query.link;
+        //Parsing body to get parameters
+        var parts = req.body;
+        var year = parts.year;
+        var date = parts.date;
+        var number = parts.number;
+        var type = parts.type;
+        var title = parts.title;
+        var link = parts.link;
 
         
         //Executing queries
@@ -178,7 +179,7 @@ module.exports = function (app) {
             .catch(error => console.error("General error:\n" + error));
     })
     
-    app.get('/updateleg', function (req, res) {
+    app.put('/updateleg', function (req, res) {
         const { SparqlClient, SPARQL } = require('sparql-client-2');
         var url = require('url');
 
@@ -213,28 +214,28 @@ module.exports = function (app) {
             var wer= "";
             
             if (year) {
-                del+= SPARQL`${{clav: id}} clav:diplomaAno ?y .\n`;
-                ins+= SPARQL`${{clav: id}} clav:diplomaAno ${year} .\n`;
+                del+= `clav:`+id+` clav:diplomaAno ?y .\n`;
+                ins+= `clav:`+id+` clav:diplomaAno "`+year+`" .\n`;
             }
             if (date) {
-                del+= SPARQL`${{clav: id}} clav:diplomaData ?d .\n`;
-                ins+= SPARQL`${{clav: id}} clav:diplomaData ${date} .\n`;
+                del+= `clav:`+id+` clav:diplomaData ?d .\n`;
+                ins+= `clav:`+id+` clav:diplomaData "`+date+`" .\n`;
             }
             if (number) {
-                del+= SPARQL`${{clav: id}} clav:diplomaNumero ?n .\n`;
-                ins+= SPARQL`${{clav: id}} clav:diplomaNumero ${number} .\n`;
+                del+= `clav:`+id+` clav:diplomaNumero ?n .\n`;
+                ins+= `clav:`+id+` clav:diplomaNumero "`+number+`" .\n`;
             }
             if (type) {
-                del+= SPARQL`${{clav: id}} clav:diplomaTipo ?t .\n`;
-                ins+= SPARQL`${{clav: id}} clav:diplomaTipo ${type} .\n`;
+                del+= `clav:`+id+` clav:diplomaTipo ?t .\n`;
+                ins+= `clav:`+id+` clav:diplomaTipo "`+type+`" .\n`;
             }
             if (title) {
-                del+= SPARQL`${{clav: id}} clav:diplomaTitulo ?tit .\n`;
-                ins+= SPARQL`${{clav: id}} clav:diplomaTitulo ${title} .\n`;
+                del+= `clav:`+id+` clav:diplomaTitulo ?tit .\n`;
+                ins+= `clav:`+id+` clav:diplomaTitulo "`+title+`" .\n`;
             }
             if (link) {
-                del+= SPARQL`${{clav: id}} clav:diplomaLink ?l .\n`;
-                ins+= SPARQL`${{clav: id}} clav:diplomaLink ${link} .\n`;
+                del+= `clav:`+id+` clav:diplomaLink ?l .\n`;
+                ins+= `clav:`+id+` clav:diplomaLink "`+link+`" .\n`;
             }
 
             wer= "WHERE {"+del+"}\n";
@@ -243,20 +244,22 @@ module.exports = function (app) {
 
             var updateQuery = del + ins + wer;
 
+            console.log(updateQuery);
+
             return client.query(updateQuery).execute()
                 .then(response => Promise.resolve(response))
                 .catch(error => console.error("Error in update:\n" + error));
         }
 
-        //Parsing url to get parameters
-        var parts = url.parse(req.url, true);
-        var id = parts.query.id;
-        var year = parts.query.year;
-        var date = parts.query.date;
-        var number = parts.query.number;
-        var type = parts.query.type;
-        var title = parts.query.title;
-        var link = parts.query.link;
+        //Parsing body to get parameters
+        var parts = req.body;
+        var id = parts.id;
+        var year = parts.year;
+        var date = parts.date;
+        var number = parts.number;
+        var type = parts.type;
+        var title = parts.title;
+        var link = parts.link;
 
         //Executing queries
         if (number) {
@@ -284,9 +287,8 @@ module.exports = function (app) {
         }
     })
 
-    app.get('/deleteLeg', function (req, res) {
+    app.post('/deleteLeg', function (req, res) {
         const { SparqlClient, SPARQL } = require('sparql-client-2');
-        var url = require('url');
 
         const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV', {
                 updateEndpoint: 'http://localhost:7200/repositories/M51-CLAV/statements'
@@ -310,8 +312,7 @@ module.exports = function (app) {
                 });
         }
 
-        var parts = url.parse(req.url, true);
-        var id = parts.query.id;
+        var id = req.body.id;
 
         //Answer the request
         deleteLeg(id)

@@ -72,6 +72,7 @@
     padding-top: 10px;
 }
 
+
 .custom-select div{  
     border-color: rgb(122, 122, 122) !important;
     height: 27px;
@@ -87,8 +88,12 @@
 
 .custom-select span {
     margin: 0px !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
+
 
 .is-collapsed li:nth-child(n+5) {
     display: none;
 }
+

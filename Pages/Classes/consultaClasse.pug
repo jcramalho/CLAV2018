@@ -158,19 +158,21 @@ block corpo
                         td(style="width:10%")
                             label Tipo de Processo: 
                         td(v-if="edit.ProcType" style="width:80%")
-                            input(
+                            input#pc(
                                 type="radio"
                                 value="PC"
                                 v-model="newClass.ProcType"
                             ) 
-                            |  Processo Comum
+                            label(for="pc" style="font-weight:normal")
+                                |  Processo Comum
                             br
-                            input(
+                            input#pe(
                                 type="radio"
                                 value="PE"
                                 v-model="newClass.ProcType"
                             )
-                            |  Processo Específico
+                            label(for="pe" style="font-weight:normal")
+                                |  Processo Específico
 
                         td(v-else style="width:80%")
                             | {{ clas.ProcType }}  
@@ -186,19 +188,21 @@ block corpo
                         td(style="width:10%")
                             label Processo Transversal: 
                         td(v-if="edit.ProcTrans" style="width:80%")
-                            input(
+                            input#ptS(
                                 type="radio"
                                 value="S"
                                 v-model="newClass.ProcTrans"
                             ) 
-                            |  Sim
+                            label(for="ptS" style="font-weight:normal")
+                                |  Sim
                             br
-                            input(
+                            input#ptN(
                                 type="radio"
                                 value="N"
                                 v-model="newClass.ProcTrans"
                             )
-                            |  Não
+                            label(for="ptN" style="font-weight:normal")
+                                |  Não
                         td(v-else style="width:80%")
                             | {{ clas.ProcTrans }}  
                         td(style="width:10%")

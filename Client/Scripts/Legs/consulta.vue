@@ -67,17 +67,29 @@ var leg = new Vue({
             this.ready=true;
         },
         update: function(){
-            var args='?id='+this.id;
+            var dataObj = {
+                id: this.id,
+                year: null,
+                date: null,
+                number: null,
+                type: null,
+                title: null,
+                link: null,
+            };
 
-            keys=["year","date","number","type","title","link"];
+            keys=Object.keys(this.legData);
 
-            for(var i=0;i<6;i++){
+            for(var i=0;i<keys.length;i++){
                 if(this.legData[keys[i]].edit && this.legData[keys[i]].new){
-                    args+='&'+keys[i]+'='+this.legData[keys[i]].new;
+                    dataObj[keys[i]]=this.legData[keys[i]].new;
                 }
             }
 
-            this.$http.get('/updateLeg'+args)
+            this.$http.put('/updateLeg',dataObj,{
+                headers: {
+                    'content-type' : 'application/json'
+                }
+            })
             .then( function(response) { 
                 this.message = response.body;
             })
@@ -94,9 +106,10 @@ var leg = new Vue({
             this.delConfirm=false;
         },
         deleteLeg: function(){
-            this.$http.get('/deleteLeg?id='+this.id)
+            this.$http.post('/deleteLeg',{id: this.id})
             .then( function(response) { 
                 this.message = response.body;
+                window.location.href = '/legislacoes';
             })
             .catch( function(error) { 
                 console.error(error); 
