@@ -76,6 +76,44 @@ module.exports = function (app) {
             });
     })
 
+    //get processes regulated by a legislation
+    app.get('/procsLeg', function (req, res) {
+        const { SparqlClient, SPARQL } = require('sparql-client-2');
+        var url = require('url');
+
+        const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV')
+            .register({
+                rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+                clav: 'http://jcr.di.uminho.pt/m51-clav#',
+            });
+
+        function fetchList(id) {
+            var fetchQuery = `
+                SELECT * WHERE { 
+                    ?id clav:temLegislacao clav:`+ id + `;
+                        clav:codigo ?Code;
+                        clav:titulo ?Title;
+                }`;
+
+            console.log(fetchQuery);
+
+            return client.query(fetchQuery).execute()
+                .then(response => Promise.resolve(response.results.bindings))
+                .catch(function (error) {
+                    console.error(error);
+                });
+        }
+
+        var parts = url.parse(req.url, true);
+        var id = parts.query.id;
+
+        //Answer the request
+        fetchList(id).then(legs => res.send(legs))
+            .catch(function (error) {
+                console.error(error);
+            });
+    })
+
     app.post('/createLeg', function (req, res) {
         const { SparqlClient, SPARQL } = require('sparql-client-2');
 

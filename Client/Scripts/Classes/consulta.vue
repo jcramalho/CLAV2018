@@ -305,7 +305,7 @@ var classe = new Vue({
                     }
                 }
                 var type = content[i].Type.value.replace(/.*temParticipante(.*)/, '$1');
-
+                
                 dest[type].push(JSON.parse(JSON.stringify(temp)));
             }
 

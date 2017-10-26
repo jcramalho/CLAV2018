@@ -1,7 +1,5 @@
 TODOS:
-    -filtrar subníveis da tabela de classes
-
-    -checkbox na tabela cascata
+    -checkbox na tabela cascata p/ tabela de seleção
     -implementar tabelas de seleção
 
     -deploy no servidor
