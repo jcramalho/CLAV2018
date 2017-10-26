@@ -230,7 +230,7 @@ Vue.component('custom-table-waterfall', {
                         v-for="(row,index) in rowsShow"
 
                         :row="row" 
-                        :id="completeRows.indexOf(row)+''" 
+                        :id="genID(index)" 
                         :key="row.index" 
                         :sub-ready="subReady" 
                         :cwidth="cwidth" 
@@ -259,7 +259,8 @@ Vue.component('custom-table-waterfall', {
         'subReady',
         'pagesOn',
         'filterOn',
-        'add'
+        'add',
+        'nEdits',
     ],
     data: function () {
         return {
@@ -270,11 +271,15 @@ Vue.component('custom-table-waterfall', {
             "activePage": 1,
             "pages": [0],
             "rowsPerPage": 10,
+            "filtered": false,
         };
     },
     watch: {
         filt: function () {
-            this.filter();
+            if(!this.filtered) {
+                this.filtered=true;
+            }
+            this.newFilter();
         },
         rows: function () {
             this.loadPages();
@@ -285,9 +290,14 @@ Vue.component('custom-table-waterfall', {
         activePage: function () {
             this.prepPage();
         },
+        nEdits: function() {
+            if(this.filtered){
+                this.newFilter();
+            }
+        }
     },
     methods: {
-        filter: function () { //filter rows according to what is written in the input box
+        /*filter: function () { //filter rows according to what is written in the input box
             regex = new RegExp(this.filt, "gi");
 
             this.rows = this.completeRows.filter(function (item) {
@@ -302,6 +312,60 @@ Vue.component('custom-table-waterfall', {
             if (this.rows.length == 0) {
                 this.rows = [{ content: ["Sem resultados correspondentes..."] }];
             }
+        },*/
+        newFilter: function () { //filter rows and sublevels 
+            var regex = new RegExp(this.filt, "gi");
+
+            var temp = JSON.parse(JSON.stringify(this.completeRows));
+            this.rows = this.subFilter(regex,temp);
+        },
+        subFilter: function (regex, list) {
+            //go through the list
+            for (var i = 0; i < list.length; i++) {
+                //if item has sublevel, filter it
+                if (list[i].sublevel && list[i].sublevel.length) {
+                    list[i].sublevel = this.subFilter(regex, list[i].sublevel);
+
+                    //if sublevel comes empty and item doesn't match regex, cut it
+                    if (list[i].sublevel.length == 0) {
+                        var check = false;
+                        
+                        for (var j = 0; j < list[i].content.length; j++) {
+                            if (regex.test(list[i].content[j])) {
+                                check = true;
+                                break;
+                            }
+                        }
+                        if (!check) {
+                            list.splice(i, 1);
+                        }
+                    }
+                }
+                //if item doesn't have sublevel, check if it matches regex, if not, cut it                
+                else {
+                    var check = false;
+                    
+                    for (var j = 0; j < list[i].content.length; j++) {
+                        if (regex.test(list[i].content[j])) {
+                            check = true;
+                            break;
+                        }
+                    }
+                    if (!check) {
+                        list.splice(i, 1);
+                    }
+                }            
+            }
+
+            return list;
+        },
+        genID: function(index){
+            for(var i=0;i<this.completeRows.length;i++){
+                if(this.rows[index].codeID==this.completeRows[i].codeID){
+                    return i+"";
+                }
+            }
+            return "-1";
         },
         sort: function (index) { //sort rows by header[index]
             if (this.order == index) {
