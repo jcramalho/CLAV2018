@@ -18,6 +18,19 @@ var selecao = new Vue({
 
             return array;
         },
+        selectClicked: function(params){
+            var id = params.id;
+            var rowData = params.rowData;
+            
+            console.log(id);
+            /*
+            if(!this.subReady[id]){
+                //split the id; example: '1.1.2' becomes ['1','1','2']
+                var path = id.split('.');
+                this.selectTree(path,this.tableData,params);
+            }
+            */
+        },
         dropClicked: function(params){
             var id = params.id;
             var rowData = params.rowData;

@@ -195,21 +195,39 @@ Vue.component('row-waterfall', {
                             <td v-if="row.sublevel" 
                                 class="cascata-drop"
                             >
-                                <label
-                                    :for="'toggle'+id"
-                                    :class="[drop[id] ? 'glyphicon glyphicon-chevron-down' : 'glyphicon glyphicon-chevron-right']"
-                                />
-                                <input
-                                    :id="'toggle'+id" 
-                                    type="checkbox" 
-                                    v-model="drop[id]" 
-                                    @click="dropClicked"
-                                    class="drop-row"
-                                /> 
+                                <span>
+                                    <label
+                                        :for="'toggle'+id"
+                                        :class="[drop[id] ? 'glyphicon glyphicon-chevron-down' : 'glyphicon glyphicon-chevron-right']"
+                                    />
+                                    <input
+                                        :id="'toggle'+id" 
+                                        type="checkbox" 
+                                        v-model="drop[id]" 
+                                        @click="dropClicked"
+                                        class="drop-row"
+                                    />
+                                </span>
+                                <span v-if="selectOn">
+                                    <input
+                                        :id="'select'+id" 
+                                        type="checkbox" 
+                                        v-model="selected[id]" 
+                                        @click="selectClicked"
+                                    /> 
+                                </span> 
                             </td>
                             <td v-else 
                                 class="cascata-drop" 
                             >
+                                <span v-if="selectOn">
+                                    <input
+                                        :id="'select'+id" 
+                                        type="checkbox" 
+                                        v-model="selected[id]" 
+                                        @click="selectClicked"
+                                    /> 
+                                </span> 
                             </td>
                             <td 
                                 v-for="(item,index) in row.content"
@@ -223,6 +241,7 @@ Vue.component('row-waterfall', {
                         <row-waterfall v-if="drop[id] && subReady[id]" 
                             v-for="(line,index) in row.sublevel"
 
+                            :select-on="selectOn"
                             :id="genId(index)" 
                             :row="line" 
                             :key="index"  
@@ -248,14 +267,26 @@ Vue.component('row-waterfall', {
         'cwidth',
         'id',
         'subReady',
-        'root'
+        'selectOn',
+        'root',
     ],
     data: function () {
         return {
             drop: {},
+            selected: {},
         }
     },
     methods: {
+        selectClicked: function () { //emit event when a row is selected
+            var eventContent = {
+                type: "select",
+                params: {
+                    id: this.id,
+                    rowData: this.row
+                }
+            };
+            this.$emit('eventWaterfall', eventContent);
+        },
         dropClicked: function () { //emit event when a row is expanded
             var eventContent = {
                 type: "drop",
@@ -285,7 +316,7 @@ Vue.component('row-waterfall', {
     },
 })
 
-
+/*
 Vue.component('row-waterfall-select', {
     template: `
         <tr>
@@ -309,7 +340,7 @@ Vue.component('row-waterfall-select', {
                                         class="drop-row"
                                     />
                                 </span>
-                                <span>
+                                <span v-if="selectOn">
                                     <input
                                         :id="'select'+id" 
                                         type="checkbox" 
@@ -412,6 +443,7 @@ Vue.component('row-waterfall-select', {
         }
     },
 })
+*/
 
 
 Vue.component('custom-table-waterfall', {
@@ -456,24 +488,9 @@ Vue.component('custom-table-waterfall', {
                 </thead>
                 <tbody name="table">
                     <row-waterfall 
-                        v-if="!checkboxSelect"
                         v-for="(row,index) in rowsShow"
 
-                        :row="row" 
-                        :id="genID(index)" 
-                        :key="row.index" 
-                        :sub-ready="subReady" 
-                        :cwidth="cwidth" 
-                        
-                        :table-class="tableClass+' cascata'" 
-                        root="true" 
-                        
-                        @eventWaterfall="eventPass($event)"
-                    />
-                    <row-waterfall-select
-                        v-if="checkboxSelect"
-                        v-for="(row,index) in rowsShow"
-
+                        :select-on="selectOn"
                         :row="row" 
                         :id="genID(index)" 
                         :key="row.index" 
@@ -505,7 +522,7 @@ Vue.component('custom-table-waterfall', {
         'pagesOn',
         'filterOn',
         'add',
-        'checkboxSelect',
+        'selectOn',
         'nEdits',
     ],
     data: function () {
@@ -693,17 +710,14 @@ Vue.component('custom-table-waterfall', {
         },
         eventPass: function (event) { //process event comming from child component
             if (event.type == "row") {
-                this.rowClick(event.params);
+                this.$emit('row-clicked', event.params);
             }
             else if (event.type == "drop") {
-                this.dropClick(event.params);
+                this.$emit('drop-clicked', event.params);
             }
-        },
-        rowClick: function (params) { //emit event when a row is clicked
-            this.$emit('row-clicked', params);
-        },
-        dropClick: function (params) { //emit event when a row is expanded
-            this.$emit('drop-clicked', params);
+            else if (event.type == "select") {
+                this.$emit('select-clicked', event.params);
+            }
         },
         addClick: function (index) { //emit event when the '+' button is clicked
             this.$emit('add-clicked');
