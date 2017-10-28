@@ -212,7 +212,7 @@ Vue.component('row-waterfall', {
                                     <input
                                         :id="'select'+id" 
                                         type="checkbox" 
-                                        v-model="selected[id]" 
+                                        v-model="row.selected" 
                                         @click="selectClicked"
                                     /> 
                                 </span> 
@@ -224,7 +224,7 @@ Vue.component('row-waterfall', {
                                     <input
                                         :id="'select'+id" 
                                         type="checkbox" 
-                                        v-model="selected[id]" 
+                                        v-model="row.selected" 
                                         @click="selectClicked"
                                     /> 
                                 </span> 
@@ -625,7 +625,7 @@ Vue.component('custom-table-waterfall', {
         },
         genID: function(index){
             for(var i=0;i<this.completeRows.length;i++){
-                if(this.rows[index].codeID==this.completeRows[i].codeID){
+                if(this.rowsShow[index].codeID==this.completeRows[i].codeID){
                     return i+"";
                 }
             }

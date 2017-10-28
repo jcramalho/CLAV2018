@@ -23,13 +23,28 @@ var selecao = new Vue({
             var rowData = params.rowData;
             
             console.log(id);
-            /*
+            
             if(!this.subReady[id]){
                 //split the id; example: '1.1.2' becomes ['1','1','2']
                 var path = id.split('.');
                 this.selectTree(path,this.tableData,params);
             }
-            */
+        },
+        selectTree: function(indexes,location,params){
+            if(indexes.length==1){
+                location[indexes[0]].selected= true;
+            }
+            else{
+                location[indexes[0]].selected=true;
+
+                //get the path tail
+                var tail = indexes.splice(1,indexes.length-1);
+
+                //next level in the data structure
+                var newLocation = location[indexes[0]].sublevel;
+
+                this.selectTree(tail,newLocation,params);
+            }
         },
         dropClicked: function(params){
             var id = params.id;
@@ -49,7 +64,7 @@ var selecao = new Vue({
                 })
                 .then( function() {
                     //load child classes on the sublevel of the parent
-                    location[indexes[0]].sublevel= this.parseSub();
+                    location[indexes[0]].sublevel= this.parseSub(location[indexes[0]].selected);
 
                     //let child components know that the rows are ready to render
                     this.subReady[params.id]=true;
@@ -75,7 +90,7 @@ var selecao = new Vue({
         parse: function(){
             // parsing the JSON
             for (var i=0; i<this.content.length; i++) {
-                var temp={content:"",sublevel:false};
+                var temp={content:"",sublevel:false,selected:false};
                 
                 var id= this.content[i].id.value.replace(/[^#]+#(.*)/,'$1');
                 var code= this.content[i].Code.value;
@@ -94,9 +109,9 @@ var selecao = new Vue({
                 return a.content[0].localeCompare(b.content[0]);
             })
         },
-        parseSub: function(location){
+        parseSub: function(selecValue){
             var ret=[]
-            var temp={content:"",sublevel:false};
+            var temp={content:"",sublevel:false,selected:selecValue};
             // parsing the JSON
             for (var i=0; i<this.subTemp.length; i++) {
 
