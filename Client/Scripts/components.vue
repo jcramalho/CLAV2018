@@ -220,6 +220,7 @@ Vue.component('row-waterfall', {
                             <td v-else 
                                 class="cascata-drop" 
                             >
+                                <span style="padding-right:18px"></span>
                                 <span v-if="selectOn">
                                     <input
                                         :id="'select'+id" 
