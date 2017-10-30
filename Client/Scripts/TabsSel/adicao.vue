@@ -1,7 +1,6 @@
 var selecao = new Vue({
     el: '#selecao',
     data: {
-        subReady: {},
         tableHeader: [],
         tableData: [],
         ready: false,
@@ -60,9 +59,9 @@ var selecao = new Vue({
         },
         dropClicked: function (params) {
             var id = params.id;
-            var rowData = params.rowData;
+            var ready = params.rowData.subReady;
 
-            if (!this.subReady[id]) {
+            if (!ready) {
                 //split the id; example: '1.1.2' becomes ['1','1','2']
                 var path = id.split('.');
                 this.loadSub(path, this.tableData, params);
@@ -92,7 +91,7 @@ var selecao = new Vue({
                         }
 
                         //let child components know that the rows are ready to render
-                        this.subReady[params.id] = true;
+                        location[indexes[0]].subReady = true;
                         this.nEdits++;
                     })
                     .catch(function (error) {
@@ -115,7 +114,13 @@ var selecao = new Vue({
         parse: function () {
             // parsing the JSON
             for (var i = 0; i < this.content.length; i++) {
-                var temp = { content: "", sublevel: false, selected: false,drop: false};
+                var temp = { 
+                    content: "", 
+                    sublevel: false, 
+                    selected: false,
+                    drop: false,
+                    subReady: false,
+                };
 
                 var id = this.content[i].id.value.replace(/[^#]+#(.*)/, '$1');
                 var code = this.content[i].Code.value;
@@ -136,7 +141,14 @@ var selecao = new Vue({
         },
         parseSub: function (selecValue) {
             var ret = []
-            var temp = { content: "", sublevel: false, selected: selecValue, drop:false};
+            var temp = { 
+                content: "", 
+                sublevel: false, 
+                selected: selecValue, 
+                drop:false, 
+                subReady: false
+            };
+
             // parsing the JSON
             for (var i = 0; i < this.subTemp.length; i++) {
 

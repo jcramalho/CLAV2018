@@ -238,7 +238,7 @@ Vue.component('row-waterfall', {
                             </td>
                         </tr>
                         
-                        <row-waterfall v-if="row.drop && subReady[id]" 
+                        <row-waterfall v-if="row.drop && row.subReady" 
                             v-for="(line,index) in row.sublevel"
 
                             :select-on="selectOn"
@@ -246,14 +246,13 @@ Vue.component('row-waterfall', {
                             :row="line" 
                             :key="index"  
                             :cwidth="cwidth"
-                            :sub-ready="subReady"
 
                             @eventWaterfall="eventPass($event)"
 
                             :table-class="tableClass+' cascata'"
                         />
                         
-                        <tr v-if="row.drop && !subReady[id]">
+                        <tr v-if="row.drop && !row.subReady">
                             <td colspan=4> Loading... </td>
                         </tr>
                     </tbody>
@@ -266,7 +265,6 @@ Vue.component('row-waterfall', {
         'tableClass',
         'cwidth',
         'id',
-        'subReady',
         'selectOn',
         'root',
     ],
@@ -365,7 +363,6 @@ Vue.component('custom-table-waterfall', {
                         :row="row" 
                         :id="genID(index)" 
                         :key="row.index" 
-                        :sub-ready="subReady" 
                         :cwidth="cwidth" 
                         
                         :table-class="tableClass+' cascata'" 
@@ -389,7 +386,6 @@ Vue.component('custom-table-waterfall', {
         'url',
         'completeRows',
         'header',
-        'subReady',
         'pagesOn',
         'filterOn',
         'add',
