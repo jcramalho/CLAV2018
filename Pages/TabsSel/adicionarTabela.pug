@@ -10,6 +10,7 @@ block corpo
                 filter-on="true"
                 pages-on="true"
                 select-on="true"
+                add="true"
 
                 :header="tableHeader"
                 :complete-rows="tableData"
@@ -22,7 +23,7 @@ block corpo
                 @row-clicked="rowClicked($event)"
                 @drop-clicked="dropClicked($event)"
                 @select-clicked="selectClicked($event)"
-                @add-clicked="addClass"
+                @add-clicked="createSelTab()"
             )
             h4(
                 v-else

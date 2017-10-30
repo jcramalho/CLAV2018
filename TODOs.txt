@@ -1,5 +1,4 @@
 TODOS:
-    -checkbox na tabela cascata p/ tabela de seleção
     -implementar tabelas de seleção
 
     -deploy no servidor

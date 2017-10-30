@@ -115,7 +115,7 @@ var selecao = new Vue({
         parse: function () {
             // parsing the JSON
             for (var i = 0; i < this.content.length; i++) {
-                var temp = { content: "", sublevel: false, selected: false };
+                var temp = { content: "", sublevel: false, selected: false,drop: false};
 
                 var id = this.content[i].id.value.replace(/[^#]+#(.*)/, '$1');
                 var code = this.content[i].Code.value;
@@ -136,7 +136,7 @@ var selecao = new Vue({
         },
         parseSub: function (selecValue) {
             var ret = []
-            var temp = { content: "", sublevel: false, selected: selecValue };
+            var temp = { content: "", sublevel: false, selected: selecValue, drop:false};
             // parsing the JSON
             for (var i = 0; i < this.subTemp.length; i++) {
 
@@ -166,9 +166,26 @@ var selecao = new Vue({
 
             return ret;
         },
-        addClass: function (row) {
-            window.location.href = '/novaClasse';
+        getSelected: function(location){
+            var list=[];
+
+            for(var i=0;i<location.length;i++){
+                //if a node is selected add its ID to the list and check its descendants
+                if(location[i].selected){
+                    list.push(location[i].codeID);
+
+                    if(location[i].sublevel && location[i].sublevel.length){
+                        list=list.concat(this.getSelected(location[i].sublevel));
+                    }
+                }
+            }
+            return list;
         },
+        createSelTab: function(){
+            var list=this.getSelected(this.tableData);
+            console.log(list);
+        }
+
     },
     created: function () {
         this.tableHeader = [
