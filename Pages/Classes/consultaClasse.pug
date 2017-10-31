@@ -227,7 +227,7 @@ block corpo
                                         )
                                     td
                                         button(
-                                            @click="addOwner(orgList.indexOf(newClass.Owner.value))"
+                                            @click="newClass.Owners.push(newClass.Owner.value)"
                                         ) +
                                 tr(v-if="clas.Owners")
                                     td( colspan="2")

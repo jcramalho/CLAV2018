@@ -95,7 +95,7 @@ var classe = new Vue({
                 .then(function () {
                     this.orgList = this.parse(orgsToParse, keys).map(function(item){
                         return {
-                            label: item.Sigla+"",
+                            label: item.Sigla+" - "+item.Nome,
                             value: item,
                         }
                     }).sort(function (a, b) {

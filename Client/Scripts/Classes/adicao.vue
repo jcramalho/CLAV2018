@@ -415,5 +415,6 @@ var newClass = new Vue({
     created: function () {
         this.loadOrgs();
         this.loadLegs();
+        this.loadClasses();
     }
 })

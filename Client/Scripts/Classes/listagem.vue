@@ -20,9 +20,9 @@ var classes = new Vue({
         },
         dropClicked: function(params){
             var id = params.id;
-            var rowData = params.rowData;
-
-            if(!this.subReady[id]){
+            var ready = params.rowData.subReady;
+            
+            if (!ready) {
                 //split the id; example: '1.1.2' becomes ['1','1','2']
                 var path = id.split('.');
                 this.loadSub(path,this.tableData,params);
@@ -39,7 +39,7 @@ var classes = new Vue({
                     location[indexes[0]].sublevel= this.parseSub();
 
                     //let child components know that the rows are ready to render
-                    this.subReady[params.id]=true;
+                    location[indexes[0]].subReady = true;
                     this.nEdits++;
                 })
                 .catch( function(error) { 
