@@ -86,8 +86,7 @@ module.exports = function (app) {
                 }Group by ?Child ?Code ?Title
             `;
 
-            console.log("query: \n" + fetchQuery);
-
+            
             return client.query(fetchQuery)
                 .execute()
                 //getting the content we want
@@ -101,10 +100,9 @@ module.exports = function (app) {
         var parent = parts.query.parent;
         var table = parts.query.table;
 
-        console.log(parent,table);
-
+        
         //Answer the request
-        fetchChilds(parent).then(list => res.send(list))
+        fetchChilds(parent,table).then(list => res.send(list))
             .catch(function (error) {
                 console.error(error);
             });
@@ -141,8 +139,7 @@ module.exports = function (app) {
                     }
                 }`;
 
-            console.log(fetchQuery);
-
+            
             return client.query(fetchQuery)
                 .execute()
                 //getting the content we want
@@ -181,8 +178,7 @@ module.exports = function (app) {
                         clav:orgSigla ?Sigla;
                 }`;
 
-            console.log(fetchQuery);
-
+            
             return client.query(fetchQuery).execute()
                 .then(response => Promise.resolve(response.results.bindings))
                 .catch(function (error) {
@@ -220,8 +216,7 @@ module.exports = function (app) {
                         clav:diplomaTipo ?Tipo;
                 }`;
 
-            console.log(fetchQuery);
-
+            
             return client.query(fetchQuery).execute()
                 .then(response => Promise.resolve(response.results.bindings))
                 .catch(function (error) {
@@ -256,8 +251,7 @@ module.exports = function (app) {
                     clav:`+ id + ` clav:exemploNA ?Exemplo.
                 }`;
 
-            console.log(fetchQuery);
-
+            
             return client.query(fetchQuery).execute()
                 .then(response => Promise.resolve(response.results.bindings))
                 .catch(function (error) {
@@ -293,8 +287,7 @@ module.exports = function (app) {
                     ?id clav:conteudo ?Nota .
                 }`;
 
-            console.log(fetchQuery);
-
+            
             return client.query(fetchQuery).execute()
                 .then(response => Promise.resolve(response.results.bindings))
                 .catch(function (error) {
@@ -330,8 +323,7 @@ module.exports = function (app) {
                     ?id clav:conteudo ?Nota .
                 }`;
 
-            console.log(fetchQuery);
-
+            
             return client.query(fetchQuery).execute()
                 .then(response => Promise.resolve(response.results.bindings))
                 .catch(function (error) {
@@ -377,8 +369,7 @@ module.exports = function (app) {
                 }
             `;
 
-            console.log(fetchQuery);
-
+            
             return client.query(fetchQuery).execute()
                 .then(response => Promise.resolve(response.results.bindings))
                 .catch(function (error) {
@@ -420,8 +411,7 @@ module.exports = function (app) {
                 }
             `;
 
-            console.log(fetchQuery);
-
+            
             return client.query(fetchQuery).execute()
                 .then(response => Promise.resolve(response.results.bindings))
                 .catch(function (error) {
@@ -627,8 +617,7 @@ module.exports = function (app) {
 
             updateQuery = deletePart + inserTPart + wherePart;
 
-            console.log(updateQuery);
-
+            
             return client.query(updateQuery).execute()
                 .then(response => Promise.resolve(response))
                 .catch(error => console.error("Error in update:\n" + error));
@@ -747,8 +736,7 @@ module.exports = function (app) {
 
             createQuery += '}';
 
-            console.log(createQuery);
-            
+                        
             return client.query(createQuery).execute()
                 .then(response => Promise.resolve(response))
                 .catch(error => console.error("Error in create:\n" + error));
@@ -800,8 +788,7 @@ module.exports = function (app) {
                     }
                 }
             `;
-            console.log(delQuery);
-
+            
             return client.query(delQuery).execute()
                 //getting the content we want
                 .then(response => Promise.resolve(response))

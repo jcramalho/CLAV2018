@@ -1,13 +1,17 @@
 TODOS:
+    -passar "mostrar X entradas" para baixo da tabela?
+
+    -substituir função de gerar id para legislações
+
     -alterar selects na criação de classes 
 
     -implementar tabelas de seleção
     -visualizador de TS
     
-    -pagina principal
+    -página principal
 
     -deploy no servidor
 
-    -ver Passport (autenticaçao)
+    -ver Passport (autenticação)
         -User/Pass
         -cc
