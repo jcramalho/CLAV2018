@@ -373,9 +373,6 @@ var classe = new Vue({
 
             this.loadParticipants();
         },
-        addOwner: function (index) {
-            this.newClass.Owners.push(this.orgList[index]);
-        },
         remOwner: function (index) {
             this.newClass.Owners.splice(index, 1);
         },
