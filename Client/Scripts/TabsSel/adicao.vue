@@ -228,6 +228,22 @@ var selecao = new Vue({
                 classes: this.getSelected(this.tableData),
             }
 
+            this.$http.post('/createSelTab',dataObj,{
+                headers: {
+                    'content-type' : 'application/json'
+                }
+            })
+            .then( function(response) { 
+                this.message = response.body;
+                /*
+                if(response.body=="Inserido!"){
+                    window.location.href = '/organizacao?id=org_'+this.initials;
+                }*/
+            })
+            .catch( function(error) { 
+                console.error(error); 
+            });
+
 
         }
 

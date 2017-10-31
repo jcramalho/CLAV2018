@@ -47,4 +47,8 @@ module.exports = function(app) {
     app.get('/novaTabSel', function(req, res) {
         res.render('Pages/TabsSel/adicionarTabela');
     });
+
+    app.get('/tabelaSelecao', function(req, res) {
+        res.render('Pages/TabsSel/consultarTabela');
+    });
 }

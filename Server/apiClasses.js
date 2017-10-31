@@ -32,9 +32,20 @@ module.exports = function (app) {
             }
 
             listQuery+=`
-                    optional {?sub clav:temPai ?id}
+                    optional {
+                        ?sub clav:temPai ?id .
+            `;
+
+            if(table){
+                listQuery+=`?sub clav:pertenceTS clav:`+table+` .`
+            }
+
+            listQuery+=`
+                    }
                 }Group by ?id ?Code ?Title
             `;
+            
+            console.log(listQuery);
 
             return client.query(listQuery).execute()
                 .then(response => Promise.resolve(response.results.bindings))
@@ -70,7 +81,7 @@ module.exports = function (app) {
             });
 
         function fetchChilds(parent,table) {
-            var fetchQuery = SPARQL`
+            var fetchQuery = `
                 SELECT ?Child ?Code ?Title (count(?sub) as ?NChilds)
                 WHERE {
                     ?Child clav:temPai clav:`+ parent + ` ;
@@ -78,14 +89,25 @@ module.exports = function (app) {
                            clav:titulo ?Title .
             `;
             if(table){
+                console.log("ola");
                 fetchQuery+=`?Child clav:pertenceTS clav:`+table+` .`
             }
 
             fetchQuery+=`
-                optional {?sub clav:temPai ?Child}
-                }Group by ?Child ?Code ?Title
+                optional {
+                    ?sub clav:temPai ?Child .
             `;
 
+            if(table){
+                fetchQuery+=`?sub clav:pertenceTS clav:`+table+` .`
+            }
+
+            fetchQuery+=`
+                }
+            }Group by ?Child ?Code ?Title
+            `;
+
+            console.log(fetchQuery);
             
             return client.query(fetchQuery)
                 .execute()
@@ -100,6 +122,7 @@ module.exports = function (app) {
         var parent = parts.query.parent;
         var table = parts.query.table;
 
+        console.log(parts.query);
         
         //Answer the request
         fetchChilds(parent,table).then(list => res.send(list))
