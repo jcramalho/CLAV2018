@@ -1,4 +1,13 @@
 TODOS:
+    -alterar selects na criação de classes 
+
     -implementar tabelas de seleção
+    -visualizador de TS
+    
+    -pagina principal
 
     -deploy no servidor
+
+    -ver Passport (autenticaçao)
+        -User/Pass
+        -cc
