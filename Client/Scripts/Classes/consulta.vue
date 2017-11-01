@@ -100,7 +100,7 @@ var classe = new Vue({
                         }
                     }).sort(function (a, b) {
                         return a.label.localeCompare(b.label);
-                    });;
+                    });
 
                     this.orgsReady = true;
                 })
