@@ -45,8 +45,7 @@ module.exports = function (app) {
                 }Group by ?id ?Code ?Title
             `;
             
-            console.log(listQuery);
-
+            
             return client.query(listQuery).execute()
                 .then(response => Promise.resolve(response.results.bindings))
                 .catch(function (error) {
@@ -89,8 +88,7 @@ module.exports = function (app) {
                            clav:titulo ?Title .
             `;
             if(table){
-                console.log("ola");
-                fetchQuery+=`?Child clav:pertenceTS clav:`+table+` .`
+                                fetchQuery+=`?Child clav:pertenceTS clav:`+table+` .`
             }
 
             fetchQuery+=`
@@ -107,8 +105,7 @@ module.exports = function (app) {
             }Group by ?Child ?Code ?Title
             `;
 
-            console.log(fetchQuery);
-            
+                        
             return client.query(fetchQuery)
                 .execute()
                 //getting the content we want
@@ -122,8 +119,7 @@ module.exports = function (app) {
         var parent = parts.query.parent;
         var table = parts.query.table;
 
-        console.log(parts.query);
-        
+                
         //Answer the request
         fetchChilds(parent,table).then(list => res.send(list))
             .catch(function (error) {

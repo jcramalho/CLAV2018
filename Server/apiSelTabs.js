@@ -95,8 +95,7 @@ module.exports = function (app) {
 
             createQuery+="}"
 
-            console.log(createQuery);
-
+            
             return client.query(createQuery).execute()
                 .then(response => Promise.resolve(response))
                 .catch(error => console.error("Error in create:\n" + error));
