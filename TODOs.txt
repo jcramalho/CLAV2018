@@ -1,11 +1,9 @@
 TODOS:
     -preparar uma navbar decente
 
-    -passar "mostrar X entradas" para baixo da tabela?
+    -mover "mostrar X entradas" para baixo da tabela?
 
     -substituir função de gerar id para legislações
-
-    -alterar selects na criação de classes para o "v-select"
 
     -página principal
 

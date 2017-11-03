@@ -93,7 +93,8 @@ var classe = new Vue({
                     orgsToParse = response.body;
                 })
                 .then(function () {
-                    this.orgList = this.parse(orgsToParse, keys).map(function(item){
+                    this.orgList = this.parse(orgsToParse, keys)
+                    .map(function(item){
                         return {
                             label: item.Sigla+" - "+item.Nome,
                             value: item,
@@ -136,7 +137,8 @@ var classe = new Vue({
                     legsToParse = response.body;
                 })
                 .then(function () {
-                    this.legList = this.parse(legsToParse, keys).map(function(item){
+                    this.legList = this.parse(legsToParse, keys)
+                    .map(function(item){
                         return {
                             label: item.Tipo+" - "+item.Número,
                             value: item,
@@ -232,7 +234,8 @@ var classe = new Vue({
                     classesToParse = response.body;
                 })
                 .then(function () {
-                    this.classList = this.parse(classesToParse, keys).map(function(item){
+                    this.classList = this.parse(classesToParse, keys)
+                    .map(function(item){
                         return {
                             label: item.Code+" - "+item.Title,
                             value: item,
