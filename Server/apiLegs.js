@@ -47,16 +47,16 @@ module.exports = function (app) {
             });
 
         function fetchLeg(id) {
-            var fetchQuery =SPARQL`
+            var fetchQuery = SPARQL`
                 SELECT * WHERE { 
-                    ${{clav: id}} clav:diplomaAno ?Ano;
+                    ${{ clav: id }} clav:diplomaAno ?Ano;
                         clav:diplomaData ?Data;
                         clav:diplomaNumero ?Número;
                         clav:diplomaTipo ?Tipo;
                         clav:diplomaTitulo ?Titulo;
                         clav:diplomaLink ?Link;
                 }`;
-            
+
             return client.query(fetchQuery)
                 .execute()
                 //getting the content we want
@@ -118,13 +118,38 @@ module.exports = function (app) {
         const { SparqlClient, SPARQL } = require('sparql-client-2');
 
         const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV', {
-                updateEndpoint: 'http://localhost:7200/repositories/M51-CLAV/statements'
-            })
+            updateEndpoint: 'http://localhost:7200/repositories/M51-CLAV/statements'
+        })
             .register({
                 rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
                 clav: 'http://jcr.di.uminho.pt/m51-clav#',
                 owl: 'http://www.w3.org/2002/07/owl#',
-        });
+            });
+
+
+        //generate a new ID
+        function genID(ids) {
+            var newIDNum = 1;
+
+            var list = ids
+                .map(item => parseInt(
+                    item.id.value.replace(/[^#]+#leg_(.*)/, '$1')
+                )).sort((a,b) => a-b);
+
+                console.log(list);
+
+            for (var i = 0; i < list.length; i++) {
+                var idNum = list[i];
+
+                if (newIDNum == idNum) {
+                    newIDNum++;
+                }
+                else {
+                    break;
+                }
+            }
+            return "leg_" + newIDNum;
+        }
 
         //Check if legislation number already exists
         function checkNumber(number) {
@@ -143,26 +168,25 @@ module.exports = function (app) {
                 });
         }
 
-        //TODO find better solution
-        //Generates new ID number
-        function newID(){
-            var countQuery = SPARQL`
-                SELECT (count(*) AS ?Count)
+        //Get the list of IDs
+        function fetchList() {
+            var fetchList = SPARQL`
+                SELECT *
                 WHERE {
-                    ?s rdf:type clav:Legislacao .
+                    ?id rdf:type clav:Legislacao .
                 }
             `;
 
-            return client.query(countQuery).execute()
-            //Getting the content we want
-            .then(response => Promise.resolve(response.results.bindings[0].Count.value))
-            .catch(function (error) {
-                console.error("Error in check:\n" + error);
-            });
+            return client.query(fetchList).execute()
+                //Getting the content we want
+                .then(response => Promise.resolve(response.results.bindings))
+                .catch(function (error) {
+                    console.error("Error in check:\n" + error);
+                });
         }
 
         //Create new organization
-        function createLeg(newID, year, date, number, type, title, link) {            
+        function createLeg(newID, year, date, number, type, title, link) {
             var createQuery = SPARQL`
                 INSERT DATA {
                     ${{ clav: newID }} rdf:type owl:NamedIndividual ,
@@ -192,7 +216,7 @@ module.exports = function (app) {
         var title = parts.title;
         var link = parts.link;
 
-        
+
         //Executing queries
         checkNumber(number)
             .then(function (count) {
@@ -201,22 +225,23 @@ module.exports = function (app) {
                 }
                 else {
 
-                    newID()
-                        .then(function(ids){
-                            var newID = "leg_"+(parseInt(ids)+1);
+                    fetchList()
+                        .then(function (ids) {
+                            var newID = genID(ids)
                             
                             createLeg(newID, year, date, number, type, title, link)
                                 .then(function () {
                                     res.send("Inserido!");
                                 })
                                 .catch(error => console.error(error));
+                                
                         })
-                        .catch(error => console.error("newID error: \n\t"+error))
+                        .catch(error => console.error("newID error: \n\t" + error))
                 }
             })
             .catch(error => console.error("General error:\n" + error));
     })
-    
+
     app.put('/updateleg', function (req, res) {
         const { SparqlClient, SPARQL } = require('sparql-client-2');
         var url = require('url');
@@ -247,38 +272,38 @@ module.exports = function (app) {
 
         //Update organization
         function updateLeg(id, year, date, number, type, title, link) {
-            var del= "";
-            var ins= "";
-            var wer= "";
-            
+            var del = "";
+            var ins = "";
+            var wer = "";
+
             if (year) {
-                del+= `clav:`+id+` clav:diplomaAno ?y .\n`;
-                ins+= `clav:`+id+` clav:diplomaAno "`+year+`" .\n`;
+                del += `clav:` + id + ` clav:diplomaAno ?y .\n`;
+                ins += `clav:` + id + ` clav:diplomaAno "` + year + `" .\n`;
             }
             if (date) {
-                del+= `clav:`+id+` clav:diplomaData ?d .\n`;
-                ins+= `clav:`+id+` clav:diplomaData "`+date+`" .\n`;
+                del += `clav:` + id + ` clav:diplomaData ?d .\n`;
+                ins += `clav:` + id + ` clav:diplomaData "` + date + `" .\n`;
             }
             if (number) {
-                del+= `clav:`+id+` clav:diplomaNumero ?n .\n`;
-                ins+= `clav:`+id+` clav:diplomaNumero "`+number+`" .\n`;
+                del += `clav:` + id + ` clav:diplomaNumero ?n .\n`;
+                ins += `clav:` + id + ` clav:diplomaNumero "` + number + `" .\n`;
             }
             if (type) {
-                del+= `clav:`+id+` clav:diplomaTipo ?t .\n`;
-                ins+= `clav:`+id+` clav:diplomaTipo "`+type+`" .\n`;
+                del += `clav:` + id + ` clav:diplomaTipo ?t .\n`;
+                ins += `clav:` + id + ` clav:diplomaTipo "` + type + `" .\n`;
             }
             if (title) {
-                del+= `clav:`+id+` clav:diplomaTitulo ?tit .\n`;
-                ins+= `clav:`+id+` clav:diplomaTitulo "`+title+`" .\n`;
+                del += `clav:` + id + ` clav:diplomaTitulo ?tit .\n`;
+                ins += `clav:` + id + ` clav:diplomaTitulo "` + title + `" .\n`;
             }
             if (link) {
-                del+= `clav:`+id+` clav:diplomaLink ?l .\n`;
-                ins+= `clav:`+id+` clav:diplomaLink "`+link+`" .\n`;
+                del += `clav:` + id + ` clav:diplomaLink ?l .\n`;
+                ins += `clav:` + id + ` clav:diplomaLink "` + link + `" .\n`;
             }
 
-            wer= "WHERE {"+del+"}\n";
-            del= "DELETE {"+del+"}\n";
-            ins= "INSERT {"+ins+"}\n";
+            wer = "WHERE {" + del + "}\n";
+            del = "DELETE {" + del + "}\n";
+            ins = "INSERT {" + ins + "}\n";
 
             var updateQuery = del + ins + wer;
 
@@ -329,12 +354,12 @@ module.exports = function (app) {
         const { SparqlClient, SPARQL } = require('sparql-client-2');
 
         const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV', {
-                updateEndpoint: 'http://localhost:7200/repositories/M51-CLAV/statements'
-            })
+            updateEndpoint: 'http://localhost:7200/repositories/M51-CLAV/statements'
+        })
             .register({
                 rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
                 clav: 'http://jcr.di.uminho.pt/m51-clav#',
-        });
+            });
 
         function deleteLeg(id) {
             return client.query(SPARQL`
@@ -354,11 +379,11 @@ module.exports = function (app) {
 
         //Answer the request
         deleteLeg(id)
-            .then(function() {
+            .then(function () {
                 res.send("Entrada apagada!");
             })
             .catch(function (error) {
                 console.error(error);
-        });
+            });
     })
 }

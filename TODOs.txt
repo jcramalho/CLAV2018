@@ -1,9 +1,6 @@
 TODOS:
     -preparar uma navbar decente
 
-    -substituir função de gerar id para legislações
-    -passar função de gerar id para tabelas de seleção para o servidor
-
     -página principal
 
 !!  -deploy no servidor
