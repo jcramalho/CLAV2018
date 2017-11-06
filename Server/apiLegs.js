@@ -1,14 +1,20 @@
 module.exports = function (app) {
 
-    //using sparql-client-2
-    app.get('/legs', function (req, res) {
-        const { SparqlClient, SPARQL } = require('sparql-client-2');
+//  Ontology endpoint
+    const { SparqlClient, SPARQL } = require('sparql-client-2');
 
-        const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV')
-            .register({
-                rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-                clav: 'http://jcr.di.uminho.pt/m51-clav#',
-            });
+    const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV', {
+        updateEndpoint: 'http://localhost:7200/repositories/M51-CLAV/statements'
+    }).register({
+        rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+        clav: 'http://jcr.di.uminho.pt/m51-clav#',
+        owl: 'http://www.w3.org/2002/07/owl#',
+        rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
+        noInferences: 'http://www.ontotext.com/explicit'
+    });
+//
+
+    app.get('/legs', function (req, res) {
 
         function fetchLegs() {
             return client.query(
@@ -37,19 +43,12 @@ module.exports = function (app) {
     })
 
     app.get('/singleLeg', function (req, res) {
-        const { SparqlClient, SPARQL } = require('sparql-client-2');
         var url = require('url');
 
-        const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV')
-            .register({
-                rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-                clav: 'http://jcr.di.uminho.pt/m51-clav#',
-            });
-
         function fetchLeg(id) {
-            var fetchQuery = SPARQL`
+            var fetchQuery = `
                 SELECT * WHERE { 
-                    ${{ clav: id }} clav:diplomaAno ?Ano;
+                        clav:`+ id + ` clav:diplomaAno ?Ano;
                         clav:diplomaData ?Data;
                         clav:diplomaNumero ?Número;
                         clav:diplomaTipo ?Tipo;
@@ -78,14 +77,7 @@ module.exports = function (app) {
 
     //get processes regulated by a legislation
     app.get('/procsLeg', function (req, res) {
-        const { SparqlClient, SPARQL } = require('sparql-client-2');
         var url = require('url');
-
-        const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV')
-            .register({
-                rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-                clav: 'http://jcr.di.uminho.pt/m51-clav#',
-            });
 
         function fetchList(id) {
             var fetchQuery = `
@@ -115,18 +107,6 @@ module.exports = function (app) {
     })
 
     app.post('/createLeg', function (req, res) {
-        const { SparqlClient, SPARQL } = require('sparql-client-2');
-
-        const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV', {
-            updateEndpoint: 'http://localhost:7200/repositories/M51-CLAV/statements'
-        })
-            .register({
-                rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-                clav: 'http://jcr.di.uminho.pt/m51-clav#',
-                owl: 'http://www.w3.org/2002/07/owl#',
-            });
-
-
         //generate a new ID
         function genID(ids) {
             var newIDNum = 1;
@@ -134,9 +114,9 @@ module.exports = function (app) {
             var list = ids
                 .map(item => parseInt(
                     item.id.value.replace(/[^#]+#leg_(.*)/, '$1')
-                )).sort((a,b) => a-b);
+                ))
+                .sort((a, b) => a - b);
 
-                console.log(list);
 
             for (var i = 0; i < list.length; i++) {
                 var idNum = list[i];
@@ -228,13 +208,13 @@ module.exports = function (app) {
                     fetchList()
                         .then(function (ids) {
                             var newID = genID(ids)
-                            
+
                             createLeg(newID, year, date, number, type, title, link)
                                 .then(function () {
                                     res.send("Inserido!");
                                 })
                                 .catch(error => console.error(error));
-                                
+
                         })
                         .catch(error => console.error("newID error: \n\t" + error))
                 }
@@ -243,16 +223,7 @@ module.exports = function (app) {
     })
 
     app.put('/updateleg', function (req, res) {
-        const { SparqlClient, SPARQL } = require('sparql-client-2');
         var url = require('url');
-
-        const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV', {
-            updateEndpoint: 'http://localhost:7200/repositories/M51-CLAV/statements'
-        })
-            .register({
-                rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-                clav: 'http://jcr.di.uminho.pt/m51-clav#',
-            });
 
         //Check if legislation Initials already exists
         function checkNumber(number) {
@@ -351,16 +322,7 @@ module.exports = function (app) {
     })
 
     app.post('/deleteLeg', function (req, res) {
-        const { SparqlClient, SPARQL } = require('sparql-client-2');
-
-        const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV', {
-            updateEndpoint: 'http://localhost:7200/repositories/M51-CLAV/statements'
-        })
-            .register({
-                rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-                clav: 'http://jcr.di.uminho.pt/m51-clav#',
-            });
-
+        
         function deleteLeg(id) {
             return client.query(SPARQL`
                     DELETE {
