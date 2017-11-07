@@ -189,6 +189,9 @@ var org = new Vue({
             })
             .then(function (response) {
                 this.message = response.body;
+                if(this.message!="Nome e/ou Sigla já existentente(s)!"){
+                    window.location.href = '/organizacao?id='+response.body;
+                }
             })
             .catch(function (error) {
                 console.error(error);
