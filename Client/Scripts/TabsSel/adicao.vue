@@ -110,9 +110,6 @@ var selecao = new Vue({
                 this.loadSub(tail, newLocation, params);
             }
         },
-        rowClicked: function (params) {
-            window.location.href = '/classe?id=c' + params.rowData[0];
-        },
         parse: function () {
             // parsing the JSON
             for (var i = 0; i < this.content.length; i++) {
