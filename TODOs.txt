@@ -6,3 +6,7 @@ TODOS:
     -ver Passport (autenticação)
         -User/Pass
         -cc
+
+    -"arrumar" ficheiros (public != client) 
+
+    
