@@ -8,10 +8,4 @@ TODOS:
         -facebook
         -google
         -cc
- 
-    -links mais claros
-
-    -tabela cascata, substituir >/v por +/-
-
-    -legislações para legislação
 
