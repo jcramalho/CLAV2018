@@ -5,8 +5,13 @@ TODOS:
 
     -ver Passport (autenticação)
         -User/Pass
+        -facebook
+        -google
         -cc
+ 
+    -links mais claros
 
-    -"arrumar" ficheiros (public != client) 
+    -tabela cascata, substituir >/v por +/-
 
-    
+    -legislações para legislação
+
