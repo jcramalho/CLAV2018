@@ -33,7 +33,7 @@ app.set('view engine', 'pug');
 app.set('views', __dirname);
 
 //standard
-app.use(express.static(__dirname + '/Client/Base'));
+app.use(express.static(__dirname + '/Client'));
 app.use("/styles", express.static(__dirname + '/Styles'));
 
 // Express Session
