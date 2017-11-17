@@ -19,10 +19,11 @@ var users = require('./Server/users');
 
 //routes and API
 require('./Server/routes')(app);
-require('./Server/apiOrgs')(app);
-require('./Server/apiLegs')(app);
-require('./Server/apiClasses')(app);
-require('./Server/apiSelTabs')(app);
+require('./Server/api/apiOrgs')(app);
+require('./Server/api/apiLegs')(app);
+require('./Server/api/apiClasses')(app);
+require('./Server/api/apiSelTabs')(app);
+require('./Server/api/apiUsers')(app);
 
 module.exports = app;
 
@@ -31,7 +32,7 @@ app.set('view engine', 'pug');
 app.set('views', __dirname);
 
 //standard
-app.use(express.static(__dirname + '/Client/Base'));
+app.use(express.static(__dirname + '/Client'));
 app.use("/styles", express.static(__dirname + '/Styles'));
 
 // Express Session

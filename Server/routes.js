@@ -55,4 +55,8 @@ module.exports = function(app) {
     app.get('/tabelaSelecao', function(req, res) {
         res.render('Pages/TabsSel/consultarTabela');
     });
+
+    app.get('/registar', function(req, res) {
+        res.render('Pages/Users/registar');
+    });
 }
