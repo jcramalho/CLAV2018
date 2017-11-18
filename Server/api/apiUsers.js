@@ -5,8 +5,8 @@ var User = require('../users');
 
 
 module.exports = function (app) {
-    var expressValidator = require('express-validator');
-    app.use(expressValidator());
+    //var expressValidator = require('express-validator');
+    //app.use(expressValidator());
 
     // Register User
     app.post('/registar', function (req, res) {
@@ -19,20 +19,21 @@ module.exports = function (app) {
 
         // Validation
         req.checkBody('name', 'Nome é obrigatório').notEmpty();
-        req.checkBody('email', 'Email is required').notEmpty();
-        req.checkBody('email', 'Email is not valid').isEmail();
-        req.checkBody('password', 'Password is required').notEmpty();
-        req.checkBody('password2', 'Passwords do not match').equals(req.body.password);
+        req.checkBody('email', 'Email é obrigatório').notEmpty();
+        req.checkBody('email', 'Email inválido').isEmail();
+        req.checkBody('password', 'Password é obrigatória').notEmpty();
+        req.checkBody('password2', 'Passwords têm de ser iguais').equals(req.body.password);
 
         var errors = req.validationErrors();
 
         if (errors) {
-            res.render('Pages/Users/registar', {
+            res.render('Users/registar', {
                 errors: errors
             });
         } else {
             var newUser = new User({
                 name: name,
+                level: 1,
                 email: email,
                 password: password
             });
@@ -42,15 +43,15 @@ module.exports = function (app) {
                 console.log(user);
             });
 
-            //req.flash('success_msg', 'You are registered and can now login');
+            req.flash('success_msg', 'A sua conta foi criada, pode agora fazer login');
 
             res.redirect('/');
         }
     });
 
     passport.use(new LocalStrategy(
-        function (username, password, done) {
-            User.getUserByUsername(username, function (err, user) {
+        function (email, password, done) {
+            User.getUserByEmail(email, function (err, user) {
                 if (err) throw err;
                 if (!user) {
                     return done(null, false, { message: 'Unknown User' });
@@ -78,7 +79,7 @@ module.exports = function (app) {
     });
 
     app.post('/login',
-        passport.authenticate('local', { successRedirect: '/', failureRedirect: '/login', failureFlash: true }),
+        passport.authenticate('local', { successRedirect: '/', failureRedirect: '/', failureFlash: true }),
         function (req, res) {
             res.redirect('/');
         });

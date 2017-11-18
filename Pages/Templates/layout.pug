@@ -21,7 +21,26 @@ block body
 					span.icon-bar
 					span.icon-bar
 					span.icon-bar
+				button.navbar-toggle.collapsed(type='button', data-toggle='collapse', data-target='#users', aria-expanded='false', aria-controls='users')
+					span.sr-only Toggle authentication
+					span.glyphicon.glyphicon-user(style="color: white")
 				.navbar-brand M51-CLAV
+			
+			#users.navbar-collapse.collapse
+				ul.nav.navbar-nav.navbar-right
+					li.dropdown
+						a.dropdown-toggle(href='#', data-toggle='dropdown', role='button', aria-expanded='false')
+							| Login 
+							span.caret
+						form.dropdown-menu(role='menu' action="/login" method="post")
+							input#email.form-control(name='username' type='text', placeholder='Email', required='')
+							
+							input#password.form-control(name='password' type='password', placeholder='Password', required='')
+							
+							button.btn.btn-primary.btn-block(type='submit') Login
+					
+					li
+						a(href='/registar') Registar		
 			#navbar.collapse
 				ul.nav.navbar-nav
 					li
@@ -59,6 +78,16 @@ block body
 				
 
 			.col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main
+				h3
+					if success_msg!=""
+						.alert.alert-success #{success_msg}
+
+					if error_msg!=""
+						.alert.alert-danger #{error_msg}
+
+					if error!=""
+						.alert.alert-danger #{error}
+					
 				block corpo
 
 append scripts

@@ -14,22 +14,11 @@ var cookieParser = require('cookie-parser');
 var expressValidator = require('express-validator');
 var session = require('express-session');
 var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
-var users = require('./Server/users');
-
-//routes and API
-require('./Server/routes')(app);
-require('./Server/api/apiOrgs')(app);
-require('./Server/api/apiLegs')(app);
-require('./Server/api/apiClasses')(app);
-require('./Server/api/apiSelTabs')(app);
-require('./Server/api/apiUsers')(app);
-
-module.exports = app;
+var flash = require('connect-flash');
 
 //config
 app.set('view engine', 'pug');
-app.set('views', __dirname);
+app.set('views', __dirname + '/Pages');
 
 //standard
 app.use(express.static(__dirname + '/Client'));
@@ -64,6 +53,28 @@ app.use(expressValidator({
   }
 }));
 
+// Connect Flash
+app.use(flash());
+
+
+// Global Vars
+app.use(function (req, res, next) {
+    res.locals.success_msg = req.flash('success_msg');
+    res.locals.error_msg = req.flash('error_msg');
+    res.locals.error = req.flash('error');
+    res.locals.user = req.user || null;
+    next();
+  });
+
+//routes and API
+require('./Server/routes')(app);
+require('./Server/api/apiOrgs')(app);
+require('./Server/api/apiLegs')(app);
+require('./Server/api/apiClasses')(app);
+require('./Server/api/apiSelTabs')(app);
+require('./Server/api/apiUsers')(app);
+
+module.exports = app;
 
 //Starts and listens
 var port = process.env.PORT || 3000;
