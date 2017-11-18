@@ -62,8 +62,6 @@ module.exports = function (app) {
         var level = parts.query.level;
         var table = parts.query.table;
 
-        console.log(parts);
-
         fetchClasses(level,table)
             .then(list => res.send(list))
             .catch(function (error) {

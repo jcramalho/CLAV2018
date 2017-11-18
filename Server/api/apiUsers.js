@@ -5,17 +5,12 @@ var User = require('../users');
 
 
 module.exports = function (app) {
-    //var expressValidator = require('express-validator');
-    //app.use(expressValidator());
-
     // Register User
     app.post('/registar', function (req, res) {
         var name = req.body.name;
         var email = req.body.email;
         var password = req.body.password;
         var password2 = req.body.password2;
-
-        console.log(req.body);
 
         // Validation
         req.checkBody('name', 'Nome é obrigatório').notEmpty();
@@ -54,7 +49,7 @@ module.exports = function (app) {
             User.getUserByEmail(email, function (err, user) {
                 if (err) throw err;
                 if (!user) {
-                    return done(null, false, { message: 'Unknown User' });
+                    return done(null, false, { message: 'Email não reconhecido' });
                 }
 
                 User.comparePassword(password, user.password, function (err, isMatch) {
@@ -62,7 +57,7 @@ module.exports = function (app) {
                     if (isMatch) {
                         return done(null, user);
                     } else {
-                        return done(null, false, { message: 'Invalid password' });
+                        return done(null, false, { message: 'Password Inválida' });
                     }
                 });
             });
@@ -79,16 +74,20 @@ module.exports = function (app) {
     });
 
     app.post('/login',
-        passport.authenticate('local', { successRedirect: '/', failureRedirect: '/', failureFlash: true }),
+        passport.authenticate('local', { failureFlash: true }),
         function (req, res) {
-            res.redirect('/');
+            res.redirect(req.body.location);
         });
 
     app.get('/logout', function (req, res) {
+        var url = require('url');
+        var parts = url.parse(req.url, true);
+        var location = parts.query.l;
+
         req.logout();
 
         req.flash('success_msg', 'You are logged out');
 
-        res.redirect('/login');
+        res.redirect(location);
     });
 }

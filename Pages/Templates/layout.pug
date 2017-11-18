@@ -28,19 +28,28 @@ block body
 			
 			#users.navbar-collapse.collapse
 				ul.nav.navbar-nav.navbar-right
-					li.dropdown
-						a.dropdown-toggle(href='#', data-toggle='dropdown', role='button', aria-expanded='false')
-							| Login 
-							span.caret
-						form.dropdown-menu(role='menu' action="/login" method="post")
-							input#email.form-control(name='username' type='text', placeholder='Email', required='')
-							
-							input#password.form-control(name='password' type='password', placeholder='Password', required='')
-							
-							button.btn.btn-primary.btn-block(type='submit') Login
-					
-					li
-						a(href='/registar') Registar		
+					if user
+						li 
+							a(href='#') 
+								b(style="color: white") #{user.name}
+						li
+							a(:href="'/logout?l='+location") Logout
+					else
+						li.dropdown
+							a.dropdown-toggle(href='#', data-toggle='dropdown', role='button', aria-expanded='false')
+								| Login 
+								span.caret
+							form.dropdown-menu(role='menu' action="/login" method="post")
+								input#email.form-control(name='username' type='text', placeholder='Email', required='')
+								
+								input#password.form-control(name='password' type='password', placeholder='Password', required='')
+								
+								input(type="hidden" :value="location" name="location")
+
+								button.btn.btn-primary.btn-block(type='submit') Login
+						
+						li
+							a(href='/registar') Registar		
 			#navbar.collapse
 				ul.nav.navbar-nav
 					li

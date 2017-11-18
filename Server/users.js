@@ -2,6 +2,7 @@ var mongo = require('mongodb');
 var mongoose = require('mongoose');
 var bcrypt = require('bcryptjs');
 
+mongoose.Promise = require('bluebird');
 mongoose.connect('mongodb://localhost/m51-clav', {
 	useMongoClient: true,
 });
