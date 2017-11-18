@@ -25,7 +25,8 @@ module.exports = function (app) {
             res.render('Users/registar', {
                 errors: errors
             });
-        } else {
+        }
+        else {
             var newUser = new User({
                 name: name,
                 level: 1,
@@ -33,14 +34,23 @@ module.exports = function (app) {
                 password: password
             });
 
-            User.createUser(newUser, function (err, user) {
+            User.getUserByEmail(email, function (err, user) {
                 if (err) throw err;
-                console.log(user);
+                if (!user) {
+                    User.createUser(newUser, function (err, user) {
+                        if (err) throw err;
+                    });
+
+                    req.flash('success_msg', 'A sua conta foi criada, pode agora fazer login');
+
+                    res.redirect('/');
+                }
+                else {
+                    res.render('Users/registar', {
+                        errors: [{ msg: "Email já em uso" }]
+                    });
+                }
             });
-
-            req.flash('success_msg', 'A sua conta foi criada, pode agora fazer login');
-
-            res.redirect('/');
         }
     });
 

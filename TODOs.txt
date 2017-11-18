@@ -9,3 +9,4 @@ TODOS:
         -google
         -cc
 
+    -verificar se inserção de classes verifica se o código já existe
