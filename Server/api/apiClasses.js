@@ -579,6 +579,7 @@ module.exports = function (app) {
         //Executing queries
         updateClass(dataObj)
             .then(function () {
+                req.flash('success_msg', 'Info. de Classe actualizada');
                 res.send("Actualizado!");
             })
             .catch(error => console.error(error));
@@ -685,6 +686,7 @@ module.exports = function (app) {
         
         createClass(data)
         .then(function () {
+            req.flash('success_msg', 'Classe inserida');
             res.send("Classe Inserida!");
         })
         .catch(error => console.error(error));    
@@ -730,6 +732,7 @@ module.exports = function (app) {
         //Answer the request
         deleteClass(id)
             .then(function() {
+                req.flash('success_msg', 'Entrada apagada');
                 res.send("Entrada apagada!");
             })
             .catch(function (error) {

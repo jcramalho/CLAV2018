@@ -165,7 +165,7 @@ module.exports = function (app) {
                 });
         }
 
-        //Create new organization
+        //Create new legislation
         function createLeg(newID, year, date, number, type, title, link) {
             var createQuery = SPARQL`
                 INSERT DATA {
@@ -211,6 +211,7 @@ module.exports = function (app) {
 
                             createLeg(newID, year, date, number, type, title, link)
                                 .then(function () {
+                                    req.flash('success_msg', 'Documento inserido');
                                     res.send(newID);
                                 })
                                 .catch(error => console.error(error));
@@ -305,6 +306,7 @@ module.exports = function (app) {
                     else {
                         updateLeg(id, year, date, number, type, title, link)
                             .then(function () {
+                                req.flash('success_msg', 'Info. de Documento actualizada');
                                 res.send("Actualizado!");
                             })
                             .catch(error => console.error(error));
@@ -342,6 +344,7 @@ module.exports = function (app) {
         //Answer the request
         deleteLeg(id)
             .then(function () {
+                req.flash('success_msg', 'Entrada apagada');
                 res.send("Entrada apagada!");
             })
             .catch(function (error) {
