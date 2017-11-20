@@ -4,9 +4,9 @@ TODOS:
     -página principal
 
     -ver Passport (autenticação)
-        -User/Pass
-        -facebook
         -google
         -cc
 
     -verificar se inserção de classes verifica se o código já existe
+
+    -se email já existir quando registar com facebook, simplesmente adicionar id e token.

@@ -1,3 +1,5 @@
+var Auth = require('./auth.js');
+
 module.exports = function(app) {
 
     app.get('/', function(req, res) {
@@ -12,7 +14,7 @@ module.exports = function(app) {
         res.render('Orgs/consultaOrganizacao');
     });
 
-    app.get('/novaorganizacao', function(req, res) {
+    app.get('/novaorganizacao', Auth.isLoggedIn, function(req, res) {
         res.render('Orgs/adicionaOrganizacao');
     });
 
@@ -24,7 +26,7 @@ module.exports = function(app) {
         res.render('Legs/consultaLegislacao');
     });
         
-    app.get('/novalegislacao', function(req, res) {
+    app.get('/novalegislacao', Auth.isLoggedIn, function(req, res) {
         res.render('Legs/adicionaLegislacao');
     });
 
@@ -36,7 +38,7 @@ module.exports = function(app) {
         res.render('Classes/consultaClasse');
     });
         
-    app.get('/novaClasse', function(req, res) {
+    app.get('/novaClasse', Auth.isLoggedIn, function(req, res) {
         res.render('Classes/adicionaClasse');
     });
     

@@ -5,10 +5,11 @@ append head
 append styles
 	meta(name="author",content="Tomás Ferreira")
 	link(rel="stylesheet", href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css")
-	link(rel="stylesheet" type="text/css" href="/styles/styles.css")
-	link(href='/styles/dashboard.css', rel='stylesheet')
-	link(href='/styles/theme.css', rel='stylesheet')
-	link(href='/styles/signin.css', rel='stylesheet')
+	link(rel="stylesheet" type="text/css" href="/styles/css/styles.css")
+	link(href='/styles/css/dashboard.css', rel='stylesheet')
+	link(href='/styles/css/theme.css', rel='stylesheet')
+	link(href='/styles/css/signin.css', rel='stylesheet')
+	link(href='/styles/css/font-awesome.min.css', rel='stylesheet')
 	link(rel="icon" href="https://cdn1.iconfinder.com/data/icons/dotted-charts/512/links_diagram-128.png")
 	
 
@@ -31,7 +32,7 @@ block body
 				ul.nav.navbar-nav.navbar-right
 					if user
 						li 
-							a(href='#') 
+							a(href='#')
 								b(style="color: white") #{user.name} 
 								span.glyphicon.glyphicon-user(style="color: white")
 						li
@@ -48,8 +49,11 @@ block body
 								
 								input(type="hidden" :value="location" name="location")
 
-								button.btn.btn-primary.btn-block(type='submit') Login
-						
+								button.btn.btn-block(type='submit') Login
+
+								a.btn.btn-primary.btn-block(href="/loginFB")
+									span.fa.fa-facebook
+									|  Facebook
 						li
 							a(href='/registar') Registar
 

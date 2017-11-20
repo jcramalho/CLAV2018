@@ -73,7 +73,7 @@ require('./Server/api/apiOrgs')(app);
 require('./Server/api/apiLegs')(app);
 require('./Server/api/apiClasses')(app);
 require('./Server/api/apiSelTabs')(app);
-require('./Server/api/apiUsers')(app);
+require('./Server/auth/userRoutes')(app);
 
 module.exports = app;
 
