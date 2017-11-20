@@ -1,13 +1,8 @@
 TODOS:
     -preparar uma navbar decente
 
-    -página principal
-
     -ver Passport (autenticação)
-        -google
         -cc
 
     -interface
         -visualização/edição de processos regulamentados por diploma
-        
-    -verificar se inserção de classes verifica se o código já existe

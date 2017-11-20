@@ -226,11 +226,11 @@ module.exports = function (app) {
     app.put('/updateleg', function (req, res) {
         var url = require('url');
 
-        //Check if legislation Initials already exists
+        //Check if legislation number already exists
         function checkNumber(number) {
             var checkQuery = `
                 SELECT (count(*) AS ?Count) WHERE {
-                    ?org rdf:type clav:Legislacao ;
+                    ?leg rdf:type clav:Legislacao ;
                         clav:diplomaNumero '${number}'
                 }
             `;
