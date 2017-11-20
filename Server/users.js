@@ -33,6 +33,14 @@ var UserSchema = mongoose.Schema({
 		token: {
 			type: String
 		}
+	},
+	google: {
+		id: {
+			type: String
+		},
+		token: {
+			type: String
+		}
 	}
 });
 
