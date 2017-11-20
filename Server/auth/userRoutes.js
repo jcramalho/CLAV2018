@@ -1,13 +1,14 @@
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var FacebookStrategy = require('passport-facebook').Strategy;
+var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 var User = require('../users');
 var ConfigAuth = require('../config/credentials')
 
 module.exports = function (app) {
 
-    // Register User local
+    // Local user registration
     app.post('/registar', function (req, res) {
         var name = req.body.name;
         var email = req.body.email;
@@ -81,6 +82,19 @@ module.exports = function (app) {
         })
     );
 
+    // Google authentication
+    app.get('/loginG', passport.authenticate(
+        'google',
+        {scope: ['profile','email']} 
+    ));
+
+    app.get('/loginG/callback',
+        passport.authenticate('google', {
+            successRedirect: '/',
+            failureRedirect: '/'
+        })
+    );
+
     app.get('/logout', function (req, res) {
         var url = require('url');
         var parts = url.parse(req.url, true);
@@ -113,16 +127,17 @@ module.exports = function (app) {
         })
     );
 
-    passport.use(new FacebookStrategy({
-        clientID: ConfigAuth.facebookAuth.ID,
-        clientSecret: ConfigAuth.facebookAuth.Secret,
-        callbackURL: ConfigAuth.facebookAuth.callbackURL,
-        passReqToCallback : true,
-        profileFields: ['id', 'emails', 'name']
-    },
+    passport.use(new FacebookStrategy(
+        {
+            clientID: ConfigAuth.facebookAuth.ID,
+            clientSecret: ConfigAuth.facebookAuth.Secret,
+            callbackURL: ConfigAuth.facebookAuth.callbackURL,
+            passReqToCallback : true,
+            profileFields: ['id', 'emails', 'name']
+        },
         function (req, accessToken, refreshToken, profile, done) {
             process.nextTick(function () {
-                console.log(profile);
+                
                 var newUser = new User({
                     level: 1,
                     email: profile.emails[0].value,
@@ -133,28 +148,60 @@ module.exports = function (app) {
                     }
                 })
 
-                User.getUserByEmail(newUser.email, function (err, user) {
+                User.findOne({'facebook.id': profile.id}, function(err, user){
                     if (err)
                         return done(err);
                     if (user)
                         return done(null, user);
                     else {
-                        User.findOne({'facebook.id': profile.id}, function(err, user){
+                        newUser.save(function (err) {
                             if (err)
-                                return done(err);
-                            if (user)
-                                return done(null, user);
-                            else {
-                                newUser.save(function (err) {
-                                    if (err)
-                                        throw err;
-                                    return done(null, newUser);
-                                })
-                                console.log(profile);
-                            }
+                                throw err;
+                            return done(null, newUser);
                         })
+                        console.log(profile);
                     }
-                });
+                })
+            });
+        }
+
+    ));
+
+    passport.use(new GoogleStrategy(
+        {
+            clientID: ConfigAuth.googleAuth.ID,
+            clientSecret: ConfigAuth.googleAuth.Secret,
+            callbackURL: ConfigAuth.googleAuth.callbackURL,
+            passReqToCallback : true,
+            profileFields: ['id', 'emails', 'name']
+        },
+        function (req, accessToken, refreshToken, profile, done) {
+            process.nextTick(function () {
+                
+                var newUser = new User({
+                    level: 1,
+                    email: profile.emails[0].value,
+                    name: profile.displayName,
+                    google: {
+                        id: profile.id,
+                        token: accessToken
+                    }
+                })
+
+                User.findOne({'google.id': profile.id}, function(err, user){
+                    if (err)
+                        return done(err);
+                    if (user)
+                        return done(null, user);
+                    else {
+                        newUser.save(function (err) {
+                            if (err)
+                                throw err;
+                            return done(null, newUser);
+                        })
+                        console.log(profile);
+                    }
+                })
             });
         }
 

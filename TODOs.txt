@@ -8,5 +8,3 @@ TODOS:
         -cc
 
     -verificar se inserção de classes verifica se o código já existe
-
-    -se email já existir quando registar com facebook, simplesmente adicionar id e token.
