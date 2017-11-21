@@ -61,4 +61,8 @@ module.exports = function(app) {
     app.get('/registar', function(req, res) {
         res.render('Users/registar');
     });
+
+    app.get('/iniciarSessao', function(req, res) {
+        res.render('Users/login');
+    });
 }

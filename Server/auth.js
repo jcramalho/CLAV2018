@@ -5,7 +5,7 @@ module.exports.isLoggedIn = function (req, res, next) {
         return next();
     }
     req.flash('warn_msg', 'Login necessário para aceder a esta página');
-    res.redirect('back');
+    res.redirect('/iniciarSessao');
 }
 
 module.exports.checkLevel2 = function (req, res, next) {
@@ -27,11 +27,11 @@ module.exports.isLevel = function (clearance, req, res, next) {
         }
         else {
             req.flash('warn_msg', 'Não tem permissões suficientes para aceder a esta página');
-            res.redirect('back');
+            res.redirect('/');
         }
     }
     else {
         req.flash('warn_msg', 'Login necessário para aceder a esta página');
-        res.redirect('back');
+        res.redirect('/iniciarSessao');
     }
 }
