@@ -36,7 +36,7 @@ var newClass = new Vue({
         newDelNote: null,
         delNotes: [],
         
-        status: null,
+        status: "H",
         
         procType: null,
 

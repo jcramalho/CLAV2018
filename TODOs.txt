@@ -4,5 +4,13 @@ TODOS:
     -ver Passport (autenticação)
         -cc
 
-    -interface
-        -visualização/edição de processos regulamentados por diploma
+    -ts a partir de org
+
+    -logs
+        -quem
+        -quando
+        -oque
+
+    -listagem de classes em harmonização
+
+    938312013

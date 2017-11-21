@@ -7,6 +7,34 @@ block corpo
             .form-group
                 table.consulta(v-if="pageReady")
                     
+                    //- STATUS
+                    tr
+                        td(style="width:10%")
+                            label Status: 
+                        td(v-if="edit.Status" style="width:80%")
+                            select(
+                                v-model="newClass.Status"
+                            )
+                                option(
+                                    value="H"
+                                    selected
+                                )   Harmonização
+                                option(
+                                    value="A"
+                                )   Activa
+                                option(
+                                    value="I"
+                                ) Inactiva
+                                
+                        td(v-else style="width:80%")
+                            | {{ clas.Status }}  
+                        td(style="width:10%")
+                            label(style="padding-right:5px") Editar
+                            input(
+                                type="checkbox"
+                                v-model="edit.Status"
+                            )
+
                     //- CLASSE PAI
                     tr(v-if="clas.Level>1")
                         td(style="width:10%")
@@ -336,25 +364,6 @@ block corpo
                             input(
                                 type="checkbox"
                                 v-model="edit.RelProcs"
-                            )
-
-                    //- STATUS
-                    tr
-                        td(style="width:10%")
-                            label Status: 
-                        td(v-if="edit.Status" style="width:80%")
-                            input(
-                                size="50"
-                                v-model="newClass.Status"
-                                :placeholder="clas.Status"
-                            )
-                        td(v-else style="width:80%")
-                            | {{ clas.Status }}  
-                        td(style="width:10%")
-                            label(style="padding-right:5px") Editar
-                            input(
-                                type="checkbox"
-                                v-model="edit.Status"
                             )
 
                     //- LEGISLAÇÕES

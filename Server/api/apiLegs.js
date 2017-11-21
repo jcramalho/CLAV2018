@@ -87,8 +87,6 @@ module.exports = function (app) {
                         clav:titulo ?Title;
                 }`;
 
-            console.log(fetchQuery);
-
             return client.query(fetchQuery).execute()
                 .then(response => Promise.resolve(response.results.bindings))
                 .catch(function (error) {
@@ -179,8 +177,6 @@ module.exports = function (app) {
                         clav:diplomaLink ${link} .
                 }
             `;
-
-            console.log(createQuery);
 
             return client.query(createQuery).execute()
                 .then(response => Promise.resolve(response))
@@ -278,8 +274,6 @@ module.exports = function (app) {
             ins = "INSERT {" + ins + "}\n";
 
             var updateQuery = del + ins + wer;
-
-            console.log(updateQuery);
 
             return client.query(updateQuery).execute()
                 .then(response => Promise.resolve(response))
