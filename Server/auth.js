@@ -27,7 +27,7 @@ module.exports.isLevel = function (clearance, req, res, next) {
         }
         else {
             req.flash('warn_msg', 'Não tem permissões suficientes para aceder a esta página');
-            res.redirect('/');
+            res.redirect('back');
         }
     }
     else {

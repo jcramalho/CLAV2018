@@ -53,8 +53,17 @@ var newClass = new Vue({
             Iniciador: [],
         },
 
+        newRelType: null,
         newRelProc: null,
-        relProcs: [],
+        relProcs: {
+            'Antecessor De': [],
+            'Complementar De': [],
+            'Cruzado Com': [],
+            'Sintese De': [],
+            'Sintetizado Por': [],
+            'Sucessor De': [],
+            'Suplemento Para': [],
+        },
         classList: null,
         classesReady: false,
 

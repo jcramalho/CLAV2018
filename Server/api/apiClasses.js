@@ -319,21 +319,16 @@ module.exports = function (app) {
 
         function fetchRelProc(id) {
             var fetchQuery = `
-                select DISTINCT ?id ?Code ?Title {
-                    {
-                        select * where{
-                            clav:`+ id + ` clav:temRelProc ?id.
-                        }
-                    } union {
-                        select * where{
-                            ?id clav:temRelProc clav:`+ id + `.
-                        } 
-                    }
-                    ?id clav:codigo ?Code;
-                            clav:titulo ?Title
-                }
+                select DISTINCT ?id ?Type ?Code ?Title {
+                    clav:`+ id + ` clav:temRelProc ?id;
+                        ?Type ?id.
+                    
+                        ?id clav:codigo ?Code;
+                        clav:titulo ?Title
+                    
+                        filter (?Type!=clav:temRelProc)
+                } Order by ?Type
             `;
-
 
             return client.query(fetchQuery).execute()
                 .then(response => Promise.resolve(response.results.bindings))
@@ -404,11 +399,6 @@ module.exports = function (app) {
                     deletePart += "\tclav:" + dataObj.id + " clav:temLegislacao clav:" + dataObj.Legs.Delete[i].id + " .\n";
                 }
             }
-            if (dataObj.Legs.Delete && dataObj.Legs.Delete.length) {
-                for (var i = 0; i < dataObj.Legs.Delete.length; i++) {
-                    deletePart += "\tclav:" + dataObj.id + " clav:temLegislacao clav:" + dataObj.Legs.Delete[i].id + " .\n";
-                }
-            }
             if (dataObj.AppNotes.Delete && dataObj.AppNotes.Delete.length) {
                 for (var i = 0; i < dataObj.AppNotes.Delete.length; i++) {
                     deletePart += "\tclav:" + dataObj.id + " clav:temNotaAplicacao clav:" + dataObj.AppNotes.Delete[i].id + " .\n";
@@ -419,10 +409,14 @@ module.exports = function (app) {
                     deletePart += "\tclav:" + dataObj.id + " clav:temNotaExclusao clav:" + dataObj.DelNotes.Delete[i].id + " .\n";
                 }
             }
-            if (dataObj.RelProcs.Delete && dataObj.RelProcs.Delete.length) {
-                for (var i = 0; i < dataObj.RelProcs.Delete.length; i++) {
-                    deletePart += "\tclav:" + dataObj.id + " clav:temRelProc clav:" + dataObj.RelProcs.Delete[i].id + " .\n";
-                    deletePart += "\tclav:" + dataObj.RelProcs.Delete[i].id + " clav:temRelProc clav:" + dataObj.id + " .\n";
+            
+            var relKeys = Object.keys(dataObj.RelProcs);
+            
+            for (var k = 0; k < relKeys.length; k++) {
+                if (dataObj.RelProcs[relKeys[k]].Delete && dataObj.RelProcs[relKeys[k]].Delete.length) {
+                    for (var i = 0; i < dataObj.RelProcs[relKeys[k]].Delete.length; i++) {
+                        deletePart += "\tclav:" + dataObj.id + " clav:e" + relKeys[k].replace(/ /,'') + " clav:" + dataObj.RelProcs[relKeys[k]].Delete[i].id + " .\n";
+                    }
                 }
             }
 
@@ -538,10 +532,13 @@ module.exports = function (app) {
                 }
             }
             //Relações com Processos 
-            if (dataObj.RelProcs.Add && dataObj.RelProcs.Add.length) {
-                for (var i = 0; i < dataObj.RelProcs.Add.length; i++) {
-                    insertPart += "\tclav:" + dataObj.id + " clav:temRelProc clav:" + dataObj.RelProcs.Add[i].id + " .\n";
-                    insertPart += "\tclav:" + dataObj.RelProcs.Add[i].id + " clav:temRelProc clav:" + dataObj.id + " .\n";
+            var relKeys = Object.keys(dataObj.RelProcs);
+            
+            for (var k = 0; k < relKeys.length; k++) {
+                if (dataObj.RelProcs[relKeys[k]].Add && dataObj.RelProcs[relKeys[k]].Add.length) {
+                    for (var i = 0; i < dataObj.RelProcs[relKeys[k]].Add.length; i++) {
+                        insertPart += "\tclav:" + dataObj.id + " clav:e" + relKeys[k].replace(/ /,'') + " clav:" + dataObj.RelProcs[relKeys[k]].Add[i].id + " .\n";
+                    }
                 }
             }
             //Participantes
@@ -566,6 +563,7 @@ module.exports = function (app) {
 
             updateQuery = deletePart + inserTPart + wherePart;
 
+            console.log(updateQuery);
 
             return client.query(updateQuery).execute()
                 .then(response => Promise.resolve(response))
@@ -677,10 +675,13 @@ module.exports = function (app) {
                 }
             }
 
-            if (data.Level == 3 && data.RelProcs && data.RelProcs.length) {
-                for (var i = 0; i < data.RelProcs.length; i++) {
-                    createQuery += 'clav:' + id + ' clav:temRelProc clav:' + data.RelProcs[i].id + ' .\n';
-                    createQuery += 'clav:' + data.RelProcs[i].id + ' clav:temRelProc clav:' + id + ' .\n';
+            if (data.Level == 3 && data.RelProcs) {
+                var keys = Object.keys(data.RelProcs);
+
+                for (var k = 0; k < keys.length; k++) {
+                    for (var i = 0; i < data.RelProcs[keys[k]].length; i++) {
+                        createQuery += 'clav:' + id + ' clav:e' + keys[k].replace(/ /, '') + ' clav:' + data.RelProcs[keys[k]][i].id + ' .\n';
+                    }
                 }
             }
 
