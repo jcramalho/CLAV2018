@@ -13,4 +13,6 @@ TODOS:
 
     -listagem de classes em harmonização
 
+    -retirar botoes "editar" da consulta se nao houver user
+
     938312013

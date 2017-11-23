@@ -135,33 +135,33 @@ block corpo
                                 v-model="editParts"
                             )
 
+            if user
+                input.btn.btn-xs.btn-default.col-sm-1(
+                    type="button" 
+                    @click="update" 
+                    value="Confirmar" 
+                    :disabled="!((editName && newName) || (editInitials && newInitials))"
+                )
+                input.btn.btn-xs.btn-warning.col-sm-1(
+                    type="button" 
+                    @click="delReady" 
+                    value="Apagar" 
+                    :disabled="(editName || editInitials)"
+                )
+                p.col-sm-5 {{ message }}
 
-            input.btn.btn-xs.btn-default.col-sm-1(
-                type="button" 
-                @click="update" 
-                value="Confirmar" 
-                :disabled="!((editName && newName) || (editInitials && newInitials))"
-            )
-            input.btn.btn-xs.btn-warning.col-sm-1(
-                type="button" 
-                @click="delReady" 
-                value="Apagar" 
-                :disabled="(editName || editInitials)"
-            )
-            p.col-sm-5 {{ message }}
-
-            input.btn.btn-xs.btn-danger(
-                v-if="delConfirm"
-                type="button" 
-                @click="deleteOrg" 
-                value="OK" 
-            )
-            input.btn.btn-xs.btn-info(
-                v-if="delConfirm"
-                type="button" 
-                @click="delNotReady" 
-                value="<-" 
-            )
+                input.btn.btn-xs.btn-danger(
+                    v-if="delConfirm"
+                    type="button" 
+                    @click="deleteOrg" 
+                    value="OK" 
+                )
+                input.btn.btn-xs.btn-info(
+                    v-if="delConfirm"
+                    type="button" 
+                    @click="delNotReady" 
+                    value="<-" 
+                )
     //-
 
 append scripts    
