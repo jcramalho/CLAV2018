@@ -277,6 +277,7 @@ var classe = new Vue({
                 'Sintese De': [],
                 'Sintetizado Por': [],
                 'Sucessor De': [],
+                'Suplemento De': [],
                 'Suplemento Para': []
             };
             var temp = {};
@@ -608,6 +609,10 @@ var classe = new Vue({
                         Delete: null,
                     },
                     'Sucessor De': {
+                        Add: null,
+                        Delete: null,
+                    },
+                    'Suplemento De': {
                         Add: null,
                         Delete: null,
                     },

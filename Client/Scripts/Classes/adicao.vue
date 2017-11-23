@@ -62,6 +62,7 @@ var newClass = new Vue({
             'Sintese De': [],
             'Sintetizado Por': [],
             'Sucessor De': [],
+            'Suplemento De': [],
             'Suplemento Para': [],
         },
         classList: null,
