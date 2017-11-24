@@ -77,7 +77,8 @@ block corpo
                                     a(:href="'/classe?id='+c.id") {{ c.Code }}
                                     |  - {{ c.Title }}
                             button(@click="domainCollapsed=!domainCollapsed" v-if="domain.length>4")
-                                | Mostrar mais...
+                                span(v-if="domainCollapsed") Mostrar mais...
+                                span(v-else) Mostrar menos...
                         //-
                          td(style="width:10%")
                             label(style="padding-right:5px") Editar
@@ -128,7 +129,8 @@ block corpo
                                             a(:href="'/classe?id='+p.id") {{ p.Code }}
                                             |  - {{ p.Title }}
                                     button(@click="partsCollapsed[key]=!partsCollapsed[key]" v-if="participations[key].length>4")
-                                        | Mostrar mais...
+                                        span(v-if="partsCollapsed[key]") Mostrar mais...
+                                        span(v-else) Mostrar menos...
                         //-
                          td(style="width:10%")
                             label(style="padding-right:5px") Editar
