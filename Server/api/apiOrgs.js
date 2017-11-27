@@ -1,3 +1,5 @@
+var Logging = require('../logging')
+
 module.exports = function (app) {
 
 //  Ontology endpoint
@@ -182,6 +184,9 @@ module.exports = function (app) {
                 else {
                     createOrg(id, name, initials)
                         .then(function () {
+                            Logging.logger.info('Criada organização \''+id+'\' por utilizador \''+req.user._id+'\'');
+                            
+
                             req.flash('success_msg', 'Organização adicionada');
                             res.send("Inserido!");
                         })
@@ -273,10 +278,15 @@ module.exports = function (app) {
                     updateOrg(id, name, initials)
                         .then(function () {
                             if(initials){
+                                Logging.logger.info('Update a organização \''+id+'\' (novo id org_'+initials+') por utilizador \''+req.user._id+'\'');
+                                
                                 req.flash('success_msg', 'Info. de Organização actualizada');
                                 res.send("org_"+initials);
                             }
                             else{
+                                Logging.logger.info('Update a organização \''+id+'\' por utilizador \''+req.user._id+'\'');
+                                
+                                req.flash('success_msg', 'Info. de Organização actualizada');
                                 res.send(id);
                             }
                         })
@@ -311,6 +321,8 @@ module.exports = function (app) {
         //Answer the request
         deleteOrg(id)
             .then(function() {
+                Logging.logger.info('Apagada organização \''+id+'\' por utilizador \''+req.user._id+'\'');
+                
                 req.flash('success_msg', 'Entrada apagada');
                 res.send("Entrada apagada!");
             })

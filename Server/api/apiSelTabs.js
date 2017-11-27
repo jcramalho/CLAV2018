@@ -1,3 +1,5 @@
+var Logging = require('../logging')
+
 module.exports = function (app) {
 
 //  Ontology endpoint
@@ -130,7 +132,6 @@ module.exports = function (app) {
         var name = parts.name;
         var classes = parts.classes;
 
-
         //Executing queries
 
         fetchList()
@@ -139,6 +140,8 @@ module.exports = function (app) {
 
                 createSelTab(id, name, classes)
                     .then(function () {
+                        Logging.logger.info('Criada Tabela de Seleção \''+id+'\' por utilizador \''+req.user._id+'\'');
+                        
                         req.flash('success_msg', 'Tabela de Seleção criada');
                         res.send(id);
                     })

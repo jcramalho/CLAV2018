@@ -1,3 +1,5 @@
+var Logging = require('../logging')
+
 module.exports = function (app) {
 
 //  Ontology endpoint
@@ -576,7 +578,10 @@ module.exports = function (app) {
 
         //Executing queries
         updateClass(dataObj)
-            .then(function () {
+            .then(function (response) {
+                var id = require('url').parse(req.url, true).query.id;
+                Logging.logger.info('Update a classe \''+id+'\' por utilizador \''+req.user._id+'\'');
+                
                 req.flash('success_msg', 'Info. de Classe actualizada');
                 res.send("Actualizado!");
             })
@@ -711,6 +716,8 @@ module.exports = function (app) {
                 else {
                     createClass(data)
                         .then(function () {
+                            Logging.logger.info('Criada classe \'c'+data.Code+'\' por utilizador \''+req.user._id+'\'');
+                            
                             req.flash('success_msg', 'Classe inserida');
                             res.send("Classe Inserida!");
                         })
@@ -761,6 +768,8 @@ module.exports = function (app) {
         //Answer the request
         deleteClass(id)
             .then(function () {
+                Logging.logger.info('Apagada classe \''+id+'\' por utilizador \''+req.user._id+'\'');
+                
                 req.flash('success_msg', 'Entrada apagada');
                 res.send("Entrada apagada!");
             })
