@@ -18,12 +18,14 @@ block corpo
                         td(v-else style="width:80%")
                             span(v-if="item.label!='Link'") {{ item.original }}  
                             a(v-else :href="item.original") Ficheiro
-                        td
-                            label(style="padding-right:5px") Editar
-                            input(
-                                type="checkbox"
-                                v-model="item.edit"
-                            )
+                        
+                        if user
+                            td
+                                label(style="padding-right:5px") Editar
+                                input(
+                                    type="checkbox"
+                                    v-model="item.edit"
+                                )
 
                     //- PROCESSOS
                     tr
@@ -56,7 +58,8 @@ block corpo
                                     a(:href="'/classe?id='+c.id") {{ c.Code }}
                                     |  - {{ c.Title }}
                             button(@click="processesCollapsed=!processesCollapsed" v-if="processes.length>4")
-                                | Mostrar mais...
+                                span(v-if="processesCollapsed") Mostrar mais...
+                                span(v-else) Mostrar menos...
                         //-
                          td(style="width:10%")
                             label(style="padding-right:5px") Editar

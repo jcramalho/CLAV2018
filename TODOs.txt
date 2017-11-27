@@ -11,8 +11,6 @@ TODOS:
         -quando
         -oque
 
+    -controlo de níveis de acesso
+
     -listagem de classes em harmonização
-
-    -retirar botoes "editar" da consulta se nao houver user
-
-    938312013
