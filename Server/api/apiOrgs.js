@@ -1,4 +1,5 @@
-var Logging = require('../logging')
+var Logging = require('../logging');
+var Auth = require('../auth');
 
 module.exports = function (app) {
 
@@ -133,7 +134,7 @@ module.exports = function (app) {
             });
     })
 
-    app.post('/createOrg', function (req, res) {
+    app.post('/createOrg', Auth.isLoggedInAPI, function (req, res) {
         //Check if organization Name or Initials already exist
         function checkOrg(name, initials) {
             var checkQuery = `
@@ -196,7 +197,7 @@ module.exports = function (app) {
             .catch(error => console.error("General error:\n" + error));
     })
 
-    app.put('/updateOrg', function (req, res) {
+    app.put('/updateOrg', Auth.isLoggedInAPI, function (req, res) {
         //Check if organization Name or Initials already exist
         function checkOrg(name, initials) {
             var checkQuery = ` 
@@ -297,7 +298,7 @@ module.exports = function (app) {
         
     })
 
-    app.post('/deleteOrg', function (req, res) {
+    app.post('/deleteOrg', Auth.isLoggedInAPI, function (req, res) {
         
         function deleteOrg(id) {
             var deleteQuery = `

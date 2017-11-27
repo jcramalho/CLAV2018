@@ -1,4 +1,5 @@
-var Logging = require('../logging')
+var Logging = require('../logging');
+var Auth = require('../auth');
 
 module.exports = function (app) {
 
@@ -68,7 +69,7 @@ module.exports = function (app) {
             });
     })
 
-    app.post('/createSelTab', function (req, res) {
+    app.post('/createSelTab', Auth.isLoggedInAPI, function (req, res) {
         //get a list of all table IDs
         function fetchList() {
             return client.query(

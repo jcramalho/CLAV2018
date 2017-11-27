@@ -1,4 +1,5 @@
-var Logging = require('../logging')
+var Logging = require('../logging');
+var Auth = require('../auth');
 
 module.exports = function (app) {
 
@@ -106,7 +107,7 @@ module.exports = function (app) {
             });
     })
 
-    app.post('/createLeg', function (req, res) {
+    app.post('/createLeg', Auth.isLoggedInAPI, function (req, res) {
         //generate a new ID
         function genID(ids) {
             var newIDNum = 1;
@@ -223,7 +224,7 @@ module.exports = function (app) {
             .catch(error => console.error("General error:\n" + error));
     })
 
-    app.put('/updateleg', function (req, res) {
+    app.put('/updateleg', Auth.isLoggedInAPI, function (req, res) {
         var url = require('url');
 
         //Check if legislation number already exists
@@ -326,7 +327,7 @@ module.exports = function (app) {
         }
     })
 
-    app.post('/deleteLeg', function (req, res) {
+    app.post('/deleteLeg', Auth.isLoggedInAPI, function (req, res) {
         
         function deleteLeg(id) {
             return client.query(SPARQL`

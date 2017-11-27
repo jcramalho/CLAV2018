@@ -1,4 +1,5 @@
-var Logging = require('../logging')
+var Logging = require('../logging');
+var Auth = require('../auth');
 
 module.exports = function (app) {
 
@@ -589,7 +590,7 @@ module.exports = function (app) {
     })
 
     //inserts a new class into the DB
-    app.post('/createClass', function (req, res) {
+    app.post('/createClass', Auth.isLoggedInAPI, function (req, res) {
 
         //Check if class' code already exists
         function checkCode(code) {
@@ -729,7 +730,7 @@ module.exports = function (app) {
     })
 
     //Deletes a class 
-    app.post('/deleteClass', function (req, res) {
+    app.post('/deleteClass', Auth.isLoggedInAPI, function (req, res) {
 
         function deleteClass(id) {
             var delQuery = `
