@@ -23,7 +23,7 @@ module.exports.logger = new (winston.Logger)({
     new (require('winston-daily-rotate-file'))({
       filename: `${logDir}/-results.log`,
       timestamp: tsFormat,
-      datePattern: 'yyyy-MM-dd',
+      datePattern: 'yyyy-MM',
       prepend: true,
       level: env === 'development' ? 'verbose' : 'info'
     })
