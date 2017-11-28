@@ -57,7 +57,8 @@ block corpo
                             input(
                                 size="50"
                                 v-model="newPassword2"
-                            )
+                            ) 
+                            | {{ passMessage }}
                             br
                             button(
                                 @click="edit.Password=!edit.Password"
@@ -66,6 +67,12 @@ block corpo
                             button(
                                 @click="edit.Password=!edit.Password"
                             ) Alterar Password
+
+                input.btn.btn-xs.btn-default.col-sm-1(
+                    type="button" 
+                    value="Confirmar" 
+                    :disabled="!checkready()"
+                )
 
 append scripts    
     script(src="/Scripts/Users/perfil.vue")
