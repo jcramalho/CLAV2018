@@ -41,6 +41,6 @@
     "sparql-client-2": "^0.6.2",
     "vue": "^2.4.4",
     "winston": "^2.4.0",
-    "winston-daily-rotate-file": "^1.7.2"
+    "winston-daily-rotate-file": "^2.0.0-beta"
   }
 }

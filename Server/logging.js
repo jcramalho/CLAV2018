@@ -3,14 +3,14 @@ const winston = require('winston');
 const fs = require('fs');
 const env = process.env.NODE_ENV || 'development';
 
-const logDir = 'Log';
+const logDir = 'Logs';
 
 // Create the log directory if it does not exist
 if (!fs.existsSync(logDir)) {
   fs.mkdirSync(logDir);
 }
 
-const tsFormat = () => (new Date()).toLocaleTimeString();
+const tsFormat = () => (new Date()).toLocaleString();
 
 module.exports.logger = new (winston.Logger)({
   transports: [
@@ -21,9 +21,9 @@ module.exports.logger = new (winston.Logger)({
       level: 'info'
     }),
     new (require('winston-daily-rotate-file'))({
-      filename: `${logDir}/-results.log`,
+      filename: `${logDir}/log`,
       timestamp: tsFormat,
-      datePattern: 'yyyy-MM',
+      datePattern: 'YYYY-MM',
       prepend: true,
       level: env === 'development' ? 'verbose' : 'info'
     })
