@@ -12,3 +12,17 @@ TODOS:
     -editar TS
 
     -fluxo de submissões
+
+
+    Tabelas de Seleção
+        -alterar formato TS
+        -editar TS
+
+
+    Legislação
+        -lista de legislação (tipo e numero no inicio , titulo)
+        -pesquisa nas tabelas
+        -concatenar data
+
+
+    CRUD nos erros
