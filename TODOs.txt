@@ -13,4 +13,9 @@ TODOS:
         -listagem de classes em harmonização
 
 
+    Organizações
+        -CRUD em conjuntos de orgs
+        -CRUD em tipologias de orgs
+    
+
     CRUD nos erros
