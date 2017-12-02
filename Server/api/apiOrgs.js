@@ -21,10 +21,26 @@ module.exports = function (app) {
         
         function fetchOrgs() {
             return client.query(
-                `SELECT ?id ?Nome ?Sigla where {
-                    ?id rdf:type clav:Organizacao ;
-                        clav:orgNome ?Nome ;
-                        clav:orgSigla ?Sigla
+                `SELECT * {
+                    {
+                        SELECT ?id ?Nome ?Sigla where {
+                            ?id rdf:type clav:Organizacao ;
+                                clav:orgNome ?Nome ;
+                                clav:orgSigla ?Sigla
+                        }
+                    } UNION {
+                        SELECT ?id ?Nome ?Sigla where {
+                            ?id rdf:type clav:TipologiaOrganizacao ;
+                                clav:orgNome ?Nome ;
+                                clav:orgSigla ?Sigla
+                        }
+                    } UNION {
+                        SELECT ?id ?Nome ?Sigla where {
+                            ?id rdf:type clav:ConjuntoOrganizacoes ;
+                                clav:orgNome ?Nome ;
+                                clav:orgSigla ?Sigla
+                        }
+                    }
                 }`
             )
                 .execute()
@@ -37,6 +53,64 @@ module.exports = function (app) {
 
         fetchOrgs()
             .then(orgs => res.send(orgs))
+            .catch(function (error) {
+                console.error(error);
+            });
+    })
+ 
+    app.get('/conjOrgs', function (req, res) {
+        var url = require('url');
+        
+        function fetchList(id) {
+            return client.query(
+                `SELECT * WHERE {
+                    clav:${id} clav:pertenceConjOrg ?id ;
+                        clav:orgNome ?Nome ;
+                        clav:orgSigla ?Sigla .
+                }`
+            )
+                .execute()
+                //getting the content we want
+                .then(response => Promise.resolve(response.results.bindings))
+                .catch(function (error) {
+                    console.error(error);
+                });
+        }
+
+        var parts = url.parse(req.url, true);
+        var id = parts.query.id;
+
+        fetchList(id)
+            .then(list => res.send(list))
+            .catch(function (error) {
+                console.error(error);
+            });
+    })
+
+    app.get('/tipolOrgs', function (req, res) {
+        var url = require('url');
+        
+        function fetchList(id) {
+            return client.query(
+                `SELECT * WHERE {
+                    clav:${id} clav:pertenceTipologiaOrg ?id ;
+                        clav:orgNome ?Nome ;
+                        clav:orgSigla ?Sigla .
+                }`
+            )
+                .execute()
+                //getting the content we want
+                .then(response => Promise.resolve(response.results.bindings))
+                .catch(function (error) {
+                    console.error(error);
+                });
+        }
+
+        var parts = url.parse(req.url, true);
+        var id = parts.query.id;
+
+        fetchList(id)
+            .then(list => res.send(list))
             .catch(function (error) {
                 console.error(error);
             });
