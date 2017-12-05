@@ -24,23 +24,20 @@ module.exports = function (app) {
                 `SELECT * {
                     {
                         SELECT ?id ?Nome ?Sigla where {
-                            ?id rdf:type clav:Organizacao ;
-                                clav:orgNome ?Nome ;
-                                clav:orgSigla ?Sigla
+                            ?id rdf:type clav:Organizacao .
                         }
                     } UNION {
                         SELECT ?id ?Nome ?Sigla where {
-                            ?id rdf:type clav:TipologiaOrganizacao ;
-                                clav:orgNome ?Nome ;
-                                clav:orgSigla ?Sigla
+                            ?id rdf:type clav:TipologiaOrganizacao .
                         }
                     } UNION {
                         SELECT ?id ?Nome ?Sigla where {
-                            ?id rdf:type clav:ConjuntoOrganizacoes ;
-                                clav:orgNome ?Nome ;
-                                clav:orgSigla ?Sigla
+                            ?id rdf:type clav:ConjuntoOrganizacoes .
                         }
                     }
+                    ?id rdf:type ?Tipo ;
+                        clav:orgNome ?Nome ;
+                        clav:orgSigla ?Sigla
                 }`
             )
                 .execute()
@@ -58,13 +55,71 @@ module.exports = function (app) {
             });
     })
  
-    app.get('/conjOrgs', function (req, res) {
+    app.get('/inConjOrgs', function (req, res) {
         var url = require('url');
         
         function fetchList(id) {
             return client.query(
                 `SELECT * WHERE {
-                    clav:${id} clav:pertenceConjOrg ?id ;
+                    clav:${id} clav:pertenceConjOrg ?id .
+                    ?id clav:orgNome ?Nome ;
+                        clav:orgSigla ?Sigla .
+                }`
+            )
+                .execute()
+                //getting the content we want
+                .then(response => Promise.resolve(response.results.bindings))
+                .catch(function (error) {
+                    console.error(error);
+                });
+        }
+
+        var parts = url.parse(req.url, true);
+        var id = parts.query.id;
+
+        fetchList(id)
+            .then(list => res.send(list))
+            .catch(function (error) {
+                console.error(error);
+            });
+    })
+
+    app.get('/inTipolOrgs', function (req, res) {
+        var url = require('url');
+        
+        function fetchList(id) {
+            return client.query(
+                `SELECT * WHERE {
+                    clav:${id} clav:pertenceTipologiaOrg ?id .
+                    ?id clav:orgNome ?Nome ;
+                        clav:orgSigla ?Sigla .
+                }`
+            )
+                .execute()
+                //getting the content we want
+                .then(response => Promise.resolve(response.results.bindings))
+                .catch(function (error) {
+                    console.error(error);
+                });
+        }
+
+        var parts = url.parse(req.url, true);
+        var id = parts.query.id;
+
+        fetchList(id)
+            .then(list => res.send(list))
+            .catch(function (error) {
+                console.error(error);
+            });
+    })
+
+    app.get('/orgsInConj', function (req, res) {
+        var url = require('url');
+        
+        function fetchList(id) {
+            return client.query(
+                `SELECT * WHERE {
+                    ?id clav:pertenceConjOrg clav:${id} ;
                         clav:orgNome ?Nome ;
                         clav:orgSigla ?Sigla .
                 }`
@@ -87,13 +142,13 @@ module.exports = function (app) {
             });
     })
 
-    app.get('/tipolOrgs', function (req, res) {
+    app.get('/orgsInTipol', function (req, res) {
         var url = require('url');
         
         function fetchList(id) {
             return client.query(
                 `SELECT * WHERE {
-                    clav:${id} clav:pertenceTipologiaOrg ?id ;
+                    ?id clav:pertenceTipologiaOrg clav:${id} ;
                         clav:orgNome ?Nome ;
                         clav:orgSigla ?Sigla .
                 }`

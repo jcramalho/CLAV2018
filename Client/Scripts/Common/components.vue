@@ -78,7 +78,7 @@ Vue.component('custom-table-simple', {
         },
     },
     methods: {
-        completeFilter: function (filt){
+        completeFilter: function (filt){ //filter rows according to what is written in the input box
             tempRows= this.completeRows;
             
             filters= filt.split(" ");
@@ -89,12 +89,11 @@ Vue.component('custom-table-simple', {
 
             this.rows=tempRows;
         },
-        filter: function (list, filt) { //filter rows according to what is written in the input box
+        filter: function (list, filt) { 
             var retList;
             
             regex = new RegExp(filt, "gi");
 
-            //this.rows = this.completeRows.filter(function (item) {
             retList = list.filter(function (item) {
                     
                 for (var i = 0; i < item.length; i++) {
@@ -105,7 +104,7 @@ Vue.component('custom-table-simple', {
                 return false;
             })
             if (retList.length == 0) {
-                retList = [["Sem resultados correspondentes..."]];
+                retList = [[]];
             }
 
             return retList;

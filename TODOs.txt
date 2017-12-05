@@ -1,4 +1,4 @@
-TODOS:
+TODOs:
     Utilizadores
         -controlo de níveis de acesso
         -fluxo de submissões
@@ -7,15 +7,14 @@ TODOS:
 
 
     Tabelas de Seleção (em standby)
-        -alterar formato TS
-        -editar TS
+        -acabar CRUD
         -ts a partir de org
         -listagem de classes em harmonização
 
 
     Organizações
-        -CRUD em conjuntos de orgs
-        -CRUD em tipologias de orgs
+        -CRUD conjuntos de orgs
+        -CRUD tipologias de orgs
     
 
-    CRUD nos erros
+    CRUD erros
