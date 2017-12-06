@@ -14,7 +14,17 @@ TODOs:
 
     Organizações
         -CRUD conjuntos de orgs
+            -API
+                -create
+                -update
+                -delete
         -CRUD tipologias de orgs
-    
+            -API    
+                -create
+                -update
+                -delete
+        -Site
+            -tipologias a que organização pertence
+
 
     CRUD erros

@@ -38,39 +38,42 @@ module.exports = function (app) {
                     ?id rdf:type ?Tipo ;
                         clav:orgNome ?Nome ;
                         clav:orgSigla ?Sigla
+					filter(?Tipo!=owl:NamedIndividual)
                 }`
             )
                 .execute()
                 //getting the content we want
                 .then(response => Promise.resolve(response.results.bindings))
                 .catch(function (error) {
-                    console.error(error);
+                    console.error("Listagem: "+error);
                 });
         }
 
         fetchOrgs()
             .then(orgs => res.send(orgs))
             .catch(function (error) {
-                console.error(error);
+                console.error("Chamada a Listagem: "+error);
             });
     })
  
-    app.get('/inConjOrgs', function (req, res) {
+    app.get('/inConjs', function (req, res) {
         var url = require('url');
         
         function fetchList(id) {
             return client.query(
                 `SELECT * WHERE {
                     clav:${id} clav:pertenceConjOrg ?id .
-                    ?id clav:orgNome ?Nome ;
+                    ?id rdf:type ?Tipo ;
+                        clav:orgNome ?Nome ;
                         clav:orgSigla ?Sigla .
+					filter(?Tipo!=owl:NamedIndividual)
                 }`
             )
                 .execute()
                 //getting the content we want
                 .then(response => Promise.resolve(response.results.bindings))
                 .catch(function (error) {
-                    console.error(error);
+                    console.error("Conjuntos a que x pertence: "+error);
                 });
         }
 
@@ -80,26 +83,29 @@ module.exports = function (app) {
         fetchList(id)
             .then(list => res.send(list))
             .catch(function (error) {
-                console.error(error);
+                console.error("Chamada de conjuntos a que x pertence: "+error);
             });
     })
 
-    app.get('/inTipolOrgs', function (req, res) {
+    app.get('/inTipols', function (req, res) {
         var url = require('url');
         
         function fetchList(id) {
             return client.query(
                 `SELECT * WHERE {
                     clav:${id} clav:pertenceTipologiaOrg ?id .
-                    ?id clav:orgNome ?Nome ;
+                    ?id rdf:type ?Tipo ;
+                        clav:orgNome ?Nome ;
                         clav:orgSigla ?Sigla .
+                        
+					filter(?Tipo!=owl:NamedIndividual)
                 }`
             )
                 .execute()
                 //getting the content we want
                 .then(response => Promise.resolve(response.results.bindings))
                 .catch(function (error) {
-                    console.error(error);
+                    console.error("Tipologias a que x pertence: "+error);
                 });
         }
 
@@ -109,26 +115,28 @@ module.exports = function (app) {
         fetchList(id)
             .then(list => res.send(list))
             .catch(function (error) {
-                console.error(error);
+                console.error("Chamada de tipologias a que x pertence: "+error);
             });
     })
 
-    app.get('/orgsInConj', function (req, res) {
+    app.get('/orgsInGroup', function (req, res) {
         var url = require('url');
         
         function fetchList(id) {
             return client.query(
                 `SELECT * WHERE {
-                    ?id clav:pertenceConjOrg clav:${id} ;
+                    clav:${id} clav:temOrg ?id .
+                    ?id rdf:type ?Tipo ;
                         clav:orgNome ?Nome ;
                         clav:orgSigla ?Sigla .
+                    filter(?Tipo!=owl:NamedIndividual)
                 }`
             )
                 .execute()
                 //getting the content we want
                 .then(response => Promise.resolve(response.results.bindings))
                 .catch(function (error) {
-                    console.error(error);
+                    console.error("Elementos num grupo: "+error);
                 });
         }
 
@@ -138,36 +146,7 @@ module.exports = function (app) {
         fetchList(id)
             .then(list => res.send(list))
             .catch(function (error) {
-                console.error(error);
-            });
-    })
-
-    app.get('/orgsInTipol', function (req, res) {
-        var url = require('url');
-        
-        function fetchList(id) {
-            return client.query(
-                `SELECT * WHERE {
-                    ?id clav:pertenceTipologiaOrg clav:${id} ;
-                        clav:orgNome ?Nome ;
-                        clav:orgSigla ?Sigla .
-                }`
-            )
-                .execute()
-                //getting the content we want
-                .then(response => Promise.resolve(response.results.bindings))
-                .catch(function (error) {
-                    console.error(error);
-                });
-        }
-
-        var parts = url.parse(req.url, true);
-        var id = parts.query.id;
-
-        fetchList(id)
-            .then(list => res.send(list))
-            .catch(function (error) {
-                console.error(error);
+                console.error("Chamada de elementos num grupo: "+error);
             });
     })
 
@@ -185,7 +164,7 @@ module.exports = function (app) {
                 //getting the content we want
                 .then(response => Promise.resolve(response.results.bindings))
                 .catch(function (error) {
-                    console.error(error);
+                    console.error("Dados de uma org: "+error);
                 });
         }
 
@@ -195,7 +174,7 @@ module.exports = function (app) {
         //Answer the request
         fetchOrg(id).then(org => res.send(org))
             .catch(function (error) {
-                console.error(error);
+                console.error("Chamada de dados de uma org: "+error);
             });
     })
 
@@ -215,7 +194,7 @@ module.exports = function (app) {
                 .execute()
                 .then(response => Promise.resolve(response.results.bindings))
                 .catch(function (error) {
-                    console.error(error);
+                    console.error("Dominio de org: "+error);
             });
         }
 
@@ -225,7 +204,7 @@ module.exports = function (app) {
         //Answer the request
         fetchDomain(id).then(org => res.send(org))
             .catch(function (error) {
-                console.error(error);
+                console.error("Chamada de dominio: "+error);
             });
     })
 
@@ -249,7 +228,7 @@ module.exports = function (app) {
                 .execute()
                 .then(response => Promise.resolve(response.results.bindings))
                 .catch(function (error) {
-                    console.error(error);
+                    console.error("Participações de org: "+error);
             });
         }
 
@@ -259,7 +238,7 @@ module.exports = function (app) {
         //Answer the request
         fetchParts(id).then(org => res.send(org))
             .catch(function (error) {
-                console.error(error);
+                console.error("Chamada de participações: "+error);
             });
     })
 

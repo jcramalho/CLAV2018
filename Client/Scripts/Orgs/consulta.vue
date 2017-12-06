@@ -2,6 +2,7 @@ var org = new Vue({
     el: '#organizacao-form',
     data: {
         id: "",
+        type: "",
         orgName: "",
         newName: "",
         editName: false,
@@ -36,6 +37,21 @@ var org = new Vue({
             Iniciador: true,
         },
         domainCollapsed: true,
+
+        editConj: false,
+        newConj: "",
+        conjList: [],
+        myConjList: [],
+        myNewConjList: [],
+
+        editElems: false,
+        newElem: "",
+        orgList: [],
+        elemList: [],
+        newElemList: [],
+
+        tipolList: [],
+
     },
     methods: {
         getParameterByName: function (name, url) {
@@ -56,16 +72,69 @@ var org = new Vue({
                     classesToParse = response.body;
                 })
                 .then(function () {
-                    this.classList = this.parseList(classesToParse, keys).map(function(item){
+                    this.classList = this.parseList(classesToParse, keys).map(function (item) {
                         return {
-                            label: item.Code+" - "+item.Title,
+                            label: item.Code + " - " + item.Title,
                             value: item,
                         }
                     }).sort(function (a, b) {
                         return a.label.localeCompare(b.label);
                     });
-                    
+
                     this.classesReady = true;
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        },
+        loadOrgs: function () {
+            var orgsToParse = [];
+            var keys = ["id", "Tipo", "Nome", "Sigla"];
+
+            this.$http.get("/orgs")
+                .then(function (response) {
+                    orgsToParse = response.body;
+                })
+                .then(function () {
+                    var completeList = this.parseList(orgsToParse, keys);
+
+                    //orgs or sets that can belong to a set or tipology
+                    this.orgList = completeList.filter(
+                        a => (a.Tipo != "Tipologia")
+                    ).map(function (item) {
+                        return {
+                            label: item.Sigla,
+                            value: item,
+                        }
+                    }).sort(function (a, b) {
+                        return a.label.localeCompare(b.label);
+                    });
+
+                    //sets
+                    this.conjList = completeList.filter(
+                        a => (a.Tipo == "Conjunto")
+                    ).map(function (item) {
+                        return {
+                            label: item.Sigla,
+                            value: item,
+                        }
+                    }).sort(function (a, b) {
+                        return a.label.localeCompare(b.label);
+                    });
+
+                    //tipologies
+                    this.tipolList = completeList.filter(
+                        a => (a.Tipo == "Tipologia")
+                    ).map(function (item) {
+                        return {
+                            label: item.Sigla,
+                            value: item,
+                        }
+                    }).sort(function (a, b) {
+                        return a.label.localeCompare(b.label);
+                    });
+
+                    this.orgsReady = true;
                 })
                 .catch(function (error) {
                     console.error(error);
@@ -107,6 +176,42 @@ var org = new Vue({
                     console.error(error);
                 });
         },
+        loadElements: function () {
+            var orgsToParse = [];
+            var keys = ["id", "Tipo", "Nome", "Sigla"];
+
+            this.$http.get("/orgsInGroup?id=" + this.id)
+                .then(function (response) {
+                    orgsToParse = response.body;
+                })
+                .then(function () {
+                    this.elemList = this.parseList(orgsToParse, keys);
+                    this.newElemList = JSON.parse(JSON.stringify(this.elemList));
+
+                    this.elemsReady = true;
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        },
+        loadConjs: function () {
+            var orgsToParse = [];
+            var keys = ["id", "Tipo", "Nome", "Sigla"];
+
+            this.$http.get("/inConjs?id=" + this.id)
+                .then(function (response) {
+                    orgsToParse = response.body;
+                })
+                .then(function () {
+                    this.myConjList = this.parseList(orgsToParse, keys);
+                    this.myNewConjList = JSON.parse(JSON.stringify(this.myConjList));
+
+                    this.conjsReady = true;
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        },
         parse: function () {
             this.orgName = this.content[0].Nome.value;
             this.orgInitials = this.content[0].Sigla.value;
@@ -122,6 +227,21 @@ var org = new Vue({
 
                     if (keys[j] == "id") {
                         temp.id = temp.id.replace(/[^#]+#(.*)/, '$1');
+                    }
+                    if (keys[j] == "Tipo") {
+
+                        conj = new RegExp("#Conjunto", "g");
+                        tipol = new RegExp("#Tipologia", "g");
+
+                        if (conj.test(temp.Tipo)) {
+                            temp.Tipo = "Conjunto";
+                        }
+                        else if (tipol.test(temp.Tipo)) {
+                            temp.Tipo = "Tipologia";
+                        }
+                        else {
+                            temp.Tipo = "Organização";
+                        }
                     }
                 }
 
@@ -169,35 +289,35 @@ var org = new Vue({
             return dest;
         },
         update: function () {
-            var dataObj={
+            var dataObj = {
                 id: this.id,
                 name: null,
                 initials: null,
             }
 
             if (this.editName && this.newName) {
-                dataObj.name=this.newName;
+                dataObj.name = this.newName;
             }
             if (this.editInitials && this.newInitials) {
-                dataObj.initials=this.newInitials;
+                dataObj.initials = this.newInitials;
             }
 
-            this.$http.put('/updateOrg',dataObj,{
+            this.$http.put('/updateOrg', dataObj, {
                 headers: {
-                    'content-type' : 'application/json'
+                    'content-type': 'application/json'
                 }
             })
-            .then(function (response) {
-                var resp = response.body;
-                if(resp!="Nome e/ou Sigla já existentente(s)!"){
-                    window.location.href = '/organizacao?id='+response.body;
-                } else {
-                    this.message= resp;
-                }
-            })
-            .catch(function (error) {
-                console.error(error);
-            });
+                .then(function (response) {
+                    var resp = response.body;
+                    if (resp != "Nome e/ou Sigla já existentente(s)!") {
+                        window.location.href = '/organizacao?id=' + response.body;
+                    } else {
+                        this.message = resp;
+                    }
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
         },
         delReady: function () {
             this.message = "Tem a certeza que deseja apagar?";
@@ -208,18 +328,19 @@ var org = new Vue({
             this.delConfirm = false;
         },
         deleteOrg: function () {
-            this.$http.post('/deleteOrg',{id: this.id})
-            .then( function(response) { 
-                this.message = response.body;
-                window.location.href = '/organizacoes';
-            })
-            .catch( function(error) { 
-                console.error(error); 
-            });
+            this.$http.post('/deleteOrg', { id: this.id })
+                .then(function (response) {
+                    this.message = response.body;
+                    window.location.href = '/organizacoes';
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
         }
     },
     created: function () {
         this.id = this.getParameterByName('id');
+        this.type = this.getParameterByName('type');
 
         this.$http.get("/singleOrg?id=" + this.id)
             .then(function (response) {
@@ -229,6 +350,14 @@ var org = new Vue({
                 this.loadDomain();
                 this.loadParticipations();
                 this.loadClasses();
+
+                if (this.type != "Organização") {
+                    this.loadOrgs();
+                    this.loadElements();
+                }
+                if (this.type != "Tipologia") {
+                    this.loadConjs();
+                }
                 this.parse();
             })
             .catch(function (error) {
