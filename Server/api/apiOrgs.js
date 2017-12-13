@@ -458,8 +458,7 @@ module.exports = function (app) {
 
         //Getting data
         var dataObj = req.body;
-
-        console.log(dataObj);
+        
         //Executing queries
         checkOrg(dataObj.name)
             .then(function (count) {
