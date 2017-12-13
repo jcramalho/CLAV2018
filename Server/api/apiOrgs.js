@@ -263,11 +263,11 @@ module.exports = function (app) {
         }
 
         //Create new organization
-        function createOrg(id, name, initials) {
+        function createOrg(id, name, initials, type) {
             var createQuery = `
                 INSERT DATA {
                     clav:${id} rdf:type owl:NamedIndividual ,
-                            clav:Organizacao ;
+                            clav:${type} ;
                         clav:orgNome '${name}' ;
                         clav:orgSigla '${initials}'
                 }
@@ -282,7 +282,19 @@ module.exports = function (app) {
         var parts = req.body;
         var initials = parts.initials;
         var name = parts.name;
-        var id = "org_" + initials;
+        var type = parts.type;
+        var id;
+
+        switch (type) {
+            case 'Organizacao': id = 'org_' + initials;
+                break;
+            case 'ConjuntoOrganizacoes': id = 'conj_org_' + initials;
+                break;
+            case 'TipologiaOrganizacao': id = 'tipol_org_' + initials;
+                break;
+            default: id = 'error';
+                break;
+        }
 
         //Executing queries
         checkOrg(name, initials)
@@ -291,13 +303,13 @@ module.exports = function (app) {
                     res.send("Nome e/ou Sigla já existente(s)!");
                 }
                 else {
-                    createOrg(id, name, initials)
+                    createOrg(id, name, initials, type)
                         .then(function () {
                             Logging.logger.info('Criada organização \'' + id + '\' por utilizador \'' + req.user._id + '\'');
 
 
                             req.flash('success_msg', 'Organização adicionada');
-                            res.send("Inserido!");
+                            res.send(id);
                         })
                         .catch(error => console.error(error));
                 }
