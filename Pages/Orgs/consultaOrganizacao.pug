@@ -30,21 +30,8 @@ block corpo
                     tr
                         td
                             label Sigla: 
-                        td(v-if="editInitials")
-                            input(
-                                size="50"
-                                v-model="newInitials"
-                                :placeholder="orgInitials"
-                            )
-                        td(v-else)
+                        td
                             | {{ orgInitials }} 
-                        if user 
-                            td
-                                label(style="padding-right:5px") Editar
-                                input(
-                                    type="checkbox"
-                                    v-model="editInitials"
-                                )
             
                     //- TIPO
                     tr
@@ -138,13 +125,13 @@ block corpo
                                     button(@click="partsCollapsed[key]=!partsCollapsed[key]" v-if="participations[key].length>4")
                                         span(v-if="partsCollapsed[key]") Mostrar mais...
                                         span(v-else) Mostrar menos...
-                        //-
-                         td(style="width:10%")
-                            label(style="padding-right:5px") Editar
-                            input(
-                                type="checkbox"
-                                v-model="editParts"
-                            )
+                        if user
+                            td(style="width:10%")
+                                label(style="padding-right:5px") Editar
+                                input(
+                                    type="checkbox"
+                                    v-model="editParts"
+                                )
 
                     //- CONJUNTOS A QUE PERTENCE
                     tr(v-if="type!='Tipologia'")
@@ -160,7 +147,7 @@ block corpo
                                         )
                                     td
                                         button(
-                                            @click="myNewConjList.push(newConj.value)"
+                                            @click="myNewConjList.unshift(newConj.value)"
                                         ) +
                                 tr(v-if="myNewConjList.length")
                                     td(colspan="2")
@@ -183,10 +170,47 @@ block corpo
                                     v-model="editConj"
                                 )
 
+                    //- TIPOLOGIAS A QUE PERTENCE
+                    tr(v-if="type!='Tipologia'")
+                        td(style="width:10%")
+                            label Tipologias:
+                        td(v-if="editTipol" style="width:80%")
+                            table
+                                tr
+                                    td
+                                        v-select.custom-select( 
+                                            v-model="newTipol"
+                                            :options="tipolList"
+                                        )
+                                    td
+                                        button(
+                                            @click="myNewTipolList.unshift(newTipol.value)"
+                                        ) +
+                                tr(v-if="myNewTipolList.length")
+                                    td(colspan="2")
+                                        ul(style="padding-left:20px")
+                                            li(v-for="(o,index) in myNewTipolList")
+                                                | {{ o.Sigla }} - {{ o.Nome }}
+                                                button(
+                                                    @click="myNewTipolList.splice(index,1)"
+                                                ) x
+                        td(v-else style="width:80%")
+                            ul(style="padding-left:20px")
+                                li(v-for="o in myTipolList")
+                                    a(:href="'/organizacao?id='+o.id+'&type='+o.Tipo") {{ o.Sigla }} 
+                                    | - {{ o.Nome }}
+                        if user
+                            td(style="width:10%")
+                                label(style="padding-right:5px") Editar
+                                input(
+                                    type="checkbox"
+                                    v-model="editTipol"
+                                )
+
                     //- ELEMENTOS
                     tr(v-if="type!='Organização'")
                         td(style="width:10%")
-                            label Elmentos:
+                            label Elementos:
                         td(v-if="editElems" style="width:80%")
                             table
                                 tr
@@ -197,7 +221,7 @@ block corpo
                                         )
                                     td
                                         button(
-                                            @click="newElemList.push(newElem.value)"
+                                            @click="newElemList.unshift(newElem.value)"
                                         ) +
                                 tr(v-if="newElemList.length")
                                     td(colspan="2")
@@ -219,18 +243,19 @@ block corpo
                                     type="checkbox"
                                     v-model="editElems"
                                 )
+
             if user
                 input.btn.btn-xs.btn-default.col-sm-1(
                     type="button" 
                     @click="update" 
                     value="Confirmar" 
-                    :disabled="!((editName && newName) || (editInitials && newInitials))"
+                    :disabled="!((editName && newName) || editConj || editTipol || editElems)"
                 )
                 input.btn.btn-xs.btn-warning.col-sm-1(
                     type="button" 
                     @click="delReady" 
                     value="Apagar" 
-                    :disabled="(editName || editInitials)"
+                    :disabled="(editName || editConj || editTipol || editElems)"
                 )
                 p.col-sm-5 {{ message }}
 

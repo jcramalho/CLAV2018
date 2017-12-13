@@ -3,7 +3,7 @@ var Auth = require('../auth');
 
 module.exports = function (app) {
 
-//  Ontology endpoint
+    //  Ontology endpoint
     const { SparqlClient, SPARQL } = require('sparql-client-2');
 
     const client = new SparqlClient('http://localhost:7200/repositories/M51-CLAV', {
@@ -15,10 +15,10 @@ module.exports = function (app) {
         rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
         noInferences: 'http://www.ontotext.com/explicit'
     });
-//
+    //
 
     app.get('/orgs', function (req, res) {
-        
+
         function fetchOrgs() {
             return client.query(
                 `SELECT * {
@@ -45,23 +45,23 @@ module.exports = function (app) {
                 //getting the content we want
                 .then(response => Promise.resolve(response.results.bindings))
                 .catch(function (error) {
-                    console.error("Listagem: "+error);
+                    console.error("Listagem: " + error);
                 });
         }
 
         fetchOrgs()
             .then(orgs => res.send(orgs))
             .catch(function (error) {
-                console.error("Chamada a Listagem: "+error);
+                console.error("Chamada a Listagem: " + error);
             });
     })
- 
+
     app.get('/inConjs', function (req, res) {
         var url = require('url');
-        
+
         function fetchList(id) {
             return client.query(
-                `SELECT * WHERE {
+                `SELECT * FROM noInferences: WHERE {
                     clav:${id} clav:pertenceConjOrg ?id .
                     ?id rdf:type ?Tipo ;
                         clav:orgNome ?Nome ;
@@ -73,7 +73,7 @@ module.exports = function (app) {
                 //getting the content we want
                 .then(response => Promise.resolve(response.results.bindings))
                 .catch(function (error) {
-                    console.error("Conjuntos a que x pertence: "+error);
+                    console.error("Conjuntos a que x pertence: " + error);
                 });
         }
 
@@ -83,29 +83,28 @@ module.exports = function (app) {
         fetchList(id)
             .then(list => res.send(list))
             .catch(function (error) {
-                console.error("Chamada de conjuntos a que x pertence: "+error);
+                console.error("Chamada de conjuntos a que x pertence: " + error);
             });
     })
 
     app.get('/inTipols', function (req, res) {
         var url = require('url');
-        
+
         function fetchList(id) {
-            return client.query(
-                `SELECT * WHERE {
-                    clav:${id} clav:pertenceTipologiaOrg ?id .
-                    ?id rdf:type ?Tipo ;
-                        clav:orgNome ?Nome ;
-                        clav:orgSigla ?Sigla .
-                        
-					filter(?Tipo!=owl:NamedIndividual)
-                }`
-            )
-                .execute()
-                //getting the content we want
+            var fetchQuery = `
+            SELECT * FROM noInferences: WHERE {
+                clav:${id} clav:pertenceTipologiaOrg ?id .
+                ?id rdf:type ?Tipo ;
+                    clav:orgNome ?Nome ;
+                    clav:orgSigla ?Sigla .
+                    
+                filter(?Tipo!=owl:NamedIndividual)
+            }`;
+
+            return client.query(fetchQuery).execute()
                 .then(response => Promise.resolve(response.results.bindings))
                 .catch(function (error) {
-                    console.error("Tipologias a que x pertence: "+error);
+                    console.error("Tipologias a que x pertence: " + error);
                 });
         }
 
@@ -115,13 +114,13 @@ module.exports = function (app) {
         fetchList(id)
             .then(list => res.send(list))
             .catch(function (error) {
-                console.error("Chamada de tipologias a que x pertence: "+error);
+                console.error("Chamada de tipologias a que x pertence: " + error);
             });
     })
 
     app.get('/orgsInGroup', function (req, res) {
         var url = require('url');
-        
+
         function fetchList(id) {
             return client.query(
                 `SELECT * WHERE {
@@ -136,7 +135,7 @@ module.exports = function (app) {
                 //getting the content we want
                 .then(response => Promise.resolve(response.results.bindings))
                 .catch(function (error) {
-                    console.error("Elementos num grupo: "+error);
+                    console.error("Elementos num grupo: " + error);
                 });
         }
 
@@ -146,7 +145,7 @@ module.exports = function (app) {
         fetchList(id)
             .then(list => res.send(list))
             .catch(function (error) {
-                console.error("Chamada de elementos num grupo: "+error);
+                console.error("Chamada de elementos num grupo: " + error);
             });
     })
 
@@ -155,16 +154,18 @@ module.exports = function (app) {
 
         function fetchOrg(id) {
             return client.query(`
-                SELECT ?Nome ?Sigla where {
+                SELECT ?Nome ?Sigla ?Tipo where {
                     clav:${id} clav:orgNome ?Nome ;
-                        clav:orgSigla ?Sigla
+                        rdf:type ?Tipo ;
+                        clav:orgSigla ?Sigla .
+					filter(?Tipo!=owl:NamedIndividual)
                 }`
             )
                 .execute()
                 //getting the content we want
                 .then(response => Promise.resolve(response.results.bindings))
                 .catch(function (error) {
-                    console.error("Dados de uma org: "+error);
+                    console.error("Dados de uma org: " + error);
                 });
         }
 
@@ -174,7 +175,7 @@ module.exports = function (app) {
         //Answer the request
         fetchOrg(id).then(org => res.send(org))
             .catch(function (error) {
-                console.error("Chamada de dados de uma org: "+error);
+                console.error("Chamada de dados de uma org: " + error);
             });
     })
 
@@ -182,20 +183,20 @@ module.exports = function (app) {
         var url = require('url');
 
         function fetchDomain(id) {
-            var fetchQuery= `
+            var fetchQuery = `
                 SELECT * WHERE {
                     ?id clav:temDono clav:${id} ;
                         clav:codigo ?Code ;
                         clav:titulo ?Title .
                 }`
-            ;
+                ;
 
             return client.query(fetchQuery)
                 .execute()
                 .then(response => Promise.resolve(response.results.bindings))
                 .catch(function (error) {
-                    console.error("Dominio de org: "+error);
-            });
+                    console.error("Dominio de org: " + error);
+                });
         }
 
         var parts = url.parse(req.url, true);
@@ -204,7 +205,7 @@ module.exports = function (app) {
         //Answer the request
         fetchDomain(id).then(org => res.send(org))
             .catch(function (error) {
-                console.error("Chamada de dominio: "+error);
+                console.error("Chamada de dominio: " + error);
             });
     })
 
@@ -212,7 +213,7 @@ module.exports = function (app) {
         var url = require('url');
 
         function fetchParts(id) {
-            var fetchQuery= `
+            var fetchQuery = `
                 select * where { 
                     ?id clav:temParticipante clav:${id} ;
                         ?Type clav:${id} ;
@@ -222,14 +223,14 @@ module.exports = function (app) {
                     
                     filter (?Type!=clav:temParticipante && ?Type!=clav:temDono)
                 }`
-            ;
+                ;
 
             return client.query(fetchQuery)
                 .execute()
                 .then(response => Promise.resolve(response.results.bindings))
                 .catch(function (error) {
-                    console.error("Participações de org: "+error);
-            });
+                    console.error("Participações de org: " + error);
+                });
         }
 
         var parts = url.parse(req.url, true);
@@ -238,7 +239,7 @@ module.exports = function (app) {
         //Answer the request
         fetchParts(id).then(org => res.send(org))
             .catch(function (error) {
-                console.error("Chamada de participações: "+error);
+                console.error("Chamada de participações: " + error);
             });
     })
 
@@ -247,8 +248,7 @@ module.exports = function (app) {
         function checkOrg(name, initials) {
             var checkQuery = `
                 SELECT (count(*) as ?Count) where { 
-                    ?o rdf:type clav:Organizacao ;
-                        clav:orgSigla ?s ;
+                    ?o clav:orgSigla ?s ;
                         clav:orgNome ?n .
                     filter (?s='${initials}' || ?n='${name}').
                 }
@@ -293,8 +293,8 @@ module.exports = function (app) {
                 else {
                     createOrg(id, name, initials)
                         .then(function () {
-                            Logging.logger.info('Criada organização \''+id+'\' por utilizador \''+req.user._id+'\'');
-                            
+                            Logging.logger.info('Criada organização \'' + id + '\' por utilizador \'' + req.user._id + '\'');
+
 
                             req.flash('success_msg', 'Organização adicionada');
                             res.send("Inserido!");
@@ -307,13 +307,10 @@ module.exports = function (app) {
 
     app.put('/updateOrg', Auth.isLoggedInAPI, function (req, res) {
         //Check if organization Name or Initials already exist
-        function checkOrg(name, initials) {
+        function checkOrg(name) {
             var checkQuery = ` 
                 SELECT (count(*) as ?Count) where { 
-                    ?o rdf:type clav:Organizacao ;
-                        clav:orgSigla ?s ;
-                        clav:orgNome ?n .
-                    filter (?s='${initials}' || ?n='${name}').
+                    ?o clav:orgNome '${name}' .
                 }
             `;
 
@@ -326,92 +323,147 @@ module.exports = function (app) {
         }
 
         //Update organization
-        function updateOrg(id, name, initials) {
-            if (name && !initials) {
-                var updateQuery = `
-                    DELETE {clav:${id} clav:orgNome ?o }
-                    INSERT {clav:${id} clav:orgNome '${name}' }
-                    WHERE  {clav:${id} ?p ?o }
-                `;
-            }
-            else if (!name && initials) {
-                var newID = "org_" + initials;
+        function updateOrg(dataObj) {
 
-                var updateQuery = `
-                    DELETE {clav:${id} ?p ?o }
-                    INSERT {
-                        clav:${newID} rdf:type clav:Organizacao ;
-                            clav:orgNome ?nome ;
-                            clav:orgSigla '${initials}'
-                    }
-                    WHERE  {clav:${id} clav:orgNome ?nome };
-                    DELETE {clav:${id} ?p ?o }
-                    WHERE {?s ?p ?o}
-                `;
-            }
-            else {
-                var newID = "org_" + initials;
+            function prepDelete(dataObj) {
+                var ret = "";
 
-                var updateQuery = `
-                    DELETE {clav:${id} ?p ?o }
-                    INSERT {
-                        clav:${newID} rdf:type clav:Organizacao ;
-                            clav:orgNome '${name}' ;
-                            clav:orgSigla '${initials}'
+                for (const pType in dataObj.parts) {
+                    if (dataObj.parts[pType].del && dataObj.parts[pType].del.length) {
+                        for (let p of dataObj.parts[pType].del) {
+                            ret += "\tclav:" + p.id + " clav:temParticipante" + pType + " clav:" + dataObj.id + " .\n";
+                        }
                     }
-                    WHERE  {clav:${id} ?p ?o };
-                    DELETE {clav:${id} ?p ?o }
-                    WHERE {?s ?p ?o}
-                `;
+                }
+
+                if (dataObj.conjs.del && dataObj.conjs.del.length) {
+                    for (let conj of dataObj.conjs.del) {
+                        ret += `\tclav:${dataObj.id} clav:pertenceConjOrg clav:${conj.id} .\n`;
+                    }
+                }
+
+                if (dataObj.tipols.del && dataObj.tipols.del.length) {
+                    for (let tipol of dataObj.tipols.del) {
+                        ret += `\tclav:${dataObj.id} clav:pertenceTipologiaOrg clav:${tipol.id} .\n`;
+                    }
+                }
+
+                if (dataObj.elems.del && dataObj.elems.del.length) {
+                    for (let org of dataObj.elems.del) {
+                        if (dataObj.type == "Conjunto") {
+                            ret += `\tclav:${org.id} clav:pertenceConjOrg clav:${dataObj.id} .\n`;
+                        }
+                        else {
+                            ret += `\tclav:${org.id} clav:pertenceTipologiaOrg clav:${dataObj.id} .\n`;
+                        }
+                    }
+                }
+
+                return ret;
             }
-            
+
+            function prepInsert(dataObj) {
+                var ret = "";
+
+                if (dataObj.initials) {
+                    ret += `\tclav:${dataObj.id} clav:orgSigla '${dataObj.initials}' .\n`;
+                }
+
+                if (dataObj.name) {
+                    ret += `\tclav:${dataObj.id} clav:orgNome '${dataObj.name}' .\n`;
+                }
+
+                for (const pType in dataObj.parts) {
+                    if (dataObj.parts[pType].add && dataObj.parts[pType].add.length) {
+                        for (let p of dataObj.parts[pType].add) {
+                            ret += "\tclav:" + p.id + " clav:temParticipante" + pType + " clav:" + dataObj.id + " .\n";
+                        }
+                    }
+                }
+
+                if (dataObj.conjs.add && dataObj.conjs.add.length) {
+                    for (let conj of dataObj.conjs.add) {
+                        ret += `\tclav:${dataObj.id} clav:pertenceConjOrg clav:${conj.id} .\n`;
+                    }
+                }
+
+                if (dataObj.tipols.add && dataObj.tipols.add.length) {
+                    for (let tipol of dataObj.tipols.add) {
+                        ret += `\tclav:${dataObj.id} clav:pertenceTipologiaOrg clav:${tipol.id} .\n`;
+                    }
+                }
+
+                if (dataObj.elems.add && dataObj.elems.add.length) {
+                    for (let org of dataObj.elems.add) {
+                        if (dataObj.type == "Conjunto") {
+                            ret += `\tclav:${org.id} clav:pertenceConjOrg clav:${dataObj.id} .\n`;
+                        }
+                        else if (dataObj.type == "Tipologia") {
+                            ret += `\tclav:${org.id} clav:pertenceTipologiaOrg clav:${dataObj.id} .\n`;
+                        }
+                    }
+                }
+
+                return ret;
+            }
+
+            function prepWhere(dataObj) {
+                var ret = "";
+
+                if (dataObj.initials) {
+                    ret += `\tclav:${dataObj.id} clav:orgSigla ?s .\n`;
+                }
+
+                if (dataObj.name) {
+                    ret += `\tclav:${dataObj.id} clav:orgNome ?n .\n`;
+                }
+
+                return ret;
+            }
+
+            var deletePart = "DELETE {\n" + prepWhere(dataObj) + prepDelete(dataObj) + "}\n";
+            var inserTPart = "INSERT {\n" + prepInsert(dataObj) + "}\n";
+            var wherePart = "WHERE {\n" + prepWhere(dataObj) + "}\n";
+
+            var updateQuery = deletePart + inserTPart + wherePart;
+
             return client.query(updateQuery).execute()
                 .then(response => Promise.resolve(response))
                 .catch(error => console.error("Error in update:\n" + error));
         }
-        
+
         //Getting data
         var dataObj = req.body;
-        
-        var initials = dataObj.initials;
-        var name = dataObj.name;
-        var id = dataObj.id;
 
+        console.log(dataObj);
         //Executing queries
-        checkOrg(name, initials)
+        checkOrg(dataObj.name)
             .then(function (count) {
                 if (count > 0) {
-                    res.send("Nome e/ou Sigla já existentente(s)!");
+                    res.send("Nome já existentente!");
                 }
                 else {
-                    updateOrg(id, name, initials)
+                    updateOrg(dataObj)
                         .then(function () {
-                            if(initials){
-                                Logging.logger.info('Update a organização \''+id+'\' (novo id org_'+initials+') por utilizador \''+req.user._id+'\'');
-                                
-                                req.flash('success_msg', 'Info. de Organização actualizada');
-                                res.send("org_"+initials);
-                            }
-                            else{
-                                Logging.logger.info('Update a organização \''+id+'\' por utilizador \''+req.user._id+'\'');
-                                
-                                req.flash('success_msg', 'Info. de Organização actualizada');
-                                res.send(id);
-                            }
+                            Logging.logger.info('Update a organização \'' + dataObj.id + '\' por utilizador \'' + req.user._id + '\'');
+
+                            req.flash('success_msg', 'Info. de Organização actualizada');
+                            res.send(dataObj.id);
                         })
                         .catch(error => console.error(error));
                 }
             })
             .catch(error => console.error("Initials error:\n" + error));
-        
+
     })
 
     app.post('/deleteOrg', Auth.isLoggedInAPI, function (req, res) {
-        
+
         function deleteOrg(id) {
             var deleteQuery = `
                 DELETE {
-                    clav:${id} ?o ?p
+                    clav:${id} ?o ?p .
+                    ?s ?o clav:${id}
                 }
                 WHERE { ?s ?o ?p }
             `;
@@ -429,14 +481,14 @@ module.exports = function (app) {
 
         //Answer the request
         deleteOrg(id)
-            .then(function() {
-                Logging.logger.info('Apagada organização \''+id+'\' por utilizador \''+req.user._id+'\'');
-                
+            .then(function () {
+                Logging.logger.info('Apagada organização \'' + id + '\' por utilizador \'' + req.user._id + '\'');
+
                 req.flash('success_msg', 'Entrada apagada');
                 res.send("Entrada apagada!");
             })
             .catch(function (error) {
                 console.error(error);
-        });
+            });
     })
 }
