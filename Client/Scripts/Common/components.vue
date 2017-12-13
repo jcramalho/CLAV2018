@@ -23,14 +23,14 @@ Vue.component('custom-table-simple', {
             <table :class="classTable">
                 <thead v-if="header">
                     <tr>
-                        <th v-for="(item,index) in header" @click="sort(index)" class="sorter" :style="{width: cwidth[index]}">
+                        <th v-if="index>0" v-for="(item,index) in header" @click="sort(index)" class="sorter" :style="{width: cwidth[index]}">
                             {{ item }} <span class="caret"></span>
                         </th>
                     </tr>
                 </thead>
                 <tbody name="table">
                     <tr v-for="(row,index) in rowsShow" :key="row[0]" @click="rowClick(index)">
-                        <td v-for="item in row" style="max-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ item }}</td>
+                        <td v-if="index>0" v-for="(item,index) in row" style="max-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ item }}</td>
                     </tr>
                 </tbody>
             </table>

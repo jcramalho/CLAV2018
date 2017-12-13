@@ -73,13 +73,13 @@ block corpo
                             button(@click="domainCollapsed=!domainCollapsed" v-if="domain.length>4")
                                 span(v-if="domainCollapsed") Mostrar mais...
                                 span(v-else) Mostrar menos...
-                        //-
-                         td(style="width:10%")
-                            label(style="padding-right:5px") Editar
-                            input(
-                                type="checkbox"
-                                v-model="editDomain"
-                            )
+                        if user
+                            td(style="width:10%")
+                                label(style="padding-right:5px") Editar
+                                input(
+                                    type="checkbox"
+                                    v-model="editDomain"
+                                )
 
                     //- PARTICIPAÇÕES
                     tr
@@ -249,13 +249,13 @@ block corpo
                     type="button" 
                     @click="update" 
                     value="Confirmar" 
-                    :disabled="!((editName && newName) || editConj || editTipol || editElems)"
+                    :disabled="!((editName && newName) || editDomain || editParts || editConj || editTipol || editElems)"
                 )
                 input.btn.btn-xs.btn-warning.col-sm-1(
                     type="button" 
                     @click="delReady" 
                     value="Apagar" 
-                    :disabled="(editName || editConj || editTipol || editElems)"
+                    :disabled="(editName || editDomain || editParts || editConj || editTipol || editElems)"
                 )
                 p.col-sm-5 {{ message }}
 

@@ -340,6 +340,12 @@ module.exports = function (app) {
             function prepDelete(dataObj) {
                 var ret = "";
 
+                if (dataObj.domain.del && dataObj.domain.del.length) {
+                    for (let process of dataObj.domain.del) {
+                        ret += `\tclav:${process.id} clav:temDono clav:${dataObj.id} .\n`;
+                    }
+                }
+
                 for (const pType in dataObj.parts) {
                     if (dataObj.parts[pType].del && dataObj.parts[pType].del.length) {
                         for (let p of dataObj.parts[pType].del) {
@@ -383,6 +389,12 @@ module.exports = function (app) {
 
                 if (dataObj.name) {
                     ret += `\tclav:${dataObj.id} clav:orgNome '${dataObj.name}' .\n`;
+                }
+
+                if (dataObj.domain.add && dataObj.domain.add.length) {
+                    for (let process of dataObj.domain.add) {
+                        ret += `\tclav:${process.id} clav:temDono clav:${dataObj.id} .\n`;
+                    }
                 }
 
                 for (const pType in dataObj.parts) {

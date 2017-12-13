@@ -355,6 +355,10 @@ var org = new Vue({
                 id: this.id,
                 type: this.type,
                 name: null,
+                domain: {
+                    add: null,
+                    del: null,
+                },
                 parts: {
                     Apreciador: {
                         add: null,
@@ -397,6 +401,18 @@ var org = new Vue({
 
             if (this.editName) {
                 dataObj.name = this.newName;
+            }
+            if (this.editDomain) {
+
+                var temp = {
+                    add: null,
+                    delete: null,
+                };
+
+                temp.add = this.subtractArray(this.newDomain, this.domain);
+                temp.del = this.subtractArray(this.domain, this.newDomain);
+
+                dataObj.domain = JSON.parse(JSON.stringify(temp));
             }
             if (this.editParts) {
                 for (const pType in this.participations) {
