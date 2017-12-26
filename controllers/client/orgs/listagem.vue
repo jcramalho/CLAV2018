@@ -21,10 +21,10 @@ var orgs = new Vue({
             var id = this.content[row[0]-1].id.value;
             id = id.replace(/[^#]+#(.*)/,'$1');
             
-            window.location.href = '/organizacao?id='+id+'&type='+row[3];
+            window.location.href = '/orgs/consulta/'+id;
         },
         addOrg: function(row){
-            window.location.href = '/novaorganizacao';
+            window.location.href = '/orgs/criacao';
         },
         parse: function(){    
             // key names for table header and parsing
@@ -65,7 +65,7 @@ var orgs = new Vue({
         }
     },
     created: function(){
-        this.$http.get("/orgs")
+        this.$http.get("/api/orgs")
         .then( function(response) { 
             this.content = response.body;
         })
