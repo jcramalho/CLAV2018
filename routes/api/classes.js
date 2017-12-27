@@ -3,10 +3,18 @@ var Auth = require('../../controllers/auth.js');
 var Classes = require('../../controllers/api/classes.js');
 
 var express = require('express');
-var app = express.app();
+var router = express.Router();
 
 
-router.get('/(level/:level)?', function (req, res) {
+router.get('/', function (req, res) {
+    Classes.list(1)
+        .then(list => res.send(list))
+        .catch(function (error) {
+            console.error(error);
+        });
+})00
+
+router.get('/level:level', function (req, res) {
     Classes.list(req.params.level)
         .then(list => res.send(list))
         .catch(function (error) {
@@ -134,4 +142,4 @@ router.post('/delete', Auth.isLoggedInAPI, function (req, res) {
         });
 })
 
-module.exports = app;
+module.exports = router;
