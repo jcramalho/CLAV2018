@@ -76,8 +76,8 @@ app.use('/legislacao',require('./routes/leg'));
 app.use('/classes',require('./routes/classes'));
 app.use('/tabelasSelecao',require('./routes/tabsSel'));
 
-app.use('/api/orgs',require('./routes/api/orgs'));/*
-app.use('/api/leg',require('./routes/api/leg')(app));
+app.use('/api/orgs',require('./routes/api/orgs'));
+app.use('/api/leg',require('./routes/api/leg'));/*
 app.use('/api/classes',require('./routes/api/classes')(app));
 app.use('/api/selTabs',require('./routes/api/selTabs')(app));
 app.use('/auth',require('./routes/auth/user')(app, passport));

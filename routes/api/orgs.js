@@ -21,7 +21,7 @@ router.get('/:id', function (req, res) {
         });
 })
 
-router.get('/inConjs/:id', function (req, res) {
+router.get('/:id/inConjs', function (req, res) {
     Orgs.inConjs(req.params.id)
         .then(list => res.send(list))
         .catch(function (error) {
@@ -29,7 +29,7 @@ router.get('/inConjs/:id', function (req, res) {
         });
 })
 
-router.get('/inTipols/:id', function (req, res) {
+router.get('/:id/inTipols', function (req, res) {
     Orgs.inTipols(req.params.id)
         .then(list => res.send(list))
         .catch(function (error) {
@@ -37,7 +37,7 @@ router.get('/inTipols/:id', function (req, res) {
         });
 })
 
-router.get('/elems/:id', function (req, res) {
+router.get('/:id/elems', function (req, res) {
     Orgs.elems(req.params.id)
         .then(list => res.send(list))
         .catch(function (error) {
@@ -45,7 +45,7 @@ router.get('/elems/:id', function (req, res) {
         });
 })
 
-router.get('/domain/:id', function (req, res) {
+router.get('/:id/domain', function (req, res) {
     Orgs.domain(req.params.id)
         .then(org => res.send(org))
         .catch(function (error) {
@@ -53,7 +53,7 @@ router.get('/domain/:id', function (req, res) {
         });
 })
 
-router.get('/participations/:id', function (req, res) {
+router.get('/:id/participations', function (req, res) {
     Orgs.participations(req.params.id)
         .then(org => res.send(org))
         .catch(function (error) {
