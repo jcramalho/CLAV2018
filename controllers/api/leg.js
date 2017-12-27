@@ -1,4 +1,4 @@
-const client = require('../../../config/database').onthology;
+const client = require('../../config/database').onthology;
 
 var Leg = module.exports
 

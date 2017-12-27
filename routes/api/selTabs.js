@@ -13,6 +13,22 @@ router.get('/', function (req, res) {
         });
 })
 
+router.get('/:id/classes(/:level)?', function (req, res) {
+    SelTabs.listClasses(req.params.level,req.params.id)
+        .then(list => res.send(list))
+        .catch(function (error) {
+            console.error(error);
+        });
+})
+
+router.get('/:id/classes/:parent/children', function (req, res) {
+    SelTabs.classChildren(req.params.id,req.params.table)
+        .then(list => res.send(list))
+        .catch(function (error) {
+            console.error(error);
+        });
+})
+
 router.get('/:id', function (req, res) {
     SelTabs.stats(req.params.id)
         .then(result => res.send(result))

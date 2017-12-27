@@ -1,13 +1,5 @@
 const { SparqlClient, SPARQL } = require('sparql-client-2');
 
-/*
-module.exports={
-    onthology: {
-        url:'http://localhost:7200/repositories/M51-CLAV',
-        update: 'http://localhost:7200/repositories/M51-CLAV/statements',
-    },
-}*/
-
 module.exports.onthology = new SparqlClient('http://localhost:7200/repositories/M51-CLAV', {
     updateEndpoint: 'http://localhost:7200/repositories/M51-CLAV/statements'
 }).register({

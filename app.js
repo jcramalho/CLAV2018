@@ -22,8 +22,6 @@ app.set('view engine', 'pug');
 app.set('views', __dirname + '/views');
 
 app.use(express.static(__dirname + '/public'));
-app.use("/styles", express.static(__dirname + '/public/stylesheets'));
-app.use("/scripts", express.static(__dirname + '/controllers/client'));
 
 // Express Session
 app.use(session({
@@ -78,8 +76,8 @@ app.use('/tabelasSelecao',require('./routes/tabsSel'));
 
 app.use('/api/orgs',require('./routes/api/orgs'));
 app.use('/api/leg',require('./routes/api/leg'));
-app.use('/api/selTabs',require('./routes/api/selTabs'));/*
-app.use('/api/classes',require('./routes/api/classes'));
+app.use('/api/selTabs',require('./routes/api/selTabs'));
+app.use('/api/classes',require('./routes/api/classes'));/*
 app.use('/auth',require('./routes/auth/user')(app, passport));
 */
 // catch 404 and forward to error handler
