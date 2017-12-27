@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-var Auth = require('../controllers/server/auth.js');
+var Auth = require('../controllers/auth.js');
 
 router.get('/', function(req, res, next) {
 	res.render('tabsSel/listagem');

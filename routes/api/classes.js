@@ -1,5 +1,5 @@
-var Logging = require('../../controllers/server/logging');
-var Auth = require('../../controllers/server/auth.js');
+var Logging = require('../../controllers/logging');
+var Auth = require('../../controllers/auth.js');
 
 module.exports = function (app) {
 

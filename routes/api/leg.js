@@ -1,6 +1,6 @@
-var Logging = require('../../controllers/server/logging');
-var Auth = require('../../controllers/server/auth.js');
-var Leg = require('../../controllers/server/api/leg.js');
+var Logging = require('../../controllers/logging');
+var Auth = require('../../controllers/auth.js');
+var Leg = require('../../controllers/api/leg.js');
 
 var express = require('express');
 var router = express.Router();
@@ -61,7 +61,7 @@ router.post('/create', Auth.isLoggedInAPI, function (req, res) {
                 res.send("Número já existente!");
             }
             else {
-                Leg.idList()
+                Leg.list()
                     .then(function (ids) {
                         var newID = genID(ids)
 

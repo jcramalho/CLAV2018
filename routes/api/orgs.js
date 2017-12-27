@@ -1,6 +1,6 @@
-var Logging = require('../../controllers/server/logging');
-var Auth = require('../../controllers/server/auth.js');
-var Orgs = require('../../controllers/server/api/orgs.js');
+var Logging = require('../../controllers/logging');
+var Auth = require('../../controllers/auth.js');
+var Orgs = require('../../controllers/api/orgs.js');
 
 var express = require('express');
 var router = express.Router();

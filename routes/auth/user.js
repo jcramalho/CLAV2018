@@ -1,4 +1,4 @@
-var Logging = require('../../controllers/server/logging');
+var Logging = require('../../controllers/logging');
 
 module.exports = function (app, passport) {
 

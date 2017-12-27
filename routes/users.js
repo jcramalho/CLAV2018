@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-var Auth = require('../controllers/server/auth.js');
+var Auth = require('../controllers/auth.js');
 
 router.get('/registar', function(req, res) {
     res.render('users/registar');
