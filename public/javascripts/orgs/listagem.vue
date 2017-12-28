@@ -8,23 +8,14 @@ var orgs = new Vue({
         cwidth: ['4%','75%','8%','13%'],
     },
     methods: {
-        getParameterByName: function(name, url) {
-            if (!url) url = window.location.href;
-            name = name.replace(/[\[\]]/g, "\\$&");
-            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-                results = regex.exec(url);
-            if (!results) return null;
-            if (!results[2]) return '';
-            return decodeURIComponent(results[2].replace(/\+/g, " "));
-        },
         rowClicked: function(row){
             var id = this.content[row[0]-1].id.value;
             id = id.replace(/[^#]+#(.*)/,'$1');
             
-            window.location.href = '/orgs/consulta/'+id;
+            window.location.href = '/organizacoes/consulta/'+id;
         },
         addOrg: function(row){
-            window.location.href = '/orgs/criacao';
+            window.location.href = '/organizacoes/criacao';
         },
         parse: function(){    
             // key names for table header and parsing

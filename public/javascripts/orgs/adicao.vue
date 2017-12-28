@@ -14,15 +14,14 @@ var newOrg = new Vue({
                 type: this.type,
             }
 
-            this.$http.post('/createOrg', dataObj, {
+            this.$http.post('/api/orgs/create', dataObj, {
                 headers: {
                     'content-type': 'application/json'
                 }
             })
                 .then(function (response) {
-
                     if (response.body != "Nome e/ou Sigla já existente(s)!") {
-                        window.location.href = '/organizacao?id=' + response.body;
+                        window.location.href = '/organizacoes/' + response.body;
                     }
                     else {
                         this.message = response.body;

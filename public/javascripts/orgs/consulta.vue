@@ -3,7 +3,7 @@ var org = new Vue({
     data: {
         id: "",
         type: "",
-        
+
         orgName: "",
         newName: "",
         editName: false,
@@ -58,15 +58,7 @@ var org = new Vue({
 
     },
     methods: {
-        getParameterByName: function (name, url) {
-            if (!url) url = window.location.href;
-            name = name.replace(/[\[\]]/g, "\\$&");
-            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-                results = regex.exec(url);
-            if (!results) return null;
-            if (!results[2]) return '';
-            return decodeURIComponent(results[2].replace(/\+/g, " "));
-        },
+
         subtractArray: function (from, minus) {
             var ret;
 
@@ -78,10 +70,10 @@ var org = new Vue({
             }
             else {
                 ret = from.filter(function (item) {
-                    var r= true;
+                    var r = true;
                     for (var i = 0; i < minus.length; i++) {
                         if (minus[i].id == item.id) {
-                            r= false;
+                            r = false;
                             break;
                         }
                     }
@@ -96,7 +88,7 @@ var org = new Vue({
             var classesToParse = [];
             var keys = ["id", "Code", "Title"];
 
-            this.$http.get("/classesn?level=3")
+            this.$http.get("/api/classes/level3")
                 .then(function (response) {
                     classesToParse = response.body;
                 })
@@ -120,7 +112,7 @@ var org = new Vue({
             var orgsToParse = [];
             var keys = ["id", "Tipo", "Nome", "Sigla"];
 
-            this.$http.get("/orgs")
+            this.$http.get("/api/orgs")
                 .then(function (response) {
                     orgsToParse = response.body;
                 })
@@ -173,7 +165,7 @@ var org = new Vue({
             var classesToParse = [];
             var keys = ["id", "Code", "Title"];
 
-            this.$http.get("/domainOrg?id=" + this.id)
+            this.$http.get("/api/orgs/" + this.id+"/domain")
                 .then(function (response) {
                     classesToParse = response.body;
                 })
@@ -191,7 +183,7 @@ var org = new Vue({
             var partsToParse = [];
             var keys = ['id', 'Title', 'Code'];
 
-            this.$http.get("/partsOrg?id=" + this.id)
+            this.$http.get("/api/orgs/" + this.id + "/participations")
                 .then(function (response) {
                     partsToParse = response.body;
                 })
@@ -209,7 +201,7 @@ var org = new Vue({
             var orgsToParse = [];
             var keys = ["id", "Tipo", "Nome", "Sigla"];
 
-            this.$http.get("/orgsInGroup?id=" + this.id)
+            this.$http.get("/api/orgs/" + this.id + "/elems")
                 .then(function (response) {
                     orgsToParse = response.body;
                 })
@@ -227,7 +219,7 @@ var org = new Vue({
             var orgsToParse = [];
             var keys = ["id", "Tipo", "Nome", "Sigla"];
 
-            this.$http.get("/inConjs?id=" + this.id)
+            this.$http.get("/api/orgs/" + this.id + "/inConjs")
                 .then(function (response) {
                     orgsToParse = response.body;
                 })
@@ -245,7 +237,7 @@ var org = new Vue({
             var orgsToParse = [];
             var keys = ["id", "Tipo", "Nome", "Sigla"];
 
-            this.$http.get("/inTipols?id=" + this.id)
+            this.$http.get("/api/orgs/" + this.id + "/inTipols")
                 .then(function (response) {
                     orgsToParse = response.body;
                 })
@@ -264,18 +256,18 @@ var org = new Vue({
             this.newName = content[0].Nome.value;
             this.orgInitials = content[0].Sigla.value;
             var type = content[0].Tipo.value;
-            
+
             conj = new RegExp("#Conjunto", "g");
             tipol = new RegExp("#Tipologia", "g");
 
-            if (conj.test(type)){
-                this.type="Conjunto";
+            if (conj.test(type)) {
+                this.type = "Conjunto";
             }
-            else if (tipol.test(type)){
-                this.type="Tipologia";
+            else if (tipol.test(type)) {
+                this.type = "Tipologia";
             }
             else {
-                this.type="Organização";
+                this.type = "Organização";
             }
         },
         parseList: function (content, keys) {
@@ -440,7 +432,7 @@ var org = new Vue({
 
                 dataObj.conjs = JSON.parse(JSON.stringify(temp));
             }
-            if (this.editTipol) {    
+            if (this.editTipol) {
                 var temp = {
                     add: null,
                     delete: null,
@@ -451,7 +443,7 @@ var org = new Vue({
 
                 dataObj.tipols = JSON.parse(JSON.stringify(temp));
             }
-            if (this.editElems) {    
+            if (this.editElems) {
                 var temp = {
                     add: null,
                     del: null,
@@ -465,7 +457,7 @@ var org = new Vue({
 
             console.log(dataObj);
 
-            this.$http.put('/updateOrg', dataObj, {
+            this.$http.put('/api/orgs/update', dataObj, {
                 headers: {
                     'content-type': 'application/json'
                 }
@@ -473,7 +465,7 @@ var org = new Vue({
                 .then(function (response) {
                     var resp = response.body;
                     if (resp != "Nome já existentente!") {
-                        window.location.href = '/organizacao?id=' + this.id;
+                        window.location.href = '/organizacoes/consulta/' + this.id;
                     } else {
                         this.message = resp;
                     }
@@ -491,7 +483,7 @@ var org = new Vue({
             this.delConfirm = false;
         },
         deleteOrg: function () {
-            this.$http.post('/deleteOrg', { id: this.id })
+            this.$http.post('/api/orgs/delete', { id: this.id })
                 .then(function (response) {
                     this.message = response.body;
                     window.location.href = '/organizacoes';
@@ -502,10 +494,12 @@ var org = new Vue({
         }
     },
     created: function () {
-        this.id = this.getParameterByName('id');
-        this.type = this.getParameterByName('type');
-
-        this.$http.get("/singleOrg?id=" + this.id)
+        this.id = window.location.pathname.split('/')[3];
+        /*
+        let a = '#{orgID}';
+        console.log(a);
+        */
+        this.$http.get("/api/orgs/" + this.id)
             .then(function (response) {
                 this.parse(response.body);
             })
@@ -513,9 +507,9 @@ var org = new Vue({
                 this.loadDomain();
                 this.loadParticipations();
                 this.loadClasses();
-
+                this.loadOrgs();
+                
                 if (this.type != "Organização") {
-                    this.loadOrgs();
                     this.loadElements();
                 }
                 if (this.type != "Tipologia") {

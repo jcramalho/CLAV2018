@@ -11,7 +11,7 @@ var nav = new Vue({
     watch: {
         link: function () {
             if (this.link.value != "#") {
-                this.goTo("/tabelaSelecao?table=" + this.link.value)
+                this.goTo("/tabelasSelecao/" + this.link.value)
             }
         },
     },
@@ -40,7 +40,7 @@ var nav = new Vue({
     mounted: function () {
         var content = null;
 
-        this.$http.get("/selTabs")
+        this.$http.get("/api/selTabs")
             .then(function (response) {
                 content = response.body;
             })

@@ -1,4 +1,5 @@
 var Logging = require('../../controllers/logging');
+var passport = require('passport');
 
 module.exports = function (app, passport) {
 

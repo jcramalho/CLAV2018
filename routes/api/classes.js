@@ -12,7 +12,7 @@ router.get('/', function (req, res) {
         .catch(function (error) {
             console.error(error);
         });
-})00
+})
 
 router.get('/level:level', function (req, res) {
     Classes.list(req.params.level)

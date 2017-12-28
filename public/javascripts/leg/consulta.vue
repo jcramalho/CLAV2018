@@ -55,20 +55,11 @@ var leg = new Vue({
         processesReady: false,
     },
     methods: {
-        getParameterByName: function(name, url) {
-            if (!url) url = window.location.href;
-            name = name.replace(/[\[\]]/g, "\\$&");
-            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-                results = regex.exec(url);
-            if (!results) return null;
-            if (!results[2]) return '';
-            return decodeURIComponent(results[2].replace(/\+/g, " "));
-        },
         loadClasses: function () {
             var classesToParse = [];
             var keys = ["id", "Code", "Title"];
 
-            this.$http.get("/classesn?level=3")
+            this.$http.get("/api/classes/level3")
                 .then(function (response) {
                     classesToParse = response.body;
                 })
@@ -92,7 +83,7 @@ var leg = new Vue({
             var classesToParse = [];
             var keys = ["id", "Code", "Title"];
 
-            this.$http.get("/procsLeg?id=" + this.id)
+            this.$http.get("/api/leg/" + this.id+"/regulates")
                 .then(function (response) {
                     classesToParse = response.body;
                 })
@@ -156,7 +147,7 @@ var leg = new Vue({
                 }
             }
 
-            this.$http.put('/updateLeg',dataObj,{
+            this.$http.put('/api/leg/update',dataObj,{
                 headers: {
                     'content-type' : 'application/json'
                 }
@@ -164,7 +155,7 @@ var leg = new Vue({
             .then( function(response) { 
                 this.message = response.body;
                 if(this.message=="Actualizado!"){
-                    window.location.href = '/legislacao?id='+this.id;
+                    window.location.href = '/legislacao/consulta/'+this.id;
                 }
             })
             .catch( function(error) { 
@@ -180,10 +171,10 @@ var leg = new Vue({
             this.delConfirm=false;
         },
         deleteLeg: function(){
-            this.$http.post('/deleteLeg',{id: this.id})
+            this.$http.post('/api/leg/delete',{id: this.id})
             .then( function(response) { 
                 this.message = response.body;
-                window.location.href = '/legislacoes';
+                window.location.href = '/legislacao';
             })
             .catch( function(error) { 
                 console.error(error); 
@@ -191,15 +182,16 @@ var leg = new Vue({
         } 
     },
     created: function(){
-        this.id=this.getParameterByName('id');
+        this.id=window.location.pathname.split('/')[3];
 
-        this.$http.get("/singleLeg?id="+this.id)
+        this.$http.get("/api/leg/"+this.id)
         .then( function(response) { 
             this.content = response.body;
         })
         .then( function() {
             this.parse();
             this.loadProcesses();
+            this.loadClasses();
         })
         .catch( function(error) { 
             console.error(error); 

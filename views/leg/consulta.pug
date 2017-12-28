@@ -37,12 +37,12 @@ block corpo
                                 tr
                                     td(width="60%")
                                         v-select.custom-select(
-                                            v-model="newClass"
+                                            v-model="newProcess"
                                             :options="classList"
                                         )
                                     td
                                         button(
-                                            @click="newProcesses.unshift(newClass.value)"
+                                            @click="newProcesses.unshift(newProcess.value)"
                                         ) +
                                 tr(v-if="newProcesses.length")
                                     td(colspan="2")
@@ -55,14 +55,13 @@ block corpo
                         td(v-else style="width:80%")
                             ul(v-if="processesReady" style="padding-left:20px" :class="{'is-collapsed' : processesCollapsed }")
                                 li(v-for="c in processes")
-                                    a(:href="'/classe?id='+c.id") {{ c.Code }}
+                                    a(:href="'/classes/consulta/'+c.id") {{ c.Code }}
                                     |  - {{ c.Title }}
                             button(@click="processesCollapsed=!processesCollapsed" v-if="processes.length>4")
                                 span(v-if="processesCollapsed") Mostrar mais...
                                 span(v-else) Mostrar menos...
-                        //-
-                         td(style="width:10%")
-                            label(style="padding-right:5px") Editar
+                        td(style="width:10%")
+                            label(style="padding-right:5px") Editar (NYI)
                             input(
                                 type="checkbox"
                                 v-model="editProcesses"
@@ -115,5 +114,4 @@ block corpo
     
 
 append scripts 
-    script(src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.14.1/lodash.min.js")
-    script(src="/Scripts/Legs/consulta.vue")
+    script(src="/javascripts/leg/consulta.vue")
