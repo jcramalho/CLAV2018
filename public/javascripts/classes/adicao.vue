@@ -101,7 +101,7 @@ var newClass = new Vue({
             var classesToParse = [];
             var keys = ["id", "Code", "Title"];
 
-            this.$http.get("/classesn?level=3")
+            this.$http.get("/api/classes/level=3")
                 .then(function (response) {
                     classesToParse = response.body;
                 })
@@ -125,7 +125,7 @@ var newClass = new Vue({
             var orgsToParse = [];
             var keys = ["id", "Sigla", "Nome"];
 
-            this.$http.get("/orgs")
+            this.$http.get("/api/orgs")
                 .then(function (response) {
                     orgsToParse = response.body;
                 })
@@ -149,7 +149,7 @@ var newClass = new Vue({
             var legsToParse = [];
             var keys = ["id", "Número", "Titulo", "Tipo"];
 
-            this.$http.get("/legs")
+            this.$http.get("/api/leg")
                 .then(function (response) {
                     legsToParse = response.body;
                 })
@@ -173,7 +173,7 @@ var newClass = new Vue({
             var classesToParse = [];
             var keys = ["id", "Code", "Title"];
 
-            this.$http.get("/classesn?level=" + (this.type - 1))
+            this.$http.get("/api/classes/level=" + (this.type - 1))
                 .then(function (response) {
                     classesToParse = response.body;
                 })
@@ -390,7 +390,7 @@ var newClass = new Vue({
 
             if(dataObj=this.checkready(dataObj)){        
                 
-                this.$http.post('/createClass',dataObj,{
+                this.$http.post('/api/classes/create',dataObj,{
                     headers: {
                         'content-type' : 'application/json'
                     }
@@ -399,7 +399,7 @@ var newClass = new Vue({
                     this.message = response.body;
                     
                     if(response.body=="Classe Inserida!"){
-                        window.location.href = '/classe?id=c'+this.code;
+                        window.location.href = '/classes/consulta/c'+this.code;
                     }
                 })
                 .catch( function(error) { 

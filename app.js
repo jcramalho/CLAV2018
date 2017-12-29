@@ -76,9 +76,9 @@ app.use('/tabelasSelecao',require('./routes/tabsSel'));
 
 app.use('/api/orgs',require('./routes/api/orgs'));
 app.use('/api/leg',require('./routes/api/leg'));
-app.use('/api/selTabs',require('./routes/api/selTabs'));
+app.use('/api/selTabs',require('./routes/api/tabsSel'));
 app.use('/api/classes',require('./routes/api/classes'));
-require('./routes/auth/user')(app, passport);
+app.use('/auth',require('./routes/auth/user'));
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

@@ -13,15 +13,6 @@ var tabSel = new Vue({
         id: null,
     },
     methods: {
-        getParameterByName: function(name, url) {
-            if (!url) url = window.location.href;
-            name = name.replace(/[\[\]]/g, "\\$&");
-            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-                results = regex.exec(url);
-            if (!results) return null;
-            if (!results[2]) return '';
-            return decodeURIComponent(results[2].replace(/\+/g, " "));
-        },
         swap: function(array,pos1,pos2){
             var temp=array[pos1];
             array[pos1]=array[pos2];
@@ -41,7 +32,7 @@ var tabSel = new Vue({
         },
         loadSub: function(indexes,location,params){
             if(indexes.length==1){
-                this.$http.get("/childClasses?parent="+params.rowData.codeID+"&table="+this.id)
+                this.$http.get("/api/selTabs/"+this.id+"/classes/"+params.rowData.codeID+"/children")
                 .then( function(response) { 
                     this.subTemp = response.body;
                 })
@@ -68,7 +59,7 @@ var tabSel = new Vue({
             }
         },
         rowClicked: function(params){
-            window.location.href = '/classe?id=c'+params.rowData[0];
+            window.location.href = '/classes/consulta/c'+params.rowData[0];
         },
         parse: function(){
             // parsing the JSON
@@ -131,9 +122,9 @@ var tabSel = new Vue({
             "TÍTULO"
         ];
 
-        this.id=this.getParameterByName('table');        
+        this.id= window.location.pathname.split('/')[3];
 
-        this.$http.get("/selTab?table="+this.id)
+        this.$http.get("/api/selTabs/"+this.id)
         .then( function(response) {
             this.name = response.body[0].Name.value;
         })
@@ -141,7 +132,7 @@ var tabSel = new Vue({
             console.error(error); 
         });
 
-        this.$http.get("/classesn?table="+this.id)
+        this.$http.get("/api/selTabs/"+this.id+"/classes")
         .then( function(response) {
             this.content = response.body;
         })

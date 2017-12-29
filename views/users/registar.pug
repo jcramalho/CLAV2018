@@ -1,7 +1,7 @@
-extends ../Templates/layout
+extends ../layout
 block corpo
     .container
-        form.form-signin(action="/registar" method="post" style="width:60%")
+        form.form-signin(action="/auth/registar" method="post" style="width:60%")
             h2.form-signin-heading Registar
             
             label.sr-only(for='name') Nome

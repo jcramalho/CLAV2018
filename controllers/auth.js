@@ -32,7 +32,7 @@ Auth.isLevel = function (clearance, req, res, next) {
     }
     else {
         req.flash('warn_msg', 'Login necessário para aceder a esta página');
-        res.redirect('/iniciarSessao');
+        res.redirect('/users/login');
     }
 }
 

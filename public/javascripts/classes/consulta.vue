@@ -76,20 +76,11 @@ var classe = new Vue({
         pageReady: false,
     },
     methods: {
-        getParameterByName: function (name, url) {
-            if (!url) url = window.location.href;
-            name = name.replace(/[\[\]]/g, "\\$&");
-            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-                results = regex.exec(url);
-            if (!results) return null;
-            if (!results[2]) return '';
-            return decodeURIComponent(results[2].replace(/\+/g, " "));
-        },
         loadOrgs: function () {
             var orgsToParse = [];
             var keys = ["id", "Sigla", "Nome"];
 
-            this.$http.get("/orgs")
+            this.$http.get("/api/orgs")
                 .then(function (response) {
                     orgsToParse = response.body;
                 })
@@ -114,7 +105,7 @@ var classe = new Vue({
             var orgsToParse = [];
             var keys = ["id", "Sigla", "Nome"];
 
-            this.$http.get("/ownersClass?id=" + this.id)
+            this.$http.get("/api/classes/" + this.id+"/owners")
                 .then(function (response) {
                     orgsToParse = response.body;
                 })
@@ -133,7 +124,7 @@ var classe = new Vue({
             var legsToParse = [];
             var keys = ["id","Tipo", "Número", "Titulo"];
 
-            this.$http.get("/legs")
+            this.$http.get("/api/leg")
                 .then(function (response) {
                     legsToParse = response.body;
                 })
@@ -158,7 +149,7 @@ var classe = new Vue({
             var legsToParse = [];
             var keys = ["id","Tipo", "Número", "Titulo"];
 
-            this.$http.get("/legsClass?id=" + this.id)
+            this.$http.get("/api/classes/" + this.id+"/legislation")
                 .then(function (response) {
                     legsToParse = response.body;
                 })
@@ -176,7 +167,7 @@ var classe = new Vue({
             var notesToParse = [];
             var keys = ["id", "Nota"];
 
-            this.$http.get("/appNotesClass?id=" + this.id)
+            this.$http.get("/api/classes/" + this.id+"/appNotes")
                 .then(function (response) {
                     notesToParse = response.body;
                 })
@@ -194,7 +185,7 @@ var classe = new Vue({
             var notesToParse = [];
             var keys = ["id", "Nota"];
 
-            this.$http.get("/delNotesClass?id=" + this.id)
+            this.$http.get("/api/classes/" + this.id+"/delNotes")
                 .then(function (response) {
                     notesToParse = response.body;
                 })
@@ -212,7 +203,7 @@ var classe = new Vue({
             var notesToParse = [];
             var keys = ["Exemplo"];
 
-            this.$http.get("/exAppNotesClass?id=" + this.id)
+            this.$http.get("/api/classes/" + this.id+"/exAppNotes")
                 .then(function (response) {
                     notesToParse = response.body;
                 })
@@ -230,7 +221,7 @@ var classe = new Vue({
             var classesToParse = [];
             var keys = ["id", "Code", "Title"];
 
-            this.$http.get("/classesn?level=3")
+            this.$http.get("/api/classes/level=3")
                 .then(function (response) {
                     classesToParse = response.body;
                 })
@@ -255,7 +246,7 @@ var classe = new Vue({
             var relProcsToParse = [];
             var keys = ["id", "Code", "Title"];
 
-            this.$http.get("/relProcsClass?id=" + this.id)
+            this.$http.get("/api/classes/" + this.id+"/related")
                 .then(function (response) {
                     relProcsToParse = response.body;
                 })
@@ -303,7 +294,7 @@ var classe = new Vue({
             var participantsToParse = [];
             var keys = ['id', 'Nome', 'Sigla'];
 
-            this.$http.get("/participantsClass?id=" + this.id)
+            this.$http.get("/api/classes/" + this.id+"/participants")
                 .then(function (response) {
                     participantsToParse = response.body;
                 })
@@ -707,16 +698,15 @@ var classe = new Vue({
                     dataObj.RelProcs[relationKeys[i]] = JSON.parse(JSON.stringify(temp));
                 }
             }
-            console.log(dataObj);
 
-            this.$http.put('/updateClass?id='+this.id, { dataObj: dataObj },{
+            this.$http.put('/api/classes/update', { dataObj: dataObj },{
                 headers: {
                     'content-type' : 'application/json'
                 }
             })
             .then(function (response) {
                 this.message = response.body;
-                window.location.href = '/classe?id='+this.id;
+                window.location.href = '/classes/consulta/'+this.id;
             })
             .catch(function (error) {
                 console.error(error);
@@ -731,7 +721,7 @@ var classe = new Vue({
             this.delConfirm = false;
         },
         deleteClass: function () {    
-            this.$http.post('/deleteClass',{id: this.id})
+            this.$http.post('/api/classes/delete',{id: this.id})
             .then( function(response) { 
                 this.message = response.body;
                 window.location.href = '/classes';
@@ -742,12 +732,12 @@ var classe = new Vue({
         }
     },
     created: function () {
-        this.id = this.getParameterByName('id');
+        this.id = window.location.pathname.split('/')[3];
         this.clas.Level = this.id.split('.').length;
 
         var content;
 
-        this.$http.get("/singleClass?id=" + this.id)
+        this.$http.get("/api/classes/" + this.id)
             .then(function (response) {
                 content = response.body;
             })

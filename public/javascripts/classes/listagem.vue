@@ -23,14 +23,13 @@ var classes = new Vue({
             var ready = params.rowData.subReady;
             
             if (!ready) {
-                //split the id; example: '1.1.2' becomes ['1','1','2']
                 var path = id.split('.');
                 this.loadSub(path,this.tableData,params);
             }
         },
         loadSub: function(indexes,location,params){
             if(indexes.length==1){
-                this.$http.get("/childClasses?parent="+params.rowData.codeID)
+                this.$http.get("/api/classes/"+params.rowData.codeID+"/children")
                 .then( function(response) { 
                     this.subTemp = response.body;
                 })
@@ -57,7 +56,7 @@ var classes = new Vue({
             }
         },
         rowClicked: function(params){
-            window.location.href = '/classe?id=c'+params.rowData[0];
+            window.location.href = '/classes/consulta/c'+params.rowData[0];
         },
         parse: function(){
             // parsing the JSON
@@ -114,7 +113,7 @@ var classes = new Vue({
             return ret;
         },
         addClass: function(row){
-            window.location.href = '/novaClasse';
+            window.location.href = '/classes/criacao';
         },
     },
     created: function(){
@@ -123,7 +122,7 @@ var classes = new Vue({
             "TÍTULO"
         ];
 
-        this.$http.get("/classesn")
+        this.$http.get("/api/classes")
         .then( function(response) {
             this.content = response.body;
         })

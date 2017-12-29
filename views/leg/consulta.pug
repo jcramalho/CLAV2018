@@ -17,7 +17,7 @@ block corpo
                             )
                         td(v-else style="width:80%")
                             span(v-if="item.label!='Link'") {{ item.original }}  
-                            a(v-else :href="item.original") Ficheiro
+                            a(v-else :href="item.original" target="_blank") Ficheiro
                         
                         if user
                             td

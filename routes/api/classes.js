@@ -14,7 +14,7 @@ router.get('/', function (req, res) {
         });
 })
 
-router.get('/level:level', function (req, res) {
+router.get('/level=:level', function (req, res) {
     Classes.list(req.params.level)
         .then(list => res.send(list))
         .catch(function (error) {
@@ -46,7 +46,7 @@ router.get('/:id/owners', function (req, res) {
         });
 })
 
-router.get('/:id/leg', function (req, res) {
+router.get('/:id/legislation', function (req, res) {
     Classes.legislation(req.params.id)
         .then(legs => res.send(legs))
         .catch(function (error) {

@@ -12,10 +12,10 @@ var tabs = new Vue({
             var id = this.content[row[0]-1].id.value;
             id = id.replace(/[^#]+#(.*)/,'$1');
             
-            window.location.href = '/tabelaSelecao?table='+id;
+            window.location.href = '/tabelaSelecao/consulta/'+id;
         },
         addTab: function(row){
-            window.location.href = '/novaTabSel';
+            window.location.href = '/tabelasSelecao/criacao';
         },
         parse: function(){    
             // setting the table header
@@ -40,7 +40,7 @@ var tabs = new Vue({
         }
     },
     created: function(){
-        this.$http.get("/selTabs")
+        this.$http.get("/api/selTabs")
         .then( function(response) { 
             this.content = response.body;
         })

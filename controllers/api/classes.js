@@ -211,9 +211,9 @@ Classes.updateClass = function (dataObj) {
                 deletePart += "\tclav:" + dataObj.id + " clav:temLegislacao clav:" + dataObj.Legs.Delete[i].id + " .\n";
             }
         }
-        if (dataObj.appNotes.Delete && dataObj.appNotes.Delete.length) {
-            for (var i = 0; i < dataObj.appNotes.Delete.length; i++) {
-                deletePart += "\tclav:" + dataObj.id + " clav:temNotaAplicacao clav:" + dataObj.appNotes.Delete[i].id + " .\n";
+        if (dataObj.AppNotes.Delete && dataObj.AppNotes.Delete.length) {
+            for (var i = 0; i < dataObj.AppNotes.Delete.length; i++) {
+                deletePart += "\tclav:" + dataObj.id + " clav:temNotaAplicacao clav:" + dataObj.AppNotes.Delete[i].id + " .\n";
             }
         }
         if (dataObj.DelNotes.Delete && dataObj.DelNotes.Delete.length) {
@@ -247,7 +247,6 @@ Classes.updateClass = function (dataObj) {
 
     function prepWhere(dataObj) {
         var wherePart = "\n";
-
         //atributes
         if (dataObj.Title) {
             wherePart += "\tclav:" + dataObj.id + " clav:titulo ?tit .\n";
@@ -264,14 +263,13 @@ Classes.updateClass = function (dataObj) {
         if (dataObj.ProcTrans) {
             wherePart += "\tclav:" + dataObj.id + " clav:processoTransversal ?ptrans .\n";
         }
-        if (dataObj.ExappNotes && dataObj.ExappNotes.length) {
+        if (dataObj.ExAppNotes && dataObj.ExAppNotes.length) {
             wherePart += "\tclav:" + dataObj.id + " clav:exemploNA ?exNA .\n";
         }
-
         //relations
-        if (dataObj.appNotes.Delete && dataObj.appNotes.Delete.length) {
-            for (var i = 0; i < dataObj.appNotes.Delete.length; i++) {
-                wherePart += "\tclav:" + dataObj.appNotes.Delete[i].id + " ?NAp" + i + " ?NAo" + i + " .\n";
+        if (dataObj.AppNotes.Delete && dataObj.AppNotes.Delete.length) {
+            for (var i = 0; i < dataObj.AppNotes.Delete.length; i++) {
+                wherePart += "\tclav:" + dataObj.AppNotes.Delete[i].id + " ?NAp" + i + " ?NAo" + i + " .\n";
             }
         }
         if (dataObj.DelNotes.Delete && dataObj.DelNotes.Delete.length) {
@@ -279,7 +277,7 @@ Classes.updateClass = function (dataObj) {
                 wherePart += "\tclav:" + dataObj.DelNotes.Delete[i].id + " ?NEp" + i + " ?NEo" + i + " .\n";
             }
         }
-
+        
         return wherePart;
     }
 
@@ -302,22 +300,22 @@ Classes.updateClass = function (dataObj) {
         if (dataObj.ProcTrans) {
             insertPart += "\tclav:" + dataObj.id + " clav:processoTransversal '" + dataObj.ProcTrans + "' .\n";
         }
-        if (dataObj.ExappNotes && dataObj.ExappNotes.length) {
-            for (var i = 0; i < dataObj.ExappNotes.length; i++) {
-                insertPart += "\tclav:" + dataObj.id + " clav:exemploNA '" + dataObj.ExappNotes[i].Exemplo.replace(/\n/g, '\\n') + "' .\n";
+        if (dataObj.ExAppNotes && dataObj.ExAppNotes.length) {
+            for (var i = 0; i < dataObj.ExAppNotes.length; i++) {
+                insertPart += "\tclav:" + dataObj.id + " clav:exemploNA '" + dataObj.ExAppNotes[i].Exemplo.replace(/\n/g, '\\n') + "' .\n";
             }
         }
 
         //relations
         //Notas de aplicação
-        if (dataObj.appNotes.Add && dataObj.appNotes.Add.length) {
-            for (var i = 0; i < dataObj.appNotes.Add.length; i++) {
+        if (dataObj.AppNotes.Add && dataObj.AppNotes.Add.length) {
+            for (var i = 0; i < dataObj.AppNotes.Add.length; i++) {
                 insertPart += `
-                        clav:${dataObj.appNotes.Add[i].id} rdf:type owl:NamedIndividual ,
+                        clav:${dataObj.AppNotes.Add[i].id} rdf:type owl:NamedIndividual ,
                                 clav:NotaAplicacao ;
-                            clav:conteudo "${dataObj.appNotes.Add[i].Nota.replace(/\n/g, '\\n')}" .
+                            clav:conteudo "${dataObj.AppNotes.Add[i].Nota.replace(/\n/g, '\\n')}" .
                     `;
-                insertPart += "\tclav:" + dataObj.id + " clav:temNotaAplicacao clav:" + dataObj.appNotes.Add[i].id + " .\n";
+                insertPart += "\tclav:" + dataObj.id + " clav:temNotaAplicacao clav:" + dataObj.AppNotes.Add[i].id + " .\n";
             }
         }
         //Notas de exclusão
@@ -368,12 +366,14 @@ Classes.updateClass = function (dataObj) {
     }
 
     var deletePart = "DELETE {" + prepWhere(dataObj) + prepDelete(dataObj) + "}\n";
+    
     var inserTPart = "INSERT {" + prepInsert(dataObj) + "}\n";
+    
     var wherePart = "WHERE {" + prepWhere(dataObj) + "}\n";
 
+    
     var updateQuery = deletePart + inserTPart + wherePart;
 
-    console.log(updateQuery);
 
     return client.query(updateQuery).execute()
         .then(response => Promise.resolve(response))
@@ -416,20 +416,20 @@ Classes.createClass = function (data) {
         createQuery += 'clav:' + id + ' clav:temPai clav:' + data.Parent + ' .\n';
     }
 
-    if (data.appNotes && data.appNotes.length) {
-        for (var i = 0; i < data.appNotes.length; i++) {
+    if (data.AppNotes && data.AppNotes.length) {
+        for (var i = 0; i < data.AppNotes.length; i++) {
             createQuery += `
-                    clav:${data.appNotes[i].id} rdf:type owl:NamedIndividual ,
+                    clav:${data.AppNotes[i].id} rdf:type owl:NamedIndividual ,
                             clav:NotaAplicacao ;
-                        clav:conteudo "${data.appNotes[i].Note.replace(/\n/g, '\\n')}" .
+                        clav:conteudo "${data.AppNotes[i].Note.replace(/\n/g, '\\n')}" .
                 `;
-            createQuery += 'clav:' + id + ' clav:temNotaAplicacao clav:' + data.appNotes[i].id + ' .\n';
+            createQuery += 'clav:' + id + ' clav:temNotaAplicacao clav:' + data.AppNotes[i].id + ' .\n';
         }
     }
 
-    if (data.ExappNotes && data.ExappNotes.length) {
-        for (var i = 0; i < data.ExappNotes.length; i++) {
-            createQuery += 'clav:' + id + ' clav:exemploNA "' + data.ExappNotes[i].replace(/\n/g, '\\n') + '" .\n';
+    if (data.ExAppNotes && data.ExAppNotes.length) {
+        for (var i = 0; i < data.ExAppNotes.length; i++) {
+            createQuery += 'clav:' + id + ' clav:exemploNA "' + data.ExAppNotes[i].replace(/\n/g, '\\n') + '" .\n';
         }
     }
 

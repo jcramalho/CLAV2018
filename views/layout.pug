@@ -32,17 +32,17 @@ block body
 				ul.nav.navbar-nav.navbar-right
 					if user
 						li 
-							a(href='/perfil')
+							a(href='/users/perfil')
 								b(style="color: white") #{user.name} 
 								span.glyphicon.glyphicon-user(style="color: white")
 						li
-							a(:href="'/logout?l='+location") Logout
+							a(:href="'/auth/logout?l='+location") Logout
 					else
 						li.dropdown
 							a.dropdown-toggle(href='#', data-toggle='dropdown', role='button', aria-expanded='false')
 								| Login 
 								span.caret
-							form.dropdown-menu(role='menu' action="/login" method="post")
+							form.dropdown-menu(role='menu' action="/auth/login" method="post")
 								input#email.form-control(name='username' type='text', placeholder='Email', required='')
 								
 								input#password.form-control(name='password' type='password', placeholder='Password', required='')
@@ -51,15 +51,15 @@ block body
 
 								button.btn.btn-block(type='submit') Login
 
-								a.btn.btn-primary.btn-block(href="/loginFB")
+								a.btn.btn-primary.btn-block(href="/auth/loginFB")
 									span.fa.fa-facebook
 									|  Facebook
 								
-								a.btn.btn-danger.btn-block(href="/loginG")
+								a.btn.btn-danger.btn-block(href="/auth/loginG")
 									span.fa.fa-google
 									|  Google
 						li
-							a(href='/registar') Registar
+							a(href='/users/registar') Registar
 
 			//collapsable, only appears on mobile		
 			#navbar.collapse

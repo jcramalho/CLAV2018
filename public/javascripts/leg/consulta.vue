@@ -59,7 +59,7 @@ var leg = new Vue({
             var classesToParse = [];
             var keys = ["id", "Code", "Title"];
 
-            this.$http.get("/api/classes/level3")
+            this.$http.get("/api/classes/level=3")
                 .then(function (response) {
                     classesToParse = response.body;
                 })

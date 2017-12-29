@@ -46,20 +46,19 @@ SelTabs.listClasses = function (level, table) {
 
 SelTabs.classChildren = function (parent, table) {
     var fetchQuery = `
-            SELECT ?Child ?Code ?Title (count(?sub) as ?NChilds)
-            WHERE {
-                ?Child clav:temPai clav:${parent} ;
-                       clav:codigo ?Code ;
-                       clav:titulo ?Title ;
-                       clav:pertenceTS clav:${table} .
+        SELECT ?Child ?Code ?Title (count(?sub) as ?NChilds)
+        WHERE {
+            ?Child clav:temPai clav:${parent} ;
+                    clav:codigo ?Code ;
+                    clav:titulo ?Title ;
+                    clav:pertenceTS clav:${table} .
             optional {
                 ?sub clav:temPai ?Child ;
                 clav:pertenceTS clav:${table} .
             }
         }Group by ?Child ?Code ?Title
         `;
-
-
+    
     return client.query(fetchQuery)
         .execute()
         //getting the content we want
@@ -89,13 +88,11 @@ SelTabs.createTab = function (id, dataObj) {
             INSERT DATA {
                 clav:${id} rdf:type owl:NamedIndividual ,
                         clav:TabelaSelecao ;
-                    clav:designacao '${dataObj.nome}' .
+                    clav:designacao '${dataObj.name}' .
         `;
 
-    if (classes && classes.length) {
-        for (let clas in dataObj.classes) {
-            createQuery += `clav:${clas} clav:pertenceTS clav:${id} .\n`;
-        }
+    for (let clas of dataObj.classes) {
+        createQuery += `clav:${clas} clav:pertenceTS clav:${id} .\n`;
     }
 
     createQuery += "}"
