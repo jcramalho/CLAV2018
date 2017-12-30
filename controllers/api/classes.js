@@ -57,11 +57,11 @@ Classes.stats = function (id) {
 
 Classes.children = function (id) {
     var fetchQuery = `
-            SELECT ?Child ?Code ?Title (count(?sub) as ?NChilds)
-            WHERE {
-                ?Child clav:temPai clav:${id} ;
-                       clav:codigo ?Code ;
-                       clav:titulo ?Title .
+        SELECT ?Child ?Code ?Title (count(?sub) as ?NChilds)
+        WHERE {
+            ?Child clav:temPai clav:${id} ;
+                    clav:codigo ?Code ;
+                    clav:titulo ?Title .
             optional {
                 ?sub clav:temPai ?Child .
             }
@@ -277,7 +277,7 @@ Classes.updateClass = function (dataObj) {
                 wherePart += "\tclav:" + dataObj.DelNotes.Delete[i].id + " ?NEp" + i + " ?NEo" + i + " .\n";
             }
         }
-        
+
         return wherePart;
     }
 
@@ -366,12 +366,12 @@ Classes.updateClass = function (dataObj) {
     }
 
     var deletePart = "DELETE {" + prepWhere(dataObj) + prepDelete(dataObj) + "}\n";
-    
+
     var inserTPart = "INSERT {" + prepInsert(dataObj) + "}\n";
-    
+
     var wherePart = "WHERE {" + prepWhere(dataObj) + "}\n";
 
-    
+
     var updateQuery = deletePart + inserTPart + wherePart;
 
 

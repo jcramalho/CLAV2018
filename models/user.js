@@ -1,9 +1,10 @@
 var mongo = require('mongodb');
 var mongoose = require('mongoose');
 var bcrypt = require('bcryptjs');
+var dataBases = require('../config/database');
 
 mongoose.Promise = require('bluebird');
-mongoose.connect('mongodb://localhost/m51-clav', {
+mongoose.connect(dataBases.userDB, {
 	useMongoClient: true,
 });
 

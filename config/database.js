@@ -9,3 +9,5 @@ module.exports.onthology = new SparqlClient('http://localhost:7200/repositories/
     rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
     noInferences: 'http://www.ontotext.com/explicit'
 });
+
+module.exports.userDB = 'mongodb://localhost/m51-clav'
