@@ -12,7 +12,7 @@ var orgs = new Vue({
             var id = this.content[row[0]-1].id.value;
             id = id.replace(/[^#]+#(.*)/,'$1');
             
-            window.location.href = '/organizacoes/consulta/'+id;
+            window.location.href = '/organizacoes/'+id;
         },
         addOrg: function(row){
             window.location.href = '/organizacoes/criacao';

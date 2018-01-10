@@ -7,12 +7,12 @@ router.get('/', function(req, res, next) {
 	res.render('classes/listagem');
 });
 
-router.get('/consulta/:id', function(req, res) {
-    res.render('classes/consulta',{classID: req.params.id});
-});
-
 router.get('/criacao', Auth.isLoggedIn, function(req, res) {
     res.render('classes/adicao');
+});
+
+router.get('/:id', function(req, res) {
+    res.render('classes/consulta',{classID: req.params.id});
 });
 
 

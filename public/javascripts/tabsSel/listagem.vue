@@ -12,7 +12,7 @@ var tabs = new Vue({
             var id = this.content[row[0]-1].id.value;
             id = id.replace(/[^#]+#(.*)/,'$1');
             
-            window.location.href = '/tabelaSelecao/consulta/'+id;
+            window.location.href = '/tabelaSelecao/'+id;
         },
         addTab: function(row){
             window.location.href = '/tabelasSelecao/criacao';

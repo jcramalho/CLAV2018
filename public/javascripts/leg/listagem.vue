@@ -12,10 +12,10 @@ var legs = new Vue({
             var id = this.content[row[0]-1].id.value;
             id = id.replace(/[^#]+#(.*)/,'$1');
             
-            window.location.href = '/legislacao/consulta/'+id;
+            window.location.href = '/legislacao/'+id;
         },
         addLeg: function(row){
-            window.location.href = '/legislacai/criacao';
+            window.location.href = '/legislacao/criacao';
         },
         parse: function(){    
             // key names for table header and parsing

@@ -56,7 +56,7 @@ var classes = new Vue({
             }
         },
         rowClicked: function(params){
-            window.location.href = '/classes/consulta/c'+params.rowData[0];
+            window.location.href = '/classes/c'+params.rowData[0];
         },
         parse: function(){
             // parsing the JSON

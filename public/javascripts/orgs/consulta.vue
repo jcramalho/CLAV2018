@@ -465,7 +465,7 @@ var org = new Vue({
                 .then(function (response) {
                     var resp = response.body;
                     if (resp != "Nome já existentente!") {
-                        window.location.href = '/organizacoes/consulta/' + this.id;
+                        window.location.href = '/organizacoes/' + this.id;
                     } else {
                         this.message = resp;
                     }

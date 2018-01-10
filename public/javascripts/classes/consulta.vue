@@ -706,7 +706,7 @@ var classe = new Vue({
             })
             .then(function (response) {
                 this.message = response.body;
-                window.location.href = '/classes/consulta/'+this.id;
+                window.location.href = '/classes/'+this.id;
             })
             .catch(function (error) {
                 console.error(error);
@@ -732,7 +732,7 @@ var classe = new Vue({
         }
     },
     created: function () {
-        this.id = window.location.pathname.split('/')[3];
+        this.id = window.location.pathname.split('/')[2];
         this.clas.Level = this.id.split('.').length;
 
         var content;

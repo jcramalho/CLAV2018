@@ -399,7 +399,7 @@ var newClass = new Vue({
                     this.message = response.body;
                     
                     if(response.body=="Classe Inserida!"){
-                        window.location.href = '/classes/consulta/c'+this.code;
+                        window.location.href = '/classes/c'+this.code;
                     }
                 })
                 .catch( function(error) { 

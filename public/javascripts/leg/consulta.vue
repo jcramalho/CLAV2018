@@ -155,7 +155,7 @@ var leg = new Vue({
             .then( function(response) { 
                 this.message = response.body;
                 if(this.message=="Actualizado!"){
-                    window.location.href = '/legislacao/consulta/'+this.id;
+                    window.location.href = '/legislacao/'+this.id;
                 }
             })
             .catch( function(error) { 

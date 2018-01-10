@@ -69,10 +69,10 @@ app.use(function (req, res, next) {
 //routes and API
 app.use('/',require('./routes/index'));
 app.use('/users',require('./routes/users'));
-app.use('/organizacoes',require('./routes/orgs'));
+app.use('/organizacao',require('./routes/orgs'));
 app.use('/legislacao',require('./routes/leg'));
-app.use('/classes',require('./routes/classes'));
-app.use('/tabelasSelecao',require('./routes/tabsSel'));
+app.use('/classe',require('./routes/classes'));
+app.use('/tabelaSelecao',require('./routes/tabsSel'));
 
 app.use('/api/orgs',require('./routes/api/orgs'));
 app.use('/api/leg',require('./routes/api/leg'));

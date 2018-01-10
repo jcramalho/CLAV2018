@@ -55,7 +55,7 @@ var newLeg = new Vue({
                 regex = new RegExp(/leg_[0-9]+/, "gi");
 
                 if(regex.test(response.body)){
-                    window.location.href = '/legislacao/consulta/'+response.body;
+                    window.location.href = '/legislacao/'+response.body;
                 }
                 else {
                     this.message = response.body;

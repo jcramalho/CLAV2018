@@ -7,12 +7,12 @@ router.get('/', function(req, res, next) {
 	res.render('orgs/listagem');
 });
 
-router.get('/consulta/:id', function(req, res) {
-    res.render('orgs/consulta',{orgID: req.params.id});
-});
-
 router.get('/criacao', Auth.isLoggedIn, function(req, res) {
     res.render('orgs/adicao');
+});
+
+router.get('/:id', function(req, res) {
+    res.render('orgs/consulta',{orgID: req.params.id});
 });
 
 
