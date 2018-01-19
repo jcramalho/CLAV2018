@@ -21,5 +21,3 @@ TODOs:
     MISC
         -preparar as páginas e criar routes para /editar e /remover 
         -mudar routes / para /listar
-
-    Listar erros da ontologia (how dafuq)
