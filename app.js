@@ -69,15 +69,17 @@ app.use(function (req, res, next) {
 //routes and API
 app.use('/',require('./routes/index'));
 app.use('/users',require('./routes/users'));
-app.use('/organizacao',require('./routes/orgs'));
+app.use('/organizacoes',require('./routes/orgs'));
 app.use('/legislacao',require('./routes/leg'));
-app.use('/classe',require('./routes/classes'));
-app.use('/tabelaSelecao',require('./routes/tabsSel'));
+app.use('/classes',require('./routes/classes'));
+app.use('/tabelasSelecao',require('./routes/tabsSel'));
+app.use('/termosIndice',require('./routes/termosIndice'));
 
-app.use('/api/orgs',require('./routes/api/orgs'));
-app.use('/api/leg',require('./routes/api/leg'));
-app.use('/api/selTabs',require('./routes/api/tabsSel'));
+app.use('/api/organizacoes',require('./routes/api/orgs'));
+app.use('/api/legislacao',require('./routes/api/leg'));
 app.use('/api/classes',require('./routes/api/classes'));
+app.use('/api/tabelasSelecao',require('./routes/api/tabsSel'));
+app.use('/api/termosIndice',require('./routes/api/termosIndice'));
 app.use('/auth',require('./routes/auth/user'));
 
 // catch 404 and forward to error handler

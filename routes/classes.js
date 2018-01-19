@@ -7,11 +7,11 @@ router.get('/', function(req, res, next) {
 	res.render('classes/listagem');
 });
 
-router.get('/criacao', Auth.isLoggedIn, function(req, res) {
+router.get('/adicionar', Auth.isLoggedIn, function(req, res) {
     res.render('classes/adicao');
 });
 
-router.get('/:id', function(req, res) {
+router.get('/consultar/:id', function(req, res) {
     res.render('classes/consulta',{classID: req.params.id});
 });
 
