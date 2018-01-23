@@ -1,45 +1,47 @@
 {
-    "name": "M51-CLAV",
-    "version": "1.0.0",
-    "description": "Arquivo Digital: Plataforma Modular para a Classificação e a Avaliação da Informação Pública",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "start": "node ./bin/www"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/tomasmferreira/M51-CLAV_WEB.git"
-    },
-    "keywords": [
-        "vue.js",
-        "node.js",
-        "pug",
-        "sparql"
-    ],
-    "author": "Tomás Ferreira",
-    "license": "ISC",
-    "bugs": {
-        "url": "https://github.com/tomasmferreira/M51-CLAV_WEB/issues"
-    },
-    "homepage": "https://github.com/tomasmferreira/M51-CLAV_WEB#readme",
-    "dependencies": {
-        "bcryptjs": "^2.4.3",
-        "body-parser": "^1.18.2",
-        "connect-flash": "^0.1.1",
-        "cookie-parser": "^1.4.3",
-        "express": "^4.16.1",
-        "express-session": "^1.15.6",
-        "express-validator": "^4.3.0",
-        "mongodb": "^2.2.33",
-        "mongoose": "^4.13.2",
-        "passport": "^0.4.0",
-        "passport-facebook": "^2.1.1",
-        "passport-google-oauth": "^1.0.0",
-        "passport-local": "^1.0.0",
-        "pug": "^2.0.0-rc.4",
-        "sparql-client-2": "^0.6.2",
-        "vue": "^2.4.4",
-        "winston": "^2.4.0",
-        "winston-daily-rotate-file": "^2.0.0-beta"
-    }
+  "name": "M51-CLAV",
+  "version": "1.0.0",
+  "description": "Arquivo Digital: Plataforma Modular para a Classificação e a Avaliação da Informação Pública",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./bin/www"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tomasmferreira/M51-CLAV_WEB.git"
+  },
+  "keywords": [
+    "vue.js",
+    "node.js",
+    "pug",
+    "sparql"
+  ],
+  "author": "Tomás Ferreira",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tomasmferreira/M51-CLAV_WEB/issues"
+  },
+  "homepage": "https://github.com/tomasmferreira/M51-CLAV_WEB#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.18.2",
+    "bootstrap-vue": "^1.4.1",
+    "connect-flash": "^0.1.1",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.16.1",
+    "express-session": "^1.15.6",
+    "express-validator": "^4.3.0",
+    "mongodb": "^2.2.33",
+    "mongoose": "^4.13.2",
+    "passport": "^0.4.0",
+    "passport-facebook": "^2.1.1",
+    "passport-google-oauth": "^1.0.0",
+    "passport-local": "^1.0.0",
+    "pug": "^2.0.0-rc.4",
+    "sparql-client-2": "^0.6.2",
+    "vue": "^2.4.4",
+    "vue-strap": "github:wffranco/vue-strap",
+    "winston": "^2.4.0",
+    "winston-daily-rotate-file": "^2.0.0-beta"
+  }
 }

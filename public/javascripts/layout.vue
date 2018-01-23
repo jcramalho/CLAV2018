@@ -1,3 +1,4 @@
+/*
 var nav = new Vue({
     el: '#selTabs',
     data: {
@@ -62,6 +63,7 @@ var nav = new Vue({
             });
     }
 })
+*/
 
 var users = new Vue({
     el: '#users',
