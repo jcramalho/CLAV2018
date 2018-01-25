@@ -112,6 +112,24 @@ router.get('/:id/pca', function (req, res) {
         .catch(error=>console.error(error));
 })
 
+router.get('/:id/df', function (req, res) {
+    Classes.df(req.params.id)
+        .then(function (data) {
+            let criteria = data.Criterios.value.split("###");
+            criteria = criteria.map(a => a.replace(/[^#]+#(.*)/, '$1'));
+
+            Classes.criteria(criteria)
+                .then(function (criteriaData) {
+                    data.Criterios.type = "array";
+                    data.Criterios.value = criteriaData;
+
+                    res.send(data);
+                })
+                .catch(error=>console.error(error));
+        })
+        .catch(error=>console.error(error));
+})
+
 router.put('/:id', Auth.isLoggedInAPI, function (req, res) {
     Classes.updateClass(req.body.dataObj)
         .then(function (response) {

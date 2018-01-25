@@ -522,8 +522,7 @@ Classes.pca = function (id) {
             (GROUP_CONCAT(DISTINCT ?Valor; SEPARATOR="###") AS ?Valores)
             (GROUP_CONCAT(DISTINCT ?Criterio; SEPARATOR="###") AS ?Criterios)
         WHERE { 
-            clav:${id} rdf:type clav:Classe_N3 ;
-            clav:temPCA ?pca .
+            clav:${id} clav:temPCA ?pca .
             OPTIONAL {
                 ?pca clav:pcaFormaContagem ?Contagem .
             }
@@ -541,6 +540,33 @@ Classes.pca = function (id) {
                 ?just clav:temCriterio ?Criterio
             }    
         }GROUP BY ?Contagem ?ContagemNorm
+    `;
+    
+    console.log(fetchQuery);
+
+    return client.query(fetchQuery).execute()
+        //Getting the content we want
+        .then(response => Promise.resolve(response.results.bindings[0]))
+        .catch(function (error) {
+            console.error("Error in check:\n" + error);
+        });
+}
+
+Classes.df = function (id) {
+    var fetchQuery = `
+        SELECT 
+            (GROUP_CONCAT(DISTINCT ?Valor; SEPARATOR="###") AS ?Valores)
+            (GROUP_CONCAT(DISTINCT ?Criterio; SEPARATOR="###") AS ?Criterios)
+        WHERE { 
+            clav:${id} clav:temDF ?df .
+            OPTIONAL {
+                ?df clav:dfValor ?Valor ;
+            }
+            OPTIONAL {
+                ?df clav:temJustificacao ?just .
+                ?just clav:temCriterio ?Criterio
+            }    
+        }GROUP BY ?df
     `;
     
     console.log(fetchQuery);
