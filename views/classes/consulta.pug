@@ -445,7 +445,7 @@ block corpo
                                 )
 
                     //- PRAZO DE CONSERVAÇÃO ADMINISTRATIVA
-                    tr(v-if="clas.Level==3")
+                    tr(v-if="clas.Level==3 && clas.PCA.valores.length")
                         td(style="width:10%")
                             label Prazo de Conservação Administrativa: 
                         td(style="width:80%")
@@ -505,7 +505,7 @@ block corpo
                                                                     |  - {{proc.titulo}} 
 
                     //- DESTINO FINAL
-                    tr(v-if="clas.Level==3")
+                    tr(v-if="clas.Level==3 && clas.DF.valores.length")
                         td(style="width:10%")
                             label Destino Final: 
                         td(style="width:80%")
