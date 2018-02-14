@@ -2,7 +2,7 @@ Vue.component('custom-table-simple', {
     template: `
         <div>
             <div class="col-sm-4">
-                Mostrar 
+                Mostrar
                 <select v-model="rowsPerPage">
                     <option>5</option>
                     <option>10</option>
@@ -19,7 +19,7 @@ Vue.component('custom-table-simple', {
                     <span class="glyphicon glyphicon-plus"/>
                 </button>
             </div>
-            
+
             <table :class="classTable">
                 <thead v-if="header">
                     <tr>
@@ -34,7 +34,7 @@ Vue.component('custom-table-simple', {
                     </tr>
                 </tbody>
             </table>
-            
+
             <div class="pages">
                 <span class="glyphicon glyphicon-chevron-left page-number" @click="prevPage"></span>
                 <span class="page-number btn btn-xs btn-default" v-for="page in pages" :class="{active: page==activePage}" @click="loadPage(page)" :disabled="isNaN(page)">\ {{ page }}\ </span>
@@ -80,7 +80,7 @@ Vue.component('custom-table-simple', {
     methods: {
         completeFilter: function (filt){ //filter rows according to what is written in the input box
             tempRows= this.completeRows;
-            
+
             filters= filt.split(" ");
 
             for(i=0; i<filters.length; i++){
@@ -89,13 +89,13 @@ Vue.component('custom-table-simple', {
 
             this.rows=tempRows;
         },
-        filter: function (list, filt) { 
+        filter: function (list, filt) {
             var retList;
-            
+
             regex = new RegExp(filt, "gi");
 
             retList = list.filter(function (item) {
-                    
+
                 for (var i = 0; i < item.length; i++) {
                     if (regex.test(item[i])) {
                         return true;
@@ -123,7 +123,7 @@ Vue.component('custom-table-simple', {
                 this.order = index;
             }
         },
-        rowClick: function (index) { //emit event when a row is clicked 
+        rowClick: function (index) { //emit event when a row is clicked
             this.$emit('row-clicked', this.rowsShow[index]);
         },
         addClick: function (index) { //emit event when the '+' button is clicked
@@ -167,7 +167,7 @@ Vue.component('custom-table-simple', {
                 this.activePage = page;
             }
         },
-        prepPage: function () { //process rows to be shown 
+        prepPage: function () { //process rows to be shown
             var beggining = (this.activePage - 1) * this.rowsPerPage;
             var end = beggining + parseInt(this.rowsPerPage);
 
@@ -203,78 +203,93 @@ Vue.component('custom-table-simple', {
 Vue.component('row-waterfall', {
     template: `
         <tr>
-            <td colspan=4 :class="[root ? 'cascata-row-root' : 'cascata-row']">
+            <td colspan=5 :class="[root ? 'cascata-row-root' : 'cascata-row']">
                 <table :class="tableClass">
                     <tbody name="table">
                         <tr>
-                            <td v-if="row.sublevel" 
-                                class="cascata-drop"
+                            <td v-if="row.sublevel"
+                                :class="[selectOn ? 'cascata-drop-select' : 'cascata-drop']"
                             >
-                                <span>
-                                    <label
-                                        :for="'toggle'+id"
-                                        :class="[row.drop ? 'glyphicon glyphicon-minus' : 'glyphicon glyphicon-plus']"
-                                    />
-                                    <input
-                                        :id="'toggle'+id" 
-                                        type="checkbox" 
-                                        v-model="row.drop" 
-                                        @click="dropClicked"
-                                        class="drop-row"
-                                    />
-                                </span>
-                                <span v-if="selectOn">
-                                    <input
-                                        :id="'select'+id" 
-                                        type="checkbox" 
-                                        v-model="row.selected" 
-                                        @click="selectClicked"
-                                    /> 
-                                </span> 
+                                <label
+                                    :for="'toggle'+id"
+                                    :class="[row.drop ? 'glyphicon glyphicon-minus' : 'glyphicon glyphicon-plus']"
+                                />
+                                <input
+                                    :id="'toggle'+id"
+                                    type="checkbox"
+                                    v-model="row.drop"
+                                    @click="dropClicked"
+                                    class="drop-row"
+                                />
+                                <input
+                                    v-if="selectOn"
+                                    :id="'select'+id"
+                                    type="checkbox"
+                                    v-model="row.selected"
+                                    @click="selectClicked"
+                                />
                             </td>
-                            <td v-else 
-                                class="cascata-drop" 
+                            <td v-else
+                                :class="[selectOn ? 'cascata-drop-select' : 'cascata-drop']"
                             >
                                 <span style="padding-right:18px"></span>
                                 <span v-if="selectOn">
                                     <input
-                                        :id="'select'+id" 
-                                        type="checkbox" 
-                                        v-model="row.selected" 
+                                        :id="'select'+id"
+                                        type="checkbox"
+                                        v-model="row.selected"
                                         @click="selectClicked"
-                                    /> 
-                                </span> 
+                                    />
+                                </span>
                             </td>
-                            <td 
+                            <td
                                 v-for="(item,index) in row.content"
                                 :style="{width: cwidth[index]}"
+                                :class="[ index==0 ? 'codigo' : 'null' ]"
                                 @click="rowClicked"
-                            > 
-                                {{ item }} 
+                                :colspan="[ (index==1 && !selectOn) ? '3' : '1' ]"
+                            >
+                                {{ item }}
+                            </td>
+                            <td v-if="selectOn && level==3">
+                                <input
+                                    :id="'owner'+id"
+                                    type="checkbox"
+                                    v-model="row.owner"
+                                    @click="ownerClicked"
+                                />
+                            </td>
+                            <td v-if="selectOn && level==3">
+                                <input
+                                    :id="'participant'+id"
+                                    type="checkbox"
+                                    v-model="row.participant"
+                                    @click="participantClicked"
+                                />
                             </td>
                         </tr>
-                        
-                        <row-waterfall v-if="row.drop && row.subReady" 
+
+                        <row-waterfall v-if="row.drop && row.subReady"
                             v-for="(line,index) in row.sublevel"
 
                             :select-on="selectOn"
-                            :id="genId(index)" 
-                            :row="line" 
-                            :key="index"  
+                            :id="genId(index)"
+                            :row="line"
+                            :key="index"
                             :cwidth="cwidth"
 
                             @eventWaterfall="eventPass($event)"
 
                             :table-class="tableClass+' cascata'"
                         />
-                        
+
                         <tr v-if="row.drop && !row.subReady">
                             <td colspan=4> Loading... </td>
                         </tr>
                     </tbody>
                 </table>
             </td>
-        </tr> 
+        </tr>
     `,
     props: [
         'row',
@@ -286,14 +301,36 @@ Vue.component('row-waterfall', {
     ],
     data: function () {
         return {
+            relations: ['owner','participant'],
             drop: {},
             selected: {},
+            level: this.id.split('.').length,
         }
     },
     methods: {
         selectClicked: function () { //emit event when a row is selected
             var eventContent = {
                 type: "select",
+                params: {
+                    id: this.id,
+                    rowData: this.row
+                }
+            };
+            this.$emit('eventWaterfall', eventContent);
+        },
+        ownerClicked: function () { //emit event when an owner "checkbox" is selected
+            var eventContent = {
+                type: "owner",
+                params: {
+                    id: this.id,
+                    rowData: this.row
+                }
+            };
+            this.$emit('eventWaterfall', eventContent);
+        },
+        participantClicked: function () { //emit event when a "participant" checkbox is selected
+            var eventContent = {
+                type: "participant",
                 params: {
                     id: this.id,
                     rowData: this.row
@@ -335,7 +372,7 @@ Vue.component('custom-table-waterfall', {
     template: `
         <div id="root">
             <div id="pages" class="col-sm-4" v-if="pagesOn">
-                Mostrar 
+                Mostrar
                 <select v-model="rowsPerPage">
                     <option>5</option>
                     <option>10</option>
@@ -345,9 +382,9 @@ Vue.component('custom-table-waterfall', {
                 entradas
             </div>
             <div id="filter" class="col-sm-7" v-if="filterOn">
-                <input 
-                    class="form-control" 
-                    v-model="filt" type="text" 
+                <input
+                    class="form-control"
+                    v-model="filt" type="text"
                     placeholder="Filtrar"
                 />
             </div>
@@ -356,39 +393,45 @@ Vue.component('custom-table-waterfall', {
                     <span class="glyphicon glyphicon-plus"/>
                 </button>
             </div>
-            
+
             <table id="masterTable" :class="tableClass">
                 <thead>
                     <tr>
                         <th style="width: 4%"></th>
-                        <th 
-                            v-for="(item,index) in header" 
-                            @click="sort(index)" 
-                            class="sorter" 
+                        <th
+                            v-for="(item,index) in header"
+                            @click="sort(index)"
+                            class="sorter"
                             :style="{width: cwidth[index]}"
                         >
                             {{ item }} <span class="caret"></span>
                         </th>
+                        <th v-if="selectOn">
+                            D
+                        </th>
+                        <th v-if="selectOn">
+                            P
+                        </th>
                     </tr>
                 </thead>
                 <tbody name="table">
-                    <row-waterfall 
+                    <row-waterfall
                         v-for="(row,index) in rowsShow"
 
                         :select-on="selectOn"
-                        :row="row" 
-                        :id="genID(index)" 
-                        :key="row.index" 
-                        :cwidth="cwidth" 
-                        
-                        :table-class="tableClass+' cascata'" 
-                        root="true" 
-                        
+                        :row="row"
+                        :id="genID(index)"
+                        :key="row.index"
+                        :cwidth="cwidth"
+
+                        :table-class="tableClass+' cascata'"
+                        root="true"
+
                         @eventWaterfall="eventPass($event)"
                     />
                 </tbody>
             </table>
-            
+
             <div class="pages" v-if="pagesOn">
                 <span class="glyphicon glyphicon-chevron-left page-number" @click="prevPage"></span>
                 <span class="page-number btn btn-xs btn-default" v-for="page in pages" :class="{active: page==activePage}" @click="loadPage(page)">\ {{ page }}\ </span>
@@ -460,7 +503,7 @@ Vue.component('custom-table-waterfall', {
                 this.rows = [{ content: ["Sem resultados correspondentes..."] }];
             }
         },*/
-        newFilter: function () { //filter rows and sublevels 
+        newFilter: function () { //filter rows and sublevels
             var regex = new RegExp(this.filt, "gi");
 
             var temp = JSON.parse(JSON.stringify(this.completeRows));
@@ -476,7 +519,7 @@ Vue.component('custom-table-waterfall', {
                     //if sublevel comes empty and item doesn't match regex, cut it
                     if (list[i].sublevel.length == 0) {
                         var check = false;
-                        
+
                         for (var j = 0; j < list[i].content.length; j++) {
                             if (regex.test(list[i].content[j])) {
                                 check = true;
@@ -488,10 +531,10 @@ Vue.component('custom-table-waterfall', {
                         }
                     }
                 }
-                //if item doesn't have sublevel, check if it matches regex, if not, cut it                
+                //if item doesn't have sublevel, check if it matches regex, if not, cut it
                 else {
                     var check = false;
-                    
+
                     for (var j = 0; j < list[i].content.length; j++) {
                         if (regex.test(list[i].content[j])) {
                             check = true;
@@ -501,7 +544,7 @@ Vue.component('custom-table-waterfall', {
                     if (!check) {
                         list.splice(i, 1);
                     }
-                }            
+                }
             }
 
             return list;
@@ -566,7 +609,7 @@ Vue.component('custom-table-waterfall', {
                 this.activePage = page;
             }
         },
-        prepPage: function () { //process rows to be shown 
+        prepPage: function () { //process rows to be shown
             var beggining = (this.activePage - 1) * this.rowsPerPage;
             var end = beggining + parseInt(this.rowsPerPage);
 

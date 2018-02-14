@@ -41,7 +41,8 @@
 .cascata-row {
     padding:0px !important; 
     padding-left:30px !important; 
-    border:0px !important
+    border:0px !important;
+    width: 100%;
 }
 
 .cascata-row-root {
@@ -50,9 +51,19 @@
 }
 
 .cascata-drop {
+    text-align: center;
+    background-color: #90CAF9; 
     border-right:1px solid #ddd; 
     margin-right: 5px;
-    width: 5%;
+    width: 40px !important;
+}
+
+.cascata-drop-select {
+    text-align: center;
+    background-color: #90CAF9; 
+    border-right:1px solid #ddd; 
+    margin-right: 5px;
+    width: 48px !important;
 }
 
 .drop-row {
@@ -68,8 +79,10 @@
 
 
 .consulta td{
+    padding-left: 5px;
     padding-bottom: 5px;
-    padding-top: 10px;
+    padding-top: 5px;
+    align-content: center;
 }
 
 .cria tr{
@@ -112,7 +125,7 @@
 
 
 .table-hover tbody:hover > tr:hover {
-    background-color: rgba(201, 201, 201, 0.514) !important;
+    background-color: #BBDEFB !important;
 }
 
 
@@ -123,7 +136,7 @@
     border-width: 1px;
     border-style: solid;
     padding: 5px;
-    background-color: rgba(197, 197, 197, 0.747)
+    background-color: rgb(190, 190, 190);
 }
 
 .botao a {
@@ -142,7 +155,7 @@
 
 .titlebox {
     color: beige;
-    background: rgb(0, 5, 71);
+    background: #0D47A1;
     border-style: solid;
     border-width: 1px;
     padding: 7px;
@@ -153,7 +166,7 @@
 
 
 .infobox {
-    background: rgb(154, 195, 241);
+    background: #64B5F6;
     border-style: solid;
     border-width: 1px;
     padding: 5px;
@@ -162,6 +175,7 @@
 
 .textbox {
     border-style: solid;
+    background-color: #E3F2FD;
     border-width: 1px;
     padding: 5px;
     margin: 5px;
@@ -204,9 +218,39 @@
     padding:5px;
     border: solid;
     border-width: 1px;
-    background: rgb(77, 154, 243)
+    background: #90CAF9;
 }
 
 .button a {
     color: beige !important;
+}
+
+.info-classe .panel {
+    margin-bottom: 10px;
+}
+
+.info-label {
+    padding: 5px; 
+    font-weight: 400;
+    width: 100%;
+    background-color: #E3F2FD;
+    font-weight: bold;
+}
+
+.codigo {
+    background-color: #E3F2FD;
+    width:100px;
+}
+
+.noborder {
+    width: 100%;
+}
+
+.noborder tr {
+    border: none;
+}
+
+.consulta td:nth-of-type(2) {
+    vertical-align: middle;
+    padding-left: 15px;
 }
