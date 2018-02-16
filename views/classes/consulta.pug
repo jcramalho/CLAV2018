@@ -503,7 +503,7 @@ block corpo
                                                         td 
                                                             p(v-html="criterio.nota")
                                                     
-                                                    tr(v-if="criterio.legislacao.length")
+                                                    //-tr(v-if="criterio.legislacao.length")
                                                         td Legislação:
                                                         td
                                                             ul
@@ -512,7 +512,7 @@ block corpo
                                                                     a(:href="'/legislacao/consultar/'+diploma.id")
                                                                         | {{diploma.numero}}
 
-                                                    tr(v-if="criterio.processos.length")
+                                                    //-tr(v-if="criterio.processos.length")
                                                         td Processos:
                                                         td
                                                             ul
@@ -537,7 +537,14 @@ block corpo
                                         tr(v-if="clas.DF.criterios.length")
                                             td Critérios:
                                             td 
-                                                table(v-for="criterio in clas.DF.criterios" style="border-color: white; border-style:solid; margin-bottom: 20px")
+                                                table(
+                                                    v-for="criterio in clas.DF.criterios" 
+                                                    style=`
+                                                        border-color: white; 
+                                                        border-style:solid; 
+                                                        margin-bottom: 20px
+                                                    `
+                                                )
                                                     tr
                                                         td Tipo:
                                                         td {{criterio.tipo}}
@@ -547,7 +554,7 @@ block corpo
                                                         td
                                                             p(v-html="criterio.nota")
                                                     
-                                                    tr(v-if="criterio.legislacao.length")
+                                                    //-tr(v-if="criterio.legislacao.length")
                                                         td Legislação:
                                                         td
                                                             ul
@@ -556,7 +563,7 @@ block corpo
                                                                     a(:href="'/legislacao/consultar/'+diploma.id")
                                                                         | {{diploma.numero}}
 
-                                                    tr(v-if="criterio.processos.length")
+                                                    //-tr(v-if="criterio.processos.length")
                                                         td Processos:
                                                         td
                                                             ul

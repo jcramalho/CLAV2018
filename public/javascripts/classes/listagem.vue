@@ -6,7 +6,7 @@ var classes = new Vue({
         tableData: [],
         ready: false,
         content: [],
-        cwidth: ['80px',''],
+        cwidth: ['15%','80%'],
         subTemp: [],
         nEdits: 0,
     },

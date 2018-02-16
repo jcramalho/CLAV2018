@@ -54,16 +54,25 @@
     text-align: center;
     background-color: #90CAF9; 
     border-right:1px solid #ddd; 
-    margin-right: 5px;
-    width: 40px !important;
+    width: 48px !important;
+    overflow: hidden;
+    display: inline-block;
+    white-space: nowrap;
 }
 
 .cascata-drop-select {
     text-align: center;
     background-color: #90CAF9; 
     border-right:1px solid #ddd; 
-    margin-right: 5px;
     width: 48px !important;
+    overflow: hidden;
+    display: inline-block;
+    white-space: nowrap;
+}
+
+.codigo {
+    background-color: #E3F2FD;
+    white-space: nowrap;
 }
 
 .drop-row {
@@ -128,6 +137,15 @@
     background-color: #BBDEFB !important;
 }
 
+.custom-table-cell {
+    max-width: 0; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+    white-space: nowrap; 
+    cursor: pointer;
+    cursor: hand !important;
+}
+
 
 .botao {
     box-sizing: border-box;
@@ -136,12 +154,16 @@
     border-width: 1px;
     border-style: solid;
     padding: 5px;
-    background-color: rgb(190, 190, 190);
-}
-
-.botao a {
+    background-color: #f5f5f5;
     color: #000 !important;
 }
+
+.botao:hover {
+    border: #555;
+    text-decoration: none !important;
+    outline: none;
+}
+
 
 .footer {
     z-index: 10000 !important;
@@ -237,11 +259,6 @@
     font-weight: bold;
 }
 
-.codigo {
-    background-color: #E3F2FD;
-    width:100px;
-}
-
 .noborder {
     width: 100%;
 }
@@ -253,4 +270,17 @@
 .consulta td:nth-of-type(2) {
     vertical-align: middle;
     padding-left: 15px;
+}
+
+.tabela-navegacao td{
+    vertical-align: middle;
+    border:none !important;
+}
+
+.tabela-navegacao td:nth-of-type(1) div{
+    text-align: left !important;
+}
+
+.tabela-navegacao{
+    border: none !important;
 }

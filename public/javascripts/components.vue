@@ -30,7 +30,7 @@ Vue.component('custom-table-simple', {
                 </thead>
                 <tbody name="table">
                     <tr v-for="(row,index) in rowsShow" :key="row[0]" @click="rowClick(index)">
-                        <td v-if="index>0" v-for="(item,index) in row" style="max-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ item }}</td>
+                        <td v-if="index>0" v-for="(item,index) in row" class="custom-table-cell">{{ item }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -371,7 +371,7 @@ Vue.component('row-waterfall', {
 Vue.component('custom-table-waterfall', {
     template: `
         <div id="root">
-            <div id="pages" class="col-sm-4" v-if="pagesOn">
+            <div id="pages" class="col-sm-4" v-if="pagesOn" style="margin-bottom:5px">
                 Mostrar
                 <select v-model="rowsPerPage">
                     <option>5</option>
@@ -395,7 +395,7 @@ Vue.component('custom-table-waterfall', {
             </div>
 
             <table id="masterTable" :class="tableClass">
-                <thead>
+                <thead v-if="!selectOn">
                     <tr>
                         <th style="width: 4%"></th>
                         <th
