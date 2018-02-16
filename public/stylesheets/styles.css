@@ -50,14 +50,23 @@
     border:0px !important
 }
 
+.fixed {
+    table-layout: fixed;
+}
+
 .cascata-drop {
     text-align: center;
     background-color: #90CAF9; 
     border-right:1px solid #ddd; 
-    width: 48px !important;
+    width: 100% !important;
     overflow: hidden;
     display: inline-block;
     white-space: nowrap;
+}
+
+.null {
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .cascata-drop-select {
@@ -85,7 +94,6 @@
     vertical-align: top;
     border-bottom: 1px solid #ddd;
 }
-
 
 .consulta td{
     padding-left: 5px;
@@ -131,7 +139,6 @@
 .is-collapsed li:nth-child(n+5) {
     display: none;
 }
-
 
 .table-hover tbody:hover > tr:hover {
     background-color: #BBDEFB !important;

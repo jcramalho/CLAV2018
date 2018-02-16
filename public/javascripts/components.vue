@@ -204,7 +204,7 @@ Vue.component('row-waterfall', {
     template: `
         <tr>
             <td colspan=5 :class="[root ? 'cascata-row-root' : 'cascata-row']">
-                <table :class="tableClass">
+                <table :class="[selectOn ? tableClass : (tableClass+' fixed')]">
                     <tbody name="table">
                         <tr>
                             <td v-if="row.sublevel"
@@ -395,7 +395,7 @@ Vue.component('custom-table-waterfall', {
             </div>
 
             <table id="masterTable" :class="tableClass">
-                <thead v-if="!selectOn">
+                <thead>
                     <tr>
                         <th style="width: 4%"></th>
                         <th

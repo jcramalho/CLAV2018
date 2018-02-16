@@ -10,4 +10,4 @@ TODOs:
 
     MISC
         -mudar routes / para /listar?
-
+        -arrumar CSS
