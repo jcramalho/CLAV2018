@@ -245,27 +245,36 @@ Vue.component('row-waterfall', {
                             <td
                                 v-for="(item,index) in row.content"
                                 :style="{width: cwidth[index]}"
-                                :class="[ index==0 ? 'codigo' : 'null' ]"
+                                :class="[ index==0 ? 'codigo' : ( selectOn ? '' : 'texto' ) ]"
                                 @click="rowClicked"
                                 :colspan="[ (index==1 && !selectOn) ? '3' : '1' ]"
                             >
-                                {{ item }}
-                            </td>
-                            <td v-if="selectOn && level==3">
-                                <input
-                                    :id="'owner'+id"
-                                    type="checkbox"
-                                    v-model="row.owner"
-                                    @click="ownerClicked"
-                                />
-                            </td>
-                            <td v-if="selectOn && level==3">
-                                <input
-                                    :id="'participant'+id"
-                                    type="checkbox"
-                                    v-model="row.participant"
-                                    @click="participantClicked"
-                                />
+                                <div>
+                                    <div style="float:left">
+                                        {{ item }}
+                                    </div>
+                                    <div
+                                        v-if="selectOn && level==3 && index==1" 
+                                        class="checks"
+                                    >
+                                        <div class="ownercheck">
+                                            <input
+                                                :id="'owner'+id"
+                                                type="checkbox"
+                                                v-model="row.owner"
+                                                @click="ownerClicked"
+                                            />
+                                        </div>
+                                        <div class="partcheck">
+                                            <input
+                                                :id="'participant'+id"
+                                                type="checkbox"
+                                                v-model="row.participant"
+                                                @click="participantClicked"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
                             </td>
                         </tr>
 
@@ -407,10 +416,10 @@ Vue.component('custom-table-waterfall', {
                             {{ item }} <span class="caret"></span>
                         </th>
                         <th v-if="selectOn">
-                            D
+                            Dono
                         </th>
                         <th v-if="selectOn">
-                            P
+                            Participante
                         </th>
                     </tr>
                 </thead>

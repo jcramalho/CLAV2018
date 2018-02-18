@@ -64,7 +64,7 @@
     white-space: nowrap;
 }
 
-.null {
+.texto {
     white-space: nowrap;
     overflow: hidden;
 }
@@ -182,6 +182,11 @@
     background: rgb(226, 226, 226)
 }
 
+.footer td{
+    padding: 8px;
+    text-align: center;
+}
+
 .titlebox {
     color: beige;
     background: #0D47A1;
@@ -195,7 +200,7 @@
 
 
 .infobox {
-    background: #64B5F6;
+    background: #90CAF9;
     border-style: solid;
     border-width: 1px;
     padding: 5px;
@@ -211,15 +216,18 @@
 }
 
 .questionario {
+    width:99%;
     border-style: solid;
     border-width: 2px;
     padding: 5px;
     margin:5px;
+    table-layout: fixed;
 }
 
 .questionario tr {
     padding-right: 5px;
-    border-bottom-style: dashed;
+    padding-left: 5px;
+    border-style: dashed;
     border-width: 1px;
 }
 
@@ -230,7 +238,8 @@
 }
 
 .questionario .in {
-    width: 100%;
+    width: 98%;
+    height: 24.5px;
 }
 
 .questionario span {
@@ -290,4 +299,22 @@
 
 .tabela-navegacao{
     border: none !important;
+}
+
+.ownercheck {
+    width:56px;
+    text-align: center;
+    display:inline-block;
+}
+
+.partcheck {
+    width:108px;
+    text-align: center;
+    display:inline-block;
+}
+
+
+.checks {
+    width:168px;
+    float: right;
 }

@@ -36,7 +36,7 @@ new Vue({
                 submeter: '/legislacao/adicionar',
             },
             {
-                valor: 'Estatísticas',
+                valor: 'Estatísticas (WIP)',
                 consultar: '#',
                 submeter: '#',
             },
