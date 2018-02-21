@@ -215,6 +215,13 @@
     margin: 5px;
 }
 
+.whitebox {
+    border-style: solid;
+    border-width: 1px;
+    padding: 5px;
+    margin: 5px;
+}
+
 .questionario {
     width:99%;
     border-style: solid;
@@ -317,4 +324,9 @@
 .checks {
     width:168px;
     float: right;
+}
+
+
+.next {
+    border-radius: 50%;
 }
