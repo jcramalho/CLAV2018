@@ -1,12 +1,12 @@
 extends ../layout 
 block corpo
-    #tabs    
+    #tabs
         .titlebox
             | Tabela de Seleção {{ entidade.nome }}
         
-        tabs
+        tabs(:value="activeTab" @input="inputed($event)")
             //- PROCESSOS COMUNS
-            tab(header="Processos Comuns")#tab1
+            tab(header="Processos Comuns" ref="tab1")
                 .textbox
                     | A partir da lista de processos comuns (passíveis de existirem em qualquer 
                     | entidade) identifique a natureza de intervenção da sua entidade, como dono 
@@ -32,21 +32,15 @@ block corpo
                         
                         table-class='table table-hover'
                         
-                        @drop-clicked-common="dropClicked($event, commonProcs)"
                         @select-clicked-common="selectClicked($event, commonProcs)"
                     )
                     h4(
                         v-else
                     ) Loading...
 
-                div(align="centre")
-                    button.next <
-                    button(@click="saveInfo") Guardar
-                    button.next >
-
 
             //-PROCESSOS ESPECÍFICOS
-            tab(header="Processos Específicos")#tab2
+            tab(header="Processos Específicos" ref="tab2")
                 .textbox
                     | Selecione a tipologia de entidade a que pertence.
 
@@ -83,7 +77,7 @@ block corpo
 
                 #tabela(style="margin-top:30px")
                     custom-table-waterfall(
-                        v-if="ready"
+                        v-if="specReady"
 
                         pages-on="true"
                         select-on="true"
@@ -97,21 +91,15 @@ block corpo
                         
                         table-class='table table-hover'
                         
-                        @drop-clicked-specific="dropClicked($event, specificProcs)"
                         @select-clicked-specific="selectClicked($event, specificProcs)"
                     )
                     h4(
                         v-else
                     ) Loading...
 
-                div(align="centre")
-                    button.next <
-                    button Guardar
-                    button.next >
-
 
             //-PROCESSOS RESTANTES
-            tab(header="Processos Restantes")#tab3
+            tab(header="Processos Restantes" @click="activeTab=1")
                 .textbox
                     | Selecione na lista de processos de negócio específicos restantes 
                     |aqueles em que a sua entidade intervém e assinale a natureza da 
@@ -122,7 +110,7 @@ block corpo
 
                 #tabela(style="margin-top:30px")
                     custom-table-waterfall(
-                        v-if="ready"
+                        v-if="restReady"
 
                         pages-on="true"
                         select-on="true"
@@ -136,17 +124,16 @@ block corpo
                         
                         table-class='table table-hover'
                         
-                        @drop-clicked-rest="dropClicked($event, restProcs)"
                         @select-clicked-rest="selectClicked($event, restProcs)"
                     )
                     h4(
                         v-else
                     ) Loading...
 
-                div(style="float:right")
-                    button.next <
-                    button Guardar
-                    button.next >
+        div(style="float:right")
+            button.next(@click="activeTab--" :disabled="activeTab<=0") <
+            button Guardar
+            button.next(@click="activeTab++" :disabled="activeTab>=2") >
         
 append scripts
     script(src="/javascripts/tabsSel/escolha_processos.vue")
