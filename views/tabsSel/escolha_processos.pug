@@ -20,7 +20,6 @@ block corpo
                     custom-table-waterfall(
                         v-if="ready"
 
-                        pages-on="true"
                         select-on="true"
 
                         suffix="common"
@@ -79,7 +78,6 @@ block corpo
                     custom-table-waterfall(
                         v-if="specReady"
 
-                        pages-on="true"
                         select-on="true"
                         
                         suffix="specific"
@@ -112,7 +110,6 @@ block corpo
                     custom-table-waterfall(
                         v-if="restReady"
 
-                        pages-on="true"
                         select-on="true"
                         
                         suffix="rest"
@@ -130,7 +127,7 @@ block corpo
                         v-else
                     ) Loading...
 
-        div(style="float:right")
+        center
             button.next(@click="activeTab--" :disabled="activeTab<=0") <
             button Guardar
             button.next(@click="activeTab++" :disabled="activeTab>=2") >

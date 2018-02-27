@@ -23,6 +23,7 @@ Vue.component('custom-table-simple', {
             <table :class="classTable">
                 <thead v-if="header">
                     <tr>
+                        <th v-if="selectOn" style="width: 4%"></th>
                         <th v-if="index>0" v-for="(item,index) in header" @click="sort(index)" class="sorter" :style="{width: cwidth[index]}">
                             {{ item }} <span class="caret"></span>
                         </th>
@@ -30,6 +31,12 @@ Vue.component('custom-table-simple', {
                 </thead>
                 <tbody name="table">
                     <tr v-for="(row,index) in rowsShow" :key="row[0]" @click="rowClick(index)">
+                        <td v-if="selectOn">
+                            <input
+                                type="checkbox"
+                                v-model="row.selected"
+                                @click="selectClicked"
+                            />
                         <td v-if="index>0" v-for="(item,index) in row" class="custom-table-cell">{{ item }}</td>
                     </tr>
                 </tbody>
@@ -48,7 +55,8 @@ Vue.component('custom-table-simple', {
         'header',
         'ready',
         'cwidth',
-        'add'
+        'add',
+        'selectOn'
     ],
     data: function () {
         return {
@@ -78,6 +86,9 @@ Vue.component('custom-table-simple', {
         },
     },
     methods: {
+        selectClicked: function () { //emit event when a row is selected
+            this.$emit('selectClicked', this.row);
+        },
         completeFilter: function (filt) { //filter rows according to what is written in the input box
             tempRows = this.completeRows;
 

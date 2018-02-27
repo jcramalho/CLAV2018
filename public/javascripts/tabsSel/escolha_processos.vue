@@ -42,8 +42,7 @@ var escolha = new Vue({
     },
     methods: {
         inputed: function(event){
-            
-            this.activeTab=event[0];
+            this.activeTab=event;
         },
         loadTipols: function () {
             let orgsToParse = [];
