@@ -44,7 +44,22 @@ block corpo
                     | Selecione a tipologia de entidade a que pertence.
 
                 div(style="margin-top:10px")
-                    table(style="width:100%;table-layout:fixed")
+                    custom-table-select(
+                        v-if="tipolsReady"
+
+                        :header="tipolsTableHeader"
+                        :complete-rows="tipolList"
+                        :ready="tipolsReady"
+                        :cwidth="tipolsTableWidth"
+                        
+                        class-table='table table-condensed'
+
+                        @select-clicked="tipolSelected($event)"
+                    )
+                    h4(
+                        v-else
+                    ) Loading...   
+                    //-table(style="width:100%;table-layout:fixed")
                         tr
                             td(width="500px")
                                 v-select.custom-select( 
@@ -76,7 +91,7 @@ block corpo
 
                 #tabela(style="margin-top:30px")
                     custom-table-waterfall(
-                        v-if="specReady"
+                        v-if="specReady && myTipolList.length"
 
                         select-on="true"
                         
@@ -93,7 +108,7 @@ block corpo
                     )
                     h4(
                         v-else
-                    ) Loading...
+                    ) Nenhuma tipologia selecionada...
 
 
             //-PROCESSOS RESTANTES
@@ -129,7 +144,7 @@ block corpo
 
         center
             button.next(@click="activeTab--" :disabled="activeTab<=0") <
-            button Guardar
+            button(@click="saveInfo") Guardar
             button.next(@click="activeTab++" :disabled="activeTab>=2") >
         
 append scripts

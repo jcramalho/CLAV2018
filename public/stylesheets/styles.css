@@ -167,6 +167,12 @@
     cursor: hand !important;
 }
 
+.custom-table-cell-select {
+    max-width: 0; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+    white-space: nowrap; 
+}
 
 .botao {
     box-sizing: border-box;

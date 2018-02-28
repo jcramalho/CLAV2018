@@ -5,8 +5,13 @@ var escolha = new Vue({
             nome: "Teste",
         },
         newTipol: null,
+
+        tipolsTableHeader: ["#","Sigla","Nome"],
+        tipolsTableWidth: ["4%","20%","80%"],
         tipolList: [],
         myTipolList: [],
+        tipolsReady: false,
+
         tableHeader: [],
         commonProcs: [],
         specificProcs: [],
@@ -20,6 +25,10 @@ var escolha = new Vue({
         name: "",
         message: "",
         activeTab: 0,
+
+        commonPNSelected: [],
+        specPNSelected: [],
+        restPNSelected: [],
     },
     components: {
         tabs: VueStrap.tabs,
@@ -28,19 +37,33 @@ var escolha = new Vue({
     },
     watch: {
         myTipolList: function () {
+            this.specPNSelected=this.getSelected(this.specificProcs);
+            this.restPNSelected=this.getSelected(this.restProcs);
+
             this.specReady = false;
             this.restReady = false;
             if (this.myTipolList.length) {
                 this.loadSpecificProcs();
             }
             else {
-                this.specificProcs = [{ content: [000, "Sem resultados a apresentar..."] }];
-                this.specReady = true;
+                this.specificProcs = [{ content: [000, "Nenhuma tipologia selecionada..."] }];
+                this.specReady = false;
             }
             this.loadRestProcs();
         },
     },
     methods: {
+        tipolSelected: function (row) {
+            if(!row.selected){
+                this.myTipolList.push(row.id);  
+            }
+            else {
+                let index = this.myTipolList.indexOf(row.id);
+                if(index!=-1){
+                    this.myTipolList.splice(index,1);
+                }
+            }
+        },
         inputed: function(event){
             this.activeTab=event;
         },
@@ -54,18 +77,22 @@ var escolha = new Vue({
                 })
                 .then(function () {
                     let completeList = this.parseList(orgsToParse, keys);
+                    let i=0;
 
                     //tipologias
                     this.tipolList = completeList.filter(
                         a => (a.Tipo == "Tipologia")
                     ).map(function (item) {
                         return {
-                            label: item.Sigla + " - " + item.Nome,
-                            value: item,
+                            data: [i++,item.Sigla,item.Nome],
+                            selected: false,
+                            id: item.id
                         }
                     }).sort(function (a, b) {
-                        return a.label.localeCompare(b.label);
+                        return a.data[1].localeCompare(b.data[1]);
                     });
+
+                    this.tipolsReady=true;
                 })
                 .catch(function (error) {
                     console.error(error);
@@ -117,14 +144,14 @@ var escolha = new Vue({
         loadSpecificProcs() {
             let content = [];
 
-            this.$http.get("/api/classes/filtrar/" + this.myTipolList.map(a => a.id).join(','))
+            this.$http.get("/api/classes/filtrar/" + this.myTipolList.join(','))
                 .then(function (response) {
                     content = response.body;
                 })
                 .then(function () {
 
                     this.specificProcs = [];
-                    this.parse(content, this.specificProcs);
+                    this.parse(content, this.specificProcs, this.specPNSelected);
                     this.specReady = true;
                 })
                 .catch(function (error) {
@@ -134,14 +161,14 @@ var escolha = new Vue({
         loadRestProcs() {
             let content = [];
 
-            this.$http.get("/api/classes/filtrar/restantes/" + this.myTipolList.map(a => a.id).join(','))
+            this.$http.get("/api/classes/filtrar/restantes/" + this.myTipolList.join(','))
                 .then(function (response) {
                     content = response.body;
                 })
                 .then(function () {
 
                     this.restProcs = [];
-                    this.parse(content, this.restProcs);
+                    this.parse(content, this.restProcs, this.restPNSelected);
                     this.restReady = true;
                 })
                 .catch(function (error) {
@@ -197,7 +224,7 @@ var escolha = new Vue({
                 this.dropClicked(params);
             }
         },
-        parse: function (dataToParse, destination) {
+        parse: function (dataToParse, destination, selectedPNs) {
             const indexes = {};
             let avo;
             let pai;
@@ -206,6 +233,9 @@ var escolha = new Vue({
                 let codeAvo = pn.AvoCodigo.value;
                 let indexesAvo = indexes[codeAvo];
                 let codePai = pn.PaiCodigo.value;
+
+                let pnSelected = (selectedPNs.indexOf(pn.PN.value.replace(/[^#]+#(.*)/, '$1'))!=-1);
+
 
                 if (indexesAvo) {
                     avo = indexesAvo.i;
@@ -222,7 +252,7 @@ var escolha = new Vue({
                             codeID: pn.Pai.value.replace(/[^#]+#(.*)/, '$1'),
                             content: [codePai, pn.PaiTitulo.value],
                             drop: false,
-                            selected: false,
+                            selected: pnSelected,
                             subReady: true,
                             sublevel: []
                         }
@@ -240,13 +270,13 @@ var escolha = new Vue({
                         codeID: pn.Avo.value.replace(/[^#]+#(.*)/, '$1'),
                         content: [codeAvo, pn.AvoTitulo.value],
                         drop: false,
-                        selected: false,
+                        selected: pnSelected,
                         subReady: true,
                         sublevel: [{
                             codeID: pn.Pai.value.replace(/[^#]+#(.*)/, '$1'),
                             content: [codePai, pn.PaiTitulo.value],
                             drop: false,
-                            selected: false,
+                            selected: pnSelected,
                             subReady: true,
                             sublevel: [],
                         }]
@@ -258,7 +288,7 @@ var escolha = new Vue({
                     codeID: pn.PN.value.replace(/[^#]+#(.*)/, '$1'),
                     content: [pn.PNCodigo.value, pn.PNTitulo.value],
                     drop: false,
-                    selected: false,
+                    selected: pnSelected,
                 }
 
                 if (pn.Filhos.value.length) {
@@ -272,7 +302,7 @@ var escolha = new Vue({
                             codeID: filhoInfo[0].replace(/[^#]+#(.*)/, '$1'),
                             content: [filhoInfo[1], filhoInfo[2]],
                             drop: false,
-                            selected: false,
+                            selected: pnSelected,
                         });
                     }
                 }
@@ -306,8 +336,8 @@ var escolha = new Vue({
         },
         saveInfo: function () {
             let selected = {
+                tipologias: this.myTipolList,
                 comuns: this.getSelected(this.commonProcs),
-                tipols: this.myTipolList,
                 especificos: this.getSelected(this.specificProcs),
                 restantes: this.getSelected(this.restProcs),
             };
@@ -355,7 +385,7 @@ var escolha = new Vue({
                 content = response.body;
             })
             .then(function () {
-                this.parse(content, this.commonProcs);
+                this.parse(content, this.commonProcs, this.commonPNSelected);
                 this.ready = true;
 
                 this.loadTipols();
