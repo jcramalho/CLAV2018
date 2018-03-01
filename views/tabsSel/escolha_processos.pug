@@ -146,6 +146,8 @@ block corpo
             button.next(@click="activeTab--" :disabled="activeTab<=0") <
             button(@click="saveInfo") Guardar
             button.next(@click="activeTab++" :disabled="activeTab>=2") >
+        button(@click="loadSavedInfo") Continuar Trabalho
+            
         
 append scripts
     script(src="/javascripts/tabsSel/escolha_processos.vue")

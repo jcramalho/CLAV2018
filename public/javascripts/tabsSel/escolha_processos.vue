@@ -6,8 +6,8 @@ var escolha = new Vue({
         },
         newTipol: null,
 
-        tipolsTableHeader: ["#","Sigla","Nome"],
-        tipolsTableWidth: ["4%","20%","80%"],
+        tipolsTableHeader: ["#", "Sigla", "Nome"],
+        tipolsTableWidth: ["4%", "20%", "80%"],
         tipolList: [],
         myTipolList: [],
         tipolsReady: false,
@@ -35,10 +35,20 @@ var escolha = new Vue({
         tabGroup: VueStrap.tabGroup,
         tab: VueStrap.tab
     },
-    watch: {
-        myTipolList: function () {
-            this.specPNSelected=this.getSelected(this.specificProcs);
-            this.restPNSelected=this.getSelected(this.restProcs);
+    methods: {
+        tipolSelected: function (row) {
+            if (!row.selected) {
+                this.myTipolList.push(row.id);
+            }
+            else {
+                let index = this.myTipolList.indexOf(row.id);
+                if (index != -1) {
+                    this.myTipolList.splice(index, 1);
+                }
+            }
+
+            this.specPNSelected = this.getSelected(this.specificProcs);
+            this.restPNSelected = this.getSelected(this.restProcs);
 
             this.specReady = false;
             this.restReady = false;
@@ -51,23 +61,13 @@ var escolha = new Vue({
             }
             this.loadRestProcs();
         },
-    },
-    methods: {
-        tipolSelected: function (row) {
-            if(!row.selected){
-                this.myTipolList.push(row.id);  
-            }
-            else {
-                let index = this.myTipolList.indexOf(row.id);
-                if(index!=-1){
-                    this.myTipolList.splice(index,1);
-                }
-            }
-        },
-        inputed: function(event){
-            this.activeTab=event;
+        inputed: function (event) {
+            this.activeTab = event;
         },
         loadTipols: function () {
+            this.tipolsReady = false;
+            this.tipolList = [];
+            
             let orgsToParse = [];
             let keys = ["id", "Tipo", "Nome", "Sigla"];
 
@@ -77,22 +77,23 @@ var escolha = new Vue({
                 })
                 .then(function () {
                     let completeList = this.parseList(orgsToParse, keys);
-                    let i=0;
+                    let i = 0;
 
+                    let selection = this.myTipolList;
                     //tipologias
                     this.tipolList = completeList.filter(
                         a => (a.Tipo == "Tipologia")
                     ).map(function (item) {
                         return {
-                            data: [i++,item.Sigla,item.Nome],
-                            selected: false,
+                            data: [i++, item.Sigla, item.Nome],
+                            selected: selection.indexOf(item.id) != -1,
                             id: item.id
                         }
                     }).sort(function (a, b) {
                         return a.data[1].localeCompare(b.data[1]);
                     });
 
-                    this.tipolsReady=true;
+                    this.tipolsReady = true;
                 })
                 .catch(function (error) {
                     console.error(error);
@@ -140,6 +141,24 @@ var escolha = new Vue({
             array[pos2] = temp;
 
             return array;
+        },
+        loadCommonProcs() {
+            this.ready=false;
+            let content = [];
+
+            this.$http.get("/api/classes/filtrar/comuns")
+                .then(function (response) {
+                    content = response.body;
+                })
+                .then(function () {
+
+                    this.commonProcs = [];
+                    this.parse(content, this.commonProcs, this.commonPNSelected);
+                    this.ready = true;
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
         },
         loadSpecificProcs() {
             let content = [];
@@ -234,7 +253,7 @@ var escolha = new Vue({
                 let indexesAvo = indexes[codeAvo];
                 let codePai = pn.PaiCodigo.value;
 
-                let pnSelected = (selectedPNs.indexOf(pn.PN.value.replace(/[^#]+#(.*)/, '$1'))!=-1);
+                let pnSelected = (selectedPNs.indexOf(pn.PN.value.replace(/[^#]+#(.*)/, '$1')) != -1);
 
 
                 if (indexesAvo) {
@@ -342,11 +361,46 @@ var escolha = new Vue({
                 restantes: this.getSelected(this.restProcs),
             };
 
-            /* do stuff */
+            this.$http.put('/users/save/escolhaProcessos', selected, {
+                headers: {
+                    'content-type': 'application/json'
+                }
+            })
+                .then(function (response) {
+                    var resp = response.body;
+                    console.log(resp);
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
         },
         loadSavedInfo: function () {
-            /* get info */
-            /* apply info */
+            this.$http.get("/users/load/escolhaProcessos")
+                .then(function (response) {
+                    content = response.body;
+                })
+                .then(function(){
+                    console.log(content);
+
+                    this.commonPNSelected=content.comuns;
+                    this.ready=false;
+                    this.loadCommonProcs();
+                    
+                    this.myTipolList=content.tipologias;
+                    this.tipolsReady=false;
+                    this.loadTipols();
+
+                    this.specPNSelected=content.especificos;
+                    this.specReady=false;
+                    this.loadSpecificProcs();
+
+                    this.restPNSelected=content.restantes;
+                    this.restReady=false;
+                    this.loadRestProcs();
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
         },
         createSelTab: function () {
             var dataObj = {
@@ -378,7 +432,7 @@ var escolha = new Vue({
             "TÍTULO"
         ];
 
-        let content = [];
+        /*let content = [];
 
         this.$http.get("/api/classes/filtrar/comuns")
             .then(function (response) {
@@ -393,6 +447,10 @@ var escolha = new Vue({
             })
             .catch(function (error) {
                 console.error(error);
-            });
+            });*/
+        this.loadCommonProcs();
+        this.loadTipols();
+        this.loadRestProcs();
+        
     }
 })
