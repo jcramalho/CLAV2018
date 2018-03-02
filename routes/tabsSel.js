@@ -7,15 +7,15 @@ router.get('/', function(req, res, next) {
 	res.render('tabsSel/listagem');
 });
 
-router.get('/escolha_processos', function(req, res) {
+router.get('/escolha_processos', Auth.isLoggedIn, function(req, res) {
     res.render('tabsSel/escolha_processos');
 });
 
-router.get('/escolha', function(req, res) {
+router.get('/escolha', Auth.isLoggedIn, function(req, res) {
     res.render('tabsSel/escolha');
 });
 
-router.get('/passos', function(req, res) {
+router.get('/passos', Auth.isLoggedIn, function(req, res) {
     res.render('tabsSel/passos');
 });
 

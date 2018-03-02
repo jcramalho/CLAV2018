@@ -559,6 +559,7 @@ Classes.pca = function (id) {
 Classes.df = function (id) {
     var fetchQuery = `
         SELECT 
+            ?Nota
             (GROUP_CONCAT(DISTINCT ?Valor; SEPARATOR="###") AS ?Valores)
             (GROUP_CONCAT(DISTINCT ?Criterio; SEPARATOR="###") AS ?Criterios)
         WHERE { 
@@ -567,10 +568,13 @@ Classes.df = function (id) {
                 ?df clav:dfValor ?Valor ;
             }
             OPTIONAL {
+                ?df clav:dfNota ?Nota ;
+            }
+            OPTIONAL {
                 ?df clav:temJustificacao ?just .
                 ?just clav:temCriterio ?Criterio
             }    
-        }GROUP BY ?df
+        }GROUP BY ?df ?Nota
     `;
 
     return client.query(fetchQuery).execute()

@@ -16,6 +16,10 @@ block corpo
                 .infobox(style="margin-top:10px")
                     b Lista Consolidada - Processos Comuns
 
+                div(style="float:right")
+                    button(@click="clean(0)") 
+                        | Limpar Seleção
+
                 #tabela(style="margin-top:30px")
                     custom-table-waterfall(
                         v-if="ready"
@@ -58,27 +62,7 @@ block corpo
                     )
                     h4(
                         v-else
-                    ) Loading...   
-                    //-table(style="width:100%;table-layout:fixed")
-                        tr
-                            td(width="500px")
-                                v-select.custom-select( 
-                                    style="width:500px"
-                                    v-model="newTipol"
-                                    :options="tipolList"
-                                )
-                            td(valign="top")
-                                button(
-                                    @click="myTipolList.unshift(newTipol.value)"
-                                ) +
-                        tr(v-if="myTipolList.length")
-                            td(colspan="2" style="padding-top:10px")
-                                ul(style="padding-left:20px")
-                                    li(v-for="(o,index) in myTipolList")
-                                        | {{ o.Sigla }} - {{ o.Nome }}
-                                        button(
-                                            @click="myTipolList.splice(index,1)"
-                                        ) x
+                    ) Loading...
 
                 .textbox(style="margin-top:30px")
                     | Assinale na lista apresentada a natureza da intervenção da entidade, 
@@ -88,6 +72,10 @@ block corpo
                 
                 .infobox(style="margin-top:10px")
                     b Lista Consolidada - Seleção por entidade e tipologia
+
+                div(style="float:right")
+                    button(@click="clean(1)") 
+                        | Limpar Seleção
 
                 #tabela(style="margin-top:30px")
                     custom-table-waterfall(
@@ -121,6 +109,10 @@ block corpo
                 .infobox(style="margin-top:10px")
                     b Lista Consolidada - Processos Específicos Restantes
 
+                div(style="float:right")
+                    button(@click="clean(2)") 
+                        | Limpar Seleção
+
                 #tabela(style="margin-top:30px")
                     custom-table-waterfall(
                         v-if="restReady"
@@ -146,8 +138,32 @@ block corpo
             button.next(@click="activeTab--" :disabled="activeTab<=0") <
             button(@click="saveInfo") Guardar
             button.next(@click="activeTab++" :disabled="activeTab>=2") >
-        button(@click="loadSavedInfo") Continuar Trabalho
-            
+        
+        div(style="float:right")
+            button(@click="loadSavedInfo") Continuar Trabalho
+
+        div(style="align:left")
+            input.btn(
+                type="button" 
+                @click="createSelTab(0)" 
+                value="Criar Tabela de Seleção" 
+            )
+
+            div(v-html="message")
+
+            input.btn.btn-xs.btn-danger(
+                v-if="createConfirm"
+                type="button" 
+                @click="createSelTab(1)" 
+                value="OK" 
+            )
+            input.btn.btn-xs.btn-info(
+                v-if="createConfirm"
+                type="button" 
+                @click="createConfirm=!createConfirm" 
+                value="<-" 
+            )
+                
         
 append scripts
     script(src="/javascripts/tabsSel/escolha_processos.vue")

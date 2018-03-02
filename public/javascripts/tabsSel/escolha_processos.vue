@@ -29,6 +29,9 @@ var escolha = new Vue({
         commonPNSelected: [],
         specPNSelected: [],
         restPNSelected: [],
+
+        message: "",
+        createConfirm: false, 
     },
     components: {
         tabs: VueStrap.tabs,
@@ -353,6 +356,24 @@ var escolha = new Vue({
 
             return Array.from(new Set(list));
         },
+        clean: function(i){
+            if(i==0) {
+                this.commonPNSelected=[];
+                this.ready=false;
+                this.loadCommonProcs();
+            } 
+            else if(i==1) {
+                this.specPNSelected=[];
+                this.specReady=false;
+                this.loadSpecificProcs();
+            }
+            else if(i==2) {
+                this.restPNSelected=[];
+                this.restReady=false;
+                this.loadRestProcs();
+            }
+            
+        },
         saveInfo: function () {
             let selected = {
                 tipologias: this.myTipolList,
@@ -402,27 +423,54 @@ var escolha = new Vue({
                     console.error(error);
                 });
         },
-        createSelTab: function () {
-            var dataObj = {
-                name: this.name,
-                classes: this.getAllSelected(this.tableData),
+        createSelTab: function (force) {
+            let ok=force;
+
+            if(!ok){
+                this.message="";
+                ok=true;
+                if(this.getSelected(this.commonProcs).length==0){
+                    this.message += "<p>Nenhum processo comum selecionado!</p>";
+                    ok=false;
+                }
+                if(this.getSelected(this.specificProcs).length==0){
+                    this.message += "<p>Nenhum processo específico selecionado!</p>";
+                    ok=false;
+                }
+                if(this.getSelected(this.restPNSelected).length==0){
+                    this.message += "<p>Nenhum processo restante selecionado!</p>";
+                    ok=false;
+                }
+                if(!ok){
+                    this.message += "<p>Continuar mesmo assim?</p>"
+                }
+                this.createConfirm=true;
             }
 
-            if (dataObj.classes.length == 0) {
-                this.message = "É necessário selecionar uma ou mais classes!";
-            }
-            else {
-                this.$http.post('/api/tabelasSelecao/', dataObj, {
-                    headers: {
-                        'content-type': 'application/json'
-                    }
-                })
-                    .then(function (response) {
-                        window.location.href = '/tabelasSelecao/consultar/' + response.body;
+            if(ok){
+                var dataObj = {
+                    name: this.entidade.nome,
+                    classes: this.getAllSelected(this.tableData),
+                }
+
+                if (dataObj.classes.length == 0) {
+                    this.message = "É necessário selecionar um ou mais processos!";
+                    this.createConfirm=false;
+                }
+                else {
+                    this.message="<p>A criar tabela de seleção!</p><p> Será redirecionado para a respectiva página após a criação.</p>";
+                    this.$http.post('/api/tabelasSelecao/', dataObj, {
+                        headers: {
+                            'content-type': 'application/json'
+                        }
                     })
-                    .catch(function (error) {
-                        console.error(error);
-                    });
+                        .then(function (response) {
+                            window.location.href = '/tabelasSelecao/consultar/' + response.body;
+                        })
+                        .catch(function (error) {
+                            console.error(error);
+                        });
+                }
             }
         }
     },
@@ -432,22 +480,6 @@ var escolha = new Vue({
             "TÍTULO"
         ];
 
-        /*let content = [];
-
-        this.$http.get("/api/classes/filtrar/comuns")
-            .then(function (response) {
-                content = response.body;
-            })
-            .then(function () {
-                this.parse(content, this.commonProcs, this.commonPNSelected);
-                this.ready = true;
-
-                this.loadTipols();
-                this.loadRestProcs();
-            })
-            .catch(function (error) {
-                console.error(error);
-            });*/
         this.loadCommonProcs();
         this.loadTipols();
         this.loadRestProcs();

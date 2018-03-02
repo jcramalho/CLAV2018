@@ -463,7 +463,7 @@ block corpo
                     panel(header="Decisões de Avaliação" v-if="clas.Level==3")
                         table.consulta.noborder(v-if="pageReady" style="border-color: white; border-style:solid")
                             //- PRAZO DE CONSERVAÇÃO ADMINISTRATIVA
-                            tr
+                            tr(v-if="clas.PCA.valores.length")
                                 td
                                     .info-label(style="text-align:center")
                                         | Prazo de Conservação Administrativa
@@ -492,7 +492,7 @@ block corpo
                                                             p(v-html="criterio.nota")
                                 
                             //- DESTINO FINAL
-                            tr
+                            tr(v-if="clas.DF.valores.length")
                                 td
                                     .info-label(style="text-align:center") 
                                         | Destino Final
