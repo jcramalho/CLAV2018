@@ -34,6 +34,12 @@ new Vue({
         },
         remRep: function(){
             this.representantes.pop();
+        },
+        submitEntity: function(){
+            let data = {
+                entidade: this.entidade,
+                representantes: this.representantes
+            }
         }
     }
 })
