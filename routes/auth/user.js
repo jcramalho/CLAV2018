@@ -127,6 +127,7 @@ router.post('/submeterEntidade', function (req, res) {
 
                     if (err) {console.log(err);}
                 });
+                req.flash('success_msg', 'Entidade submetida com sucesso!');
                 res.send('Entidade submetida com sucesso!');
             }
             else {
