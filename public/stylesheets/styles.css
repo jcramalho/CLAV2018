@@ -400,3 +400,14 @@ li .panel-body{
 li .panel-body li{
     margin-left:20px;
 }
+
+.blue-border-box{
+    box-sizing: border-box;
+    font-style: normal;
+    border: rgb(51, 167, 221);
+    margin: 2px;
+    border-width: 1px;
+    border-style: solid;
+    padding: 5px;
+    color: #000 !important;
+}

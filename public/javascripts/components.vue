@@ -569,6 +569,7 @@ Vue.component('row-waterfall', {
                 type: "row",
                 params: {
                     id: this.id,
+                    trueID: this.row.codeID,
                     rowData: this.row.content
                 }
             };
@@ -879,6 +880,40 @@ Vue.component('custom-table-waterfall', {
             this.rowsPerPage = this.completeRows.length;
         }
     }
+})
+
+
+Vue.component('hidden-table', {
+    template: `
+        <accordion type="info">
+            <panel :header="titulo">
+                <table class="hidden-table">
+                    <thead>
+                        <th v-for="item in cabecalho">
+                            {{item}}
+                        </th>
+                    </thead>
+                    <tbody>
+                        <tr v-for="linha in linhas">
+                            <td v-for="item in linha">
+                                <div class="blue-border-box" v-html="item">
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </panel>
+        </accordion>
+    `,
+    props: [
+        'titulo',
+        'cabecalho',
+        'linhas'
+    ],
+    components: {
+        accordion: VueStrap.accordion,
+        panel: VueStrap.panel,
+    },
 })
 
 
