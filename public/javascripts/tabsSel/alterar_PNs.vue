@@ -1109,6 +1109,14 @@ var alt = new Vue({
                 console.error(error);
             });
         },
+
+
+        submeter: function(){
+            window.location.href= '/users/pedido_submetido/1';
+        },
+        retroceder: function(){
+            window.location.href= '/tabelasSelecao/submeter/escolher_processos';
+        }
     },
     created: function(){
         this.id = window.location.pathname.split('/')[4];
