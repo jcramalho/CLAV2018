@@ -112,8 +112,8 @@ router.post('/pedido', Auth.isLoggedInAPI, function (req, res) {
 });
 
 // Dados de um pedido
-router.get('/pedido/:num', Auth.isLoggedInAPI, function (req, res) {
-    Pedido.getPedidobyNumber(req.params.num, function(err, request){
+router.get('/pedido/:num', function (req, res) {
+    Pedido.getPedidoByNumber(req.params.num, function(err, request){
         if (err) {
             console.log(err);
             req.send("Ocorreu um erro!");    

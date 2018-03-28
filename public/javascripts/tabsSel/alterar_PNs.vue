@@ -1152,7 +1152,7 @@ var alt = new Vue({
                 regex = new RegExp(/[0-9]+\-[0-9]+/, "gi");
 
                 if(regex.test(response.body)){
-                    window.location.href = '/legislacao/consultar/'+response.body;
+                    window.location.href = '/users/pedido_submetido/'+response.body;
                 }
                 else {
                     this.message = response.body;
