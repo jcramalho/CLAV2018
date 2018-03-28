@@ -102,6 +102,8 @@ var alt = new Vue({
         classesReady: false,
         relProcsReady: false,
         pageReady: false,
+
+        editedClasses: [],
     },
     components: {
         modal: VueStrap.modal,
@@ -119,6 +121,21 @@ var alt = new Vue({
         }
     },
     methods: {
+        loadTS: function(){
+            var content = [];
+
+            this.$http.get("/api/tabelasSelecao/"+this.id+"/classes")
+            .then( function(response) {
+                content = response.body;
+            })
+            .then( function() {
+                this.parseTS(content);
+                this.table.ready=true;
+            })
+            .catch( function(error) { 
+                console.error(error); 
+            });
+        },
         swap: function(array,pos1,pos2){
             var temp=array[pos1];
             array[pos1]=array[pos2];
@@ -236,6 +253,12 @@ var alt = new Vue({
             })
             
             return ret;
+        },
+        classUpdated: function(){
+            this.editedClasses.push(this.clas.ID);
+
+            this.table.ready=false;
+            this.loadTS(); 
         },
 
 
@@ -1101,6 +1124,7 @@ var alt = new Vue({
                 }
             })
             .then(function (response) {
+                this.classUpdated();
                 this.$refs.spinner.hide();
                 this.message = response.body;
                 this.classShow=false;
@@ -1112,7 +1136,35 @@ var alt = new Vue({
 
 
         submeter: function(){
-            window.location.href= '/users/pedido_submetido/1';
+            this.$refs.spinner.show();
+
+            var dataObj = {
+                type: "Tabela de Seleção",
+                desc: "Nova tabela de seleção."
+            }
+
+            this.$http.post('/users/pedido', dataObj,{
+                headers: {
+                    'content-type' : 'application/json'
+                }
+            })
+            .then(function (response) {
+                regex = new RegExp(/[0-9]+\-[0-9]+/, "gi");
+
+                if(regex.test(response.body)){
+                    window.location.href = '/legislacao/consultar/'+response.body;
+                }
+                else {
+                    this.message = response.body;
+                    console.log(this.message);
+                }
+
+                this.$refs.spinner.hide();
+            })
+            .catch(function (error) {
+                console.error(error);
+            });
+
         },
         retroceder: function(){
             window.location.href= '/tabelasSelecao/submeter/escolher_processos';
@@ -1125,18 +1177,7 @@ var alt = new Vue({
             "CLASSE",
             "TÍTULO"
         ];
-        var content = [];
-
-        this.$http.get("/api/tabelasSelecao/"+this.id+"/classes")
-        .then( function(response) {
-            content = response.body;
-        })
-        .then( function() {
-            this.parseTS(content);
-            this.table.ready=true;
-        })
-        .catch( function(error) { 
-            console.error(error); 
-        });
+        
+        this.loadTS();
     }
 })

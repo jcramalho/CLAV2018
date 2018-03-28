@@ -18,18 +18,30 @@ var PedidoSchema = mongoose.Schema({
 	tipo: {
 		type: String,
     },
+	descricao: {
+		type: String,
+    },
     entidade: {
         nome: {
-            type: {
-                type: String
-            },
-            email: {
-                type: String
-            } 
+            type: String
+        },
+        email: {
+            type: String
+        }
+    },
+    utilizador: {
+        nome: {
+            type: String
+        },
+        email: {
+            type: String
         }
     },
     data: {
         type: String
+    },
+    tratado: {
+        type: Boolean
     }
 });
 

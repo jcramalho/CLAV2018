@@ -123,12 +123,18 @@ router.post('/submeterEntidade', function (req, res) {
             if (err) {console.log(err);}
             if (!ent) {
                 Entidade.createEntidade(newEntidade, function (err, ent) {
-                    Logging.logger.info('Entidade ' + ent._id + ' submetida para avaliação.');
+                    if (err) {
+                        console.log(err);
+                        req.flash('error_msg', 'Ocorreu um erro a submeter a entidade! Tente novamente mais tarde');
+                        req.send('Ocorreu um erro a submeter a entidade! Tente novamente mais tarde');
+                    }
+                    else {
+                        Logging.logger.info('Entidade ' + ent._id + ' submetida para avaliação.');
 
-                    if (err) {console.log(err);}
+                        req.flash('success_msg', 'Entidade submetida com sucesso!');
+                        res.send('Entidade submetida com sucesso!');
+                    }
                 });
-                req.flash('success_msg', 'Entidade submetida com sucesso!');
-                res.send('Entidade submetida com sucesso!');
             }
             else {
                 res.send({ errors: ["Email da entidade já em uso!"] });
