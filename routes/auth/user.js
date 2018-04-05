@@ -120,7 +120,7 @@ router.post('/submeterEntidade', function (req, res) {
         });
 
         Entidade.getEntidadeByEmail(entity.email, function (err, ent) {
-            if (err) {console.log(err);}
+            if (err) { console.log(err); }
             if (!ent) {
                 Entidade.createEntidade(newEntidade, function (err, ent) {
                     if (err) {
@@ -174,3 +174,4 @@ module.exports = router;
         })
     );
 */
+

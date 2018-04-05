@@ -283,10 +283,10 @@ Classes.related = function (id) {
                 clav:${id} clav:temRelProc ?id;
                     ?Type ?id.
                 
-                    ?id clav:codigo ?Code;
-                    clav:titulo ?Title
+                ?id clav:codigo ?Code;
+                    clav:titulo ?Title.
                 
-                    filter (?Type!=clav:temRelProc)
+                filter (?Type!=clav:temRelProc)
             } Order by ?Type
         `;
 

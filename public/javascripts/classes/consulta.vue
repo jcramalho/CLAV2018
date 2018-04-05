@@ -25,6 +25,7 @@ var classe = new Vue({
             Legs: [],
             AppNotes: [],
             DelNotes: [],
+            Indexes: [],
             RelProcs: [],
             Participants: [],
             PCA: {
@@ -119,6 +120,7 @@ var classe = new Vue({
             this.loadExAppNotes();
             this.loadAppNotes();
             this.loadDelNotes();
+            this.loadIndexes();
 
             if(this.clas.Level==3){
 
@@ -144,6 +146,22 @@ var classe = new Vue({
             this.loadOrgs();            
             this.loadLegList();            
         },
+        loadIndexes: function () {
+            var indexesToParse = [];
+            var keys = ["Termo"];
+
+            this.$http.get("/api/termosIndice/filtrar/"+this.id)
+                .then(function (response) {
+                    indexesToParse = response.body;
+                })
+                .then(function () {
+                    if(indexesToParse[0])
+                        this.clas.Indexes = this.parse(indexesToParse, keys);
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        },
         loadChildren: function () {
             var classesToParse = [];
             var keys = ["Child", "Code", "Title"];
@@ -154,7 +172,8 @@ var classe = new Vue({
                 })
                 .then(function () {
                     if(classesToParse[0].Code)
-                        this.clas.Children = this.parse(classesToParse, keys);
+                        this.clas.Children = this.parse(classesToParse, keys)
+                            .sort((a,b)=>a.Code.localeCompare(b.Code));
                 })
                 .catch(function (error) {
                     console.error(error);

@@ -42,6 +42,12 @@ var PedidoSchema = mongoose.Schema({
     },
     tratado: {
         type: Boolean
+    },
+    objetoID: {
+        type: String
+    },
+    alteracoes: {
+        type: Object
     }
 });
 

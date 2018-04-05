@@ -61,7 +61,7 @@ router.post('/pedido', Auth.isLoggedInAPI, function (req, res) {
             req.send("Ocorreu um erro!");    
         }
         else {
-            var num = count+1+"-"+dd+mm+yyyy;
+            var num = count+1+"-"+yyyy;
 
             Entidade.getEntidadeByRepresentante(req.user.email, function(err, entity){
                 if (err) {
@@ -89,7 +89,10 @@ router.post('/pedido', Auth.isLoggedInAPI, function (req, res) {
                         },
         
                         data: dd+"/"+mm+"/"+yyyy,
-                        tratado: false
+                        tratado: false,
+
+                        objetoID: dataObj.id,
+                        alterado: dataObj.alt,
                     });
                     
                     Pedido.createPedido(newPedido, function (err, request) {

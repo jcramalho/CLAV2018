@@ -42,6 +42,7 @@ var alt = new Vue({
             AppNotes: [],
             DelNotes: [],
             RelProcs: [],
+            Indexes: [],
             Participants: [],
             PCA: {
                 formacontagem: "",
@@ -254,13 +255,12 @@ var alt = new Vue({
             
             return ret;
         },
-        classUpdated: function(){
-            this.editedClasses.push(this.clas.ID);
+        classUpdated: function(id){
+            this.editedClasses.push(id);
 
             this.table.ready=false;
             this.loadTS(); 
         },
-
 
 
         prepData: function (dataObj) {
@@ -280,7 +280,7 @@ var alt = new Vue({
             this.loadChildren();
             
             this.pageReady=true;
-            this.classShow = true;
+            this.classShow=true;
             this.$refs.spinner.hide();
 
             if (dataObj.Desc) {
@@ -291,6 +291,7 @@ var alt = new Vue({
             this.loadExAppNotes();
             this.loadAppNotes();
             this.loadDelNotes();
+            this.loadIndexes();
 
             if(this.clas.Level==3){
 
@@ -316,6 +317,22 @@ var alt = new Vue({
             this.loadOrgs();            
             this.loadLegList();            
         },
+        loadIndexes: function () {
+            var indexesToParse = [];
+            var keys = ["Termo"];
+
+            this.$http.get("/api/termosIndice/filtrar/"+this.id)
+                .then(function (response) {
+                    indexesToParse = response.body;
+                })
+                .then(function () {
+                    if(indexesToParse[0])
+                        this.clas.Indexes = this.parse(indexesToParse, keys);
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        },
         loadChildren: function () {
             var classesToParse = [];
             var keys = ["Child", "Code", "Title"];
@@ -326,7 +343,8 @@ var alt = new Vue({
                 })
                 .then(function () {
                     if(classesToParse[0].Code)
-                        this.clas.Children = this.parse(classesToParse, keys);
+                        this.clas.Children = this.parse(classesToParse, keys)
+                            .sort((a,b)=>a.Code.localeCompare(b.Code));
                 })
                 .catch(function (error) {
                     console.error(error);
@@ -1124,7 +1142,7 @@ var alt = new Vue({
                 }
             })
             .then(function (response) {
-                this.classUpdated();
+                this.classUpdated(this.clas.ID);
                 this.$refs.spinner.hide();
                 this.message = response.body;
                 this.classShow=false;
@@ -1139,8 +1157,10 @@ var alt = new Vue({
             this.$refs.spinner.show();
 
             var dataObj = {
-                type: "Tabela de Seleção",
-                desc: "Nova tabela de seleção."
+                type: "Criação de TS",
+                desc: "Nova tabela de seleção.",
+                id: this.id,
+                alt: this.editedClasses
             }
 
             this.$http.post('/users/pedido', dataObj,{
