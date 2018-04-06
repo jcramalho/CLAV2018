@@ -198,7 +198,7 @@ block corpo
                                 td(v-else style="width:80%")
                                     ul(style="padding-left:20px" v-if="delNotesReady")
                                         li(v-for="note in clas.DelNotes")
-                                            | {{note.Nota}}
+                                            p(v-html="note.Nota")
 
                                 if user
                                     td(style="width:10%")
