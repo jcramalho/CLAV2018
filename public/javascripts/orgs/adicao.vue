@@ -6,6 +6,14 @@ var newOrg = new Vue({
         type: "Organizacao",
         message: "",
     },
+    watch: {
+        name: function(){
+            this.message="";
+        },
+        initials: function(){
+            this.message="";
+        },
+    },
     components: {
         spinner: VueStrap.spinner
     },

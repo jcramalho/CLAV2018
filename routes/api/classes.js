@@ -22,6 +22,14 @@ router.get('/nivel=:n', function (req, res) {
         });
 })
 
+router.get('/filtrar', function (req, res) {
+    Classes.filterNone()
+        .then(list => res.send(list))
+        .catch(function (error) {
+            console.error(error);
+        });
+})
+
 router.get('/filtrar/comuns', function (req, res) {
     Classes.filterCommon()
         .then(list => res.send(list))

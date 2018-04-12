@@ -109,7 +109,7 @@ Classes.completeData = function (classes) {
                 ?id clav:descricao ?Descricao.
             } 
             OPTIONAL {
-                ?id clav:processoTipo ?ProcTipo.
+                ?id clav:processoTipoVC ?ProcTipo.
             } 
             OPTIONAL {
                 ?id clav:processoTransversal ?ProcTrans.
@@ -381,7 +381,7 @@ Classes.updateClass = function (dataObj) {
             wherePart += "\tclav:" + dataObj.id + " clav:descricao ?desc .\n";
         }
         if (dataObj.ProcType) {
-            wherePart += "\tclav:" + dataObj.id + " clav:processoTipo ?ptipo .\n";
+            wherePart += "\tclav:" + dataObj.id + " clav:processoTipoVC ?ptipo .\n";
         }
         if (dataObj.ProcTrans) {
             wherePart += "\tclav:" + dataObj.id + " clav:processoTransversal ?ptrans .\n";
@@ -418,7 +418,7 @@ Classes.updateClass = function (dataObj) {
             insertPart += "\tclav:" + dataObj.id + " clav:descricao '" + dataObj.Desc.replace(/\n/g, '\\n') + "' .\n";
         }
         if (dataObj.ProcType) {
-            insertPart += "\tclav:" + dataObj.id + " clav:processoTipo '" + dataObj.ProcType + "' .\n";
+            insertPart += "\tclav:" + dataObj.id + " clav:processoTipoVC clav:vc_processoTipo_" + dataObj.ProcType + " .\n";
         }
         if (dataObj.ProcTrans) {
             insertPart += "\tclav:" + dataObj.id + " clav:processoTransversal '" + dataObj.ProcTrans + "' .\n";
@@ -679,6 +679,52 @@ Classes.filterByOrgs = function(orgs) {
         });
 }
 
+Classes.filterNone = function() {
+    var fetchQuery = `
+        SELECT DISTINCT
+            ?Avo ?AvoCodigo ?AvoTitulo 
+            ?Pai ?PaiCodigo ?PaiTitulo 
+            ?PN ?PNCodigo ?PNTitulo   
+            (GROUP_CONCAT(CONCAT(STR(?Filho),":::",?FilhoCodigo, ":::",?FilhoTitulo); SEPARATOR="###") AS ?Filhos)
+        WHERE {  
+            
+            ?PN rdf:type clav:Classe_N3
+
+            MINUS { 
+                ?PN clav:pertenceLC ?lc
+                filter( ?lc != clav:lc1 )
+            }
+            
+            ?PN clav:temPai ?Pai.
+            ?Pai clav:temPai ?Avo.
+            
+            ?PN clav:codigo ?PNCodigo;
+                clav:titulo ?PNTitulo.
+            
+            ?Pai clav:codigo ?PaiCodigo;
+                clav:titulo ?PaiTitulo.
+            
+            ?Avo clav:codigo ?AvoCodigo;
+                clav:titulo ?AvoTitulo.
+            
+            OPTIONAL {
+                ?Filho clav:temPai ?PN;
+                   clav:codigo ?FilhoCodigo;
+                   clav:titulo ?FilhoTitulo
+            }
+        }
+        Group By ?PN ?PNCodigo ?PNTitulo ?Pai ?PaiCodigo ?PaiTitulo ?Avo ?AvoCodigo ?AvoTitulo 
+        Order By ?PN
+    `;
+
+    return client.query(fetchQuery).execute()
+        //Getting the content we want
+        .then(response => Promise.resolve(response.results.bindings))
+        .catch(function (error) {
+            console.error("Error in check:\n" + error);
+        });
+}
+
 Classes.filterCommon = function(orgs) {
     var fetchQuery = `
         SELECT DISTINCT
@@ -688,7 +734,7 @@ Classes.filterCommon = function(orgs) {
             (GROUP_CONCAT(CONCAT(STR(?Filho),":::",?FilhoCodigo, ":::",?FilhoTitulo); SEPARATOR="###") AS ?Filhos)
         WHERE {  
             ?PN rdf:type clav:Classe_N3 .
-            ?PN clav:processoTipo "PC" .
+            ?PN clav:processoTipoVC clav:vc_processoTipo_pc .
             
             ?PN clav:temPai ?Pai.
             ?Pai clav:temPai ?Avo.
@@ -734,7 +780,7 @@ Classes.filterRest = function(orgs) {
             (GROUP_CONCAT(CONCAT(STR(?Filho),":::",?FilhoCodigo, ":::",?FilhoTitulo); SEPARATOR="###") AS ?Filhos)
         WHERE { 
             ?PN rdf:type clav:Classe_N3 .
-            ?PN clav:processoTipo "PE" .
+            ?PN clav:processoTipoVC clav:vc_processoTipo_pe .
             
             MINUS { 
                 ?PN clav:pertenceLC ?lc
@@ -837,7 +883,7 @@ Classes.createClass = function (data) {
     }
 
     if (data.Level == 3 && data.Type) {
-        createQuery += 'clav:' + id + ' clav:processoTipo "' + data.Type + '" .\n';
+        createQuery += 'clav:' + id + ' clav:processoTipoVC clav:vc_processoTipo_' + data.Type + ' .\n';
     }
 
     if (data.Level == 3 && data.Trans) {
