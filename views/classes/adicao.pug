@@ -322,27 +322,97 @@ block corpo
                                                 .info-label Prazo:
                                             td(width="10%")
                                                 input(
-                                                    size="50"
+                                                    size="25"
                                                     v-model="pca.dueDate"
                                                 )
                                             td(style="padding-left:10px")
                                                 .info-label Forma de Contagem:
                                             td
                                                 input(
-                                                    size="50"
+                                                    size="25"
                                                     v-model="pca.count"
-                                                )                                      
-                                        //-tr
+                                                )        
+                                        tr
+                                            td
+                                                .info-label Sub-forma de contagem:
+                                            td(colspan=3)
+                                                input(
+                                                    size="50"
+                                                    v-model="pca.subcount"
+                                                ) 
+                                        tr
                                             td
                                                 .info-label Justificação:
                                             td(colspan=3)
-                                                table(v-for="criterio in clas.PCA.criterios")
+                                                table
                                                     tr
                                                         td
-                                                            b {{ criterio.tipo }}
+                                                            v-select.custom-select(
+                                                                v-model="pca.criteria.new.type"
+                                                                :options="pca.criteria.types"
+                                                            )
+                                                        td(rowspan=2)
+                                                            button(
+                                                                style="height:100%"
+                                                                @click="addNewJustCrit(pca)"  
+                                                            ) OK
                                                     tr
                                                         td 
-                                                            p(v-html="criterio.nota")
+                                                            textarea(
+                                                                cols="72"
+                                                                lines="5"
+                                                                v-model="pca.criteria.new.content"
+                                                                @keyup.ctrl.enter="addNewJustCrit(pca)" 
+                                                            )
+
+                                                    tr
+                                                        td(colspan=2)
+                                                            accordion.info-classe
+                                                                panel(header="Processos Relacionados")
+                                                                    
+                                                                    custom-table-waterfall(
+                                                                        v-if="classesReadyPCA"
+
+                                                                        select-left="true"
+                                                                        pages-on="true"
+                                                                        
+                                                                        :suffix="pca"
+
+                                                                        :header="classesTableHeader"
+                                                                        :complete-rows="pca.criteria.classes"
+                                                                        :cwidth="cwidth"
+                                                                        :n-edits="nEdits"
+                                                                        
+                                                                        table-class='table table-hover'
+                                                                        
+                                                                        @left-select-clicked="selectClickedCrit(pca, $event)"
+                                                                    )
+                                                                    h4(
+                                                                        v-else
+                                                                    ) A carregar...
+
+                                                                    ul
+                                                                        li(v-for="(pn, index) in pca.criteria.new.pns")
+                                                                            | {{pn.Code}} - {{pn.Title}}
+
+
+                                                table.whitebox(
+                                                    v-for="(crit, index) in pca.criteria.list"
+                                                    v-if="pca.criteria.list.length>0"
+                                                    width="90%"
+                                                )
+                                                    tr
+                                                        td 
+                                                            b {{ crit.type.label }}
+                                                        td
+                                                            span.glyphicon.glyphicon-remove(
+                                                                @click="pca.criteria.list.splice(index,1)"
+                                                                style="float:right; padding-right:10px"
+                                                            )
+                                                    tr 
+                                                        td(colspan=2)
+                                                            | {{ crit.content }}                               
+                                        
                                 
                             //- DESTINO FINAL
                             tr
@@ -367,10 +437,21 @@ block corpo
                                                 table(v-for="criterio in clas.DF.criterios")
                                                     tr
                                                         td
-                                                            b {{ criterio.tipo }}
+                                                            v-select.custom-select(
+                                                                v-model="newDF"
+                                                                :options="classList"
+                                                            )
                                                     tr
                                                         td 
-                                                            p(v-html="criterio.nota")
+                                                            textarea(
+                                                                cols="72"
+                                                                lines="5"
+                                                                v-model="newJustCrit"
+                                                                @keyup.ctrl.enter="addNewJustCrit" 
+                                                            )
+                                                    tr
+                                                        button(@click="addNewJustCrit") Ok
+
             
             //spinner(ref="spinner" fixed size="lg" text="Por favor aguarde...")
 

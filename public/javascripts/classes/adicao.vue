@@ -114,16 +114,51 @@ var newClass = new Vue({
             'Suplemento Para': [],
         },
         classesReady: false,
+        classesReadyPCA: false,
+        classesReadyDF: false,
 
         pca: {
             dueDate: null,
             count: null,
+            criteria: {
+                new: {
+                    type: null,
+                    content: null,
+                    pns: [],
+                    leg: [],
+                },
+                classes: [],
+                types: [
+                    {
+                        value:"CriterioJustificacaoComplementaridadeInfo",
+                        label:"Complementaridade Info.",
+                    },
+                    {
+                        value:"CriterioJustificacaoDensidadeInfo",
+                        label:"Densidade Info.",
+                    },
+                    {
+                        value:"CriterioJustificacaoGestionario",
+                        label:"Gestionário",
+                    },
+                    {
+                        value:"CriterioJustificacaoLegal",
+                        label:"Legal",
+                    },
+                    {
+                        value:"CriterioJustificacaoUtilidadeAdministrativa",
+                        label:"Utilidade Administrativa",
+                    },
+                ],
+                list: []
+            }
         },
 
         df: {
             end: null,
         },
 
+        classList: [],
         message: null,
 
         parentvalue: "",
@@ -141,7 +176,7 @@ var newClass = new Vue({
                 this.loadParents();
             }
             if (this.type >= 3 && !this.classesReady){
-                this.loadClassesNew();
+                this.loadClasses();
             }
         },
         code: function () {
@@ -156,7 +191,51 @@ var newClass = new Vue({
         }
     },
     methods: {
-        loadClasses() {
+        reloadClasses: function(path){
+            path = JSON.parse(
+                JSON.stringify(this.classList)
+            );
+        },
+        selectClickedCrit: function(path, payload){
+            var row= payload.rowData;
+
+            if (!row.selected) {
+                path.criteria.new.pns.push({
+                    id: row.codeID,
+                    Code: row.content[0],
+                    Title: row.content[1],
+                });
+            }
+            else {
+                let i=0;
+                for(pn of path.criteria.new.pns){
+                    if(row.codeID==pn.id){break;}
+                    i++;
+                }
+                if(i<path.criteria.new.pns.length){
+                    path.criteria.new.pns.splice(i,1);
+                }
+            }
+        },
+        addNewJustCrit: function(obj){
+            obj.criteria.list.push(
+                JSON.parse(JSON.stringify(obj.criteria.new))
+            );
+
+            obj.criteria.new = {
+                type: null,
+                content: null,
+                pns: [],
+                leg: [],
+            };
+
+            this.classesReadyPCA = false;
+            this.classesReadyDF = false;
+            this.reloadClasses(obj.criteria.classes);
+            this.classesReadyPCA = true;
+            this.classesReadyDF = true;
+        },
+        loadClasses: function() {
             this.ready=false;
             let content = [];
 
@@ -165,16 +244,19 @@ var newClass = new Vue({
                     content = response.body;
                 })
                 .then(function () {
-                    var classList=[]
-                    classList = this.parseClasses(content);
+                    this.classList = this.parseClasses(content);
 
                     for(let key in this.relationLists){
                         this.relationLists[key]= JSON.parse(
-                            JSON.stringify(classList)
+                            JSON.stringify(this.classList)
                         );
                     }
+                    this.pca.criteria.classes= JSON.parse(
+                        JSON.stringify(this.classList)
+                    );
 
                     this.classesReady = true;
+                    this.classesReadyPCA = true;
                 })
                 .catch(function (error) {
                     console.error(error);
