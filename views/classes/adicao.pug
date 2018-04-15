@@ -317,6 +317,7 @@ block corpo
                             tr
                                 td
                                     table.noborder
+                                        //- PRAZO / FORMA DE CONTAGEM
                                         tr
                                             td
                                                 .info-label Prazo:
@@ -332,6 +333,7 @@ block corpo
                                                     size="25"
                                                     v-model="pca.count"
                                                 )        
+                                        //- SUB-FORMA DE CONTAGEM
                                         tr
                                             td
                                                 .info-label Sub-forma de contagem:
@@ -340,11 +342,13 @@ block corpo
                                                     size="50"
                                                     v-model="pca.subcount"
                                                 ) 
+                                        //- JUSTIFICAÇÃO (CRITÉRIOS)
                                         tr
                                             td
                                                 .info-label Justificação:
                                             td(colspan=3)
                                                 table
+                                                    //- METAINFO
                                                     tr
                                                         td
                                                             v-select.custom-select(
@@ -365,13 +369,15 @@ block corpo
                                                                 @keyup.ctrl.enter="addNewJustCrit(pca)" 
                                                             )
 
+                                                    //- PROCESSOS E LEGISLAÇÃO RELACIONADA
                                                     tr
                                                         td(colspan=2)
                                                             accordion.info-classe
-                                                                panel(header="Processos Relacionados")
+                                                                //- PROCESSOS
+                                                                panel(v-if="pca.criteria.new.type.rel==2" header="Processos Relacionados")
                                                                     
                                                                     custom-table-waterfall(
-                                                                        v-if="classesReadyPCA"
+                                                                        v-if="classesReady"
 
                                                                         select-left="true"
                                                                         pages-on="true"
@@ -391,9 +397,24 @@ block corpo
                                                                         v-else
                                                                     ) A carregar...
 
-                                                                    ul
-                                                                        li(v-for="(pn, index) in pca.criteria.new.pns")
-                                                                            | {{pn.Code}} - {{pn.Title}}
+                                                                //- LEGISLAÇÃO
+                                                                panel(v-if="pca.criteria.new.type.rel==1" header="Legislação")
+                                                                    
+                                                                    custom-table-select(
+                                                                        v-if="legsReady"
+
+                                                                        :header="legsTableHeader"
+                                                                        :complete-rows="pca.criteria.legislation"
+                                                                        :ready="legsReady"
+                                                                        :cwidth="legsTableWidth"
+                                                                        
+                                                                        class-table='table table-condensed'
+
+                                                                        @select-clicked="legSelectedCrit($event,pca)"
+                                                                    )
+                                                                    h4(
+                                                                        v-else
+                                                                    ) A carregar...
 
 
                                                 table.whitebox(
@@ -403,7 +424,8 @@ block corpo
                                                 )
                                                     tr
                                                         td 
-                                                            b {{ crit.type.label }}
+                                                            h4
+                                                                b {{ crit.type.label }}
                                                         td
                                                             span.glyphicon.glyphicon-remove(
                                                                 @click="pca.criteria.list.splice(index,1)"
@@ -411,9 +433,22 @@ block corpo
                                                             )
                                                     tr 
                                                         td(colspan=2)
-                                                            | {{ crit.content }}                               
-                                        
-                                
+                                                            p {{ crit.content }}
+                                                            br   
+
+                                                            div(v-if="crit.pns.length>0")
+                                                                b Processos Relacionados:
+                                                                ul
+                                                                    li(v-for="pn in crit.pns")
+                                                                        | {{pn.Code}} - {{pn.Title}}
+
+                                                            div(v-if="crit.leg.length>0")            
+                                                                b Diplomas Legais Relacionados:    
+                                                                ul
+                                                                    li(v-for="doc in crit.leg")
+                                                                        | {{doc.Type}} - {{doc.Num}}
+
+                                                                                    
                             //- DESTINO FINAL
                             tr
                                 td
@@ -422,38 +457,124 @@ block corpo
                             tr
                                 td
                                     table.noborder
+                                        //- DESTINO
                                         tr
                                             td
                                                 .info-label Destino:
                                             td
                                                 input(
                                                     size="50"
-                                                    v-model="df.dueDate"
+                                                    v-model="df.end"
                                                 )                                        
-                                        //-tr
+                                        //- JUSTIFICAÇÃO (CRITÉRIOS)
+                                        tr
                                             td
                                                 .info-label Justificação:
-                                            td
-                                                table(v-for="criterio in clas.DF.criterios")
+                                            td(colspan=3)
+                                                table
+                                                    //- METAINFO
                                                     tr
                                                         td
                                                             v-select.custom-select(
-                                                                v-model="newDF"
-                                                                :options="classList"
+                                                                v-model="df.criteria.new.type"
+                                                                :options="df.criteria.types"
                                                             )
+                                                        td(rowspan=2)
+                                                            button(
+                                                                style="height:100%"
+                                                                @click="addNewJustCrit(df)"  
+                                                            ) OK
                                                     tr
                                                         td 
                                                             textarea(
                                                                 cols="72"
                                                                 lines="5"
-                                                                v-model="newJustCrit"
-                                                                @keyup.ctrl.enter="addNewJustCrit" 
+                                                                v-model="df.criteria.new.content"
+                                                                @keyup.ctrl.enter="addNewJustCrit(df)" 
                                                             )
-                                                    tr
-                                                        button(@click="addNewJustCrit") Ok
 
+                                                    //- PROCESSOS E LEGISLAÇÃO RELACIONADA
+                                                    tr
+                                                        td(colspan=2)
+                                                            accordion.info-classe
+                                                                //- PROCESSOS
+                                                                panel(v-if="df.criteria.new.type.rel==2" header="Processos Relacionados")
+                                                                    
+                                                                    custom-table-waterfall(
+                                                                        v-if="classesReady"
+
+                                                                        select-left="true"
+                                                                        pages-on="true"
+                                                                        
+                                                                        :suffix="df"
+
+                                                                        :header="classesTableHeader"
+                                                                        :complete-rows="df.criteria.classes"
+                                                                        :cwidth="cwidth"
+                                                                        :n-edits="nEdits"
+                                                                        
+                                                                        table-class='table table-hover'
+                                                                        
+                                                                        @left-select-clicked="selectClickedCrit(df, $event)"
+                                                                    )
+                                                                    h4(
+                                                                        v-else
+                                                                    ) A carregar...
+
+                                                                //- LEGISLAÇÃO
+                                                                panel(v-if="df.criteria.new.type.rel==1" header="Legislação")
+                                                                    
+                                                                    custom-table-select(
+                                                                        v-if="legsReady"
+
+                                                                        :header="legsTableHeader"
+                                                                        :complete-rows="df.criteria.legislation"
+                                                                        :ready="legsReady"
+                                                                        :cwidth="legsTableWidth"
+                                                                        
+                                                                        class-table='table table-condensed'
+
+                                                                        @select-clicked="legSelectedCrit($event,df)"
+                                                                    )
+                                                                    h4(
+                                                                        v-else
+                                                                    ) A carregar...
+
+                                                //- Adicionados
+                                                table.whitebox(
+                                                    v-for="(crit, index) in df.criteria.list"
+                                                    v-if="df.criteria.list.length>0"
+                                                    width="90%"
+                                                )
+                                                    tr
+                                                        td 
+                                                            h4
+                                                                b {{ crit.type.label }}
+                                                        td
+                                                            span.glyphicon.glyphicon-remove(
+                                                                @click="df.criteria.list.splice(index,1)"
+                                                                style="float:right; padding-right:10px"
+                                                            )
+                                                    tr 
+                                                        td(colspan=2)
+                                                            p {{ crit.content }}
+                                                            br   
+
+                                                            div(v-if="crit.pns.length>0")
+                                                                b Processos Relacionados:
+                                                                ul
+                                                                    li(v-for="pn in crit.pns")
+                                                                        | {{pn.Code}} - {{pn.Title}}
+
+                                                            div(v-if="crit.leg.length>0")            
+                                                                b Diplomas Legais Relacionados:    
+                                                                ul
+                                                                    li(v-for="doc in crit.leg")
+                                                                        | {{doc.Type}} - {{doc.Num}}
+
+                                        
             
-            //spinner(ref="spinner" fixed size="lg" text="Por favor aguarde...")
+            spinner(ref="spinner" fixed size="lg" text="Por favor aguarde...")
 
             //input.btn.btn-xs.btn-default.col-sm-2(
                 type="button" 
