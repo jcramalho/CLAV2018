@@ -117,7 +117,7 @@ var newClass = new Vue({
 
         pca: {
             dueDate: null,
-            count: null,
+            count: {label:"Forma de Contagem",id:null},
             criteria: {
                 new: {
                     type: {label:"Tipo de Critério",rel:0},
@@ -147,6 +147,7 @@ var newClass = new Vue({
                 list: []
             }
         },
+        countTypes: null,
 
         df: {
             end: null,
@@ -212,6 +213,30 @@ var newClass = new Vue({
         }
     },
     methods: {
+        loadCountTypes: function(){
+            var dataToParse = [];
+            var keys = ["id", "Label"];
+            var i = 0;
+
+            this.$http.get("/api/vocabulario/formasContagemPCA")
+                .then(function (response) {
+                    dataToParse = response.body;
+                })
+                .then(function () {
+                    this.countTypes = this.parse(dataToParse, keys)
+                        .map(function(a){
+                            return {
+                                label: a.Label,
+                                id: a.id,
+                            }
+                        });
+
+                    this.countssReady = true;
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        },
         cleanSelection: function(path){
             for(var line of path){
                 line.selected=false;
@@ -611,8 +636,8 @@ var newClass = new Vue({
                         if (this.procTrans == 'S') {
                             let check = 0;
 
-                            for (const key in this.participants) {
-                                check += this.participants[key].length;
+                            for (const key in this.participantsSelected) {
+                                check += this.participantsSelected[key].length;
                             }
 
                             if (check == 0) {
@@ -632,11 +657,11 @@ var newClass = new Vue({
                                     Indexes: this.indexes,          //
                                     Type: this.procType,            //
                                     Trans: this.procTrans,          //
-                                    Owners: this.ownerList,         //
-                                    Participants: this.participants,//
-                                    RelProcs: this.relProcs,        //
+                                    Owners: this.selectedOwners,         //
+                                    Participants: this.participantsSelected,//
+                                    RelProcs: this.relationsSelected,        //
                                     Status: this.status,            //
-                                    Legislations: this.newLegList,  //
+                                    Legislations: this.selectedLegs,  //
                                     PCA: {
                                         dueDate: this.pca.dueDate,
                                         count: this.pca.count,
@@ -665,11 +690,11 @@ var newClass = new Vue({
                                 Indexes: this.indexes,          //
                                 Type: this.procType,            //
                                 Trans: this.procTrans,          //
-                                Owners: this.ownerList,         //
+                                Owners: this.selectedOwners,         //
                                 Participants: null,             //
-                                RelProcs: this.relProcs,        //
+                                RelProcs: this.relationsSelected,        //
                                 Status: this.status,            //
-                                Legislations: this.newLegList,  //
+                                Legislations: this.selectedLegs,  //
                                 PCA: {
                                     dueDate: this.pca.dueDate,
                                     count: this.pca.count,
@@ -760,19 +785,24 @@ var newClass = new Vue({
                     }
                 })
                     .then(function (response) {
-                        this.$refs.spinner.hide();
                         this.message = response.body;
 
                         if (response.body == "Classe Inserida!") {
                             window.location.href = '/classes/consultar/c' + this.code;
                         }
+                        this.$refs.spinner.hide();
                     })
                     .catch(function (error) {
                         console.error(error);
+                        this.message = "Ocorreu um erro!"
+                        this.$refs.spinner.hide();
                     });
+
+                console.log(dataObj);
             }
             else {
                 console.log("mistakes");
+                this.$refs.spinner.hide();
             }
         }
     },
@@ -780,5 +810,6 @@ var newClass = new Vue({
         this.loadOrgs();
         this.loadLegs();
         this.loadClasses();
+        this.loadCountTypes();
     }
 })

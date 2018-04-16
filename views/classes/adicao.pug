@@ -79,9 +79,12 @@ block corpo
                                         
                                     ul(v-if="appNotes && appNotes.length")
                                         li(v-for="(note,index) in appNotes")
-                                            button(@click="appNotes.splice(index,1)") x
                                             | {{note.Note}}
-
+                                            span.glyphicon.glyphicon-remove(
+                                                @click="appNotes.splice(index,1)"
+                                                style="padding-left: 20px"
+                                            )
+                                
                             //- EXEMPLOS DE NOTAS DE APLICAçÃO                        
                             tr
                                 td(style="width: 10%")
@@ -97,8 +100,11 @@ block corpo
                             
                                     ul(v-if="exAppNotes && exAppNotes.length")
                                         li(v-for="(ex,index) in exAppNotes")
-                                            button(@click="exAppNotes.splice(index,1)") x
                                             | {{ex}}
+                                            span.glyphicon.glyphicon-remove(
+                                                @click="exAppNotes.splice(index,1)"
+                                                style="padding-left: 20px"
+                                            )
 
                             //- NOTAS DE EXCLUSÃO                        
                             tr
@@ -115,8 +121,11 @@ block corpo
                                         
                                     ul(v-if="delNotes && delNotes.length")
                                         li(v-for="(note,index) in delNotes")
-                                            button(@click="delNotes.splice(index,1)") x
                                             | {{note.Note}}
+                                            span.glyphicon.glyphicon-remove(
+                                                @click="delNotes.splice(index,1)"
+                                                style="padding-left: 20px"
+                                            )
 
                             //- TERMOS DE ÍNDICE
                             tr(v-if="type>=3")
@@ -133,8 +142,11 @@ block corpo
                                         
                                     ul(v-if="indexes && indexes.length")
                                         li(v-for="(i,index) in indexes")
-                                            button(@click="indexes.splice(index,1)") x
                                             | {{i.Note}}
+                                            span.glyphicon.glyphicon-remove(
+                                                @click="indexes.splice(index,1)"
+                                                style="padding-left: 20px"
+                                            )
 
 
                     panel(header="Contexto de Avaliação" v-if="type>=3" is-open=true)
@@ -323,25 +335,26 @@ block corpo
                                                 .info-label Prazo:
                                             td(width="10%")
                                                 input(
-                                                    size="25"
+                                                    size="15"
                                                     v-model="pca.dueDate"
                                                 )
                                             td(style="padding-left:10px")
                                                 .info-label Forma de Contagem:
                                             td
-                                                input(
-                                                    size="25"
+                                                v-select.custom-select(
+                                                    :options="countTypes"
                                                     v-model="pca.count"
                                                 )        
                                         //- SUB-FORMA DE CONTAGEM
-                                        tr
+                                        tr(v-if="pca.count.id=='vc_pcaFormaContagem_disposicaoLegal'")
                                             td
                                                 .info-label Sub-forma de contagem:
                                             td(colspan=3)
-                                                input(
-                                                    size="50"
+                                                textarea(
+                                                    cols="72"
+                                                    lines="5"
                                                     v-model="pca.subcount"
-                                                ) 
+                                                )
                                         //- JUSTIFICAÇÃO (CRITÉRIOS)
                                         tr
                                             td
@@ -576,7 +589,7 @@ block corpo
             
             spinner(ref="spinner" fixed size="lg" text="Por favor aguarde...")
 
-            //input.btn.btn-xs.btn-default.col-sm-2(
+            input.btn.btn-xs.btn-default.col-sm-2(
                 type="button" 
                 @click="add" 
                 value="Adicionar" 
