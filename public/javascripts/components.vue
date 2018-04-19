@@ -421,9 +421,9 @@ Vue.component('row-waterfall', {
                 <table class="partial-hover cascata-table-within" :class="tableClass">
                     <tbody name="table">
                         <tr>
-                            <td v-if="row.sublevel" :class="[(selectLeft && level==3) ? 'cascata-drop-select' :'cascata-drop']">
+                            <td v-if="row.sublevel" :class="[(selectLeft && level>=3) ? 'cascata-drop-select' :'cascata-drop']">
                                 <input
-                                    v-if="selectLeft && level==3"
+                                    v-if="selectLeft && level>=3"
                                     :id="'left'+id+suffix"
                                     type="checkbox"
                                     v-model="row.selected"
@@ -444,7 +444,7 @@ Vue.component('row-waterfall', {
                             
                             <td v-else class="cascata-drop">
                                 <input
-                                    v-if="selectLeft && level==3"
+                                    v-if="selectLeft && level>=3"
                                     :id="'left'+id+suffix"
                                     type="checkbox"
                                     v-model="row.selected"
