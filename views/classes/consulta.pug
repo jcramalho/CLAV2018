@@ -475,14 +475,19 @@ block corpo
                                 td
                                     table.noborder
                                         tr
-                                            td
+                                            td(width="125px")
                                                 .info-label Prazo:
-                                            td(width="10%")
+                                            td
                                                 | {{ clas.PCA.valores.join(', ') }}
-                                            td(style="padding-left:10px")
+                                            td(style="padding-left:10px" width="170px")
                                                 .info-label Forma de Contagem:
                                             td
-                                                | {{ clas.PCA.contagemnormalizada }}                                        
+                                                | {{ clas.PCA.contagemnormalizada }}  
+                                        tr(v-if="clas.PCA.contagemnormalizada=='Conforme disposição legal'")
+                                            td
+                                                .info-label Sub-forma de Contagem:
+                                            td(colspan=3)
+                                                | {{ clas.PCA.subContagem }}
                                         tr
                                             td
                                                 .info-label Justificação:
@@ -504,7 +509,7 @@ block corpo
                                 td
                                     table.noborder
                                         tr
-                                            td
+                                            td(width="120px")
                                                 .info-label Destino Final:
                                             td
                                                 | {{ clas.DF.valores.join(', ') }}                                            
