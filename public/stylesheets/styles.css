@@ -61,28 +61,38 @@
 
 .cascata-drop {
     text-align: center;
-    background-color: #90CAF9; 
-    border-right:1px solid #ddd; 
+    background-image: linear-gradient(to bottom,#7986CB 0,#3949AB 100%);
+    border-right:1px solid #C5CAE9; 
     width: 30px  !important; 
     min-width: 30px  !important; 
     max-width: 30px;
     overflow: hidden;
     white-space: nowrap;
+    color: #E8EAF6;
+}
+
+.cascata-drop:hover {
+    background-image: linear-gradient(to top,#3F51B5 0,#283593 100%);
 }
 
 .cascata-drop-select {
     text-align: center;
-    background-color: #90CAF9; 
-    border-right:1px solid #ddd; 
+    background-image: linear-gradient(to bottom,#7986CB 0,#3949AB 100%);
+    border-right:1px solid #C5CAE9; 
     width: 50px  !important; 
     min-width: 50px  !important; 
     max-width: 50px;
     overflow: hidden;
     white-space: nowrap;
+    color: #E8EAF6;
+}
+
+.cascata-drop-select:hover {
+    background-image: linear-gradient(to top,#3F51B5 0,#283593 100%);
 }
 
 .cascata-codigo {
-    background-color: #E3F2FD;
+    background-color: #E8EAF6;
     overflow: hidden;
     white-space: nowrap;
     width: 108px !important;
@@ -146,7 +156,7 @@
 }
 
 .custom-select div{  
-    border-color: rgb(122, 122, 122) !important;
+    border-color: #9FA8DA !important;
     height: 27px;
 }
 
@@ -170,7 +180,7 @@
 }
 
 .table-hover tbody:hover > tr:hover {
-    background-color: #BBDEFB !important;
+    background-color: #8C9EFF !important;
 }
 
 .partial-hover tbody:hover > tr:hover {
@@ -178,7 +188,7 @@
 }
 
 .partial-hover td:nth-of-type(3):hover{
-    background-color: #BBDEFB !important;
+    background-color: #8C9EFF !important;
     cursor: pointer;
     cursor: hand !important;
 }
@@ -197,6 +207,10 @@
     overflow: hidden; 
     text-overflow: ellipsis; 
     white-space: nowrap; 
+}
+
+.custom-table-waterfall{
+    max-width: 1000px;
 }
 
 .botao {
@@ -237,8 +251,8 @@ a:hover{
 }
 
 .titlebox {
-    color: beige;
-    background: #0D47A1;
+    color: #E8EAF6;
+    background-image: linear-gradient(to bottom,#5C6BC0 0,#303F9F 100%);
     border-style: solid;
     border-width: 1px;
     padding: 7px;
@@ -247,9 +261,14 @@ a:hover{
     text-align: center;
 }
 
+a .titlebox:hover {
+    background-image: linear-gradient(to bottom,rgb(35, 46, 117) 0,rgb(72, 84, 150) 100%);    
+}
+
 .labelbox {
-    color: beige;
-    background: rgb(74, 134, 224);
+    color: #E8EAF6;
+    background: #304FFE;
+    background-image: linear-gradient(to bottom,#304FFE 0,#283583 100%);
     border-style: solid;
     border-width: 1px;
     padding: 7px;
@@ -259,7 +278,7 @@ a:hover{
 }
 
 .noticiabox {
-    background: rgb(178, 217, 250);
+    background: rgb(177, 189, 255);
     border: none;
     padding: 9px;
     margin: 2px;
@@ -440,4 +459,44 @@ li .panel-body li{
     border-style: solid;
     padding: 5px;
     color: #000 !important;
+}
+
+
+.nav-top-custom-style{
+    background-image: linear-gradient(to bottom,#3949AB 0,#1A237E 100%);
+}
+
+.open .dropdown-toggle{
+    background-image: linear-gradient(to top,#3949AB 0,#1A237E 100%) !important;
+}
+
+.nav-top-custom-style li:hover{
+    background-image: linear-gradient(to top,#3949AB 0,#1A237E 100%)
+}
+
+.nav-top-custom-style a{
+    color: #E8EAF6 !important;
+}
+
+.panel-info-custom .panel-heading{
+    background-image: linear-gradient(to top,#C5CAE9 0,#7986CB 100%);
+}
+
+.panel-info-custom{
+    border-color: #7986CB;
+}
+
+.panel-info-custom .panel-title{
+    font-weight: bolder !important;
+}
+
+.dropdown-menu a {
+    color: #1A237E !important;
+    font-weight: bold;
+}
+
+.dropdown-menu{
+    border-top-width: 0px;
+    width: inherit !important;
+    background-image: linear-gradient(to top,#C5CAE9 0,#7986CB 100%);
 }

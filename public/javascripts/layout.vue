@@ -66,15 +66,63 @@ var nav = new Vue({
 */
 
 var users = new Vue({
-    el: '#users',
+    el: '#navbartop',
     data: {
         location: null,
+        linhas: [
+            {
+                valor: 'Lista Consolidada',
+                consultar: '/classes',
+                submeter: '/classes/adicionar',
+                style: `
+                    padding-left:10px; 
+                    border-left-width:2px; 
+                    border-color: white;
+                    border-left-style: inset;
+                `
+            },
+            {
+                valor: 'Tabelas de Seleção',
+                consultar: '/tabelasSelecao',
+                submeter: '/tabelasSelecao/submeter',
+            },
+            {
+                valor: 'Autos de Eliminação',
+                consultar: '#',
+                submeter: '#',
+            },
+            {
+                valor: 'Entidades',
+                consultar: '/organizacoes',
+                submeter: '/organizacoes/adicionar',
+            },
+            {
+                valor: 'Legislação',
+                consultar: '/legislacao',
+                submeter: '/legislacao/adicionar',
+            },
+            {
+                valor: 'Estatísticas',
+                consultar: '#',
+                submeter: '#',
+            },
+            {
+                valor: 'Termos de Índice',
+                consultar: '/termosIndice',
+                submeter: '#',
+            },
+        ],
+    },
+    components:{
+        accordion: VueStrap.accordion,
+        panel: VueStrap.panel
     },
     created() {
         this.location= window.location.pathname+window.location.search;
     }
 })
 
+/*
 new Vue({
     el: '#navegacaoleft',
     data: {
@@ -121,3 +169,4 @@ new Vue({
         panel: VueStrap.panel
     }
 })
+*/

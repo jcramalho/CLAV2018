@@ -594,7 +594,7 @@ Vue.component('row-waterfall', {
 
 Vue.component('custom-table-waterfall', {
     template: `
-        <div id="root">
+        <div id="root" class="custom-table-waterfall">
             <div id="pages" class="col-sm-4" v-if="pagesOn" style="margin-bottom:5px">
                 Mostrar
                 <select v-model="rowsPerPage">
@@ -612,7 +612,7 @@ Vue.component('custom-table-waterfall', {
             </div>
 
             <table id="masterTable" :class="tableClass">
-                <thead>
+                <thead v-if="header">
                     <tr>
                         <th style="width: 30px; min-width: 30px"></th>
                         <th

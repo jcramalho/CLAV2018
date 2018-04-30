@@ -1,4 +1,21 @@
 extends ../layout
+block lateral
+    #sidebar-tabela-classes
+        custom-table-waterfall(
+            v-if="ready"
+
+            :complete-rows="tableData"
+            :n-edits="nEdits"
+            
+            table-class='sidebar-nav-table'
+            
+            @row-clicked="rowClicked($event)"
+        )
+        h4(
+            v-else
+        ) A carregar...
+
+
 block corpo
     #classe-form.panel.panel-default
         .panel-heading
@@ -559,3 +576,4 @@ block corpo
 
 append scripts    
     script(src="/javascripts/classes/consulta.vue")
+    script(src="/javascripts/classes/consulta-sidebar.vue")
