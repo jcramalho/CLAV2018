@@ -34,7 +34,8 @@ var classesSide = new Vue({
             let pai;
 
             let level= this.level;
-            let activeClass= this.activeClass;
+            let active= this.activeClass.substring(1);
+            this.activeClass=this.activeClass.slice(1,-1);
 
             for (let pn of dataToParse) {
                 let codeAvo = pn.AvoCodigo.value;
@@ -61,7 +62,8 @@ var classesSide = new Vue({
                             drop: this.activeClass.includes(codePai),
                             selected: pnSelected,
                             subReady: true,
-                            sublevel: []
+                            sublevel: [],
+                            active: active==codePai
                         }
                         destination[avo].sublevel.push(infoPai);
                     }
@@ -79,6 +81,7 @@ var classesSide = new Vue({
                         drop: this.activeClass.includes(codeAvo),
                         selected: pnSelected,
                         subReady: true,
+                        active: active==codeAvo,
                         sublevel: [{
                             codeID: pn.Pai.value.replace(/[^#]+#(.*)/, '$1'),
                             content: [codePai],
@@ -86,6 +89,7 @@ var classesSide = new Vue({
                             selected: pnSelected,
                             subReady: true,
                             sublevel: [],
+                            active: active==codePai
                         }]
                     }
                     destination.push(infoAvo);
@@ -96,6 +100,7 @@ var classesSide = new Vue({
                     content: [pn.PNCodigo.value],
                     drop: false,
                     selected: pnSelected,
+                    active: active==pn.PNCodigo.value
                 }
 
                 if (pn.Filhos.value.length) {
@@ -110,6 +115,7 @@ var classesSide = new Vue({
                             content: [filhoInfo[1]],
                             drop: false,
                             selected: pnSelected,
+                            active: active==filhoInfo[1]
                         });
                     }
                 }

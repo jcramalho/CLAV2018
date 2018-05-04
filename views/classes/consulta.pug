@@ -4,10 +4,13 @@ block lateral
         custom-table-waterfall(
             v-if="ready"
 
+            filter-on="true"
+            sidebar="true"
+
             :complete-rows="tableData"
             :n-edits="nEdits"
             
-            table-class='sidebar-nav-table'
+           class='sidebar-nav-table'
             
             @row-clicked="rowClicked($event)"
         )

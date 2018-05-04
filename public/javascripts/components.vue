@@ -421,7 +421,7 @@ Vue.component('row-waterfall', {
                 <table class="partial-hover cascata-table-within" :class="tableClass">
                     <tbody name="table">
                         <tr>
-                            <td v-if="row.sublevel" :class="[(selectLeft && level>=3) ? 'cascata-drop-select' :'cascata-drop']">
+                            <td v-if="row.sublevel" :class="[(selectLeft && level>=3) ? 'cascata-drop-select cascata-plus' :'cascata-drop cascata-plus']">
                                 <input
                                     v-if="selectLeft && level>=3"
                                     :id="'left'+id+suffix"
@@ -453,11 +453,11 @@ Vue.component('row-waterfall', {
                                 <span style="padding-right:18px"></span>
                             </td>
 
-                            <td class="cascata-codigo" @click="rowClicked">
+                            <td class="cascata-codigo" :class="[row.active ? 'cascata-active' : '']" @click="rowClicked">
                                 {{ row.content[0] }}
                             </td>
 
-                            <td class="cascata-texto"  @click="rowClicked">
+                            <td v-if="row.content[1]" class="cascata-texto" @click="rowClicked">
                                 <div>
                                     <div style="float:left">
                                         {{ row.content[1] }}
@@ -605,6 +605,27 @@ Vue.component('custom-table-waterfall', {
                 </select>
                 entradas
             </div>
+
+            <div v-if="filterOn && sidebar">
+                <input 
+                    class="form-control" 
+                    :class="[filtError ? 'form-error' : '']" 
+                    v-model="filt" 
+                    type="text" 
+                    placeholder="Pesquisa por código"
+                    pattern="[0-9]{1,3}(\.[0-9]{0,2}(\.[0-9]{0,3}(\.[0-9]{0,3})?)?)?"
+                />
+            </div>
+            <div class="col-sm-7" v-if="filterOn && !sidebar">
+                <input 
+                    class="form-control" 
+                    :class="[filtError ? 'form-error' : '']" 
+                    v-model="filt" 
+                    type="text" 
+                    placeholder="Pesquisa por código"
+                    pattern="[0-9]{1,3}(\.[0-9]{0,2}(\.[0-9]{0,3}(\.[0-9]{0,3})?)?)?"
+                />
+            </div>
             <div class="col-sm-1"  v-if="add" style="float:right">
                 <button type="button" class="btn btn-default btn-circle" @click="addClick">
                     <span class="glyphicon glyphicon-plus"/>
@@ -631,7 +652,13 @@ Vue.component('custom-table-waterfall', {
                     </tr>
                 </thead>
                 <tbody name="table">
+                    <tr v-if="rows.length==0">
+                        <td colspan=5>
+                            Nenhum resultado encontrado...
+                        </td>
+                    </tr>
                     <row-waterfall
+                        v-if="rows.length>0"
                         v-for="(row,index) in rowsShow"
 
                         :select-on="selectOn"
@@ -668,7 +695,9 @@ Vue.component('custom-table-waterfall', {
         'selectOn',
         'selectLeft',
         'nEdits',
-        'suffix'
+        'suffix',
+        'filterOn',
+        'sidebar'
     ],
     data: function () {
         return {
@@ -678,7 +707,9 @@ Vue.component('custom-table-waterfall', {
             "activePage": 1,
             "pages": [0],
             "rowsPerPage": 10,
+            "filt": "",
             "filtered": false,
+            "filtError": false,
         };
     },
     watch: {
@@ -696,9 +727,82 @@ Vue.component('custom-table-waterfall', {
             if (this.filtered) {
                 this.newFilter();
             }
+        },
+        filt: function () {
+            this.completeFilter(this.filt);
         }
     },
     methods: {
+        completeFilter: function (filt) { //filter rows according to what is written in the input box
+            this.filtError=false;
+            let tempRows = JSON.parse(JSON.stringify(this.completeRows));
+
+            if(filt!=""){
+                let filters = filt.split(" ");
+                let codeFormat = /^[0-9]{1,3}(\.[0-9]{0,2}(\.[0-9]{0,3}(\.[0-9]{0,3})?)?)?$/;
+
+                for (let f of filters) {
+                    if(codeFormat.test(f)){
+                        tempRows = this.filterCode(tempRows, f); 
+                    }
+                    else{
+                        this.filtError=true;
+                        //tempRows = this.filterText(tempRows, f);                
+                    }
+                }
+            }
+            
+            this.rows = tempRows;
+        },
+        filterCode: function (list, code) {
+            var levels = code.split('.');
+            return this.filterCodeLevel(list, levels, 1);
+        },
+        filterCodeLevel: function (list, codeList, level) {
+            //console.log(codeList);
+            var code = "";
+            for (let i = 0; i < level; i++) {
+                code += codeList[i] + ".";
+            }
+            code = code.slice(0, -1);
+
+            var retList = list.filter(function (item) {
+                //console.log(item.content[0]+ " includes "+code+" = " +item.content[0].includes(code));
+                return item.content[0].includes(code);
+            });
+
+            if (level < codeList.length) {
+                for (let item of retList) {
+                    if (item.sublevel) {
+                        item.sublevel = this.filterCodeLevel(item.sublevel, codeList, level + 1);
+                        item.drop = true;
+                    }
+                }
+            }
+
+            return retList;
+        },
+        filterText: function (list, filt) {
+            var retList;
+
+            regex = new RegExp(filt, "gi");
+
+            var retList = list.filter(function (item) {
+                return regex.test(item.content[1]);
+            });
+
+            for (let item of retList) {
+                if (item.sublevel) {
+                    item.sublevel = this.filterText(item.sublevel, filt);
+                    
+                    if(item.sublevel.length>0){
+                        item.drop = true;
+                    }
+                }
+            }
+
+            return retList;
+        },
         genID: function (index) {
             for (var i = 0; i < this.completeRows.length; i++) {
                 if (this.rowsShow[index].codeID == this.completeRows[i].codeID) {
@@ -747,8 +851,8 @@ Vue.component('custom-table-waterfall', {
             }
 
             this.pages = ret;
-
-            if (page > n) {
+            
+            if (page > n && n!=0) {
                 this.loadPage(n);
             } else {
                 this.prepPage();
@@ -762,7 +866,7 @@ Vue.component('custom-table-waterfall', {
         prepPage: function () { //process rows to be shown
             var beggining = (this.activePage - 1) * this.rowsPerPage;
             var end = beggining + parseInt(this.rowsPerPage);
-
+            
             this.rowsShow = this.rows.slice(beggining, end);
         },
         nextPage: function () {
