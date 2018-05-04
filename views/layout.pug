@@ -1,6 +1,8 @@
 extends ./_bootstrap
 append head
-	title M51-CLAV
+	title M51-CLAV 
+		if title
+			| - #{title}
 
 append styles
 	meta(name="author",content="Tomás Ferreira")
