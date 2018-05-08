@@ -44,7 +44,7 @@ block body
 						
 						if user
 							li(v-for="linha in linhas" :style="linha.style")
-								a.dropdown-toggle(href='#', data-toggle='dropdown', role='button', aria-expanded='false')
+								a.dropdown-toggle(href='#', data-toggle='dropdown', role='button', aria-expanded='false' style="padding-left:7px;padding-right:7px")
 									| {{ linha.valor }} 
 									span.caret
 								ul.dropdown-menu(role="menu")

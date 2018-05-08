@@ -78,38 +78,68 @@ var users = new Vue({
                     padding-left:10px; 
                     border-left-width:2px; 
                     border-color: white;
-                    border-left-style: inset;
+                    border-left-style:  inset
                 `
             },
             {
                 valor: 'Tabelas de Seleção',
                 consultar: '/tabelasSelecao',
-                submeter: '/tabelasSelecao/submeter',
+                submeter: '/tabelasSelecao/submeter/passos',
+                style: `
+                    border-width:1px;
+                    border-color: #5c6bc0;
+                    border-left-style:  outset
+                `
             },
             {
                 valor: 'Autos de Eliminação',
                 consultar: '#',
                 submeter: '#',
+                style: `
+                    border-width:1px;
+                    border-color: #5c6bc0;
+                    border-left-style:  outset
+                `
             },
             {
                 valor: 'Entidades',
                 consultar: '/organizacoes',
                 submeter: '/organizacoes/adicionar',
+                style: `
+                    border-width:1px;
+                    border-color: #5c6bc0;
+                    border-left-style:  outset
+                `
             },
             {
                 valor: 'Legislação',
                 consultar: '/legislacao',
                 submeter: '/legislacao/adicionar',
+                style: `
+                    border-width:1px;
+                    border-color: #5c6bc0;
+                    border-left-style:  outset
+                `
             },
             {
                 valor: 'Estatísticas',
                 consultar: '#',
                 submeter: '#',
+                style: `
+                    border-width:1px;
+                    border-color: #5c6bc0;
+                    border-left-style:  outset
+                `
             },
             {
                 valor: 'Termos de Índice',
                 consultar: '/termosIndice',
                 submeter: '#',
+                style: `
+                    border-width:1px;
+                    border-color: #5c6bc0;
+                    border-left-style:  outset
+                `
             },
         ],
     },
@@ -135,7 +165,7 @@ new Vue({
             {
                 valor: 'Tabelas de Seleção',
                 consultar: '/tabelasSelecao',
-                submeter: '/tabelasSelecao/submeter',
+                submeter: '/tabelasSelecao/submeter/passos',
             },
             {
                 valor: 'Autos de Eliminação',

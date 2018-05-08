@@ -12,7 +12,7 @@ router.get('/submeter', Auth.isLoggedIn, function(req, res) {
 });
 
 router.get('/submeter/passos', Auth.isLoggedIn, function(req, res) {
-    res.render('tabsSel/passos', {title: "Nova TS"});
+    res.render('tabsSel/passos', {title: "Nova TS", entidade: "Teste"});
 });
 
 router.get('/submeter/escolher_processos', Auth.isLoggedIn, function(req, res) {
