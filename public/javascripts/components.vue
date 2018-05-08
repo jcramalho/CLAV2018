@@ -421,7 +421,11 @@ Vue.component('row-waterfall', {
                 <table class="partial-hover cascata-table-within" :class="tableClass">
                     <tbody name="table">
                         <tr>
-                            <td v-if="row.sublevel" :class="[(selectLeft && level>=3) ? 'cascata-drop-select cascata-plus' :'cascata-drop cascata-plus']">
+                            <td 
+                                v-if="row.sublevel" 
+                                @click="row.drop=!row.drop"
+                                :class="[(selectLeft && level>=3) ? 'cascata-drop-select cascata-plus' :'cascata-drop cascata-plus']"
+                            >
                                 <input
                                     v-if="selectLeft && level>=3"
                                     :id="'left'+id+suffix"
@@ -429,17 +433,22 @@ Vue.component('row-waterfall', {
                                     v-model="row.selected"
                                     @click="leftSelectClicked"
                                 />
-                                <label
+                                <span
                                     :for="'toggle'+id+suffix"
                                     :class="[row.drop ? 'glyphicon glyphicon-minus' : 'glyphicon glyphicon-plus']"
                                 />
-                                <input
-                                    :id="'toggle'+id+suffix"
-                                    type="checkbox"
-                                    v-model="row.drop"
-                                    @click="dropClicked"
-                                    class="drop-row"
-                                />
+                                <!--
+                                    <label
+                                        :for="'toggle'+id+suffix"
+                                        :class="[row.drop ? 'glyphicon glyphicon-minus' : 'glyphicon glyphicon-plus']"
+                                    />
+                                    <input
+                                        :id="'toggle'+id+suffix"
+                                        type="checkbox"
+                                        v-model="row.drop"
+                                        class="drop-row"
+                                    />
+                                /-->
                             </td>
                             
                             <td v-else class="cascata-drop">
@@ -463,7 +472,7 @@ Vue.component('row-waterfall', {
                                         {{ row.content[1] }}
                                     </div>
                                     <div
-                                        v-if="selectOn && level==3" 
+                                        v-if="selectOn && level>=3" 
                                         class="checks"
                                     >
                                         <div class="ownercheck">

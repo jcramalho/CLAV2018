@@ -14,7 +14,18 @@ var classesSide = new Vue({
             this.ready=false;
             let content = [];
 
-            this.$http.get("/api/classes/filtrar")
+            let TS = /^ts_/;
+
+            let link;
+
+            if(TS.test(this.activeClass)){
+                link = "/api/tabelasSelecao/"+this.activeClass.replace(/(ts_[0-9]+).+/,"$1")+"/classes";
+            }
+            else {
+                link = "/api/classes/filtrar";
+            }
+
+            this.$http.get(link)
                 .then(function (response) {
                     content = response.body;
                 })
@@ -98,7 +109,7 @@ var classesSide = new Vue({
                 let pninfo = {
                     codeID: pn.PN.value.replace(/[^#]+#(.*)/, '$1'),
                     content: [pn.PNCodigo.value],
-                    drop: false,
+                    drop: this.activeClass.includes(pn.PNCodigo.value),
                     selected: pnSelected,
                     active: active==pn.PNCodigo.value
                 }
