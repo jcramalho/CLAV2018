@@ -1,3 +1,79 @@
+var side = new Vue({
+    el: '#sidenav',
+    data: {
+        nav: [
+            {
+                label: "Nível",
+                anchor: "#nivel"
+            },
+            {
+                label: "Classe Pai",
+                anchor: "#pai"
+            },
+            {
+                label: "Código",
+                anchor: "#codigo"
+            },
+            {
+                label: "Título",
+                anchor: "#titulo"
+            },
+            {
+                label: "Descrição",
+                anchor: "#descricao"
+            },
+            {
+                label: "Notas de Aplicação",
+                anchor: "#notasA"
+            },
+            {
+                label: "Exemplos de Notas de Aplicação",
+                anchor: "#exemplos"
+            },
+            {
+                label: "Notas de Exclusão",
+                anchor: "#notasE"
+            },
+            {
+                label: "Termos de Índice",
+                anchor: "#termosI"
+            },
+            {
+                label: "Tipo de Processo",
+                anchor: "#tipoTrans"
+            },
+            {
+                label: "Processo Tranversal",
+                anchor: "#tipTrans"
+            },
+            {
+                label: "Donos",
+                anchor: "#donos"
+            },
+            {
+                label: "Participantes",
+                anchor: "#participantes"
+            },
+            {
+                label: "Processos Relacionados",
+                anchor: "#PNrel"
+            },
+            {
+                label: "Legislação",
+                anchor: "#legislacao"
+            },
+            {
+                label: "PCA",
+                anchor: "#PCA"
+            },
+            {
+                label: "Destino Final",
+                anchor: "#DF"
+            },
+        ]
+    }
+})
+
 var newClass = new Vue({
     el: '#nova-classe-form',
     http: {

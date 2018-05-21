@@ -79,7 +79,9 @@ var users = new Vue({
                     border-left-width:2px; 
                     border-color: white;
                     border-left-style:  inset
-                `
+                `,
+                newCons: 'Consultar e propor alteração',
+                newSub: 'Submeter novo PN'
             },
             {
                 valor: 'Tabelas de Seleção',

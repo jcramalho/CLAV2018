@@ -8,7 +8,7 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/adicionar', Auth.isLoggedIn, function(req, res) {
-    res.render('classes/adicao', {title: "Nova classe"});
+    res.render('classes/adicao', {title: "Nova classe", sidebar: true});
 });
 
 router.get('/consultar/:id', function(req, res) {

@@ -44,11 +44,13 @@ block corpo
                 td
                     .labelbox(style="with:100%")
                         | Notícias:
-            tr(v-for="noticia in noticias")
-                td 
-                    .noticiabox(style="border:none; margin:2px")
-                        | {{noticia}}
-            
+            tr
+                td
+                    accordion(type="noticiabox")
+                        panel(v-for="(not,index) in noticias" :header="not.title" :key="index")
+                            small {{ not.date }}
+                            div(v-html="not.body")
+                            
             
 
 append scripts

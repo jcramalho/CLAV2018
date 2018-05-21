@@ -24,7 +24,16 @@ block corpo
                             td
                                 input.in(type="text" v-model="entidade.email")
                                 
-                    table.questionario(v-for="rep in representantes" style="margin-bottom:-5px")
+                    table.questionario(v-for="(rep,index) in representantes" style="margin-bottom:-5px")
+                        tr
+                            td 
+                                h4
+                                    b Representante {{index+1}}
+                            td
+                                span.glyphicon.glyphicon-remove(
+                                    @click="representantes.splice(index,1)"
+                                    style="float:right; padding-right:10px"
+                                )
                         tr
                             td Nome completo do representante da entidade:
                             td  
@@ -71,7 +80,6 @@ block corpo
                                     )
                     button(@click="addRep" style="margin:5px; margin-top:10px") Adicionar Representante
                     
-                    button(@click="remRep") Remover Representante
                 td(valign="bottom")
                     button(@click="submitEntity") Imprimir
         div(v-html="message")

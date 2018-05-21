@@ -313,6 +313,15 @@ a .linkbox:hover {
     margin: 2px;
 }
 
+.panel-noticiabox .panel-heading{
+    background: rgb(177, 189, 255);
+}
+
+.panel-noticiabox{
+    border-color: rgb(177, 189, 255);
+    margin: 2px;
+}
+
 .infobox {
     background: #c5cae9;
     color: #1a237e;

@@ -10,7 +10,7 @@ block lateral
             :complete-rows="tableData"
             :n-edits="nEdits"
             
-           class='sidebar-nav-table'
+            class='sidebar-nav-table'
             
             @row-clicked="rowClicked($event)"
         )
@@ -372,8 +372,8 @@ block corpo
                                             td(colspan=3)
                                                 ul(v-if="relProcsReady" style="padding-left:20px")
                                                     li(v-for="key in Object.keys(newClass.Participants)" v-if="newClass.Participants[key].length>0")
-                                                        b {{ key }}
-                                                            span(v-if="newClass.Participants[key].length>1") es
+                                                        b {{participationsDic[key]}}:
+                                                            //-span(v-if="newClass.Participants[key].length>1") es
                                                         ul
                                                             li(v-for="(p, index) in newClass.Participants[key]")
                                                                 | {{ p.Sigla }} - {{ p.Nome }}
@@ -383,8 +383,8 @@ block corpo
                                 td(v-else style="width:80%")
                                     ul(v-if="relProcsReady" style="padding-left:20px")
                                         li(v-for="key in Object.keys(clas.Participants)" v-if="clas.Participants[key].length>0")
-                                            b {{ key }}
-                                                span(v-if="clas.Participants[key].length>1") es
+                                            b {{participationsDic[key]}}:
+                                                //-span(v-if="clas.Participants[key].length>1") es
                                             ul
                                                 li(v-for="p in clas.Participants[key]")
                                                     a(:href="'/organizacoes/consultar/'+p.id") {{ p.Sigla }}

@@ -49,9 +49,11 @@ block body
 									span.caret
 								ul.dropdown-menu(role="menu")
 									li
-										a(:href='linha.consultar') Consultar
+										a(v-if="!linha.newCons" :href='linha.consultar') Consultar
+										a(v-else :href='linha.consultar') {{linha.newCons}}
 									li
-										a(:href='linha.submeter') Submeter
+										a(v-if="!linha.newSub" :href='linha.submeter') Submeter
+										a(v-else :href='linha.submeter') {{linha.newSub}}
 							
 						else
 							li(v-for="(linha,index) in linhas" :style="linha.style")

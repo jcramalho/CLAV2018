@@ -87,6 +87,15 @@ var classe = new Vue({
         classesReady: false,
         relProcsReady: false,
         pageReady: false,
+
+        participationsDic: {
+            Apreciador: "Aprecia",
+            Assessor: "Assessora",
+            Comunicador: "Comunica",
+            Decisor: "Decide",
+            Executor: "Executa",
+            Iniciador: "Inicia"
+        }
     },
     components: {
         accordion: VueStrap.accordion,

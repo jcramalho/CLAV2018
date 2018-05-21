@@ -175,7 +175,6 @@ router.get('/:code/check/:level', function (req, res) {
         .catch(error=>console.error(error));
 })
 
-
 router.put('/:id', Auth.isLoggedInAPI, function (req, res) {
     Classes.updateClass(req.body.dataObj)
         .then(function (response) {
@@ -186,8 +185,6 @@ router.put('/:id', Auth.isLoggedInAPI, function (req, res) {
         })
         .catch(error => console.error(error));
 })
-
-
 
 router.post('/', function (req, res) {
     var dataObj = req.body;

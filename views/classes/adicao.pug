@@ -1,4 +1,9 @@
 extends ../layout
+block lateral
+    ul#sidenav
+        li(v-for="l in nav")
+            a(:href="l.anchor") {{ l.label }}
+
 block corpo
     #nova-classe-form.panel.panel-default.panel-custom
         .panel-heading
@@ -8,6 +13,7 @@ block corpo
                 table.consulta(style="border-color: white; border-style:solid; margin-bottom:20px")
                     
                     //-TIPO/ NIVEL
+                    a(name="nivel")
                     tr
                         td(style="width:10%")
                             .info-label Tipo: 
@@ -19,6 +25,7 @@ block corpo
                                 option(value=4) Classe_N4
 
                     //- CLASSE PAI
+                    a(name="pai")
                     tr(v-if="type>1 && parentsReady")
                         td(style="width: 10%")
                             .info-label Classe Pai: 
@@ -30,6 +37,7 @@ block corpo
                             )
 
                     //- CÓDIGO
+                    a(name="codigo")
                     tr 
                         td(style="width: 10%")
                             .info-label Código: 
@@ -41,6 +49,7 @@ block corpo
                             p(style="color: red") {{ codeMessage }}
 
                     //- TÍTULO
+                    a(name="titulo")
                     tr
                         td(style="width: 10%")
                             .info-label Título: 
@@ -55,6 +64,7 @@ block corpo
                         table.consulta(style="border-color: white; border-style:solid")                
 
                             //- DESCRIÇÃO
+                            a(name="descricao")
                             tr
                                 td(style="width: 10%")
                                     .info-label Descrição: 
@@ -66,6 +76,7 @@ block corpo
                                     )
 
                             //- NOTAS DE APLICAçÃO                        
+                            a(name="notasA")
                             tr
                                 td(style="width: 10%")
                                     .info-label Nota(s) de Aplicação:
@@ -87,6 +98,7 @@ block corpo
                                             )
                                 
                             //- EXEMPLOS DE NOTAS DE APLICAçÃO                        
+                            a(name="exemplos")
                             tr
                                 td(style="width: 10%")
                                     .info-label Exemplo(s) de Nota(s) de Aplicação:
@@ -108,6 +120,7 @@ block corpo
                                             )
 
                             //- NOTAS DE EXCLUSÃO                        
+                            a(name="notasE")
                             tr
                                 td(style="width: 10%")
                                     .info-label Nota(s) de Exclusão:
@@ -129,6 +142,7 @@ block corpo
                                             )
 
                             //- TERMOS DE ÍNDICE
+                            a(name="termosI")
                             tr(v-if="type>=3")
                                 td(style="width: 10%")
                                     .info-label Termos de Índice:
@@ -153,6 +167,7 @@ block corpo
                     panel(header="Contexto de Avaliação" v-if="type>=3" is-open=true)
                         table.consulta(style="border-color: white; border-style:solid; width:100%")
                             //- TIPO/TRANSVERSAL
+                            a(name="tipoTrans")
                             tr
                                 td(colspan=2)
                                     table.noborder
@@ -198,6 +213,7 @@ block corpo
 
                             
                             //- DONOS
+                            a(name="donos")
                             tr(style="padding-bottom:30px")
                                 td(style="width: 10%")
                                     .info-label Donos:
@@ -221,6 +237,7 @@ block corpo
 
 
                             //- PARTICIPANTES
+                            a(name="participantes")
                             tr(v-if="type>=3 && procTrans=='S'")
                                 td(style="width: 10%")
                                     .info-label Participante(s):
@@ -257,6 +274,7 @@ block corpo
                             
 
                             //- PROCESSOS RELACIONADOS
+                            a(name="PNrel")
                             tr
                                 td(style="width: 10%")
                                     .info-label Processo(s) Relacionado(s):
@@ -302,6 +320,7 @@ block corpo
                                                                         
 
                             //- LEGISLAÇÃO
+                            a(name="legislacao")
                             tr(style="padding-bottom:30px")
                                 td(style="width: 10%")
                                     .info-label Legislação:
@@ -327,6 +346,7 @@ block corpo
                     panel(header="Decisões de Avaliação" v-if="type>=3" is-open)
                         table.consulta.noborder(style="border-color: white; border-style:solid")
                             //- PRAZO DE CONSERVAÇÃO ADMINISTRATIVA
+                            a(name="PCA")
                             tr
                                 td
                                     .info-label(style="text-align:center")
@@ -468,6 +488,7 @@ block corpo
 
                                                                                     
                             //- DESTINO FINAL
+                            a(name="DF")
                             tr
                                 td
                                     .info-label(style="text-align:center") 
