@@ -713,30 +713,6 @@ var newClass = new Vue({
 
             return dest;
         },
-        addNewExAppNote: function () {
-            if (this.newExAppNote) {
-                this.exAppNotes.push(this.newExAppNote);
-                this.newExAppNote = '';
-            }
-        },
-        addNewAppNote: function () {
-            if (this.newAppNote) {
-                this.appNotes.push({
-                    id: "",
-                    Note: this.newAppNote
-                });
-                this.newAppNote = '';
-            }
-        },
-        addNewDelNote: function () {
-            if (this.newDelNote) {
-                this.delNotes.push({
-                    id: "",
-                    Note: this.newDelNote
-                });
-                this.newDelNote = '';
-            }
-        },
         addNewIndex: function () {
             if (this.newIndex) {
                 this.indexes.push({
@@ -901,15 +877,15 @@ var newClass = new Vue({
         add: function () {
             this.$refs.spinner.show();
 
-            if (this.appNotes) {
-                for (var i = 0; i < this.appNotes.length; i++) {
-                    this.appNotes[i].id = "na_c" + this.code + "_" + (i + 1);
+            for([i,note] of this.appNotes.entries()) {
+                if(note.Note){
+                    note.id = "na_c" + this.code + "_" + (i + 1);
                 }
             }
 
-            if (this.delNotes) {
-                for (var i = 0; i < this.delNotes.length; i++) {
-                    this.delNotes[i].id = "ne_c" + this.code + "_" + (i + 1);
+            for([i,note] of this.delNotes.entries()) {
+                if(note.Note){
+                    note.id = "ne_c" + this.code + "_" + (i + 1);
                 }
             }
 
@@ -942,11 +918,15 @@ var newClass = new Vue({
                     }
                 })
                     .then(function (response) {
-                        this.message = response.body;
+                        regex = new RegExp(/[0-9]+\-[0-9]+/, "gi");
 
-                        if (response.body == "Classe Inserida!") {
-                            window.location.href = '/classes/consultar/c' + this.code;
+                        if(regex.test(response.body)){
+                            window.location.href = '/users/pedido_submetido/'+response.body;
                         }
+                        else {
+                            this.message = response.body;
+                        }
+
                         this.$refs.spinner.hide();
                     })
                     .catch(function (error) {

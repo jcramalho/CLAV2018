@@ -849,7 +849,7 @@ Classes.createClass = function (data) {
                 clav:${id} rdf:type owl:NamedIndividual ,
                         clav:${level} ;
                     clav:codigo "${data.Code}" ;
-                    clav:classeStatus "${data.Status}" ;
+                    clav:classeStatus "H" ;
                     clav:descricao "${data.Description.replace(/\n/g, '\\n')}" ;
                     clav:pertenceLC clav:lc1 ;
                     clav:titulo "${data.Title}" .                   

@@ -1,54 +1,7 @@
-var express = require('express');
-var router = express.Router();
 
-var Logging = require('../controllers/logging');
-
-var Auth = require('../controllers/auth.js');
-var User = require('../models/user');
-var Pedido = require('../models/pedido');
-var Entidade = require('../models/entidade');
-
-router.get('/registar', function(req, res) {
-    res.render('users/registar', {title: "Registo"});
-});
-
-router.get('/login', function(req, res) {
-    res.render('users/login', {title: "Login"});
-});
-
-router.get('/perfil', Auth.isLoggedIn, function(req, res) {
-    res.render('users/perfil', {title: "Perfil"});
-});
-
-router.get('/pedido_submetido/:id', Auth.isLoggedIn, function(req, res) {
-    res.render('users/pedido_submetido', {title: "Pedido submetido"});
-});
-
-// Guardar trabalho
-router.put('/save/:type', Auth.isLoggedInAPI, function (req, res) {
-    User.getUserById(req.user._id, function(err, user){
-
-		if (err) {	
-			throw err;
-		}
-		else if (!user) {
-			return done(null, false, { message: 'Ocorreu um erro ao guardar a informação' });
-		}
-		else {
-            user.savedStates[req.params.type]=req.body;
-
-            user.save(function(err,updatedUser){
-                if(err) {	
-                    throw err;
-                }
-                res.send(updatedUser.savedStates[req.params.type]);
-            });
-        }
-	});
-});
 
 // Novo pedido
-router.post('/pedido', Auth.isLoggedInAPI, function (req, res) {
+router.post('/', Auth.isLoggedInAPI, function (req, res) {
     var dataObj= req.body;
     var today = new Date();
     var dd = today.getDate();
@@ -114,8 +67,21 @@ router.post('/pedido', Auth.isLoggedInAPI, function (req, res) {
     });
 });
 
+// Pedidos por estado
+router.get('estado/:estado', function (req, res) {
+    Pedido.getPedidosByState(req.params.estado, function(err, request){
+        if (err) {
+            console.log(err);
+            req.send("Ocorreu um erro!");    
+        }
+        else{
+            res.send(request);
+        }
+    });
+});
+
 // Dados de um pedido
-router.get('/pedido/:num', function (req, res) {
+router.get('/:num', function (req, res) {
     Pedido.getPedidoByNumber(req.params.num, function(err, request){
         if (err) {
             console.log(err);
@@ -137,14 +103,3 @@ router.get('/pedido/:num', function (req, res) {
     });
 });
 
-// Carregar trabalho
-router.get('/load/:type', Auth.isLoggedInAPI, function (req, res) {
-    res.send(req.user.savedStates[req.params.type]);
-});
-
-// Gestão de pedidos (admin)
-router.get('/pedidos', function(req, res) {
-    res.render('admin/gestao_pedidos', {title: "Gestão de Pedidos"});
-});
-
-module.exports = router;

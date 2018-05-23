@@ -3,6 +3,10 @@ var Auth = require('../../controllers/auth.js');
 var Classes = require('../../controllers/api/classes.js');
 var TermosIndice = require('../../controllers/api/termosIndice.js');
 
+
+var Pedido = require('../../models/pedido');
+var Entidade = require('../../models/entidade');
+
 var express = require('express');
 var router = express.Router();
 
@@ -197,10 +201,83 @@ router.post('/', function (req, res) {
             else {
                 Classes.createClass(dataObj)
                     .then(function () {
-                        Logging.logger.info('Criada classe \'c' + dataObj.Code + '\' por utilizador \'' + req.user._id + '\'');
+                        Logging.logger.info('Submetida classe \'c' + dataObj.Code + '\' por utilizador \'' + req.user._id + '\'');
+                        
 
-                        req.flash('success_msg', 'Classe inserida');
-                        res.send("Classe Inserida!");
+                        //-------- GERAR PEDIDO -------------------------------------
+
+                        var today = new Date();
+                        var dd = today.getDate();
+                        var mm = today.getMonth()+1;
+                        var yyyy = today.getFullYear();
+
+                        Pedido.getCountPedidos(function(err, count){
+                            if (err) {
+                                console.log(err);
+                                req.send("Ocorreu um erro ao gerar o pedido");    
+                            }
+                            else {
+                                var num = count+1+"-"+yyyy;
+                                var entity;
+
+                                Entidade.getEntidadeByRepresentante(req.user.email, function(err, ent){
+                                    if (err) {
+                                        console.log(err);
+                                        req.send("Ocorreu um erro!");    
+                                    }
+                                    else {
+                                        if(!ent){
+                                            entity = {
+                                                nome: "Sem entidade realcionada",
+                                                email: req.user.email
+                                            }
+                                        }
+                                        else {
+                                            entity = ent;
+                                        }
+
+                                        var newPedido = new Pedido({
+                                            numero: num,
+                                            tipo: "Novo PN",
+                                            descricao: "Novo processo de negócio",
+                            
+                                            entidade: {
+                                                nome: entity.nome,
+                                                email: entity.email
+                                            },
+                            
+                                            utilizador: {
+                                                nome: req.user.name,
+                                                email: req.user.email,
+                                            },
+                            
+                                            data: dd+"/"+mm+"/"+yyyy,
+                                            tratado: false,
+                    
+                                            objetoID: "c"+dataObj.Code,
+                                            alterado: null,
+                                        });
+                                        
+                                        Pedido.createPedido(newPedido, function (err, request) {
+                                            if (err) {
+                                                console.log(err);
+                                                req.flash('error_msg', 'Ocorreu um erro a submeter o pedido! Tente novamente mais tarde');
+                                                req.send('Ocorreu um erro a submeter o pedido! Tente novamente mais tarde');
+                                            }
+                                            else {
+                                                Logging.logger.info('Novo pedido ' + request.tipo + ': '+request.numero+' submetido por '+req.user._id);
+                        
+                                                req.flash('success_msg', 'Pedido submetido com sucesso!');
+                                                res.send(request.numero);
+                                            }
+                                        });  
+                                    } 
+                                });
+                            }
+                        });
+
+                        //----------------------------------------------------------
+
                     })
                     .catch(error => console.error(error));
             }

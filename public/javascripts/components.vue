@@ -939,7 +939,7 @@ Vue.component('custom-table-waterfall', {
 
 Vue.component('hidden-table', {
     template: `
-        <accordion type="custom">
+        <accordion :type="tabClass">
             <panel :header="titulo" :is-open="open">
                 <table class="hidden-table">
                     <thead>
@@ -967,8 +967,14 @@ Vue.component('hidden-table', {
         'titulo',
         'cabecalho',
         'linhas',
-        'open'
+        'open',
+        'tableClass'
     ],
+    computed: {
+        tabClass: function(){
+            return this.tableClass ? this.tabClass : 'custom';
+        }
+    },
     components: {
         accordion: VueStrap.accordion,
         panel: VueStrap.panel,

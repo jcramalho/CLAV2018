@@ -40,8 +40,8 @@ var PedidoSchema = mongoose.Schema({
     data: {
         type: String
     },
-    tratado: {
-        type: Boolean
+    estado: {
+        type: String
     },
     objetoID: {
         type: String
@@ -59,6 +59,11 @@ module.exports.createPedido = function (newPedido, callback) {
 
 module.exports.getPedidoByNumber = function (n, callback) {
 	var query = { numero: n };
+	Pedido.findOne(query, callback);
+}
+
+module.exports.getPedidosByState = function (e, callback) {
+	var query = { estado: e };
 	Pedido.findOne(query, callback);
 }
 

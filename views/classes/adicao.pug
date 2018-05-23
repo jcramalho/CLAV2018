@@ -81,43 +81,47 @@ block corpo
                                 td(style="width: 10%")
                                     .info-label Nota(s) de Aplicação:
                                 td
-                                    textarea(
-                                        cols="72"
-                                        lines="5"
-                                        v-model="newAppNote"
-                                        @keyup.ctrl.enter="addNewAppNote" 
+                                    div(v-for="(note,index) in appNotes")
+                                        textarea(
+                                            cols="72"
+                                            lines="5"
+                                            v-model="appNotes[index].Note"
+                                        )
+                                        span.glyphicon.glyphicon-remove(
+                                            @click="appNotes.splice(index,1)"
+                                            style="padding-left: 5px; vertical-align:top"
+                                        )
+                                    
+                                    button(
+                                        style="margin-bottom:10px"
+                                        @click="appNotes.push({id:'',Note:''})"
                                     )
-                                    button(@click="addNewAppNote") Ok
-                                        
-                                    ul(v-if="appNotes && appNotes.length")
-                                        li(v-for="(note,index) in appNotes")
-                                            | {{note.Note}}
-                                            span.glyphicon.glyphicon-remove(
-                                                @click="appNotes.splice(index,1)"
-                                                style="padding-left: 20px"
-                                            )
+                                        | Nova nota
                                 
+
                             //- EXEMPLOS DE NOTAS DE APLICAçÃO                        
                             a(name="exemplos")
                             tr
                                 td(style="width: 10%")
                                     .info-label Exemplo(s) de Nota(s) de Aplicação:
                                 td
-                                    textarea(
-                                        cols="72"
-                                        lines="5"
-                                        v-model="newExAppNote"
-                                        @keyup.ctrl.enter="addNewExAppNote" 
+                                    div(v-for="(note,index) in exAppNotes")
+                                        textarea(
+                                            cols="72"
+                                            lines="5"
+                                            v-model="exAppNotes[index]"
+                                        )
+                                        span.glyphicon.glyphicon-remove(
+                                            @click="exAppNotes.splice(index,1)"
+                                            style="padding-left: 5px; vertical-align:top"
+                                        )
+                                    
+                                    button(
+                                        style="margin-bottom:10px"
+                                        @click="exAppNotes.push('')"
                                     )
-                                    button(@click="addNewExAppNote") Ok
-                            
-                                    ul(v-if="exAppNotes && exAppNotes.length")
-                                        li(v-for="(ex,index) in exAppNotes")
-                                            | {{ex}}
-                                            span.glyphicon.glyphicon-remove(
-                                                @click="exAppNotes.splice(index,1)"
-                                                style="padding-left: 20px"
-                                            )
+                                        | Novo exemplo
+
 
                             //- NOTAS DE EXCLUSÃO                        
                             a(name="notasE")
@@ -125,21 +129,22 @@ block corpo
                                 td(style="width: 10%")
                                     .info-label Nota(s) de Exclusão:
                                 td
-                                    textarea(
-                                        cols="72"
-                                        lines="5"
-                                        v-model="newDelNote"
-                                        @keyup.ctrl.enter="addNewDelNote" 
+                                    div(v-for="(note,index) in delNotes")
+                                        textarea(
+                                            cols="72"
+                                            lines="5"
+                                            v-model="delNotes[index].Note"
+                                        )
+                                        span.glyphicon.glyphicon-remove(
+                                            @click="delNotes.splice(index,1)"
+                                            style="padding-left: 5px; vertical-align:top"
+                                        )
+                                    
+                                    button(
+                                        style="margin-bottom:10px"
+                                        @click="delNotes.push({id:'',Note:''})"
                                     )
-                                    button(@click="addNewDelNote") Ok
-                                        
-                                    ul(v-if="delNotes && delNotes.length")
-                                        li(v-for="(note,index) in delNotes")
-                                            | {{note.Note}}
-                                            span.glyphicon.glyphicon-remove(
-                                                @click="delNotes.splice(index,1)"
-                                                style="padding-left: 20px"
-                                            )
+                                        | Nova nota
 
                             //- TERMOS DE ÍNDICE
                             a(name="termosI")
@@ -147,21 +152,21 @@ block corpo
                                 td(style="width: 10%")
                                     .info-label Termos de Índice:
                                 td
-                                    textarea(
-                                        cols="72"
-                                        lines="5"
-                                        v-model="newIndex"
-                                        @keyup.ctrl.enter="addNewIndex" 
+                                    div(v-for="(ti,index) in indexes")
+                                        input(
+                                            size="70    "
+                                            v-model="ti.Note"
+                                        )
+                                        span.glyphicon.glyphicon-remove(
+                                            @click="indexes.splice(index,1)"
+                                            style="padding-left: 5px; vertical-align:top"
+                                        )
+                                    
+                                    button(
+                                        style="margin-bottom:10px"
+                                        @click="indexes.push({id:'',Note:''})"
                                     )
-                                    button(@click="addNewIndex") Ok
-                                        
-                                    ul(v-if="indexes && indexes.length")
-                                        li(v-for="(i,index) in indexes")
-                                            | {{i.Note}}
-                                            span.glyphicon.glyphicon-remove(
-                                                @click="indexes.splice(index,1)"
-                                                style="padding-left: 20px"
-                                            )
+                                        | Nova nota
 
 
                     panel(header="Contexto de Avaliação" v-if="type>=3" is-open=true)
