@@ -20,7 +20,12 @@ Orgs.list = function () {
             }
             ?id rdf:type ?Tipo ;
                 clav:orgNome ?Nome ;
-                clav:orgSigla ?Sigla
+                clav:orgSigla ?Sigla .
+
+            MINUS{
+                ?id clav:status ?status
+                filter(?status!='A')
+            }
             filter(?Tipo!=owl:NamedIndividual)
         }`
     )
@@ -310,12 +315,24 @@ Orgs.updateOrg = function (dataObj) {
 }
 
 Orgs.deleteOrg = function (id) {
-    var deleteQuery = `
+    /*var deleteQuery = `
         DELETE {
             clav:${id} ?o ?p .
             ?s ?o clav:${id}
         }
         WHERE { ?s ?o ?p }
+    `;*/
+
+    var deleteQuery = `
+        DELETE {
+            clav:${id} clav:status ?status .
+        }
+        INSERT {
+            clav:${id} clav:status 'I' .
+        }
+        WHERE {
+            clav:${id} clav:status ?status .
+        }
     `;
 
     return client.query(deleteQuery).execute()
