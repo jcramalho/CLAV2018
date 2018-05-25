@@ -228,7 +228,7 @@ router.post('/', function (req, res) {
                                     else {
                                         if(!ent){
                                             entity = {
-                                                nome: "Sem entidade realcionada",
+                                                nome: "Sem entidade relacionada",
                                                 email: req.user.email
                                             }
                                         }

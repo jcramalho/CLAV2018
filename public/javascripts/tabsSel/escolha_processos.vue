@@ -33,6 +33,11 @@ var escolha = new Vue({
         message: "",
         createConfirm: false, 
     },
+    watch: {
+        activeTab: function(){
+            this.saveInfo();
+        }
+    },
     components: {
         tabs: VueStrap.tabs,
         tabGroup: VueStrap.tabGroup,
@@ -491,5 +496,6 @@ var escolha = new Vue({
         this.loadTipols();
         this.loadRestProcs();
         
+        this.loadSavedInfo();
     }
 })
