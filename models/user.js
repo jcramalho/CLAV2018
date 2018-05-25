@@ -77,6 +77,11 @@ var UserSchema = mongoose.Schema({
 			restantes: {
 				type: Array
 			},
+		},
+		tsNome: {
+			nome:{
+				type: String
+			}
 		}
 	}
 });

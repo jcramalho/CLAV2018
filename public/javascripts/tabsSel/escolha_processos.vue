@@ -406,6 +406,18 @@ var escolha = new Vue({
                     console.error(error);
                 });
         },
+        loadNome: function() {
+            this.$http.get("/users/load/tsNome")
+                .then(function (response) {
+                    content = response.body;
+                })
+                .then(function(){
+                    this.entidade.nome = content.nome;
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        },
         loadSavedInfo: function () {
             this.$http.get("/users/load/escolhaProcessos")
                 .then(function (response) {
@@ -491,6 +503,8 @@ var escolha = new Vue({
             "CLASSE",
             "TÍTULO"
         ];
+
+        this.loadNome();
 
         this.loadCommonProcs();
         this.loadTipols();
