@@ -251,7 +251,7 @@ block corpo
                                     table
                                         tr
                                             tabs
-                                                tab(:header="key" v-for="key in Object.keys(participantLists)")
+                                                tab(:header="partDic[key]" v-for="key in Object.keys(participantLists)")
                                                     custom-table-select(
                                                         v-if="orgsReady"
 
@@ -271,8 +271,7 @@ block corpo
                                             td(colspan="3")
                                                 ul
                                                     li(v-for="key in Object.keys(participantsSelected)" v-if="participantsSelected[key].length>0")
-                                                        b {{ key }}
-                                                            span(v-if="participantsSelected[key].length>1") es
+                                                        b {{ partDic[key] }}
                                                         ul
                                                             li(v-for="(p, index) in participantsSelectedInfo[key]")
                                                                 | {{ p[1] }} - {{ p[2] }}
@@ -370,7 +369,7 @@ block corpo
                                                 )
                                             td(style="padding-left:10px")
                                                 .info-label Forma de Contagem:
-                                            td
+                                            td(v-if="countsReady")
                                                 v-select.custom-select(
                                                     :options="countTypes"
                                                     v-model="pca.count"
@@ -406,6 +405,7 @@ block corpo
                                                     tr
                                                         td 
                                                             textarea(
+                                                                placeholder="Notas.."
                                                                 cols="72"
                                                                 lines="5"
                                                                 v-model="pca.criteria.new.content"
@@ -505,11 +505,38 @@ block corpo
                                         tr
                                             td
                                                 .info-label Destino:
-                                            td
-                                                input(
-                                                    size="50"
+                                            td(style="vertical-align:midle")
+                                                label(
+                                                    for="dfE"
+                                                    style="margin-right:5px;font-weight:normal"
+                                                ) Eliminação 
+                                                input#dfE(
+                                                    type="radio"
+                                                    value="E"
                                                     v-model="df.end"
-                                                )                                        
+                                                    style="margin-right:15px"
+                                                )  
+
+                                                label(
+                                                    for="dfC"
+                                                    style="margin-right:5px;font-weight:normal"
+                                                ) Conservação 
+                                                input#dfC(
+                                                    type="radio"
+                                                    value="C"
+                                                    v-model="df.end"
+                                                    style="margin-right:10px"
+                                                )  
+                                                
+                                                label(
+                                                    for="dfCP"
+                                                    style="margin-right:5px;font-weight:normal"
+                                                ) Conservação Parcial
+                                                input#dfCP(
+                                                    type="radio"
+                                                    value="CP"
+                                                    v-model="df.end"
+                                                )                                   
                                         //- JUSTIFICAÇÃO (CRITÉRIOS)
                                         tr
                                             td
@@ -531,6 +558,7 @@ block corpo
                                                     tr
                                                         td 
                                                             textarea(
+                                                                placeholder="Notas.."
                                                                 cols="72"
                                                                 lines="5"
                                                                 v-model="df.criteria.new.content"

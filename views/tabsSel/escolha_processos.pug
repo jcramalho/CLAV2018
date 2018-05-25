@@ -135,11 +135,24 @@ block corpo
                     ) A carregar...
 
         center
-            button.next(@click="activeTab--" :disabled="activeTab<=0") <
+            button.next(
+                @click="activeTab--" 
+                :disabled="activeTab<=0"
+                style="margin-right:10px"
+            ) <
             button(@click="saveInfo") Guardar
-            button.next(@click="activeTab++" :disabled="activeTab>=2") >
+            button.next(
+                @click="activeTab++" 
+                :disabled="activeTab>=2"
+                style="margin-left:10px"
+            ) >
         
 
+        button(
+            style="float:left"
+            @click="loadSavedInfo" 
+        ) Carregar Seleção Guardada
+        
         div(style="float:right")
             button(
                 style="float:right"

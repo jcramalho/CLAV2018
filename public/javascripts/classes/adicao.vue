@@ -90,7 +90,7 @@ var newClass = new Vue({
     },
     data: {
         nEdits: 0,
-        type: 1,
+        type: 3,
 
         parent: null,
         parents: null,
@@ -128,17 +128,26 @@ var newClass = new Vue({
 
         status: "H",
 
-        procType: null,
+        procType: "pc",
 
-        procTrans: null,
+        procTrans: "N",
+
+        partDic: {
+            Apreciador: "Apreciar",
+            Assessor: "Assessorar",
+            Comunicador: "Comunicar",
+            Decisor: "Decidir",
+            Executor: "Executar",
+            Iniciador: "Iniciar",
+        },
 
         participantLists: {
             Apreciador: [],
             Assessor: [],
             Comunicador: [],
             Decisor: [],
-            Executor: [],
             Iniciador: [],
+            Executor: [],
         },
         participantsSelected: {
             Apreciador: [],
@@ -231,6 +240,9 @@ var newClass = new Vue({
             }
         },
         countTypes: null,
+        subCountTypes: null,
+        countsReady: false,
+        subCountsReady: false,
 
         df: {
             end: null,
@@ -345,7 +357,31 @@ var newClass = new Vue({
                             }
                         });
 
-                    this.countssReady = true;
+                    this.countsReady = true;
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        },
+        loadSubCountTypes: function(){
+            var dataToParse = [];
+            var keys = ["id", "Label"];
+            var i = 0;
+
+            this.$http.get("/api/vocabulario/subFormasContagemPCA")
+                .then(function (response) {
+                    dataToParse = response.body;
+                })
+                .then(function () {
+                    this.subCountTypes = this.parse(dataToParse, keys)
+                        .map(function(a){
+                            return {
+                                label: a.Label,
+                                id: a.id,
+                            }
+                        });
+
+                    this.subCountsReady = true;
                 })
                 .catch(function (error) {
                     console.error(error);
@@ -609,9 +645,11 @@ var newClass = new Vue({
                         });
 
                     for (let type in this.participantLists) {
-                        this.participantLists[type] = JSON.parse(
-                            JSON.stringify(this.ownerList)
-                        );
+                        if(type!="Executor"){
+                            this.participantLists[type] = JSON.parse(
+                                JSON.stringify(this.ownerList)
+                            );
+                        }
                     }
 
                     this.orgsReady = true;
@@ -627,6 +665,9 @@ var newClass = new Vue({
                 if (partType) {
                     this.participantsSelectedInfo[partType].push(row.data);
                 }
+                else{
+                    this.participantLists.Executor.push(JSON.parse(JSON.stringify(row)));
+                }
             }
             else {
                 let index = list.indexOf(row.id);
@@ -635,6 +676,9 @@ var newClass = new Vue({
 
                     if (partType) {
                         this.participantsSelectedInfo[partType].splice(index, 1);
+                    }
+                    else {
+                        this.participantLists.splice(index, 1);
                     }
                 }
             }

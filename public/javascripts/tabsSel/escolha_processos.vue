@@ -446,6 +446,8 @@ var escolha = new Vue({
                 });
         },
         createSelTab: function (force) {
+            this.saveInfo();
+
             let ok=force;
 
             if(!ok){
@@ -510,6 +512,6 @@ var escolha = new Vue({
         this.loadTipols();
         this.loadRestProcs();
         
-        this.loadSavedInfo();
+        //this.loadSavedInfo();
     }
 })
