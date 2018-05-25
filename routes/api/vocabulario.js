@@ -14,4 +14,12 @@ router.get('/formasContagemPCA', function (req, res) {
         });
 })
 
+router.get('/subFormasContagemPCA', function (req, res) {
+    Vocabulario.subFormasContagemPCA()
+        .then(list => res.send(list))
+        .catch(function (error) {
+            console.error(error);
+        });
+})
+
 module.exports = router;

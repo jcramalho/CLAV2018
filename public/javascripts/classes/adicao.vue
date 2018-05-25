@@ -128,17 +128,26 @@ var newClass = new Vue({
 
         status: "H",
 
-        procType: null,
+        procType: "pc",
 
-        procTrans: null,
+        procTrans: "N",
+
+        partDic: {
+            Apreciador: "Apreciar",
+            Assessor: "Assessorar",
+            Comunicador: "Comunicar",
+            Decisor: "Decidir",
+            Executor: "Executar",
+            Iniciador: "Iniciar",
+        },
 
         participantLists: {
             Apreciador: [],
             Assessor: [],
             Comunicador: [],
             Decisor: [],
-            Executor: [],
             Iniciador: [],
+            Executor: [],
         },
         participantsSelected: {
             Apreciador: [],
@@ -210,6 +219,10 @@ var newClass = new Vue({
                 },
                 classes: [],
                 legislation: [],
+                pns: {
+                    CriterioJustificacaoUtilidadeAdministrativa: [],
+                    CriterioJustificacaoComplementaridadeInfo: [],
+                },
                 types: [
                     {
                         value:"CriterioJustificacaoLegal",
@@ -226,11 +239,21 @@ var newClass = new Vue({
                         label:"Critério Gestionário",
                         rel: 0
                     },
+                    {
+                        value:"CriterioJustificacaoComplementaridadeInfo",
+                        label:"Critério Complementaridade Informacional",
+                        rel: 2
+                    },
                 ],
                 list: []
             }
         },
         countTypes: null,
+        subCountTypes: null,
+        countsReady: false,
+        subCountsReady: false,
+        pnsTableHeader: ["#","Código","Título"],
+        pnsTableWidth: ["4%","16%","81%"],
 
         df: {
             end: null,
@@ -243,6 +266,10 @@ var newClass = new Vue({
                 },
                 classes: [],
                 legislation: [],
+                pns: {
+                    CriterioJustificacaoDensidadeInfo: [],
+                    CriterioJustificacaoComplementaridadeInfo: [],
+                },
                 types: [
                     {
                         value:"CriterioJustificacaoLegal",
@@ -308,6 +335,70 @@ var newClass = new Vue({
             else{
                 this.checkCodeAvailability(this.code);
             }
+        },
+        relationsSelected: {
+            deep: true,
+            handler: function() {
+                let pnsCI=[]; //complementaridade info - "eComplementarDe"
+                let pnsUA=[]; //utilidade administrativa - "eSuplementoDe"
+                let pnsDI=[]; //Densidade informacional - "eSinteseDe"
+                let i;
+
+                //complementaridade info
+                pnsCI = this.relationsSelected.filter(
+                    function(a) {
+                        return a.relType=="eComplementarDe";
+                    }
+                );
+
+                i=0;
+                this.pca.criteria.pns.CriterioJustificacaoComplementaridadeInfo = pnsCI.map(
+                    function(a){
+                        return {
+                            data: [i++,a.code,a.name],
+                            id: a.id,
+                            selected: false
+                        }
+                    }
+                );
+                this.df.criteria.pns.CriterioJustificacaoComplementaridadeInfo = JSON.parse(JSON.stringify(this.pca.criteria.pns.CriterioJustificacaoComplementaridadeInfo));
+
+                //utilidade administrativa
+                pnsUA = this.relationsSelected.filter(
+                    function(a) {
+                        return a.relType=="eSuplementoDe";
+                    }
+                );
+
+                i=0;
+                this.pca.criteria.pns.CriterioJustificacaoUtilidadeAdministrativa = pnsUA.map(
+                    function(a){
+                        return {
+                            data: [i++,a.code,a.name],
+                            id: a.id,
+                            selected: false
+                        }
+                    }
+                );
+
+                //Densidade informacional
+                pnsDI = this.relationsSelected.filter(
+                    function(a) {
+                        return a.relType=="eSuplementoDe";
+                    }
+                );
+
+                i=0;
+                this.df.criteria.pns.CriterioJustificacaoDensidadeInfo = pnsDI.map(
+                    function(a){
+                        return {
+                            data: [i++,a.code,a.name],
+                            id: a.id,
+                            selected: false
+                        }
+                    }
+                );
+            }
         }
     },
     methods: {
@@ -345,7 +436,31 @@ var newClass = new Vue({
                             }
                         });
 
-                    this.countssReady = true;
+                    this.countsReady = true;
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        },
+        loadSubCountTypes: function(){
+            var dataToParse = [];
+            var keys = ["id", "Label"];
+            var i = 0;
+
+            this.$http.get("/api/vocabulario/subFormasContagemPCA")
+                .then(function (response) {
+                    dataToParse = response.body;
+                })
+                .then(function () {
+                    this.subCountTypes = this.parse(dataToParse, keys)
+                        .map(function(a){
+                            return {
+                                label: a.Label,
+                                id: a.id,
+                            }
+                        });
+
+                    this.subCountsReady = true;
                 })
                 .catch(function (error) {
                     console.error(error);
@@ -401,6 +516,25 @@ var newClass = new Vue({
                 }
             }
         },   
+        pnSelectedCrit: function (row, obj) {
+            if (!row.selected) {
+                obj.criteria.new.pns.push({
+                    id: row.id,
+                    Code: row.data[1],
+                    Title: row.data[2]
+                });
+            }
+            else {
+                let i=0;
+                for(let p of obj.criteria.new.pns){
+                    if(row.id==p.id){break;}
+                    i++;
+                }
+                if(i<obj.criteria.new.pns.length){
+                    obj.criteria.new.pns.splice(i,1);
+                }
+            }
+        },   
         addNewJustCrit: function(obj){
             obj.criteria.list.push(
                 JSON.parse(JSON.stringify(obj.criteria.new))
@@ -412,6 +546,10 @@ var newClass = new Vue({
                 pns: [],
                 leg: [],
             };
+
+            for(type in obj.criteria.pns){
+                this.cleanSelection(obj.criteria.pns[type]);
+            }
 
             this.cleanSelection(obj.criteria.classes);
             this.cleanSelection(obj.criteria.legislation);
@@ -609,9 +747,11 @@ var newClass = new Vue({
                         });
 
                     for (let type in this.participantLists) {
-                        this.participantLists[type] = JSON.parse(
-                            JSON.stringify(this.ownerList)
-                        );
+                        if(type!="Executor"){
+                            this.participantLists[type] = JSON.parse(
+                                JSON.stringify(this.ownerList)
+                            );
+                        }
                     }
 
                     this.orgsReady = true;
@@ -624,8 +764,11 @@ var newClass = new Vue({
             if (!row.selected) {
                 list.push(row.id);
 
-                if (partType) {
+                if (partType && partType!='dono') {
                     this.participantsSelectedInfo[partType].push(row.data);
+                }
+                if (partType && partType=='dono') {
+                    this.participantLists.Executor.push(JSON.parse(JSON.stringify(row)));
                 }
             }
             else {
@@ -635,6 +778,9 @@ var newClass = new Vue({
 
                     if (partType) {
                         this.participantsSelectedInfo[partType].splice(index, 1);
+                    }
+                    else {
+                        this.participantLists.splice(index, 1);
                     }
                 }
             }

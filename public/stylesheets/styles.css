@@ -322,12 +322,13 @@ a .linkbox:hover {
 .panel-linkbox{
     border: none;
     margin: 0px;
+    margin-bottom: -5px !important;
 }
 
 .panel-linkbox .panel-body{
-    padding: 0px;
     padding-top: 5px !important;
     padding-left: 30px !important;
+    padding-bottom: 10px;
 }
 
 .labelbox {
@@ -353,9 +354,14 @@ a .linkbox:hover {
     background: rgb(177, 189, 255);
 }
 
+.panel-noticiabox .panel-body{
+    font-size: 1pc;
+}
+
 .panel-noticiabox{
     border-color: rgb(177, 189, 255);
     margin: 2px;
+    font-family: 'Times New Roman', Times, serif;
 }
 
 .infobox {
