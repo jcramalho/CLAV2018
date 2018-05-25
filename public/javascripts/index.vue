@@ -41,6 +41,10 @@ new Vue({
                 submeter: '#',
             },
         ],
+    },
+    components:{
+        accordion: VueStrap.accordion,
+        panel: VueStrap.panel
     }
 })
 
