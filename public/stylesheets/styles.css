@@ -294,6 +294,42 @@ a .linkbox:hover {
     background-image: linear-gradient(to top,#c5cae9 0,#9fa8da 100%);
 }
 
+.panel-linkbox .panel-heading{
+    border-color: #7986cb;
+    color: #1a237e;
+    background-image: linear-gradient(to bottom,#e8eaf6 0,#c5cae9 100%);
+    border-style: solid;
+    border-width: 1px;
+    padding: 7px;
+    margin-bottom: 0px;
+    font-weight: bolder;
+    text-align: center;
+}
+
+.panel-linkbox .panel-title{
+    font-weight: bold;
+}
+
+.panel-linkbox button{
+    color: #1a237e;
+    font-weight: normal;
+}
+
+.panel-linkbox .panel-heading:hover{
+    background: linear-gradient(to top,#c5cae9 0,#9fa8da 100%);
+}
+
+.panel-linkbox{
+    border: none;
+    margin: 0px;
+}
+
+.panel-linkbox .panel-body{
+    padding: 0px;
+    padding-top: 5px !important;
+    padding-left: 30px !important;
+}
+
 .labelbox {
     color: #E8EAF6;
     background: #304FFE;

@@ -12,11 +12,22 @@ block corpo
                 td
                     .labelbox(style="width:20%")
                         | Consulte:
-            tr(v-for="linha in linhas")
-                td(style="padding-left:50px !important")
-                    a(:href="linha.consultar")
-                        .linkbox(style="margin-bottom:0px")
-                            | {{linha.valor}}
+            
+            if !user
+                tr(v-for="linha in linhas")
+                    td(style="padding-left:50px !important")
+                        a(:href="linha.consultar")
+                            .linkbox(style="margin-bottom:0px")
+                                | {{linha.valor}}
+            else
+                tr
+                    td(style="padding-left:50px !important")
+                        accordion(type="linkbox")
+                            panel(v-for="(linha,index) in linhas" :header="linha.valor" :key="index")
+                                a(:href="linha.consultar")
+                                    button Consultar
+                                a(:href="linha.submeter")
+                                    button Submeter
             tr 
                 td(style="padding-top:15px !important")
                     .labelbox
