@@ -139,14 +139,12 @@ block corpo
             button(@click="saveInfo") Guardar
             button.next(@click="activeTab++" :disabled="activeTab>=2") >
         
+
         div(style="float:right")
-            button(@click="loadSavedInfo") Continuar Trabalho
-
-
-        div(style="align:left")
             button(
+                style="float:right"
                 @click="createSelTab(0)" 
-            ) Criar Tabela de Seleção
+            ) Submeter
 
             div(v-html="message")
 

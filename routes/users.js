@@ -62,17 +62,24 @@ router.post('/pedido', Auth.isLoggedInAPI, function (req, res) {
         }
         else {
             var num = count+1+"-"+yyyy;
+            var entity;
 
-            Entidade.getEntidadeByRepresentante(req.user.email, function(err, entity){
+            Entidade.getEntidadeByRepresentante(req.user.email, function(err, ent){
                 if (err) {
                     console.log(err);
                     req.send("Ocorreu um erro!");    
                 }
-                else if(!entity) {
-                    console.log("Utilizador sem entidade relacionada");
-                    req.send("Ocorreu um erro! Sem entidade associada!"); 
-                }
                 else{
+                    if(!ent){
+                        entity = {
+                            nome: "Sem entidade relacionada",
+                            email: req.user.email
+                        }
+                    }
+                    else {
+                        entity = ent;
+                    }
+
                     var newPedido = new Pedido({
                         numero: num,
                         tipo: dataObj.type,
