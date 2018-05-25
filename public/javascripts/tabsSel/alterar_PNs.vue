@@ -1168,7 +1168,6 @@ var alt = new Vue({
                 }
                 else {
                     this.message = response.body;
-                    console.log(this.message);
                 }
 
                 this.$refs.spinner.hide();
