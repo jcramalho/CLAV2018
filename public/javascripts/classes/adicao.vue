@@ -210,6 +210,7 @@ var newClass = new Vue({
         pca: {
             dueDate: null,
             count: {label:"Forma de Contagem",id:null},
+            subcount: {label:"Sub-forma de Contagem",id:null},
             criteria: {
                 new: {
                     type: {label:"Tipo de Critério",rel:0},
@@ -249,9 +250,9 @@ var newClass = new Vue({
             }
         },
         countTypes: null,
-        subCountTypes: null,
+        subcountTypes: null,
         countsReady: false,
-        subCountsReady: false,
+        subcountsReady: false,
         pnsTableHeader: ["#","Código","Título"],
         pnsTableWidth: ["4%","16%","81%"],
 
@@ -452,7 +453,7 @@ var newClass = new Vue({
                     dataToParse = response.body;
                 })
                 .then(function () {
-                    this.subCountTypes = this.parse(dataToParse, keys)
+                    this.subcountTypes = this.parse(dataToParse, keys)
                         .map(function(a){
                             return {
                                 label: a.Label,
@@ -460,7 +461,7 @@ var newClass = new Vue({
                             }
                         });
 
-                    this.subCountsReady = true;
+                    this.subcountsReady = true;
                 })
                 .catch(function (error) {
                     console.error(error);
@@ -1094,5 +1095,6 @@ var newClass = new Vue({
         this.loadLegs();
         this.loadClasses();
         this.loadCountTypes();
+        this.loadSubCountTypes();
     }
 })

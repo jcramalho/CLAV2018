@@ -761,13 +761,8 @@ Classes.createClass = function (data) {
             clav:${id} clav:temPCA clav:pca_${id} .
         `;
 
-        if(data.PCA.count.id=='vc_pcaFormaContagem_disposicaoLegal'){
-            createQuery+= `
-                clav:vc_pcaSubformaContagem_${id} rdf:type owl:NamedIndividual ,
-                        skos:Concept ;
-                    skos:scopeNote '${data.PCA.subcount}' .
-                clav:pca_${id} clav:pcaSubformaContagem clav:vc_pcaSubformaContagem_${id} .
-            `;
+        if(data.PCA.count.id=='vc_pcaFormaContagem_disposicaoLegal' && data.PCA.subcount.id){
+            createQuery+= `clav:pca_${id} clav:pcaSubformaContagem clav:${data.PCA.subcount.id} .`;
         }
 
         if(data.PCA.criteria){
