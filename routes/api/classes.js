@@ -1,8 +1,8 @@
 var Logging = require('../../controllers/logging');
 var Auth = require('../../controllers/auth.js');
+
 var Classes = require('../../controllers/api/classes.js');
 var TermosIndice = require('../../controllers/api/termosIndice.js');
-
 
 var Pedido = require('../../models/pedido');
 var Entidade = require('../../models/entidade');
