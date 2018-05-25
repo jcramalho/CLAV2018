@@ -3,8 +3,13 @@ block corpo
     div(style="vertical-align:middle;width:1400px")
         .titlebox(style="width:30%;display:inline-block")
             | Designação de Nova Tabela de Seleção
-        .textbox(style="width:65%;display:inline-block")
-                    | Tabela de seleção #{entidade}
+        .textbox(style="width:65%;display:inline-block")#nome
+            | Tabela de seleção 
+            input(
+                size=70
+                placeholder=entidade
+                v-model="nome"
+            ) 
 
     #passos.panel-custom(style="width:1400px")
         //.titlebox
