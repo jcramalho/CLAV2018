@@ -234,7 +234,7 @@ block corpo
                                         
                                         class-table='table table-condensed'
 
-                                        @select-clicked="orgSelected($event,selectedOwners)"
+                                        @select-clicked="orgSelected($event,selectedOwners,'dono')"
                                     )
                                     h4(
                                         v-else
@@ -418,23 +418,40 @@ block corpo
                                                             accordion.info-classe
                                                                 //- PROCESSOS
                                                                 panel(v-if="pca.criteria.new.type.rel==2" header="Processos Relacionados")
-                                                                    
-                                                                    custom-table-waterfall(
-                                                                        v-if="classesReady"
+                                                                    //
+                                                                        custom-table-waterfall(
+                                                                            v-if="classesReady"
 
-                                                                        select-left="true"
-                                                                        pages-on="true"
-                                                                        
-                                                                        :suffix="pca"
+                                                                            select-left="true"
+                                                                            pages-on="true"
+                                                                            
+                                                                            :suffix="pca"
 
-                                                                        :header="classesTableHeader"
-                                                                        :complete-rows="pca.criteria.classes"
-                                                                        :cwidth="cwidth"
-                                                                        :n-edits="nEdits"
+                                                                            :header="classesTableHeader"
+                                                                            :complete-rows="pca.criteria.classes"
+                                                                            :cwidth="cwidth"
+                                                                            :n-edits="nEdits"
+                                                                            
+                                                                            table-class='table table-hover'
+                                                                            
+                                                                            @left-select-clicked="selectClickedCrit(pca, $event)"
+                                                                        )
+                                                                        h4(
+                                                                            v-else
+                                                                        ) A carregar...
+
+                                                                    //
+                                                                    custom-table-select(
+                                                                        v-if="pca.criteria.new.type.value"
+
+                                                                        :header="pnsTableHeader"
+                                                                        :complete-rows="pca.criteria.pns[pca.criteria.new.type.value]"
+                                                                        ready="true"
+                                                                        :cwidth="pnsTableWidth"
                                                                         
-                                                                        table-class='table table-hover'
-                                                                        
-                                                                        @left-select-clicked="selectClickedCrit(pca, $event)"
+                                                                        class-table='table table-condensed'
+
+                                                                        @select-clicked="pnSelectedCrit($event,pca)"
                                                                     )
                                                                     h4(
                                                                         v-else
@@ -571,23 +588,39 @@ block corpo
                                                             accordion.info-classe
                                                                 //- PROCESSOS
                                                                 panel(v-if="df.criteria.new.type.rel==2" header="Processos Relacionados")
-                                                                    
-                                                                    custom-table-waterfall(
-                                                                        v-if="classesReady"
+                                                                    //
+                                                                        custom-table-waterfall(
+                                                                            v-if="classesReady"
 
-                                                                        select-left="true"
-                                                                        pages-on="true"
-                                                                        
-                                                                        :suffix="df"
+                                                                            select-left="true"
+                                                                            pages-on="true"
+                                                                            
+                                                                            :suffix="df"
 
-                                                                        :header="classesTableHeader"
-                                                                        :complete-rows="df.criteria.classes"
-                                                                        :cwidth="cwidth"
-                                                                        :n-edits="nEdits"
+                                                                            :header="classesTableHeader"
+                                                                            :complete-rows="df.criteria.classes"
+                                                                            :cwidth="cwidth"
+                                                                            :n-edits="nEdits"
+                                                                            
+                                                                            table-class='table table-hover'
+                                                                            
+                                                                            @left-select-clicked="selectClickedCrit(df, $event)"
+                                                                        )
+                                                                        h4(
+                                                                            v-else
+                                                                        ) A carregar...
+
+                                                                    custom-table-select(
+                                                                        v-if="df.criteria.new.type.value"
+
+                                                                        :header="pnsTableHeader"
+                                                                        :complete-rows="df.criteria.pns[df.criteria.new.type.value]"
+                                                                        ready="true"
+                                                                        :cwidth="pnsTableWidth"
                                                                         
-                                                                        table-class='table table-hover'
-                                                                        
-                                                                        @left-select-clicked="selectClickedCrit(df, $event)"
+                                                                        class-table='table table-condensed'
+
+                                                                        @select-clicked="pnSelectedCrit($event,df)"
                                                                     )
                                                                     h4(
                                                                         v-else

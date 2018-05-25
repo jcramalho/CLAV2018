@@ -90,7 +90,7 @@ var newClass = new Vue({
     },
     data: {
         nEdits: 0,
-        type: 3,
+        type: 1,
 
         parent: null,
         parents: null,
@@ -219,6 +219,10 @@ var newClass = new Vue({
                 },
                 classes: [],
                 legislation: [],
+                pns: {
+                    CriterioJustificacaoUtilidadeAdministrativa: [],
+                    CriterioJustificacaoComplementaridadeInfo: [],
+                },
                 types: [
                     {
                         value:"CriterioJustificacaoLegal",
@@ -235,6 +239,11 @@ var newClass = new Vue({
                         label:"Critério Gestionário",
                         rel: 0
                     },
+                    {
+                        value:"CriterioJustificacaoComplementaridadeInfo",
+                        label:"Critério Complementaridade Informacional",
+                        rel: 2
+                    },
                 ],
                 list: []
             }
@@ -243,6 +252,8 @@ var newClass = new Vue({
         subCountTypes: null,
         countsReady: false,
         subCountsReady: false,
+        pnsTableHeader: ["#","Código","Título"],
+        pnsTableWidth: ["4%","16%","81%"],
 
         df: {
             end: null,
@@ -255,6 +266,10 @@ var newClass = new Vue({
                 },
                 classes: [],
                 legislation: [],
+                pns: {
+                    CriterioJustificacaoDensidadeInfo: [],
+                    CriterioJustificacaoComplementaridadeInfo: [],
+                },
                 types: [
                     {
                         value:"CriterioJustificacaoLegal",
@@ -319,6 +334,70 @@ var newClass = new Vue({
             }
             else{
                 this.checkCodeAvailability(this.code);
+            }
+        },
+        relationsSelected: {
+            deep: true,
+            handler: function() {
+                let pnsCI=[]; //complementaridade info - "eComplementarDe"
+                let pnsUA=[]; //utilidade administrativa - "eSuplementoDe"
+                let pnsDI=[]; //Densidade informacional - "eSinteseDe"
+                let i;
+
+                //complementaridade info
+                pnsCI = this.relationsSelected.filter(
+                    function(a) {
+                        return a.relType=="eComplementarDe";
+                    }
+                );
+
+                i=0;
+                this.pca.criteria.pns.CriterioJustificacaoComplementaridadeInfo = pnsCI.map(
+                    function(a){
+                        return {
+                            data: [i++,a.code,a.name],
+                            id: a.id,
+                            selected: false
+                        }
+                    }
+                );
+                this.df.criteria.pns.CriterioJustificacaoComplementaridadeInfo = JSON.parse(JSON.stringify(this.pca.criteria.pns.CriterioJustificacaoComplementaridadeInfo));
+
+                //utilidade administrativa
+                pnsUA = this.relationsSelected.filter(
+                    function(a) {
+                        return a.relType=="eSuplementoDe";
+                    }
+                );
+
+                i=0;
+                this.pca.criteria.pns.CriterioJustificacaoUtilidadeAdministrativa = pnsUA.map(
+                    function(a){
+                        return {
+                            data: [i++,a.code,a.name],
+                            id: a.id,
+                            selected: false
+                        }
+                    }
+                );
+
+                //Densidade informacional
+                pnsDI = this.relationsSelected.filter(
+                    function(a) {
+                        return a.relType=="eSuplementoDe";
+                    }
+                );
+
+                i=0;
+                this.df.criteria.pns.CriterioJustificacaoDensidadeInfo = pnsDI.map(
+                    function(a){
+                        return {
+                            data: [i++,a.code,a.name],
+                            id: a.id,
+                            selected: false
+                        }
+                    }
+                );
             }
         }
     },
@@ -437,6 +516,25 @@ var newClass = new Vue({
                 }
             }
         },   
+        pnSelectedCrit: function (row, obj) {
+            if (!row.selected) {
+                obj.criteria.new.pns.push({
+                    id: row.id,
+                    Code: row.data[1],
+                    Title: row.data[2]
+                });
+            }
+            else {
+                let i=0;
+                for(let p of obj.criteria.new.pns){
+                    if(row.id==p.id){break;}
+                    i++;
+                }
+                if(i<obj.criteria.new.pns.length){
+                    obj.criteria.new.pns.splice(i,1);
+                }
+            }
+        },   
         addNewJustCrit: function(obj){
             obj.criteria.list.push(
                 JSON.parse(JSON.stringify(obj.criteria.new))
@@ -448,6 +546,10 @@ var newClass = new Vue({
                 pns: [],
                 leg: [],
             };
+
+            for(type in obj.criteria.pns){
+                this.cleanSelection(obj.criteria.pns[type]);
+            }
 
             this.cleanSelection(obj.criteria.classes);
             this.cleanSelection(obj.criteria.legislation);
@@ -662,10 +764,10 @@ var newClass = new Vue({
             if (!row.selected) {
                 list.push(row.id);
 
-                if (partType) {
+                if (partType && partType!='dono') {
                     this.participantsSelectedInfo[partType].push(row.data);
                 }
-                else{
+                if (partType && partType=='dono') {
                     this.participantLists.Executor.push(JSON.parse(JSON.stringify(row)));
                 }
             }
