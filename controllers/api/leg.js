@@ -4,13 +4,21 @@ var Leg = module.exports
 
 Leg.list = function () {
     return client.query(
-        `SELECT * WHERE { 
-                ?id rdf:type clav:Legislacao;
-                    clav:diplomaData ?Data;
-                    clav:diplomaNumero ?Número;
-                    clav:diplomaTipo ?Tipo;
-                    clav:diplomaTitulo ?Titulo
-            }`
+        `SELECT  
+            ?id ?Data ?Número ?Tipo ?Titulo
+            (GROUP_CONCAT(CONCAT(STR(?Ent),"::",?EntSigla); SEPARATOR=";") AS ?Entidades)
+        WHERE { 
+            ?id rdf:type clav:Legislacao;
+                clav:diplomaData ?Data;
+                clav:diplomaNumero ?Número;
+                clav:diplomaTipo ?Tipo;
+                clav:diplomaTitulo ?Titulo.
+            optional{
+                ?id clav:diplomaEntidade ?Ent.
+                ?Ent clav:orgSigla ?EntSigla;
+            }
+        }
+        Group by ?id ?Data ?Número ?Tipo ?Titulo`
     )
         .execute()
         //getting the content we want
@@ -22,13 +30,23 @@ Leg.list = function () {
 
 Leg.stats = function (id) {
     var fetchQuery = `
-            SELECT * WHERE { 
-                    clav:${id} clav:diplomaData ?Data;
-                    clav:diplomaNumero ?Número;
-                    clav:diplomaTipo ?Tipo;
-                    clav:diplomaTitulo ?Titulo;
-                    clav:diplomaLink ?Link;
-            }`;
+        SELECT  
+            ?Data ?Número ?Tipo ?Titulo ?Link
+            (GROUP_CONCAT(CONCAT(STR(?Ent),"::",?EntSigla,"::",?EntNome); SEPARATOR=";") AS ?Entidades)
+        WHERE { 
+            clav:${id} clav:diplomaData ?Data;
+                clav:diplomaNumero ?Número;
+                clav:diplomaTipo ?Tipo;
+                clav:diplomaTitulo ?Titulo;
+                clav:diplomaLink ?Link;
+
+            OPTIONAL{
+                clav:${id} clav:diplomaEntidade ?Ent.
+                ?Ent clav:orgSigla ?EntSigla;
+                     clav:orgNome ?EntNome.
+            }
+        } GROUP BY ?Data ?Número ?Tipo ?Titulo ?Link
+    `;
 
     return client.query(fetchQuery)
         .execute()

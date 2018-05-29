@@ -33,6 +33,9 @@ var leg = new Vue({
                 new: "",
                 edit: false
             },
+            org: {
+                original: []
+            }
         },
         content: [],
         message: "",
@@ -124,6 +127,21 @@ var leg = new Vue({
             this.legData.type.original=this.content[0].Tipo.value;
             this.legData.title.original=this.content[0].Titulo.value;
             this.legData.link.original=this.content[0].Link.value;
+
+            let ent = this.content[0].Entidades.value;
+
+            if(ent.length>0){
+                this.legData.org.original = ent.split(";").map(
+                    function(e){
+                        let data = e.split("::");
+                        return {
+                            id: data[0].replace(/[^#]+#(.*)/, '$1'),
+                            sigla: data[1],
+                            nome: data[2]
+                        }
+                    }
+                );
+            }
         
             this.ready=true;
         },

@@ -30,7 +30,23 @@ Vue.component('custom-table-simple', {
                 </thead>
                 <tbody name="table">
                     <tr v-for="(row,index) in rowsShow" :key="row[0]" @click="rowClick(index)">
-                        <td v-if="index>0" v-for="(item,index) in row" class="custom-table-cell">{{ item }}</td>
+                        <td 
+                            v-if="index>0" 
+                            v-for="(item,index) in row" 
+                            class="custom-table-cell"
+                        >
+                            <div 
+                                v-if="item.charAt(0)!='<'"
+                                class="custom-table-text" 
+                                v-html="item"
+                                :title="item"
+                            ></div>
+                            <div 
+                                v-else
+                                class="custom-table-text" 
+                                v-html="item"
+                            ></div>
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -240,7 +256,11 @@ Vue.component('custom-table-select', {
                             class="custom-table-cell-select"
                             @click="selectRow(index)"
                         >
-                            {{ item }}
+                            <div 
+                                class="custom-table-text" 
+                                v-html="item"
+                                :title="item"
+                            ></div>
                         </td>
                     </tr>
                 </tbody>
@@ -468,7 +488,7 @@ Vue.component('row-waterfall', {
 
                             <td v-if="row.content[1]" class="cascata-texto" @click="rowClicked">
                                 <div>
-                                    <div style="float:left">
+                                    <div style="float:left" :title="row.content[1]">
                                         {{ row.content[1] }}
                                     </div>
                                     <div

@@ -86,6 +86,36 @@ block corpo
                                     class="drop-row"
                                 )
 
+                    //- Entidades
+                    tr
+                        td(style="width:12%")
+                            .info-label Entidade(s):
+                        //td(v-if="legData.org.edit" style="width:80%")
+                            input(
+                                size="50"
+                                v-model="legData.org.new"
+                                :placeholder="legData.org.original"
+                            )
+                        td( style="width:80%")
+                            ul
+                                li(v-for="org in legData.org.original")
+                                    a(:href="'/organizacoes/consultar/'+org.id") {{org.sigla}}
+                                    |  - {{org.nome}}
+
+
+                        //if user
+                            td
+                                label(
+                                    for="legData.org.edit"
+                                    :class="[legData.org.edit ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
+                                )
+                                input(
+                                    id="legData.org.edit"
+                                    type="checkbox"
+                                    v-model="legData.org.edit"
+                                    class="drop-row"
+                                )
+
                     //- Data
                     tr
                         td(style="width:12%")

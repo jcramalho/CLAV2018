@@ -219,6 +219,11 @@
     cursor: hand !important;
 }
 
+.custom-table-text {
+    overflow: hidden; 
+    text-overflow: ellipsis;
+}
+
 .custom-table-cell-select {
     max-width: 0; 
     overflow: hidden; 
