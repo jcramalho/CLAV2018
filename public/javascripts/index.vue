@@ -16,13 +16,15 @@ new Vue({
                 submeter: '/classes/adicionar',
                 newCons: 'Consultar e propor alteração',
                 newSub: 'Submeter novo PN',
-                text: '<p class="info-text">Estrutura de classes da “Lista Consolidada para a classificação e avaliação da informação pública” que atualmente se encontra disponível. Inclui os níveis referentes aos processos de negócio da Administração Pública. Para novos contributos, faça Login.</p>'
+                text: '<p class="info-text">Estrutura de classes da “Lista Consolidada para a classificação e avaliação da informação pública” que atualmente se encontra disponível. Inclui os níveis referentes aos processos de negócio da Administração Pública.</p>',
+                notlogged: 'Para novos contributos, faça Login.'
             },
             {
                 valor: 'Tabelas de Seleção',
                 consultar: '/tabelasSelecao',
                 submeter: '/tabelasSelecao/submeter/passos',
-                text: '<p class="info-text">Lista das Tabelas de seleção atualmente aprovadas. Para novas propostas, faça Login.</p>'
+                text: '<p class="info-text">Lista das Tabelas de seleção atualmente aprovadas.</p>',
+                notlogged: 'Para novas propostas, faça Login.'
             },
             {
                 valor: 'Autos de Eliminação (Em desenvolvimento)',
@@ -33,13 +35,15 @@ new Vue({
                 valor: 'Entidades',
                 consultar: '/organizacoes',
                 submeter: '/organizacoes/adicionar',
-                text: '<p class="info-text">Lista das entidades ou tipologias de entidades que estão envolvidas nos processos de negócio da Administração Pública e que foram identificadas até ao momento. Em atualização constante. Para novas propostas, faça Login.</p>'
+                text: '<p class="info-text">Lista das entidades ou tipologias de entidades que estão envolvidas nos processos de negócio da Administração Pública e que foram identificadas até ao momento. Em atualização constante.</p>',
+                notlogged: 'Para novas propostas, faça Login.'
             },
             {
                 valor: 'Legislação',
                 consultar: '/legislacao',
                 submeter: '/legislacao/adicionar',
-                text: '<p class="info-text">Lista da legislação que enquadra os processos de negócio da Administração Pública e que foi identificada até ao momento. Em atualização constante. Para novas propostas, faça Login.</p>'
+                text: '<p class="info-text">Lista da legislação que enquadra os processos de negócio da Administração Pública e que foi identificada até ao momento. Em atualização constante.</p>',
+                notlogged: 'Para novas propostas, faça Login.'
             },
             {
                 valor: 'Estatísticas (Em desenvolvimento)',

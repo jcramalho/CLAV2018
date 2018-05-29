@@ -105,6 +105,15 @@ var alt = new Vue({
         pageReady: false,
 
         editedClasses: [],
+        
+        participationsDic: {
+            Apreciador: "Apreciar",
+            Assessor: "Assessorar",
+            Comunicador: "Comunicar",
+            Decisor: "Decidir",
+            Executor: "Executar",
+            Iniciador: "Iniciar"
+        }
     },
     components: {
         modal: VueStrap.modal,
