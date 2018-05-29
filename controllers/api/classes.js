@@ -78,8 +78,8 @@ Classes.completeData = function (classes) {
             ?ProcTrans 
             (group_concat(distinct ?Exemplo;separator="%%") as ?Exemplos) 
             (group_concat(distinct ?Dono;separator="%%") as ?Donos) 
-            (group_concat(distinct ?NotaA;separator="%%") as ?NotasA) 
-            (group_concat(distinct ?NotaE;separator="%%") as ?NotasE) 
+            (group_concat(distinct Concat(STR(?NotaA),"::",?NotaACont);separator="%%") as ?NotasA) 
+            (group_concat(distinct Concat(STR(?NotaE),"::",?NotaECont);separator="%%") as ?NotasE)
             (group_concat(distinct ?Participante1;separator="%%") as ?Parts1) 
             (group_concat(distinct ?Participante2;separator="%%") as ?Parts2) 
             (group_concat(distinct ?Participante3;separator="%%") as ?Parts3) 
@@ -120,9 +120,11 @@ Classes.completeData = function (classes) {
             }
             OPTIONAL {
                 ?id clav:temNotaAplicacao ?NotaA.
+        		?NotaA clav:conteudo ?NotaACont.
             }
             OPTIONAL {
                 ?id clav:temNotaExclusao ?NotaE.
+        		?NotaE clav:conteudo ?NotaECont.
             }
             OPTIONAL {
                 ?id clav:temParticipanteApreciador ?Participante1.
@@ -413,18 +415,19 @@ Classes.criteria = function (criteria) {
             VALUES ?id { ${'clav:' + criteria.join(' clav:')} }
             ?id rdf:type ?Tipo ;
                 clav:conteudo ?Conteudo .
+
             OPTIONAL {
                 ?id clav:temLegislacao ?leg .
                 ?leg clav:diplomaNumero ?LegNumero ;
                     clav:diplomaTipo ?LegTipo .
             }
+
             OPTIONAL {
-                ?id clav:temProcessoRelacionado ?proc .
-                ?proc clav:codigo ?Codigo ;
-                      clav:titulo ?Titulo .
-            }
-            OPTIONAL {
-                ?id clav:eComplementarDe ?proc .
+                {
+                	?id clav:temProcessoRelacionado ?proc .
+        		} UNION {
+            		?id clav:eComplementarDe ?proc .
+        		}
                 ?proc clav:codigo ?Codigo ;
                       clav:titulo ?Titulo .
             }
@@ -433,7 +436,6 @@ Classes.criteria = function (criteria) {
     `;
 
     return client.query(fetchQuery).execute()
-        //Getting the content we want
         .then(response => Promise.resolve(response.results.bindings))
         .catch(function (error) {
             console.error("Error in check:\n" + error);
@@ -665,7 +667,7 @@ Classes.createClass = function (data) {
                         clav:${level} ;
                     clav:codigo "${data.Code}" ;
                     clav:classeStatus "H" ;
-                    clav:descricao "${data.Description.replace(/\n/g, '\\n')}" ;
+                    clav:descricao "${data.Description.replace(/\n/g, '\\n').replace(/\"/g,"\\\"")}" ;
                     clav:pertenceLC clav:lc1 ;
                     clav:titulo "${data.Title}" .                   
         `;
@@ -679,7 +681,7 @@ Classes.createClass = function (data) {
             createQuery += `
                     clav:${data.AppNotes[i].id} rdf:type owl:NamedIndividual ,
                             clav:NotaAplicacao ;
-                        clav:conteudo "${data.AppNotes[i].Note.replace(/\n/g, '\\n')}" .
+                        clav:conteudo "${data.AppNotes[i].Note.replace(/\n/g, '\\n').replace(/\"/g,"\\\"")}" .
                 `;
             createQuery += 'clav:' + id + ' clav:temNotaAplicacao clav:' + data.AppNotes[i].id + ' .\n';
         }
@@ -687,7 +689,7 @@ Classes.createClass = function (data) {
 
     if (data.ExAppNotes && data.ExAppNotes.length) {
         for (var i = 0; i < data.ExAppNotes.length; i++) {
-            createQuery += 'clav:' + id + ' clav:exemploNA "' + data.ExAppNotes[i].replace(/\n/g, '\\n') + '" .\n';
+            createQuery += 'clav:' + id + ' clav:exemploNA "' + data.ExAppNotes[i].replace(/\n/g, '\\n').replace(/\"/g,"\\\"") + '" .\n';
         }
     }
 
@@ -696,7 +698,7 @@ Classes.createClass = function (data) {
             createQuery += `
                     clav:${data.DelNotes[i].id} rdf:type owl:NamedIndividual ,
                             clav:NotaExclusao ;
-                        clav:conteudo "${data.DelNotes[i].Note.replace(/\n/g, '\\n')}" .
+                        clav:conteudo "${data.DelNotes[i].Note.replace(/\n/g, '\\n').replace(/\"/g,"\\\"")}" .
                 `;
             createQuery += 'clav:' + id + ' clav:temNotaExclusao clav:' + data.DelNotes[i].id + ' .\n';
         }
@@ -707,7 +709,7 @@ Classes.createClass = function (data) {
             createQuery += `
                 clav:ti_${id}_${i+1} rdf:type owl:NamedIndividual ,
                         clav:TermoIndice ;
-                    clav:termo "${index.Note.replace(/\n/g, '\\n')}" ;
+                    clav:termo "${index.Note.replace(/\n/g, '\\n').replace(/\"/g,"\\\"")}" ;
                     clav:estaAssocClasse clav:${id} .
             `;
         }
@@ -838,6 +840,8 @@ Classes.createClass = function (data) {
     }
 
     createQuery += '}';
+
+    console.log(createQuery);
 
     return client.query(createQuery).execute()
         .then(response => Promise.resolve(response))

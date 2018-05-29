@@ -143,6 +143,7 @@ router.get('/:id/pca', function (req, res) {
 
             Classes.criteria(criteria)
                 .then(function (criteriaData) {
+
                     data.Criterios.type = "array";
                     data.Criterios.value = criteriaData;
 

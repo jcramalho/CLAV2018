@@ -295,11 +295,9 @@ a .linkbox:hover {
 }
 
 .panel-linkbox .panel-heading{
-    border-color: #7986cb;
+    border: 0;
     color: #1a237e;
     background-image: linear-gradient(to bottom,#e8eaf6 0,#c5cae9 100%);
-    border-style: solid;
-    border-width: 1px;
     padding: 7px;
     margin-bottom: 0px;
     font-weight: bolder;
@@ -320,7 +318,7 @@ a .linkbox:hover {
 }
 
 .panel-linkbox{
-    border: none;
+    border-color: #7986cb;
     margin: 0px;
     margin-bottom: -5px !important;
 }
@@ -361,6 +359,16 @@ a .linkbox:hover {
 .panel-noticiabox{
     border-color: rgb(177, 189, 255);
     margin: 2px;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.panel-info-custom .panel-body{
+    font-size: 1pc;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.info-text{
+    font-size: 1pc;
     font-family: 'Times New Roman', Times, serif;
 }
 
