@@ -20,26 +20,22 @@ block corpo
                     .labelbox(style="width:20%")
                         | Consulte:
             
-            //if !user
-                tr(v-for="linha in linhas")
-                    td(style="padding-left:50px !important")
-                        a(:href="linha.consultar")
-                            .linkbox(style="margin-bottom:0px")
-                                | {{linha.valor}}
-            //else
             tr
                 td(style="padding-left:50px !important")
                     accordion(type="linkbox")
                         panel(v-for="(linha,index) in linhas" :header="linha.valor" :key="index")
                             div(v-if="linha.text" v-html="linha.text")
-
-                            a(:href="linha.consultar")
-                                button(v-if="!linha.newCons") Consultar
-                                button(v-else) {{linha.newCons}}
+                            
                             if user
+                                a(:href="linha.consultar")
+                                    button(v-if="!linha.newCons") Consultar
+                                    button(v-else) {{linha.newCons}}
                                 a(:href="linha.submeter" style="margin-left:9px")
                                     button(v-if="!linha.newSub") Submeter
                                     button(v-else) {{linha.newSub}}
+                            else
+                                a(:href="linha.consultar")
+                                    button Consultar
             tr 
                 td(style="padding-top:15px !important")
                     .labelbox
