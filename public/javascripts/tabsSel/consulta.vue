@@ -5,145 +5,126 @@ var tabSel = new Vue({
         tableHeader: [],
         tableData: [],
         ready: false,
-        content: [],
-        cwidth: ['15%','81%'],
-        subTemp: [],
+        cwidth: ['15%', '81%'],
         nEdits: 0,
         name: "",
         id: null,
     },
     methods: {
-        swap: function(array,pos1,pos2){
-            var temp=array[pos1];
-            array[pos1]=array[pos2];
-            array[pos2]=temp;
-
-            return array;
-        },
-        dropClicked: function(params){
-            var id = params.id;
-            var ready = params.rowData.subReady;
-            
-            if (!ready) {
-                //split the id; example: '1.1.2' becomes ['1','1','2']
-                var path = id.split('.');
-                this.loadSub(path,this.tableData,params);
-            }
-        },
-        loadSub: function(indexes,location,params){
-            if(indexes.length==1){
-                this.$http.get("/api/tabelasSelecao/"+this.id+"/classes/"+params.rowData.codeID+"/descendencia")
-                .then( function(response) { 
-                    this.subTemp = response.body;
-                })
-                .then( function() {
-                    //load child classes on the sublevel of the parent
-                    location[indexes[0]].sublevel= this.parseSub();
-
-                    //let child components know that the rows are ready to render
-                    location[indexes[0]].subReady = true;
-                    this.nEdits++;
-                })
-                .catch( function(error) { 
-                    console.error(error); 
-                });
-            }
-            else{
-                //get the path tail
-                var tail = indexes.splice(1,indexes.length-1);
-
-                //next level in the data structure
-                var newLocation = location[indexes[0]].sublevel;
-
-                this.loadSub(tail,newLocation,params);
-            }
-        },
         rowClicked: function(params){
-            window.location.href = '/classes/consultar/c'+params.rowData[0];
+            window.location.href = '/classes/consultar/'+this.id+'_c'+params.rowData[0];
         },
-        parse: function(){
-            // parsing the JSON
-            for (var i=0; i<this.content.length; i++) {
-                var temp={content:"",sublevel:false};
-                
-                var id= this.content[i].id.value.replace(/[^#]+#(.*)/,'$1');
-                var code= this.content[i].Code.value;
-                var title= this.content[i].Title.value;
+        parseClasses: function (dataToParse) {
+            var destination = [];
+            const indexes = {};
+            let avo;
+            let pai;
 
-                temp.content = [code, title];
-                temp.codeID=id;
+            let level = this.level;
+            let activeClass = this.activeClass;
 
-                if(this.content[i].NChilds.value>0){
-                    temp.sublevel=true;
+            for (let pn of dataToParse) {
+                let codeAvo = pn.AvoCodigo.value;
+                let indexesAvo = indexes[codeAvo];
+                let codePai = pn.PaiCodigo.value;
+
+                if (indexesAvo) {
+                    avo = indexesAvo.i;
+
+                    if (indexesAvo.sub[codePai] != undefined) {
+                        pai = indexesAvo.sub[codePai];
+                    }
+                    else {
+                        pai = Object.keys(indexesAvo.sub).length;
+
+                        indexes[codeAvo].sub[codePai] = pai;
+
+                        let infoPai = {
+                            codeID: pn.Pai.value.replace(/[^#]+#(.*)/, '$1'),
+                            content: [codePai, pn.PaiTitulo.value],
+                            drop: false,
+                            subReady: true,
+                            sublevel: []
+                        }
+                        destination[avo].sublevel.push(infoPai);
+                    }
                 }
-
-                this.tableData[i]=JSON.parse(JSON.stringify(temp));
-            }
-            this.tableData.sort(function(a,b) {
-                return a.content[0].localeCompare(b.content[0]);
-            })
-        },
-        parseSub: function(location){
-            var ret=[]
-            var temp={content:"",sublevel:false};
-            // parsing the JSON
-            for (var i=0; i<this.subTemp.length; i++) {
-
-                var id= this.subTemp[i].Child.value.replace(/[^#]+#(.*)/,'$1');
-                var code= this.subTemp[i].Code.value;
-                var title= this.subTemp[i].Title.value;
-
-                temp.content = [code, title];
-                temp.codeID=id;
-
-                if(parseInt(this.subTemp[i].NChilds.value)>0){
-                    temp.sublevel=true;
-                } 
                 else {
-                    temp.sublevel=false;
+                    avo = Object.keys(indexes).length;
+                    pai = 0;
+
+                    indexes[codeAvo] = { i: avo, sub: {} };
+                    indexes[codeAvo].sub[codePai] = pai;
+
+                    let infoAvo = {
+                        codeID: pn.Avo.value.replace(/[^#]+#(.*)/, '$1'),
+                        content: [codeAvo, pn.AvoTitulo.value],
+                        drop: false,
+                        subReady: true,
+                        sublevel: [{
+                            codeID: pn.Pai.value.replace(/[^#]+#(.*)/, '$1'),
+                            content: [codePai, pn.PaiTitulo.value],
+                            drop: false,
+                            subReady: true,
+                            sublevel: [],
+                        }]
+                    }
+                    destination.push(infoAvo);
                 }
 
-                ret[i]=JSON.parse(JSON.stringify(temp));
+                let pninfo = {
+                    codeID: pn.PN.value.replace(/[^#]+#(.*)/, '$1'),
+                    content: [pn.PNCodigo.value, pn.PNTitulo.value],
+                    drop: false,
+                }
+
+                if (pn.Filhos.value.length) {
+                    pninfo.subReady = true;
+                    pninfo.sublevel = [];
+
+                    for (let filho of pn.Filhos.value.split('###')) {
+                        let filhoInfo = filho.split(':::');
+
+                        pninfo.sublevel.push({
+                            codeID: filhoInfo[0].replace(/[^#]+#(.*)/, '$1'),
+                            content: [filhoInfo[1], filhoInfo[2]],
+                            drop: false,
+                        });
+                    }
+                }
+                destination[avo].sublevel[pai].sublevel.push(pninfo);
             }
-            
-            ret.sort(function(a,b) {
-                a1=parseInt(a.content[0].replace(/([0-9]+\.)*([0-9]+)/,'$2'));
-                b1=parseInt(b.content[0].replace(/([0-9]+\.)*([0-9]+)/,'$2'));
-    
-                return a1-b1;
-            })
-            
-            return ret;
+            return destination;
         },
     },
-    created: function(){
-        this.tableHeader=[
+    created: function () {
+        this.tableHeader = [
             "CLASSE",
             "TÍTULO"
         ];
 
-        this.id= window.location.pathname.split('/')[3];
+        this.id = window.location.pathname.split('/')[3];
 
-        this.$http.get("/api/tabelasSelecao/"+this.id)
-        .then( function(response) {
-            this.name = response.body[0].Name.value;
-        })
-        .catch( function(error) { 
-            console.error(error); 
-        });
+        this.$http.get("/api/tabelasSelecao/" + this.id)
+            .then(function (response) {
+                this.name = response.body[0].Name.value;
+            })
+            .catch(function (error) {
+                console.error(error);
+            });
 
-        this.$http.get("/api/tabelasSelecao/"+this.id+"/classes")
-        .then( function(response) {
-            this.content = response.body;
-            
-            console.log(response);
-        })
-        .then( function() {
-            this.parse();
-            this.ready=true;
-        })
-        .catch( function(error) { 
-            console.error(error); 
-        });
+        var content
+        this.$http.get("/api/tabelasSelecao/" + this.id + "/classes")
+            .then(function (response) {
+                content = response.body;
+            })
+            .then(function () {
+                console.log(content);
+                this.tableData = this.parseClasses(content);
+                this.ready = true;
+            })
+            .catch(function (error) {
+                console.error(error);
+            });
     }
 })

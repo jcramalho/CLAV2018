@@ -1,76 +1,104 @@
 var side = new Vue({
     el: '#sidenav',
     data: {
-        nav: [
+        navComplete: [
             {
                 label: "Nível",
-                anchor: "#nivel"
+                anchor: "#nivel",
+                lvl: 1
             },
             {
                 label: "Classe Pai",
-                anchor: "#pai"
+                anchor: "#pai",
+                lvl: 2
             },
             {
                 label: "Código",
-                anchor: "#codigo"
+                anchor: "#codigo",
+                lvl: 1
             },
             {
                 label: "Título",
-                anchor: "#titulo"
+                anchor: "#titulo",
+                lvl: 1
             },
             {
                 label: "Descrição",
-                anchor: "#descricao"
+                anchor: "#descricao",
+                lvl: 1
             },
             {
                 label: "Notas de Aplicação",
-                anchor: "#notasA"
+                anchor: "#notasA",
+                lvl: 1
             },
             {
                 label: "Exemplos de Notas de Aplicação",
-                anchor: "#exemplos"
+                anchor: "#exemplos",
+                lvl: 1
             },
             {
                 label: "Notas de Exclusão",
-                anchor: "#notasE"
+                anchor: "#notasE",
+                lvl: 1
             },
             {
                 label: "Termos de Índice",
-                anchor: "#termosI"
+                anchor: "#termosI",
+                lvl: 3
             },
             {
                 label: "Tipo de Processo",
-                anchor: "#tipoTrans"
+                anchor: "#tipoTrans",
+                lvl: 3
             },
             {
                 label: "Processo Tranversal",
-                anchor: "#tipTrans"
+                anchor: "#tipTrans",
+                lvl: 3
             },
             {
                 label: "Donos",
-                anchor: "#donos"
+                anchor: "#donos",
+                lvl: 3
             },
             {
                 label: "Participantes",
-                anchor: "#participantes"
+                anchor: "#participantes",
+                lvl: 3
             },
             {
                 label: "Processos Relacionados",
-                anchor: "#PNrel"
+                anchor: "#PNrel",
+                lvl: 3
             },
             {
                 label: "Legislação",
-                anchor: "#legislacao"
+                anchor: "#legislacao",
+                lvl: 3
             },
             {
                 label: "PCA",
-                anchor: "#PCA"
+                anchor: "#PCA",
+                lvl: 3
             },
             {
                 label: "Destino Final",
-                anchor: "#DF"
+                anchor: "#DF",
+                lvl: 3
             },
-        ]
+        ],
+        nav: []
+    },
+    methods: {
+        changeNav: function(type){
+            this.nav= this.navComplete.filter(
+                a=>a.lvl<=type
+            )
+        }
+    },
+    mounted() {
+        this.changeNav(1);
     }
 })
 
@@ -107,7 +135,7 @@ var newClass = new Vue({
         orgsReady: false,
 
         legsTableHeader: ["#", "Tipo", "Número", "Título", "Data"],
-        legsTableWidth: ['5%','19%','11%','50%','15%'],
+        legsTableWidth: ['5%', '19%', '11%', '50%', '15%'],
         legList: [],
         selectedLegs: [],
         legsReady: false,
@@ -166,14 +194,14 @@ var newClass = new Vue({
             Iniciador: [],
         },
 
-        classesTableHeader: ["CLASSE","TÍTULO"],
+        classesTableHeader: ["CLASSE", "TÍTULO"],
         cwidth: ['16%', '81%'],
         relationList: [],
         relationsSelected: [],
         relationTypes: [
             {
-                label:'Antecessor de',
-                value:'eAntecessorDe'
+                label: 'Antecessor de',
+                value: 'eAntecessorDe'
             },
             {
                 label: 'Sucessor de',
@@ -209,11 +237,11 @@ var newClass = new Vue({
 
         pca: {
             dueDate: null,
-            count: {label:"Forma de Contagem",id:null},
-            subcount: {label:"Sub-forma de Contagem",id:null},
+            count: { label: "Forma de Contagem", id: null },
+            subcount: { label: "Sub-forma de Contagem", id: null },
             criteria: {
                 new: {
-                    type: {label:"Tipo de Critério",rel:0},
+                    type: { label: "Tipo de Critério", rel: 0 },
                     content: null,
                     pns: [],
                     leg: [],
@@ -226,23 +254,23 @@ var newClass = new Vue({
                 },
                 types: [
                     {
-                        value:"CriterioJustificacaoLegal",
-                        label:"Critério Legal",
+                        value: "CriterioJustificacaoLegal",
+                        label: "Critério Legal",
                         rel: 1
                     },
                     {
-                        value:"CriterioJustificacaoUtilidadeAdministrativa",
-                        label:"Critério Utilidade Administrativa",
+                        value: "CriterioJustificacaoUtilidadeAdministrativa",
+                        label: "Critério Utilidade Administrativa",
                         rel: 2
                     },
                     {
-                        value:"CriterioJustificacaoGestionario",
-                        label:"Critério Gestionário",
+                        value: "CriterioJustificacaoGestionario",
+                        label: "Critério Gestionário",
                         rel: 0
                     },
                     {
-                        value:"CriterioJustificacaoComplementaridadeInfo",
-                        label:"Critério Complementaridade Informacional",
+                        value: "CriterioJustificacaoComplementaridadeInfo",
+                        label: "Critério Complementaridade Informacional",
                         rel: 2
                     },
                 ],
@@ -253,14 +281,14 @@ var newClass = new Vue({
         subcountTypes: null,
         countsReady: false,
         subcountsReady: false,
-        pnsTableHeader: ["#","Código","Título"],
-        pnsTableWidth: ["4%","16%","81%"],
+        pnsTableHeader: ["#", "Código", "Título"],
+        pnsTableWidth: ["4%", "16%", "81%"],
 
         df: {
             end: null,
             criteria: {
                 new: {
-                    type: {label:"Tipo de Critério",rel:0},
+                    type: { label: "Tipo de Critério", rel: 0 },
                     content: null,
                     pns: [],
                     leg: [],
@@ -273,18 +301,18 @@ var newClass = new Vue({
                 },
                 types: [
                     {
-                        value:"CriterioJustificacaoLegal",
-                        label:"Critério Legal",
+                        value: "CriterioJustificacaoLegal",
+                        label: "Critério Legal",
                         rel: 1
                     },
                     {
-                        value:"CriterioJustificacaoDensidadeInfo",
-                        label:"Densidade Informacional",
+                        value: "CriterioJustificacaoDensidadeInfo",
+                        label: "Densidade Informacional",
                         rel: 2
                     },
                     {
-                        value:"CriterioJustificacaoComplementaridadeInfo",
-                        label:"Critério Complementaridade Informacional",
+                        value: "CriterioJustificacaoComplementaridadeInfo",
+                        label: "Critério Complementaridade Informacional",
                         rel: 2
                     },
                 ],
@@ -308,12 +336,13 @@ var newClass = new Vue({
             if (this.type > 1) {
                 this.loadParents();
             }
-            if (this.type >= 3 && !this.classesReady){
+            if (this.type >= 3 && !this.classesReady) {
                 this.loadClasses();
             }
+            side.changeNav(this.type);
         },
         code: function () {
-            this.codeMessage="";
+            this.codeMessage = "";
 
             if (this.type > 1) {
                 if (this.code.indexOf(this.parent.slice(1, this.parent.length)) != 0) {
@@ -329,34 +358,34 @@ var newClass = new Vue({
                 3: /^[0-9]{3}\.[0-9]{2}\.[0-9]{3}$/,
                 4: /^[0-9]{3}\.[0-9]{2}\.[0-9]{3}\.[0-9]{3}$/,
             }
-            
-            if(!reg[this.type].test(this.code)){
-                this.codeMessage="Formato inválido";
+
+            if (!reg[this.type].test(this.code)) {
+                this.codeMessage = "Formato inválido";
             }
-            else{
+            else {
                 this.checkCodeAvailability(this.code);
             }
         },
         relationsSelected: {
             deep: true,
-            handler: function() {
-                let pnsCI=[]; //complementaridade info - "eComplementarDe"
-                let pnsUA=[]; //utilidade administrativa - "eSuplementoDe"
-                let pnsDI=[]; //Densidade informacional - "eSinteseDe"
+            handler: function () {
+                let pnsCI = []; //complementaridade info - "eComplementarDe"
+                let pnsUA = []; //utilidade administrativa - "eSuplementoDe"
+                let pnsDI = []; //Densidade informacional - "eSinteseDe"
                 let i;
 
                 //complementaridade info
                 pnsCI = this.relationsSelected.filter(
-                    function(a) {
-                        return a.relType=="eComplementarDe";
+                    function (a) {
+                        return a.relType == "eComplementarDe";
                     }
                 );
 
-                i=0;
+                i = 0;
                 this.pca.criteria.pns.CriterioJustificacaoComplementaridadeInfo = pnsCI.map(
-                    function(a){
+                    function (a) {
                         return {
-                            data: [i++,a.code,a.name],
+                            data: [i++, a.code, a.name],
                             id: a.id,
                             selected: false
                         }
@@ -366,16 +395,16 @@ var newClass = new Vue({
 
                 //utilidade administrativa
                 pnsUA = this.relationsSelected.filter(
-                    function(a) {
-                        return a.relType=="eSuplementoDe";
+                    function (a) {
+                        return a.relType == "eSuplementoDe";
                     }
                 );
 
-                i=0;
+                i = 0;
                 this.pca.criteria.pns.CriterioJustificacaoUtilidadeAdministrativa = pnsUA.map(
-                    function(a){
+                    function (a) {
                         return {
-                            data: [i++,a.code,a.name],
+                            data: [i++, a.code, a.name],
                             id: a.id,
                             selected: false
                         }
@@ -384,16 +413,16 @@ var newClass = new Vue({
 
                 //Densidade informacional
                 pnsDI = this.relationsSelected.filter(
-                    function(a) {
-                        return a.relType=="eSuplementoDe";
+                    function (a) {
+                        return a.relType == "eSuplementoDe";
                     }
                 );
 
-                i=0;
+                i = 0;
                 this.df.criteria.pns.CriterioJustificacaoDensidadeInfo = pnsDI.map(
-                    function(a){
+                    function (a) {
                         return {
-                            data: [i++,a.code,a.name],
+                            data: [i++, a.code, a.name],
                             id: a.id,
                             selected: false
                         }
@@ -404,22 +433,22 @@ var newClass = new Vue({
     },
     methods: {
         checkCodeAvailability: _.debounce(
-            function(code){
+            function (code) {
                 var count;
 
                 this.$http.get(`/api/classes/${code}/check/${this.type}`)
-                .then(function (response) {
-                    count = response.body;
-                })
-                .then(function () {
-                    if(parseInt(count)>0){
-                        this.codeMessage = "Codigo já existe!";
-                    }  
-                })
+                    .then(function (response) {
+                        count = response.body;
+                    })
+                    .then(function () {
+                        if (parseInt(count) > 0) {
+                            this.codeMessage = "Codigo já existe!";
+                        }
+                    })
             },
             500
         ),
-        loadCountTypes: function(){
+        loadCountTypes: function () {
             var dataToParse = [];
             var keys = ["id", "Label"];
             var i = 0;
@@ -430,7 +459,7 @@ var newClass = new Vue({
                 })
                 .then(function () {
                     this.countTypes = this.parse(dataToParse, keys)
-                        .map(function(a){
+                        .map(function (a) {
                             return {
                                 label: a.Label,
                                 id: a.id,
@@ -443,7 +472,7 @@ var newClass = new Vue({
                     console.error(error);
                 });
         },
-        loadSubCountTypes: function(){
+        loadSubCountTypes: function () {
             var dataToParse = [];
             var keys = ["id", "Label"];
             var i = 0;
@@ -454,7 +483,7 @@ var newClass = new Vue({
                 })
                 .then(function () {
                     this.subcountTypes = this.parse(dataToParse, keys)
-                        .map(function(a){
+                        .map(function (a) {
                             return {
                                 label: a.Label,
                                 id: a.id,
@@ -467,18 +496,18 @@ var newClass = new Vue({
                     console.error(error);
                 });
         },
-        cleanSelection: function(path){
-            for(var line of path){
-                line.selected=false;
-                line.drop=false;
+        cleanSelection: function (path) {
+            for (var line of path) {
+                line.selected = false;
+                line.drop = false;
 
-                if(line.sublevel){
+                if (line.sublevel) {
                     this.cleanSelection(line.sublevel);
                 }
             }
         },
-        selectClickedCrit: function(path, payload){
-            var row= payload.rowData;
+        selectClickedCrit: function (path, payload) {
+            var row = payload.rowData;
 
             if (!row.selected) {
                 path.criteria.new.pns.push({
@@ -488,13 +517,13 @@ var newClass = new Vue({
                 });
             }
             else {
-                let i=0;
-                for(let pn of path.criteria.new.pns){
-                    if(row.codeID==pn.id){break;}
+                let i = 0;
+                for (let pn of path.criteria.new.pns) {
+                    if (row.codeID == pn.id) { break; }
                     i++;
                 }
-                if(i<path.criteria.new.pns.length){
-                    path.criteria.new.pns.splice(i,1);
+                if (i < path.criteria.new.pns.length) {
+                    path.criteria.new.pns.splice(i, 1);
                 }
             }
         },
@@ -507,16 +536,16 @@ var newClass = new Vue({
                 });
             }
             else {
-                let i=0;
-                for(let doc of obj.criteria.new.leg){
-                    if(row.id==doc.id){break;}
+                let i = 0;
+                for (let doc of obj.criteria.new.leg) {
+                    if (row.id == doc.id) { break; }
                     i++;
                 }
-                if(i<obj.criteria.new.leg.length){
-                    obj.criteria.new.leg.splice(i,1);
+                if (i < obj.criteria.new.leg.length) {
+                    obj.criteria.new.leg.splice(i, 1);
                 }
             }
-        },   
+        },
         pnSelectedCrit: function (row, obj) {
             if (!row.selected) {
                 obj.criteria.new.pns.push({
@@ -526,37 +555,37 @@ var newClass = new Vue({
                 });
             }
             else {
-                let i=0;
-                for(let p of obj.criteria.new.pns){
-                    if(row.id==p.id){break;}
+                let i = 0;
+                for (let p of obj.criteria.new.pns) {
+                    if (row.id == p.id) { break; }
                     i++;
                 }
-                if(i<obj.criteria.new.pns.length){
-                    obj.criteria.new.pns.splice(i,1);
+                if (i < obj.criteria.new.pns.length) {
+                    obj.criteria.new.pns.splice(i, 1);
                 }
             }
-        },   
-        addNewJustCrit: function(obj){
+        },
+        addNewJustCrit: function (obj) {
             obj.criteria.list.push(
                 JSON.parse(JSON.stringify(obj.criteria.new))
             );
 
             obj.criteria.new = {
-                type: {label:"Tipo de Critério",rel:0},
+                type: { label: "Tipo de Critério", rel: 0 },
                 content: null,
                 pns: [],
                 leg: [],
             };
 
-            for(type in obj.criteria.pns){
+            for (type in obj.criteria.pns) {
                 this.cleanSelection(obj.criteria.pns[type]);
             }
 
             this.cleanSelection(obj.criteria.classes);
             this.cleanSelection(obj.criteria.legislation);
         },
-        loadClasses: function() {
-            this.ready=false;
+        loadClasses: function () {
+            this.ready = false;
             let content = [];
 
             this.$http.get("/api/classes/filtrar")
@@ -567,15 +596,15 @@ var newClass = new Vue({
                     var classList = [];
                     classList = this.parseClasses(content);
 
-                    this.relationLists= JSON.parse(
+                    this.relationLists = JSON.parse(
                         JSON.stringify(classList)
                     );
 
-                    this.pca.criteria.classes= JSON.parse(
+                    this.pca.criteria.classes = JSON.parse(
                         JSON.stringify(classList)
                     );
 
-                    this.df.criteria.classes= JSON.parse(
+                    this.df.criteria.classes = JSON.parse(
                         JSON.stringify(classList)
                     );
 
@@ -673,8 +702,8 @@ var newClass = new Vue({
 
             return destination;
         },
-        selectClicked(payload){
-            var row= payload.rowData;
+        selectClicked(payload) {
+            var row = payload.rowData;
 
             if (!row.selected) {
                 let newPN = {
@@ -690,22 +719,22 @@ var newClass = new Vue({
                 this.relationsSelected.push(newPN);
 
                 this.relationsSelected.sort(
-                    function(a,b){
+                    function (a, b) {
                         return a.code.localeCompare(b.code);
                     }
                 );
             }
-            
-            else {
-                let index=0;
 
-                for(pn of this.relationsSelected){
-                    if(pn.id == row.codeID){
+            else {
+                let index = 0;
+
+                for (pn of this.relationsSelected) {
+                    if (pn.id == row.codeID) {
                         break;
                     }
                     index++;
                 }
-                
+
                 if (index < this.relationsSelected.length) {
                     this.relationsSelected.splice(index, 1);
                 }
@@ -725,15 +754,15 @@ var newClass = new Vue({
                     tipol = new RegExp("#Tipologia", "g");
 
                     this.ownerList = this.parse(orgsToParse, keys)
-                        .map( function(item){
-                            if (conj.test(item.Tipo)){
-                                item.Tipo="Conjunto";
+                        .map(function (item) {
+                            if (conj.test(item.Tipo)) {
+                                item.Tipo = "Conjunto";
                             }
-                            else if (tipol.test(item.Tipo)){
-                                item.Tipo="Tipologia";
+                            else if (tipol.test(item.Tipo)) {
+                                item.Tipo = "Tipologia";
                             }
                             else {
-                                item.Tipo="Organização";
+                                item.Tipo = "Organização";
                             }
                             return item;
                         })
@@ -748,7 +777,7 @@ var newClass = new Vue({
                         });
 
                     for (let type in this.participantLists) {
-                        if(type!="Executor"){
+                        if (type != "Executor") {
                             this.participantLists[type] = JSON.parse(
                                 JSON.stringify(this.ownerList)
                             );
@@ -765,10 +794,10 @@ var newClass = new Vue({
             if (!row.selected) {
                 list.push(row.id);
 
-                if (partType && partType!='dono') {
+                if (partType && partType != 'dono') {
                     this.participantsSelectedInfo[partType].push(row.data);
                 }
-                if (partType && partType=='dono') {
+                if (partType && partType == 'dono') {
                     this.participantLists.Executor.push(JSON.parse(JSON.stringify(row)));
                 }
             }
@@ -789,7 +818,7 @@ var newClass = new Vue({
         loadLegs: function () {
             var legsToParse = [];
             var keys = ["id", "Número", "Titulo", "Tipo", "Data"];
-            var i=0;
+            var i = 0;
 
             this.$http.get("/api/legislacao")
                 .then(function (response) {
@@ -797,13 +826,13 @@ var newClass = new Vue({
                 })
                 .then(function () {
                     this.legList = this.parse(legsToParse, keys)
-                    .map(function (item) {
-                        return {
-                            data: [i++, item.Tipo, item.Número, item.Titulo, item.Data],
-                            selected: false,
-                            id: item.id
-                        }
-                    });
+                        .map(function (item) {
+                            return {
+                                data: [i++, item.Tipo, item.Número, item.Titulo, item.Data],
+                                selected: false,
+                                id: item.id
+                            }
+                        });
                     this.pca.criteria.legislation = JSON.parse(
                         JSON.stringify(this.legList)
                     );
@@ -875,7 +904,7 @@ var newClass = new Vue({
                 return false;
             }
 
-            if (this.codeMessage.length>0){
+            if (this.codeMessage.length > 0) {
                 this.message = "Formato do código errado!";
                 return false;
             }
@@ -1024,16 +1053,12 @@ var newClass = new Vue({
         add: function () {
             this.$refs.spinner.show();
 
-            for([i,note] of this.appNotes.entries()) {
-                if(note.Note){
-                    note.id = "na_c" + this.code + "_" + (i + 1);
-                }
+            for ([i, note] of this.appNotes.entries()) {
+                note.id = "na_c" + this.code + "_" + (i + 1);
             }
 
-            for([i,note] of this.delNotes.entries()) {
-                if(note.Note){
-                    note.id = "ne_c" + this.code + "_" + (i + 1);
-                }
+            for ([i, note] of this.delNotes.entries()) {
+                note.id = "ne_c" + this.code + "_" + (i + 1);
             }
 
             var dataObj = {
@@ -1067,8 +1092,8 @@ var newClass = new Vue({
                     .then(function (response) {
                         regex = new RegExp(/[0-9]+\-[0-9]+/, "gi");
 
-                        if(regex.test(response.body)){
-                            window.location.href = '/users/pedido_submetido/'+response.body;
+                        if (regex.test(response.body)) {
+                            window.location.href = '/users/pedido_submetido/' + response.body;
                         }
                         else {
                             this.message = response.body;

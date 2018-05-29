@@ -530,9 +530,9 @@ var classe = new Vue({
                                 titulo: titulo
                             });
 
-                            let regex = new RegExp(codigo+" - "+titulo, "gi");
+                            let regex = new RegExp(codigo, "gi");
                             newCrit.nota = newCrit.nota
-                                .replace(regex,"<a href='/classes/consultar/"+id+"'>"+codigo+"</a> - "+titulo);
+                                .replace(regex,"<a href='/classes/consultar/"+id+"'>"+codigo+"</a>");
                         }
                     }
 
@@ -550,10 +550,10 @@ var classe = new Vue({
                                 numero: doc[2]
                             })
 
-                            let regex = new RegExp("\\["+tipo+" "+numero+"\\]", "gi");
+                            let regex = new RegExp("\\[([^\\]]*"+numero+")\\]", "gi");
                             
                             newCrit.nota = newCrit.nota
-                                .replace(regex,"<a href='/legislacao/consultar/"+id+"'>"+tipo+" "+numero+"</a>");
+                                .replace(regex,"<a href='/legislacao/consultar/"+id+"'>$1</a>");
                         }
                     }
 
@@ -638,9 +638,9 @@ var classe = new Vue({
                                 titulo: titulo
                             });
 
-                            let regex = new RegExp(codigo+" - "+titulo, "gi");
+                            let regex = new RegExp(codigo, "gi");
                             newCrit.nota = newCrit.nota
-                                .replace(regex,"<a href='/classes/consultar/"+id+"'>"+codigo+"</a> - "+titulo);
+                                .replace(regex,"<a href='/classes/consultar/"+id+"'>"+codigo+"</a>");
                         }
                     }
 
@@ -658,9 +658,10 @@ var classe = new Vue({
                                 numero: doc[2]
                             })
 
-                            let regex = new RegExp("\\["+tipo+" "+numero+"\\]", "gi");
+                            let regex = new RegExp("\\[([^\\]]*"+numero+")\\]", "gi");
+                            
                             newCrit.nota = newCrit.nota
-                                .replace(regex,"<a href='/legislacao/consultar/"+id+"'>"+tipo+" "+numero+"</a>");
+                                .replace(regex,"<a href='/legislacao/consultar/"+id+"'>$1</a>");
                         }
                     }
 
