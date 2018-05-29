@@ -349,7 +349,7 @@ block corpo
                             //- PARTICIPANTES
                             tr(v-if="clas.ProcTrans=='S' || (edit.ProcTrans && newClass.ProcTrans=='S')")
                                 td(style="width: 10%")
-                                    .info-label Participante(s):
+                                    .info-label Tipo de intervenção do(s) Participante(s):
                                     
                                 td(v-if="edit.Participants" style="width:80%")
                                     table
@@ -373,7 +373,6 @@ block corpo
                                                 ul(v-if="relProcsReady" style="padding-left:20px")
                                                     li(v-for="key in Object.keys(newClass.Participants)" v-if="newClass.Participants[key].length>0")
                                                         b {{participationsDic[key]}}:
-                                                            //-span(v-if="newClass.Participants[key].length>1") es
                                                         ul
                                                             li(v-for="(p, index) in newClass.Participants[key]")
                                                                 | {{ p.Sigla }} - {{ p.Nome }}
@@ -384,7 +383,6 @@ block corpo
                                     ul(v-if="relProcsReady" style="padding-left:20px")
                                         li(v-for="key in Object.keys(clas.Participants)" v-if="clas.Participants[key].length>0")
                                             b {{participationsDic[key]}}:
-                                                //-span(v-if="clas.Participants[key].length>1") es
                                             ul
                                                 li(v-for="p in clas.Participants[key]")
                                                     a(:href="'/organizacoes/consultar/'+p.id") {{ p.Sigla }}

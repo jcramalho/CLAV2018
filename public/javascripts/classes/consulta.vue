@@ -89,12 +89,12 @@ var classe = new Vue({
         pageReady: false,
 
         participationsDic: {
-            Apreciador: "Aprecia",
-            Assessor: "Assessora",
-            Comunicador: "Comunica",
-            Decisor: "Decide",
-            Executor: "Executa",
-            Iniciador: "Inicia"
+            Apreciador: "Apreciar",
+            Assessor: "Assessorar",
+            Comunicador: "Comunicar",
+            Decisor: "Decidir",
+            Executor: "Executar",
+            Iniciador: "Iniciar"
         }
     },
     components: {
