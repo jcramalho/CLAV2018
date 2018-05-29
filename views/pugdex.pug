@@ -34,6 +34,7 @@ block corpo
                                     button(v-if="!linha.newSub") Submeter
                                     button(v-else) {{linha.newSub}}
                             else
+                                p.info-text {{linha.notlogged}}
                                 a(:href="linha.consultar")
                                     button Consultar
             tr 
