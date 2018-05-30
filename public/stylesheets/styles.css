@@ -693,3 +693,18 @@ button:hover {
     background-image: linear-gradient(to top,#e8eaf6 0,#afbbff 100%);
     border-color: white;
 }
+
+.panel-white .panel-heading{
+    background: white;
+}
+
+.panel-white .panel-title {
+    font-weight: normal;
+    color: black;
+}
+
+.panel-white{
+    border-style: solid;
+    border-color: #a9a9a9;
+    border-width: 1px;
+}

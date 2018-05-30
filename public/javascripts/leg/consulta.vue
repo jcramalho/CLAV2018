@@ -34,7 +34,9 @@ var leg = new Vue({
                 edit: false
             },
             org: {
-                original: []
+                original: [],
+                new: [],
+                edit: false
             }
         },
         content: [],
@@ -42,6 +44,11 @@ var leg = new Vue({
         updateReady: false,
         delConfirm: false,
         ready: false,
+
+        orgs: [],
+        orgsReady: false,
+        orgsTableHeader: ["#", "Sigla", "Nome", "Tipo"],
+        orgsTableWidth: ["4%", "15%", "70%", "15%"],
 
         classList:[],
         processes: [],
@@ -100,6 +107,51 @@ var leg = new Vue({
                     console.error(error);
                 });
         },
+        loadOrgs: function () {
+            var orgsToParse = [];
+            var keys = ["id", "Sigla", "Nome", "Tipo"];
+            var i = 0;
+
+            var selectedOrgs = this.legData.org.original.map(a=>a.id);
+            this.legData.org.new = JSON.parse(JSON.stringify(selectedOrgs));
+
+            this.$http.get("/api/organizacoes")
+                .then(function (response) {
+                    orgsToParse = response.body;
+                })
+                .then(function () {
+                    conj = new RegExp("#Conjunto", "g");
+                    tipol = new RegExp("#Tipologia", "g");
+
+                    this.orgs = this.parseList(orgsToParse, keys)
+                        .map(function (item) {
+                            if (conj.test(item.Tipo)) {
+                                item.Tipo = "Conjunto";
+                            }
+                            else if (tipol.test(item.Tipo)) {
+                                item.Tipo = "Tipologia";
+                            }
+                            else {
+                                item.Tipo = "Organização";
+                            }
+                            return item;
+                        })
+                        .map(function (item) {
+                            return {
+                                data: [i++, item.Sigla, item.Nome, item.Tipo],
+                                selected: (selectedOrgs.indexOf(item.id)!=-1),
+                                id: item.id
+                            }
+                        }).sort(function (a, b) {
+                            return a.data[1].localeCompare(b.data[1]);
+                        });
+
+                    this.orgsReady = true;
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        },
         parseList: function (content, keys) {
             var dest = [];
             var temp = {};
@@ -145,6 +197,17 @@ var leg = new Vue({
         
             this.ready=true;
         },
+        orgSelected: function (row, list, partType) {
+            if (!row.selected) {
+                list.push(row.id);
+            }
+            else {
+                let index = list.indexOf(row.id);
+                if (index != -1) {
+                    list.splice(index, 1);
+                }
+            }
+        },
         update: function(){
             this.$refs.spinner.show();
 
@@ -155,6 +218,7 @@ var leg = new Vue({
                 type: null,
                 title: null,
                 link: null,
+                org: null,
             };
 
             keys=Object.keys(this.legData);
@@ -164,6 +228,8 @@ var leg = new Vue({
                     dataObj[keys[i]]=this.legData[keys[i]].new;
                 }
             }
+
+            console.log(dataObj);
 
             this.$http.put('/api/legislacao/'+this.id,dataObj,{
                 headers: {
@@ -213,6 +279,8 @@ var leg = new Vue({
         .then( function() {
             this.parse();
             this.loadProcesses();
+
+            this.loadOrgs();
             this.loadClasses();
         })
         .catch( function(error) { 

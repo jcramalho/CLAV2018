@@ -7,12 +7,19 @@ var newLeg = new Vue({
             Numero: "",
             Data: "",
             Link: "",
+            Orgs: [],
         },
+        orgs: [],
+        orgsReady: false,
+        orgsTableHeader: ["#", "Sigla", "Nome", "Tipo"],
+        orgsTableWidth: ["4%", "15%", "70%", "15%"],
         message: "",
     },
     components: {
         spinner: VueStrap.spinner,
         datepicker: VueStrap.datepicker,
+        accordion: VueStrap.accordion,
+        panel: VueStrap.panel,
     },
     methods: {
         dataEscolhida: function(payload){
@@ -69,6 +76,81 @@ var newLeg = new Vue({
             .catch( function(error) { 
                 console.error(error); 
             });
-        }
+        },
+        loadOrgs: function () {
+            var orgsToParse = [];
+            var keys = ["id", "Sigla", "Nome", "Tipo"];
+            var i = 0;
+
+            this.$http.get("/api/organizacoes")
+                .then(function (response) {
+                    orgsToParse = response.body;
+                })
+                .then(function () {
+                    conj = new RegExp("#Conjunto", "g");
+                    tipol = new RegExp("#Tipologia", "g");
+
+                    this.orgs = this.parse(orgsToParse, keys)
+                        .map(function (item) {
+                            if (conj.test(item.Tipo)) {
+                                item.Tipo = "Conjunto";
+                            }
+                            else if (tipol.test(item.Tipo)) {
+                                item.Tipo = "Tipologia";
+                            }
+                            else {
+                                item.Tipo = "Organização";
+                            }
+                            return item;
+                        })
+                        .map(function (item) {
+                            return {
+                                data: [i++, item.Sigla, item.Nome, item.Tipo],
+                                selected: false,
+                                id: item.id
+                            }
+                        }).sort(function (a, b) {
+                            return a.data[1].localeCompare(b.data[1]);
+                        });
+
+                    this.orgsReady = true;
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        },
+        parse: function (content, keys) {
+            var dest = [];
+            var temp = {};
+
+            // parsing the JSON
+            for (var i = 0; i < content.length; i++) {
+                for (var j = 0; j < keys.length; j++) {
+                    temp[keys[j]] = content[i][keys[j]].value;
+
+                    if (keys[j] == "id") {
+                        temp.id = temp.id.replace(/[^#]+#(.*)/, '$1');
+                    }
+                }
+
+                dest[i] = JSON.parse(JSON.stringify(temp));
+            }
+
+            return dest;
+        },
+        orgSelected: function (row, list, partType) {
+            if (!row.selected) {
+                list.push(row.id);
+            }
+            else {
+                let index = list.indexOf(row.id);
+                if (index != -1) {
+                    list.splice(index, 1);
+                }
+            }
+        },
+    },
+    created: function () {
+        this.loadOrgs();
     }
 })

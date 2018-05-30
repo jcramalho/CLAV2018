@@ -90,20 +90,29 @@ block corpo
                     tr
                         td(style="width:12%")
                             .info-label Entidade(s):
-                        //td(v-if="legData.org.edit" style="width:80%")
-                            input(
-                                size="50"
-                                v-model="legData.org.new"
-                                :placeholder="legData.org.original"
+                        td(v-if="legData.org.edit" style="width:80%")
+                            custom-table-select(
+                                v-if="orgsReady"
+
+                                :header="orgsTableHeader"
+                                :complete-rows="orgs"
+                                :ready="orgsReady"
+                                :cwidth="orgsTableWidth"
+                                
+                                class-table='table table-condensed'
+
+                                @select-clicked="orgSelected($event,legData.org.new)"
                             )
-                        td( style="width:80%")
+                            h4(
+                                v-else
+                            ) A carregar...
+                        td(v-else style="width:80%")
                             ul
                                 li(v-for="org in legData.org.original")
                                     a(:href="'/organizacoes/consultar/'+org.id") {{org.sigla}}
                                     |  - {{org.nome}}
 
-
-                        //if user
+                        if user
                             td
                                 label(
                                     for="legData.org.edit"
@@ -222,7 +231,8 @@ block corpo
                         legData.number.edit && legData.number.new ||\
                         legData.type.edit && legData.type.new ||\
                         legData.title.edit && legData.title.new ||\
-                        legData.link.edit && legData.link.new \
+                        legData.link.edit && legData.link.new ||\
+                        legData.org.edit\
                     )"
                 )
                 input.btn.btn-xs.btn-warning.col-sm-1(
@@ -234,7 +244,8 @@ block corpo
                         legData.number.edit && legData.number.new ||\
                         legData.type.edit && legData.type.new ||\
                         legData.title.edit && legData.title.new ||\
-                        legData.link.edit && legData.link.new \
+                        legData.link.edit && legData.link.new ||\
+                        legData.org.edit\
                     )"
                 )
                 p.col-sm-5 {{ message }}
