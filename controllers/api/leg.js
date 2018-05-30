@@ -114,6 +114,15 @@ Leg.createDoc = function (newID, dataObj) {
                 clav:diplomaTipo '${dataObj.Tipo}' ;
                 clav:diplomaTitulo '${dataObj.Titulo}' ;
                 clav:diplomaLink '${dataObj.Link}' .
+    `;
+
+    for(org of dataObj.Orgs){
+        createQuery += `
+            clav:${newID} clav:diplomaEntidade clav:${org}.
+        `;    
+    }
+
+    createQuery += `
         }
     `;
 
@@ -154,13 +163,21 @@ Leg.updateDoc = function (dataObj) {
         ins += `clav:${dataObj.id} clav:diplomaLink "${dataObj.link}" .\n`;
     }
 
-    wer = "WHERE {" + del + "}\n";
-    del = "DELETE {" + del + "}\n";
-    ins = "INSERT {" + ins + "}\n";
+    if (dataObj.org && dataObj.org.length) {
+        del += `clav:${dataObj.id} clav:diplomaEntidade ?org .\n`;
+
+        for(let ent of dataObj.org){
+            ins += `clav:${dataObj.id} clav:diplomaEntidade clav:${ent}.\n`;    
+        }        
+    }
+
+    wer = "WHERE {\n" + del + "}\n";
+    del = "DELETE {\n" + del + "}\n";
+    ins = "INSERT {\n" + ins + "}\n";
 
     var updateQuery = del + ins + wer;
     
-    console.log("ola");
+    console.log(updateQuery);
 
     return client.query(updateQuery).execute()
         .then(response => Promise.resolve(response))

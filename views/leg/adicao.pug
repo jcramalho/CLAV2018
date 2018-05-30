@@ -49,6 +49,30 @@ block corpo
                                 format="yyyy/MM/dd"
                                 placeholder="AAAA/MM/DD"
                             )
+
+                    //- DONOS
+                    tr(style="padding-bottom:30px")
+                        td(style="width: 10%")
+                            .info-label Entidades:
+
+                        td
+                            accordion
+                                panel(type="white" header="Selecionar Entidades")
+                                    custom-table-select(
+                                        v-if="orgsReady"
+
+                                        :header="orgsTableHeader"
+                                        :complete-rows="orgs"
+                                        :ready="orgsReady"
+                                        :cwidth="orgsTableWidth"
+                                        
+                                        class-table='table table-condensed'
+
+                                        @select-clicked="orgSelected($event,diploma.Orgs)"
+                                    )
+                                    h4(
+                                        v-else
+                                    ) A carregar...
                     
                     //- Link
                     tr

@@ -81,7 +81,7 @@ router.post('/', Auth.isLoggedInAPI, function (req, res) {
         .catch(error => console.error("General error:\n" + error));
 })
 
-router.put('/:id', Auth.isLoggedInAPI, function (req, res) {
+router.put('/:id', function (req, res) {
     var dataObj = req.body;
 
     if (dataObj.number) {
