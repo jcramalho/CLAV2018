@@ -103,7 +103,7 @@ SelTabs.createTab = function (id, name, classes) {
                 clav:${id} rdf:type owl:NamedIndividual ,
                         clav:TabelaSelecao ;
                     clav:referencialClassificativoStatus 'H';
-                    clav:designacao '${name} ${id.replace("ts_", "")}' .
+                    clav:designacao '${name} ${name=="Teste" ? id.replace("ts_", "") : ""}' .
         `;
 
     for (let clas of classes) {
@@ -182,10 +182,8 @@ SelTabs.createTab = function (id, name, classes) {
                     val = val.split('::');
                     noteID = val[0].replace(/[^#]+#(n[ae]_)(.*)/, `$1${id}_$2`); 
 
-                    console.log(noteID);
-
                     createQuery += `
-                        clav:clav:${noteID} rdf:type owl:NamedIndividual,
+                        clav:${noteID} rdf:type owl:NamedIndividual,
                                 clav:clav:${keyNotes[key].slice(3)};
                             clav:conteudo "${val[1].replace(/\n|\r/g, '\\n').replace(/\"/g,"\\\"")}".
                         clav:${clasID} clav:${keyNotes[key]} clav:${noteID} .
@@ -194,7 +192,6 @@ SelTabs.createTab = function (id, name, classes) {
             }
         }
         
-
         var keyRels = {
             Rels1: 'eSintetizadoPor',
             Rels2: 'eSinteseDe',
@@ -217,8 +214,6 @@ SelTabs.createTab = function (id, name, classes) {
     }
 
     createQuery += "}"
-
-    console.log(createQuery);
 
     return client.query(createQuery).execute()
         .then(response => Promise.resolve(response))

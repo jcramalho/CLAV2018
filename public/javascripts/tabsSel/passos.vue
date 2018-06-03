@@ -37,5 +37,9 @@ new Vue({
             },
             500
         )
+    },
+    created() {
+        this.nome="Teste";
+        this.saveName();
     }
 })
