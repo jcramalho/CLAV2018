@@ -276,7 +276,7 @@ block corpo
                                                             v-model="edit.ProcType"
                                                         )
 
-                                        //- PROCESSO TRANVERSAL
+                                        //- PROCESSO TRANSVERSAL
                                         td(style="width: 50%")
                                             table
                                                 td(style="width: 10%")
@@ -298,7 +298,7 @@ block corpo
                                                     label(for="ptN" style="font-weight:normal")
                                                         |  Não
                                                 td(v-else style="width:80%")
-                                                    | {{ clas.ProcTrans }}  
+                                                    | {{ clas.ProcTrans=="S" ? "Sim" : "Não" }}  
 
                                                 if user
                                                     td(style="width:10%")

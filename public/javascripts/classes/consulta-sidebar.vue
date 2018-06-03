@@ -45,8 +45,8 @@ var classesSide = new Vue({
             let pai;
 
             let level= this.level;
-            let active= this.activeClass.substring(1);
-            this.activeClass=this.activeClass.slice(1,-1);
+            let active= this.activeClass.replace(/.*c([0-9]{3}.*)/,"$1");
+            this.activeClass=this.activeClass.replace(/.*c([0-9]{3}.*)\d/,"$1");
 
             for (let pn of dataToParse) {
                 let codeAvo = pn.AvoCodigo.value;
