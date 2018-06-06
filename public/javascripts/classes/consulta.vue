@@ -5,7 +5,14 @@ var classe = new Vue({
         delConfirm: false,
         id: "",
         orgList: [],
-        orgListTest: [],
+        participantLists: {
+            Apreciador: [],
+            Assessor: [],
+            Comunicador: [],
+            Decisor: [],
+            Iniciador: [],
+            Executor: [],
+        },
         legList: [],
         classList: [],
         clas: {
@@ -46,22 +53,24 @@ var classe = new Vue({
             Desc: "",
             ProcType: "",
             ProcTrans: "",
-            Owner: "",
             Owners: [],
             Leg: "",
             Legs: [],
-            ExAppNote: "",
             ExAppNotes: [],
-            AppNote: "",
             AppNotes: [],
-            DelNote: "",
             DelNotes: [],
+            Indexes: [],
             RelProc: "",
             RelType: "",
             RelProcs: [],
-            Participant: "",
-            ParticipantType: "",
-            Participants: [],
+            Participants: {
+                Apreciador: [],
+                Assessor: [],
+                Comunicador: [],
+                Decisor: [],
+                Executor: [],
+                Iniciador: [],
+            },
         },
         edit: {
             Title: false,
@@ -74,6 +83,7 @@ var classe = new Vue({
             ExAppNotes: false,
             AppNotes: false,
             DelNotes: false,
+            Indexes: false,
             RelProcs: false,
             Participants: false,
         },
@@ -101,6 +111,9 @@ var classe = new Vue({
         accordion: VueStrap.accordion,
         panel: VueStrap.panel,
         spinner: VueStrap.spinner,
+        tabs: VueStrap.tabs,
+        tabGroup: VueStrap.tabGroup,
+        tab: VueStrap.tab,
     },
     methods: {
         prepData: function (dataObj) {
@@ -118,8 +131,8 @@ var classe = new Vue({
             }
 
             this.loadChildren();
-            
-            this.pageReady=true;
+
+            this.pageReady = true;
 
             if (dataObj.Desc) {
                 this.clas.Desc = dataObj.Desc.value;
@@ -131,7 +144,7 @@ var classe = new Vue({
             this.loadDelNotes();
             this.loadIndexes();
 
-            if(this.clas.Level==3){
+            if (this.clas.Level == 3) {
 
                 if (dataObj.ProcTipo) {
                     this.clas.ProcType = dataObj.ProcTipo.value;
@@ -140,7 +153,7 @@ var classe = new Vue({
                 if (dataObj.ProcTrans) {
                     this.clas.ProcTrans = dataObj.ProcTrans.value;
                     this.newClass.ProcTrans = dataObj.ProcTrans.value;
-                }      
+                }
 
                 this.loadOwners();
                 this.loadParticipants();
@@ -152,20 +165,20 @@ var classe = new Vue({
             }
 
             this.loadClasses();
-            this.loadOrgs();            
-            this.loadLegList();            
+            this.loadLegList();
         },
         loadIndexes: function () {
             var indexesToParse = [];
-            var keys = ["Termo"];
+            var keys = ["id", "Termo"];
 
-            this.$http.get("/api/termosIndice/filtrar/"+this.id)
+            this.$http.get("/api/termosIndice/filtrar/" + this.id)
                 .then(function (response) {
                     indexesToParse = response.body;
                 })
                 .then(function () {
-                    if(indexesToParse[0])
+                    if (indexesToParse[0])
                         this.clas.Indexes = this.parse(indexesToParse, keys);
+                    this.newClass.Indexes = JSON.parse(JSON.stringify(this.clas.Indexes));
                 })
                 .catch(function (error) {
                     console.error(error);
@@ -175,20 +188,20 @@ var classe = new Vue({
             var classesToParse = [];
             var keys = ["Child", "Code", "Title"];
 
-            this.$http.get("/api/classes/"+this.id+"/descendencia")
+            this.$http.get("/api/classes/" + this.id + "/descendencia")
                 .then(function (response) {
                     classesToParse = response.body;
                 })
                 .then(function () {
-                    if(classesToParse[0].Code)
+                    if (classesToParse[0].Code)
                         this.clas.Children = this.parse(classesToParse, keys)
-                            .sort((a,b)=>a.Code.localeCompare(b.Code));
+                            .sort((a, b) => a.Code.localeCompare(b.Code));
                 })
                 .catch(function (error) {
                     console.error(error);
                 });
         },
-        loadOrgs: function () {
+        loadOrgs_old: function () {
             var orgsToParse = [];
             var keys = ["id", "Sigla", "Nome"];
 
@@ -198,16 +211,85 @@ var classe = new Vue({
                 })
                 .then(function () {
                     this.orgList = this.parse(orgsToParse, keys)
-                    .map(function(item){
-                        return {
-                            label: item.Sigla+" - "+item.Nome,
-                            value: item,
-                        }
-                    }).sort(function (a, b) {
-                        return a.label.localeCompare(b.label);
-                    });
+                        .map(function (item) {
+                            return {
+                                label: item.Sigla + " - " + item.Nome,
+                                value: item,
+                            }
+                        }).sort(function (a, b) {
+                            return a.label.localeCompare(b.label);
+                        });
 
                     this.orgsReady = true;
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        },
+        loadOrgs: function () {
+            var orgsToParse = [];
+            var keys = ["id", "Sigla", "Nome", "Tipo"];
+            var i = 0;
+
+            this.$http.get("/api/organizacoes")
+                .then(function (response) {
+                    orgsToParse = response.body;
+                })
+                .then(function () {
+                    conj = new RegExp("#Conjunto", "g");
+                    tipol = new RegExp("#Tipologia", "g");
+
+                    this.orgList = this.parse(orgsToParse, keys)
+                        .map(function (item) {
+                            if (conj.test(item.Tipo)) {
+                                item.Tipo = "Conjunto";
+                            }
+                            else if (tipol.test(item.Tipo)) {
+                                item.Tipo = "Tipologia";
+                            }
+                            else {
+                                item.Tipo = "Organização";
+                            }
+                            return item;
+                        })
+                        .map(function (item) {
+                            return {
+                                data: [i++, item.Sigla, item.Nome, item.Tipo],
+                                selected: false,
+                                id: item.id
+                            }
+                        }).sort(function (a, b) {
+                            return a.data[1].localeCompare(b.data[1]);
+                        });
+
+                    for (let type in this.participantLists) {
+                        if (type != "Executor") {
+                            this.participantLists[type] = JSON.parse(
+                                JSON.stringify(this.orgList)
+                            );
+                        }
+                    }
+                    this.orgsReady = true;
+
+                    let ownersSelected = this.clas.Owners.map(a => a.id);
+
+                    this.orgList = this.orgList.map(function (item) {
+                        item.selected = (ownersSelected.indexOf(item.id) != -1);
+                        return item;
+                    });
+
+                    this.participantLists.Executor = JSON.parse(
+                        JSON.stringify(this.orgList.filter(a => a.selected))
+                    );
+
+                    for (let type in this.participantLists) {
+                        let partsSelected = this.clas.Participants[type].map(a => a.id);
+
+                        this.participantLists[type].map(function (item) {
+                            item.selected = (partsSelected.indexOf(item.id) != -1);
+                            return item;
+                        });
+                    }
                 })
                 .catch(function (error) {
                     console.error(error);
@@ -217,7 +299,7 @@ var classe = new Vue({
             var orgsToParse = [];
             var keys = ["id", "Sigla", "Nome"];
 
-            this.$http.get("/api/classes/" + this.id+"/donos")
+            this.$http.get("/api/classes/" + this.id + "/donos")
                 .then(function (response) {
                     orgsToParse = response.body;
                 })
@@ -227,6 +309,7 @@ var classe = new Vue({
 
 
                     this.ownersReady = true;
+                    this.loadParticipants();
                 })
                 .catch(function (error) {
                     console.error(error);
@@ -234,7 +317,7 @@ var classe = new Vue({
         },
         loadLegList: function () {
             var legsToParse = [];
-            var keys = ["id","Tipo", "Número", "Titulo"];
+            var keys = ["id", "Tipo", "Número", "Titulo"];
 
             this.$http.get("/api/legislacao")
                 .then(function (response) {
@@ -242,15 +325,15 @@ var classe = new Vue({
                 })
                 .then(function () {
                     this.legList = this.parse(legsToParse, keys)
-                    .map(function(item){
-                        return {
-                            label: item.Tipo+" - "+item.Número,
-                            value: item,
-                        }
-                    }).sort(function (a, b) {
-                        return a.label.localeCompare(b.label);
-                    });
-                    
+                        .map(function (item) {
+                            return {
+                                label: item.Tipo + " - " + item.Número,
+                                value: item,
+                            }
+                        }).sort(function (a, b) {
+                            return a.label.localeCompare(b.label);
+                        });
+
                     this.legListReady = true;
                 })
                 .catch(function (error) {
@@ -259,9 +342,9 @@ var classe = new Vue({
         },
         loadLegs: function () {
             var legsToParse = [];
-            var keys = ["id","Tipo", "Número", "Titulo"];
+            var keys = ["id", "Tipo", "Número", "Titulo"];
 
-            this.$http.get("/api/classes/" + this.id+"/legislacao")
+            this.$http.get("/api/classes/" + this.id + "/legislacao")
                 .then(function (response) {
                     legsToParse = response.body;
                 })
@@ -279,7 +362,7 @@ var classe = new Vue({
             var notesToParse = [];
             var keys = ["id", "Nota"];
 
-            this.$http.get("/api/classes/" + this.id+"/notasAp")
+            this.$http.get("/api/classes/" + this.id + "/notasAp")
                 .then(function (response) {
                     notesToParse = response.body;
                 })
@@ -297,7 +380,7 @@ var classe = new Vue({
             var notesToParse = [];
             var keys = ["id", "Nota"];
 
-            this.$http.get("/api/classes/" + this.id+"/notasEx")
+            this.$http.get("/api/classes/" + this.id + "/notasEx")
                 .then(function (response) {
                     notesToParse = response.body;
                 })
@@ -322,7 +405,7 @@ var classe = new Vue({
             var notesToParse = [];
             var keys = ["Exemplo"];
 
-            this.$http.get("/api/classes/" + this.id+"/exemplosNotasAp")
+            this.$http.get("/api/classes/" + this.id + "/exemplosNotasAp")
                 .then(function (response) {
                     notesToParse = response.body;
                 })
@@ -346,15 +429,15 @@ var classe = new Vue({
                 })
                 .then(function () {
                     this.classList = this.parse(classesToParse, keys)
-                    .map(function(item){
-                        return {
-                            label: item.Code+" - "+item.Title,
-                            value: item,
-                        }
-                    }).sort(function (a, b) {
-                        return a.label.localeCompare(b.label);
-                    });
-                    
+                        .map(function (item) {
+                            return {
+                                label: item.Code + " - " + item.Title,
+                                value: item,
+                            }
+                        }).sort(function (a, b) {
+                            return a.label.localeCompare(b.label);
+                        });
+
                     this.classesReady = true;
                 })
                 .catch(function (error) {
@@ -365,7 +448,7 @@ var classe = new Vue({
             var relProcsToParse = [];
             var keys = ["id", "Code", "Title"];
 
-            this.$http.get("/api/classes/" + this.id+"/relacionados")
+            this.$http.get("/api/classes/" + this.id + "/relacionados")
                 .then(function (response) {
                     relProcsToParse = response.body;
                 })
@@ -378,7 +461,7 @@ var classe = new Vue({
                 .catch(function (error) {
                     console.error(error);
                 });
-        },       
+        },
         parseRelations: function (content, keys) {
             var dest = {
                 'Antecessor De': [],
@@ -403,7 +486,7 @@ var classe = new Vue({
                     }
                 }
                 var type = content[i].Type.value.replace(/.*#e(.*)/, '$1').replace(/([a-z])([A-Z])/, '$1 $2');
-                
+
                 dest[type].push(JSON.parse(JSON.stringify(temp)));
             }
 
@@ -413,7 +496,7 @@ var classe = new Vue({
             var participantsToParse = [];
             var keys = ['id', 'Nome', 'Sigla'];
 
-            this.$http.get("/api/classes/" + this.id+"/participantes")
+            this.$http.get("/api/classes/" + this.id + "/participantes")
                 .then(function (response) {
                     participantsToParse = response.body;
                 })
@@ -422,6 +505,8 @@ var classe = new Vue({
                     this.newClass.Participants = JSON.parse(JSON.stringify(this.clas.Participants));
 
                     this.participantsReady = true;
+
+                    this.loadOrgs();
                 })
                 .catch(function (error) {
                     console.error(error);
@@ -449,7 +534,7 @@ var classe = new Vue({
                     }
                 }
                 var type = content[i].Type.value.replace(/.*temParticipante(.*)/, '$1');
-                
+
                 dest[type].push(JSON.parse(JSON.stringify(temp)));
             }
 
@@ -458,7 +543,7 @@ var classe = new Vue({
         loadPCA: function () {
             var infoToParse = [];
 
-            this.$http.get("/api/classes/" + this.id+"/pca")
+            this.$http.get("/api/classes/" + this.id + "/pca")
                 .then(function (response) {
                     infoToParse = response.body;
                 })
@@ -479,24 +564,24 @@ var classe = new Vue({
                 criterios: [],
             }
 
-            if(data.SubContagem){
+            if (data.SubContagem) {
                 PCA.subContagem = data.SubContagem.value;
             }
-            
-            if(data.ContagemNorm){
+
+            if (data.ContagemNorm) {
                 PCA.contagemnormalizada = data.ContagemNorm.value;
             }
 
-            if(data.Notas.value){
+            if (data.Notas.value) {
                 PCA.notas = data.Notas.value.split('###');
             }
 
-            if(data.Valores.value){
+            if (data.Valores.value) {
                 PCA.valores = data.Valores.value.split('###');
             }
 
-            if(data.Criterios.value[0].Tipo){
-                for(let criterio of data.Criterios.value) {
+            if (data.Criterios.value[0].Tipo) {
+                for (let criterio of data.Criterios.value) {
                     let newCrit = {
                         tipo: "",
                         nota: "",
@@ -513,11 +598,11 @@ var classe = new Vue({
                     }
 
                     newCrit.tipo = critTypes[criterio.Tipo.value.replace(/[^#]+#(.*)/, '$1')];
-                    
+
                     newCrit.nota = criterio.Conteudo.value;
-                    
-                    if ( criterio.Processos.value ){
-                        for(let proc of criterio.Processos.value.split('###')){
+
+                    if (criterio.Processos.value) {
+                        for (let proc of criterio.Processos.value.split('###')) {
                             proc = proc.split(':::');
 
                             let id = proc[0].replace(/[^#]+#(.*)/, '$1');
@@ -532,12 +617,12 @@ var classe = new Vue({
 
                             let regex = new RegExp(codigo, "gi");
                             newCrit.nota = newCrit.nota
-                                .replace(regex,"<a href='/classes/consultar/"+id+"'>"+codigo+"</a>");
+                                .replace(regex, "<a href='/classes/consultar/" + id + "'>" + codigo + "</a>");
                         }
                     }
 
-                    if ( criterio.Legislacao.value ){
-                        for(let doc of criterio.Legislacao.value.split('###')){
+                    if (criterio.Legislacao.value) {
+                        for (let doc of criterio.Legislacao.value.split('###')) {
                             doc = doc.split(':::');
 
                             let id = doc[0].replace(/[^#]+#(.*)/, '$1');
@@ -550,23 +635,23 @@ var classe = new Vue({
                                 numero: doc[2]
                             })
 
-                            let regex = new RegExp("\\[([^\\]]*"+numero+")\\]", "gi");
-                            
+                            let regex = new RegExp("\\[([^\\]]*" + numero + ")\\]", "gi");
+
                             newCrit.nota = newCrit.nota
-                                .replace(regex,"<a href='/legislacao/consultar/"+id+"'>$1</a>");
+                                .replace(regex, "<a href='/legislacao/consultar/" + id + "'>$1</a>");
                         }
                     }
 
                     PCA.criterios.push(newCrit);
                 }
             }
-            
+
             return PCA;
         },
         loadDF: function () {
             var infoToParse = [];
 
-            this.$http.get("/api/classes/" + this.id+"/df")
+            this.$http.get("/api/classes/" + this.id + "/df")
                 .then(function (response) {
                     infoToParse = response.body;
                 })
@@ -582,29 +667,29 @@ var classe = new Vue({
                 valores: [],
                 criterios: [],
             }
-            
-            if(data.Valores.value){
+
+            if (data.Valores.value) {
                 DF.valores = data.Valores.value.split('###');
 
-                for(let [index, valor] of DF.valores.entries()){
-                    if(valor=="C"){
-                        valor="Conservação";
+                for (let [index, valor] of DF.valores.entries()) {
+                    if (valor == "C") {
+                        valor = "Conservação";
                     }
-                    else if(valor=="E"){
-                        valor="Eliminação";
+                    else if (valor == "E") {
+                        valor = "Eliminação";
                     }
-                    else if(valor=="CP"){
-                        valor="Conservação Parcial";
+                    else if (valor == "CP") {
+                        valor = "Conservação Parcial";
                     }
-                    else if(valor=="NE"){
-                        valor=data.Nota.value;
+                    else if (valor == "NE") {
+                        valor = data.Nota.value;
                     }
-                    DF.valores[index]=valor;
+                    DF.valores[index] = valor;
                 }
             }
 
-            if(data.Criterios.value[0].Tipo){
-                for(let criterio of data.Criterios.value) {
+            if (data.Criterios.value[0].Tipo) {
+                for (let criterio of data.Criterios.value) {
                     let newCrit = {
                         tipo: "",
                         nota: "",
@@ -621,11 +706,11 @@ var classe = new Vue({
                     }
 
                     newCrit.tipo = critTypes[criterio.Tipo.value.replace(/[^#]+#(.*)/, '$1')];
-                    
+
                     newCrit.nota = criterio.Conteudo.value;
 
-                    if ( criterio.Processos.value ){
-                        for(let proc of criterio.Processos.value.split('###')){
+                    if (criterio.Processos.value) {
+                        for (let proc of criterio.Processos.value.split('###')) {
                             proc = proc.split(':::');
 
                             let id = proc[0].replace(/[^#]+#(.*)/, '$1');
@@ -640,12 +725,12 @@ var classe = new Vue({
 
                             let regex = new RegExp(codigo, "gi");
                             newCrit.nota = newCrit.nota
-                                .replace(regex,"<a href='/classes/consultar/"+id+"'>"+codigo+"</a>");
+                                .replace(regex, "<a href='/classes/consultar/" + id + "'>" + codigo + "</a>");
                         }
                     }
 
-                    if ( criterio.Legislacao.value ){
-                        for(let doc of criterio.Legislacao.value.split('###')){
+                    if (criterio.Legislacao.value) {
+                        for (let doc of criterio.Legislacao.value.split('###')) {
                             doc = doc.split(':::');
 
                             let id = doc[0].replace(/[^#]+#(.*)/, '$1');
@@ -658,17 +743,17 @@ var classe = new Vue({
                                 numero: doc[2]
                             })
 
-                            let regex = new RegExp("\\[([^\\]]*"+numero+")\\]", "gi");
-                            
+                            let regex = new RegExp("\\[([^\\]]*" + numero + ")\\]", "gi");
+
                             newCrit.nota = newCrit.nota
-                                .replace(regex,"<a href='/legislacao/consultar/"+id+"'>$1</a>");
+                                .replace(regex, "<a href='/legislacao/consultar/" + id + "'>$1</a>");
                         }
                     }
 
                     DF.criterios.push(newCrit);
                 }
             }
-            
+
             return DF;
         },
         parse: function (content, keys) {
@@ -700,16 +785,10 @@ var classe = new Vue({
             this.legList.push(this.newClass.Legs[index]);
             this.newClass.Legs.splice(index, 1);
         },
-        addNewExAppNote: function () {
-            if (this.newClass.ExAppNote) {
-                this.newClass.ExAppNotes.push({ Exemplo: this.newClass.ExAppNote });
-                this.newClass.ExAppNote = '';
-            }
-        },
-        addNewAppNote: function () {
+        newNoteID: function (noteList, prefix) {
             function checkID(id, list) {
-                for(var i=0;i<list.length;i++){
-                    if(id==list[i].id.replace(/na_.*_([0-9])/, '$1')){
+                for (let item of list) {
+                    if (id == item.id.replace(/[nt][aei](_.*)?_([0-9]+)/, '$2')) {
                         return false;
                     }
                 }
@@ -717,76 +796,32 @@ var classe = new Vue({
             }
 
             var newID = 1;
-            if(this.clas.AppNotes && this.clas.AppNotes.length){
-                for (var i = 0; i < this.clas.AppNotes.length; i++) {
-                    var appID = parseInt(this.clas.AppNotes[i].id.replace(/na_.*_([0-9])/, '$1'));
+            if (noteList && noteList.length) {
+                for (let note of noteList) {
+                    var appID = parseInt(note.id.replace(/[nt][aei](_.*)?_([0-9]+)/, '$2'));
 
-                    if (newID !=appID){
-                        if(checkID(newID,this.newClass.AppNotes)){
+                    if (newID != appID) {
+                        if (checkID(newID, noteList)) {
                             break;
                         }
                     }
                     newID++;
                 }
-                while(!checkID(newID,this.newClass.AppNotes)){
+                while (!checkID(newID, noteList)) {
                     newID++;
                 }
             } else {
-                newID= this.newClass.AppNotes.length+1;
+                newID = noteList.length + 1;
             }
-
-            if (this.newClass.AppNote) {
-                this.newClass.AppNotes.push({
-                    id: "na_"+this.id+"_"+newID,
-                    Nota: this.newClass.AppNote 
-                });
-                this.newClass.AppNote = '';
-            }
+            return prefix + "_" + this.id + "_" + newID;
         },
-        addNewDelNote: function () {
-            function checkID(id, list) {
-                for(var i=0;i<list.length;i++){
-                    if(id==list[i].id.replace(/ne_.*_([0-9])/, '$1')){
-                        return false;
-                    }
-                }
-                return true;
-            }
-
-            var newID=1;
-            if(this.clas.DelNotes && this.clas.DelNotes.length){
-                for (var i = 0; i < this.clas.DelNotes.length; i++) {
-                    var delID = parseInt(this.clas.DelNotes[i].id.replace(/ne_.*_([0-9])/, '$1'));
-                    
-                    if (newID !=delID){
-                        if(checkID(newID,this.newClass.DelNotes)){
-                            break;
-                        }
-                    }
-                    newID++;
-                }
-                while(!checkID(newID,this.newClass.DelNotes)){
-                    newID++;
-                }
-            } else {
-                newID=this.newClass.DelNotes.length+1;
-            }
-            
-            if (this.newClass.DelNote) {
-                this.newClass.DelNotes.push({
-                    id: "ne_"+this.id+"_"+newID,
-                    Nota: this.newClass.DelNote 
-                });
-                this.newClass.DelNote = '';
-            }
-        },
-        addParticipant: function (type,participant) {
+        addParticipant: function (type, participant) {
             this.newClass.Participants[type].push(participant);
         },
-        remParticipant: function (key, index) {
-            this.newClass.Participants[key].splice(index, 1);
+        remParticipant: function (type, index) {
+            this.newClass.Participants[type].splice(index, 1);
         },
-        addRelation: function (type,relation) {
+        addRelation: function (type, relation) {
             this.newClass.RelProcs[type].push(relation);
         },
         remRelation: function (key, index) {
@@ -818,6 +853,56 @@ var classe = new Vue({
             }
 
         },
+        orgSelected: function (row, list, type) {
+            var findIndex = function (list, id) {
+                for (let [index, item] of list.entries()) {
+                    if (id == item.id) {
+                        return index;
+                    }
+                }
+                return -1;
+            }
+
+            if (!row.selected) {
+                if (type == 'dono') {
+                    list.push(
+                        JSON.parse(JSON.stringify(row))
+                    );
+                    this.participantLists.Executor.push(
+                        JSON.parse(JSON.stringify(row))
+                    );
+                } 
+                else {
+                    let data = {
+                        Nome: row.data[2],
+                        Sigla: row.data[1],
+                        id: row.id,
+                    }
+                    list.push(data);
+                }
+            }
+            else {
+                let index = findIndex(list, row.id);
+
+                if (index != -1) {
+                    list.splice(index, 1);
+
+                    if (type == 'dono') {
+                        let orgIndex = findIndex(this.participantLists.Executor, row.id);
+
+                        if(orgIndex!=-1){
+                            this.participantLists.Executor.splice(index, 1);
+                        }
+
+                        let selectedIndex = findIndex(this.newClass.Participants.Executor, row.id);
+
+                        if(selectedIndex!=-1){
+                            this.newClass.Participants.Executor.splice(selectedIndex,1);
+                        }   
+                    }
+                }
+            }
+        },
         subtractArray: function (from, minus) {
             var ret;
 
@@ -829,10 +914,10 @@ var classe = new Vue({
             }
             else {
                 ret = from.filter(function (item) {
-                    var r= true;
+                    var r = true;
                     for (var i = 0; i < minus.length; i++) {
                         if (minus[i].id == item.id) {
-                            r= false;
+                            r = false;
                             break;
                         }
                     }
@@ -863,14 +948,9 @@ var classe = new Vue({
                     Delete: null,
                 },
                 ExAppNotes: null,
-                AppNotes: {
-                    Add: null,
-                    Delete: null,
-                },
-                DelNotes: {
-                    Add: null,
-                    Delete: null,
-                },
+                Indexes: null,
+                AppNotes: null,
+                DelNotes: null,
                 RelProcs: {
                     'Antecessor De': {
                         Add: null,
@@ -933,7 +1013,7 @@ var classe = new Vue({
                 }
             };
 
-            var keys = ["Title", "Status", "Desc", "ProcType", "ProcTrans", "ExAppNotes"];
+            var keys = ["Title", "Status", "Desc", "ProcType", "ProcTrans", "ExAppNotes", "Indexes", "AppNotes", "DelNotes"];
 
             for (var i = 0; i < keys.length; i++) {
                 if (this.edit[keys[i]]) {
@@ -941,7 +1021,7 @@ var classe = new Vue({
                 }
             }
 
-            var arraysKeys = ["Owners", "Legs", "AppNotes", "DelNotes"];
+            var arraysKeys = ["Owners", "Legs"];
 
             for (var i = 0; i < arraysKeys.length; i++) {
                 if (this.edit[arraysKeys[i]]) {
@@ -976,7 +1056,7 @@ var classe = new Vue({
             }
 
             var relationKeys = Object.keys(this.clas.RelProcs);
-            
+
             if (this.edit.RelProcs) {
                 for (var i = 0; i < relationKeys.length; i++) {
 
@@ -992,6 +1072,8 @@ var classe = new Vue({
                 }
             }
 
+            console.log(dataObj);
+            /*
             this.$http.put('/api/classes/'+this.id, { dataObj: dataObj },{
                 headers: {
                     'content-type' : 'application/json'
@@ -1005,6 +1087,7 @@ var classe = new Vue({
             .catch(function (error) {
                 console.error(error);
             });
+            */
         },
         delReady: function () {
             this.message = "Tem a certeza que deseja apagar?";
@@ -1014,17 +1097,17 @@ var classe = new Vue({
             this.message = "";
             this.delConfirm = false;
         },
-        deleteClass: function () {    
+        deleteClass: function () {
             this.$refs.spinner.show();
-            this.$http.delete('/api/classes/'+this.id)
-            .then( function(response) { 
-                this.$refs.spinner.hide();
-                this.message = response.body;
-                window.location.href = '/classes';
-            })
-            .catch( function(error) { 
-                console.error(error); 
-            });
+            this.$http.delete('/api/classes/' + this.id)
+                .then(function (response) {
+                    this.$refs.spinner.hide();
+                    this.message = response.body;
+                    window.location.href = '/classes';
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
         }
     },
     created: function () {

@@ -49,7 +49,7 @@ block corpo
                         td(v-else style="width:80%" valign="center")
                             | {{ clas.Status }} 
 
-                        if user 
+                        //if user 
                             td(style="width:10%")
                                 label(style="padding-right:5px") Editar
                                 input(
@@ -97,9 +97,13 @@ block corpo
                             | {{ clas.Title }} 
 
                         if user 
-                            td(style="width:10%")
-                                label(style="padding-right:5px") Editar
-                                input(
+                            td
+                                label.maozinha(
+                                    for="titulo"
+                                    :class="[edit.Title ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
+                                )
+                                input.drop-row(
+                                    id="titulo"
                                     type="checkbox"
                                     v-model="edit.Title"
                                 )
@@ -122,9 +126,13 @@ block corpo
                                     | {{ clas.Desc }} 
 
                                 if user 
-                                    td(style="width:10%")
-                                        label(style="padding-right:5px") Editar
-                                        input(
+                                    td
+                                        label.maozinha(
+                                            for="descricao"
+                                            :class="[edit.Desc ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
+                                        )
+                                        input.drop-row(
+                                            id="descricao"
                                             type="checkbox"
                                             v-model="edit.Desc"
                                         )
@@ -133,31 +141,38 @@ block corpo
                             tr
                                 td(style="width: 10%")
                                     .info-label Nota(s) de Aplicação:
+                                
                                 td(v-if="edit.AppNotes" style="width:80%")
-                                    table
-                                        tr
-                                            td
-                                                textarea(
-                                                    cols="72"
-                                                    lines="5"
-                                                    v-model="newClass.AppNote"
-                                                    @keyup.ctrl.enter="addNewAppNote" 
-                                                )
-                                                button(@click="addNewAppNote") Ok
-
-                                                ul(style="padding-left:20px")
-                                                    li(v-for="(note,index) in newClass.AppNotes")
-                                                        button(@click="newClass.AppNotes.splice(index,1)") x
-                                                        | {{note.Nota}}
+                                    div(v-for="(note,index) in newClass.AppNotes")
+                                        textarea(
+                                            cols="72"
+                                            lines="5"
+                                            v-model="note.Nota"
+                                        )
+                                        span.glyphicon.glyphicon-remove(
+                                            @click="newClass.AppNotes.splice(index,1)"
+                                            style="padding-left: 5px; vertical-align:top"
+                                        )
+                                    
+                                    button(
+                                        style="margin-bottom:10px"
+                                        @click="newClass.AppNotes.push({id:newNoteID(newClass.AppNotes, 'na'),Nota:''})"
+                                    )
+                                        | Nova nota
+                                
                                 td(v-else style="width:80%")
                                     ul(style="padding-left:20px" v-if="appNotesReady")
                                         li(v-for="note in clas.AppNotes")
                                             | {{note.Nota}}
                                 
                                 if user
-                                    td(style="width:10%")
-                                        label(style="padding-right:5px") Editar
-                                        input(
+                                    td
+                                        label.maozinha(
+                                            for="notasA"
+                                            :class="[edit.AppNotes ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
+                                        )
+                                        input.drop-row(
+                                            id="notasA"
                                             type="checkbox"
                                             v-model="edit.AppNotes"
                                         )
@@ -167,30 +182,35 @@ block corpo
                                 td(style="width: 10%")
                                     .info-label Exemplo(s) de Nota(s) de Aplicação:
                                 td(v-if="edit.ExAppNotes" style="width:80%")
-                                    table
-                                        tr
-                                            td
-                                                textarea(
-                                                    cols="72"
-                                                    lines="5"
-                                                    v-model="newClass.ExAppNote"
-                                                    @keyup.ctrl.enter="addNewExAppNote" 
-                                                )
-                                                button(@click="addNewExAppNote") Ok
+                                    div(v-for="(note,index) in newClass.ExAppNotes")
+                                        textarea(
+                                            cols="72"
+                                            lines="5"
+                                            v-model="note.Exemplo"
+                                        )
+                                        span.glyphicon.glyphicon-remove(
+                                            @click="newClass.ExAppNotes.splice(index,1)"
+                                            style="padding-left: 5px; vertical-align:top"
+                                        )
 
-                                                ul(style="padding-left:20px")
-                                                    li(v-for="(note,index) in newClass.ExAppNotes")
-                                                        button(@click="newClass.ExAppNotes.splice(index,1)") x
-                                                        | {{note.Exemplo}}
+                                    button(
+                                        style="margin-bottom:10px"
+                                        @click="newClass.ExAppNotes.push({Exemplo:''})"
+                                    )
+                                        | Novo exemplo
                                 td(v-else style="width:80%")
                                     ul(style="padding-left:20px" v-if="exAppNotesReady")
                                         li(v-for="note in clas.ExAppNotes")
                                             | {{note.Exemplo}}
 
                                 if user
-                                    td(style="width:10%")
-                                        label(style="padding-right:5px") Editar
-                                        input(
+                                    td
+                                        label.maozinha(
+                                            for="notasEx"
+                                            :class="[edit.ExAppNotes ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
+                                        )
+                                        input.drop-row(
+                                            id="notasEx"
                                             type="checkbox"
                                             v-model="edit.ExAppNotes"
                                         )
@@ -200,30 +220,35 @@ block corpo
                                 td(style="width: 10%")
                                     .info-label Nota(s) de Exclusão:
                                 td(v-if="edit.DelNotes" style="width:80%")
-                                    table
-                                        tr
-                                            td
-                                                textarea(
-                                                    cols="72"
-                                                    lines="5"
-                                                    v-model="newClass.DelNote"
-                                                    @keyup.ctrl.enter="addNewDelNote" 
-                                                )
-                                                button(@click="addNewDelNote") Ok
-
-                                                ul(style="padding-left:20px")
-                                                    li(v-for="(note,index) in newClass.DelNotes")
-                                                        button(@click="newClass.DelNotes.splice(index,1)") x
-                                                        | {{note.Nota}}
+                                    div(v-for="(note,index) in newClass.DelNotes")
+                                        textarea(
+                                            cols="72"
+                                            lines="5"
+                                            v-model="note.Nota"
+                                        )
+                                        span.glyphicon.glyphicon-remove(
+                                            @click="newClass.DelNotes.splice(index,1)"
+                                            style="padding-left: 5px; vertical-align:top"
+                                        )
+                                    
+                                    button(
+                                        style="margin-bottom:10px"
+                                        @click="newClass.DelNotes.push({id:newNoteID(newClass.DelNotes, 'ne'),Nota:''})"
+                                    )
+                                        | Nova nota
                                 td(v-else style="width:80%")
                                     ul(style="padding-left:20px" v-if="delNotesReady")
                                         li(v-for="note in clas.DelNotes")
                                             p(v-html="note.Nota")
 
                                 if user
-                                    td(style="width:10%")
-                                        label(style="padding-right:5px") Editar
-                                        input(
+                                    td
+                                        label.maozinha(
+                                            for="notasE"
+                                            :class="[edit.DelNotes ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
+                                        )
+                                        input.drop-row(
+                                            id="notasE"
                                             type="checkbox"
                                             v-model="edit.DelNotes"
                                         )
@@ -232,10 +257,39 @@ block corpo
                             tr(v-if="clas.Level>=3")
                                 td(style="width: 10%")
                                     .info-label Termos de Índice:
-                                td(style="width:80%")
+                                td(v-if="edit.Indexes" style="width:80%")
+                                    div(v-for="(ti,index) in newClass.Indexes")
+                                        textarea(
+                                            cols="72"
+                                            lines="5"
+                                            v-model="ti.Termo"
+                                        )
+                                        span.glyphicon.glyphicon-remove(
+                                            @click="newClass.Indexes.splice(index,1)"
+                                            style="padding-left: 5px; vertical-align:top"
+                                        )
+                                    
+                                    button(
+                                        style="margin-bottom:10px"
+                                        @click="newClass.Indexes.push({id:newNoteID(newClass.Indexes, 'ti'),Termo:''})"
+                                    )
+                                        | Novo termo de índice
+                                td(v-else style="width:80%")
                                     ul(style="padding-left:20px")
                                         li(v-for="index in clas.Indexes")
                                             | {{ index.Termo }}
+
+                                if user
+                                    td
+                                        label.maozinha(
+                                            for="tIndice"
+                                            :class="[edit.Indexes ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
+                                        )
+                                        input.drop-row(
+                                            id="tIndice"
+                                            type="checkbox"
+                                            v-model="edit.Indexes"
+                                        )
 
                     panel(header="Contexto de Avaliação" v-if="clas.Level>=3")
                         table.consulta(v-if="pageReady" style="border-color: white; border-style:solid; width:100%")
@@ -270,8 +324,12 @@ block corpo
 
                                                 if user
                                                     td(style="width:10%")
-                                                        label(style="padding-right:5px") Editar
-                                                        input(
+                                                        label.maozinha(
+                                                            for="procTipo"
+                                                            :class="[edit.ProcType ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
+                                                        )
+                                                        input.drop-row(
+                                                            id="procTipo"
                                                             type="checkbox"
                                                             v-model="edit.ProcType"
                                                         )
@@ -302,8 +360,12 @@ block corpo
 
                                                 if user
                                                     td(style="width:10%")
-                                                        label(style="padding-right:5px") Editar
-                                                        input(
+                                                        label.maozinha(
+                                                            for="procTrans"
+                                                            :class="[edit.ProcTrans ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
+                                                        )
+                                                        input.drop-row(
+                                                            id="procTrans"
                                                             type="checkbox"
                                                             v-model="edit.ProcTrans"
                                                         )
@@ -314,25 +376,22 @@ block corpo
                                     .info-label Donos:
 
                                 td(v-if="edit.Owners" style="width:80%")
-                                    table
-                                        tr
-                                            td
-                                                v-select.custom-select(
-                                                    v-model="newClass.Owner"
-                                                    :options="orgList"
-                                                )
-                                            td
-                                                button(
-                                                    @click="newClass.Owners.push(newClass.Owner.value)"
-                                                ) +
-                                        tr(v-if="clas.Owners")
-                                            td( colspan="2")
-                                                ul(style="padding-left:20px")
-                                                    li(v-for="(o,index) in newClass.Owners")
-                                                        | {{ o.Sigla }} - {{ o.Nome }} 
-                                                        button(
-                                                            @click="remOwner(index)"
-                                                        ) x
+                                    custom-table-select(
+                                        v-if="orgsReady"
+
+                                        :header='["#", "Sigla", "Nome", "Tipo"]'
+                                        :complete-rows="orgList"
+                                        :ready="orgsReady"
+                                        :cwidth='["4%", "15%", "70%", "15%"]'
+                                        
+                                        class-table='table table-condensed'
+
+                                        @select-clicked="orgSelected($event,newClass.Owners,'dono')"
+                                    )
+                                    h4(
+                                        v-else
+                                    ) A carregar...
+
                                 td(v-else style="width:80%")
                                     ul(v-if="ownersReady" style="padding-left:20px")
                                         li(v-for="o in clas.Owners")
@@ -340,8 +399,12 @@ block corpo
                                             |  - {{ o.Nome }}
                                 if user
                                     td(style="width:10%")
-                                        label(style="padding-right:5px") Editar
-                                        input(
+                                        label.maozinha(
+                                            for="donos"
+                                            :class="[edit.Owners ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
+                                        )
+                                        input.drop-row(
+                                            id="donos"
                                             type="checkbox"
                                             v-model="edit.Owners"
                                         )
@@ -354,31 +417,32 @@ block corpo
                                 td(v-if="edit.Participants" style="width:80%")
                                     table
                                         tr
-                                            td(width="30%")
-                                                v-select.custom-select(
-                                                    v-model="newClass.ParticipantType"
-                                                    :options="Object.keys(clas.Participants)"
-                                                )
-                                            td(width="30%")
-                                                v-select.custom-select(
-                                                    v-model="newClass.Participant"
-                                                    :options="orgList"
-                                                )
-                                            td
-                                                button(
-                                                    @click="addParticipant(newClass.ParticipantType,newClass.Participant.value)"
-                                                ) +
+                                            tabs
+                                                tab(:header="participationsDic[key]" v-for="(key,index) in Object.keys(participantLists)" :key="index")
+                                                    custom-table-select(
+                                                        v-if="orgsReady"
+
+                                                        :header='["#", "Sigla", "Nome", "Tipo"]'
+                                                        :complete-rows="participantLists[key]"
+                                                        :ready="orgsReady"
+                                                        :cwidth='["4%", "15%", "70%", "15%"]'
+                                                        
+                                                        class-table='table table-condensed'
+
+                                                        @select-clicked="orgSelected($event,newClass.Participants[key], key)"
+                                                    )
+                                                    h4(
+                                                        v-else
+                                                    ) A carregar...
                                         tr
-                                            td(colspan=3)
-                                                ul(v-if="relProcsReady" style="padding-left:20px")
+                                            td(colspan="3")
+                                                ul
                                                     li(v-for="key in Object.keys(newClass.Participants)" v-if="newClass.Participants[key].length>0")
-                                                        b {{participationsDic[key]}}:
+                                                        b {{ participationsDic[key] }}
                                                         ul
                                                             li(v-for="(p, index) in newClass.Participants[key]")
                                                                 | {{ p.Sigla }} - {{ p.Nome }}
-                                                                button(
-                                                                    @click="remParticipant(key, index)"
-                                                                ) x
+
                                 td(v-else style="width:80%")
                                     ul(v-if="relProcsReady" style="padding-left:20px")
                                         li(v-for="key in Object.keys(clas.Participants)" v-if="clas.Participants[key].length>0")
@@ -389,8 +453,12 @@ block corpo
                                                     |  - {{ p.Nome }}
                                 if user
                                     td(style="width:10%")
-                                        label(style="padding-right:5px") Editar
-                                        input(
+                                        label.maozinha(
+                                            for="participantes"
+                                            :class="[edit.Participants ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
+                                        )
+                                        input.drop-row(
+                                            id="participantes"
                                             type="checkbox"
                                             v-model="edit.Participants"
                                         )

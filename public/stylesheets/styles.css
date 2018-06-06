@@ -708,3 +708,8 @@ button:hover {
     border-color: #a9a9a9;
     border-width: 1px;
 }
+
+.maozinha {
+    cursor: pointer;
+    cursor: hand !important;
+}
