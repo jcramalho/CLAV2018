@@ -294,7 +294,6 @@ block corpo
                                     .info-label Processo(s) Relacionado(s):
                                     
                                 td
-                            
                                     custom-table-waterfall(
                                         v-if="classesReady"
 
@@ -320,17 +319,19 @@ block corpo
                                         .info-label(style="text-align:center;width:100%;margin-top:25px;margin-bottom:10px")
                                             | Tipos de Relação
                                         
-                                        ul
-                                            li(
+                                        table.noborder(style="margin-bottom:30px")
+                                            tr(
                                                 style="padding-bottom:5px"
                                                 v-for="pn in relationsSelected" 
-                                            )
-                                                select(v-model="pn.relType")
-                                                    option(v-for="rel in relationTypes" :value="rel.value")
-                                                        | {{rel.label}}
-                                                b(style="margin-left:5px")
-                                                    | {{pn.code}}
-                                                |  - {{pn.name}}
+                                            )    
+                                                td(width="1px")
+                                                    select(v-model="pn.relType")
+                                                        option(v-for="rel in relationTypes" :value="rel.value")
+                                                            | {{rel.label}}
+                                                td(style="text-align:left")
+                                                    b(style="margin-left:5px")
+                                                        | {{pn.code}}
+                                                    |  - {{pn.name}}
                                                                         
 
                             //- LEGISLAÇÃO

@@ -14,7 +14,43 @@ var classe = new Vue({
             Executor: [],
         },
         legList: [],
-        classList: [],
+        classRelList: [],
+        relationsSelected: [],
+        relationTypes: [
+            {
+                label: 'Antecessor de',
+                value: 'eAntecessorDe'
+            },
+            {
+                label: 'Sucessor de',
+                value: 'eSucessorDe',
+            },
+            {
+                label: 'Complementar de',
+                value: 'eComplementarDe',
+            },
+            {
+                label: 'Cruzado com',
+                value: 'eCruzadoCom',
+            },
+            {
+                label: 'Sintese de',
+                value: 'eSinteseDe',
+            },
+            {
+                label: 'Sintetizado por',
+                value: 'eSintetizadoPor',
+            },
+            {
+                label: 'Suplemento de',
+                value: 'eSuplementoDe',
+            },
+            {
+                label: 'Suplemento para',
+                value: 'eSuplementoPara',
+            }
+        ],
+
         clas: {
             Title: "",
             Children: "",
@@ -62,7 +98,16 @@ var classe = new Vue({
             Indexes: [],
             RelProc: "",
             RelType: "",
-            RelProcs: [],
+            RelProcs: {
+                'Antecessor De': [],
+                'Complementar De': [],
+                'Cruzado Com': [],
+                'Sintese De': [],
+                'Sintetizado Por': [],
+                'Sucessor De': [],
+                'Suplemento De': [],
+                'Suplemento Para': []
+            },
             Participants: {
                 Apreciador: [],
                 Assessor: [],
@@ -87,6 +132,7 @@ var classe = new Vue({
             RelProcs: false,
             Participants: false,
         },
+
         orgsReady: false,
         ownersReady: false,
         legListReady: false,
@@ -105,7 +151,9 @@ var classe = new Vue({
             Decisor: "Decidir",
             Executor: "Executar",
             Iniciador: "Iniciar"
-        }
+        },
+
+        nEdits: 0,
     },
     components: {
         accordion: VueStrap.accordion,
@@ -115,7 +163,33 @@ var classe = new Vue({
         tabGroup: VueStrap.tabGroup,
         tab: VueStrap.tab,
     },
+    watch: {
+        relationsSelected: {
+            deep: true,
+            handler: function(){
+                
+            },
+        },
+    },
     methods: {
+        convertRelations: function () {
+            for(const key in this.newClass.RelProcs){
+                let type = "e"+key.replace(" ","");
+                let toAdd = this.relationsSelected.filter( a=>a.relType == type );
+
+                this.newClass.RelProcs[key] = JSON.parse(JSON.stringify(
+                    toAdd.map(
+                        function(pn){
+                            return {
+                                Code: pn.code,
+                                Title: pn.name,
+                                id: pn.id
+                            }
+                        }
+                    )
+                ));
+            }
+        },
         prepData: function (dataObj) {
             this.clas.Title = dataObj.Titulo.value;
             this.clas.Code = dataObj.Codigo.value;
@@ -164,7 +238,6 @@ var classe = new Vue({
                 this.loadDF();
             }
 
-            this.loadClasses();
             this.loadLegList();
         },
         loadIndexes: function () {
@@ -196,31 +269,6 @@ var classe = new Vue({
                     if (classesToParse[0].Code)
                         this.clas.Children = this.parse(classesToParse, keys)
                             .sort((a, b) => a.Code.localeCompare(b.Code));
-                })
-                .catch(function (error) {
-                    console.error(error);
-                });
-        },
-        loadOrgs_old: function () {
-            var orgsToParse = [];
-            var keys = ["id", "Sigla", "Nome"];
-
-            this.$http.get("/api/organizacoes")
-                .then(function (response) {
-                    orgsToParse = response.body;
-                })
-                .then(function () {
-                    this.orgList = this.parse(orgsToParse, keys)
-                        .map(function (item) {
-                            return {
-                                label: item.Sigla + " - " + item.Nome,
-                                value: item,
-                            }
-                        }).sort(function (a, b) {
-                            return a.label.localeCompare(b.label);
-                        });
-
-                    this.orgsReady = true;
                 })
                 .catch(function (error) {
                     console.error(error);
@@ -420,29 +468,127 @@ var classe = new Vue({
                 });
         },
         loadClasses: function () {
-            var classesToParse = [];
-            var keys = ["id", "Code", "Title"];
+            this.ready = false;
+            let content = [];
 
-            this.$http.get("/api/classes/nivel=3")
+            this.$http.get("/api/classes/filtrar")
                 .then(function (response) {
-                    classesToParse = response.body;
+                    content = response.body;
                 })
                 .then(function () {
-                    this.classList = this.parse(classesToParse, keys)
-                        .map(function (item) {
-                            return {
-                                label: item.Code + " - " + item.Title,
-                                value: item,
-                            }
-                        }).sort(function (a, b) {
-                            return a.label.localeCompare(b.label);
-                        });
+                    let relsSelected = this.relationsSelected.map(a => a.code);
+
+                    let classList = [];
+                    classList = this.parseClasses(content, relsSelected);
+
+                    this.classRelList = JSON.parse(
+                        JSON.stringify(classList)
+                    );
+
+                    /*this.pca.criteria.classes = JSON.parse(
+                        JSON.stringify(classList)
+                    );
+
+                    this.df.criteria.classes = JSON.parse(
+                        JSON.stringify(classList)
+                    );*/
 
                     this.classesReady = true;
                 })
                 .catch(function (error) {
                     console.error(error);
                 });
+        },
+        parseClasses: function (dataToParse, selectedPNs) {
+            var destination = [];
+            const indexes = {};
+            let avo;
+            let pai;
+
+            for (let pn of dataToParse) {
+                let codeAvo = pn.AvoCodigo.value;
+                let indexesAvo = indexes[codeAvo];
+                let codePai = pn.PaiCodigo.value;
+
+                let pnSelected = false;
+                if (selectedPNs && selectedPNs.length) {
+                    pnSelected = selectedPNs.indexOf(pn.PNCodigo.value) != -1;
+                }
+
+
+                if (indexesAvo) {
+                    avo = indexesAvo.i;
+
+                    if (indexesAvo.sub[codePai] != undefined) {
+                        pai = indexesAvo.sub[codePai];
+                    }
+                    else {
+                        pai = Object.keys(indexesAvo.sub).length;
+
+                        indexes[codeAvo].sub[codePai] = pai;
+
+                        let infoPai = {
+                            codeID: pn.Pai.value.replace(/[^#]+#(.*)/, '$1'),
+                            content: [codePai, pn.PaiTitulo.value],
+                            drop: false,
+                            selected: pnSelected,
+                            subReady: true,
+                            sublevel: []
+                        }
+                        destination[avo].sublevel.push(infoPai);
+                    }
+                }
+                else {
+                    avo = Object.keys(indexes).length;
+                    pai = 0;
+
+                    indexes[codeAvo] = { i: avo, sub: {} };
+                    indexes[codeAvo].sub[codePai] = pai;
+
+                    let infoAvo = {
+                        codeID: pn.Avo.value.replace(/[^#]+#(.*)/, '$1'),
+                        content: [codeAvo, pn.AvoTitulo.value],
+                        drop: false,
+                        selected: pnSelected,
+                        subReady: true,
+                        sublevel: [{
+                            codeID: pn.Pai.value.replace(/[^#]+#(.*)/, '$1'),
+                            content: [codePai, pn.PaiTitulo.value],
+                            drop: false,
+                            selected: pnSelected,
+                            subReady: true,
+                            sublevel: [],
+                        }]
+                    }
+                    destination.push(infoAvo);
+                }
+
+                let pninfo = {
+                    codeID: pn.PN.value.replace(/[^#]+#(.*)/, '$1'),
+                    content: [pn.PNCodigo.value, pn.PNTitulo.value],
+                    drop: false,
+                    selected: pnSelected,
+                }
+
+                if (pn.Filhos.value.length) {
+                    pninfo.subReady = true;
+                    pninfo.sublevel = [];
+
+                    for (let filho of pn.Filhos.value.split('###')) {
+                        let filhoInfo = filho.split(':::');
+
+                        pninfo.sublevel.push({
+                            codeID: filhoInfo[0].replace(/[^#]+#(.*)/, '$1'),
+                            content: [filhoInfo[1], filhoInfo[2]],
+                            drop: false,
+                            selected: pnSelected,
+                        });
+                    }
+                }
+                destination[avo].sublevel[pai].sublevel.push(pninfo);
+            }
+
+            return destination;
         },
         loadRelProcs: function () {
             var relProcsToParse = [];
@@ -454,13 +600,32 @@ var classe = new Vue({
                 })
                 .then(function () {
                     this.clas.RelProcs = JSON.parse(JSON.stringify(this.parseRelations(relProcsToParse, keys)));
-                    this.newClass.RelProcs = JSON.parse(JSON.stringify(this.parseRelations(relProcsToParse, keys)));
+                    this.relationsSelected = JSON.parse(
+                        JSON.stringify(
+                            this.parseRelationsSelected(relProcsToParse)
+                                .sort((a, b) => a.code.localeCompare(b.code))
+                        )
+                    );
 
                     this.relProcsReady = true;
+
+                    this.loadClasses();
                 })
                 .catch(function (error) {
                     console.error(error);
                 });
+        },
+        parseRelationsSelected: function (content) {
+            let selected = [];
+            for (let pn of content) {
+                selected.push({
+                    code: pn.Code.value,
+                    id: pn.id.value.replace(/[^#]+#(.*)/, '$1'),
+                    name: pn.Title.value,
+                    relType: pn.Type.value.replace(/[^#]+#(.*)/, '$1')
+                });
+            }
+            return selected;
         },
         parseRelations: function (content, keys) {
             var dest = {
@@ -775,9 +940,9 @@ var classe = new Vue({
 
             return dest;
         },
-        remOwner: function (index) {
+        /*remOwner: function (index) {
             this.newClass.Owners.splice(index, 1);
-        },
+        },*/
         addLeg: function (leg) {
             this.newClass.Legs.push(leg);
         },
@@ -815,7 +980,7 @@ var classe = new Vue({
             }
             return prefix + "_" + this.id + "_" + newID;
         },
-        addParticipant: function (type, participant) {
+        /*addParticipant: function (type, participant) {
             this.newClass.Participants[type].push(participant);
         },
         remParticipant: function (type, index) {
@@ -832,7 +997,7 @@ var classe = new Vue({
         },
         remRelProc: function (index) {
             this.newClass.RelProcs.splice(index, 1);
-        },
+        },*/
         readyToUpdate: function () {
             var keys = Object.keys(this.edit);
 
@@ -871,7 +1036,7 @@ var classe = new Vue({
                     this.participantLists.Executor.push(
                         JSON.parse(JSON.stringify(row))
                     );
-                } 
+                }
                 else {
                     let data = {
                         Nome: row.data[2],
@@ -890,16 +1055,54 @@ var classe = new Vue({
                     if (type == 'dono') {
                         let orgIndex = findIndex(this.participantLists.Executor, row.id);
 
-                        if(orgIndex!=-1){
+                        if (orgIndex != -1) {
                             this.participantLists.Executor.splice(index, 1);
                         }
 
                         let selectedIndex = findIndex(this.newClass.Participants.Executor, row.id);
 
-                        if(selectedIndex!=-1){
-                            this.newClass.Participants.Executor.splice(selectedIndex,1);
-                        }   
+                        if (selectedIndex != -1) {
+                            this.newClass.Participants.Executor.splice(selectedIndex, 1);
+                        }
                     }
+                }
+            }
+        },
+        pnRelSelected(payload) {
+            var row = payload.rowData;
+
+            if (!row.selected) {
+                let newPN = {
+                    name: row.content[1],
+                    code: row.content[0],
+                    id: row.codeID,
+                    relType: {
+                        value: null,
+                        label: 'Tipo de Relação'
+                    }
+                };
+
+                this.relationsSelected.push(newPN);
+
+                this.relationsSelected.sort(
+                    function (a, b) {
+                        return a.code.localeCompare(b.code);
+                    }
+                );
+            }
+
+            else {
+                let index = 0;
+
+                for (pn of this.relationsSelected) {
+                    if (pn.id == row.codeID) {
+                        break;
+                    }
+                    index++;
+                }
+
+                if (index < this.relationsSelected.length) {
+                    this.relationsSelected.splice(index, 1);
                 }
             }
         },
@@ -1058,6 +1261,8 @@ var classe = new Vue({
             var relationKeys = Object.keys(this.clas.RelProcs);
 
             if (this.edit.RelProcs) {
+                this.convertRelations();
+
                 for (var i = 0; i < relationKeys.length; i++) {
 
                     var temp = {

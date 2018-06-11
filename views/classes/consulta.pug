@@ -469,33 +469,44 @@ block corpo
                                     .info-label Processo(s) Relacionado(s):
                                     
                                 td(v-if="edit.RelProcs" style="width:80%")
-                                    table
-                                        tr
-                                            td(width="30%")
-                                                v-select.custom-select(
-                                                    v-model="newClass.RelType"
-                                                    :options="Object.keys(clas.RelProcs)"
-                                                )
-                                            td(width="30%")
-                                                v-select.custom-select(
-                                                    v-model="newClass.RelProc"
-                                                    :options="classList"
-                                                )
-                                            td
-                                                button(
-                                                    @click="addRelation(newClass.RelType,newClass.RelProc.value)"
-                                                ) +
-                                        tr
-                                            td(colspan=3)
-                                                ul(v-if="relProcsReady" style="padding-left:20px")
-                                                    li(v-for="key in Object.keys(newClass.RelProcs)" v-if="newClass.RelProcs[key].length>0")
-                                                        b É {{ key }}:
-                                                        ul
-                                                            li(v-for="(c, index) in newClass.RelProcs[key]")
-                                                                | {{ c.Code }} - {{ c.Title }}
-                                                                button(
-                                                                    @click="remRelation(key, index)"
-                                                                ) x
+                                    custom-table-waterfall(
+                                        v-if="classesReady"
+
+                                        select-left="true"
+                                        pages-on="true"
+
+                                        :header='["Classe", "Título"]'
+                                        :complete-rows="classRelList"
+                                        :cwidth="['16%', '81%']"
+                                        :n-edits="nEdits"
+
+                                        filter-on="true"
+                                        
+                                        table-class='table table-hover'
+                                        
+                                        @left-select-clicked="pnRelSelected($event)"
+                                    )
+                                    h4(
+                                        v-else
+                                    ) A carregar...
+                                    
+                                    div(v-if="relationsSelected.length>0")
+                                        .info-label(style="text-align:center;width:100%;margin-top:25px;margin-bottom:10px")
+                                            | Tipos de Relação
+                                        
+                                        table.noborder(style="margin-bottom:30px")
+                                            tr(
+                                                style="padding-bottom:5px"
+                                                v-for="pn in relationsSelected" 
+                                            )    
+                                                td(width="1px")
+                                                    select(v-model="pn.relType")
+                                                        option(v-for="rel in relationTypes" :value="rel.value")
+                                                            | {{rel.label}}
+                                                td(style="text-align:left")
+                                                    b(style="margin-left:5px")
+                                                        | {{pn.code}}
+                                                    |  - {{pn.name}}
                                 td(v-else style="width:80%")
                                     ul(v-if="relProcsReady" style="padding-left:20px")
                                         li(v-for="key in Object.keys(clas.RelProcs)" v-if="clas.RelProcs[key].length>0")
@@ -506,8 +517,12 @@ block corpo
                                                     |  - {{ c.Title }}
                                 if user
                                     td(style="width:10%")
-                                        label(style="padding-right:5px") Editar
-                                        input(
+                                        label.maozinha(
+                                            for="relprocs"
+                                            :class="[edit.RelProcs ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
+                                        )
+                                        input.drop-row(
+                                            id="relprocs"
                                             type="checkbox"
                                             v-model="edit.RelProcs"
                                         )
