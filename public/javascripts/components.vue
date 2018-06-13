@@ -973,6 +973,7 @@ Vue.component('hidden-table', {
                         <tr v-for="linha in linhas">
                             <td v-for="(item,i) in linha">
                                 <div 
+                                    width="100%"
                                     :class="{ 'blue-border-box': (i<linha.length-1)}" 
                                     v-html="item"
                                 ></div>

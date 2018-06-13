@@ -285,7 +285,8 @@ Classes.related = function (id) {
                     ?Type ?id.
                 
                 ?id clav:codigo ?Code;
-                    clav:titulo ?Title.
+                    clav:titulo ?Title;
+                    clav:classeStatus 'A'.
                 
                 filter (?Type!=clav:temRelProc)
             } Order by ?Type
@@ -852,7 +853,31 @@ Classes.createClass = function (data) {
 
 Classes.updateClass = function (dataObj) {
     function prepDelete(dataObj) {
-        var deletePart = "\n";
+        let deletePart = "\n";
+
+        if (dataObj.ExAppNotes && dataObj.ExAppNotes.length) {
+            deletePart += `
+                clav:${dataObj.id} clav:exemploNA ?exNA .
+            `;
+        }
+        if (dataObj.AppNotes) {
+            deletePart += `
+                clav:${dataObj.id} clav:temNotaAplicacao ?na .
+                ?na ?naP ?naO .
+            `;
+        }
+        if (dataObj.DelNotes) {
+            deletePart += `
+                clav:${dataObj.id} clav:temNotaExclusao ?ne .
+                ?ne ?neP ?neO .
+            `;
+        }
+        if (dataObj.Indexes) {
+            deletePart += `
+                ?ti clav:estaAssocClasse clav:${dataObj.id} .
+                ?ti ?tiP ?tiO .
+            `;
+        }
 
         //relations
         if (dataObj.Owners.Delete && dataObj.Owners.Delete.length) {
@@ -863,16 +888,6 @@ Classes.updateClass = function (dataObj) {
         if (dataObj.Legs.Delete && dataObj.Legs.Delete.length) {
             for (var i = 0; i < dataObj.Legs.Delete.length; i++) {
                 deletePart += "\tclav:" + dataObj.id + " clav:temLegislacao clav:" + dataObj.Legs.Delete[i].id + " .\n";
-            }
-        }
-        if (dataObj.AppNotes.Delete && dataObj.AppNotes.Delete.length) {
-            for (var i = 0; i < dataObj.AppNotes.Delete.length; i++) {
-                deletePart += "\tclav:" + dataObj.id + " clav:temNotaAplicacao clav:" + dataObj.AppNotes.Delete[i].id + " .\n";
-            }
-        }
-        if (dataObj.DelNotes.Delete && dataObj.DelNotes.Delete.length) {
-            for (var i = 0; i < dataObj.DelNotes.Delete.length; i++) {
-                deletePart += "\tclav:" + dataObj.id + " clav:temNotaExclusao clav:" + dataObj.DelNotes.Delete[i].id + " .\n";
             }
         }
 
@@ -895,12 +910,13 @@ Classes.updateClass = function (dataObj) {
                 }
             }
         }
+        
 
         return deletePart;
     }
 
-    function prepWhere(dataObj) {
-        var wherePart = "\n";
+    function prepDelWhere(dataObj) {
+        let wherePart = "\n";
         //atributes
         if (dataObj.Title) {
             wherePart += "\tclav:" + dataObj.id + " clav:titulo ?tit .\n";
@@ -917,26 +933,12 @@ Classes.updateClass = function (dataObj) {
         if (dataObj.ProcTrans) {
             wherePart += "\tclav:" + dataObj.id + " clav:processoTransversal ?ptrans .\n";
         }
-        if (dataObj.ExAppNotes && dataObj.ExAppNotes.length) {
-            wherePart += "\tclav:" + dataObj.id + " clav:exemploNA ?exNA .\n";
-        }
-        //relations
-        if (dataObj.AppNotes.Delete && dataObj.AppNotes.Delete.length) {
-            for (var i = 0; i < dataObj.AppNotes.Delete.length; i++) {
-                wherePart += "\tclav:" + dataObj.AppNotes.Delete[i].id + " ?NAp" + i + " ?NAo" + i + " .\n";
-            }
-        }
-        if (dataObj.DelNotes.Delete && dataObj.DelNotes.Delete.length) {
-            for (var i = 0; i < dataObj.DelNotes.Delete.length; i++) {
-                wherePart += "\tclav:" + dataObj.DelNotes.Delete[i].id + " ?NEp" + i + " ?NEo" + i + " .\n";
-            }
-        }
 
         return wherePart;
     }
 
     function prepInsert(dataObj) {
-        var insertPart = "\n";
+        let insertPart = "\n";
 
         //attributes
         if (dataObj.Title) {
@@ -946,7 +948,7 @@ Classes.updateClass = function (dataObj) {
             insertPart += "\tclav:" + dataObj.id + " clav:classeStatus '" + dataObj.Status + "' .\n";
         }
         if (dataObj.Desc) {
-            insertPart += "\tclav:" + dataObj.id + " clav:descricao '" + dataObj.Desc.replace(/\n/g, '\\n') + "' .\n";
+            insertPart += "\tclav:" + dataObj.id + " clav:descricao '" + dataObj.Desc.replace(/\n/g, '\\n').replace(/\"/g,"\\\"") + "' .\n";
         }
         if (dataObj.ProcType) {
             insertPart += "\tclav:" + dataObj.id + " clav:processoTipoVC clav:vc_processoTipo_" + dataObj.ProcType + " .\n";
@@ -956,31 +958,50 @@ Classes.updateClass = function (dataObj) {
         }
         if (dataObj.ExAppNotes && dataObj.ExAppNotes.length) {
             for (var i = 0; i < dataObj.ExAppNotes.length; i++) {
-                insertPart += "\tclav:" + dataObj.id + " clav:exemploNA '" + dataObj.ExAppNotes[i].Exemplo.replace(/\n/g, '\\n') + "' .\n";
+                if(dataObj.ExAppNotes[i].Exemplo){
+                    insertPart += `\tclav:${dataObj.id} clav:exemploNA "${dataObj.ExAppNotes[i].Exemplo.replace(/\n/g, '\\n').replace(/\"/g,"\\\"")}" .\n`;
+                }
             }
         }
 
         //relations
         //Notas de aplicação
-        if (dataObj.AppNotes.Add && dataObj.AppNotes.Add.length) {
-            for (var i = 0; i < dataObj.AppNotes.Add.length; i++) {
-                insertPart += `
-                        clav:${dataObj.AppNotes.Add[i].id} rdf:type owl:NamedIndividual ,
+        if (dataObj.AppNotes && dataObj.AppNotes.length) {
+            for (let note of dataObj.AppNotes) {
+                if(note.Nota){
+                    insertPart += `
+                        clav:${note.id} rdf:type owl:NamedIndividual ,
                                 clav:NotaAplicacao ;
-                            clav:conteudo "${dataObj.AppNotes.Add[i].Nota.replace(/\n/g, '\\n')}" .
+                            clav:conteudo "${note.Nota.replace(/\n/g, '\\n').replace(/\"/g,"\\\"")}" .
+                        clav:${dataObj.id} clav:temNotaAplicacao clav:${note.id} .
                     `;
-                insertPart += "\tclav:" + dataObj.id + " clav:temNotaAplicacao clav:" + dataObj.AppNotes.Add[i].id + " .\n";
+                }
             }
         }
         //Notas de exclusão
-        if (dataObj.DelNotes.Add && dataObj.DelNotes.Add.length) {
-            for (var i = 0; i < dataObj.DelNotes.Add.length; i++) {
-                insertPart += `
-                        clav:${dataObj.DelNotes.Add[i].id} rdf:type owl:NamedIndividual ,
+        if (dataObj.DelNotes && dataObj.DelNotes.length) {
+            for (let note of dataObj.DelNotes) {
+                if(note.Nota){
+                    insertPart += `
+                        clav:${note.id} rdf:type owl:NamedIndividual ,
                                 clav:NotaExclusao ;
-                            clav:conteudo "${dataObj.DelNotes.Add[i].Nota.replace(/\n/g, '\\n')}" .
+                            clav:conteudo "${note.Nota.replace(/\n/g, '\\n').replace(/\"/g,"\\\"")}" .
+                        clav:${dataObj.id} clav:temNotaExclusao clav:${note.id} .
                     `;
-                insertPart += "\tclav:" + dataObj.id + " clav:temNotaExclusao clav:" + dataObj.DelNotes.Add[i].id + " .\n";
+                }
+            }
+        }
+        //Termos de Indice
+        if (dataObj.Indexes && dataObj.Indexes.length) {
+            for (let ti of dataObj.Indexes) {
+                if(ti.Termo){
+                    insertPart += `
+                        clav:${ti.id} rdf:type owl:NamedIndividual ,
+                                clav:TermoIndice ;
+                            clav:termo "${ti.Termo.replace(/\n/g, '\\n').replace(/\"/g,"\\\"")}" ;
+                            clav:estaAssocClasse clav:${dataObj.id} .
+                    `;
+                }
             }
         }
         //Donos
@@ -1019,14 +1040,60 @@ Classes.updateClass = function (dataObj) {
         return insertPart;
     }
 
-    var deletePart = "DELETE {" + prepWhere(dataObj) + prepDelete(dataObj) + "}\n";
+    function prepWhere(dataObj) {
+        let retWhere="\n";
+        if (dataObj.AppNotes) {
+            retWhere += `
+                optional{
+                    clav:${dataObj.id} clav:temNotaAplicacao ?na .
+                    ?na ?naP ?naO .
+                }
+            `;
+        }
+        if (dataObj.DelNotes) {
+            retWhere += `
+                optional{
+                    clav:${dataObj.id} clav:temNotaExclusao ?ne .
+                    ?ne ?neP ?neO .
+                }
+            `;
+        }
+        if (dataObj.ExAppNotes && dataObj.ExAppNotes.length) {
+            retWhere += `
+                optional{
+                    clav:${dataObj.id} clav:exemploNA ?exNA .
+                }
+            `;
+        }
+        if (dataObj.Indexes) {
+            retWhere += `
+                optional{
+                    ?ti clav:estaAssocClasse clav:${dataObj.id} .
+                    ?ti ?tiP ?tiO .
+                }
+            `;
+        }
+        return retWhere;
+    }
 
-    var inserTPart = "INSERT {" + prepInsert(dataObj) + "}\n";
+    var deletePart = prepDelete(dataObj);
+    var insertPart = prepInsert(dataObj);
+    var delwherePart = prepDelWhere(dataObj);
+    var wherePart = prepWhere(dataObj);
 
-    var wherePart = "WHERE {" + prepWhere(dataObj) + "}\n";
-
-
-    var updateQuery = deletePart + inserTPart + wherePart;
+    var updateQuery = `
+        DELETE {
+            ${delwherePart}
+            ${deletePart}
+        }
+        INSERT{
+            ${insertPart}
+        }
+        WHERE {
+            ${delwherePart}
+            ${wherePart}
+        }
+    `;
 
     console.log(updateQuery);
 

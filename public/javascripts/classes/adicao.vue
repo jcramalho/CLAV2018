@@ -710,10 +710,7 @@ var newClass = new Vue({
                     name: row.content[1],
                     code: row.content[0],
                     id: row.codeID,
-                    relType: {
-                        value: null,
-                        label: 'Tipo de Relação'
-                    }
+                    relType: null
                 };
 
                 this.relationsSelected.push(newPN);
@@ -791,6 +788,15 @@ var newClass = new Vue({
                 });
         },
         orgSelected: function (row, list, partType) {
+            var findIndex = function (list, id) {
+                for (let [index, item] of list.entries()) {
+                    if (id == item.id) {
+                        return index;
+                    }
+                }
+                return -1;
+            }
+
             if (!row.selected) {
                 list.push(row.id);
 
@@ -806,11 +812,20 @@ var newClass = new Vue({
                 if (index != -1) {
                     list.splice(index, 1);
 
-                    if (partType) {
+                    if (partType && partType != 'dono') {
                         this.participantsSelectedInfo[partType].splice(index, 1);
                     }
-                    else {
-                        this.participantLists.splice(index, 1);
+                    else if (partType && partType == 'dono'){
+                        let exIndex = this.participantsSelected.Executor.indexOf(row.id);
+                        if(exIndex!=-1){
+                            this.participantsSelected.Executor.splice(exIndex,1);
+                            this.participantsSelectedInfo.Executor.splice(exIndex,1);
+                        }   
+
+                        let listIndex = findIndex(this.participantLists.Executor,row.id);
+                        if(listIndex!=-1){
+                            this.participantLists.Executor.splice(listIndex,1);
+                        }
                     }
                 }
             }
@@ -907,6 +922,15 @@ var newClass = new Vue({
             if (this.codeMessage.length > 0) {
                 this.message = "Formato do código errado!";
                 return false;
+            }
+
+            if (this.relationsSelected.length){
+                for(let pn of this.relationsSelected){
+                    if(!pn.relType){
+                        this.message = "É necessário selecionar o tipo de relação com todos os processos relacionados selecionados!";
+                        return false;
+                    }
+                }
             }
 
             if (this.type == 1) {
@@ -1110,7 +1134,6 @@ var newClass = new Vue({
                 console.log(dataObj);
             }
             else {
-                console.log("mistakes");
                 this.$refs.spinner.hide();
             }
         }

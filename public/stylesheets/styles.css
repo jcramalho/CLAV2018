@@ -553,6 +553,8 @@ li .panel-body li{
     border-style: solid;
     padding: 5px;
     color: #000 !important;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 
@@ -560,7 +562,7 @@ li .panel-body li{
     background-image: linear-gradient(to bottom,#3949AB 0,#1A237E 100%);
 }
 
-.open .dropdown-toggle{
+.customnav .open .dropdown-toggle{
     background-image: linear-gradient(to top,#3949AB 0,#1A237E 100%) !important;
 }
 
@@ -584,12 +586,12 @@ li .panel-body li{
     font-weight: bolder !important;
 }
 
-.dropdown-menu a {
+.customnav .dropdown-menu a {
     color: #1A237E !important;
     font-weight: bold;
 }
 
-.dropdown-menu{
+.customnav .dropdown-menu{
     border-top-width: 0px;
     width: inherit !important;
     background-image: linear-gradient(to top,#C5CAE9 0,#7986CB 100%);
@@ -707,4 +709,17 @@ button:hover {
     border-style: solid;
     border-color: #a9a9a9;
     border-width: 1px;
+}
+
+.maozinha {
+    cursor: pointer;
+    cursor: hand !important;
+}
+
+.hidden-table td {
+    padding:1px !important;
+}
+
+.editar {
+    text-align: right;
 }

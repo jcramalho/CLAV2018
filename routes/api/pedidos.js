@@ -1,4 +1,10 @@
+var express = require('express');
+var router = express.Router();
 
+var Logging = require('../../controllers/logging');
+var Auth = require('../../controllers/auth.js');
+var Pedido = require('../../models/pedido');
+var Entidade = require('../../models/entidade');
 
 // Novo pedido
 router.post('/', Auth.isLoggedInAPI, function (req, res) {
@@ -11,7 +17,7 @@ router.post('/', Auth.isLoggedInAPI, function (req, res) {
     Pedido.getCountPedidos(function(err, count){
         if (err) {
             console.log(err);
-            req.send("Ocorreu um erro!");    
+            res.send("Ocorreu um erro!");    
         }
         else {
             var num = count+1+"-"+yyyy;
@@ -19,11 +25,11 @@ router.post('/', Auth.isLoggedInAPI, function (req, res) {
             Entidade.getEntidadeByRepresentante(req.user.email, function(err, entity){
                 if (err) {
                     console.log(err);
-                    req.send("Ocorreu um erro!");    
+                    res.send("Ocorreu um erro!");    
                 }
                 else if(!entity) {
                     console.log("Utilizador sem entidade relacionada");
-                    req.send("Ocorreu um erro! Sem entidade associada!"); 
+                    res.send("Ocorreu um erro! Sem entidade associada!"); 
                 }
                 else{
                     var newPedido = new Pedido({
@@ -52,7 +58,7 @@ router.post('/', Auth.isLoggedInAPI, function (req, res) {
                         if (err) {
                             console.log(err);
                             req.flash('error_msg', 'Ocorreu um erro a submeter o pedido! Tente novamente mais tarde');
-                            req.send('Ocorreu um erro a submeter o pedido! Tente novamente mais tarde');
+                            res.send('Ocorreu um erro a submeter o pedido! Tente novamente mais tarde');
                         }
                         else {
                             Logging.logger.info('Novo pedido ' + request.tipo + ': '+request.numero+' submetido por '+req.user._id);
@@ -68,11 +74,11 @@ router.post('/', Auth.isLoggedInAPI, function (req, res) {
 });
 
 // Pedidos por estado
-router.get('estado/:estado', function (req, res) {
+router.get('/estado/:estado', Auth.isLoggedInAPI, function (req, res) {
     Pedido.getPedidosByState(req.params.estado, function(err, request){
         if (err) {
             console.log(err);
-            req.send("Ocorreu um erro!");    
+            res.send("Ocorreu um erro!");    
         }
         else{
             res.send(request);
@@ -81,21 +87,22 @@ router.get('estado/:estado', function (req, res) {
 });
 
 // Dados de um pedido
-router.get('/:num', function (req, res) {
+router.get('/numero/:num', Auth.isLoggedInAPI, function (req, res) {
     Pedido.getPedidoByNumber(req.params.num, function(err, request){
         if (err) {
             console.log(err);
-            req.send("Ocorreu um erro!");    
+            res.send("Ocorreu um erro!");    
         }
         else if (!request){
-            req.send("Não existe um pedido com esse número!");   
+            res.send("Não existe um pedido com esse número!");   
         }
         else{
             var dataObj = {
                 num: request.numero,
                 tipo: request.tipo,
                 desc: request.descricao,
-                data: request.data
+                data: request.data,
+                obj: request.objetoID
             }
 
             res.send(dataObj);
@@ -103,3 +110,47 @@ router.get('/:num', function (req, res) {
     });
 });
 
+// Pedidos por utilizador
+router.get('/utilizador', Auth.isLoggedInAPI, function (req, res) {
+
+    let user = req.user.email;
+
+    Pedido.getPedidosByUser(user, function(err, request){
+        if (err) {
+            console.log(err);
+            res.send("Ocorreu um erro!");    
+        }
+        else{
+            let dataObj = request.map(
+                function(a){
+                    return {
+                        num: a.numero,
+                        tipo: a.tipo,
+                        desc: a.descricao,
+                        data: a.data,
+                        obj: a.objetoID
+                    }
+                }
+            )
+            res.send(dataObj);
+        }
+    });
+});
+
+// Pedidos por utilizador
+router.get('/utilizador/:user', Auth.isLoggedInAPI, function (req, res) {
+
+    let user = req.params.user || req.user.email;
+
+    Pedido.getPedidosByUser(user, function(err, request){
+        if (err) {
+            console.log(err);
+            res.send("Ocorreu um erro!");    
+        }
+        else{
+            res.send(request);
+        }
+    });
+});
+
+module.exports = router;

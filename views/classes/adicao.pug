@@ -16,21 +16,32 @@ block corpo
                     a(name="nivel")
                     tr
                         td(style="width:10%")
-                            .info-label Tipo: 
+                            .info-label Nível de classe: 
                         td
-                            select( v-model="type")
+                            //select( v-model="type")
                                 option(value=1) Classe_N1
                                 option(value=2) Classe_N2
                                 option(value=3) Classe_N3
                                 option(value=4) Classe_N4
+                            table
+                                tr(style="border:none")
+                                    td(v-for="i in [1,2,3,4]" style="vertical-align:middle; padding-right:10px; padding-left:5px")
+                                        input(
+                                            :id="'n'+i"
+                                            type="radio"
+                                            :value="i"
+                                            v-model="type"
+                                        ) 
+                                        label(:for="'n'+i") N{{i}}
 
                     //- CLASSE PAI
                     a(name="pai")
-                    tr(v-if="type>1 && parentsReady")
+                    tr(v-if="type>1")
                         td(style="width: 10%")
                             .info-label Classe Pai: 
                         td.smaller
                             v-select.custom-select(
+                                v-if="parentsReady"
                                 style="width=100px"
                                 v-model="parentvalue"
                                 :options="parents"
@@ -166,7 +177,7 @@ block corpo
                                         style="margin-bottom:10px"
                                         @click="indexes.push({id:'',Note:''})"
                                     )
-                                        | Nova nota
+                                        | Novo termo
 
 
                     panel(header="Contexto de Avaliação" v-if="type>=3" is-open=true)
@@ -251,7 +262,7 @@ block corpo
                                     table
                                         tr
                                             tabs
-                                                tab(:header="partDic[key]" v-for="key in Object.keys(participantLists)")
+                                                tab(:header="partDic[key]" v-for="(key,index) in Object.keys(participantLists)" :key="index")
                                                     custom-table-select(
                                                         v-if="orgsReady"
 
@@ -284,7 +295,6 @@ block corpo
                                     .info-label Processo(s) Relacionado(s):
                                     
                                 td
-                            
                                     custom-table-waterfall(
                                         v-if="classesReady"
 
@@ -310,17 +320,19 @@ block corpo
                                         .info-label(style="text-align:center;width:100%;margin-top:25px;margin-bottom:10px")
                                             | Tipos de Relação
                                         
-                                        ul
-                                            li(
+                                        table.noborder(style="margin-bottom:30px")
+                                            tr(
                                                 style="padding-bottom:5px"
                                                 v-for="pn in relationsSelected" 
-                                            )
-                                                select(v-model="pn.relType")
-                                                    option(v-for="rel in relationTypes" :value="rel.value")
-                                                        | {{rel.label}}
-                                                b(style="margin-left:5px")
-                                                    | {{pn.code}}
-                                                |  - {{pn.name}}
+                                            )    
+                                                td(width="1px")
+                                                    select(v-model="pn.relType")
+                                                        option(v-for="rel in relationTypes" :value="rel.value")
+                                                            | {{rel.label}}
+                                                td(style="text-align:left")
+                                                    b(style="margin-left:5px")
+                                                        | {{pn.code}}
+                                                    |  - {{pn.name}}
                                                                         
 
                             //- LEGISLAÇÃO

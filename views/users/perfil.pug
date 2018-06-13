@@ -1,11 +1,11 @@
-extends ../Templates/layout
+extends ../layout
 block corpo
     #profile.panel.panel-default.panel-custom
         .panel-heading
             h1.page-header #{user.name}  
         .panel-body
             .form-group
-                table.consulta
+                table.consulta(width="100%")
                     //-NOME
                     tr
                         td(style="width:10%")
@@ -18,7 +18,7 @@ block corpo
                             )
                         td(v-else style="width:80%")
                             | #{user.name}
-                        td(style="width:10%")
+                        //td(style="width:10%")
                             label(style="padding-right:5px") Editar
                             input(
                                 type="checkbox"
@@ -37,18 +37,33 @@ block corpo
                             )
                         td(v-else style="width:80%")
                             | #{user.email}
-                        td(style="width:10%")
+                        //td(style="width:10%")
                             label(style="padding-right:5px") Editar
                             input(
                                 type="checkbox"
                                 v-model="edit.Email"
                             )
 
-                    //-PASSWORD
+                    //-PEDIDOS
                     tr
                         td(style="width:10%")
+                        td(style="width:80%").noborder
+                            hidden-table(
+                                v-if="pedidosReady"
+
+                                titulo="Pedidos"
+                                :cabecalho='["Nº","Tipo","Descrição","Data de Submissão",""]'
+                                :linhas="pedidos"
+                                
+                                open
+                            )
+                        td
+
+                    //-PASSWORD
+                    //tr
+                        td(style="width:10%")
                             label Password: 
-                        td(v-if="edit.Password" style="width:80%")
+                        td(v-if="edit.Password" style="width:80%" colspans=2)
                             input(
                                 size="50"
                                 v-model="newPassword"
@@ -63,16 +78,17 @@ block corpo
                             button(
                                 @click="edit.Password=!edit.Password"
                             ) Cancelar
-                        td(v-else style="width:80%")
+                        td(v-else style="width:80%" colspans=2)
                             button(
                                 @click="edit.Password=!edit.Password"
                             ) Alterar Password
 
-                input.btn.btn-xs.btn-default.col-sm-1(
+                //input.btn.btn-xs.btn-default.col-sm-1(
+                    @click="update"
                     type="button" 
                     value="Confirmar" 
                     :disabled="!checkready()"
-                )
+                 )
 
 append scripts    
-    script(src="/Scripts/Users/perfil.vue")
+    script(src="/javascripts/users/perfil.vue")

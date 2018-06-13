@@ -54,9 +54,10 @@ new Vue({
     },
     components:{
         accordion: VueStrap.accordion,
-        panel: VueStrap.panel
+        panel: VueStrap.panel,
     }
 })
+
 
 new Vue({
     el: '#noticias',
