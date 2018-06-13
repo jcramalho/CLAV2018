@@ -81,6 +81,7 @@ app.use('/api/classes',require('./routes/api/classes'));
 app.use('/api/tabelasSelecao',require('./routes/api/tabsSel'));
 app.use('/api/termosIndice',require('./routes/api/termosIndice'));
 app.use('/api/vocabulario',require('./routes/api/vocabulario'));
+app.use('/api/pedidos',require('./routes/api/pedidos'));
 app.use('/auth',require('./routes/auth/user'));
 
 // catch 404 and forward to error handler

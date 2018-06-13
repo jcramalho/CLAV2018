@@ -77,6 +77,7 @@ Leg.regulates = function (id) {
             }
             ?id clav:codigo ?Code;
                 clav:titulo ?Title;
+                clav:classeStatus 'A'.
                 
         } ORDER BY ?Code
     `;

@@ -97,7 +97,7 @@ block corpo
                             | {{ clas.Title }} 
 
                         if user 
-                            td
+                            td.editar
                                 label.maozinha(
                                     for="titulo"
                                     :class="[edit.Title ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
@@ -126,7 +126,7 @@ block corpo
                                     | {{ clas.Desc }} 
 
                                 if user 
-                                    td
+                                    td.editar
                                         label.maozinha(
                                             for="descricao"
                                             :class="[edit.Desc ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
@@ -166,7 +166,7 @@ block corpo
                                             | {{note.Nota}}
                                 
                                 if user
-                                    td
+                                    td.editar
                                         label.maozinha(
                                             for="notasA"
                                             :class="[edit.AppNotes ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
@@ -204,7 +204,7 @@ block corpo
                                             | {{note.Exemplo}}
 
                                 if user
-                                    td
+                                    td.editar
                                         label.maozinha(
                                             for="notasEx"
                                             :class="[edit.ExAppNotes ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
@@ -242,7 +242,7 @@ block corpo
                                             p(v-html="note.Nota")
 
                                 if user
-                                    td
+                                    td.editar
                                         label.maozinha(
                                             for="notasE"
                                             :class="[edit.DelNotes ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
@@ -280,7 +280,7 @@ block corpo
                                             | {{ index.Termo }}
 
                                 if user
-                                    td
+                                    td.editar
                                         label.maozinha(
                                             for="tIndice"
                                             :class="[edit.Indexes ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
@@ -323,7 +323,7 @@ block corpo
                                                     | {{ clas.ProcType }}  
 
                                                 if user
-                                                    td(style="width:10%")
+                                                    td(style="width:10%").editar
                                                         label.maozinha(
                                                             for="procTipo"
                                                             :class="[edit.ProcType ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
@@ -359,7 +359,7 @@ block corpo
                                                     | {{ clas.ProcTrans=="S" ? "Sim" : "Não" }}  
 
                                                 if user
-                                                    td(style="width:10%")
+                                                    td(style="width:10%").editar
                                                         label.maozinha(
                                                             for="procTrans"
                                                             :class="[edit.ProcTrans ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
@@ -398,7 +398,7 @@ block corpo
                                             a(:href="'/organizacoes/consultar/'+o.id") {{ o.Sigla }}
                                             |  - {{ o.Nome }}
                                 if user
-                                    td(style="width:10%")
+                                    td(style="width:10%").editar
                                         label.maozinha(
                                             for="donos"
                                             :class="[edit.Owners ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
@@ -452,7 +452,7 @@ block corpo
                                                     a(:href="'/organizacoes/consultar/'+p.id") {{ p.Sigla }}
                                                     |  - {{ p.Nome }}
                                 if user
-                                    td(style="width:10%")
+                                    td(style="width:10%").editar
                                         label.maozinha(
                                             for="participantes"
                                             :class="[edit.Participants ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
@@ -516,7 +516,7 @@ block corpo
                                                     a(:href="'/classes/consultar/'+c.id") {{ c.Code }}
                                                     |  - {{ c.Title }}
                                 if user
-                                    td(style="width:10%")
+                                    td(style="width:10%").editar
                                         label.maozinha(
                                             for="relprocs"
                                             :class="[edit.RelProcs ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
@@ -532,25 +532,21 @@ block corpo
                                 td(style="width: 10%")
                                     .info-label Legislação:
                                 td(v-if="edit.Legs" style="width:80%")
-                                    table
-                                        tr
-                                            td
-                                                v-select.custom-select( 
-                                                    v-model="newClass.Leg"
-                                                    :options="legList"
-                                                )
-                                            td
-                                                button(
-                                                    @click="addLeg(newClass.Leg.value)"
-                                                ) +
-                                        tr(v-if="clas.Legs")
-                                            td(colspan="2")
-                                                ul(style="padding-left:20px")
-                                                    li(v-for="(l,index) in newClass.Legs")
-                                                        | {{ l.Tipo }} - {{ l.Número }} - {{ l.Titulo }}
-                                                        button(
-                                                            @click="remLeg(index)"
-                                                        ) x
+                                    custom-table-select(
+                                        v-if="legListReady"
+
+                                        :header='["#", "Tipo", "Número", "Título", "Data"]'
+                                        :complete-rows="legList"
+                                        :ready="legListReady"
+                                        :cwidth="['5%', '19%', '11%', '50%', '15%']"
+                                        
+                                        class-table='table table-condensed'
+
+                                        @select-clicked="legSelected($event,newClass.Legs)"
+                                    )
+                                    h4(
+                                        v-else
+                                    ) A carregar...
                                 td(v-else style="width:80%")
                                     ul(v-if="legsReady" style="padding-left:20px")
                                         li(v-for="l in clas.Legs")
@@ -558,9 +554,13 @@ block corpo
                                             a(:href="'/legislacao/consultar/'+l.id") {{ l.Número }} 
                                             | - {{ l.Titulo }}
                                 if user
-                                    td(style="width:10%")
-                                        label(style="padding-right:5px") Editar
-                                        input(
+                                    td(style="width:10%").editar
+                                        label.maozinha(
+                                            for="legislacao"
+                                            :class="[edit.Legs ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
+                                        )
+                                        input.drop-row(
+                                            id="legislacao"
                                             type="checkbox"
                                             v-model="edit.Legs"
                                         )

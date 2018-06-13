@@ -1164,7 +1164,7 @@ var alt = new Vue({
                 alt: this.editedClasses
             }
 
-            this.$http.post('/users/pedido', dataObj,{
+            this.$http.post('/api/pedidos', dataObj,{
                 headers: {
                     'content-type' : 'application/json'
                 }

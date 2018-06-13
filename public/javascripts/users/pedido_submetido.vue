@@ -13,13 +13,21 @@ var orgs = new Vue({
             console.log(id);
         },
         parse: function(dataObj){
+            let link="#";
+            if(dataObj.tipo=="Novo PN" && dataObj.obj){
+                link=`/classes/consultar/${dataObj.obj}`;
+            }
+            else if(dataObj.tipo=="Criação de TS" && dataObj.obj){
+                link=`/tabelasSelecao/consultar/${dataObj.obj}`;
+            }
+
             this.linhas= [
                 [
                     dataObj.num,
                     dataObj.tipo,
                     dataObj.desc,
                     dataObj.data,
-                    "<div class='button-darker'><a href='#'>Ver Pedido</a></div>"
+                    `<div class='button-darker'><a href='${link}'>Ver Pedido</a></div>`
                 ]
             ];
         }
@@ -29,7 +37,7 @@ var orgs = new Vue({
         
         var content = [];
 
-        this.$http.get("/users/pedido/"+this.num)
+        this.$http.get("/api/pedidos/numero/"+this.num)
         .then( function(response) { 
             content = response.body;
         })

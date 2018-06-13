@@ -238,7 +238,6 @@ var classe = new Vue({
                 this.loadDF();
             }
 
-            this.loadLegList();
         },
         loadIndexes: function () {
             var indexesToParse = [];
@@ -365,22 +364,32 @@ var classe = new Vue({
         },
         loadLegList: function () {
             var legsToParse = [];
-            var keys = ["id", "Tipo", "Número", "Titulo"];
+            var keys = ["id", "Número", "Titulo", "Tipo", "Data"];
+            var i = 0;
 
             this.$http.get("/api/legislacao")
                 .then(function (response) {
                     legsToParse = response.body;
                 })
                 .then(function () {
-                    this.legList = this.parse(legsToParse, keys)
+                    let completeList = this.parse(legsToParse, keys);
+
+                    let selectedLegs = this.clas.Legs.map(a=>a.id);
+                    this.legList = completeList
                         .map(function (item) {
                             return {
-                                label: item.Tipo + " - " + item.Número,
-                                value: item,
+                                data: [i++, item.Tipo, item.Número, item.Titulo, item.Data],
+                                selected: selectedLegs.indexOf(item.id)!=-1,
+                                id: item.id
                             }
-                        }).sort(function (a, b) {
-                            return a.label.localeCompare(b.label);
                         });
+
+                    /*this.pca.criteria.legislation = JSON.parse(
+                        JSON.stringify(this.legList)
+                    );
+                    this.df.criteria.legislation = JSON.parse(
+                        JSON.stringify(this.legList)
+                    );*/
 
                     this.legListReady = true;
                 })
@@ -401,6 +410,7 @@ var classe = new Vue({
                     this.newClass.Legs = JSON.parse(JSON.stringify(this.parse(legsToParse, keys)));
 
                     this.legsReady = true;
+                    this.loadLegList();
                 })
                 .catch(function (error) {
                     console.error(error);
@@ -1017,6 +1027,26 @@ var classe = new Vue({
                 }
             }
 
+        },
+        legSelected: function(row, list){
+            var findIndex = function (list, id) {
+                for (let [index, item] of list.entries()) {
+                    if (id == item.id) {
+                        return index;
+                    }
+                }
+                return -1;
+            }
+
+            if (!row.selected) {
+                list.push(row);
+            }
+            else {
+                let index = findIndex(list, row.id);
+                if (index != -1) {
+                    list.splice(index, 1);
+                }
+            }
         },
         orgSelected: function (row, list, type) {
             var findIndex = function (list, id) {

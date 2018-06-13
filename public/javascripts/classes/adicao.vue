@@ -710,10 +710,7 @@ var newClass = new Vue({
                     name: row.content[1],
                     code: row.content[0],
                     id: row.codeID,
-                    relType: {
-                        value: null,
-                        label: 'Tipo de Relação'
-                    }
+                    relType: null
                 };
 
                 this.relationsSelected.push(newPN);
@@ -927,6 +924,15 @@ var newClass = new Vue({
                 return false;
             }
 
+            if (this.relationsSelected.length){
+                for(let pn of this.relationsSelected){
+                    if(!pn.relType){
+                        this.message = "É necessário selecionar o tipo de relação com todos os processos relacionados selecionados!";
+                        return false;
+                    }
+                }
+            }
+
             if (this.type == 1) {
                 if (this.code && this.title) {
                     dataObj = {
@@ -1128,7 +1134,6 @@ var newClass = new Vue({
                 console.log(dataObj);
             }
             else {
-                console.log("mistakes");
                 this.$refs.spinner.hide();
             }
         }

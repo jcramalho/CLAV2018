@@ -36,11 +36,12 @@ block corpo
 
                     //- CLASSE PAI
                     a(name="pai")
-                    tr(v-if="type>1 && parentsReady")
+                    tr(v-if="type>1")
                         td(style="width: 10%")
                             .info-label Classe Pai: 
                         td.smaller
                             v-select.custom-select(
+                                v-if="parentsReady"
                                 style="width=100px"
                                 v-model="parentvalue"
                                 :options="parents"

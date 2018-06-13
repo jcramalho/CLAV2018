@@ -11,6 +11,8 @@ var perfil = new Vue({
         newPassword: "",
         newPassword2: "",
         passMessage: "",
+        pedidos: [],
+        pedidosReady: false,
     },
     methods: {
         checkready: _.debounce(
@@ -59,6 +61,42 @@ var perfil = new Vue({
             .catch(function (error) {
                 console.error(error);
             });
+        },
+        parse: function(content){
+            let ret;
+            ret=content.map(function(a){
+                let link="#";
+                if(a.tipo=="Novo PN" && a.obj){
+                    link=`/classes/consultar/${a.obj}`;
+                }
+                else if(a.tipo=="Criação de TS" && a.obj){
+                    link=`/tabelasSelecao/consultar/${a.obj}`;
+                }
+
+                return [
+                    a.num,
+                    a.tipo,
+                    a.desc,
+                    a.data,
+                    `<div class='button-darker'><a href='${link}'>Ver Pedido</a></div>`
+                ]
+            });
+            return ret;
         }
+    },
+    created: function(){
+        var content = [];
+
+        this.$http.get("/api/pedidos/utilizador")
+        .then( function(response) { 
+            content = response.body;
+        })
+        .then( function() {
+            this.pedidos=this.parse(content);
+            this.pedidosReady=true;
+        })
+        .catch( function(error) { 
+            console.error(error); 
+        });
     }
 })

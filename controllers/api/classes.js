@@ -285,7 +285,8 @@ Classes.related = function (id) {
                     ?Type ?id.
                 
                 ?id clav:codigo ?Code;
-                    clav:titulo ?Title.
+                    clav:titulo ?Title;
+                    clav:classeStatus 'A'.
                 
                 filter (?Type!=clav:temRelProc)
             } Order by ?Type
@@ -840,6 +841,8 @@ Classes.createClass = function (data) {
     }
 
     createQuery += '}';
+
+    console.log(createQuery);
 
     return client.query(createQuery).execute()
         .then(response => Promise.resolve(response))
