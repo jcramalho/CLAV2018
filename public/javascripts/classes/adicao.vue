@@ -91,9 +91,9 @@ var side = new Vue({
         nav: []
     },
     methods: {
-        changeNav: function(type){
-            this.nav= this.navComplete.filter(
-                a=>a.lvl<=type
+        changeNav: function (type) {
+            this.nav = this.navComplete.filter(
+                a => a.lvl <= type
             )
         }
     },
@@ -396,7 +396,7 @@ var newClass = new Vue({
                 //utilidade administrativa
                 pnsUA = this.relationsSelected.filter(
                     function (a) {
-                        return a.relType == "eSuplementoDe";
+                        return a.relType == "eSuplementoPara";
                     }
                 );
 
@@ -414,7 +414,7 @@ var newClass = new Vue({
                 //Densidade informacional
                 pnsDI = this.relationsSelected.filter(
                     function (a) {
-                        return a.relType == "eSuplementoDe";
+                        return a.relType == "eSuplementoPara";
                     }
                 );
 
@@ -445,8 +445,7 @@ var newClass = new Vue({
                             this.codeMessage = "Codigo já existe!";
                         }
                     })
-            },
-            500
+            },500
         ),
         loadCountTypes: function () {
             var dataToParse = [];
@@ -815,16 +814,16 @@ var newClass = new Vue({
                     if (partType && partType != 'dono') {
                         this.participantsSelectedInfo[partType].splice(index, 1);
                     }
-                    else if (partType && partType == 'dono'){
+                    else if (partType && partType == 'dono') {
                         let exIndex = this.participantsSelected.Executor.indexOf(row.id);
-                        if(exIndex!=-1){
-                            this.participantsSelected.Executor.splice(exIndex,1);
-                            this.participantsSelectedInfo.Executor.splice(exIndex,1);
-                        }   
+                        if (exIndex != -1) {
+                            this.participantsSelected.Executor.splice(exIndex, 1);
+                            this.participantsSelectedInfo.Executor.splice(exIndex, 1);
+                        }
 
-                        let listIndex = findIndex(this.participantLists.Executor,row.id);
-                        if(listIndex!=-1){
-                            this.participantLists.Executor.splice(listIndex,1);
+                        let listIndex = findIndex(this.participantLists.Executor, row.id);
+                        if (listIndex != -1) {
+                            this.participantLists.Executor.splice(listIndex, 1);
                         }
                     }
                 }
@@ -924,9 +923,9 @@ var newClass = new Vue({
                 return false;
             }
 
-            if (this.relationsSelected.length){
-                for(let pn of this.relationsSelected){
-                    if(!pn.relType){
+            if (this.relationsSelected.length) {
+                for (let pn of this.relationsSelected) {
+                    if (!pn.relType) {
                         this.message = "É necessário selecionar o tipo de relação com todos os processos relacionados selecionados!";
                         return false;
                     }
@@ -1112,26 +1111,24 @@ var newClass = new Vue({
                     headers: {
                         'content-type': 'application/json'
                     }
-                })
-                    .then(function (response) {
-                        regex = new RegExp(/[0-9]+\-[0-9]+/, "gi");
+                }).then(function (response) {
+                    regex = new RegExp(/[0-9]+\-[0-9]+/, "gi");
 
-                        if (regex.test(response.body)) {
-                            window.location.href = '/users/pedido_submetido/' + response.body;
-                        }
-                        else {
-                            this.message = response.body;
-                        }
+                    if (regex.test(response.body)) {
+                        window.location.href = '/users/pedido_submetido/' + response.body;
+                    }
+                    else {
+                        this.message = response.body;
+                    }
 
-                        this.$refs.spinner.hide();
-                    })
-                    .catch(function (error) {
-                        console.error(error);
-                        this.message = "Ocorreu um erro!"
-                        this.$refs.spinner.hide();
-                    });
+                    this.$refs.spinner.hide();
+                }).catch(function (error) {
+                    console.error(error);
+                    this.message = "Ocorreu um erro!"
+                    this.$refs.spinner.hide();
+                });
 
-                console.log(dataObj);
+                //console.log(dataObj);
             }
             else {
                 this.$refs.spinner.hide();

@@ -62,7 +62,7 @@ var perfil = new Vue({
                 console.error(error);
             });
         },
-        parse: function(content){
+        parsePedidos: function(content){
             let ret;
             ret=content.map(function(a){
                 let link="#";
@@ -92,7 +92,7 @@ var perfil = new Vue({
             content = response.body;
         })
         .then( function() {
-            this.pedidos=this.parse(content);
+            this.pedidos=this.parsePedidos(content);
             this.pedidosReady=true;
         })
         .catch( function(error) { 

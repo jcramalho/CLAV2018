@@ -50,6 +50,8 @@ var classe = new Vue({
                 value: 'eSuplementoPara',
             }
         ],
+        countTypes: [],
+        subcountTypes: [],
 
         clas: {
             Title: "",
@@ -116,6 +118,12 @@ var classe = new Vue({
                 Executor: [],
                 Iniciador: [],
             },
+            PCA: {
+                deadline: "",
+                count: { label: "Forma de Contagem", id: null },
+                subcount: { label: "Sub-forma de Contagem", id: null },
+                criteria: [],
+            },
         },
         edit: {
             Title: false,
@@ -131,6 +139,39 @@ var classe = new Vue({
             Indexes: false,
             RelProcs: false,
             Participants: false,
+            PCA: {
+                value: false,
+                count: false,
+                just: false,
+            }
+        },
+        PCA: {
+            critTypes: [
+                {
+                    value: "CriterioJustificacaoLegal",
+                    label: "Critério Legal",
+                    rel: 1
+                },
+                {
+                    value: "CriterioJustificacaoUtilidadeAdministrativa",
+                    label: "Critério Utilidade Administrativa",
+                    rel: 2
+                },
+                {
+                    value: "CriterioJustificacaoGestionario",
+                    label: "Critério Gestionário",
+                    rel: 0
+                },
+                {
+                    value: "CriterioJustificacaoComplementaridadeInfo",
+                    label: "Critério Complementaridade Informacional",
+                    rel: 2
+                },
+            ],
+            pns: {
+                CriterioJustificacaoUtilidadeAdministrativa: [],
+                CriterioJustificacaoComplementaridadeInfo: [],
+            },
         },
 
         orgsReady: false,
@@ -143,6 +184,9 @@ var classe = new Vue({
         classesReady: false,
         relProcsReady: false,
         pageReady: false,
+        countsReady: false,
+        subcountsReady: false,
+        critRelsReady: false,
 
         participationsDic: {
             Apreciador: "Apreciar",
@@ -166,20 +210,20 @@ var classe = new Vue({
     watch: {
         relationsSelected: {
             deep: true,
-            handler: function(){
-                
+            handler: function () {
+
             },
         },
     },
     methods: {
         convertRelations: function () {
-            for(const key in this.newClass.RelProcs){
-                let type = "e"+key.replace(" ","");
-                let toAdd = this.relationsSelected.filter( a=>a.relType == type );
+            for (const key in this.newClass.RelProcs) {
+                let type = "e" + key.replace(" ", "");
+                let toAdd = this.relationsSelected.filter(a => a.relType == type);
 
                 this.newClass.RelProcs[key] = JSON.parse(JSON.stringify(
                     toAdd.map(
-                        function(pn){
+                        function (pn) {
                             return {
                                 Code: pn.code,
                                 Title: pn.name,
@@ -236,8 +280,59 @@ var classe = new Vue({
 
                 this.loadPCA();
                 this.loadDF();
+
+                this.loadCountTypes();
+                this.loadSubCountTypes();
             }
 
+        },
+        loadCountTypes: function () {
+            var dataToParse = [];
+            var keys = ["id", "Label"];
+            var i = 0;
+
+            this.$http.get("/api/vocabulario/formasContagemPCA")
+                .then(function (response) {
+                    dataToParse = response.body;
+                })
+                .then(function () {
+                    this.countTypes = this.parse(dataToParse, keys)
+                        .map(function (a) {
+                            return {
+                                label: a.Label,
+                                id: a.id,
+                            }
+                        });
+
+                    this.countsReady = true;
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        },
+        loadSubCountTypes: function () {
+            var dataToParse = [];
+            var keys = ["id", "Label"];
+            var i = 0;
+
+            this.$http.get("/api/vocabulario/subFormasContagemPCA")
+                .then(function (response) {
+                    dataToParse = response.body;
+                })
+                .then(function () {
+                    this.subcountTypes = this.parse(dataToParse, keys)
+                        .map(function (a) {
+                            return {
+                                label: a.Label,
+                                id: a.id,
+                            }
+                        });
+
+                    this.subcountsReady = true;
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
         },
         loadIndexes: function () {
             var indexesToParse = [];
@@ -374,12 +469,12 @@ var classe = new Vue({
                 .then(function () {
                     let completeList = this.parse(legsToParse, keys);
 
-                    let selectedLegs = this.clas.Legs.map(a=>a.id);
+                    let selectedLegs = this.clas.Legs.map(a => a.id);
                     this.legList = completeList
                         .map(function (item) {
                             return {
                                 data: [i++, item.Tipo, item.Número, item.Titulo, item.Data],
-                                selected: selectedLegs.indexOf(item.id)!=-1,
+                                selected: selectedLegs.indexOf(item.id) != -1,
                                 id: item.id
                             }
                         });
@@ -740,10 +835,18 @@ var classe = new Vue({
             }
 
             if (data.SubContagem) {
+                this.newClass.PCA.count = {
+                    label: data.SubContagem.value,
+                    id: data.SubContID.value.replace(/[^#]+#(.*)/, '$1')
+                }
                 PCA.subContagem = data.SubContagem.value;
             }
 
             if (data.ContagemNorm) {
+                this.newClass.PCA.count = {
+                    label: data.ContagemNorm.value,
+                    id: data.ContNormID.value.replace(/[^#]+#(.*)/, '$1')
+                }
                 PCA.contagemnormalizada = data.ContagemNorm.value;
             }
 
@@ -816,8 +919,46 @@ var classe = new Vue({
                                 .replace(regex, "<a href='/legislacao/consultar/" + id + "'>$1</a>");
                         }
                     }
-
                     PCA.criterios.push(newCrit);
+
+                    let editCrit = {
+                        legToSelect: [],
+                        pnsToSelect: [],
+                        edit: false,
+                        remove: false,
+                        id: criterio.id.value.replace(/[^#]+#(.*)/, '$1'),
+                        type: "",
+                        content: newCrit.nota.replace(/<[^>]+>/g, ''),
+                        pns: [],
+                        leg: []
+                    };
+
+                    for (let type of this.PCA.critTypes) {
+                        if (newCrit.tipo == type.label) {
+                            editCrit.type = JSON.parse(JSON.stringify(type));
+                            break;
+                        }
+                    }
+
+                    editCrit.pns = newCrit.processos.map(
+                        function (pn) {
+                            return {
+                                Code: pn.codigo,
+                                Title: pn.titulo,
+                                id: pn.id
+                            }
+                        }
+                    );
+                    editCrit.leg = newCrit.legislacao.map(
+                        function (dip) {
+                            return {
+                                Type: dip.tipo,
+                                Num: dip.numero,
+                                id: dip.id
+                            }
+                        }
+                    );
+                    this.newClass.PCA.criteria.push(editCrit);
                 }
             }
 
@@ -931,6 +1072,112 @@ var classe = new Vue({
 
             return DF;
         },
+        filterParsePNS: function(selected,relID,relName){
+            let pns = [];
+            let i=0;
+            if (this.edit.RelProcs) {
+                pns = this.relationsSelected
+                    .filter(
+                        function (a) {
+                            return a.relType == relID;
+                        }
+                    ).map(
+                        function (a) {
+                            return {
+                                data: [i++, a.code, a.name],
+                                id: a.id,
+                                selected: selected.indexOf(a.id)!=-1
+                            }
+                        }
+                    );
+            }
+            else {
+                pns = this.clas.RelProcs[relName]
+                    .map(
+                        function (a) {
+                            return {
+                                data: [i++, a.Code, a.Title],
+                                id: a.id,
+                                selected: selected.indexOf(a.id)!=-1
+                            }
+                        }
+                    );
+            }
+            return pns;
+        },
+        critTypeSelected: function (dest, payload) {
+            this.critRelsReady = false;
+
+            if (payload.rel == 2) { //carregar processos
+                let selected = dest.pns.map(a=>a.id);
+                let pns = [];
+
+                if (payload.value == "CriterioJustificacaoComplementaridadeInfo") {
+                    pns = this.filterParsePNS(selected,"eComplementarDe","Complementar De");
+                }
+                else if (payload.value == "CriterioJustificacaoUtilidadeAdministrativa") {
+                    pns = this.filterParsePNS(selected,"eSuplementoPara","Suplemento Para");
+                }
+                else if (payload.value == "CriterioJustificacaoDensidadeInfo") {
+                    pns = this.filterParsePNS(selected,"eSuplementoPara","Suplemento Para");
+                }
+
+                dest.pnsToSelect = JSON.parse(JSON.stringify(pns));
+            }
+            else if (payload.rel == 1) {
+                let selected = dest.leg.map(a=>a.id);
+                let leg = this.legList.map(
+                    function(a){
+                        return {
+                            data: a.data,
+                            id: a.id,
+                            selected: selected.indexOf(a.id)!=-1
+                        }
+                    }
+                );
+                dest.legToSelect = JSON.parse(JSON.stringify(leg));
+            }
+
+            this.critRelsReady = true;
+        },
+        pnSelectedCrit: function (row, obj) {
+            if (!row.selected) {
+                obj.pns.push({
+                    id: row.id,
+                    Code: row.data[1],
+                    Title: row.data[2]
+                });
+            }
+            else {
+                let i = 0;
+                for (let p of obj.pns) {
+                    if (row.id == p.id) { break; }
+                    i++;
+                }
+                if (i < obj.pns.length) {
+                    obj.pns.splice(i, 1);
+                }
+            }
+        },
+        legSelectedCrit: function (row, obj) {
+            if (!row.selected) {
+                obj.leg.push({
+                    id: row.id,
+                    Num: row.data[2],
+                    Type: row.data[1]
+                });
+            }
+            else {
+                let i = 0;
+                for (let doc of obj.leg) {
+                    if (row.id == doc.id) { break; }
+                    i++;
+                }
+                if (i < obj.leg.length) {
+                    obj.leg.splice(i, 1);
+                }
+            }
+        },
         parse: function (content, keys) {
             var dest = [];
             var temp = {};
@@ -950,9 +1197,6 @@ var classe = new Vue({
 
             return dest;
         },
-        /*remOwner: function (index) {
-            this.newClass.Owners.splice(index, 1);
-        },*/
         addLeg: function (leg) {
             this.newClass.Legs.push(leg);
         },
@@ -990,24 +1234,6 @@ var classe = new Vue({
             }
             return prefix + "_" + this.id + "_" + newID;
         },
-        /*addParticipant: function (type, participant) {
-            this.newClass.Participants[type].push(participant);
-        },
-        remParticipant: function (type, index) {
-            this.newClass.Participants[type].splice(index, 1);
-        },
-        addRelation: function (type, relation) {
-            this.newClass.RelProcs[type].push(relation);
-        },
-        remRelation: function (key, index) {
-            this.newClass.RelProcs[key].splice(index, 1);
-        },
-        addRelProc: function (proc) {
-            this.newClass.RelProcs.push(proc);
-        },
-        remRelProc: function (index) {
-            this.newClass.RelProcs.splice(index, 1);
-        },*/
         readyToUpdate: function () {
             var keys = Object.keys(this.edit);
 
@@ -1028,7 +1254,7 @@ var classe = new Vue({
             }
 
         },
-        legSelected: function(row, list){
+        legSelected: function (row, list) {
             var findIndex = function (list, id) {
                 for (let [index, item] of list.entries()) {
                     if (id == item.id) {

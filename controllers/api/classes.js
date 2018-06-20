@@ -340,7 +340,9 @@ Classes.checkCodeAvailability = function (code, level) {
 Classes.pca = function (id) {
     var fetchQuery = `
         SELECT 
+            ?SubContID
             ?SubContagem
+            ?ContNormID
             ?ContagemNorm
             (GROUP_CONCAT(DISTINCT ?Nota; SEPARATOR="###") AS ?Notas)
             (GROUP_CONCAT(DISTINCT ?Valor; SEPARATOR="###") AS ?Valores)
@@ -348,12 +350,12 @@ Classes.pca = function (id) {
         WHERE { 
             clav:${id} clav:temPCA ?pca .
             optional {
-                ?pca clav:pcaSubformaContagem ?SubCont .
-                ?SubCont skos:scopeNote ?SubContagem .
+                ?pca clav:pcaSubformaContagem ?SubContID .
+                ?SubContID skos:scopeNote ?SubContagem .
             }
             optional {
-                ?pca clav:pcaFormaContagemNormalizada ?ContNorm .    
-                ?ContNorm skos:prefLabel ?ContagemNorm .
+                ?pca clav:pcaFormaContagemNormalizada ?ContNormID .    
+                ?ContNormID skos:prefLabel ?ContagemNorm .
             }
             OPTIONAL {
                 ?pca clav:pcaNota ?Nota ;
@@ -365,7 +367,7 @@ Classes.pca = function (id) {
                 ?pca clav:temJustificacao ?just .
                 ?just clav:temCriterio ?Criterio
             }    
-        }GROUP BY ?SubContagem ?ContagemNorm
+        }GROUP BY ?SubContagem ?ContagemNorm ?SubContID ?ContNormID
     `;
 
     return client.query(fetchQuery).execute()
@@ -408,6 +410,7 @@ Classes.df = function (id) {
 Classes.criteria = function (criteria) {
     var fetchQuery = `
         SELECT
+            ?id
             ?Tipo
             ?Conteudo
             (GROUP_CONCAT(CONCAT(STR(?leg),":::",?LegTipo, ":::",?LegNumero); SEPARATOR="###") AS ?Legislacao)
@@ -433,7 +436,7 @@ Classes.criteria = function (criteria) {
                       clav:titulo ?Titulo .
             }
             FILTER(?Tipo != owl:NamedIndividual && ?Tipo != clav:CriterioJustificacao && ?Tipo != clav:AtributoComposto)
-        } GROUP BY ?Tipo ?Conteudo
+        } GROUP BY ?id ?Tipo ?Conteudo
     `;
 
     return client.query(fetchQuery).execute()
@@ -544,7 +547,7 @@ Classes.filterNone = function() {
         });
 }
 
-Classes.filterCommon = function(orgs) {
+Classes.filterCommon = function() {
     var fetchQuery = `
         SELECT DISTINCT
             ?Avo ?AvoCodigo ?AvoTitulo 
@@ -841,8 +844,6 @@ Classes.createClass = function (data) {
     }
 
     createQuery += '}';
-
-    console.log(createQuery);
 
     return client.query(createQuery).execute()
         .then(response => Promise.resolve(response))

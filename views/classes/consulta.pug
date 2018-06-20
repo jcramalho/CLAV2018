@@ -578,28 +578,160 @@ block corpo
                                         tr
                                             td(width="125px")
                                                 .info-label Prazo:
-                                            td
+                                            td(v-if="!edit.PCA.value" style="width:150px")
                                                 | {{ clas.PCA.valores.join(', ') }}
+                                            td(v-else style="width:150px")
+                                                input(
+                                                    v-model="newClass.PCA.deadline"
+                                                )
+                                            if user
+                                                td.editar
+                                                    label.maozinha(
+                                                        for="pcaValor"
+                                                        :class="[edit.PCA.value ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
+                                                    )
+                                                    input.drop-row(
+                                                        id="pcaValor"
+                                                        type="checkbox"
+                                                        v-model="edit.PCA.value"
+                                                    )
+
                                             td(style="padding-left:10px" width="170px")
                                                 .info-label Forma de Contagem:
-                                            td
-                                                | {{ clas.PCA.contagemnormalizada }}  
-                                        tr(v-if="clas.PCA.contagemnormalizada=='Conforme disposição legal'")
+                                            td(v-if="!edit.PCA.count")
+                                                | {{ clas.PCA.contagemnormalizada }}
+                                            td(v-else)
+                                                v-select.custom-select(
+                                                    :options="countTypes"
+                                                    v-model="newClass.PCA.count"
+                                                )  
+                                            if user
+                                                td.editar
+                                                    label.maozinha(
+                                                        for="pcaContagem"
+                                                        :class="[edit.PCA.count ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
+                                                    )
+                                                    input.drop-row(
+                                                        id="pcaContagem"
+                                                        type="checkbox"
+                                                        v-model="edit.PCA.count"
+                                                    )
+                                                    
+                                        tr(v-if="clas.PCA.contagemnormalizada=='Conforme disposição legal' || (edit.PCA.count && newClass.PCA.count.id=='vc_pcaFormaContagem_disposicaoLegal')")
                                             td
                                                 .info-label Sub-forma de Contagem:
-                                            td(colspan=3)
+                                            td(v-if="!edit.PCA.count" colspan=5)
                                                 | {{ clas.PCA.subContagem }}
+                                            td(v-else colspan=5)
+                                                v-select.custom-select(
+                                                    :options="subcountTypes"
+                                                    v-model="newClass.PCA.subcount"
+                                                ) 
                                         tr
                                             td
                                                 .info-label Justificação:
-                                            td(colspan=3)
-                                                table(v-for="criterio in clas.PCA.criterios")
-                                                    tr
-                                                        td
-                                                            b {{ criterio.tipo }}
-                                                    tr
-                                                        td 
-                                                            p(v-html="criterio.nota")
+                                            if !user
+                                                td(colspan=5)
+                                                    table(v-for="(criterio,index) in clas.PCA.criterios")
+                                                        tr
+                                                            td
+                                                                b {{ criterio.tipo }}
+                                                        tr
+                                                            td 
+                                                                p(v-html="criterio.nota")
+                                            else 
+                                                td(colspan=4)
+                                                    div(v-if="!edit.PCA.just")
+                                                        table(v-for="crit in clas.PCA.criterios" style="width:100%")
+                                                            tr
+                                                                td
+                                                                    b {{ crit.tipo }}
+                                                            tr
+                                                                td
+                                                                    p(v-html="crit.nota")
+
+                                                    div(v-else)
+                                                        table.blackborder(v-for="(crit,index) in newClass.PCA.criteria" style="width:100%")
+                                                            tr
+                                                                td(v-if="!crit.edit")
+                                                                    b {{ crit.type.label }}
+                                                                td(v-else)
+                                                                    v-select.custom-select(
+                                                                        v-model="crit.type"
+                                                                        :options="PCA.critTypes"
+                                                                        @input="critTypeSelected(crit, $event)"
+                                                                    )
+
+                                                                td.editar(style="padding-right:5px")
+                                                                    label.maozinha(
+                                                                        :for="'pcaCrit'+index"
+                                                                        :class="[crit.edit ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
+                                                                    )
+                                                                    input.drop-row(
+                                                                        :id="'pcaCrit'+index"
+                                                                        type="checkbox"
+                                                                        v-model="crit.edit"
+                                                                    )
+                                                            tr
+                                                                td(v-if="!crit.edit" colspan=2)
+                                                                    p(v-html="crit.content")
+                                                                td(v-else colspan=2)
+                                                                    textarea(
+                                                                        placeholder="Notas.."
+                                                                        cols="72"
+                                                                        lines="5"
+                                                                        v-model="crit.content"
+                                                                    )
+                                                            tr(v-if="crit.edit && crit.type.rel>0 && critRelsReady")
+                                                                td(colspan=2)
+                                                                    accordion.info-classe
+                                                                        //- PROCESSOS
+                                                                        panel(v-if="crit.type.rel==2" header="Processos Relacionados")
+                                                                            custom-table-select(
+                                                                                v-if="crit.type.value"
+
+                                                                                :header='["#", "Código", "Título"]'
+                                                                                :complete-rows="crit.pnsToSelect"
+                                                                                ready="true"
+                                                                                :cwidth='["4%", "16%", "81%"]'
+                                                                                
+                                                                                class-table='table table-condensed'
+
+                                                                                @select-clicked="pnSelectedCrit($event,crit)"
+                                                                            )
+                                                                            h4(
+                                                                                v-else
+                                                                            ) A carregar...
+
+                                                                        //- LEGISLAÇÃO
+                                                                        panel(v-if="crit.type.rel==1" header="Legislação")
+                                                                            
+                                                                            custom-table-select(
+                                                                                v-if="crit.type.value"
+
+                                                                                :header='["#", "Tipo", "Número", "Título", "Data"]'
+                                                                                :complete-rows="crit.legToSelect"
+                                                                                ready="true"
+                                                                                :cwidth="['5%', '19%', '11%', '50%', '15%']"
+                                                                                
+                                                                                class-table='table table-condensed'
+
+                                                                                @select-clicked="legSelectedCrit($event,crit)"
+                                                                            )
+                                                                            h4(
+                                                                                v-else
+                                                                            ) A carregar...
+                                                                    
+                                                td.editar
+                                                    label.maozinha(
+                                                        for="pcaJustificação"
+                                                        :class="[edit.PCA.just ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
+                                                    )
+                                                    input.drop-row(
+                                                        id="pcaJustificação"
+                                                        type="checkbox"
+                                                        v-model="edit.PCA.just"
+                                                    )
                                 
                             //- DESTINO FINAL
                             tr(v-if="clas.DF.valores.length")

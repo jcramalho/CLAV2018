@@ -420,6 +420,11 @@ a .linkbox:hover {
     margin: 5px;
 }
 
+.blackborder {
+    border-style: solid;
+    border-width: 1px;
+}
+
 .questionario {
     width:99%;
     border-style: solid;

@@ -74,6 +74,7 @@ app.use('/legislacao',require('./routes/leg'));
 app.use('/classes',require('./routes/classes'));
 app.use('/tabelasSelecao',require('./routes/tabsSel'));
 app.use('/termosIndice',require('./routes/termosIndice'));
+app.use('/gestao',require('./routes/admin'));
 
 app.use('/api/organizacoes',require('./routes/api/orgs'));
 app.use('/api/legislacao',require('./routes/api/leg'));
