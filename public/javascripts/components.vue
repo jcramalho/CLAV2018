@@ -493,7 +493,7 @@ Vue.component('row-waterfall', {
                                         {{ row.content[1] }}
                                     </div>
                                     <div
-                                        v-if="selectOn && level>=3" 
+                                        v-if="selectOn && level==3" 
                                         class="checks"
                                     >
                                         <div class="ownercheck">

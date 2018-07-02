@@ -316,6 +316,12 @@ var newClass = new Vue({
             }
         },
 
+        autoCritIndexes: {
+            utilidadeAdmin: -1,         // PCA - criterio de utilidade administrativa (rels: suplementoPara)
+            densidadeInfo: -1,          // DF - criterio dansidade informaconal (rels: sinteseDe/sintetizadoPor)
+            complementaridadeInfo: -1   // DF - criterio complementaridade informacional (rels: complementar de)
+        },
+
         message: null,
         codeMessage: "",
         parentvalue: "",
@@ -446,6 +452,117 @@ var newClass = new Vue({
                     })
             },500
         ),
+        relChanged: function(index, rel){
+            if(rel.relType == "eSuplementoPara"){
+                if(this.autoCritIndexes.utilidadeAdmin==-1){
+                    let critIndex = -1;
+
+                    //verificar se já existe um critério de utilidade administrativa
+                    for(let [i,crit] of this.pca.criteria.list.entries()){
+                        if(crit.type.value=="CriterioJustificacaoUtilidadeAdministrativa"){
+                            critIndex=i;
+
+                            break;
+                        }
+                    }
+
+                    //se não existir criar
+                    if(critIndex==-1){
+                        critIndex = this.pca.criteria.list.length;
+
+                        this.addNewJustCrit(this.pca.criteria.list);
+
+                        this.pca.criteria.list[critIndex].type = {
+                            value: "CriterioJustificacaoUtilidadeAdministrativa",
+                            label: "Critério Utilidade Administrativa",
+                            rel: 2
+                        };
+                    }
+                    this.autoCritIndexes.utilidadeAdmin=critIndex;
+                }
+            }
+            else if(rel.relType == "eSinteseDe" || rel.relType == "eSintetizadoPor"){
+                if((rel.relType == "eSinteseDe" && this.checkIfExistsRelation("eSintetizadoPor")) || (rel.relType == "eSintetizadoPor" && this.checkIfExistsRelation("eSinteseDe"))) {
+                    this.showMsg("Não podem existir ao mesmo tempo as relações 'Síntese De' e 'Sintetizado Por'!");
+                }
+                else if (rel.relType == "eSintetizadoPor" && this.checkIfExistsRelation("eComplementarDe")){
+                    this.showMsg("Não podem existir ao mesmo tempo as relações 'Sintetizado Por' e 'Complementar De'!");
+                }
+                else {
+                    this.df.end = (rel.relType == "eSinteseDe") ? "C" : "E";
+                    
+                    if(this.autoCritIndexes.densidadeInfo==-1){
+                        let critIndex = -1;
+
+                        //verificar se já existe um critério de utilidade administrativa
+                        for(let [i,crit] of this.df.criteria.list.entries()){
+                            if(crit.type.value=="CriterioJustificacaoDensidadeInfo"){
+                                critIndex=i;
+    
+                                break;
+                            }
+                        }
+    
+                        //se não existir criar
+                        if(critIndex==-1){
+                            critIndex = this.df.criteria.list.length;
+
+                            this.addNewJustCrit(this.df.criteria.list);
+
+                            this.df.criteria.list[critIndex].type = {
+                                value: "CriterioJustificacaoDensidadeInfo",
+                                label: "Densidade Informacional",
+                                rel: 2
+                            };
+                        }
+                        this.autoCritIndexes.densidadeInfo=critIndex;
+                    }
+                }
+            }
+            else if(rel.relType == "eComplementarDe"){
+                if(this.checkIfExistsRelation("eSintetizadoPor")){
+                    this.showMsg("Não podem existir ao mesmo tempo as relações 'Sintetizado Por' e 'Complementar De'!");
+                }
+                else{
+                    this.df.end = "C";
+
+                    if(this.autoCritIndexes.complementaridadeInfo==-1){
+                        let critIndex = -1;
+
+                        //verificar se já existe um critério de utilidade administrativa
+                        for(let [i,crit] of this.df.criteria.list.entries()){
+                            if(crit.type.value=="CriterioJustificacaoComplementaridadeInfo"){
+                                critIndex=i;
+
+                                break;
+                            }
+                        }
+
+                        //se não existir criar
+                        if(critIndex==-1){
+                            critIndex = this.df.criteria.list.length;
+
+                            this.addNewJustCrit(this.df.criteria.list);
+
+                            this.df.criteria.list[critIndex].type = {
+                                value: "CriterioJustificacaoComplementaridadeInfo",
+                                label: "Critério Complementaridade Informacional",
+                                rel: 2
+                            };
+                        }
+                        this.autoCritIndexes.complementaridadeInfo=critIndex;
+                    }
+                }
+            }
+        },
+        checkIfExistsRelation: function(rela) {
+            for (let [i, rel] of this.relationsSelected.entries()) {
+                if (rel.relType == rela) {
+                    return true;
+                }
+            }
+            return false;
+        },
         showMsg(text) {
             this.modalMsg = text;
             this.modalMsgShow = true;

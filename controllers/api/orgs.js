@@ -113,7 +113,9 @@ Orgs.domain = function (id) {
         SELECT * WHERE {
             ?id clav:temDono clav:${id} ;
                 clav:codigo ?Code ;
-                clav:titulo ?Title .
+                clav:titulo ?Title ;
+                clav:pertenceLC clav:lc1 ;
+                clav:classeStatus "A" .
         }`
         ;
 
@@ -132,7 +134,9 @@ Orgs.participations = function (id) {
                 ?Type clav:${id} ;
             
                 clav:titulo ?Title ;
-                clav:codigo ?Code .
+                clav:codigo ?Code ;
+                clav:pertenceLC clav:lc1 ;
+                clav:classeStatus "A" .
             
             filter (?Type!=clav:temParticipante && ?Type!=clav:temDono)
         }`

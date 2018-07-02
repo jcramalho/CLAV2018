@@ -326,7 +326,7 @@ block corpo
                                                 v-for="pn in relationsSelected" 
                                             )    
                                                 td(width="1px")
-                                                    select(v-model="pn.relType")
+                                                    select(v-model="pn.relType" @change="relChanged(index,pn)")
                                                         option(v-for="rel in relationTypes" :value="rel.value")
                                                             | {{rel.label}}
                                                 td(style="text-align:left")
@@ -589,6 +589,7 @@ block corpo
             modal(
                 title="Atenção!" 
                 :value="modalMsgShow"
+                @closed="modalMsgShow=false"
 
                 small
             ) 

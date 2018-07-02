@@ -358,9 +358,9 @@ var classe = new Vue({
                 console.log("[teste] relação antes da alteração era 'Suplemento Para'");
             }
         },
-        checkIfExistsRelation: function(rel) {
+        checkIfExistsRelation: function(rela) {
             for (let [i, rel] of this.relationsSelected.entries()) {
-                if (rel.relType == "rel") {
+                if (rel.relType == rela) {
                     return true;
                 }
             }
