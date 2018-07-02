@@ -277,8 +277,11 @@ var classe = new Vue({
                 }
             }
             else if(rel.relType == "eSinteseDe" || rel.relType == "eSintetizadoPor"){
-                if(!this.checkRelations()){
+                if((rel.relType == "eSinteseDe" && this.checkIfExistsRelation("eSintetizadoPor")) || (rel.relType == "eSintetizadoPor" && this.checkIfExistsRelation("eSinteseDe"))) {
                     this.showMsg("Não podem existir ao mesmo tempo as relações 'Síntese De' e 'Sintetizado Por'!");
+                }
+                else if (rel.relType == "eSintetizadoPor" && this.checkIfExistsRelation("eComplementarDe")){
+                    this.showMsg("Não podem existir ao mesmo tempo as relações 'Sintetizado Por' e 'Complementar De'!");
                 }
                 else {
                     this.edit.DF.dest=true;
@@ -314,62 +317,54 @@ var classe = new Vue({
                 }
             }
             else if(rel.relType == "eComplementarDe"){
-                this.edit.DF.dest=true;
-                this.newClass.DF.dest = "C";
+                if(this.checkIfExistsRelation("eSintetizadoPor")){
+                    this.showMsg("Não podem existir ao mesmo tempo as relações 'Sintetizado Por' e 'Complementar De'!");
+                }
+                else{
+                    this.edit.DF.dest=true;
+                    this.newClass.DF.dest = "C";
 
-                if(this.autoCritIndexes.complementaridadeInfo==-1){
-                    this.edit.DF.just=true;
-                    let critIndex = -1;
+                    if(this.autoCritIndexes.complementaridadeInfo==-1){
+                        this.edit.DF.just=true;
+                        let critIndex = -1;
 
-                    //verificar se já existe um critério de utilidade administrativa
-                    for(let [i,crit] of this.newClass.DF.criteria.entries()){
-                        if(crit.type.value=="CriterioJustificacaoComplementaridadeInfo"){
-                            critIndex=i;
+                        //verificar se já existe um critério de utilidade administrativa
+                        for(let [i,crit] of this.newClass.DF.criteria.entries()){
+                            if(crit.type.value=="CriterioJustificacaoComplementaridadeInfo"){
+                                critIndex=i;
 
-                            crit.edit=true;
+                                crit.edit=true;
 
-                            break;
+                                break;
+                            }
                         }
-                    }
 
-                    //se não existir criar
-                    if(critIndex==-1){
-                        critIndex = this.addNewCrit("DF");
+                        //se não existir criar
+                        if(critIndex==-1){
+                            critIndex = this.addNewCrit("DF");
 
-                        this.newClass.DF.criteria[critIndex].type = {
-                            value: "CriterioJustificacaoComplementaridadeInfo",
-                            label: "Critério Complementaridade Informacional",
-                            rel: 2
-                        };
+                            this.newClass.DF.criteria[critIndex].type = {
+                                value: "CriterioJustificacaoComplementaridadeInfo",
+                                label: "Critério Complementaridade Informacional",
+                                rel: 2
+                            };
+                        }
+                        this.autoCritIndexes.complementaridadeInfo=critIndex;
                     }
-                    this.autoCritIndexes.complementaridadeInfo=critIndex;
                 }
             }
-            console.log(this.relationsSelectedOld);
+            
             if(this.relationsSelectedOld[index].relType=="eSuplementoPara"){
-                console.log("Retirar processo do critério se este existir");
+                console.log("[teste] relação antes da alteração era 'Suplemento Para'");
             }
         },
-        checkRelations: function() {
+        checkIfExistsRelation: function(rel) {
             for (let [i, rel] of this.relationsSelected.entries()) {
-
-                if (rel.relType == "eSinteseDe") {
-                    for (let relComp of this.relationsSelected.slice(i)) {
-                        if (relComp.relType == "eSintetizadoPor") {
-                            return false;
-                        }
-                    }
-                }
-
-                else if (rel.relType == "eSintetizadoPor") {
-                    for (let relComp of this.relationsSelected.slice(i)) {
-                        if (relComp.relType == "eSinteseDe") {
-                            return false;
-                        }
-                    }
+                if (rel.relType == "rel") {
+                    return true;
                 }
             }
-            return true;
+            return false;
         },
         convertRelations: function () {
             for (const key in this.newClass.RelProcs) {
@@ -1305,7 +1300,7 @@ var classe = new Vue({
         critTypeSelected: function (dest, payload) {
             this.critRelsReady = false;
 
-            if (payload.rel == 2) { //carregar processos
+            if (payload.rel >= 2) { //carregar processos
                 let selected = dest.pns.map(a => a.id);
                 let pns = [];
 

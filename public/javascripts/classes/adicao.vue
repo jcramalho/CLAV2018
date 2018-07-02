@@ -115,6 +115,7 @@ var newClass = new Vue({
         tabs: VueStrap.tabs,
         tabGroup: VueStrap.tabGroup,
         tab: VueStrap.tab,
+        modal: VueStrap.modal,
     },
     data: {
         nEdits: 0,
@@ -318,6 +319,9 @@ var newClass = new Vue({
         message: null,
         codeMessage: "",
         parentvalue: "",
+
+        modalMsgShow: false,
+        modalMsg: "",
     },
     watch: {
         parentvalue: function () {
@@ -442,6 +446,10 @@ var newClass = new Vue({
                     })
             },500
         ),
+        showMsg(text) {
+            this.modalMsg = text;
+            this.modalMsgShow = true;
+        },
         loadCountTypes: function () {
             var dataToParse = [];
             var keys = ["id", "Label"];
@@ -500,30 +508,9 @@ var newClass = new Vue({
                 }
             }
         },
-        selectClickedCrit: function (path, payload) {
-            var row = payload.rowData;
-
-            if (!row.selected) {
-                path.criteria.new.pns.push({
-                    id: row.codeID,
-                    Code: row.content[0],
-                    Title: row.content[1],
-                });
-            }
-            else {
-                let i = 0;
-                for (let pn of path.criteria.new.pns) {
-                    if (row.codeID == pn.id) { break; }
-                    i++;
-                }
-                if (i < path.criteria.new.pns.length) {
-                    path.criteria.new.pns.splice(i, 1);
-                }
-            }
-        },
         legSelectedCrit: function (row, obj) {
             if (!row.selected) {
-                obj.criteria.new.leg.push({
+                obj.leg.push({
                     id: row.id,
                     Num: row.data[2],
                     Type: row.data[1]
@@ -531,18 +518,18 @@ var newClass = new Vue({
             }
             else {
                 let i = 0;
-                for (let doc of obj.criteria.new.leg) {
+                for (let doc of obj.leg) {
                     if (row.id == doc.id) { break; }
                     i++;
                 }
-                if (i < obj.criteria.new.leg.length) {
-                    obj.criteria.new.leg.splice(i, 1);
+                if (i < obj.leg.length) {
+                    obj.leg.splice(i, 1);
                 }
             }
         },
         pnSelectedCrit: function (row, obj) {
             if (!row.selected) {
-                obj.criteria.new.pns.push({
+                obj.pns.push({
                     id: row.id,
                     Code: row.data[1],
                     Title: row.data[2]
@@ -550,33 +537,34 @@ var newClass = new Vue({
             }
             else {
                 let i = 0;
-                for (let p of obj.criteria.new.pns) {
+                for (let p of obj.pns) {
                     if (row.id == p.id) { break; }
                     i++;
                 }
-                if (i < obj.criteria.new.pns.length) {
-                    obj.criteria.new.pns.splice(i, 1);
+                if (i < obj.pns.length) {
+                    obj.pns.splice(i, 1);
                 }
             }
         },
-        addNewJustCrit: function (obj) {
-            obj.criteria.list.push(
-                JSON.parse(JSON.stringify(obj.criteria.new))
-            );
+        critTypeSelected(crit, obj, payload) {
+            crit.RelsReady=false;
 
-            obj.criteria.new = {
+            if(payload && payload.rel>=2){
+                crit.pnsToSelect = JSON.parse(JSON.stringify(this[obj].criteria.pns[payload.value]));
+            }
+
+            crit.RelsReady=true;
+        },
+        addNewJustCrit: function (obj) {
+            obj.push({
+                RelsReady: false,
                 type: { label: "Tipo de Critério", rel: 0 },
                 content: null,
                 pns: [],
                 leg: [],
-            };
-
-            for (type in obj.criteria.pns) {
-                this.cleanSelection(obj.criteria.pns[type]);
-            }
-
-            this.cleanSelection(obj.criteria.classes);
-            this.cleanSelection(obj.criteria.legislation);
+                legToSelect: JSON.parse(JSON.stringify(this.pca.criteria.legislation)),
+                pnsToSelect: []
+            });
         },
         loadClasses: function () {
             this.ready = false;
@@ -993,11 +981,29 @@ var newClass = new Vue({
                                         dueDate: this.pca.dueDate,
                                         count: this.pca.count,
                                         subcount: this.pca.subcount,
-                                        criteria: this.pca.criteria.list
+                                        criteria: this.pca.criteria.list.map(
+                                            function(crit){
+                                                return {
+                                                    type: crit.type,
+                                                    leg: crit.leg,
+                                                    pns: crit.pns,
+                                                    content: crit.content
+                                                }
+                                            }
+                                        )
                                     },
                                     DF: {
                                         end: this.df.end,
-                                        criteria: this.df.criteria.list
+                                        criteria: this.df.criteria.list.map(
+                                            function(crit){
+                                                return {
+                                                    type: crit.type,
+                                                    leg: crit.leg,
+                                                    pns: crit.pns,
+                                                    content: crit.content
+                                                }
+                                            }
+                                        )
                                     },
                                 };
 
@@ -1026,11 +1032,29 @@ var newClass = new Vue({
                                     dueDate: this.pca.dueDate,
                                     count: this.pca.count,
                                     subcount: this.pca.subcount,
-                                    criteria: this.pca.criteria.list
+                                    criteria: this.pca.criteria.list.map(
+                                        function(crit){
+                                            return {
+                                                type: crit.type,
+                                                leg: crit.leg,
+                                                pns: crit.pns,
+                                                content: crit.content
+                                            }
+                                        }
+                                    )
                                 },
                                 DF: {
                                     end: this.df.end,
-                                    criteria: this.df.criteria.list
+                                    criteria: this.df.criteria.list.map(
+                                        function(crit){
+                                            return {
+                                                type: crit.type,
+                                                leg: crit.leg,
+                                                pns: crit.pns,
+                                                content: crit.content
+                                            }
+                                        }
+                                    )
                                 },
                             };
 
