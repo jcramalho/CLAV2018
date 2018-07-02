@@ -2,10 +2,7 @@ var Logging = require('../../controllers/logging');
 var Auth = require('../../controllers/auth.js');
 
 var Classes = require('../../controllers/api/classes.js');
-var TermosIndice = require('../../controllers/api/termosIndice.js');
-
-var Pedido = require('../../models/pedido');
-var Entidade = require('../../models/entidade');
+var Pedidos = require('../../controllers/pedidos.js');
 
 var express = require('express');
 var router = express.Router();
@@ -181,7 +178,9 @@ router.get('/:code/check/:level', function (req, res) {
 })
 
 router.put('/:id', Auth.isLoggedInAPI, function (req, res) {
-    Classes.updateClass(req.body.dataObj)
+    var dataObj = req.body;
+    
+    Classes.updateClass(dataObj)
         .then(function (response) {
             Logging.logger.info('Update a classe \'' + req.params.id + '\' por utilizador \'' + req.user._id + '\'');
 
@@ -191,7 +190,7 @@ router.put('/:id', Auth.isLoggedInAPI, function (req, res) {
         .catch(error => console.error(error));
 })
 
-router.post('/', function (req, res) {
+router.post('/', Auth.isLoggedInAPI, function (req, res) {
     var dataObj = req.body;
 
     Classes.checkCodeAvailability(dataObj.Code, dataObj.Level)
@@ -204,81 +203,14 @@ router.post('/', function (req, res) {
                     .then(function () {
                         Logging.logger.info('Submetida classe \'c' + dataObj.Code + '\' por utilizador \'' + req.user._id + '\'');
                         
+                        let pedidoData = {
+                            type: "Novo PN",
+                            desc: "Novo processo de negócio",
+                            id: "c" + dataObj.Code,
+                            alt: null
+                        }
 
-                        //-------- GERAR PEDIDO -------------------------------------
-
-                        var today = new Date();
-                        var dd = today.getDate();
-                        var mm = today.getMonth()+1;
-                        var yyyy = today.getFullYear();
-
-                        Pedido.getCountPedidos(function(err, count){
-                            if (err) {
-                                console.log(err);
-                                req.send("Ocorreu um erro ao gerar o pedido");    
-                            }
-                            else {
-                                var num = count+1+"-"+yyyy;
-                                var entity;
-
-                                Entidade.getEntidadeByRepresentante(req.user.email, function(err, ent){
-                                    if (err) {
-                                        console.log(err);
-                                        req.send("Ocorreu um erro!");    
-                                    }
-                                    else {
-                                        if(!ent){
-                                            entity = {
-                                                nome: "Sem entidade relacionada",
-                                                email: req.user.email
-                                            }
-                                        }
-                                        else {
-                                            entity = ent;
-                                        }
-
-                                        var newPedido = new Pedido({
-                                            numero: num,
-                                            tipo: "Novo PN",
-                                            descricao: "Novo processo de negócio",
-                            
-                                            entidade: {
-                                                nome: entity.nome,
-                                                email: entity.email
-                                            },
-                            
-                                            utilizador: {
-                                                nome: req.user.name,
-                                                email: req.user.email,
-                                            },
-                            
-                                            data: dd+"/"+mm+"/"+yyyy,
-                                            tratado: false,
-                    
-                                            objetoID: "c"+dataObj.Code,
-                                            alterado: null,
-                                        });
-                                        
-                                        Pedido.createPedido(newPedido, function (err, request) {
-                                            if (err) {
-                                                console.log(err);
-                                                req.flash('error_msg', 'Ocorreu um erro a submeter o pedido! Tente novamente mais tarde');
-                                                req.send('Ocorreu um erro a submeter o pedido! Tente novamente mais tarde');
-                                            }
-                                            else {
-                                                Logging.logger.info('Novo pedido ' + request.tipo + ': '+request.numero+' submetido por '+req.user._id);
-                        
-                                                req.flash('success_msg', 'Pedido submetido com sucesso!');
-                                                res.send(request.numero);
-                                            }
-                                        });  
-                                    } 
-                                });
-                            }
-                        });
-
-                        //----------------------------------------------------------
-
+                        Pedidos.add(pedidoData, req, res);
                     })
                     .catch(error => console.error(error));
             }

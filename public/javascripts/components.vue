@@ -230,7 +230,7 @@ Vue.component('custom-table-select', {
                 entradas
             </div>
             <div class="col-sm-7">
-                <input class="form-control" v-model="filt" type="text" placeholder="Filtrar"/>
+                <input v-if="!nosearch" class="form-control" v-model="filt" type="text" placeholder="Filtrar"/>
             </div>
 
             <table :class="classTable">
@@ -275,6 +275,7 @@ Vue.component('custom-table-select', {
     `,
     props: [
         'classTable',
+        'nosearch',
         'completeRows',
         'header',
         'ready',
@@ -492,7 +493,7 @@ Vue.component('row-waterfall', {
                                         {{ row.content[1] }}
                                     </div>
                                     <div
-                                        v-if="selectOn && level>=3" 
+                                        v-if="selectOn && level==3" 
                                         class="checks"
                                     >
                                         <div class="ownercheck">

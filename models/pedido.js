@@ -40,6 +40,9 @@ var PedidoSchema = mongoose.Schema({
     data: {
         type: String
     },
+    prazo: {
+        type: String
+    },
     estado: {
         type: String
     },

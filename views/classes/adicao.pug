@@ -326,7 +326,7 @@ block corpo
                                                 v-for="pn in relationsSelected" 
                                             )    
                                                 td(width="1px")
-                                                    select(v-model="pn.relType")
+                                                    select(v-model="pn.relType" @change="relChanged(index,pn)")
                                                         option(v-for="rel in relationTypes" :value="rel.value")
                                                             | {{rel.label}}
                                                 td(style="text-align:left")
@@ -400,124 +400,71 @@ block corpo
                                             td
                                                 .info-label Justificação:
                                             td(colspan=3)
-                                                table
-                                                    //- METAINFO
+                                                table.blackborder(v-for="(crit, index) in pca.criteria.list" style="width:100%")
                                                     tr
                                                         td
-                                                            v-select.custom-select(
-                                                                v-model="pca.criteria.new.type"
+                                                            v-select.custom-select.fixdisable(
+                                                                v-model="crit.type"
                                                                 :options="pca.criteria.types"
+                                                                @input="critTypeSelected(crit, 'pca', $event)"
                                                             )
-                                                        td(rowspan=2)
-                                                            button(
-                                                                style="height:100%"
-                                                                @click="addNewJustCrit(pca)"  
-                                                            ) OK
                                                     tr
-                                                        td 
-                                                            textarea(
+                                                        td
+                                                            textarea(                    
                                                                 placeholder="Notas.."
                                                                 cols="72"
                                                                 lines="5"
-                                                                v-model="pca.criteria.new.content"
-                                                                @keyup.ctrl.enter="addNewJustCrit(pca)" 
+                                                                v-model="crit.content"
                                                             )
 
-                                                    //- PROCESSOS E LEGISLAÇÃO RELACIONADA
-                                                    tr
+                                                    tr(v-if="crit.type && crit.type.rel>0 && crit.RelsReady")
                                                         td(colspan=2)
                                                             accordion.info-classe
                                                                 //- PROCESSOS
-                                                                panel(v-if="pca.criteria.new.type.rel==2" header="Processos Relacionados")
-                                                                    //
-                                                                        custom-table-waterfall(
-                                                                            v-if="classesReady"
-
-                                                                            select-left="true"
-                                                                            pages-on="true"
-                                                                            
-                                                                            :suffix="pca"
-
-                                                                            :header="classesTableHeader"
-                                                                            :complete-rows="pca.criteria.classes"
-                                                                            :cwidth="cwidth"
-                                                                            :n-edits="nEdits"
-                                                                            
-                                                                            table-class='table table-hover'
-                                                                            
-                                                                            @left-select-clicked="selectClickedCrit(pca, $event)"
-                                                                        )
-                                                                        h4(
-                                                                            v-else
-                                                                        ) A carregar...
-
-                                                                    //
+                                                                panel(v-if="crit.type.rel>=1" header="Processos Relacionados")
                                                                     custom-table-select(
-                                                                        v-if="pca.criteria.new.type.value"
+                                                                        v-if="crit.RelsReady && crit.type.rel==2"
+                                                                        
+                                                                        nosearch
 
-                                                                        :header="pnsTableHeader"
-                                                                        :complete-rows="pca.criteria.pns[pca.criteria.new.type.value]"
-                                                                        ready="true"
-                                                                        :cwidth="pnsTableWidth"
+                                                                        :header='["#", "Código", "Título"]'
+                                                                        :complete-rows="crit.pnsToSelect"
+                                                                        :ready="crit.RelsReady"
+                                                                        :cwidth='["4%", "16%", "81%"]'
                                                                         
                                                                         class-table='table table-condensed'
 
-                                                                        @select-clicked="pnSelectedCrit($event,pca)"
+                                                                        @select-clicked="pnSelectedCrit($event,crit)"
                                                                     )
                                                                     h4(
                                                                         v-else
                                                                     ) A carregar...
 
                                                                 //- LEGISLAÇÃO
-                                                                panel(v-if="pca.criteria.new.type.rel==1" header="Legislação")
+                                                                panel(v-if="crit.type.rel==1" header="Legislação")
                                                                     
                                                                     custom-table-select(
-                                                                        v-if="legsReady"
+                                                                        v-if="crit.RelsReady && crit.type.rel==1"
 
-                                                                        :header="legsTableHeader"
-                                                                        :complete-rows="pca.criteria.legislation"
-                                                                        :ready="legsReady"
-                                                                        :cwidth="legsTableWidth"
+                                                                        :header='["#", "Tipo", "Número", "Título", "Data"]'
+                                                                        :complete-rows="crit.legToSelect"
+                                                                        :ready="crit.RelsReady"
+                                                                        :cwidth="['5%', '19%', '11%', '50%', '15%']"
                                                                         
                                                                         class-table='table table-condensed'
 
-                                                                        @select-clicked="legSelectedCrit($event,pca)"
+                                                                        @select-clicked="legSelectedCrit($event,crit)"
                                                                     )
                                                                     h4(
                                                                         v-else
                                                                     ) A carregar...
 
-
-                                                table.whitebox(
-                                                    v-for="(crit, index) in pca.criteria.list"
-                                                    v-if="pca.criteria.list.length>0"
-                                                    width="90%"
-                                                )
                                                     tr
-                                                        td 
-                                                            h4
-                                                                b {{ crit.type.label }}
                                                         td
-                                                            span.glyphicon.glyphicon-remove(
-                                                                @click="pca.criteria.list.splice(index,1)"
-                                                                style="float:right; padding-right:10px"
-                                                            )
-                                                    tr 
-                                                        td(colspan=2)
-                                                            p {{ crit.content }}
-                                                            br   
-
-                                                            div(v-if="crit.pns.length>0")
-                                                                b Processos Relacionados:
-                                                                ul
-                                                                    li(v-for="pn in crit.pns")
-                                                                        | {{pn.Code}} - {{pn.Title}}
-
-                                                            div(v-if="crit.leg.length>0")            
-                                                                b Diplomas Legais Relacionados:    
-                                                                ul
-                                                                    li(v-for="doc in crit.leg")
-                                                                        | {{doc.Type}} - {{doc.Num}}
+                                                            button(@click="pca.criteria.list.splice(index,1)") 
+                                                                | Remover 
+                                                
+                                                button(@click="addNewJustCrit(pca.criteria.list)") Adicionar Critério
 
                                                                                     
                             //- DESTINO FINAL
@@ -570,127 +517,86 @@ block corpo
                                             td
                                                 .info-label Justificação:
                                             td(colspan=3)
-                                                table
-                                                    //- METAINFO
+                                                table.blackborder(v-for="(crit, index) in df.criteria.list" style="width:100%")
                                                     tr
                                                         td
-                                                            v-select.custom-select(
-                                                                v-model="df.criteria.new.type"
+                                                            v-select.custom-select.fixdisable(
+                                                                v-model="crit.type"
                                                                 :options="df.criteria.types"
+                                                                @input="critTypeSelected(crit, 'df', $event)"
                                                             )
-                                                        td(rowspan=2)
-                                                            button(
-                                                                style="height:100%"
-                                                                @click="addNewJustCrit(df)"  
-                                                            ) OK
                                                     tr
-                                                        td 
-                                                            textarea(
+                                                        td
+                                                            textarea(                    
                                                                 placeholder="Notas.."
                                                                 cols="72"
                                                                 lines="5"
-                                                                v-model="df.criteria.new.content"
-                                                                @keyup.ctrl.enter="addNewJustCrit(df)" 
+                                                                v-model="crit.content"
                                                             )
 
-                                                    //- PROCESSOS E LEGISLAÇÃO RELACIONADA
-                                                    tr
+                                                    tr(v-if="crit.type && crit.type.rel>0 && crit.RelsReady")
                                                         td(colspan=2)
                                                             accordion.info-classe
                                                                 //- PROCESSOS
-                                                                panel(v-if="df.criteria.new.type.rel==2" header="Processos Relacionados")
-                                                                    //
-                                                                        custom-table-waterfall(
-                                                                            v-if="classesReady"
-
-                                                                            select-left="true"
-                                                                            pages-on="true"
-                                                                            
-                                                                            :suffix="df"
-
-                                                                            :header="classesTableHeader"
-                                                                            :complete-rows="df.criteria.classes"
-                                                                            :cwidth="cwidth"
-                                                                            :n-edits="nEdits"
-                                                                            
-                                                                            table-class='table table-hover'
-                                                                            
-                                                                            @left-select-clicked="selectClickedCrit(df, $event)"
-                                                                        )
-                                                                        h4(
-                                                                            v-else
-                                                                        ) A carregar...
-
+                                                                panel(v-if="crit.type.rel>=1" header="Processos Relacionados")
                                                                     custom-table-select(
-                                                                        v-if="df.criteria.new.type.value"
+                                                                        v-if="crit.RelsReady && crit.type.rel==2"
+                                                                        
+                                                                        nosearch
 
-                                                                        :header="pnsTableHeader"
-                                                                        :complete-rows="df.criteria.pns[df.criteria.new.type.value]"
-                                                                        ready="true"
-                                                                        :cwidth="pnsTableWidth"
+                                                                        :header='["#", "Código", "Título"]'
+                                                                        :complete-rows="crit.pnsToSelect"
+                                                                        :ready="crit.RelsReady"
+                                                                        :cwidth='["4%", "16%", "81%"]'
                                                                         
                                                                         class-table='table table-condensed'
 
-                                                                        @select-clicked="pnSelectedCrit($event,df)"
+                                                                        @select-clicked="pnSelectedCrit($event,crit)"
                                                                     )
                                                                     h4(
                                                                         v-else
                                                                     ) A carregar...
 
                                                                 //- LEGISLAÇÃO
-                                                                panel(v-if="df.criteria.new.type.rel==1" header="Legislação")
+                                                                panel(v-if="crit.type.rel==1" header="Legislação")
                                                                     
                                                                     custom-table-select(
-                                                                        v-if="legsReady"
+                                                                        v-if="crit.RelsReady && crit.type.rel==1"
 
-                                                                        :header="legsTableHeader"
-                                                                        :complete-rows="df.criteria.legislation"
-                                                                        :ready="legsReady"
-                                                                        :cwidth="legsTableWidth"
+                                                                        :header='["#", "Tipo", "Número", "Título", "Data"]'
+                                                                        :complete-rows="crit.legToSelect"
+                                                                        :ready="crit.RelsReady"
+                                                                        :cwidth="['5%', '19%', '11%', '50%', '15%']"
                                                                         
                                                                         class-table='table table-condensed'
 
-                                                                        @select-clicked="legSelectedCrit($event,df)"
+                                                                        @select-clicked="legSelectedCrit($event,crit)"
                                                                     )
                                                                     h4(
                                                                         v-else
                                                                     ) A carregar...
 
-                                                //- Adicionados
-                                                table.whitebox(
-                                                    v-for="(crit, index) in df.criteria.list"
-                                                    v-if="df.criteria.list.length>0"
-                                                    width="90%"
-                                                )
                                                     tr
-                                                        td 
-                                                            h4
-                                                                b {{ crit.type.label }}
                                                         td
-                                                            span.glyphicon.glyphicon-remove(
-                                                                @click="df.criteria.list.splice(index,1)"
-                                                                style="float:right; padding-right:10px"
-                                                            )
-                                                    tr 
-                                                        td(colspan=2)
-                                                            p {{ crit.content }}
-                                                            br   
-
-                                                            div(v-if="crit.pns.length>0")
-                                                                b Processos Relacionados:
-                                                                ul
-                                                                    li(v-for="pn in crit.pns")
-                                                                        | {{pn.Code}} - {{pn.Title}}
-
-                                                            div(v-if="crit.leg.length>0")            
-                                                                b Diplomas Legais Relacionados:    
-                                                                ul
-                                                                    li(v-for="doc in crit.leg")
-                                                                        | {{doc.Type}} - {{doc.Num}}
-
+                                                            button(@click="df.criteria.list.splice(index,1)") 
+                                                                | Remover 
+                                                
+                                                button(@click="addNewJustCrit(df.criteria.list)") Adicionar Critério
                                         
             
             spinner(ref="spinner" fixed size="lg" text="Por favor aguarde...")
+
+            modal(
+                title="Atenção!" 
+                :value="modalMsgShow"
+                @closed="modalMsgShow=false"
+
+                small
+            ) 
+                .modal-body(slot="modal-body")
+                    center {{modalMsg}}
+                .modal-footer(slot="modal-footer")
+                    button(@click="modalMsgShow=false") Ok
 
             input.btn.btn-xs.btn-default.col-sm-2(
                 type="button" 

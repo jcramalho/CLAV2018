@@ -3,28 +3,39 @@ var Entidade = require('../models/entidade');
 
 var Pedidos = module.exports
 
-Pedidos.add = function(dataObj, user, req){
+var Logging = require('../controllers/logging');
+var Pedido = require('../models/pedido');
+var Entidade = require('../models/entidade');
+
+Pedidos.add = function(dataObj, req, res){
     var today = new Date();
     var dd = today.getDate();
     var mm = today.getMonth()+1;
     var yyyy = today.getFullYear();
 
+    // 1728000000 = número de ms em 20 dias
+    var deadline = new Date(today.getTime()+1728000000);
+    var deadlineD = deadline.getDate();
+    var deadlineM = deadline.getMonth()+1;
+    var deadlineY = deadline.getFullYear();
+
+
     Pedido.getCountPedidos(function(err, count){
         if (err) {
             console.log(err);
-            req.send("Ocorreu um erro!");    
+            res.send("Ocorreu um erro!");    
         }
         else {
             var num = count+1+"-"+yyyy;
 
-            Entidade.getEntidadeByRepresentante(user.email, function(err, entity){
+            Entidade.getEntidadeByRepresentante(req.user.email, function(err, entity){
                 if (err) {
                     console.log(err);
-                    req.send("Ocorreu um erro!");    
+                    res.send("Ocorreu um erro!");    
                 }
                 else if(!entity) {
                     console.log("Utilizador sem entidade relacionada");
-                    req.send("Ocorreu um erro! Sem entidade associada!"); 
+                    res.send("Ocorreu um erro! Sem entidade associada!"); 
                 }
                 else{
                     var newPedido = new Pedido({
@@ -38,12 +49,13 @@ Pedidos.add = function(dataObj, user, req){
                         },
         
                         utilizador: {
-                            nome: user.name,
-                            email: user.email,
+                            nome: req.user.name,
+                            email: req.user.email,
                         },
         
-                        data: dd+"/"+mm+"/"+yyyy,
-                        tratado: false,
+                        data: yyyy+"/"+mm+"/"+dd,
+                        prazo: deadlineY+"/"+deadlineM+"/"+deadlineD,
+                        estado: "Novo",
 
                         objetoID: dataObj.id,
                         alterado: dataObj.alt,
@@ -53,7 +65,7 @@ Pedidos.add = function(dataObj, user, req){
                         if (err) {
                             console.log(err);
                             req.flash('error_msg', 'Ocorreu um erro a submeter o pedido! Tente novamente mais tarde');
-                            req.send('Ocorreu um erro a submeter o pedido! Tente novamente mais tarde');
+                            res.send('Ocorreu um erro a submeter o pedido! Tente novamente mais tarde');
                         }
                         else {
                             Logging.logger.info('Novo pedido ' + request.tipo + ': '+request.numero+' submetido por '+req.user._id);
@@ -67,3 +79,4 @@ Pedidos.add = function(dataObj, user, req){
         }
     });
 }
+

@@ -91,9 +91,9 @@ var side = new Vue({
         nav: []
     },
     methods: {
-        changeNav: function(type){
-            this.nav= this.navComplete.filter(
-                a=>a.lvl<=type
+        changeNav: function (type) {
+            this.nav = this.navComplete.filter(
+                a => a.lvl <= type
             )
         }
     },
@@ -115,6 +115,7 @@ var newClass = new Vue({
         tabs: VueStrap.tabs,
         tabGroup: VueStrap.tabGroup,
         tab: VueStrap.tab,
+        modal: VueStrap.modal,
     },
     data: {
         nEdits: 0,
@@ -268,11 +269,6 @@ var newClass = new Vue({
                         label: "Critério Gestionário",
                         rel: 0
                     },
-                    {
-                        value: "CriterioJustificacaoComplementaridadeInfo",
-                        label: "Critério Complementaridade Informacional",
-                        rel: 2
-                    },
                 ],
                 list: []
             }
@@ -320,9 +316,18 @@ var newClass = new Vue({
             }
         },
 
+        autoCritIndexes: {
+            utilidadeAdmin: -1,         // PCA - criterio de utilidade administrativa (rels: suplementoPara)
+            densidadeInfo: -1,          // DF - criterio dansidade informaconal (rels: sinteseDe/sintetizadoPor)
+            complementaridadeInfo: -1   // DF - criterio complementaridade informacional (rels: complementar de)
+        },
+
         message: null,
         codeMessage: "",
         parentvalue: "",
+
+        modalMsgShow: false,
+        modalMsg: "",
     },
     watch: {
         parentvalue: function () {
@@ -370,8 +375,8 @@ var newClass = new Vue({
             deep: true,
             handler: function () {
                 let pnsCI = []; //complementaridade info - "eComplementarDe"
-                let pnsUA = []; //utilidade administrativa - "eSuplementoDe"
-                let pnsDI = []; //Densidade informacional - "eSinteseDe"
+                let pnsUA = []; //utilidade administrativa - "eSuplementoPara"
+                let pnsDI = []; //Densidade informacional - "eSinteseDe" + "eSintetizadoPor"
                 let i;
 
                 //complementaridade info
@@ -396,7 +401,7 @@ var newClass = new Vue({
                 //utilidade administrativa
                 pnsUA = this.relationsSelected.filter(
                     function (a) {
-                        return a.relType == "eSuplementoDe";
+                        return a.relType == "eSuplementoPara";
                     }
                 );
 
@@ -414,7 +419,7 @@ var newClass = new Vue({
                 //Densidade informacional
                 pnsDI = this.relationsSelected.filter(
                     function (a) {
-                        return a.relType == "eSuplementoDe";
+                        return a.relType == "eSinteseDe" || a.relType == "eSintetizadoPor";
                     }
                 );
 
@@ -445,9 +450,123 @@ var newClass = new Vue({
                             this.codeMessage = "Codigo já existe!";
                         }
                     })
-            },
-            500
+            },500
         ),
+        relChanged: function(index, rel){
+            if(rel.relType == "eSuplementoPara"){
+                if(this.autoCritIndexes.utilidadeAdmin==-1){
+                    let critIndex = -1;
+
+                    //verificar se já existe um critério de utilidade administrativa
+                    for(let [i,crit] of this.pca.criteria.list.entries()){
+                        if(crit.type.value=="CriterioJustificacaoUtilidadeAdministrativa"){
+                            critIndex=i;
+
+                            break;
+                        }
+                    }
+
+                    //se não existir criar
+                    if(critIndex==-1){
+                        critIndex = this.pca.criteria.list.length;
+
+                        this.addNewJustCrit(this.pca.criteria.list);
+
+                        this.pca.criteria.list[critIndex].type = {
+                            value: "CriterioJustificacaoUtilidadeAdministrativa",
+                            label: "Critério Utilidade Administrativa",
+                            rel: 2
+                        };
+                    }
+                    this.autoCritIndexes.utilidadeAdmin=critIndex;
+                }
+            }
+            else if(rel.relType == "eSinteseDe" || rel.relType == "eSintetizadoPor"){
+                if((rel.relType == "eSinteseDe" && this.checkIfExistsRelation("eSintetizadoPor")) || (rel.relType == "eSintetizadoPor" && this.checkIfExistsRelation("eSinteseDe"))) {
+                    this.showMsg("Não podem existir ao mesmo tempo as relações 'Síntese De' e 'Sintetizado Por'!");
+                }
+                else if (rel.relType == "eSintetizadoPor" && this.checkIfExistsRelation("eComplementarDe")){
+                    this.showMsg("Não podem existir ao mesmo tempo as relações 'Sintetizado Por' e 'Complementar De'!");
+                }
+                else {
+                    this.df.end = (rel.relType == "eSinteseDe") ? "C" : "E";
+                    
+                    if(this.autoCritIndexes.densidadeInfo==-1){
+                        let critIndex = -1;
+
+                        //verificar se já existe um critério de utilidade administrativa
+                        for(let [i,crit] of this.df.criteria.list.entries()){
+                            if(crit.type.value=="CriterioJustificacaoDensidadeInfo"){
+                                critIndex=i;
+    
+                                break;
+                            }
+                        }
+    
+                        //se não existir criar
+                        if(critIndex==-1){
+                            critIndex = this.df.criteria.list.length;
+
+                            this.addNewJustCrit(this.df.criteria.list);
+
+                            this.df.criteria.list[critIndex].type = {
+                                value: "CriterioJustificacaoDensidadeInfo",
+                                label: "Densidade Informacional",
+                                rel: 2
+                            };
+                        }
+                        this.autoCritIndexes.densidadeInfo=critIndex;
+                    }
+                }
+            }
+            else if(rel.relType == "eComplementarDe"){
+                if(this.checkIfExistsRelation("eSintetizadoPor")){
+                    this.showMsg("Não podem existir ao mesmo tempo as relações 'Sintetizado Por' e 'Complementar De'!");
+                }
+                else{
+                    this.df.end = "C";
+
+                    if(this.autoCritIndexes.complementaridadeInfo==-1){
+                        let critIndex = -1;
+
+                        //verificar se já existe um critério de utilidade administrativa
+                        for(let [i,crit] of this.df.criteria.list.entries()){
+                            if(crit.type.value=="CriterioJustificacaoComplementaridadeInfo"){
+                                critIndex=i;
+
+                                break;
+                            }
+                        }
+
+                        //se não existir criar
+                        if(critIndex==-1){
+                            critIndex = this.df.criteria.list.length;
+
+                            this.addNewJustCrit(this.df.criteria.list);
+
+                            this.df.criteria.list[critIndex].type = {
+                                value: "CriterioJustificacaoComplementaridadeInfo",
+                                label: "Critério Complementaridade Informacional",
+                                rel: 2
+                            };
+                        }
+                        this.autoCritIndexes.complementaridadeInfo=critIndex;
+                    }
+                }
+            }
+        },
+        checkIfExistsRelation: function(rela) {
+            for (let [i, rel] of this.relationsSelected.entries()) {
+                if (rel.relType == rela) {
+                    return true;
+                }
+            }
+            return false;
+        },
+        showMsg(text) {
+            this.modalMsg = text;
+            this.modalMsgShow = true;
+        },
         loadCountTypes: function () {
             var dataToParse = [];
             var keys = ["id", "Label"];
@@ -506,30 +625,9 @@ var newClass = new Vue({
                 }
             }
         },
-        selectClickedCrit: function (path, payload) {
-            var row = payload.rowData;
-
-            if (!row.selected) {
-                path.criteria.new.pns.push({
-                    id: row.codeID,
-                    Code: row.content[0],
-                    Title: row.content[1],
-                });
-            }
-            else {
-                let i = 0;
-                for (let pn of path.criteria.new.pns) {
-                    if (row.codeID == pn.id) { break; }
-                    i++;
-                }
-                if (i < path.criteria.new.pns.length) {
-                    path.criteria.new.pns.splice(i, 1);
-                }
-            }
-        },
         legSelectedCrit: function (row, obj) {
             if (!row.selected) {
-                obj.criteria.new.leg.push({
+                obj.leg.push({
                     id: row.id,
                     Num: row.data[2],
                     Type: row.data[1]
@@ -537,18 +635,18 @@ var newClass = new Vue({
             }
             else {
                 let i = 0;
-                for (let doc of obj.criteria.new.leg) {
+                for (let doc of obj.leg) {
                     if (row.id == doc.id) { break; }
                     i++;
                 }
-                if (i < obj.criteria.new.leg.length) {
-                    obj.criteria.new.leg.splice(i, 1);
+                if (i < obj.leg.length) {
+                    obj.leg.splice(i, 1);
                 }
             }
         },
         pnSelectedCrit: function (row, obj) {
             if (!row.selected) {
-                obj.criteria.new.pns.push({
+                obj.pns.push({
                     id: row.id,
                     Code: row.data[1],
                     Title: row.data[2]
@@ -556,33 +654,34 @@ var newClass = new Vue({
             }
             else {
                 let i = 0;
-                for (let p of obj.criteria.new.pns) {
+                for (let p of obj.pns) {
                     if (row.id == p.id) { break; }
                     i++;
                 }
-                if (i < obj.criteria.new.pns.length) {
-                    obj.criteria.new.pns.splice(i, 1);
+                if (i < obj.pns.length) {
+                    obj.pns.splice(i, 1);
                 }
             }
         },
-        addNewJustCrit: function (obj) {
-            obj.criteria.list.push(
-                JSON.parse(JSON.stringify(obj.criteria.new))
-            );
+        critTypeSelected(crit, obj, payload) {
+            crit.RelsReady=false;
 
-            obj.criteria.new = {
+            if(payload && payload.rel>=2){
+                crit.pnsToSelect = JSON.parse(JSON.stringify(this[obj].criteria.pns[payload.value]));
+            }
+
+            crit.RelsReady=true;
+        },
+        addNewJustCrit: function (obj) {
+            obj.push({
+                RelsReady: false,
                 type: { label: "Tipo de Critério", rel: 0 },
                 content: null,
                 pns: [],
                 leg: [],
-            };
-
-            for (type in obj.criteria.pns) {
-                this.cleanSelection(obj.criteria.pns[type]);
-            }
-
-            this.cleanSelection(obj.criteria.classes);
-            this.cleanSelection(obj.criteria.legislation);
+                legToSelect: JSON.parse(JSON.stringify(this.pca.criteria.legislation)),
+                pnsToSelect: []
+            });
         },
         loadClasses: function () {
             this.ready = false;
@@ -815,16 +914,16 @@ var newClass = new Vue({
                     if (partType && partType != 'dono') {
                         this.participantsSelectedInfo[partType].splice(index, 1);
                     }
-                    else if (partType && partType == 'dono'){
+                    else if (partType && partType == 'dono') {
                         let exIndex = this.participantsSelected.Executor.indexOf(row.id);
-                        if(exIndex!=-1){
-                            this.participantsSelected.Executor.splice(exIndex,1);
-                            this.participantsSelectedInfo.Executor.splice(exIndex,1);
-                        }   
+                        if (exIndex != -1) {
+                            this.participantsSelected.Executor.splice(exIndex, 1);
+                            this.participantsSelectedInfo.Executor.splice(exIndex, 1);
+                        }
 
-                        let listIndex = findIndex(this.participantLists.Executor,row.id);
-                        if(listIndex!=-1){
-                            this.participantLists.Executor.splice(listIndex,1);
+                        let listIndex = findIndex(this.participantLists.Executor, row.id);
+                        if (listIndex != -1) {
+                            this.participantLists.Executor.splice(listIndex, 1);
                         }
                     }
                 }
@@ -924,9 +1023,9 @@ var newClass = new Vue({
                 return false;
             }
 
-            if (this.relationsSelected.length){
-                for(let pn of this.relationsSelected){
-                    if(!pn.relType){
+            if (this.relationsSelected.length) {
+                for (let pn of this.relationsSelected) {
+                    if (!pn.relType) {
                         this.message = "É necessário selecionar o tipo de relação com todos os processos relacionados selecionados!";
                         return false;
                     }
@@ -999,11 +1098,29 @@ var newClass = new Vue({
                                         dueDate: this.pca.dueDate,
                                         count: this.pca.count,
                                         subcount: this.pca.subcount,
-                                        criteria: this.pca.criteria.list
+                                        criteria: this.pca.criteria.list.map(
+                                            function(crit){
+                                                return {
+                                                    type: crit.type,
+                                                    leg: crit.leg,
+                                                    pns: crit.pns,
+                                                    content: crit.content
+                                                }
+                                            }
+                                        )
                                     },
                                     DF: {
                                         end: this.df.end,
-                                        criteria: this.df.criteria.list
+                                        criteria: this.df.criteria.list.map(
+                                            function(crit){
+                                                return {
+                                                    type: crit.type,
+                                                    leg: crit.leg,
+                                                    pns: crit.pns,
+                                                    content: crit.content
+                                                }
+                                            }
+                                        )
                                     },
                                 };
 
@@ -1032,11 +1149,29 @@ var newClass = new Vue({
                                     dueDate: this.pca.dueDate,
                                     count: this.pca.count,
                                     subcount: this.pca.subcount,
-                                    criteria: this.pca.criteria.list
+                                    criteria: this.pca.criteria.list.map(
+                                        function(crit){
+                                            return {
+                                                type: crit.type,
+                                                leg: crit.leg,
+                                                pns: crit.pns,
+                                                content: crit.content
+                                            }
+                                        }
+                                    )
                                 },
                                 DF: {
                                     end: this.df.end,
-                                    criteria: this.df.criteria.list
+                                    criteria: this.df.criteria.list.map(
+                                        function(crit){
+                                            return {
+                                                type: crit.type,
+                                                leg: crit.leg,
+                                                pns: crit.pns,
+                                                content: crit.content
+                                            }
+                                        }
+                                    )
                                 },
                             };
 
@@ -1112,26 +1247,24 @@ var newClass = new Vue({
                     headers: {
                         'content-type': 'application/json'
                     }
-                })
-                    .then(function (response) {
-                        regex = new RegExp(/[0-9]+\-[0-9]+/, "gi");
+                }).then(function (response) {
+                    regex = new RegExp(/[0-9]+\-[0-9]+/, "gi");
 
-                        if (regex.test(response.body)) {
-                            window.location.href = '/users/pedido_submetido/' + response.body;
-                        }
-                        else {
-                            this.message = response.body;
-                        }
+                    if (regex.test(response.body)) {
+                        window.location.href = '/users/pedido_submetido/' + response.body;
+                    }
+                    else {
+                        this.message = response.body;
+                    }
 
-                        this.$refs.spinner.hide();
-                    })
-                    .catch(function (error) {
-                        console.error(error);
-                        this.message = "Ocorreu um erro!"
-                        this.$refs.spinner.hide();
-                    });
+                    this.$refs.spinner.hide();
+                }).catch(function (error) {
+                    console.error(error);
+                    this.message = "Ocorreu um erro!"
+                    this.$refs.spinner.hide();
+                });
 
-                console.log(dataObj);
+                //console.log(dataObj);
             }
             else {
                 this.$refs.spinner.hide();

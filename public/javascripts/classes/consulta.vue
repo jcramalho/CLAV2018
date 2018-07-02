@@ -16,6 +16,7 @@ var classe = new Vue({
         legList: [],
         classRelList: [],
         relationsSelected: [],
+        relationsSelectedOld: [],
         relationTypes: [
             {
                 label: 'Antecessor de',
@@ -50,6 +51,8 @@ var classe = new Vue({
                 value: 'eSuplementoPara',
             }
         ],
+        countTypes: [],
+        subcountTypes: [],
 
         clas: {
             Title: "",
@@ -116,6 +119,16 @@ var classe = new Vue({
                 Executor: [],
                 Iniciador: [],
             },
+            PCA: {
+                deadline: "",
+                count: { label: "Forma de Contagem", id: null },
+                subcount: { label: "Sub-forma de Contagem", id: null },
+                criteria: [],
+            },
+            DF: {
+                dest: "",
+                criteria: [],
+            }
         },
         edit: {
             Title: false,
@@ -131,6 +144,53 @@ var classe = new Vue({
             Indexes: false,
             RelProcs: false,
             Participants: false,
+            PCA: {
+                value: false,
+                count: false,
+                just: false,
+            },
+            DF: {
+                dest: false,
+                just: false,
+            }
+        },
+        PCA: {
+            critTypes: [
+                {
+                    value: "CriterioJustificacaoLegal",
+                    label: "Critério Legal",
+                    rel: 1
+                },
+                {
+                    value: "CriterioJustificacaoUtilidadeAdministrativa",
+                    label: "Critério Utilidade Administrativa",
+                    rel: 2
+                },
+                {
+                    value: "CriterioJustificacaoGestionario",
+                    label: "Critério Gestionário",
+                    rel: 0
+                },
+            ],
+        },
+        DF: {
+            critTypes: [
+                {
+                    value: "CriterioJustificacaoLegal",
+                    label: "Critério Legal",
+                    rel: 1
+                },
+                {
+                    value: "CriterioJustificacaoDensidadeInfo",
+                    label: "Densidade Informacional",
+                    rel: 2
+                },
+                {
+                    value: "CriterioJustificacaoComplementaridadeInfo",
+                    label: "Critério Complementaridade Informacional",
+                    rel: 2
+                },
+            ],
         },
 
         orgsReady: false,
@@ -143,6 +203,9 @@ var classe = new Vue({
         classesReady: false,
         relProcsReady: false,
         pageReady: false,
+        countsReady: false,
+        subcountsReady: false,
+        critRelsReady: false,
 
         participationsDic: {
             Apreciador: "Apreciar",
@@ -154,6 +217,14 @@ var classe = new Vue({
         },
 
         nEdits: 0,
+        modalMsgShow: false,
+        modalMsg: "",
+
+        autoCritIndexes: {
+            utilidadeAdmin: -1,         // PCA - criterio de utilidade administrativa (rels: suplementoPara)
+            densidadeInfo: -1,          // DF - criterio dansidade informaconal (rels: sinteseDe/sintetizadoPor)
+            complementaridadeInfo: -1   // DF - criterio complementaridade informacional (rels: complementar de)
+        }
     },
     components: {
         accordion: VueStrap.accordion,
@@ -162,24 +233,147 @@ var classe = new Vue({
         tabs: VueStrap.tabs,
         tabGroup: VueStrap.tabGroup,
         tab: VueStrap.tab,
+        modal: VueStrap.modal,
+    },
+    computed: {
+        relationsSelectedClone: function(){
+            return JSON.parse(JSON.stringify(this.relationsSelected));
+        }
     },
     watch: {
-        relationsSelected: {
-            deep: true,
-            handler: function(){
-                
-            },
-        },
+        relationsSelectedClone: function(newVal, oldVal){
+            this.relationsSelectedOld=JSON.parse(JSON.stringify(oldVal));
+        }
     },
     methods: {
+        relChanged: function(index, rel){
+            if(rel.relType == "eSuplementoPara"){
+                if(this.autoCritIndexes.utilidadeAdmin==-1){
+                    this.edit.PCA.just=true;
+                    let critIndex = -1;
+
+                    //verificar se já existe um critério de utilidade administrativa
+                    for(let [i,crit] of this.newClass.PCA.criteria.entries()){
+                        if(crit.type.value=="CriterioJustificacaoUtilidadeAdministrativa"){
+                            critIndex=i;
+
+                            crit.edit=true;
+
+                            break;
+                        }
+                    }
+
+                    //se não existir criar
+                    if(critIndex==-1){
+                        critIndex = this.addNewCrit("PCA");
+
+                        this.newClass.PCA.criteria[critIndex].type = {
+                            value: "CriterioJustificacaoUtilidadeAdministrativa",
+                            label: "Critério Utilidade Administrativa",
+                            rel: 2
+                        };
+                    }
+                    this.autoCritIndexes.utilidadeAdmin=critIndex;
+                }
+            }
+            else if(rel.relType == "eSinteseDe" || rel.relType == "eSintetizadoPor"){
+                if((rel.relType == "eSinteseDe" && this.checkIfExistsRelation("eSintetizadoPor")) || (rel.relType == "eSintetizadoPor" && this.checkIfExistsRelation("eSinteseDe"))) {
+                    this.showMsg("Não podem existir ao mesmo tempo as relações 'Síntese De' e 'Sintetizado Por'!");
+                }
+                else if (rel.relType == "eSintetizadoPor" && this.checkIfExistsRelation("eComplementarDe")){
+                    this.showMsg("Não podem existir ao mesmo tempo as relações 'Sintetizado Por' e 'Complementar De'!");
+                }
+                else {
+                    this.edit.DF.dest=true;
+                    this.newClass.DF.dest = (rel.relType == "eSinteseDe") ? "C" : "E";
+                    
+                    if(this.autoCritIndexes.densidadeInfo==-1){
+                        this.edit.DF.just=true;
+                        let critIndex = -1;
+
+                        //verificar se já existe um critério de utilidade administrativa
+                        for(let [i,crit] of this.newClass.DF.criteria.entries()){
+                            if(crit.type.value=="CriterioJustificacaoDensidadeInfo"){
+                                critIndex=i;
+    
+                                crit.edit=true;
+    
+                                break;
+                            }
+                        }
+    
+                        //se não existir criar
+                        if(critIndex==-1){
+                            critIndex = this.addNewCrit("DF");
+    
+                            this.newClass.DF.criteria[critIndex].type = {
+                                value: "CriterioJustificacaoDensidadeInfo",
+                                label: "Densidade Informacional",
+                                rel: 2
+                            };
+                        }
+                        this.autoCritIndexes.densidadeInfo=critIndex;
+                    }
+                }
+            }
+            else if(rel.relType == "eComplementarDe"){
+                if(this.checkIfExistsRelation("eSintetizadoPor")){
+                    this.showMsg("Não podem existir ao mesmo tempo as relações 'Sintetizado Por' e 'Complementar De'!");
+                }
+                else{
+                    this.edit.DF.dest=true;
+                    this.newClass.DF.dest = "C";
+
+                    if(this.autoCritIndexes.complementaridadeInfo==-1){
+                        this.edit.DF.just=true;
+                        let critIndex = -1;
+
+                        //verificar se já existe um critério de utilidade administrativa
+                        for(let [i,crit] of this.newClass.DF.criteria.entries()){
+                            if(crit.type.value=="CriterioJustificacaoComplementaridadeInfo"){
+                                critIndex=i;
+
+                                crit.edit=true;
+
+                                break;
+                            }
+                        }
+
+                        //se não existir criar
+                        if(critIndex==-1){
+                            critIndex = this.addNewCrit("DF");
+
+                            this.newClass.DF.criteria[critIndex].type = {
+                                value: "CriterioJustificacaoComplementaridadeInfo",
+                                label: "Critério Complementaridade Informacional",
+                                rel: 2
+                            };
+                        }
+                        this.autoCritIndexes.complementaridadeInfo=critIndex;
+                    }
+                }
+            }
+            
+            if(this.relationsSelectedOld[index].relType=="eSuplementoPara"){
+                console.log("[teste] relação antes da alteração era 'Suplemento Para'");
+            }
+        },
+        checkIfExistsRelation: function(rela) {
+            for (let [i, rel] of this.relationsSelected.entries()) {
+                if (rel.relType == rela) {
+                    return true;
+                }
+            }
+            return false;
+        },
         convertRelations: function () {
-            for(const key in this.newClass.RelProcs){
-                let type = "e"+key.replace(" ","");
-                let toAdd = this.relationsSelected.filter( a=>a.relType == type );
+            for (const key in this.newClass.RelProcs) {
+                let type = "e" + key.replace(" ", "");
+                let toAdd = this.relationsSelected.filter(a => a.relType == type);
 
                 this.newClass.RelProcs[key] = JSON.parse(JSON.stringify(
                     toAdd.map(
-                        function(pn){
+                        function (pn) {
                             return {
                                 Code: pn.code,
                                 Title: pn.name,
@@ -218,7 +412,7 @@ var classe = new Vue({
             this.loadDelNotes();
             this.loadIndexes();
 
-            if (this.clas.Level == 3) {
+            if (this.clas.Level >= 3) {
 
                 if (dataObj.ProcTipo) {
                     this.clas.ProcType = dataObj.ProcTipo.value;
@@ -236,8 +430,59 @@ var classe = new Vue({
 
                 this.loadPCA();
                 this.loadDF();
+
+                this.loadCountTypes();
+                this.loadSubCountTypes();
             }
 
+        },
+        loadCountTypes: function () {
+            var dataToParse = [];
+            var keys = ["id", "Label"];
+            var i = 0;
+
+            this.$http.get("/api/vocabulario/formasContagemPCA")
+                .then(function (response) {
+                    dataToParse = response.body;
+                })
+                .then(function () {
+                    this.countTypes = this.parse(dataToParse, keys)
+                        .map(function (a) {
+                            return {
+                                label: a.Label,
+                                id: a.id,
+                            }
+                        });
+
+                    this.countsReady = true;
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        },
+        loadSubCountTypes: function () {
+            var dataToParse = [];
+            var keys = ["id", "Label"];
+            var i = 0;
+
+            this.$http.get("/api/vocabulario/subFormasContagemPCA")
+                .then(function (response) {
+                    dataToParse = response.body;
+                })
+                .then(function () {
+                    this.subcountTypes = this.parse(dataToParse, keys)
+                        .map(function (a) {
+                            return {
+                                label: a.Label,
+                                id: a.id,
+                            }
+                        });
+
+                    this.subcountsReady = true;
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
         },
         loadIndexes: function () {
             var indexesToParse = [];
@@ -374,12 +619,12 @@ var classe = new Vue({
                 .then(function () {
                     let completeList = this.parse(legsToParse, keys);
 
-                    let selectedLegs = this.clas.Legs.map(a=>a.id);
+                    let selectedLegs = this.clas.Legs.map(a => a.id);
                     this.legList = completeList
                         .map(function (item) {
                             return {
                                 data: [i++, item.Tipo, item.Número, item.Titulo, item.Data],
-                                selected: selectedLegs.indexOf(item.id)!=-1,
+                                selected: selectedLegs.indexOf(item.id) != -1,
                                 id: item.id
                             }
                         });
@@ -740,10 +985,18 @@ var classe = new Vue({
             }
 
             if (data.SubContagem) {
+                this.newClass.PCA.count = {
+                    label: data.SubContagem.value,
+                    id: data.SubContID.value.replace(/[^#]+#(.*)/, '$1')
+                }
                 PCA.subContagem = data.SubContagem.value;
             }
 
             if (data.ContagemNorm) {
+                this.newClass.PCA.count = {
+                    label: data.ContagemNorm.value,
+                    id: data.ContNormID.value.replace(/[^#]+#(.*)/, '$1')
+                }
                 PCA.contagemnormalizada = data.ContagemNorm.value;
             }
 
@@ -816,8 +1069,47 @@ var classe = new Vue({
                                 .replace(regex, "<a href='/legislacao/consultar/" + id + "'>$1</a>");
                         }
                     }
-
                     PCA.criterios.push(newCrit);
+
+                    let editCrit = {
+                        legToSelect: [],
+                        pnsToSelect: [],
+                        edit: false,
+                        remove: false,
+                        original: true,
+                        id: criterio.id.value.replace(/[^#]+#(.*)/, '$1'),
+                        type: "",
+                        content: newCrit.nota.replace(/<[^>]+>/g, ''),
+                        pns: [],
+                        leg: []
+                    };
+
+                    for (let type of this.PCA.critTypes) {
+                        if (newCrit.tipo == type.label) {
+                            editCrit.type = JSON.parse(JSON.stringify(type));
+                            break;
+                        }
+                    }
+
+                    editCrit.pns = newCrit.processos.map(
+                        function (pn) {
+                            return {
+                                Code: pn.codigo,
+                                Title: pn.titulo,
+                                id: pn.id
+                            }
+                        }
+                    );
+                    editCrit.leg = newCrit.legislacao.map(
+                        function (dip) {
+                            return {
+                                Type: dip.tipo,
+                                Num: dip.numero,
+                                id: dip.id
+                            }
+                        }
+                    );
+                    this.newClass.PCA.criteria.push(editCrit);
                 }
             }
 
@@ -845,6 +1137,7 @@ var classe = new Vue({
 
             if (data.Valores.value) {
                 DF.valores = data.Valores.value.split('###');
+                this.newClass.DF.dest = DF.valores[0];
 
                 for (let [index, valor] of DF.valores.entries()) {
                     if (valor == "C") {
@@ -877,7 +1170,7 @@ var classe = new Vue({
                         CriterioJustificacaoUtilidadeAdministrativa: "Critério Utilidade Administrativa",
                         CriterioJustificacaoLegal: "Critério Legal",
                         CriterioJustificacaoGestionario: "Critério Gestionário",
-                        CriterioJustificacaoDensidadeInfo: "Critério Densidade Informacional",
+                        CriterioJustificacaoDensidadeInfo: "Densidade Informacional",
                     }
 
                     newCrit.tipo = critTypes[criterio.Tipo.value.replace(/[^#]+#(.*)/, '$1')];
@@ -926,10 +1219,182 @@ var classe = new Vue({
                     }
 
                     DF.criterios.push(newCrit);
+
+                    let editCrit = {
+                        legToSelect: [],
+                        pnsToSelect: [],
+                        edit: false,
+                        remove: false,
+                        original: true,
+                        id: criterio.id.value.replace(/[^#]+#(.*)/, '$1'),
+                        type: "",
+                        content: newCrit.nota.replace(/<[^>]+>/g, ''),
+                        pns: [],
+                        leg: []
+                    };
+
+                    for (let type of this.DF.critTypes) {
+                        if (newCrit.tipo == type.label) {
+                            editCrit.type = JSON.parse(JSON.stringify(type));
+                            break;
+                        }
+                    }
+
+                    editCrit.pns = newCrit.processos.map(
+                        function (pn) {
+                            return {
+                                Code: pn.codigo,
+                                Title: pn.titulo,
+                                id: pn.id
+                            }
+                        }
+                    );
+                    editCrit.leg = newCrit.legislacao.map(
+                        function (dip) {
+                            return {
+                                Type: dip.tipo,
+                                Num: dip.numero,
+                                id: dip.id
+                            }
+                        }
+                    );
+                    this.newClass.DF.criteria.push(editCrit);
                 }
             }
 
             return DF;
+        },
+        filterParsePNS: function (selected, relID, relName) {
+            let pns = [];
+            let i = 0;
+            if (this.edit.RelProcs) {
+                pns = this.relationsSelected
+                    .filter(
+                        function (a) {
+                            return a.relType == relID;
+                        }
+                    ).map(
+                        function (a) {
+                            return {
+                                data: [i++, a.code, a.name],
+                                id: a.id,
+                                selected: selected.indexOf(a.id) != -1
+                            }
+                        }
+                    );
+            }
+            else {
+                pns = this.clas.RelProcs[relName]
+                    .map(
+                        function (a) {
+                            return {
+                                data: [i++, a.Code, a.Title],
+                                id: a.id,
+                                selected: selected.indexOf(a.id) != -1
+                            }
+                        }
+                    );
+            }
+            return pns;
+        },
+        critTypeSelected: function (dest, payload) {
+            this.critRelsReady = false;
+
+            if (payload.rel >= 2) { //carregar processos
+                let selected = dest.pns.map(a => a.id);
+                let pns = [];
+
+                if (payload.value == "CriterioJustificacaoComplementaridadeInfo") {
+                    pns = this.filterParsePNS(selected, "eComplementarDe", "Complementar De");
+                }
+                else if (payload.value == "CriterioJustificacaoUtilidadeAdministrativa") {
+                    pns = this.filterParsePNS(selected, "eSuplementoPara", "Suplemento Para");
+                }
+                else if (payload.value == "CriterioJustificacaoDensidadeInfo") {
+                    pns = this.filterParsePNS(selected, "eSintetizadoPor", "Sintetizado Por");
+                    pns = pns.concat(this.filterParsePNS(selected, "eSinteseDe", "Sintese De"))
+                }
+
+                dest.pnsToSelect = JSON.parse(JSON.stringify(pns));
+            }
+            else if (payload.rel == 1) {
+                let selected = dest.leg.map(a => a.id);
+                let leg = this.legList.map(
+                    function (a) {
+                        return {
+                            data: a.data,
+                            id: a.id,
+                            selected: selected.indexOf(a.id) != -1
+                        }
+                    }
+                );
+                dest.legToSelect = JSON.parse(JSON.stringify(leg));
+            }
+            this.critRelsReady = true;
+        },
+        pnSelectedCrit: function (row, obj) {
+            if (!row.selected) {
+                obj.pns.push({
+                    id: row.id,
+                    Code: row.data[1],
+                    Title: row.data[2]
+                });
+            }
+            else {
+                let i = 0;
+                for (let p of obj.pns) {
+                    if (row.id == p.id) { break; }
+                    i++;
+                }
+                if (i < obj.pns.length) {
+                    obj.pns.splice(i, 1);
+                }
+            }
+        },
+        legSelectedCrit: function (row, obj) {
+            if (!row.selected) {
+                obj.leg.push({
+                    id: row.id,
+                    Num: row.data[2],
+                    Type: row.data[1]
+                });
+            }
+            else {
+                let i = 0;
+                for (let doc of obj.leg) {
+                    if (row.id == doc.id) { break; }
+                    i++;
+                }
+                if (i < obj.leg.length) {
+                    obj.leg.splice(i, 1);
+                }
+            }
+        },
+        addNewCrit: function (dest) {
+            let i = 1;
+
+            for (let crit of this.newClass[dest].criteria) {
+                let n = crit.id.replace(/.+(\d+)$/, "$1");
+
+                if (i != n) break;
+                else i++;
+            }
+            let newID = "crit_just_" + dest.toLowerCase() + "_" + this.id + "_" + i;
+
+            this.newClass[dest].criteria.push({
+                legToSelect: [],
+                pnsToSelect: [],
+                edit: true,
+                remove: false,
+                original: false,
+                id: newID,
+                type: "",
+                content: "",
+                pns: [],
+                leg: []
+            });
+
+            return this.newClass[dest].criteria.length-1;
         },
         parse: function (content, keys) {
             var dest = [];
@@ -950,9 +1415,6 @@ var classe = new Vue({
 
             return dest;
         },
-        /*remOwner: function (index) {
-            this.newClass.Owners.splice(index, 1);
-        },*/
         addLeg: function (leg) {
             this.newClass.Legs.push(leg);
         },
@@ -990,24 +1452,6 @@ var classe = new Vue({
             }
             return prefix + "_" + this.id + "_" + newID;
         },
-        /*addParticipant: function (type, participant) {
-            this.newClass.Participants[type].push(participant);
-        },
-        remParticipant: function (type, index) {
-            this.newClass.Participants[type].splice(index, 1);
-        },
-        addRelation: function (type, relation) {
-            this.newClass.RelProcs[type].push(relation);
-        },
-        remRelation: function (key, index) {
-            this.newClass.RelProcs[key].splice(index, 1);
-        },
-        addRelProc: function (proc) {
-            this.newClass.RelProcs.push(proc);
-        },
-        remRelProc: function (index) {
-            this.newClass.RelProcs.splice(index, 1);
-        },*/
         readyToUpdate: function () {
             var keys = Object.keys(this.edit);
 
@@ -1028,7 +1472,7 @@ var classe = new Vue({
             }
 
         },
-        legSelected: function(row, list){
+        legSelected: function (row, list) {
             var findIndex = function (list, id) {
                 for (let [index, item] of list.entries()) {
                     if (id == item.id) {
@@ -1098,7 +1542,7 @@ var classe = new Vue({
                 }
             }
         },
-        pnRelSelected(payload) {
+        pnRelSelected: function (payload) {
             var row = payload.rowData;
 
             if (!row.selected) {
@@ -1136,32 +1580,31 @@ var classe = new Vue({
                 }
             }
         },
+        showMsg(text) {
+            this.modalMsg = text;
+            this.modalMsgShow = true;
+        },
         subtractArray: function (from, minus) {
-            var ret;
-
             if (!from) {
-                ret = null;
+                return null;
             }
             else if (!minus) {
-                ret = JSON.parse(JSON.stringify(from));
+                return JSON.parse(JSON.stringify(from));
             }
             else {
-                ret = from.filter(function (item) {
-                    var r = true;
-                    for (var i = 0; i < minus.length; i++) {
-                        if (minus[i].id == item.id) {
-                            r = false;
-                            break;
+                return from.filter(function (item) {
+                    for (let i of minus) {
+                        if (i.id == item.id) {
+                            return false;
                         }
                     }
-
-                    return r;
+                    return true;
                 });
             }
-
-            return ret;
         },
         updateClass: function () {
+            let okToGo = true;
+
             this.$refs.spinner.show();
             this.message = "Updating...";
 
@@ -1243,7 +1686,25 @@ var classe = new Vue({
                         Add: null,
                         Delete: null,
                     },
-                }
+                },
+                PCA: {
+                    value: null,
+                    count: null,
+                    subcount: null,
+                    criteria: {
+                        Change: [],
+                        Add: [],
+                        Delete: []
+                    },
+                },
+                DF: {
+                    dest: null,
+                    criteria: {
+                        Change: [],
+                        Add: [],
+                        Delete: []
+                    },
+                },
             };
 
             var keys = ["Title", "Status", "Desc", "ProcType", "ProcTrans", "ExAppNotes", "Indexes", "AppNotes", "DelNotes"];
@@ -1288,6 +1749,10 @@ var classe = new Vue({
                 }
             }
 
+            if(!this.checkRelations()){
+                this.showMsg("Não podem existir ao mesmo tempo as relações 'Síntese De' e 'Sintetizado Por'!");
+                okToGo=false;
+            }
             var relationKeys = Object.keys(this.clas.RelProcs);
 
             if (this.edit.RelProcs) {
@@ -1307,22 +1772,98 @@ var classe = new Vue({
                 }
             }
 
-            console.log(dataObj);
-            /*
-            this.$http.put('/api/classes/'+this.id, { dataObj: dataObj },{
-                headers: {
-                    'content-type' : 'application/json'
+            if (this.edit.PCA.value && this.newClass.PCA.deadline) {
+                dataObj.PCA.value = this.newClass.PCA.deadline;
+            }
+            if (this.edit.PCA.count) {
+                dataObj.PCA.count = this.newClass.PCA.count.id;
+
+                if (dataObj.PCA.count == "vc_pcaFormaContagem_disposicaoLegal") {
+                    if (this.newClass.PCA.subcount.id) {
+                        dataObj.PCA.subcount = this.newClass.PCA.subcount.id;
+                    }
+                    else {
+                        this.message = "Um PCA com forma de contagem 'Conforme disposição legal' necessita de uma sub-forma de contagem";
+                        okToGo = false;
+                    }
                 }
-            })
-            .then(function (response) {
-                this.$refs.spinner.hide();
-                this.message = response.body;
-                window.location.href = '/classes/consultar/'+this.id;
-            })
-            .catch(function (error) {
-                console.error(error);
-            });
-            */
+            }
+            if (this.edit.PCA.just) {
+                for (let crit of this.newClass.PCA.criteria) {
+                    if (crit.edit) {
+                        if (!crit.original) {
+                            dataObj.PCA.criteria.Add.push({
+                                id: crit.id,
+                                type: crit.type.value,
+                                note: crit.content,
+                                pns: crit.pns,
+                                leg: crit.leg,
+                            })
+                        }
+                        else if (crit.remove) {
+                            dataObj.PCA.criteria.Delete.push(crit.id)
+                        }
+                        else {
+                            dataObj.PCA.criteria.Change.push({
+                                id: crit.id,
+                                type: crit.type.value,
+                                note: crit.content,
+                                pns: crit.pns,
+                                leg: crit.leg,
+                            })
+                        }
+                    }
+                }
+            }
+
+
+            if (this.edit.DF.dest) {
+                dataObj.DF.dest = this.newClass.DF.dest;
+            }
+            if (this.edit.DF.just) {
+                for (let crit of this.newClass.DF.criteria) {
+                    if (crit.edit) {
+                        if (!crit.original) {
+                            dataObj.DF.criteria.Add.push({
+                                id: crit.id,
+                                type: crit.type.value,
+                                note: crit.content,
+                                pns: crit.pns,
+                                leg: crit.leg,
+                            })
+                        }
+                        else if (crit.remove) {
+                            dataObj.DF.criteria.Delete.push(crit.id)
+                        }
+                        else {
+                            dataObj.DF.criteria.Change.push({
+                                id: crit.id,
+                                type: crit.type.value,
+                                note: crit.content,
+                                pns: crit.pns,
+                                leg: crit.leg,
+                            })
+                        }
+                    }
+                }
+            }
+
+            console.log(JSON.stringify(dataObj, null, "\t"));
+            if (okToGo) {    
+                this.$http.put('/api/classes/'+this.id, dataObj,{
+                    headers: {
+                        'content-type' : 'application/json'
+                    }
+                })
+                .then(function (response) {
+                    this.$refs.spinner.hide();
+                    this.message = response.body;
+                    window.location.href = '/classes/consultar/'+this.id;
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+            }
         },
         delReady: function () {
             this.message = "Tem a certeza que deseja apagar?";

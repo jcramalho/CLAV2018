@@ -114,7 +114,8 @@ Orgs.domain = function (id) {
             ?id clav:temDono clav:${id} ;
                 clav:codigo ?Code ;
                 clav:titulo ?Title ;
-                clav:classeStatus 'A'.
+                clav:pertenceLC clav:lc1 ;
+                clav:classeStatus "A" .
         }`
         ;
 
@@ -134,7 +135,8 @@ Orgs.participations = function (id) {
             
                 clav:titulo ?Title ;
                 clav:codigo ?Code ;
-                clav:classeStatus 'A'.
+                clav:pertenceLC clav:lc1 ;
+                clav:classeStatus "A" .
             
             filter (?Type!=clav:temParticipante && ?Type!=clav:temDono)
         }`
