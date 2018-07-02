@@ -446,7 +446,7 @@ Classes.criteria = function (criteria) {
         });
 }
 
-Classes.filterByOrgs = function(orgs) {
+Classes.filterByOrgs = function (orgs) {
     var fetchQuery = `
         SELECT DISTINCT
             ?Avo ?AvoCodigo ?AvoTitulo 
@@ -500,7 +500,7 @@ Classes.filterByOrgs = function(orgs) {
         });
 }
 
-Classes.filterNone = function() {
+Classes.filterNone = function () {
     var fetchQuery = `
         SELECT DISTINCT
             ?Avo ?AvoCodigo ?AvoTitulo 
@@ -547,7 +547,7 @@ Classes.filterNone = function() {
         });
 }
 
-Classes.filterCommon = function() {
+Classes.filterCommon = function () {
     var fetchQuery = `
         SELECT DISTINCT
             ?Avo ?AvoCodigo ?AvoTitulo 
@@ -595,7 +595,7 @@ Classes.filterCommon = function() {
         });
 }
 
-Classes.filterRest = function(orgs) {
+Classes.filterRest = function (orgs) {
     var fetchQuery = `
         SELECT DISTINCT 
             ?Avo ?AvoCodigo ?AvoTitulo 
@@ -613,8 +613,8 @@ Classes.filterRest = function(orgs) {
                 filter( ?lc != clav:lc1 )
             }
     `;
-    if(orgs){
-        fetchQuery+=`
+    if (orgs) {
+        fetchQuery += `
                 MINUS {
                     {
                         SELECT ?PN where {
@@ -630,7 +630,7 @@ Classes.filterRest = function(orgs) {
                 }
         `;
     }
-    fetchQuery+=`
+    fetchQuery += `
             ?PN clav:temPai ?Pai.
             ?Pai clav:temPai ?Avo.
             
@@ -652,7 +652,7 @@ Classes.filterRest = function(orgs) {
         GROUP BY ?PN ?PNCodigo ?PNTitulo ?Pai ?PaiCodigo ?PaiTitulo ?Avo ?AvoCodigo ?AvoTitulo 
         ORDER BY ?PN
     `;
-    
+
     return client.query(fetchQuery).execute()
         //Getting the content we want
         .then(response => Promise.resolve(response.results.bindings))
@@ -671,7 +671,7 @@ Classes.createClass = function (data) {
                         clav:${level} ;
                     clav:codigo "${data.Code}" ;
                     clav:classeStatus "H" ;
-                    clav:descricao "${data.Description.replace(/\n/g, '\\n').replace(/\"/g,"\\\"")}" ;
+                    clav:descricao "${data.Description.replace(/\n/g, '\\n').replace(/\"/g, "\\\"")}" ;
                     clav:pertenceLC clav:lc1 ;
                     clav:titulo "${data.Title}" .                   
         `;
@@ -685,7 +685,7 @@ Classes.createClass = function (data) {
             createQuery += `
                     clav:${data.AppNotes[i].id} rdf:type owl:NamedIndividual ,
                             clav:NotaAplicacao ;
-                        clav:conteudo "${data.AppNotes[i].Note.replace(/\n/g, '\\n').replace(/\"/g,"\\\"")}" .
+                        clav:conteudo "${data.AppNotes[i].Note.replace(/\n/g, '\\n').replace(/\"/g, "\\\"")}" .
                 `;
             createQuery += 'clav:' + id + ' clav:temNotaAplicacao clav:' + data.AppNotes[i].id + ' .\n';
         }
@@ -693,7 +693,7 @@ Classes.createClass = function (data) {
 
     if (data.ExAppNotes && data.ExAppNotes.length) {
         for (var i = 0; i < data.ExAppNotes.length; i++) {
-            createQuery += 'clav:' + id + ' clav:exemploNA "' + data.ExAppNotes[i].replace(/\n/g, '\\n').replace(/\"/g,"\\\"") + '" .\n';
+            createQuery += 'clav:' + id + ' clav:exemploNA "' + data.ExAppNotes[i].replace(/\n/g, '\\n').replace(/\"/g, "\\\"") + '" .\n';
         }
     }
 
@@ -702,18 +702,18 @@ Classes.createClass = function (data) {
             createQuery += `
                     clav:${data.DelNotes[i].id} rdf:type owl:NamedIndividual ,
                             clav:NotaExclusao ;
-                        clav:conteudo "${data.DelNotes[i].Note.replace(/\n/g, '\\n').replace(/\"/g,"\\\"")}" .
+                        clav:conteudo "${data.DelNotes[i].Note.replace(/\n/g, '\\n').replace(/\"/g, "\\\"")}" .
                 `;
             createQuery += 'clav:' + id + ' clav:temNotaExclusao clav:' + data.DelNotes[i].id + ' .\n';
         }
     }
 
-    if(data.Level >= 3 && data.Indexes && data.Indexes.length ) {
-        for(let [i,index] of data.Indexes.entries()){
+    if (data.Level >= 3 && data.Indexes && data.Indexes.length) {
+        for (let [i, index] of data.Indexes.entries()) {
             createQuery += `
-                clav:ti_${id}_${i+1} rdf:type owl:NamedIndividual ,
+                clav:ti_${id}_${i + 1} rdf:type owl:NamedIndividual ,
                         clav:TermoIndice ;
-                    clav:termo "${index.Note.replace(/\n/g, '\\n').replace(/\"/g,"\\\"")}" ;
+                    clav:termo "${index.Note.replace(/\n/g, '\\n').replace(/\"/g, "\\\"")}" ;
                     clav:estaAssocClasse clav:${id} .
             `;
         }
@@ -753,7 +753,7 @@ Classes.createClass = function (data) {
         }
     }
 
-    if (data.Level >=3 && data.PCA){
+    if (data.Level >= 3 && data.PCA) {
         createQuery += `
             clav:pca_${id} rdf:type owl:NamedIndividual ,
                     clav:PCA ;
@@ -767,40 +767,40 @@ Classes.createClass = function (data) {
             clav:${id} clav:temPCA clav:pca_${id} .
         `;
 
-        if(data.PCA.count.id=='vc_pcaFormaContagem_disposicaoLegal' && data.PCA.subcount.id){
-            createQuery+= `clav:pca_${id} clav:pcaSubformaContagem clav:${data.PCA.subcount.id} .`;
+        if (data.PCA.count.id == 'vc_pcaFormaContagem_disposicaoLegal' && data.PCA.subcount.id) {
+            createQuery += `clav:pca_${id} clav:pcaSubformaContagem clav:${data.PCA.subcount.id} .`;
         }
 
-        if(data.PCA.criteria){
-            for(let [i, crit] of data.PCA.criteria.entries()){
-                let critID = `clav:crit_jpca_${id}_${i+1}`;
+        if (data.PCA.criteria) {
+            for (let [i, crit] of data.PCA.criteria.entries()) {
+                let critID = `clav:crit_jpca_${id}_${i + 1}`;
 
-                createQuery+=`
+                createQuery += `
                     ${critID} rdf:type owl:NamedIndividual ,
                             clav:${crit.type.value} ;
                         clav:conteudo '${crit.content.replace(/\n/g, '\\n')}' .
                     clav:just_pca_${id} clav:temCriterio ${critID} .
                 `;
 
-                if(crit.pns){
-                    for(let pn of crit.pns){
-                        createQuery+=`
+                if (crit.pns) {
+                    for (let pn of crit.pns) {
+                        createQuery += `
                             ${critID} clav:temProcessoRelacionado clav:${pn.id} .
                         `;
                     }
                 }
-                if(crit.leg){
-                    for(let doc of crit.leg){
-                        createQuery+=`
+                if (crit.leg) {
+                    for (let doc of crit.leg) {
+                        createQuery += `
                             ${critID} clav:temLegislacao clav:${doc.id} .
                         `;
                     }
                 }
-            } 
+            }
         }
     }
 
-    if (data.Level >=3 && data.DF){
+    if (data.Level >= 3 && data.DF) {
         createQuery += `
             clav:df_${id} rdf:type owl:NamedIndividual ,
                     clav:DestinoFinal ;
@@ -812,34 +812,34 @@ Classes.createClass = function (data) {
             clav:df_${id} clav:temJustificacao clav:just_df_${id} .
 
             clav:${id} clav:temDF clav:df_${id} .
-        `;        
+        `;
 
-        if(data.DF.criteria){
-            for(let [i, crit] of data.DF.criteria.entries()){
-                let critID = `clav:crit_just_df_${id}_${i+1}`;
+        if (data.DF.criteria) {
+            for (let [i, crit] of data.DF.criteria.entries()) {
+                let critID = `clav:crit_just_df_${id}_${i + 1}`;
 
-                createQuery+=`
+                createQuery += `
                     ${critID} rdf:type owl:NamedIndividual ,
                             clav:${crit.type.value} ;
                         clav:conteudo '${crit.content.replace(/\n/g, '\\n')}' .
                     clav:just_df_${id} clav:temCriterio ${critID} .
                 `;
 
-                if(crit.pns){
-                    for(let pn of crit.pns){
-                        createQuery+=`
+                if (crit.pns) {
+                    for (let pn of crit.pns) {
+                        createQuery += `
                             ${critID} clav:temProcessoRelacionado clav:${pn.id} .
                         `;
                     }
                 }
-                if(crit.leg){
-                    for(let doc of crit.leg){
-                        createQuery+=`
+                if (crit.leg) {
+                    for (let doc of crit.leg) {
+                        createQuery += `
                             ${critID} clav:temLegislacao clav:${doc.id} .
                         `;
                     }
                 }
-            } 
+            }
         }
     }
 
@@ -848,7 +848,7 @@ Classes.createClass = function (data) {
     return client.query(createQuery).execute()
         .then(response => Promise.resolve(response))
         .catch(error => console.error("Error in create:\n" + error));
-    
+
 
 }
 
@@ -881,12 +881,12 @@ Classes.updateClass = function (dataObj) {
         }
 
         //relations
-        if (dataObj.Owners.Delete && dataObj.Owners.Delete.length) {
+        if (dataObj.Owners && dataObj.Owners.Delete && dataObj.Owners.Delete.length) {
             for (var i = 0; i < dataObj.Owners.Delete.length; i++) {
                 deletePart += "\tclav:" + dataObj.id + " clav:temDono clav:" + dataObj.Owners.Delete[i].id + " .\n";
             }
         }
-        if (dataObj.Legs.Delete && dataObj.Legs.Delete.length) {
+        if (dataObj.Legs && dataObj.Legs.Delete && dataObj.Legs.Delete.length) {
             for (var i = 0; i < dataObj.Legs.Delete.length; i++) {
                 deletePart += "\tclav:" + dataObj.id + " clav:temLegislacao clav:" + dataObj.Legs.Delete[i].id + " .\n";
             }
@@ -911,7 +911,41 @@ Classes.updateClass = function (dataObj) {
                 }
             }
         }
-        
+
+        if (dataObj.PCA) {
+            for (let [i, critID] of dataObj.PCA.criteria.Delete.entries()) {
+                deletePart += `
+                    clav:just_pca_${dataObj.id} clav:temCriterio clav:${critID} .
+                `;
+            }
+            
+            for (let [i, crit] of dataObj.PCA.criteria.Change.entries()) {
+                deletePart += `
+                clav:just_pca_${dataObj.id} clav:temCriterio clav:${crit.id} .
+                `;
+            }
+
+            if(dataObj.PCA.count){
+                deletePart += `
+                    clav:pca_${dataObj.id} clav:pcaSubformaContagem ?pcaSubCount .
+                `;
+            }
+            
+        }
+        if (dataObj.DF) {
+            for (let [i, critID] of dataObj.DF.criteria.Delete.entries()) {
+                deletePart += `
+                    clav:just_df_${dataObj.id} clav:temCriterio clav:${critID} .
+                `;
+            }
+            
+            for (let [i, crit] of dataObj.DF.criteria.Change.entries()) {
+                deletePart += `
+                clav:just_df_${dataObj.id} clav:temCriterio clav:${crit.id} .
+                `;
+            }
+        }
+
 
         return deletePart;
     }
@@ -935,6 +969,51 @@ Classes.updateClass = function (dataObj) {
             wherePart += "\tclav:" + dataObj.id + " clav:processoTransversal ?ptrans .\n";
         }
 
+        if (dataObj.PCA) {
+            if(dataObj.PCA.value){
+                wherePart += `
+                    clav:pca_${dataObj.id} clav:pcaValor ?pcaVal .
+                `;
+            }
+            if(dataObj.PCA.count){
+                wherePart += `
+                    clav:pca_${dataObj.id} clav:pcaFormaContagemNormalizada ?pcaCount .
+                `;
+            }
+
+            for (let [i, critID] of dataObj.PCA.criteria.Delete.entries()) {
+                wherePart += `
+                    clav:${critID} ?pcaCritDelP${i} ?pcaCritDelO${i} .
+                `;
+            }
+            
+            for (let [i, crit] of dataObj.PCA.criteria.Change.entries()) {
+                wherePart += `
+                    clav:${crit.id} ?pcaCritUpdP${i} ?pcaCritUpdO${i} .
+                `;
+            }
+        }
+
+        if (dataObj.DF) {
+            if(dataObj.DF.dest) {
+                wherePart += `
+                    clav:df_${dataObj.id} clav:dfValor ?dfDest .
+                `;
+            }
+
+            for (let [i, critID] of dataObj.DF.criteria.Delete.entries()) {
+                wherePart += `
+                    clav:${critID} ?dfCritDelP${i} ?dfCritDelO${i} .
+                `;
+            }
+            
+            for (let [i, crit] of dataObj.DF.criteria.Change.entries()) {
+                wherePart += `
+                    clav:${crit.id} ?dfCritUpdP${i} ?dfCritUpdO${i} .
+                `;
+            }
+        }
+
         return wherePart;
     }
 
@@ -949,7 +1028,7 @@ Classes.updateClass = function (dataObj) {
             insertPart += "\tclav:" + dataObj.id + " clav:classeStatus '" + dataObj.Status + "' .\n";
         }
         if (dataObj.Desc) {
-            insertPart += "\tclav:" + dataObj.id + " clav:descricao '" + dataObj.Desc.replace(/\n/g, '\\n').replace(/\"/g,"\\\"") + "' .\n";
+            insertPart += "\tclav:" + dataObj.id + " clav:descricao '" + dataObj.Desc.replace(/\n/g, '\\n').replace(/\"/g, "\\\"") + "' .\n";
         }
         if (dataObj.ProcType) {
             insertPart += "\tclav:" + dataObj.id + " clav:processoTipoVC clav:vc_processoTipo_" + dataObj.ProcType + " .\n";
@@ -959,21 +1038,20 @@ Classes.updateClass = function (dataObj) {
         }
         if (dataObj.ExAppNotes && dataObj.ExAppNotes.length) {
             for (var i = 0; i < dataObj.ExAppNotes.length; i++) {
-                if(dataObj.ExAppNotes[i].Exemplo){
-                    insertPart += `\tclav:${dataObj.id} clav:exemploNA "${dataObj.ExAppNotes[i].Exemplo.replace(/\n/g, '\\n').replace(/\"/g,"\\\"")}" .\n`;
+                if (dataObj.ExAppNotes[i].Exemplo) {
+                    insertPart += `\tclav:${dataObj.id} clav:exemploNA "${dataObj.ExAppNotes[i].Exemplo.replace(/\n/g, '\\n').replace(/\"/g, "\\\"")}" .\n`;
                 }
             }
         }
 
-        //relations
         //Notas de aplicação
         if (dataObj.AppNotes && dataObj.AppNotes.length) {
             for (let note of dataObj.AppNotes) {
-                if(note.Nota){
+                if (note.Nota) {
                     insertPart += `
                         clav:${note.id} rdf:type owl:NamedIndividual ,
                                 clav:NotaAplicacao ;
-                            clav:conteudo "${note.Nota.replace(/\n/g, '\\n').replace(/\"/g,"\\\"")}" .
+                            clav:conteudo "${note.Nota.replace(/\n/g, '\\n').replace(/\"/g, "\\\"")}" .
                         clav:${dataObj.id} clav:temNotaAplicacao clav:${note.id} .
                     `;
                 }
@@ -982,11 +1060,11 @@ Classes.updateClass = function (dataObj) {
         //Notas de exclusão
         if (dataObj.DelNotes && dataObj.DelNotes.length) {
             for (let note of dataObj.DelNotes) {
-                if(note.Nota){
+                if (note.Nota) {
                     insertPart += `
                         clav:${note.id} rdf:type owl:NamedIndividual ,
                                 clav:NotaExclusao ;
-                            clav:conteudo "${note.Nota.replace(/\n/g, '\\n').replace(/\"/g,"\\\"")}" .
+                            clav:conteudo "${note.Nota.replace(/\n/g, '\\n').replace(/\"/g, "\\\"")}" .
                         clav:${dataObj.id} clav:temNotaExclusao clav:${note.id} .
                     `;
                 }
@@ -995,11 +1073,11 @@ Classes.updateClass = function (dataObj) {
         //Termos de Indice
         if (dataObj.Indexes && dataObj.Indexes.length) {
             for (let ti of dataObj.Indexes) {
-                if(ti.Termo){
+                if (ti.Termo) {
                     insertPart += `
                         clav:${ti.id} rdf:type owl:NamedIndividual ,
                                 clav:TermoIndice ;
-                            clav:termo "${ti.Termo.replace(/\n/g, '\\n').replace(/\"/g,"\\\"")}" ;
+                            clav:termo "${ti.Termo.replace(/\n/g, '\\n').replace(/\"/g, "\\\"")}" ;
                             clav:estaAssocClasse clav:${dataObj.id} .
                     `;
                 }
@@ -1011,7 +1089,7 @@ Classes.updateClass = function (dataObj) {
                 insertPart += "\tclav:" + dataObj.id + " clav:temDono clav:" + dataObj.Owners.Add[i].id + " .\n";
             }
         }
-        //Legislações
+        //Legislação
         if (dataObj.Legs.Add && dataObj.Legs.Add.length) {
             for (var i = 0; i < dataObj.Legs.Add.length; i++) {
                 insertPart += "\tclav:" + dataObj.id + " clav:temLegislacao clav:" + dataObj.Legs.Add[i].id + " .\n";
@@ -1038,11 +1116,87 @@ Classes.updateClass = function (dataObj) {
             }
         }
 
+        //PCA
+        if (dataObj.PCA) {
+            if(dataObj.PCA.value){
+                insertPart += `
+                    clav:pca_${dataObj.id} clav:pcaValor '${dataObj.PCA.value}' .
+                `;
+            }
+            if(dataObj.PCA.count){
+                insertPart += `
+                    clav:pca_${dataObj.id} clav:pcaFormaContagemNormalizada clav:${dataObj.PCA.count} .
+                `;
+
+                if(dataObj.PCA.count=="vc_pcaFormaContagem_disposicaoLegal"){
+                    insertPart += `
+                        clav:pca_${dataObj.id} clav:pcaSubformaContagem clav:${dataObj.PCA.subcount} .
+                    `;
+                }
+            }
+
+            for (let crit of dataObj.PCA.criteria.Add.concat(dataObj.PCA.criteria.Change)) {
+                insertPart += `
+                    clav:${crit.id} rdf:type owl:NamedIndividual ,
+                            clav:${crit.type};
+                        clav:conteudo "${crit.note.replace(/\n/g, '\\n').replace(/\"/g, "\\\"")}".
+                `;
+
+                for (let doc of crit.leg) {
+                    insertPart += `
+                        clav:${crit.id} clav:temLegislacao clav:${doc.id} .
+                    `;
+                }
+
+                for (let pn of crit.pns) {
+                    insertPart += `
+                        clav:${crit.id} clav:temProcessoRelacionado clav:${pn.id} .
+                    `;
+                }
+
+                insertPart += `
+                    clav:just_pca_${dataObj.id} clav:temCriterio clav:${crit.id} .
+                `;
+            }
+        }
+
+        if (dataObj.DF) {
+            if(dataObj.DF.dest) {
+                insertPart += `
+                    clav:df_${dataObj.id} clav:dfValor '${dataObj.DF.dest}' .
+                `;
+            }
+
+            for (let crit of dataObj.DF.criteria.Add.concat(dataObj.DF.criteria.Change)) {
+                insertPart += `
+                    clav:${crit.id} rdf:type owl:NamedIndividual ,
+                            clav:${crit.type};
+                        clav:conteudo "${crit.note.replace(/\n/g, '\\n').replace(/\"/g, "\\\"")}".
+                `;
+
+                for (let doc of crit.leg) {
+                    insertPart += `
+                        clav:${crit.id} clav:temLegislacao clav:${doc.id} .
+                    `;
+                }
+
+                for (let pn of crit.pns) {
+                    insertPart += `
+                        clav:${crit.id} clav:temProcessoRelacionado clav:${pn.id} .
+                    `;
+                }
+
+                insertPart += `
+                    clav:just_df_${dataObj.id} clav:temCriterio clav:${crit.id} .
+                `;
+            }
+        }
+
         return insertPart;
     }
 
     function prepWhere(dataObj) {
-        let retWhere="\n";
+        let retWhere = "\n";
         if (dataObj.AppNotes) {
             retWhere += `
                 optional{
@@ -1074,6 +1228,13 @@ Classes.updateClass = function (dataObj) {
                 }
             `;
         }
+        if(dataObj.PCA && dataObj.PCA.count){
+            retWhere += `
+                optional{
+                    clav:pca_${dataObj.id} clav:pcaSubformaContagem ?pcaSubCount .
+                }
+            `;
+        }
         return retWhere;
     }
 
@@ -1095,13 +1256,11 @@ Classes.updateClass = function (dataObj) {
             ${wherePart}
         }
     `;
-
-    console.log(updateQuery);
-
+    
+    
     return client.query(updateQuery).execute()
         .then(response => Promise.resolve(response))
         .catch(error => console.error("Error in update:\n" + error));
-
 }
 
 Classes.deleteClass = function (id) {

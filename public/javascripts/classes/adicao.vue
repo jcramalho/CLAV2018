@@ -268,11 +268,6 @@ var newClass = new Vue({
                         label: "Critério Gestionário",
                         rel: 0
                     },
-                    {
-                        value: "CriterioJustificacaoComplementaridadeInfo",
-                        label: "Critério Complementaridade Informacional",
-                        rel: 2
-                    },
                 ],
                 list: []
             }
@@ -370,8 +365,8 @@ var newClass = new Vue({
             deep: true,
             handler: function () {
                 let pnsCI = []; //complementaridade info - "eComplementarDe"
-                let pnsUA = []; //utilidade administrativa - "eSuplementoDe"
-                let pnsDI = []; //Densidade informacional - "eSinteseDe"
+                let pnsUA = []; //utilidade administrativa - "eSuplementoPara"
+                let pnsDI = []; //Densidade informacional - "eSinteseDe" + "eSintetizadoPor"
                 let i;
 
                 //complementaridade info
@@ -414,7 +409,7 @@ var newClass = new Vue({
                 //Densidade informacional
                 pnsDI = this.relationsSelected.filter(
                     function (a) {
-                        return a.relType == "eSuplementoPara";
+                        return a.relType == "eSinteseDe" || a.relType == "eSintetizadoPor";
                     }
                 );
 

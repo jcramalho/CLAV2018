@@ -728,3 +728,9 @@ button:hover {
 .editar {
     text-align: right;
 }
+
+.fixdisable input.disabled.form-control {
+    position: absolute;
+    left: -9999px;
+}
+

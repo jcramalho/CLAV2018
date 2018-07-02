@@ -178,7 +178,9 @@ router.get('/:code/check/:level', function (req, res) {
 })
 
 router.put('/:id', Auth.isLoggedInAPI, function (req, res) {
-    Classes.updateClass(req.body.dataObj)
+    var dataObj = req.body;
+    
+    Classes.updateClass(dataObj)
         .then(function (response) {
             Logging.logger.info('Update a classe \'' + req.params.id + '\' por utilizador \'' + req.user._id + '\'');
 
