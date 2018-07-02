@@ -564,6 +564,8 @@ li .panel-body li{
 
 
 .nav-top-custom-style{
+    padding-left: 7px;
+    padding-right: 7px;
     background-image: linear-gradient(to bottom,#3949AB 0,#1A237E 100%);
 }
 
@@ -734,3 +736,14 @@ button:hover {
     left: -9999px;
 }
 
+
+.topbarfixoverlap {
+}
+
+body {
+    padding-top: 0px !important;
+}
+
+.pagebodyfixoverlap{
+    display:block !important;
+}
