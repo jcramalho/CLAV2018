@@ -1749,10 +1749,10 @@ var classe = new Vue({
                 }
             }
 
-            if(!this.checkRelations()){
+            /*if(!this.checkRelations()){
                 this.showMsg("Não podem existir ao mesmo tempo as relações 'Síntese De' e 'Sintetizado Por'!");
                 okToGo=false;
-            }
+            }*/
             var relationKeys = Object.keys(this.clas.RelProcs);
 
             if (this.edit.RelProcs) {
