@@ -33,11 +33,18 @@ Pedidos.add = function(dataObj, req, res){
                     console.log(err);
                     res.send("Ocorreu um erro!");    
                 }
-                else if(!entity) {
+                /*else if(!entity) {
                     console.log("Utilizador sem entidade relacionada");
                     res.send("Ocorreu um erro! Sem entidade associada!"); 
-                }
+                }*/
                 else{
+                    if(!entity){
+                        entity = {
+                            nome: "Sem Entidade",
+                            email: "teste@teste.com"
+                        };
+                    }
+
                     var newPedido = new Pedido({
                         numero: num,
                         tipo: dataObj.type,
