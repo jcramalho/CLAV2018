@@ -16,7 +16,7 @@ append styles
 	
 
 block body
-	.topbarfixoverlap.row
+	.topbarfixoverlap
 		nav.navbar.navbar-inverse.navbar-default.navbar-static-top.nav-top-custom-style.customnav
 			.container-fluid
 				.navbar-header
@@ -109,13 +109,14 @@ block body
 						li
 							a(href='/termosIndice') Termos de Índice
 	
-	.pagebodyfixoverlap.row
+	.row
 		.container-fluid
 			.row
 				//does not appear on mobile
 				if sidebar
-					.col-sm-3.col-md-2.sidebar(style="padding-bottom:60px")
-						block lateral
+					.col-sm-3.col-md-2.sidebar(style="padding-bottom:60px; position:fixed; height:100%; top:0px; padding-top:71px; z-index:-1")
+						div(style="position:relative")
+							block lateral
 
 						//-ul.nav.nav-sidebar#navegacaoleft
 							if user
@@ -162,7 +163,7 @@ block body
 											li
 												a(href='/tabelasSelecao/alteracao') Alteração da TS
 
-					.col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main
+					.col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main(style="position:absolute;padding-top:0; padding-bottom:70px")
 						h3
 							if success_msg!=""
 								.alert.alert-success #{success_msg}
@@ -180,7 +181,7 @@ block body
 
 				
 				else
-					.col-lg-12.main(style="margin-left:30px; margin-right:30px")
+					.col-lg-12.main(style="margin-left:30px; margin-right:30px; position:absolute; padding-top:0; padding-bottom:70px")
 						h3
 							if success_msg!=""
 								.alert.alert-success #{success_msg}

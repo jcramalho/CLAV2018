@@ -76,6 +76,10 @@ Classes.completeData = function (classes) {
             ?Descricao 
             ?ProcTipo 
             ?ProcTrans 
+            ?PCAcontagem
+            ?PCAsubcontagem
+            ?PCAvalor
+            ?DFvalor
             (group_concat(distinct ?Exemplo;separator="%%") as ?Exemplos) 
             (group_concat(distinct ?Dono;separator="%%") as ?Donos) 
             (group_concat(distinct Concat(STR(?NotaA),"::",?NotaACont);separator="%%") as ?NotasA) 
@@ -94,6 +98,7 @@ Classes.completeData = function (classes) {
             (group_concat(distinct ?Rel5;separator="%%") as ?Rels5) 
             (group_concat(distinct ?Rel6;separator="%%") as ?Rels6) 
             (group_concat(distinct ?Rel7;separator="%%") as ?Rels7) 
+            (CONCAT(group_concat(distinct ?CritPCA;separator="%%"),"%%",group_concat(distinct ?CritDF;separator="%%")) as ?Crits)
         FROM noInferences: WHERE {
             VALUES ?id { ${'clav:' + classes.join(' clav:')} }
             ?id clav:titulo ?Titulo;
@@ -168,7 +173,25 @@ Classes.completeData = function (classes) {
             OPTIONAL {
                 ?id clav:eAntecessorDe ?Rel7.
             }
-        } GROUP BY ?id ?Titulo ?Codigo ?Pai ?CodigoPai ?TituloPai ?Status ?Descricao ?ProcTipo ?ProcTrans  
+            OPTIONAL {
+                ?id clav:temPCA ?pca ;
+                    clav:temDF	?df .
+                
+                ?pca clav:pcaFormaContagemNormalizada ?PCAcontagem ;
+                     clav:pcaValor ?PCAvalor.
+                optional {
+                    ?pca clav:pcaSubformaContagem ?PCAsubcontagem .
+                }
+                
+                ?df clav:dfValor ?DFvalor .
+                
+                ?pca clav:temJustificacao ?justPCA .
+                ?df clav:temJustificacao ?justDF .
+                
+                ?justPCA clav:temCriterio ?CritPCA .
+                ?justDF clav:temCriterio ?CritDF .
+            }
+        } GROUP BY ?id ?Titulo ?Codigo ?Pai ?CodigoPai ?TituloPai ?Status ?Descricao ?ProcTipo ?ProcTrans ?PCAcontagem ?PCAsubcontagem ?PCAvalor ?DFvalor
     `;
 
     return client.query(fetchQuery).execute()
@@ -434,6 +457,41 @@ Classes.criteria = function (criteria) {
         		}
                 ?proc clav:codigo ?Codigo ;
                       clav:titulo ?Titulo .
+            }
+            FILTER(?Tipo != owl:NamedIndividual && ?Tipo != clav:CriterioJustificacao && ?Tipo != clav:AtributoComposto)
+        } GROUP BY ?id ?Tipo ?Conteudo
+    `;
+
+    return client.query(fetchQuery).execute()
+        .then(response => Promise.resolve(response.results.bindings))
+        .catch(function (error) {
+            console.error("Error in check:\n" + error);
+        });
+}
+
+Classes.criteriaMin = function (criteria) {
+    var fetchQuery = `
+        SELECT
+            ?id
+            ?Tipo
+            ?Conteudo
+            (GROUP_CONCAT(?leg; SEPARATOR="###") AS ?Legislacao)
+            (GROUP_CONCAT(?proc; SEPARATOR="###") AS ?Processos)
+        WHERE { 
+            VALUES ?id { ${'clav:' + criteria.join(' clav:')} }
+            ?id rdf:type ?Tipo ;
+                clav:conteudo ?Conteudo .
+
+            OPTIONAL {
+                ?id clav:temLegislacao ?leg .
+            }
+
+            OPTIONAL {
+                {
+                	?id clav:temProcessoRelacionado ?proc .
+        		} UNION {
+            		?id clav:eComplementarDe ?proc .
+        		}
             }
             FILTER(?Tipo != owl:NamedIndividual && ?Tipo != clav:CriterioJustificacao && ?Tipo != clav:AtributoComposto)
         } GROUP BY ?id ?Tipo ?Conteudo

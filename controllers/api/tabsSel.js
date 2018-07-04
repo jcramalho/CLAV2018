@@ -96,7 +96,7 @@ SelTabs.stats = function (id) {
         });
 }
 
-SelTabs.createTab = function (id, name, classes) {
+SelTabs.createTab = function (id, name, classes, criteriaData) {
 
     var createQuery = `
             INSERT DATA {
@@ -211,9 +211,97 @@ SelTabs.createTab = function (id, name, classes) {
                 }
             }
         }
+
+
+        if(level>=3){
+            createQuery += `
+                clav:pca_${clasID} rdf:type clav:PCA,
+                        owl:NamedIndividual .
+
+                clav:df_${clasID} rdf:type clav:DestinoFinal,
+                        owl:NamedIndividual .
+
+                clav:${clasID} clav:temPCA  clav:pca_${clasID} ;
+                    clav:temDF clav:df_${clasID} .
+
+
+                clav:just_pca_${clasID} rdf:type clav:JustificacaoPCA,
+                        owl:NamedIndividual .
+
+                clav:just_df_${clasID} rdf:type clav:JustificacaoDF,
+                        owl:NamedIndividual .
+
+                clav:pca_${clasID} clav:temJustificacao clav:just_pca_${clasID} .
+                clav:df_${clasID} clav:temJustificacao clav:just_df_${clasID} .
+            `;
+
+            if(clas.PCAcontagem.value){
+                createQuery+= `
+                    clav:pca_${clasID} clav:pcaFormaContagemNormalizada clav:${clas.PCAcontagem.value.replace(/[^#]+#(.*)/, '$1')} .
+                `;
+            }
+            if(clas.PCAsubcontagem && clas.PCAsubcontagem.value){
+                createQuery+= `
+                    clav:pca_${clasID} clav:pcaSubformaContagem clav:${clas.PCAsubcontagem.value.replace(/[^#]+#(.*)/, '$1')} .
+                `;
+            }
+            if(clas.PCAvalor.value){
+                createQuery+= `
+                    clav:pca_${clasID} clav:pcaValor '${clas.PCAvalor.value}' .
+                `;
+            }
+            if(clas.DFvalor.value){
+                createQuery+= `
+                    clav:df_${clasID} clav:dfValor '${clas.DFvalor.value}' .
+                `;
+            }
+        }
+        let critCount={
+            pca:0,
+            df:0   
+        };
+        for(let crit of criteriaData){
+            let critID = crit.id.value.replace(/[^#]+#(.*)/, '$1');
+            let pID = critID.replace(/.*(c[0-9]{3}\.[0-9]{2}.[0-9]{3}).*/,'$1');
+            let critCat = critID.replace(/crit_just_([^_]*)_.*/,'$1');
+
+            if(pID == clas.id.value.replace(/[^#]+#(.*)/, '$1')){
+                let n = critCount[critCat];
+                critCount[critCat]++;
+
+                createQuery += `
+                    clav:crit_just_${critCat}_${clasID}_${n} rdf:type clav:${crit.Tipo.value.replace(/[^#]+#(.*)/, '$1')} ,
+                            owl:NamedIndividual .
+
+                    clav:just_${critCat}_${clasID} clav:temCriterio clav:crit_just_${critCat}_${clasID}_${n} .
+                `;
+                
+                if(crit.Conteudo.value){
+                    createQuery += `
+                        clav:crit_just_${critCat}_${clasID}_${n} clav:conteudo "${crit.Conteudo.value.replace(/\n|\r/g, '\\n').replace(/\"/g,"\\\"")}" .
+                    `;
+                }
+                if(crit.Legislacao.value){
+                    for(let dip of crit.Legislacao.value.split('###')){
+                        createQuery += `
+                            clav:crit_just_${critCat}_${clasID}_${n} clav:temLegislacao clav:${dip.replace(/[^#]+#(.*)/, '$1')} .
+                        `;
+                    }
+                }
+                if(crit.Processos.value){
+                    for(let proc of crit.Processos.value.split('###')){
+                        createQuery += `
+                            clav:crit_just_${critCat}_${clasID}_${n} clav:temProcessoRelacionado clav:${proc.replace(/[^#]+#(.*)/, '$1')} .
+                        `;
+                    }
+                }
+            }
+        }        
     }
 
     createQuery += "}"
+
+    console.log(createQuery);
 
     return client.query(createQuery).execute()
         .then(response => Promise.resolve(response))

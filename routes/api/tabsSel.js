@@ -72,7 +72,7 @@ router.post('/', Auth.isLoggedInAPI, function (req, res) {
                 .then(function(classes){
                     
                     let relations = ["Rels1","Rels2","Rels3","Rels4","Rels5","Rels6","Rels7"];
-                    
+                    var crits = [];
                     // filtrar relações por PNs que estejam na tabela
                     for(let clas of classes){
                         for(let rel of relations){
@@ -83,17 +83,30 @@ router.post('/', Auth.isLoggedInAPI, function (req, res) {
                                 .map( a => id+"_"+a)
                                 .join('%%');
                         }
+                        if(clas.Crits.value){
+                            for(let c of clas.Crits.value.split('%%')){
+                                crits.push(c.replace(/[^#]+#(.*)/, '$1'));
+                            }
+                        }
                     }
-                    
-                    SelTabs.createTab(id, dataObj.name, classes)
-                        .then(function () {
-                            Logging.logger.info('Criada Tabela de Seleção \'' + id + '\' por utilizador \'' + req.user._id + '\'');
+                    crits = crits.filter(a=>a!="");
 
-                            req.flash('success_msg', 'Tabela de Seleção criada');
-                            res.send(id);
+                    Classes.criteriaMin(crits)
+                        .then(function(criteriaData) {
+
+                            SelTabs.createTab(id, dataObj.name, classes, criteriaData)
+                                .then(function () {
+                                    Logging.logger.info('Criada Tabela de Seleção \'' + id + '\' por utilizador \'' + req.user._id + '\'');
+
+                                    req.flash('success_msg', 'Tabela de Seleção criada');
+                                    res.send(id);
+                                })
+                                .catch(error => console.error(error)
+                                );
                         })
-                        .catch(error => console.error(error)
-                        );
+                        .catch(error=>console.error(error));
+                    
+                    
                 })
                 .catch(error => console.error(error)
                 );
