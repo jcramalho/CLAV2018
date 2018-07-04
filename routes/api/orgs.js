@@ -124,10 +124,10 @@ router.put('/:id', Auth.isLoggedInAPI, function (req, res) {
 router.delete('/:id', Auth.isLoggedInAPI, function (req, res) {
     Orgs.deleteOrg(req.params.id)
         .then(function () {
-            Logging.logger.info('Apagada organização \'' + req.params.id + '\' por utilizador \'' + req.user._id + '\'');
+            Logging.logger.info('Desativada organização \'' + req.params.id + '\' por utilizador \'' + req.user._id + '\'');
 
-            req.flash('success_msg', 'Entrada apagada');
-            res.send("Entrada apagada!");
+            req.flash('success_msg', 'Entrada desativada');
+            res.send("Entrada desativada!");
         })
         .catch(function (error) {
             console.error(error);

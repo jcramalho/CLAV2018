@@ -213,7 +213,7 @@ SelTabs.createTab = function (id, name, classes, criteriaData) {
         }
 
 
-        if(level>=3){
+        if(level>=3 && clas.DFvalor){
             createQuery += `
                 clav:pca_${clasID} rdf:type clav:PCA,
                         owl:NamedIndividual .
@@ -235,7 +235,7 @@ SelTabs.createTab = function (id, name, classes, criteriaData) {
                 clav:df_${clasID} clav:temJustificacao clav:just_df_${clasID} .
             `;
 
-            if(clas.PCAcontagem.value){
+            if(clas.PCAcontagem && clas.PCAcontagem.value){
                 createQuery+= `
                     clav:pca_${clasID} clav:pcaFormaContagemNormalizada clav:${clas.PCAcontagem.value.replace(/[^#]+#(.*)/, '$1')} .
                 `;
@@ -245,12 +245,12 @@ SelTabs.createTab = function (id, name, classes, criteriaData) {
                     clav:pca_${clasID} clav:pcaSubformaContagem clav:${clas.PCAsubcontagem.value.replace(/[^#]+#(.*)/, '$1')} .
                 `;
             }
-            if(clas.PCAvalor.value){
+            if(clas.PCAvalor && clas.PCAvalor.value){
                 createQuery+= `
                     clav:pca_${clasID} clav:pcaValor '${clas.PCAvalor.value}' .
                 `;
             }
-            if(clas.DFvalor.value){
+            if(clas.DFvalor && clas.DFvalor.value){
                 createQuery+= `
                     clav:df_${clasID} clav:dfValor '${clas.DFvalor.value}' .
                 `;
@@ -260,7 +260,8 @@ SelTabs.createTab = function (id, name, classes, criteriaData) {
             pca:0,
             df:0   
         };
-        for(let crit of criteriaData){
+        let critsToRemove = [];
+        for(let [critIndex,crit] of criteriaData.entries()){
             let critID = crit.id.value.replace(/[^#]+#(.*)/, '$1');
             let pID = critID.replace(/.*(c[0-9]{3}\.[0-9]{2}.[0-9]{3}).*/,'$1');
             let critCat = critID.replace(/crit_just_([^_]*)_.*/,'$1');
@@ -295,13 +296,17 @@ SelTabs.createTab = function (id, name, classes, criteriaData) {
                         `;
                     }
                 }
+                critsToRemove.push(critIndex);
             }
-        }        
+        }    
+        /*for(let i of critsToRemove.sort().reverse()){
+            criteriaData.splice(i,1);
+        }   */ 
     }
 
     createQuery += "}"
 
-    console.log(createQuery);
+    //console.log(createQuery);
 
     return client.query(createQuery).execute()
         .then(response => Promise.resolve(response))

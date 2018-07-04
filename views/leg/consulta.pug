@@ -187,7 +187,7 @@ block corpo
                                 li(v-for="c in processes")
                                     a(:href="'/classes/consultar/'+c.id") {{ c.Code }}
                                     |  - {{ c.Title }}
-                            button(@click="processesCollapsed=!processesCollapsed" v-if="processes.length>4")
+                            a(@click="processesCollapsed=!processesCollapsed" v-if="processes.length>6").maozinha
                                 span(v-if="processesCollapsed") Mostrar mais...
                                 span(v-else) Mostrar menos...
                         //- edição

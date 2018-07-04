@@ -4,6 +4,16 @@ new Vue({
         accordion: VueStrap.accordion,
         panel: VueStrap.panel
     },
+    methods: {
+        rowClicked: function(i){
+            if(i==1){
+                window.location.href="/tabelasSelecao/submeter/escolher_processos";
+            }    
+            else if(i==2){
+                window.location.href="/classes/adicionar";
+            }
+        }
+    }
 })
 
 new Vue({

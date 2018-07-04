@@ -20,12 +20,12 @@ block body
 		nav.navbar.navbar-inverse.navbar-default.navbar-static-top.nav-top-custom-style.customnav
 			.container-fluid
 				.navbar-header
-					button.navbar-toggle.collapsed(type='button', data-toggle='collapse', data-target='#navbar', aria-expanded='false', aria-controls='navbar')
+					//button.navbar-toggle.collapsed(type='button', data-toggle='collapse', data-target='#navbar', aria-expanded='false', aria-controls='navbar')
 						span.sr-only Toggle navigation
 						span.icon-bar
 						span.icon-bar
 						span.icon-bar
-					button.navbar-toggle.collapsed(type='button', data-toggle='collapse', data-target='#users', aria-expanded='false', aria-controls='users')
+					//button.navbar-toggle.collapsed(type='button', data-toggle='collapse', data-target='#users', aria-expanded='false', aria-controls='users')
 						span.sr-only Toggle authentication
 						span.glyphicon.glyphicon-user(style="color: white")
 					if page=="index"
@@ -97,7 +97,7 @@ block body
 
 				//collapsable, only appears on mobile		
 				#navbar.collapse
-					ul.nav.navbar-nav
+					//ul.nav.navbar-nav
 						li
 							a(href='/organizacoes') Entidades
 						li
@@ -108,7 +108,7 @@ block body
 							a(href='/tabelasSelecao') Tabelas de Seleção
 						li
 							a(href='/termosIndice') Termos de Índice
-	
+		
 	.row
 		.container-fluid
 			.row
@@ -162,7 +162,7 @@ block body
 												a(href='/tabelasSelecao/submeter/passos') Passos para criação de TS
 											li
 												a(href='/tabelasSelecao/alteracao') Alteração da TS
-
+					
 					.col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main(style="position:absolute;padding-top:0; padding-bottom:70px")
 						h3
 							if success_msg!=""

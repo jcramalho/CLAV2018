@@ -10,7 +10,7 @@ block corpo
                         li Possibilitar a submissão de propostas ou atualizações de planos de classificação e tabelas de seleção; 
                         li Desmaterializar os procedimentos de controlo da eliminação da informação pública através da recolha e análise de autos de eliminação;
                         li Disponibilizar ferramentas para a elaboração e submissão de planos de preservação digital e Planos de subsituição de suporte.
-                    p A Plataforma CLAV corresponde à Medida 107 do Simplex + e teve apoio do SAMA. 
+                    p A Plataforma CLAV corresponde à Medida 107 do Simplex+ 2017 e teve apoio do SAMA. 
 
     
     .col-lg-6
@@ -30,7 +30,7 @@ block corpo
                                 a(:href="linha.consultar")
                                     button(v-if="!linha.newCons") Consultar
                                     button(v-else) {{linha.newCons}}
-                                a(:href="linha.submeter" style="margin-left:9px")
+                                a(v-if="linha.submeter" :href="linha.submeter" style="margin-left:9px")
                                     button(v-if="!linha.newSub") Submeter
                                     button(v-else) {{linha.newSub}}
                             else

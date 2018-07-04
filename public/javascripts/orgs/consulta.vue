@@ -66,6 +66,19 @@ var org = new Vue({
         }
 
     },
+    computed: {
+        partOptions: function(){
+            var dictionary = this.participationsDic;
+            return Object.keys(this.participations).map(
+                function(a){
+                    return{
+                        label: dictionary[a],
+                        value: a
+                    }
+                }
+            )
+        }
+    },
     components: {
         spinner: VueStrap.spinner,
     },

@@ -48,7 +48,6 @@ new Vue({
             {
                 valor: 'Estatísticas (Em desenvolvimento)',
                 consultar: '#',
-                submeter: '#',
             },
         ],
     },
