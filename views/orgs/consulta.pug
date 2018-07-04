@@ -53,7 +53,7 @@ block corpo
                         td(v-if="editDomain" style="width:80%")
                             table
                                 tr
-                                    td(width="60%")
+                                    td
                                         v-select.custom-select(
                                             v-model="newClass"
                                             :options="classList"
@@ -75,7 +75,7 @@ block corpo
                                 li(v-for="c in domain")
                                     a(:href="'/classes/consultar/'+c.id") {{ c.Code }}
                                     |  - {{ c.Title }}
-                            button(@click="domainCollapsed=!domainCollapsed" v-if="domain.length>4")
+                            a(@click="domainCollapsed=!domainCollapsed" v-if="domain.length>6").maozinha
                                 span(v-if="domainCollapsed") Mostrar mais...
                                 span(v-else) Mostrar menos...
                         if user
@@ -102,16 +102,16 @@ block corpo
                                     td(width="30%")
                                         v-select.custom-select(
                                             v-model="newPartType"
-                                            :options="Object.keys(participations)"
+                                            :options="partOptions"
                                         )
-                                    td(width="30%")
+                                    td
                                         v-select.custom-select(
                                             v-model="newPart"
                                             :options="classList"
                                         )
                                     td
                                         button(
-                                            @click="newParticipations[newPartType].unshift(newPart.value)"
+                                            @click="newParticipations[newPartType.value].unshift(newPart.value)"
                                         ) +
                                 tr
                                     td(colspan="3")
@@ -132,7 +132,7 @@ block corpo
                                         li(v-for="p in participations[key]")
                                             a(:href="'/classes/consultar/'+p.id") {{ p.Code }}
                                             |  - {{ p.Title }}
-                                    button(@click="partsCollapsed[key]=!partsCollapsed[key]" v-if="participations[key].length>4")
+                                    a(@click="partsCollapsed[key]=!partsCollapsed[key]" v-if="participations[key].length>6").maozinha
                                         span(v-if="partsCollapsed[key]") Mostrar mais...
                                         span(v-else) Mostrar menos...
                         if user

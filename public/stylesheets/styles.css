@@ -737,8 +737,6 @@ button:hover {
 }
 
 
-.topbarfixoverlap {
-}
 
 body {
     padding-top: 0px !important;
@@ -746,4 +744,8 @@ body {
 
 .pagebodyfixoverlap{
     display:block !important;
+}
+
+.passos-links td div:hover {
+    background: white !important;
 }

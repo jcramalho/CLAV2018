@@ -11,13 +11,13 @@ block corpo
                 v-model="nome"
             ) 
 
-    #passos.panel-custom(style="width:1400px")
+    #passos.panel-custom(style="width:100%")
         //.titlebox
             | Escolha o tipo de Tabela de Seleção
         accordion.info-classe
             panel(header="Tabela de Seleção organizacional")
                 table(style="table-layout:fixed")
-                    tr
+                    tr(@click="rowClicked(1)").maozinha.passos-links
                         td
                             .infobox(style="text-align:center")
                                 b Passo 1
@@ -29,23 +29,21 @@ block corpo
                         td
                             .whitebox
                                 | Processos comuns (passíveis de existirem em qualquer entidade)
-                        td
-                            button.next(onclick='window.location.href="/tabelasSelecao/submeter/escolher_processos"') >
-                    
-                    tr
+                        
+                    tr(@click="rowClicked(1)").maozinha.passos-links
                         td
                             
                         td
                             .whitebox
                                 | Processos de negócio específicos da entidade e tipologia em que se enquadre
-                        td
-                    tr
+                        
+                    tr(@click="rowClicked(1)").maozinha.passos-links
                         td
                             
                         td
                             .whitebox
                                 | Processos de negócio específicos restantes 
-                        td
+                        
                     tr
                         td
                             .infobox(style="text-align:center")
@@ -55,16 +53,14 @@ block corpo
                                 | Alteração do conteúdo dos campos nos processos de negócio selecionados: 
                                 | Notas de aplicação; Exemplos de NA; Notas de exclusão; 
                                 | Termos de índice; Legislação.
-                        td
-                    tr
+                        
+                    tr(@click="rowClicked(2)").maozinha.passos-links
                         td
                             .infobox(style="text-align:center")
                                 b Passo 3
                         td(colspan="2")
                             .whitebox
                                 | Proposta de novos processos de negócio
-                        td
-                            button.next(href="/classes/adicionar") >
                 
             panel(header="Tabela de Seleção pluriorganizacional")
                 table(style="table-layout:fixed")

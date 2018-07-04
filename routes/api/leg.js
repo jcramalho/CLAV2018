@@ -118,10 +118,10 @@ router.put('/:id', function (req, res) {
 router.delete('/:id', Auth.isLoggedInAPI, function (req, res) {
     Leg.deleteDoc(req.params.id)
         .then(function () {
-            Logging.logger.info('Apagada Legislação \'' + req.params.id + '\' por utilizador \'' + req.user._id + '\'');
+            Logging.logger.info('Desativada Legislação \'' + req.params.id + '\' por utilizador \'' + req.user._id + '\'');
 
-            req.flash('success_msg', 'Entrada apagada');
-            res.send("Entrada apagada!");
+            req.flash('success_msg', 'Entrada desativada');
+            res.send("Entrada desativada!");
         })
         .catch(function (error) {
             console.error(error);
