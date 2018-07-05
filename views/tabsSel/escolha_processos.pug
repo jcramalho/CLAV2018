@@ -163,18 +163,18 @@ block corpo
 
             
 
-            modal(
-                title="Confirmar" 
-                :value="createConfirm"
-                @closed="createConfirm=false"
+        modal(
+            title="Confirmar" 
+            :value="createConfirm"
+            @closed="createConfirm=false"
 
-                medium
-            ) 
-                .modal-body(slot="modal-body")
-                    div(v-html="message")
-                .modal-footer(slot="modal-footer")
-                    button(@click="createSelTab(1)" style="margin-right:7px") Continuar
-                    button(@click="createConfirm=false") Voltar à seleção
+            medium
+        ) 
+            .modal-body(slot="modal-body")
+                div(v-html="message")
+            .modal-footer(slot="modal-footer")
+                button(@click="createSelTab(1)" style="margin-right:7px") Continuar
+                button(@click="createConfirm=false") Voltar à seleção
 
         //-    input.btn.btn-xs.btn-danger(
                 v-if="createConfirm"

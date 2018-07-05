@@ -30,7 +30,7 @@ block corpo
                     //- STATUS
                     tr
                         td(style="width: 10%")
-                            .info-label Status: 
+                            .info-label Estado: 
                         td(v-if="edit.Status" style="width:80%" valign="center")
                             select(
                                 v-model="newClass.Status"
@@ -47,7 +47,7 @@ block corpo
                                 ) Inactiva
                                 
                         td(v-else style="width:80%" valign="center")
-                            | {{ clas.Status }} 
+                            | {{ clas.Status=="A" ? "Ativa" : (clas.Status=="H" ? "Harmonização" : "Inativa") }} 
 
                         //if user 
                             td(style="width:10%")
