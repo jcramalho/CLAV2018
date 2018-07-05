@@ -59,7 +59,9 @@ var leg = new Vue({
         processesReady: false,
     },
     components: {
+        datepicker: VueStrap.datepicker,
         spinner: VueStrap.spinner,
+        modal: VueStrap.modal,
     },
     methods: {
         dateChosen: function(payload){
@@ -237,7 +239,7 @@ var leg = new Vue({
                 }
             })
             .then( function(response) { 
-                this.message = response.body;
+                messageL.showMsg(response.body);
                 if(this.message=="Actualizado!"){
                     window.location.href = '/legislacao/consultar/'+this.id;
                 }
@@ -247,20 +249,12 @@ var leg = new Vue({
                 console.error(error); 
             });
         },
-        delReady: function(){
-            this.message="Tem a certeza que deseja apagar?";
-            this.delConfirm=true;
-        },
-        delNotReady: function(){
-            this.message= "";
-            this.delConfirm=false;
-        },
         deleteLeg: function(){
             this.$refs.spinner.show();
 
             this.$http.delete('/api/legislacao/'+this.id)
             .then( function(response) { 
-                this.message = response.body;
+                messageL.showMsg(response.body);
                 window.location.href = '/legislacao';
                 this.$refs.spinner.hide();                
             })

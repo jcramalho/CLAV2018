@@ -136,12 +136,14 @@ block corpo
 
         center
             button.next(
+                v-if="activeTab>=0"
                 @click="activeTab--" 
                 :disabled="activeTab<=0"
                 style="margin-right:10px"
             ) <
             button(@click="saveInfo") Guardar
             button.next(
+                v-if="activeTab<=2"
                 @click="activeTab++" 
                 :disabled="activeTab>=2"
                 style="margin-left:10px"
@@ -159,9 +161,22 @@ block corpo
                 @click="createSelTab(0)" 
             ) Submeter
 
-            div(v-html="message")
+            
 
-            input.btn.btn-xs.btn-danger(
+            modal(
+                title="Confirmar" 
+                :value="createConfirm"
+                @closed="createConfirm=false"
+
+                medium
+            ) 
+                .modal-body(slot="modal-body")
+                    div(v-html="message")
+                .modal-footer(slot="modal-footer")
+                    button(@click="createSelTab(1)" style="margin-right:7px") Continuar
+                    button(@click="createConfirm=false") Voltar à seleção
+
+        //-    input.btn.btn-xs.btn-danger(
                 v-if="createConfirm"
                 type="button" 
                 @click="createSelTab(1)" 

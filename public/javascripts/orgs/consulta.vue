@@ -81,6 +81,7 @@ var org = new Vue({
     },
     components: {
         spinner: VueStrap.spinner,
+        modal: VueStrap.modal,
     },
     methods: {
         subtractArray: function (from, minus) {
@@ -495,20 +496,12 @@ var org = new Vue({
                     if (resp != "Nome já existentente!") {
                         window.location.href = '/organizacoes/consultar/' + this.id;
                     } else {
-                        this.message = resp;
+                        messageL.showMsg(resp);
                     }
                 })
                 .catch(function (error) {
                     console.error(error);
                 });
-        },
-        delReady: function () {
-            this.message = "Tem a certeza que deseja apagar?";
-            this.delConfirm = true;
-        },
-        delNotReady: function () {
-            this.message = "";
-            this.delConfirm = false;
         },
         deleteOrg: function () {
             this.$refs.spinner.show();
@@ -517,7 +510,7 @@ var org = new Vue({
                 .then(function (response) {
                     this.$refs.spinner.hide();
 
-                    this.message = response.body;
+                    messageL.showMsg(response.body);
                     window.location.href = '/organizacoes';
                 })
                 .catch(function (error) {

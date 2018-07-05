@@ -199,9 +199,9 @@ var selecao = new Vue({
             }
 
             if (dataObj.classes.length==0){
-                this.message="É necessário selecionar uma ou mais classes!";
+                messageL.showMsg("É necessário selecionar uma ou mais classes!");
             } else if(dataObj.name.length==0){
-                this.message="O campo 'Designação' não pode estar vazio!"
+                messageL.showMsg("O campo 'Designação' não pode estar vazio!");
             } else {
                 this.$http.post('/api/tabelasSelecao/',dataObj,{
                     headers: {

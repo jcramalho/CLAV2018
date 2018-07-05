@@ -20,6 +20,7 @@ var newLeg = new Vue({
         datepicker: VueStrap.datepicker,
         accordion: VueStrap.accordion,
         panel: VueStrap.panel,
+        modal: VueStrap.modal,
     },
     methods: {
         dataEscolhida: function(payload){
@@ -69,7 +70,7 @@ var newLeg = new Vue({
                     this.message = "Diploma adicionado! Vai ser redirecionado para a página de consulta/edição..."
                 }
                 else {
-                    this.message = response.body;
+                    messageL.showMsg(response.body);
                 }
                 this.$refs.spinner.hide();
             })

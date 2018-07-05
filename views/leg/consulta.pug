@@ -237,7 +237,7 @@ block corpo
                 )
                 input.btn.btn-xs.btn-warning.col-sm-1(
                     type="button"
-                    @click="delReady"
+                    @click="delConfirm=true"
                     value="Apagar"
                     :disabled="(\
                         legData.date.edit && legData.date.new ||\
@@ -250,7 +250,20 @@ block corpo
                 )
                 p.col-sm-5 {{ message }}
 
-                input.btn.btn-xs.btn-danger(
+                modal(
+                    title="Confirmar" 
+                    :value="delConfirm"
+                    @closed="delConfirm=false"
+
+                    small
+                ) 
+                    .modal-body(slot="modal-body")
+                        center Tem a certeza que deseja apagar?
+                    .modal-footer(slot="modal-footer")
+                        button(@click="deleteLeg" style="margin-right:7px") Ok
+                        button(@click="delConfirm=false") Cancelar
+
+            //-    input.btn.btn-xs.btn-danger(
                     v-if="delConfirm"
                     type="button"
                     @click="deleteLeg"

@@ -6,14 +6,6 @@ var newOrg = new Vue({
         type: "Organizacao",
         message: "",
     },
-    watch: {
-        name: function(){
-            this.message="";
-        },
-        initials: function(){
-            this.message="";
-        },
-    },
     components: {
         spinner: VueStrap.spinner
     },
@@ -39,7 +31,7 @@ var newOrg = new Vue({
                         window.location.href = '/organizacoes/consultar/' + response.body;
                     }
                     else {
-                        this.message = response.body;
+                        messageL.showMsg(response.body);
                     }
                 })
                 .catch(function (error) {
