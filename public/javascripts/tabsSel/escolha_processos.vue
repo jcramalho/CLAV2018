@@ -467,9 +467,9 @@ var escolha = new Vue({
                     ok=false;
                 }
                 if(!ok){
-                    this.message = "<ul>"+this.message+"</ul><b>Continuar mesmo assim?</b>"
+                    this.message = "<ul>"+this.message+"</ul><b>Continuar mesmo assim?</b>";
+                    this.createConfirm=true;
                 }
-                this.createConfirm=true;
             }
 
             if(ok){
@@ -479,7 +479,7 @@ var escolha = new Vue({
                 }
 
                 if (dataObj.classes.length == 0) {
-                    this.message = "É necessário selecionar um ou mais processos!";
+                    messageL.showMsg("É necessário selecionar um ou mais processos!");
                     this.createConfirm=false;
                 }
                 else {
