@@ -42,7 +42,8 @@ var escolha = new Vue({
         tabs: VueStrap.tabs,
         tabGroup: VueStrap.tabGroup,
         tab: VueStrap.tab,
-        spinner: VueStrap.spinner
+        spinner: VueStrap.spinner,
+        modal: VueStrap.modal,
     },
     methods: {
         tipolSelected: function (row) {
@@ -454,19 +455,19 @@ var escolha = new Vue({
                 this.message="";
                 ok=true;
                 if(this.getSelected(this.commonProcs, 1).length==0){
-                    this.message += "<p>Nenhum processo comum selecionado!</p>";
+                    this.message += "<li>Nenhum processo comum selecionado!</li>";
                     ok=false;
                 }
                 if(this.getSelected(this.specificProcs, 1).length==0){
-                    this.message += "<p>Nenhum processo específico selecionado!</p>";
+                    this.message += "<li>Nenhum processo específico selecionado!</li>";
                     ok=false;
                 }
                 if(this.getSelected(this.restProcs, 1).length==0){
-                    this.message += "<p>Nenhum processo restante selecionado!</p>";
+                    this.message += "<li>Nenhum processo restante selecionado!</li>";
                     ok=false;
                 }
                 if(!ok){
-                    this.message += "<p>Continuar mesmo assim?</p>"
+                    this.message = "<ul>"+this.message+"</ul><b>Continuar mesmo assim?</b>"
                 }
                 this.createConfirm=true;
             }

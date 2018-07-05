@@ -1014,19 +1014,19 @@ var newClass = new Vue({
         },
         checkready: function (dataObj) {
             if (!this.code.match(/^([0-9]+\.)*[0-9]+$/)) {
-                this.message = "Formato do código errado!";
+                messageL.showMsg("Formato do código errado!");
                 return false;
             }
 
             if (this.codeMessage.length > 0) {
-                this.message = "Formato do código errado!";
+                messageL.showMsg("Formato do código errado!");
                 return false;
             }
 
             if (this.relationsSelected.length) {
                 for (let pn of this.relationsSelected) {
                     if (!pn.relType) {
-                        this.message = "É necessário selecionar o tipo de relação com todos os processos relacionados selecionados!";
+                        messageL.showMsg("É necessário selecionar o tipo de relação com todos os processos relacionados selecionados!");
                         return false;
                     }
                 }
@@ -1058,7 +1058,7 @@ var newClass = new Vue({
                     return dataObj;
                 }
                 else {
-                    this.message = "Preencher campos obrigatórios!";
+                    messageL.showMsg("Preencher campos obrigatórios!");
                     return false;
                 }
             }
@@ -1073,7 +1073,7 @@ var newClass = new Vue({
                             }
 
                             if (check == 0) {
-                                this.message = "Um processo transversal tem de ter pelo menos um participante!";
+                                messageL.showMsg("Um processo transversal tem de ter pelo menos um participante!");
                                 return false;
                             }
                             else {
@@ -1204,7 +1204,7 @@ var newClass = new Vue({
                     }
                 }
                 else {
-                    this.message = "Preencher campos obrigatórios!";
+                    messageL.showMsg("Preencher campos obrigatórios!");
                     return false;
                 }
             }
@@ -1254,7 +1254,7 @@ var newClass = new Vue({
                         window.location.href = '/users/pedido_submetido/' + response.body;
                     }
                     else {
-                        this.message = response.body;
+                        messageL.showMsg(response.body);
                     }
 
                     this.$refs.spinner.hide();

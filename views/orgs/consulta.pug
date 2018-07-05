@@ -53,7 +53,7 @@ block corpo
                         td(v-if="editDomain" style="width:80%")
                             table
                                 tr
-                                    td
+                                    td(width="1000px")
                                         v-select.custom-select(
                                             v-model="newClass"
                                             :options="classList"
@@ -99,12 +99,12 @@ block corpo
                         td(v-if="editParts" style="width:80%")
                             table
                                 tr
-                                    td(width="30%")
+                                    td(width="200px")
                                         v-select.custom-select(
                                             v-model="newPartType"
                                             :options="partOptions"
                                         )
-                                    td
+                                    td(width="800px")
                                         v-select.custom-select(
                                             v-model="newPart"
                                             :options="classList"
@@ -285,13 +285,26 @@ block corpo
                 )
                 input.btn.btn-xs.btn-warning.col-sm-1(
                     type="button" 
-                    @click="delReady" 
+                    @click="delConfirm=true" 
                     value="Apagar" 
                     :disabled="(editName || editDomain || editParts || editConj || editTipol || editElems)"
                 )
                 p.col-sm-5 {{ message }}
 
-                input.btn.btn-xs.btn-danger(
+                modal(
+                    title="Confirmar" 
+                    :value="delConfirm"
+                    @closed="delConfirm=false"
+
+                    small
+                ) 
+                    .modal-body(slot="modal-body")
+                        center Tem a certeza que deseja apagar?
+                    .modal-footer(slot="modal-footer")
+                        button(@click="deleteOrg" style="margin-right:7px") Ok
+                        button(@click="delConfirm=false") Cancelar
+
+            //-    input.btn.btn-xs.btn-danger(
                     v-if="delConfirm"
                     type="button" 
                     @click="deleteOrg" 

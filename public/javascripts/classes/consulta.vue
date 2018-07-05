@@ -1456,10 +1456,11 @@ var classe = new Vue({
             var keys = Object.keys(this.edit);
 
             for (var i = 0; i < keys.length; i++) {
-                if (this.edit[keys[i]] && this.newClass[keys[i]] != this.clas[keys[i]]) {
+                if (this.edit[keys[i]]) {
                     return true;
                 }
             }
+            console.log("ola");
 
             if (this.edit.Participants) {
                 var keys = Object.keys(this.clas.Participants);
@@ -1606,7 +1607,6 @@ var classe = new Vue({
             let okToGo = true;
 
             this.$refs.spinner.show();
-            this.message = "Updating...";
 
             var dataObj = {
                 id: this.id,
@@ -1783,7 +1783,7 @@ var classe = new Vue({
                         dataObj.PCA.subcount = this.newClass.PCA.subcount.id;
                     }
                     else {
-                        this.message = "Um PCA com forma de contagem 'Conforme disposição legal' necessita de uma sub-forma de contagem";
+                        this.showMsg("Um PCA com forma de contagem 'Conforme disposição legal' necessita de uma sub-forma de contagem")
                         okToGo = false;
                     }
                 }
@@ -1857,7 +1857,8 @@ var classe = new Vue({
                 })
                 .then(function (response) {
                     this.$refs.spinner.hide();
-                    this.message = response.body;
+                    
+                    this.showMsg(response.body);
                     window.location.href = '/classes/consultar/'+this.id;
                 })
                 .catch(function (error) {
@@ -1865,20 +1866,12 @@ var classe = new Vue({
                 });
             }
         },
-        delReady: function () {
-            this.message = "Tem a certeza que deseja apagar?";
-            this.delConfirm = true;
-        },
-        delNotReady: function () {
-            this.message = "";
-            this.delConfirm = false;
-        },
         deleteClass: function () {
             this.$refs.spinner.show();
             this.$http.delete('/api/classes/' + this.id)
                 .then(function (response) {
                     this.$refs.spinner.hide();
-                    this.message = response.body;
+                    this.showMsg(response.body);
                     window.location.href = '/classes';
                 })
                 .catch(function (error) {

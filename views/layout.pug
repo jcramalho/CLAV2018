@@ -197,6 +197,19 @@ block body
 							
 						block corpo
 
+				#message
+					modal(
+						title="Atenção!" 
+						:value="modalMsgShow"
+						@closed="modalMsgShow=false"
+
+						small
+					) 
+						.modal-body(slot="modal-body")
+							center {{modalMsg}}
+						.modal-footer(slot="modal-footer")
+							button(@click="modalMsgShow=false") Ok
+
 block footer
 	table
 		tr
