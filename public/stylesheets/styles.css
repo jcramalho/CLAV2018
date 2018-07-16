@@ -130,7 +130,7 @@
 }
 
 .checks {
-    width:141px;
+    width:166px;
     float: right;
 }
 
@@ -748,4 +748,30 @@ body {
 
 .passos-links td div:hover {
     background: white !important;
+}
+
+.modal {
+    overflow-y:auto !important;
+}
+
+
+.tooltip {
+
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+ 
+    position: absolute;
+    z-index: 1;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
 }

@@ -555,10 +555,19 @@ var newClass = new Vue({
                 }
             }
         },
-        checkIfExistsRelation: function(rela) {
-            for (let [i, rel] of this.relationsSelected.entries()) {
-                if (rel.relType == rela) {
-                    return true;
+        checkIfExistsRelation: function(rela, from) {
+            if(from){
+                for (let rel of this.relationsSelected.slice(from)) {
+                    if (rel.relType == rela) {
+                        return true;
+                    }
+                }
+            }
+            else{
+                for (let rel of this.relationsSelected) {
+                    if (rel.relType == rela) {
+                        return true;
+                    }
                 }
             }
             return false;
@@ -1023,16 +1032,28 @@ var newClass = new Vue({
                 return false;
             }
 
+            //verificar relações
             if (this.relationsSelected.length) {
-                for (let pn of this.relationsSelected) {
+                for ([i,pn] of this.relationsSelected.entries()) {
                     if (!pn.relType) {
                         messageL.showMsg("É necessário selecionar o tipo de relação com todos os processos relacionados selecionados!");
                         return false;
+                    }
+                    else if (pn.relType=="eSintetizadoPor"){
+                        if(this.checkIfExistsRelation("eSinteseDe",i)){
+                            messageL.showMsg("Não podem existir ao mesmo tempo as relações 'Síntese De' e 'Sintetizado Por'!");
+                            return false;
+                        }
+                        if(this.checkIfExistsRelation("eComplementarDe",i)){
+                            messageL.showMsg("Não podem existir ao mesmo tempo as relações 'Complementar De' e 'Sintetizado Por'!");
+                            return false;
+                        }
                     }
                 }
             }
 
             if (this.type == 1) {
+                //verificar campos obrigatórios
                 if (this.code && this.title) {
                     dataObj = {
                         Level: this.type,               //
@@ -1078,22 +1099,22 @@ var newClass = new Vue({
                             }
                             else {
                                 dataObj = {
-                                    Level: this.type,               //
-                                    Parent: this.parent,            //
-                                    Code: this.code,                //
-                                    Title: this.title,              //
-                                    Description: this.description,  //
-                                    AppNotes: this.appNotes,        //
-                                    ExAppNotes: this.exAppNotes,    //
-                                    DelNotes: this.delNotes,        //
-                                    Indexes: this.indexes,          //
-                                    Type: this.procType,            //
-                                    Trans: this.procTrans,          //
-                                    Owners: this.selectedOwners,         //
+                                    Level: this.type,                       //
+                                    Parent: this.parent,                    //
+                                    Code: this.code,                        //
+                                    Title: this.title,                      //
+                                    Description: this.description,          //
+                                    AppNotes: this.appNotes,                //
+                                    ExAppNotes: this.exAppNotes,            //
+                                    DelNotes: this.delNotes,                //
+                                    Indexes: this.indexes,                  //
+                                    Type: this.procType,                    //
+                                    Trans: this.procTrans,                  //
+                                    Owners: this.selectedOwners,            //
                                     Participants: this.participantsSelected,//
-                                    RelProcs: this.relationsSelected,        //
-                                    Status: this.status,            //
-                                    Legislations: this.selectedLegs,  //
+                                    RelProcs: this.relationsSelected,       //
+                                    Status: this.status,                    //
+                                    Legislations: this.selectedLegs,        //
                                     PCA: {
                                         dueDate: this.pca.dueDate,
                                         count: this.pca.count,
@@ -1129,22 +1150,22 @@ var newClass = new Vue({
                         }
                         else {
                             dataObj = {
-                                Level: this.type,               //
-                                Parent: this.parent,            //
-                                Code: this.code,                //
-                                Title: this.title,              //
-                                Description: this.description,  //
-                                AppNotes: this.appNotes,        //
-                                ExAppNotes: this.exAppNotes,    //
-                                DelNotes: this.delNotes,        //
-                                Indexes: this.indexes,          //
-                                Type: this.procType,            //
-                                Trans: this.procTrans,          //
-                                Owners: this.selectedOwners,         //
-                                Participants: null,             //
-                                RelProcs: this.relationsSelected,        //
-                                Status: this.status,            //
-                                Legislations: this.selectedLegs,  //
+                                Level: this.type,                   //
+                                Parent: this.parent,                //
+                                Code: this.code,                    //
+                                Title: this.title,                  //
+                                Description: this.description,      //
+                                AppNotes: this.appNotes,            //
+                                ExAppNotes: this.exAppNotes,        //
+                                DelNotes: this.delNotes,            //
+                                Indexes: this.indexes,              //
+                                Type: this.procType,                //
+                                Trans: this.procTrans,              //
+                                Owners: this.selectedOwners,        //
+                                Participants: null,                 //
+                                RelProcs: this.relationsSelected,   //
+                                Status: this.status,                //
+                                Legislations: this.selectedLegs,    //
                                 PCA: {
                                     dueDate: this.pca.dueDate,
                                     count: this.pca.count,

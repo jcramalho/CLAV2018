@@ -22,6 +22,7 @@ router.get('/registo_entidade', function(req, res) {
     res.render('orgs/registo_entidade');
 });
 
+/*
 router.get('/registo_utilizador', function(req, res) {
     res.render('users/registo_utilizador');
 });
@@ -37,6 +38,7 @@ router.get('/autenticacao', function(req, res) {
 router.get('/autenticacao_email', function(req, res) {
     res.render('orgs/autenticacao_email');
 });
+*/
 
 router.get('/area_trabalho', function(req, res) {
     res.render('orgs/area_trabalho');

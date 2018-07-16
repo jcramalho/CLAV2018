@@ -75,20 +75,5 @@ router.get('/utilizador', Auth.isLoggedInAPI, function (req, res) {
     });
 });
 
-/*/ Pedidos por utilizador
-router.get('/utilizador/:user', Auth.isLoggedInAPI, function (req, res) {
-
-    let user = req.params.user || req.user.email;
-
-    Pedido.getPedidosByUser(user, function(err, request){
-        if (err) {
-            console.log(err);
-            res.send("Ocorreu um erro!");    
-        }
-        else{
-            res.send(request);
-        }
-    });
-});*/
 
 module.exports = router;

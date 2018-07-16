@@ -194,6 +194,8 @@ Classes.completeData = function (classes) {
         } GROUP BY ?id ?Titulo ?Codigo ?Pai ?CodigoPai ?TituloPai ?Status ?Descricao ?ProcTipo ?ProcTrans ?PCAcontagem ?PCAsubcontagem ?PCAvalor ?DFvalor
     `;
 
+    console.log(fetchQuery);
+
     return client.query(fetchQuery).execute()
         .then(response => Promise.resolve(response.results.bindings))
         .catch(function (error) {

@@ -47,7 +47,8 @@ block corpo
                     //-PEDIDOS
                     tr
                         td(style="width:10%")
-                        td(style="width:80%").noborder
+                        
+                        td(style="width:80%" v-if="pedidos.length").noborder
                             hidden-table(
                                 v-if="pedidosReady"
 
@@ -57,6 +58,26 @@ block corpo
                                 
                                 open
                             )
+
+                        td(v-else)
+                            | Sem pedidos por verificar
+                        td
+
+                    //-TRABALHO GUARDADO
+                    tr
+                        td(style="width:10%")
+
+                        td(style="width:80%").noborder
+                            hidden-table(
+                                v-if="trabalhosReady"
+
+                                titulo="Trabalho Pendente"
+                                :cabecalho='["Data","Tipo",""]'
+                                :linhas="trabalhos"
+                                
+                                open
+                            )
+
                         td
 
                     //-PASSWORD

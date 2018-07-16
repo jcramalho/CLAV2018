@@ -2,6 +2,7 @@ var Logging = require('../../controllers/logging');
 var Auth = require('../../controllers/auth.js');
 var SelTabs = require('../../controllers/api/tabsSel.js');
 var Classes = require('../../controllers/api/classes.js');
+var Trabalhos = require('../../controllers/api/trabalhos_guardados.js');
 
 var express = require('express');
 var router = express.Router();
@@ -62,6 +63,9 @@ router.post('/', Auth.isLoggedInAPI, function (req, res) {
     }
 
     var dataObj = req.body;
+
+    req.flash('warn_msg', 'Tabela de Seleção em processamento...');
+    
     
     SelTabs.list()
         .then(function (list) {
@@ -98,8 +102,14 @@ router.post('/', Auth.isLoggedInAPI, function (req, res) {
                                 .then(function () {
                                     Logging.logger.info('Criada Tabela de Seleção \'' + id + '\' por utilizador \'' + req.user._id + '\'');
 
-                                    req.flash('success_msg', 'Tabela de Seleção criada');
-                                    res.send(id);
+                                    req.flash('success_msg', 'PNs da nova TS já se encontram disponíveis para edição! (consultar área de trabalho)');
+
+                                    let trab = {
+                                        type: "TS: Alterar PNs",
+                                        objID: id,
+                                    } 
+
+                                    Trabalhos.add(trab, req, res);
                                 })
                                 .catch(error => console.error(error)
                                 );

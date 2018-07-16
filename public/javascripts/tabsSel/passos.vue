@@ -46,10 +46,19 @@ new Vue({
                     });
             },
             500
-        )
+        ),
+        getEnt: function(){
+            this.$http.get("/users/entidade")
+                .then(function (response) {
+                    let ent = response.body;
+                    this.nome = (ent=="Sem entidade relacionada!") ? "" : ent;
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        }
     },
     created() {
-        this.nome="Teste";
-        this.saveName();
+        this.getEnt();
     }
 })
