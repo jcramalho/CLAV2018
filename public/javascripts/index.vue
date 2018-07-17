@@ -54,8 +54,7 @@ new Vue({
             {
                 valor: 'Termos de Índice',
                 consultar: '/termosIndice',
-                submeter: '/termosIndice/adicionar',
-                text: '<p class="info-text">Lista das entidades ou tipologias de entidades que estão envolvidas nos processos de negócio da Administração Pública e que foram identificadas até ao momento. Em atualização constante.</p>',
+                text: '<p class="info-text">Lista dos Termos de Índice. Em atualização constante.</p>',
                 notlogged: 'Para novas propostas, faça Login.'
             },
         ],
