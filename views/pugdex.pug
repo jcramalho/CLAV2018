@@ -4,14 +4,24 @@ block corpo
         #acordeao
             accordion(type="info-custom")
                 panel( header="O que é a CLAV")
-                    p Plataforma que visa: 
+                    p Plataforma que visa:
                     ol(type="a")
                         li Disponibilizar a “Lista Consolidada para a classificação e avaliação da informação pública” enquanto instrumento facilitador da elaboração dos planos de classificação e tabelas de seleção da Administração Pública e de outras entidades abrangidas pelo Decreto-Lei X;
-                        li Possibilitar a submissão de propostas ou atualizações de planos de classificação e tabelas de seleção; 
-                        li Desmaterializar os procedimentos de controlo da eliminação da informação pública através da recolha e análise de autos de eliminação;
+                        li Possibilitar a submissão de propostas ou atualizações de planos de classificação e tabelas de seleção;
+                        li Desmaterializar os procedimentos de controlo da eliminação da informação arquivística através da recolha e análise de autos de eliminação;
                         li Disponibilizar ferramentas para a elaboração e submissão de planos de preservação digital e Planos de subsituição de suporte.
-                    p A Plataforma CLAV corresponde à Medida 107 do Simplex+ 2017 e teve apoio do SAMA. 
 
+                    p As funcionalidades disponibilizadas em julho de 2018 são as seguintes: 
+                    ol.list_parentheses
+                        li Consulta da Lista Consolidada – Processos de Negócio;
+                        li Consulta de Entidades;
+                        li Consulta de Legislação;
+                        li Consulta de Termos de Índice (associados a cada Processo de Negócio);
+                        li Disponibilização de links para Documentação Técnica de Apoio; 
+                        li Disponibilização de Notícias relevantes relacionadas com a classificação e avaliação da informação arquivística. 
+                        
+                    p Em breve, estarão acessíveis novas funcionalidades.
+                    p A Plataforma CLAV tem o apoio do Sistema de Apoios à Modernização Administrativa (SAMA).
     
     .col-lg-6
         table#navegacao.table.tabela-navegacao
@@ -27,20 +37,37 @@ block corpo
                             div(v-if="linha.text" v-html="linha.text")
                             
                             if user
-                                a(:href="linha.consultar")
+                                a(:href="linha.consultar" v-if="linha.consultar")
                                     button(v-if="!linha.newCons") Consultar
                                     button(v-else) {{linha.newCons}}
+                                
+                                a(:href="linha.consultarAuth" v-else)
+                                    button(v-if="!linha.newCons") Consultar
+                                    button(v-else) {{linha.newCons}}
+                                
                                 a(v-if="linha.submeter" :href="linha.submeter" style="margin-left:9px")
                                     button(v-if="!linha.newSub") Submeter
                                     button(v-else) {{linha.newSub}}
                             else
                                 p.info-text {{linha.notlogged}}
-                                a(:href="linha.consultar")
+                                a(:href="linha.consultar" v-if="linha.consultar")
                                     button Consultar
             tr 
                 td(style="padding-top:15px !important")
                     .labelbox
                         | Documentação Técnica de Apoio
+                    
+                    accordion(type="noticiabox")
+                        panel(header="Para conhecer os princípios teóricos e metodológicos que estão na base da Lista Consolidada, veja os seguintes documentos técnicos:")
+                            p Documentos metodológicos
+                            ul
+                                li 
+                                    a(href="http://arquivos.dglab.gov.pt/wp-content/uploads/sites/16/2013/10/egov_interoperabilidade.pdf") Governo Electrónico e Interoperabilidade: documento metodológico para a elaboração de um esquema de metainformação para a interoperabilidade e de uma macroestrutura funcional
+                                li 
+                                    a(href="http://arquivos.dglab.gov.pt/wp-content/uploads/sites/16/2014/02/2013_Orient-3-niveis_PC-MF.pdf") Orientações básicas para o desenvolvimento dos 3ºs níveis em planos de classificação conformes à macroestrutura funcional
+                                li 
+                                    a(href="http://arquivos.dglab.gov.pt/wp-content/uploads/sites/16/2016/03/ASIA_Doc-metodologico2016-03-10.pdf") Avaliação suprainstitucional da Informação arquivística (ASIA): Documento metodológico.
+                                    p Contém, em anexo, as Regras para a criação de termos do índice.
 
     .col-lg-1
     .col-lg-5

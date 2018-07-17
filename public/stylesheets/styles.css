@@ -357,6 +357,10 @@ a .linkbox:hover {
     background: rgb(177, 189, 255);
 }
 
+.panel-noticiabox .panel-title{
+    font-weight: bold;
+}
+
 .panel-noticiabox .panel-body{
     font-size: 1pc;
 }
@@ -754,3 +758,13 @@ body {
     overflow-y:auto !important;
 }
 
+.list_parentheses {
+    counter-reset: list;
+}
+.list_parentheses > li {
+    list-style: none;
+}
+.list_parentheses > li:before {
+    content: counter(list, lower-alpha) ") ";
+    counter-increment: list;
+}
