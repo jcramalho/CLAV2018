@@ -130,7 +130,7 @@
 }
 
 .checks {
-    width:141px;
+    width:166px;
     float: right;
 }
 
@@ -749,3 +749,8 @@ body {
 .passos-links td div:hover {
     background: white !important;
 }
+
+.modal {
+    overflow-y:auto !important;
+}
+

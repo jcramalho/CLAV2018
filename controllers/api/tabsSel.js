@@ -6,7 +6,8 @@ SelTabs.list = function () {
     return client.query(
         `SELECT * WHERE { 
             ?id rdf:type clav:TabelaSelecao ;
-                clav:designacao ?Name .
+                clav:designacao ?Name ;
+                clav:referencialClassificativoStatus 'A';
         }`
     )
         .execute()

@@ -24,6 +24,22 @@ router.get('/pedido_submetido/:id', Auth.isLoggedIn, function(req, res) {
     res.render('users/pedido_submetido', {title: "Pedido submetido"});
 });
 
+// Entidade do utilizador autenticado
+router.get('/entidade', Auth.isLoggedInAPI, function (req, res) {
+    Entidade.getEntidadeByRepresentante(req.user.email, function(err, entity){
+        if (err) {
+            console.log(err);
+            res.send("Ocorreu um erro!");    
+        }
+        else if(!entity) {
+            res.send("Sem entidade relacionada!"); 
+        }
+        else{
+            res.send(entity.nome);
+        }
+    });
+});
+
 // Guardar trabalho
 router.put('/save/:type', Auth.isLoggedInAPI, function (req, res) {
     User.getUserById(req.user._id, function(err, user){
@@ -147,11 +163,6 @@ router.get('/pedido/:num', function (req, res) {
 // Carregar trabalho
 router.get('/load/:type', Auth.isLoggedInAPI, function (req, res) {
     res.send(req.user.savedStates[req.params.type]);
-});
-
-// Gestão de pedidos (admin)
-router.get('/pedidos', function(req, res) {
-    res.render('admin/gestao_pedidos', {title: "Gestão de Pedidos"});
 });
 
 module.exports = router;

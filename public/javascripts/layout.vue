@@ -101,6 +101,6 @@ var messageL = new Vue({
         showMsg(text) {
             this.modalMsg = text;
             this.modalMsgShow = true;
-        },
+        }
     }
 })

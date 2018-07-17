@@ -490,13 +490,13 @@ var escolha = new Vue({
                             'content-type': 'application/json'
                         }
                     })
-                        .then(function (response) {
-                            window.location.href = '/tabelasSelecao/submeter/alterar_PNs/' + response.body;
-                            this.$refs.spinner.hide();
-                        })
                         .catch(function (error) {
                             console.error(error);
                         });
+
+
+                    this.$refs.spinner.hide();
+                    window.location.href = '/';
                 }
             }
         }

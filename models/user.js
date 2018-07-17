@@ -45,24 +45,6 @@ var UserSchema = mongoose.Schema({
 			type: String
 		}
 	},
-	/*
-		facebook: {
-			id: {
-				type: String
-			},
-			token: {
-				type: String
-			}
-		},
-		google: {
-			id: {
-				type: String
-			},
-			token: {
-				type: String
-			}
-		},
-	*/
 	savedStates: {
 		escolhaProcessos: {
 			tipologias: {
@@ -88,14 +70,14 @@ var UserSchema = mongoose.Schema({
 
 var User = module.exports = mongoose.model('User', UserSchema);
 
-module.exports.createUser = function (newUser, callback) {
+/*module.exports.createUser = function (newUser, callback) {
 	bcrypt.genSalt(10, function (err, salt) {
 		bcrypt.hash(newUser.local.password, salt, function (err, hash) {
 			newUser.local.password = hash;
 			newUser.save(callback);
 		});
 	});
-}
+}*/
 
 module.exports.getUserByEmail = function (email, callback) {
 	var query = { email: email };

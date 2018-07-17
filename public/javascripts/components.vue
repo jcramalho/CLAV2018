@@ -438,7 +438,7 @@ Vue.component('custom-table-select', {
 Vue.component('row-waterfall', {
     template: `
         <tr>
-            <td colspan=5 :class="[root ? 'cascata-row-root' : 'cascata-row']">
+            <td colspan=6 :class="[root ? 'cascata-row-root' : 'cascata-row']">
                 <table class="partial-hover cascata-table-within" :class="tableClass">
                     <tbody name="table">
                         <tr>
@@ -511,6 +511,19 @@ Vue.component('row-waterfall', {
                                                 v-model="row.participant"
                                                 @click="participantClicked"
                                             />
+                                            <select 
+                                                :id="'participantType'+id+suffix"
+                                                v-if="row.participant"
+                                                v-model="row.participantType"
+                                                @change="partTypeSelected"
+                                            >
+                                                <option>Apreciar</option>
+                                                <option>Assessorar</option>
+                                                <option>Comunicar</option>
+                                                <option>Decidir</option>
+                                                <option>Iniciar</option>
+                                                <option>Executar</option>
+                                            </select>
                                         </div>
                                     </div>
                                 </div>
@@ -679,11 +692,14 @@ Vue.component('custom-table-waterfall', {
                         <th v-if="selectOn">
                             Participante
                         </th>
+                        <th v-if="selectOn">
+                            <div style="width:15px"></div>
+                        </th>
                     </tr>
                 </thead>
                 <tbody name="table">
                     <tr v-if="rows.length==0">
-                        <td colspan=5>
+                        <td colspan=6>
                             Nenhum resultado encontrado...
                         </td>
                     </tr>
