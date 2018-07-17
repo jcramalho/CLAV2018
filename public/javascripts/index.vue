@@ -21,14 +21,15 @@ new Vue({
             },
             {
                 valor: 'Tabelas de Seleção',
-                consultar: '/tabelasSelecao',
+                consultarAuth: '/tabelasSelecao',
                 submeter: '/tabelasSelecao/submeter/passos',
-                text: '<p class="info-text">Lista das Tabelas de seleção atualmente aprovadas.</p>',
+                text: '<p class="info-text">Lista das Tabelas de seleção conformes à Lista Consolidada que se encontram  aprovadas.</p>',
                 notlogged: 'Para novas propostas, faça Login.'
             },
             {
-                valor: 'Autos de Eliminação (Em desenvolvimento)',
-                consultar: '#',
+                valor: 'Autos de Eliminação',
+                text: 'Em desenvolvimento. Funcionalidade a disponibilizar em breve',
+                consultarAuth: '#',
                 submeter: '#',
             },
             {
@@ -46,8 +47,16 @@ new Vue({
                 notlogged: 'Para novas propostas, faça Login.'
             },
             {
-                valor: 'Estatísticas (Em desenvolvimento)',
-                consultar: '#',
+                valor: 'Estatísticas',
+                text: 'Em desenvolvimento. Funcionalidade a disponibilizar em breve',
+                consultarAuth: '#',
+            },
+            {
+                valor: 'Termos de Índice',
+                consultar: '/termosIndice',
+                submeter: '/termosIndice/adicionar',
+                text: '<p class="info-text">Lista das entidades ou tipologias de entidades que estão envolvidas nos processos de negócio da Administração Pública e que foram identificadas até ao momento. Em atualização constante.</p>',
+                notlogged: 'Para novas propostas, faça Login.'
             },
         ],
     },
@@ -65,16 +74,16 @@ new Vue({
         panel: VueStrap.panel
     },
     data: {
-        noticias: [ //para já "hardcoded", no futuro criar uma forma de gerir as notícias atraves da plataforma
+        noticias: [ //para já hardcoded, no futuro criar uma forma de gerir as notícias através da plataforma
             {
                 title: 'RGPD: A "Lista Consolidada para a classificação e avaliação da informação pública" como instrumento facilitador da sua aplicação',
                 date: "25 de Maio de 2018",
-                body: `<p>O Regulamento Geral de Proteção de Dados ( RGPD ) entra em vigor hoje, 25 de Maio de 2018, e revoga a Diretiva 95/46/CE.</p>
+                body: `<p>O Regulamento Geral de Proteção de Dados ( RGPD ) entrou em vigor a 25 de Maio de 2018, e revoga a Diretiva 95/46/CE.</p>
                 <p>Para demonstrar como os instrumentos de gestão da informação e dos arquivos são importantes da sua aplicação, a DGLAB disponibiliza uma comunicação recente em que alguns dos seus arquivistas abordaram esta temática, intitulada “<a href="https://www.bad.pt/eventos/wp-content/uploads/2018/01/P.-Barca_LC_CLAV_RGPD_v2.pdf">A Lista Consolidada como instrumento facilitador da aplicação do RGPD</a>”.</p>
-                <p>Na comunicação, os autores (Alexandra Lourenço, Pedro Penteado e Rita Gago) salientam a importância da Lista Consolidada para a classificação e avaliação da informação pública [<a href="http://arquivos.dglab.gov.pt/programas-e-projectos/modernizacao-administrativa/macroestrutura-funcional-mef/lista-consolidada/">LINK</a>] para a aplicação do RGPD, na medida em que este instrumento identifica os diversos processos de negócio das entidades públicas aos quais deve estar associada a recolha de dados pessoais. </p>
+                <p>Na comunicação, os autores (Alexandra Lourenço, Pedro Penteado e Rita Gago) salientam a importância da <a href="http://arquivos.dglab.gov.pt/programas-e-projectos/modernizacao-administrativa/macroestrutura-funcional-mef/lista-consolidada/">Lista Consolidada para a classificação e avaliação da informação pública</a> para a aplicação do RGPD, na medida em que este instrumento identifica os diversos processos de negócio das entidades públicas aos quais deve estar associada a recolha de dados pessoais. </p>
                 <p>A fundamentação para a recolha, tratamento e conservação dos dados pessoais encontra-se facilitada pela utilização da referida Lista Consolidada, que contextualiza, através da inserção destes nos respetivos processos de negócio. Na Lista Consolidada é possível encontrar ainda a definição do tempo que os dados devem ser conservados e o seu destino final, bem como o fundamento legal ou outro que justifica estas ações. </p>
                 <p>Os autores salientam também as limitações ao direito ao esquecimento (artigo 17.º do RGPD) que, entre outros, abrangem os arquivos de interesse público, bem como a forma como este direito deve ser aplicado tendo em conta a necessidade de salvaguardar dados e informação de conservação permanente, recorrendo, por exemplo, à pseudonomização. </p>
-                <p>A DGLAB, com a disponibilização desta comunicação, assinala o início da entrada em vigor do RGPD, fornecendo aos profissionais da informação um documento facilitador da sua intervenção ao nível da gestão de dados e informação.</p>
+                <p>A DGLAB, com a disponibilização desta comunicação, assinalou o início da entrada em vigor do RGPD, fornecendo aos profissionais da informação um documento facilitador da sua intervenção ao nível da gestão de dados e informação. </p>
                 <p>Para mais esclarecimentos, poderá contactar-nos pelo endereço <a href="mailto:dsan@dglab.gov.pt">dsan@dglab.gov.pt</a> . </p>`
             },
             {
