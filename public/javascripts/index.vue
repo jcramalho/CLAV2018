@@ -16,14 +16,14 @@ new Vue({
                 submeter: '/classes/adicionar',
                 newCons: 'Consultar e propor alteração',
                 newSub: 'Submeter novo PN',
-                text: '<p class="info-text">Estrutura de classes da “Lista Consolidada para a classificação e avaliação da informação pública” que atualmente se encontra disponível. Inclui os níveis referentes aos processos de negócio da Administração Pública.</p>',
+                text: 'Estrutura de classes da “Lista Consolidada para a classificação e avaliação da informação pública” que atualmente se encontra disponível. Inclui os níveis referentes aos processos de negócio da Administração Pública.',
                 notlogged: 'Para novos contributos, faça Login.'
             },
             {
                 valor: 'Tabelas de Seleção',
                 consultarAuth: '/tabelasSelecao',
                 submeter: '/tabelasSelecao/submeter/passos',
-                text: '<p class="info-text">Lista das Tabelas de seleção conformes à Lista Consolidada que se encontram  aprovadas.</p>',
+                text: 'Lista das Tabelas de seleção conformes à Lista Consolidada que se encontram  aprovadas.',
                 notlogged: 'Para novas propostas, faça Login.'
             },
             {
@@ -36,14 +36,14 @@ new Vue({
                 valor: 'Entidades',
                 consultar: '/organizacoes',
                 submeter: '/organizacoes/adicionar',
-                text: '<p class="info-text">Lista das entidades ou tipologias de entidades que estão envolvidas nos processos de negócio da Administração Pública e que foram identificadas até ao momento. Em atualização constante.</p>',
+                text: 'Lista das entidades ou tipologias de entidades que estão envolvidas nos processos de negócio da Administração Pública e que foram identificadas até ao momento. Em atualização constante.',
                 notlogged: 'Para novas propostas, faça Login.'
             },
             {
                 valor: 'Legislação',
                 consultar: '/legislacao',
                 submeter: '/legislacao/adicionar',
-                text: '<p class="info-text">Lista da legislação que enquadra os processos de negócio da Administração Pública e que foi identificada até ao momento. Em atualização constante.</p>',
+                text: 'Lista da legislação que enquadra os processos de negócio da Administração Pública e que foi identificada até ao momento. Em atualização constante.',
                 notlogged: 'Para novas propostas, faça Login.'
             },
             {
@@ -54,7 +54,7 @@ new Vue({
             {
                 valor: 'Termos de Índice',
                 consultar: '/termosIndice',
-                text: '<p class="info-text">Lista dos Termos de Índice. Em atualização constante.</p>',
+                text: 'Lista dos Termos de Índice. Em atualização constante.',
                 notlogged: 'Para novas propostas, faça Login.'
             },
         ],
@@ -76,8 +76,8 @@ new Vue({
         noticias: [ //para já hardcoded, no futuro criar uma forma de gerir as notícias através da plataforma
             {
                 title: 'RGPD: A "Lista Consolidada para a classificação e avaliação da informação pública" como instrumento facilitador da sua aplicação',
-                date: "25 de Maio de 2018",
-                body: `<p>O Regulamento Geral de Proteção de Dados ( RGPD ) entrou em vigor a 25 de Maio de 2018, e revoga a Diretiva 95/46/CE.</p>
+                date: "25 de maio de 2018",
+                body: `<p>O Regulamento Geral de Proteção de Dados ( RGPD ) entrou em vigor a 25 de maio de 2018 e revoga a Diretiva 95/46/CE.</p>
                 <p>Para demonstrar como os instrumentos de gestão da informação e dos arquivos são importantes da sua aplicação, a DGLAB disponibiliza uma comunicação recente em que alguns dos seus arquivistas abordaram esta temática, intitulada “<a href="https://www.bad.pt/eventos/wp-content/uploads/2018/01/P.-Barca_LC_CLAV_RGPD_v2.pdf">A Lista Consolidada como instrumento facilitador da aplicação do RGPD</a>”.</p>
                 <p>Na comunicação, os autores (Alexandra Lourenço, Pedro Penteado e Rita Gago) salientam a importância da <a href="http://arquivos.dglab.gov.pt/programas-e-projectos/modernizacao-administrativa/macroestrutura-funcional-mef/lista-consolidada/">Lista Consolidada para a classificação e avaliação da informação pública</a> para a aplicação do RGPD, na medida em que este instrumento identifica os diversos processos de negócio das entidades públicas aos quais deve estar associada a recolha de dados pessoais. </p>
                 <p>A fundamentação para a recolha, tratamento e conservação dos dados pessoais encontra-se facilitada pela utilização da referida Lista Consolidada, que contextualiza, através da inserção destes nos respetivos processos de negócio. Na Lista Consolidada é possível encontrar ainda a definição do tempo que os dados devem ser conservados e o seu destino final, bem como o fundamento legal ou outro que justifica estas ações. </p>
@@ -87,7 +87,7 @@ new Vue({
             },
             {
                 title: "Projeto de Decreto-Lei que torna obrigatório o usa da plataforma CLAV encontra-se em tramitação",
-                date: "20 de Maio de 2018",
+                date: "20 de maio de 2018",
                 body: `<p>Encontra-se em tramitação a proposta de Decreto-Lei que torna obrigatório o uso da Plataforma CLAV, o uso da Lista Consolidada e a elaboração de tabelas de classificação e avaliação da informação decorrente do exercício de funções públicas, entre outras, nas seguintes entidades: </p>
                 <ol type="a">
                     <li>O Estado, incluindo os ministérios, os gabinetes dos membros do Governo, os tribunais e o Ministério Público;</li>
