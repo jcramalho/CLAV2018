@@ -637,7 +637,7 @@ Vue.component('row-waterfall', {
 
 Vue.component('custom-table-waterfall', {
     template: `
-        <div id="root" class="custom-table-waterfall">
+        <div id="root" class="custom-table-waterfall pesquisa-codigo">
             <div id="pages" class="col-sm-4" v-if="pagesOn" style="margin-bottom:5px">
                 Mostrar
                 <select v-model="rowsPerPage">
@@ -651,7 +651,7 @@ Vue.component('custom-table-waterfall', {
 
             <div v-if="filterOn && sidebar">
                 <input 
-                    class="form-control" 
+                    class="form-control pesquisa-codigo" 
                     :class="[filtError ? 'form-error' : '']" 
                     v-model="filt" 
                     type="text" 
@@ -661,7 +661,7 @@ Vue.component('custom-table-waterfall', {
             </div>
             <div class="col-sm-7" v-if="filterOn && !sidebar">
                 <input 
-                    class="form-control" 
+                    class="form-control pesquisa-codigo" 
                     :class="[filtError ? 'form-error' : '']" 
                     v-model="filt" 
                     type="text" 
