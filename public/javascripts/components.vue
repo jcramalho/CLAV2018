@@ -655,7 +655,7 @@ Vue.component('custom-table-waterfall', {
                     :class="[filtError ? 'form-error' : '']" 
                     v-model="filt" 
                     type="text" 
-                    placeholder="Pesquisa por código"
+                    placeholder="Pesquisa por código e/ou título"
                     pattern="[0-9]{1,3}(\.[0-9]{0,2}(\.[0-9]{0,3}(\.[0-9]{0,3})?)?)?"
                 />
             </div>
@@ -665,7 +665,7 @@ Vue.component('custom-table-waterfall', {
                     :class="[filtError ? 'form-error' : '']" 
                     v-model="filt" 
                     type="text" 
-                    placeholder="Pesquisa por código"
+                    placeholder="Pesquisa por código e/ou título"
                     pattern="[0-9]{1,3}(\.[0-9]{0,2}(\.[0-9]{0,3}(\.[0-9]{0,3})?)?)?"
                 />
             </div>
