@@ -792,8 +792,8 @@ Vue.component('custom-table-waterfall', {
                         tempRows = this.filterCode(tempRows, f); 
                     }
                     else{
-                        this.filtError=true;
-                        //tempRows = this.filterText(tempRows, f);                
+                        //this.filtError=true;
+                        tempRows = this.filterText(tempRows, f);                
                     }
                 }
             }
@@ -829,25 +829,28 @@ Vue.component('custom-table-waterfall', {
             return retList;
         },
         filterText: function (list, filt) {
-            var retList;
+            let retList=JSON.parse(JSON.stringify(list));
 
             regex = new RegExp(filt, "gi");
 
-            var retList = list.filter(function (item) {
-                return regex.test(item.content[1]);
-            });
-
             for (let item of retList) {
                 if (item.sublevel) {
-                    item.sublevel = this.filterText(item.sublevel, filt);
+                    let newSub = this.filterText(item.sublevel, filt);
                     
                     if(item.sublevel.length>0){
                         item.drop = true;
                     }
+
+                    item.sublevel=JSON.parse(JSON.stringify(newSub));
                 }
             }
 
+            retList = retList.filter(function (item) {
+                return ((item.sublevel && item.sublevel.length>0) || regex.test(item.content[1]));
+            });
+
             return retList;
+
         },
         genID: function (index) {
             for (var i = 0; i < this.completeRows.length; i++) {
