@@ -28,7 +28,7 @@ new Vue({
             },
             {
                 valor: 'Autos de Eliminação',
-                text: 'Em desenvolvimento. Funcionalidade a disponibilizar em breve',
+                text: 'Em desenvolvimento. Funcionalidade a disponibilizar em breve.',
                 consultarAuth: '#',
                 submeter: '#',
             },
@@ -48,7 +48,7 @@ new Vue({
             },
             {
                 valor: 'Estatísticas',
-                text: 'Em desenvolvimento. Funcionalidade a disponibilizar em breve',
+                text: 'Em desenvolvimento. Funcionalidade a disponibilizar em breve.',
                 consultarAuth: '#',
             },
             {
