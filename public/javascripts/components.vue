@@ -483,7 +483,7 @@ Vue.component('row-waterfall', {
                                 <span style="padding-right:18px"></span>
                             </td>
 
-                            <td class="cascata-codigo" :class="[row.active ? 'cascata-active' : '']" @click="rowClicked">
+                            <td class="cascata-codigo" :class="[row.active ? 'cascata-active' : '']" @click="rowClicked" :title="row.title">
                                 {{ row.content[0] }}
                             </td>
 
@@ -637,7 +637,7 @@ Vue.component('row-waterfall', {
 
 Vue.component('custom-table-waterfall', {
     template: `
-        <div id="root" class="custom-table-waterfall pesquisa-codigo">
+        <div id="root" class="custom-table-waterfall">
             <div id="pages" class="col-sm-4" v-if="pagesOn" style="margin-bottom:5px">
                 Mostrar
                 <select v-model="rowsPerPage">
@@ -649,24 +649,13 @@ Vue.component('custom-table-waterfall', {
                 entradas
             </div>
 
-            <div v-if="filterOn && sidebar">
+            <div :class="[sidebar ? '' : 'col-sm-7']" v-if="filterOn">
                 <input 
-                    class="form-control pesquisa-codigo" 
+                    class="form-control" 
                     :class="[filtError ? 'form-error' : '']" 
                     v-model="filt" 
                     type="text" 
-                    placeholder="Pesquisa por código e/ou título"
-                    pattern="[0-9]{1,3}(\.[0-9]{0,2}(\.[0-9]{0,3}(\.[0-9]{0,3})?)?)?"
-                />
-            </div>
-            <div class="col-sm-7" v-if="filterOn && !sidebar">
-                <input 
-                    class="form-control pesquisa-codigo" 
-                    :class="[filtError ? 'form-error' : '']" 
-                    v-model="filt" 
-                    type="text" 
-                    placeholder="Pesquisa por código e/ou título"
-                    pattern="[0-9]{1,3}(\.[0-9]{0,2}(\.[0-9]{0,3}(\.[0-9]{0,3})?)?)?"
+                    placeholder="Pesquisa"
                 />
             </div>
             <div class="col-sm-1"  v-if="add" style="float:right">
@@ -775,7 +764,7 @@ Vue.component('custom-table-waterfall', {
             }
         },
         filt: function () {
-            this.completeFilter(this.filt);
+            this.completeFilter(this.filt.replace(/([\[\]\(\)\\\/])/g,"\\$1"));
         }
     },
     methods: {
@@ -846,7 +835,14 @@ Vue.component('custom-table-waterfall', {
             }
 
             retList = retList.filter(function (item) {
-                return ((item.sublevel && item.sublevel.length>0) || regex.test(item.content[1]));
+                if(item.indexTerms){
+                    for(let ti of item.indexTerms){
+                        if(regex.test(ti)){
+                            return true;
+                        }
+                    }
+                }
+                return ((item.sublevel && item.sublevel.length>0) || regex.test(item.title));
             });
 
             return retList;

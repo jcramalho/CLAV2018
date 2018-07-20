@@ -37,9 +37,6 @@ var classes = new Vue({
             let avo;
             let pai;
 
-            let level= this.level;
-            let activeClass= this.activeClass;
-
             for (let pn of dataToParse) {
                 let codeAvo = pn.AvoCodigo.value;
                 let indexesAvo = indexes[codeAvo];
@@ -59,6 +56,7 @@ var classes = new Vue({
                         let infoPai = {
                             codeID: pn.Pai.value.replace(/[^#]+#(.*)/, '$1'),
                             content: [codePai, pn.PaiTitulo.value],
+                            title: pn.PaiTitulo.value,
                             drop: false,
                             subReady: true,
                             sublevel: []
@@ -76,11 +74,13 @@ var classes = new Vue({
                     let infoAvo = {
                         codeID: pn.Avo.value.replace(/[^#]+#(.*)/, '$1'),
                         content: [codeAvo, pn.AvoTitulo.value],
+                        title: pn.AvoTitulo.value,
                         drop: false,
                         subReady: true,
                         sublevel: [{
                             codeID: pn.Pai.value.replace(/[^#]+#(.*)/, '$1'),
                             content: [codePai, pn.PaiTitulo.value],
+                            title: pn.PaiTitulo.value,
                             drop: false,
                             subReady: true,
                             sublevel: [],
@@ -92,6 +92,8 @@ var classes = new Vue({
                 let pninfo = {
                     codeID: pn.PN.value.replace(/[^#]+#(.*)/, '$1'),
                     content: [pn.PNCodigo.value, pn.PNTitulo.value],
+                    title: pn.PNTitulo.value,
+                    indexTerms: pn.TermosIndice.value.split('###'),
                     drop: false,
                 }
 
@@ -99,12 +101,34 @@ var classes = new Vue({
                     pninfo.subReady = true;
                     pninfo.sublevel = [];
 
+                    let tisFilhos = [];
+                    if(pn.TIsFilhos.value.length){
+                        tisFilhos = pn.TIsFilhos.value.split('###').map(
+                            function(ti){
+                                let dados=ti.split(':::');
+                                return {
+                                    codigo:dados[0],
+                                    termo:dados[1],
+                                }
+                            }
+                        );
+                    }
+
                     for (let filho of pn.Filhos.value.split('###')) {
                         let filhoInfo = filho.split(':::');
+                        let indexFilho = [];
+
+                        if(tisFilhos.length){
+                            indexFilho = tisFilhos
+                                .filter(a=>a.codigo==filhoInfo[1])
+                                .map(a=>a.termo);
+                        }
 
                         pninfo.sublevel.push({
                             codeID: filhoInfo[0].replace(/[^#]+#(.*)/, '$1'),
                             content: [filhoInfo[1], filhoInfo[2]],
+                            title: filhoInfo[2],
+                            indexTerms: indexFilho,
                             drop: false,
                         });
                     }

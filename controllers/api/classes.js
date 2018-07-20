@@ -566,7 +566,9 @@ Classes.filterNone = function () {
             ?Avo ?AvoCodigo ?AvoTitulo 
             ?Pai ?PaiCodigo ?PaiTitulo 
             ?PN ?PNCodigo ?PNTitulo   
-            (GROUP_CONCAT(CONCAT(STR(?Filho),":::",?FilhoCodigo, ":::",?FilhoTitulo); SEPARATOR="###") AS ?Filhos)
+            (GROUP_CONCAT(DISTINCT(CONCAT(STR(?Filho),":::",?FilhoCodigo, ":::",?FilhoTitulo)); SEPARATOR="###") AS ?Filhos)
+			(GROUP_CONCAT(CONCAT(STR(?FilhoCodigo),":::",?FilhoTi);Separator="###") AS ?TIsFilhos)
+            (GROUP_CONCAT(?TermoI; SEPARATOR="###") AS ?TermosIndice)
         WHERE {  
             
             ?PN rdf:type clav:Classe_N3
@@ -593,7 +595,16 @@ Classes.filterNone = function () {
                 ?Filho clav:temPai ?PN;
                    clav:codigo ?FilhoCodigo;
                    clav:titulo ?FilhoTitulo
+
+                OPTIONAL {
+                    ?fTI clav:estaAssocClasse ?Filho;
+                         clav:termo ?FilhoTi
+                }
             }
+            OPTIONAL {
+        		?ti clav:estaAssocClasse ?PN ;
+              		clav:termo ?TermoI .
+    		}
         }
         Group By ?PN ?PNCodigo ?PNTitulo ?Pai ?PaiCodigo ?PaiTitulo ?Avo ?AvoCodigo ?AvoTitulo 
         Order By ?PN
