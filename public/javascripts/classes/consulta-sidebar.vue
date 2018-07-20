@@ -44,7 +44,6 @@ var classesSide = new Vue({
             let avo;
             let pai;
 
-            let level= this.level;
             let active= this.activeClass.replace(/.*c([0-9]{3}.*)/,"$1");
             this.activeClass=this.activeClass.replace(/.*c([0-9]{3}.*)\d/,"$1");
 
@@ -70,6 +69,7 @@ var classesSide = new Vue({
                         let infoPai = {
                             codeID: pn.Pai.value.replace(/[^#]+#(.*)/, '$1'),
                             content: [codePai],
+                            title: pn.PaiTitulo.value,
                             drop: this.activeClass.includes(codePai),
                             selected: pnSelected,
                             subReady: true,
@@ -89,6 +89,7 @@ var classesSide = new Vue({
                     let infoAvo = {
                         codeID: pn.Avo.value.replace(/[^#]+#(.*)/, '$1'),
                         content: [codeAvo],
+                        title: pn.AvoTitulo.value,
                         drop: this.activeClass.includes(codeAvo),
                         selected: pnSelected,
                         subReady: true,
@@ -96,6 +97,7 @@ var classesSide = new Vue({
                         sublevel: [{
                             codeID: pn.Pai.value.replace(/[^#]+#(.*)/, '$1'),
                             content: [codePai],
+                            title: pn.PaiTitulo.value,
                             drop: this.activeClass.includes(codePai),
                             selected: pnSelected,
                             subReady: true,
@@ -109,6 +111,8 @@ var classesSide = new Vue({
                 let pninfo = {
                     codeID: pn.PN.value.replace(/[^#]+#(.*)/, '$1'),
                     content: [pn.PNCodigo.value],
+                    title: pn.PNTitulo.value,
+                    indexTerms: pn.TermosIndice.value.split('###'),
                     drop: this.activeClass.includes(pn.PNCodigo.value),
                     selected: pnSelected,
                     active: active==pn.PNCodigo.value
@@ -118,12 +122,33 @@ var classesSide = new Vue({
                     pninfo.subReady = true;
                     pninfo.sublevel = [];
 
+                    let tisFilhos = [];
+                    if(pn.TIsFilhos.value.length){
+                        tisFilhos = pn.TIsFilhos.value.split('###').map(
+                            function(ti){
+                                let dados=ti.split(':::');
+                                return {
+                                    codigo:dados[0],
+                                    termo:dados[1],
+                                }
+                            }
+                        );
+                    }
+
                     for (let filho of pn.Filhos.value.split('###')) {
                         let filhoInfo = filho.split(':::');
+
+                        if(tisFilhos.length){
+                            indexFilho = tisFilhos
+                                .filter(a=>a.codigo==filhoInfo[1])
+                                .map(a=>a.termo);
+                        }
 
                         pninfo.sublevel.push({
                             codeID: filhoInfo[0].replace(/[^#]+#(.*)/, '$1'),
                             content: [filhoInfo[1]],
+                            title: filhoInfo[2],
+                            indexTerms: indexFilho,
                             drop: false,
                             selected: pnSelected,
                             active: active==filhoInfo[1]
