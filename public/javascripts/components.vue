@@ -655,7 +655,7 @@ Vue.component('custom-table-waterfall', {
                     :class="[filtError ? 'form-error' : '']" 
                     v-model="filt" 
                     type="text" 
-                    placeholder="Pesquisa"
+                    placeholder="Pesquisa por código e/ou título"
                 />
             </div>
             <div class="col-sm-1"  v-if="add" style="float:right">
