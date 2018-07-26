@@ -794,7 +794,6 @@ Vue.component('custom-table-waterfall', {
             return this.filterCodeLevel(list, levels, 1);
         },
         filterCodeLevel: function (list, codeList, level) {
-            //console.log(codeList);
             var code = "";
             for (let i = 0; i < level; i++) {
                 code += codeList[i] + ".";
@@ -802,7 +801,6 @@ Vue.component('custom-table-waterfall', {
             code = code.slice(0, -1);
 
             var retList = list.filter(function (item) {
-                //console.log(item.content[0]+ " includes "+code+" = " +item.content[0].includes(code));
                 return item.content[0].includes(code);
             });
 
@@ -846,7 +844,6 @@ Vue.component('custom-table-waterfall', {
             });
 
             return retList;
-
         },
         genID: function (index) {
             for (var i = 0; i < this.completeRows.length; i++) {
@@ -860,7 +857,8 @@ Vue.component('custom-table-waterfall', {
             if (this.order == index) {
                 this.rows.reverse();
                 this.order = -index;
-            } else {
+            } 
+            else {
                 this.rows.sort(function (a, b) {
                     if (typeof a.content[index] === 'string' || a.content[index] instanceof String)
                         return a.content[index].localeCompare(b.content[index]);
