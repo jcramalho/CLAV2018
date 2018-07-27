@@ -40,8 +40,8 @@ Entidades.inTipols = function (id) {
 
 Entidades.stats = function (id) {
     return client.query(`
-        SELECT ?Nome ?Sigla ?Estado ?Internacional where {
-            clav:${id} clav:entDesignacao ?Nome ;
+        SELECT * where {
+            clav:${id} clav:entDesignacao ?Designacao ;
                 clav:entSigla ?Sigla ;
                 clav:entEstado ?Estado ;
                 clav:entInternacional ?Internacional .
@@ -129,7 +129,7 @@ Entidades.checkNameAvailability = function (name) {
         });
 }
 
-Entidades.createEntidade = function (id, name, initials) {
+Entidades.createEntidade = function (id, name, initials, international) {
     var createQuery = `
         INSERT DATA {
             clav:${id} rdf:type owl:NamedIndividual ,
@@ -137,7 +137,7 @@ Entidades.createEntidade = function (id, name, initials) {
                 clav:entDesignacao '${name}' ;
                 clav:entSigla '${initials}' ;
                 clav:entEstado "Harmonização" ;
-                clav:entInternacional '${internacional}' .
+                clav:entInternacional '${international}' .
         }
     `;
 

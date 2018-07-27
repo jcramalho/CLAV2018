@@ -12,11 +12,11 @@ router.get('/adicionar', Auth.isLoggedIn, function(req, res) {
 });
 
 router.get('/consultar/:id', function(req, res) {
-    res.render('enidades/consulta',{orgID: req.params.id, title: "Dados de entidade"});
+    res.render('entidades/consulta',{orgID: req.params.id, title: "Dados de entidade"});
 });
 
 router.get('/editar/:id', function(req, res) {
-    res.render('enidades/edicao',{orgID: req.params.id, title: "Editar entidade"});
+    res.render('entidades/edicao',{orgID: req.params.id, title: "Editar entidade"});
 });
 
 module.exports = router;

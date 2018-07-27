@@ -55,16 +55,17 @@ router.get('/:id/participacoes', function (req, res) {
 
 router.post('/', Auth.isLoggedInAPI, function (req, res) {
     var initials = req.body.initials;
+    var international = req.body.international;
     var name = req.body.name;
     var id = 'ent_'+initials;
 
     Entidades.checkAvailability(name, initials)
         .then(function (count) {
             if (count > 0) {
-                res.send("Nome e/ou Sigla já existente(s)!");
+                res.send("Designação e/ou Sigla já existente(s)!");
             }
             else {
-                Entidades.createEntidade(id, name, initials)
+                Entidades.createEntidade(id, name, initials, international)
                     .then(function () {
                         Logging.logger.info('Criada entidade \'' + id + '\' por utilizador \'' + req.user._id + '\'');
 
@@ -84,7 +85,7 @@ router.put('/:id', Auth.isLoggedInAPI, function (req, res) {
     Entidades.checkAvailability(dataObj.name)
         .then(function (count) {
             if (count > 0) {
-                res.send("Nome já existentente!");
+                res.send("Designação já existentente!");
             }
             else {
                 Entidades.updateEntidade(dataObj)
