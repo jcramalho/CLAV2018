@@ -1,5 +1,5 @@
 var newOrg = new Vue({
-    el: '#nova-organizacao-form',
+    el: '#nova-entidade-form',
     data: {
         name: "",
         initials: "",

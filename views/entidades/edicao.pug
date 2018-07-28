@@ -38,6 +38,35 @@ block corpo
                         td
                             | {{ entInitials }} 
 
+                    //- INTERNACIONAL
+                    tr
+                        td(style="width:10%")
+                            label Internacional: 
+                        td(v-if="editInternational" style="width:80%")
+                            select(
+                                v-model="newInternational"
+                            )
+                                option(
+                                    value="Sim"
+                                )   Sim
+                                option(
+                                    value="Não"
+                                )   Não
+                        td(v-else style="width:80%")
+                            | {{ entInternational }}  
+                        if user
+                            td(style="width:10%")
+                                label(
+                                    for="editInternational"
+                                    :class="[editInternational ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']" 
+                                ) 
+                                input(
+                                    id="editInternational"
+                                    type="checkbox"
+                                    v-model="editInternational"
+                                    class="drop-row"
+                                )
+
                     //- DOMINIO
                     tr
                         td(style="width:10%")
@@ -190,13 +219,13 @@ block corpo
                     type="button" 
                     @click="update" 
                     value="Confirmar" 
-                    :disabled="!((editName && newName) || editDomain || editParts || editTipol)"
+                    :disabled="!((editName && newName) || editInternational || editDomain || editParts || editTipol)"
                 )
                 input.btn.btn-xs.btn-warning.col-sm-1(
                     type="button" 
                     @click="delConfirm=true" 
                     value="Apagar" 
-                    :disabled="(editName || editDomain || editParts || editTipol)"
+                    :disabled="(editName || editInternational || editDomain || editParts || editTipol)"
                 )
                 p.col-sm-5 {{ message }}
 

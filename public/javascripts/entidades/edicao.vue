@@ -13,6 +13,10 @@ var org = new Vue({
         message: "",
         delConfirm: false,
 
+        entInternational: "",
+        newInternational: "",
+        editInternational: false,
+
         domain: [],
         newClass: "",
         newDomain: [],
@@ -269,7 +273,7 @@ var org = new Vue({
 
             var dataObj = {
                 id: this.id,
-                type: this.type,
+                international: null,
                 name: null,
                 domain: {
                     add: null,
@@ -309,6 +313,9 @@ var org = new Vue({
 
             if (this.editName) {
                 dataObj.name = this.newName;
+            }
+            if (this.editInternational) {
+                dataObj.international = this.newInternational;
             }
             if (this.editDomain) {
 
