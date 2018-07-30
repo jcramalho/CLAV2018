@@ -2,7 +2,11 @@ extends ../layout
 block corpo
     #organizacao-form.panel.panel-default.panel-custom
         .panel-heading
-            h1.page-header {{ entName }}  
+            h1.page-header 
+                div {{ entName }}
+                    if user
+                        a(:href="'/tipologias/editar/'+id" style="float:right")  
+                            span.glyphicon.glyphicon-edit
         .panel-body
             .form-group
                 table.consulta

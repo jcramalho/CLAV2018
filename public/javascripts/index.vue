@@ -34,9 +34,16 @@ new Vue({
             },
             {
                 valor: 'Entidades',
-                consultar: '/organizacoes',
-                submeter: '/organizacoes/adicionar',
-                text: 'Lista das entidades ou tipologias de entidades que estão envolvidas nos processos de negócio da Administração Pública e que foram identificadas até ao momento. Em atualização constante.',
+                consultar: '/entidades',
+                submeter: '/entidades/adicionar',
+                text: 'Lista das entidades que estão envolvidas nos processos de negócio da Administração Pública e que foram identificadas até ao momento. Em atualização constante.',
+                notlogged: 'Para novas propostas, faça Login.'
+            },
+            {
+                valor: 'Tipologias',
+                consultar: '/tipologias',
+                submeter: '/tipologias/adicionar',
+                text: 'Lista tipologias de entidades que estão envolvidas nos processos de negócio da Administração Pública e que foram identificadas até ao momento. Em atualização constante.',
                 notlogged: 'Para novas propostas, faça Login.'
             },
             {
