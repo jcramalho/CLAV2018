@@ -71,6 +71,7 @@ app.use('/',require('./routes/index'));
 app.use('/users',require('./routes/users'));
 app.use('/organizacoes',require('./routes/orgs'));
 app.use('/entidades',require('./routes/entidades'));
+app.use('/tipologias',require('./routes/tipologias'));
 app.use('/legislacao',require('./routes/leg'));
 app.use('/classes',require('./routes/classes'));
 app.use('/tabelasSelecao',require('./routes/tabsSel'));

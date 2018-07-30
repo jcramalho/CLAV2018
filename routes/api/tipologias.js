@@ -48,7 +48,7 @@ router.get('/:id/participacoes', function (req, res) {
 router.post('/', Auth.isLoggedInAPI, function (req, res) {
     var initials = req.body.initials;
     var name = req.body.name;
-    var id = 'ent_'+initials;
+    var id = 'tip_'+initials;
 
     Tipologias.checkAvailability(name, initials)
         .then(function (count) {
@@ -56,7 +56,7 @@ router.post('/', Auth.isLoggedInAPI, function (req, res) {
                 res.send("Designação e/ou Sigla já existente(s)!");
             }
             else {
-                Tipologias.createEntidade(id, name, initials)
+                Tipologias.createTipologia(id, name, initials)
                     .then(function () {
                         Logging.logger.info('Criada tipologia \'' + id + '\' por utilizador \'' + req.user._id + '\'');
 
@@ -79,7 +79,7 @@ router.put('/:id', Auth.isLoggedInAPI, function (req, res) {
                 res.send("Designação já existentente!");
             }
             else {
-                Tipologias.updateEntidade(dataObj)
+                Tipologias.updateTipologia(dataObj)
                     .then(function () {
                         Logging.logger.info('Update a tipologia \'' + req.params.id + '\' por utilizador \'' + req.user._id + '\'');
 
@@ -94,7 +94,7 @@ router.put('/:id', Auth.isLoggedInAPI, function (req, res) {
 })
 
 router.delete('/:id', Auth.isLoggedInAPI, function (req, res) {
-    Tipologias.deleteEntidade(req.params.id)
+    Tipologias.deleteTipologia(req.params.id)
         .then(function () {
             Logging.logger.info('Desativada tipologia \'' + req.params.id + '\' por utilizador \'' + req.user._id + '\'');
 

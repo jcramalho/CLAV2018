@@ -85,9 +85,6 @@ var org = new Vue({
                 })
                 .then(function () {
                     this.myTipolList = this.parseList(dataToParse, keys);
-                    this.myNewTipolList = JSON.parse(JSON.stringify(this.myTipolList));
-
-                    this.tipolsReady = true;
                 })
                 .catch(function (error) {
                     console.error(error);

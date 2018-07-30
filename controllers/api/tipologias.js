@@ -42,7 +42,7 @@ Tipologias.stats = function (id) {
         SELECT * where {
             clav:${id} clav:tipDesignacao ?Designacao ;
                 clav:tipSigla ?Sigla ;
-                clav:entEstado ?Estado ;
+                clav:tipEstado ?Estado ;
         }`
     )
         .execute()
@@ -143,9 +143,11 @@ Tipologias.createTipologia = function (id, name, initials) {
                     clav:TipologiaEntidade ;
                 clav:tipDesignacao '${name}' ;
                 clav:tipSigla '${initials}' ;
-                clav:tipEstado "Harmonização" ;
+                clav:tipEstado "Harmonização" .
         }
     `;
+
+    console.log(createQuery);
 
     return client.query(createQuery).execute()
         .then(response => Promise.resolve(response))
@@ -155,6 +157,7 @@ Tipologias.createTipologia = function (id, name, initials) {
 Tipologias.updateTipologia = function (dataObj) {
 
     function prepDelete(dataObj) {
+
         let ret = "";
 
         if (dataObj.domain.del && dataObj.domain.del.length) {
