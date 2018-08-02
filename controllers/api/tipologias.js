@@ -1,15 +1,14 @@
 const client = require('../../config/database').onthology;
 
-var Entidades = module.exports
+var Tipologias = module.exports
 
-Entidades.list = function () {
+Tipologias.list = function () {
     return client.query(
         `SELECT * {
-            ?id rdf:type clav:Entidade ;
-                clav:entEstado "Ativa";
-                clav:entDesignacao ?Designacao ;
-                clav:entSigla ?Sigla ;
-                clav:entInternacional ?Internacional.
+            ?id rdf:type clav:TipologiaEntidade ;
+                clav:tipEstado "Ativa";
+                clav:tipDesignacao ?Designacao ;
+                clav:tipSigla ?Sigla .
         }`
     )
         .execute()
@@ -19,43 +18,42 @@ Entidades.list = function () {
         });
 }
 
-Entidades.inTipols = function (id) {
+Tipologias.elems = function (id) {
     var fetchQuery = `
         SELECT * WHERE {
-            clav:${id} clav:pertenceTipologiaEnt ?id .
+            ?id clav:pertenceTipologiaEnt clav:${id} .
             
-            ?id clav:tipEstado "Ativa";
-                clav:tipSigla ?Sigla;
-                clav:tipDesignacao ?Designacao.
+            ?id clav:entEstado "Ativa";
+                clav:entSigla ?Sigla;
+                clav:entDesignacao ?Designacao.
         }
     `;
 
     return client.query(fetchQuery).execute()
         .then(response => Promise.resolve(response.results.bindings))
         .catch(function (error) {
-            console.error("Tipologias a que x pertence: " + error);
+            console.error("Entidades que pertencem a x: " + error);
         });
 }
 
 
-Entidades.stats = function (id) {
+Tipologias.stats = function (id) {
     return client.query(`
         SELECT * where {
-            clav:${id} clav:entDesignacao ?Designacao ;
-                clav:entSigla ?Sigla ;
-                clav:entEstado ?Estado ;
-                clav:entInternacional ?Internacional .
+            clav:${id} clav:tipDesignacao ?Designacao ;
+                clav:tipSigla ?Sigla ;
+                clav:tipEstado ?Estado ;
         }`
     )
         .execute()
         //getting the content we want
         .then(response => Promise.resolve(response.results.bindings))
         .catch(function (error) {
-            console.error("Dados de uma org: " + error);
+            console.error("Dados de uma tipologia: " + error);
         });
 }
 
-Entidades.domain = function (id) {
+Tipologias.domain = function (id) {
     var fetchQuery = `
         SELECT * WHERE {
             ?id clav:temDono clav:${id} ;
@@ -70,11 +68,11 @@ Entidades.domain = function (id) {
         .execute()
         .then(response => Promise.resolve(response.results.bindings))
         .catch(function (error) {
-            console.error("Dominio de org: " + error);
+            console.error("Dominio de uma tipologia: " + error);
         });
 }
 
-Entidades.participations = function (id) {
+Tipologias.participations = function (id) {
     var fetchQuery = `
         select * where { 
             ?id clav:temParticipante clav:${id} ;
@@ -93,11 +91,11 @@ Entidades.participations = function (id) {
         .execute()
         .then(response => Promise.resolve(response.results.bindings))
         .catch(function (error) {
-            console.error("Participações de org: " + error);
+            console.error("Participações de uma tipologia: " + error);
         });
 }
 
-Entidades.checkAvailability = function (name, initials) {
+Tipologias.checkAvailability = function (name, initials) {
     var checkQuery = `
         SELECT (count(*) as ?Count) where { 
             {
@@ -119,7 +117,7 @@ Entidades.checkAvailability = function (name, initials) {
         });
 }
 
-Entidades.checkNameAvailability = function (name) {
+Tipologias.checkNameAvailability = function (name) {
     var checkQuery = ` 
         SELECT (count(*) as ?Count) where { 
             {
@@ -138,26 +136,28 @@ Entidades.checkNameAvailability = function (name) {
         });
 }
 
-Entidades.createEntidade = function (id, name, initials, international) {
+Tipologias.createTipologia = function (id, name, initials) {
     var createQuery = `
         INSERT DATA {
             clav:${id} rdf:type owl:NamedIndividual ,
-                    clav:Entidade ;
-                clav:entDesignacao '${name}' ;
-                clav:entSigla '${initials}' ;
-                clav:entEstado "Harmonização" ;
-                clav:entInternacional '${international}' .
+                    clav:TipologiaEntidade ;
+                clav:tipDesignacao '${name}' ;
+                clav:tipSigla '${initials}' ;
+                clav:tipEstado "Harmonização" .
         }
     `;
+
+    console.log(createQuery);
 
     return client.query(createQuery).execute()
         .then(response => Promise.resolve(response))
         .catch(error => console.error("Error in create:\n" + error));
 }
 
-Entidades.updateEntidade = function (dataObj) {
+Tipologias.updateTipologia = function (dataObj) {
 
     function prepDelete(dataObj) {
+
         let ret = "";
 
         if (dataObj.domain.del && dataObj.domain.del.length) {
@@ -174,9 +174,9 @@ Entidades.updateEntidade = function (dataObj) {
             }
         }
 
-        if (dataObj.tipols.del && dataObj.tipols.del.length) {
-            for (let tipol of dataObj.tipols.del) {
-                ret += `\tclav:${dataObj.id} clav:pertenceTipologiaEnt clav:${tipol.id} .\n`;
+        if (dataObj.elems.del && dataObj.elems.del.length) {
+            for (let elem of dataObj.elems.del) {
+                ret += `\tclav:${elem.id} clav:pertenceTipologiaEnt clav:${dataObj.id} .\n`;
             }
         }
 
@@ -210,9 +210,9 @@ Entidades.updateEntidade = function (dataObj) {
             }
         }
 
-        if (dataObj.tipols.add && dataObj.tipols.add.length) {
-            for (let tipol of dataObj.tipols.add) {
-                ret += `\tclav:${dataObj.id} clav:pertenceTipologiaEnt clav:${tipol.id} .\n`;
+        if (dataObj.elems.add && dataObj.elems.add.length) {
+            for (let elem of dataObj.elems.add) {
+                ret += `\tclav:${elem.id} clav:pertenceTipologiaEnt clav:${dataObj.id} .\n`;
             }
         }
 
@@ -221,12 +221,6 @@ Entidades.updateEntidade = function (dataObj) {
 
     function prepWhere(dataObj) {
         let ret = "";
-
-        if(dataObj.international) {
-            ret += `
-                clav:${dataObj.id} clav:entInternacional ?inter .
-            `;
-        }
 
         if (dataObj.name) {
             ret += `\tclav:${dataObj.id} clav:entDesignacao ?n .\n`;
@@ -246,7 +240,7 @@ Entidades.updateEntidade = function (dataObj) {
         .catch(error => console.error("Error in update:\n" + error));
 }
 
-Entidades.deleteEntidade = function (id) {
+Tipologias.deleteTipologia = function (id) {
     /*var deleteQuery = `
         DELETE {
             clav:${id} ?o ?p .
@@ -257,13 +251,13 @@ Entidades.deleteEntidade = function (id) {
 
     var deleteQuery = `
         DELETE {
-            clav:${id} clav:entEstado ?status .
+            clav:${id} clav:tipEstado ?status .
         }
         INSERT {
-            clav:${id} clav:entEstado 'Inativa' .
+            clav:${id} clav:tipEstado 'Inativa' .
         }
         WHERE {
-            clav:${id} clav:entEstado ?status .
+            clav:${id} clav:tipEstado ?status .
         }
     `;
 

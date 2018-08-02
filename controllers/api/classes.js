@@ -230,8 +230,13 @@ Classes.owners = function (id) {
     var fetchQuery = `
                 SELECT * WHERE { 
                     clav:${id} clav:temDono ?id.
-                    ?id clav:orgNome ?Nome;
-                        clav:orgSigla ?Sigla;
+                    {
+                        ?id clav:entDesignacao ?Designacao;
+                            clav:entSigla ?Sigla.
+                    } UNION {
+                        ?id clav:tipDesignacao ?Designacao;
+                            clav:tipSigla ?Sigla .
+                    }
                 }`;
 
 
@@ -330,8 +335,13 @@ Classes.participants = function (id) {
                 clav:${id} clav:temParticipante ?id ;
                     ?Type ?id .
                 
-                ?id clav:orgNome ?Nome ;
-                    clav:orgSigla ?Sigla .
+                {
+                    ?id clav:entDesignacao ?Designacao;
+                        clav:entSigla ?Sigla .
+                } UNION {
+                    ?id clav:tipDesignacao ?Designacao;
+                        clav:tipSigla ?Sigla .
+                }
                 
                 filter (?Type!=clav:temParticipante && ?Type!=clav:temDono)
             }

@@ -36,7 +36,7 @@ var legs = new Vue({
                         function(e){
                             let data = e.split("::");
                             
-                            let link = `/organizacoes/consultar/${data[0].replace(/[^#]+#(.*)/, '$1')}`;
+                            let link = `/entidades/consultar/${data[0].replace(/[^#]+#(.*)/, '$1')}`;
                             
                             return `<a href="${link}">${data[1]}</a>`;
                         }

@@ -22,7 +22,7 @@ var classesSide = new Vue({
                 link = "/api/tabelasSelecao/"+this.activeClass.replace(/(ts_[0-9]+).+/,"$1")+"/classes";
             }
             else {
-                link = "/api/classes/filtrar";
+                link = "/api/classes";
             }
 
             this.$http.get(link)

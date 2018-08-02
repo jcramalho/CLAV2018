@@ -71,6 +71,7 @@ app.use('/',require('./routes/index'));
 app.use('/users',require('./routes/users'));
 app.use('/organizacoes',require('./routes/orgs'));
 app.use('/entidades',require('./routes/entidades'));
+app.use('/tipologias',require('./routes/tipologias'));
 app.use('/legislacao',require('./routes/leg'));
 app.use('/classes',require('./routes/classes'));
 app.use('/tabelasSelecao',require('./routes/tabsSel'));
@@ -79,6 +80,7 @@ app.use('/gestao',require('./routes/admin'));
 
 app.use('/api/organizacoes',require('./routes/api/orgs'));
 app.use('/api/entidades',require('./routes/api/entidades'));
+app.use('/api/tipologias',require('./routes/api/tipologias'));
 app.use('/api/legislacao',require('./routes/api/leg'));
 app.use('/api/classes',require('./routes/api/classes'));
 app.use('/api/tabelasSelecao',require('./routes/api/tabsSel'));

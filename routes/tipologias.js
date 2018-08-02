@@ -4,19 +4,19 @@ var router = express.Router();
 var Auth = require('../controllers/auth.js');
 
 router.get('/', function(req, res, next) {
-	res.render('entidades/listagem', {title: "Entidades"});
+	res.render('tipologias/listagem', {title: "Tipologias"});
 });
 
 router.get('/adicionar', Auth.isLoggedIn, function(req, res) {
-    res.render('entidades/adicao', {title: "Nova entidade"});
+    res.render('tipologias/adicao', {title: "Nova tipologia"});
 });
 
 router.get('/consultar/:id', function(req, res) {
-    res.render('entidades/consulta',{orgID: req.params.id, title: "Dados de entidade"});
+    res.render('tipologias/consulta',{orgID: req.params.id, title: "Dados de tipologia"});
 });
 
 router.get('/editar/:id', Auth.isLoggedIn, function(req, res) {
-    res.render('entidades/edicao',{orgID: req.params.id, title: "Editar entidade"});
+    res.render('tipologias/edicao',{orgID: req.params.id, title: "Editar tipologia"});
 });
 
 module.exports = router;

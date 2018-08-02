@@ -38,8 +38,18 @@ var users = new Vue({
             },
             {
                 valor: 'Entidades',
-                consultar: '/organizacoes',
-                submeter: '/organizacoes/adicionar',
+                consultar: '/entidades',
+                submeter: '/entidades/adicionar',
+                style: `
+                    border-width:1px;
+                    border-color: #5c6bc0;
+                    border-left-style:  outset
+                `
+            },
+            {
+                valor: 'Tipologias',
+                consultar: '/tipologias',
+                submeter: '/tipologias/adicionar',
                 style: `
                     border-width:1px;
                     border-color: #5c6bc0;
