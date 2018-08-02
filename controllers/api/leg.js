@@ -15,7 +15,7 @@ Leg.list = function () {
                 clav:diplomaTitulo ?Titulo.
             optional{
                 ?id clav:diplomaEntidade ?Ent.
-                ?Ent clav:orgSigla ?EntSigla;
+                ?Ent clav:entSigla ?EntSigla;
             }
         }
         Group by ?id ?Data ?Número ?Tipo ?Titulo`
@@ -32,7 +32,7 @@ Leg.stats = function (id) {
     var fetchQuery = `
         SELECT  
             ?Data ?Número ?Tipo ?Titulo ?Link
-            (GROUP_CONCAT(CONCAT(STR(?Ent),"::",?EntSigla,"::",?EntNome); SEPARATOR=";") AS ?Entidades)
+            (GROUP_CONCAT(CONCAT(STR(?Ent),"::",?EntSigla,"::",?EntDesignacao); SEPARATOR=";") AS ?Entidades)
         WHERE { 
             clav:${id} clav:diplomaData ?Data;
                 clav:diplomaNumero ?Número;
@@ -42,8 +42,8 @@ Leg.stats = function (id) {
 
             OPTIONAL{
                 clav:${id} clav:diplomaEntidade ?Ent.
-                ?Ent clav:orgSigla ?EntSigla;
-                     clav:orgNome ?EntNome.
+                ?Ent clav:entSigla ?EntSigla;
+                     clav:entDesignacao ?EntDesignacao.
             }
         } GROUP BY ?Data ?Número ?Tipo ?Titulo ?Link
     `;
