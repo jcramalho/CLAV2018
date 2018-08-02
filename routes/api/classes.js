@@ -9,7 +9,7 @@ var router = express.Router();
 
 
 router.get('/', function (req, res) {
-    Classes.list(1)
+    Classes.filterNone()
         .then(list => res.send(list))
         .catch(function (error) {
             console.error(error);
@@ -24,14 +24,6 @@ router.get('/nivel=:n', function (req, res) {
         });
 })
 
-router.get('/filtrar', function (req, res) {
-    Classes.filterNone()
-        .then(list => res.send(list))
-        .catch(function (error) {
-            console.error(error);
-        });
-})
-
 router.get('/filtrar/comuns', function (req, res) {
     Classes.filterCommon()
         .then(list => res.send(list))
@@ -40,9 +32,9 @@ router.get('/filtrar/comuns', function (req, res) {
         });
 })
 
-router.get('/filtrar/restantes/(:orgs)?', function (req, res) {
-    if(req.params.orgs){
-        var orgs = req.params.orgs.split(',');
+router.get('/filtrar/restantes/(:tipols)?', function (req, res) {
+    if(req.params.tipols){
+        var orgs = req.params.tipols.split(',');
     }
 
     Classes.filterRest(orgs)
@@ -185,7 +177,7 @@ router.put('/:id', Auth.isLoggedInAPI, function (req, res) {
             Logging.logger.info('Update a classe \'' + req.params.id + '\' por utilizador \'' + req.user._id + '\'');
 
             req.flash('success_msg', 'Info. de Classe actualizada');
-            res.send("Actualizado!");
+            res.send("Ok");
         })
         .catch(error => console.error(error));
 })

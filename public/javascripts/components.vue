@@ -243,7 +243,7 @@ Vue.component('custom-table-select', {
                     </tr>
                 </thead>
                 <tbody name="table">
-                    <tr v-for="(row,index) in rowsShow" :key="row[0]">
+                    <tr v-if="completeRows.length>0" v-for="(row,index) in rowsShow" :key="row[0]">
                         <td>
                             <input
                                 type="checkbox"
@@ -262,6 +262,9 @@ Vue.component('custom-table-select', {
                                 :title="item"
                             ></div>
                         </td>
+                    </tr>
+                    <tr v-else>
+                        <td colspan=3>Lista vazia.</td>
                     </tr>
                 </tbody>
             </table>

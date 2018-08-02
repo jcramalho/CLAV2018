@@ -519,69 +519,77 @@ var classe = new Vue({
                 });
         },
         loadOrgs: function () {
-            var orgsToParse = [];
-            var keys = ["id", "Sigla", "Nome", "Tipo"];
+            var entsToParse = [];
+            var tipsToParse = [];
+            var keys = ["id", "Sigla", "Designacao"];
             var i = 0;
 
-            this.$http.get("/api/organizacoes")
+            this.$http.get("/api/entidades")
                 .then(function (response) {
-                    orgsToParse = response.body;
+                    entsToParse = response.body;
                 })
                 .then(function () {
-                    conj = new RegExp("#Conjunto", "g");
-                    tipol = new RegExp("#Tipologia", "g");
-
-                    this.orgList = this.parse(orgsToParse, keys)
-                        .map(function (item) {
-                            if (conj.test(item.Tipo)) {
-                                item.Tipo = "Conjunto";
-                            }
-                            else if (tipol.test(item.Tipo)) {
-                                item.Tipo = "Tipologia";
-                            }
-                            else {
-                                item.Tipo = "Organização";
-                            }
-                            return item;
-                        })
+                    
+                    this.orgList = this.parse(entsToParse, keys)
                         .map(function (item) {
                             return {
-                                data: [i++, item.Sigla, item.Nome, item.Tipo],
+                                data: [i++, item.Sigla, item.Designacao, "Entidade"],
                                 selected: false,
                                 id: item.id
                             }
-                        }).sort(function (a, b) {
-                            return a.data[1].localeCompare(b.data[1]);
                         });
 
-                    for (let type in this.participantLists) {
-                        if (type != "Executor") {
-                            this.participantLists[type] = JSON.parse(
-                                JSON.stringify(this.orgList)
+                    this.$http.get("/api/tipologias")
+                        .then(function (response) {
+                            tipsToParse = response.body;
+                        })
+                        .then(function () {
+                            this.orgList = this.orgList.concat(
+                                this.parse(tipsToParse, keys)
+                                    .map(function (item) {
+                                        return {
+                                            data: [i++, item.Sigla, item.Designacao, "Tipologia"],
+                                            selected: false,
+                                            id: item.id
+                                        }
+                                    })
+                            ).sort(function (a, b) {
+                                return a.data[1].localeCompare(b.data[1]);
+                            });
+
+                            for (let type in this.participantLists) {
+                                if (type != "Executor") {
+                                    this.participantLists[type] = JSON.parse(
+                                        JSON.stringify(this.orgList)
+                                    );
+                                }
+                            }
+
+                            this.orgsReady = true;
+
+                            let ownersSelected = this.clas.Owners.map(a => a.id);
+
+                            this.orgList = this.orgList.map(function (item) {
+                                item.selected = (ownersSelected.indexOf(item.id) != -1);
+                                return item;
+                            });
+
+                            this.participantLists.Executor = JSON.parse(
+                                JSON.stringify(this.orgList.filter(a => a.selected))
                             );
-                        }
-                    }
-                    this.orgsReady = true;
 
-                    let ownersSelected = this.clas.Owners.map(a => a.id);
+                            for (let type in this.participantLists) {
+                                let partsSelected = this.clas.Participants[type].map(a => a.id);
 
-                    this.orgList = this.orgList.map(function (item) {
-                        item.selected = (ownersSelected.indexOf(item.id) != -1);
-                        return item;
-                    });
-
-                    this.participantLists.Executor = JSON.parse(
-                        JSON.stringify(this.orgList.filter(a => a.selected))
-                    );
-
-                    for (let type in this.participantLists) {
-                        let partsSelected = this.clas.Participants[type].map(a => a.id);
-
-                        this.participantLists[type].map(function (item) {
-                            item.selected = (partsSelected.indexOf(item.id) != -1);
-                            return item;
+                                this.participantLists[type].map(function (item) {
+                                    item.selected = (partsSelected.indexOf(item.id) != -1);
+                                    return item;
+                                });
+                            }
+                        })
+                        .catch(function (error) {
+                            console.error(error);
                         });
-                    }
                 })
                 .catch(function (error) {
                     console.error(error);
@@ -589,7 +597,7 @@ var classe = new Vue({
         },
         loadOwners: function () {
             var orgsToParse = [];
-            var keys = ["id", "Sigla", "Nome"];
+            var keys = ["id", "Sigla", "Designacao"];
 
             this.$http.get("/api/classes/" + this.id + "/donos")
                 .then(function (response) {
@@ -726,7 +734,7 @@ var classe = new Vue({
             this.ready = false;
             let content = [];
 
-            this.$http.get("/api/classes/filtrar")
+            this.$http.get("/api/classes")
                 .then(function (response) {
                     content = response.body;
                 })
@@ -914,7 +922,7 @@ var classe = new Vue({
         },
         loadParticipants: function () {
             var participantsToParse = [];
-            var keys = ['id', 'Nome', 'Sigla'];
+            var keys = ['id', 'Designacao', 'Sigla'];
 
             this.$http.get("/api/classes/" + this.id + "/participantes")
                 .then(function (response) {
@@ -1531,7 +1539,7 @@ var classe = new Vue({
                         let orgIndex = findIndex(this.participantLists.Executor, row.id);
 
                         if (orgIndex != -1) {
-                            this.participantLists.Executor.splice(index, 1);
+                            this.participantLists.Executor.splice(orgIndex, 1);
                         }
 
                         let selectedIndex = findIndex(this.newClass.Participants.Executor, row.id);

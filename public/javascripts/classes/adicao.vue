@@ -129,7 +129,7 @@ var newClass = new Vue({
 
         title: null,
 
-        orgsTableHeader: ["#", "Sigla", "Nome", "Tipo"],
+        orgsTableHeader: ["#", "Sigla", "Designacao", "Tipo"],
         orgsTableWidth: ["4%", "15%", "70%", "15%"],
         ownerList: [],
         selectedOwners: [],
@@ -450,24 +450,24 @@ var newClass = new Vue({
                             this.codeMessage = "Codigo já existe!";
                         }
                     })
-            },500
+            }, 500
         ),
-        relChanged: function(index, rel){
-            if(rel.relType == "eSuplementoPara"){
-                if(this.autoCritIndexes.utilidadeAdmin==-1){
+        relChanged: function (index, rel) {
+            if (rel.relType == "eSuplementoPara") {
+                if (this.autoCritIndexes.utilidadeAdmin == -1) {
                     let critIndex = -1;
 
                     //verificar se já existe um critério de utilidade administrativa
-                    for(let [i,crit] of this.pca.criteria.list.entries()){
-                        if(crit.type.value=="CriterioJustificacaoUtilidadeAdministrativa"){
-                            critIndex=i;
+                    for (let [i, crit] of this.pca.criteria.list.entries()) {
+                        if (crit.type.value == "CriterioJustificacaoUtilidadeAdministrativa") {
+                            critIndex = i;
 
                             break;
                         }
                     }
 
                     //se não existir criar
-                    if(critIndex==-1){
+                    if (critIndex == -1) {
                         critIndex = this.pca.criteria.list.length;
 
                         this.addNewJustCrit(this.pca.criteria.list);
@@ -478,33 +478,33 @@ var newClass = new Vue({
                             rel: 2
                         };
                     }
-                    this.autoCritIndexes.utilidadeAdmin=critIndex;
+                    this.autoCritIndexes.utilidadeAdmin = critIndex;
                 }
             }
-            else if(rel.relType == "eSinteseDe" || rel.relType == "eSintetizadoPor"){
-                if((rel.relType == "eSinteseDe" && this.checkIfExistsRelation("eSintetizadoPor")) || (rel.relType == "eSintetizadoPor" && this.checkIfExistsRelation("eSinteseDe"))) {
+            else if (rel.relType == "eSinteseDe" || rel.relType == "eSintetizadoPor") {
+                if ((rel.relType == "eSinteseDe" && this.checkIfExistsRelation("eSintetizadoPor")) || (rel.relType == "eSintetizadoPor" && this.checkIfExistsRelation("eSinteseDe"))) {
                     this.showMsg("Não podem existir ao mesmo tempo as relações 'Síntese De' e 'Sintetizado Por'!");
                 }
-                else if (rel.relType == "eSintetizadoPor" && this.checkIfExistsRelation("eComplementarDe")){
+                else if (rel.relType == "eSintetizadoPor" && this.checkIfExistsRelation("eComplementarDe")) {
                     this.showMsg("Não podem existir ao mesmo tempo as relações 'Sintetizado Por' e 'Complementar De'!");
                 }
                 else {
                     this.df.end = (rel.relType == "eSinteseDe") ? "C" : "E";
-                    
-                    if(this.autoCritIndexes.densidadeInfo==-1){
+
+                    if (this.autoCritIndexes.densidadeInfo == -1) {
                         let critIndex = -1;
 
                         //verificar se já existe um critério de utilidade administrativa
-                        for(let [i,crit] of this.df.criteria.list.entries()){
-                            if(crit.type.value=="CriterioJustificacaoDensidadeInfo"){
-                                critIndex=i;
-    
+                        for (let [i, crit] of this.df.criteria.list.entries()) {
+                            if (crit.type.value == "CriterioJustificacaoDensidadeInfo") {
+                                critIndex = i;
+
                                 break;
                             }
                         }
-    
+
                         //se não existir criar
-                        if(critIndex==-1){
+                        if (critIndex == -1) {
                             critIndex = this.df.criteria.list.length;
 
                             this.addNewJustCrit(this.df.criteria.list);
@@ -515,31 +515,31 @@ var newClass = new Vue({
                                 rel: 2
                             };
                         }
-                        this.autoCritIndexes.densidadeInfo=critIndex;
+                        this.autoCritIndexes.densidadeInfo = critIndex;
                     }
                 }
             }
-            else if(rel.relType == "eComplementarDe"){
-                if(this.checkIfExistsRelation("eSintetizadoPor")){
+            else if (rel.relType == "eComplementarDe") {
+                if (this.checkIfExistsRelation("eSintetizadoPor")) {
                     this.showMsg("Não podem existir ao mesmo tempo as relações 'Sintetizado Por' e 'Complementar De'!");
                 }
-                else{
+                else {
                     this.df.end = "C";
 
-                    if(this.autoCritIndexes.complementaridadeInfo==-1){
+                    if (this.autoCritIndexes.complementaridadeInfo == -1) {
                         let critIndex = -1;
 
                         //verificar se já existe um critério de utilidade administrativa
-                        for(let [i,crit] of this.df.criteria.list.entries()){
-                            if(crit.type.value=="CriterioJustificacaoComplementaridadeInfo"){
-                                critIndex=i;
+                        for (let [i, crit] of this.df.criteria.list.entries()) {
+                            if (crit.type.value == "CriterioJustificacaoComplementaridadeInfo") {
+                                critIndex = i;
 
                                 break;
                             }
                         }
 
                         //se não existir criar
-                        if(critIndex==-1){
+                        if (critIndex == -1) {
                             critIndex = this.df.criteria.list.length;
 
                             this.addNewJustCrit(this.df.criteria.list);
@@ -550,20 +550,20 @@ var newClass = new Vue({
                                 rel: 2
                             };
                         }
-                        this.autoCritIndexes.complementaridadeInfo=critIndex;
+                        this.autoCritIndexes.complementaridadeInfo = critIndex;
                     }
                 }
             }
         },
-        checkIfExistsRelation: function(rela, from) {
-            if(from){
+        checkIfExistsRelation: function (rela, from) {
+            if (from) {
                 for (let rel of this.relationsSelected.slice(from)) {
                     if (rel.relType == rela) {
                         return true;
                     }
                 }
             }
-            else{
+            else {
                 for (let rel of this.relationsSelected) {
                     if (rel.relType == rela) {
                         return true;
@@ -673,13 +673,13 @@ var newClass = new Vue({
             }
         },
         critTypeSelected(crit, obj, payload) {
-            crit.RelsReady=false;
+            crit.RelsReady = false;
 
-            if(payload && payload.rel>=2){
+            if (payload && payload.rel >= 2) {
                 crit.pnsToSelect = JSON.parse(JSON.stringify(this[obj].criteria.pns[payload.value]));
             }
 
-            crit.RelsReady=true;
+            crit.RelsReady = true;
         },
         addNewJustCrit: function (obj) {
             obj.push({
@@ -696,7 +696,7 @@ var newClass = new Vue({
             this.ready = false;
             let content = [];
 
-            this.$http.get("/api/classes/filtrar")
+            this.$http.get("/api/classes")
                 .then(function (response) {
                     content = response.body;
                 })
@@ -846,50 +846,57 @@ var newClass = new Vue({
             }
         },
         loadOrgs: function () {
-            var orgsToParse = [];
-            var keys = ["id", "Sigla", "Nome", "Tipo"];
+            var entsToParse = [];
+            var tipsToParse = [];
+            var keys = ["id", "Sigla", "Designacao"];
             var i = 0;
 
-            this.$http.get("/api/organizacoes")
+            this.$http.get("/api/entidades")
                 .then(function (response) {
-                    orgsToParse = response.body;
+                    entsToParse = response.body;
                 })
                 .then(function () {
-                    conj = new RegExp("#Conjunto", "g");
-                    tipol = new RegExp("#Tipologia", "g");
-
-                    this.ownerList = this.parse(orgsToParse, keys)
-                        .map(function (item) {
-                            if (conj.test(item.Tipo)) {
-                                item.Tipo = "Conjunto";
-                            }
-                            else if (tipol.test(item.Tipo)) {
-                                item.Tipo = "Tipologia";
-                            }
-                            else {
-                                item.Tipo = "Organização";
-                            }
-                            return item;
-                        })
+                    
+                    this.ownerList = this.parse(entsToParse, keys)
                         .map(function (item) {
                             return {
-                                data: [i++, item.Sigla, item.Nome, item.Tipo],
+                                data: [i++, item.Sigla, item.Designacao, "Entidade"],
                                 selected: false,
                                 id: item.id
                             }
-                        }).sort(function (a, b) {
-                            return a.data[1].localeCompare(b.data[1]);
                         });
 
-                    for (let type in this.participantLists) {
-                        if (type != "Executor") {
-                            this.participantLists[type] = JSON.parse(
-                                JSON.stringify(this.ownerList)
-                            );
-                        }
-                    }
+                    this.$http.get("/api/tipologias")
+                        .then(function (response) {
+                            tipsToParse = response.body;
+                        })
+                        .then(function () {
+                            this.ownerList = this.ownerList.concat(
+                                this.parse(tipsToParse, keys)
+                                    .map(function (item) {
+                                        return {
+                                            data: [i++, item.Sigla, item.Designacao, "Tipologia"],
+                                            selected: false,
+                                            id: item.id
+                                        }
+                                    })
+                            ).sort(function (a, b) {
+                                return a.data[1].localeCompare(b.data[1]);
+                            });
 
-                    this.orgsReady = true;
+                            for (let type in this.participantLists) {
+                                if (type != "Executor") {
+                                    this.participantLists[type] = JSON.parse(
+                                        JSON.stringify(this.ownerList)
+                                    );
+                                }
+                            }
+
+                            this.orgsReady = true;
+                        })
+                        .catch(function (error) {
+                            console.error(error);
+                        });
                 })
                 .catch(function (error) {
                     console.error(error);
@@ -1034,17 +1041,17 @@ var newClass = new Vue({
 
             //verificar relações
             if (this.relationsSelected.length) {
-                for ([i,pn] of this.relationsSelected.entries()) {
+                for ([i, pn] of this.relationsSelected.entries()) {
                     if (!pn.relType) {
                         messageL.showMsg("É necessário selecionar o tipo de relação com todos os processos relacionados selecionados!");
                         return false;
                     }
-                    else if (pn.relType=="eSintetizadoPor"){
-                        if(this.checkIfExistsRelation("eSinteseDe",i)){
+                    else if (pn.relType == "eSintetizadoPor") {
+                        if (this.checkIfExistsRelation("eSinteseDe", i)) {
                             messageL.showMsg("Não podem existir ao mesmo tempo as relações 'Síntese De' e 'Sintetizado Por'!");
                             return false;
                         }
-                        if(this.checkIfExistsRelation("eComplementarDe",i)){
+                        if (this.checkIfExistsRelation("eComplementarDe", i)) {
                             messageL.showMsg("Não podem existir ao mesmo tempo as relações 'Complementar De' e 'Sintetizado Por'!");
                             return false;
                         }
@@ -1120,7 +1127,7 @@ var newClass = new Vue({
                                         count: this.pca.count,
                                         subcount: this.pca.subcount,
                                         criteria: this.pca.criteria.list.map(
-                                            function(crit){
+                                            function (crit) {
                                                 return {
                                                     type: crit.type,
                                                     leg: crit.leg,
@@ -1133,7 +1140,7 @@ var newClass = new Vue({
                                     DF: {
                                         end: this.df.end,
                                         criteria: this.df.criteria.list.map(
-                                            function(crit){
+                                            function (crit) {
                                                 return {
                                                     type: crit.type,
                                                     leg: crit.leg,
@@ -1171,7 +1178,7 @@ var newClass = new Vue({
                                     count: this.pca.count,
                                     subcount: this.pca.subcount,
                                     criteria: this.pca.criteria.list.map(
-                                        function(crit){
+                                        function (crit) {
                                             return {
                                                 type: crit.type,
                                                 leg: crit.leg,
@@ -1184,7 +1191,7 @@ var newClass = new Vue({
                                 DF: {
                                     end: this.df.end,
                                     criteria: this.df.criteria.list.map(
-                                        function(crit){
+                                        function (crit) {
                                             return {
                                                 type: crit.type,
                                                 leg: crit.leg,

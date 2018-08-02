@@ -7,7 +7,6 @@ var org = new Vue({
         entName: "",
 
         entInitials: "",
-        entInternational: "",
         content: [],
 
         domain: [],
@@ -27,7 +26,7 @@ var org = new Vue({
         },
         domainCollapsed: true,
 
-        myTipolList: [],
+        myElems: [],
 
         participationsDic: {
             Apreciador: "Apreciar",
@@ -44,13 +43,12 @@ var org = new Vue({
             var classesToParse = [];
             var keys = ["id", "Code", "Title"];
 
-            this.$http.get("/api/entidades/" + this.id+"/dominio")
+            this.$http.get("/api/tipologias/" + this.id+"/dominio")
                 .then(function (response) {
                     classesToParse = response.body;
                 })
                 .then(function () {
                     this.domain = JSON.parse(JSON.stringify(this.parseList(classesToParse, keys)));
-                    this.newDomain = JSON.parse(JSON.stringify(this.parseList(classesToParse, keys)));
 
                     this.domainReady = true;
                 })
@@ -62,13 +60,12 @@ var org = new Vue({
             var partsToParse = [];
             var keys = ['id', 'Title', 'Code'];
 
-            this.$http.get("/api/entidades/" + this.id + "/participacoes")
+            this.$http.get("/api/tipologias/" + this.id + "/participacoes")
                 .then(function (response) {
                     partsToParse = response.body;
                 })
                 .then(function () {
                     this.participations = this.parseParticipants(partsToParse, keys);
-                    this.newParticipations = JSON.parse(JSON.stringify(this.participations));
 
                     this.partsReady = true;
                 })
@@ -76,16 +73,18 @@ var org = new Vue({
                     console.error(error);
                 });
         },
-        loadTipols: function () {
+        loadElems: function () {
             var dataToParse = [];
             var keys = ["id", "Designacao", "Sigla"];
 
-            this.$http.get("/api/entidades/" + this.id + "/tipologias")
+            this.$http.get("/api/tipologias/" + this.id + "/elementos")
                 .then(function (response) {
                     dataToParse = response.body;
                 })
                 .then(function () {
-                    this.myTipolList = this.parseList(dataToParse, keys);
+                    this.myElems = this.parseList(dataToParse, keys);
+
+                    this.tipolsReady = true;
                 })
                 .catch(function (error) {
                     console.error(error);
@@ -95,7 +94,6 @@ var org = new Vue({
             this.entName = content[0].Designacao.value;
             this.newName = content[0].Designacao.value;
             this.entInitials = content[0].Sigla.value;
-            this.entInternational = content[0].Internacional.value;
         },
         parseList: function (content, keys) {
             var dest = [];
@@ -157,14 +155,14 @@ var org = new Vue({
     created: function () {
         this.id = window.location.pathname.split('/')[3];
         
-        this.$http.get("/api/entidades/" + this.id)
+        this.$http.get("/api/tipologias/" + this.id)
             .then(function (response) {
                 this.parse(response.body);
             })
             .then(function () {
                 this.loadDomain();
                 this.loadParticipations();
-                this.loadTipols();
+                this.loadElems();
             })
             .catch(function (error) {
                 console.error(error);

@@ -379,7 +379,7 @@ block corpo
                                     custom-table-select(
                                         v-if="orgsReady"
 
-                                        :header='["#", "Sigla", "Nome", "Tipo"]'
+                                        :header='["#", "Sigla", "Designação", "Tipo"]'
                                         :complete-rows="orgList"
                                         :ready="orgsReady"
                                         :cwidth='["4%", "15%", "70%", "15%"]'
@@ -395,8 +395,8 @@ block corpo
                                 td(v-else style="width:80%")
                                     ul(v-if="ownersReady" style="padding-left:20px")
                                         li(v-for="o in clas.Owners")
-                                            a(:href="'/organizacoes/consultar/'+o.id") {{ o.Sigla }}
-                                            |  - {{ o.Nome }}
+                                            a(:href="o.id.startsWith('tip') ? '/tipologias/consultar/'+o.id : '/entidades/consultar/'+o.id") {{ o.Sigla }}
+                                            |  - {{ o.Designacao }}
                                 if user
                                     td(style="width:10%").editar
                                         label.maozinha(
@@ -422,7 +422,7 @@ block corpo
                                                     custom-table-select(
                                                         v-if="orgsReady"
 
-                                                        :header='["#", "Sigla", "Nome", "Tipo"]'
+                                                        :header='["#", "Sigla", "Designação", "Tipo"]'
                                                         :complete-rows="participantLists[key]"
                                                         :ready="orgsReady"
                                                         :cwidth='["4%", "15%", "70%", "15%"]'
@@ -441,7 +441,7 @@ block corpo
                                                         b {{ participationsDic[key] }}
                                                         ul
                                                             li(v-for="(p, index) in newClass.Participants[key]")
-                                                                | {{ p.Sigla }} - {{ p.Nome }}
+                                                                | {{ p.Sigla }} - {{ p.Designacao }}
 
                                 td(v-else style="width:80%")
                                     ul(v-if="relProcsReady" style="padding-left:20px")
@@ -449,8 +449,8 @@ block corpo
                                             b {{participationsDic[key]}}:
                                             ul
                                                 li(v-for="p in clas.Participants[key]")
-                                                    a(:href="'/organizacoes/consultar/'+p.id") {{ p.Sigla }}
-                                                    |  - {{ p.Nome }}
+                                                    a(:href="p.id.startsWith('tip') ? '/tipologias/consultar/'+p.id : '/entidades/consultar/'+p.id") {{ p.Sigla }}
+                                                    |  - {{ p.Designacao }}
                                 if user
                                     td(style="width:10%").editar
                                         label.maozinha(

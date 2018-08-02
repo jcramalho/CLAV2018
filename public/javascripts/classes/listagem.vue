@@ -18,7 +18,7 @@ var classes = new Vue({
             this.ready=false;
             let content = [];
 
-            this.$http.get("/api/classes/filtrar")
+            this.$http.get("/api/classes")
                 .then(function (response) {
                     content = response.body;
                 })

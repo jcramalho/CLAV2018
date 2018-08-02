@@ -264,7 +264,7 @@ block corpo
                                             tabs
                                                 tab(:header="partDic[key]" v-for="(key,index) in Object.keys(participantLists)" :key="index")
                                                     custom-table-select(
-                                                        v-if="orgsReady"
+                                                        v-if="orgsReady && participantLists[key].length>0"
 
                                                         :header="orgsTableHeader"
                                                         :complete-rows="participantLists[key]"

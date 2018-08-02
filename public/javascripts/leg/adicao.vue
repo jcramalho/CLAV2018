@@ -79,34 +79,19 @@ var newLeg = new Vue({
             });
         },
         loadOrgs: function () {
-            var orgsToParse = [];
-            var keys = ["id", "Sigla", "Nome", "Tipo"];
+            var dataToParse = [];
+            var keys = ["id", "Sigla", "Desinacao"];
             var i = 0;
 
-            this.$http.get("/api/organizacoes")
+            this.$http.get("/api/entidades")
                 .then(function (response) {
-                    orgsToParse = response.body;
+                    dataToParse = response.body;
                 })
                 .then(function () {
-                    conj = new RegExp("#Conjunto", "g");
-                    tipol = new RegExp("#Tipologia", "g");
-
-                    this.orgs = this.parse(orgsToParse, keys)
-                        .map(function (item) {
-                            if (conj.test(item.Tipo)) {
-                                item.Tipo = "Conjunto";
-                            }
-                            else if (tipol.test(item.Tipo)) {
-                                item.Tipo = "Tipologia";
-                            }
-                            else {
-                                item.Tipo = "Organização";
-                            }
-                            return item;
-                        })
+                    this.orgs = this.parse(dataToParse, keys)
                         .map(function (item) {
                             return {
-                                data: [i++, item.Sigla, item.Nome, item.Tipo],
+                                data: [i++, item.Sigla, item.Designacao, "Entidade"],
                                 selected: false,
                                 id: item.id
                             }
