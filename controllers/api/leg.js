@@ -18,7 +18,8 @@ Leg.list = function () {
                 ?Ent clav:entSigla ?EntSigla;
             }
         }
-        Group by ?id ?Data ?Número ?Tipo ?Titulo`
+        Group by ?id ?Data ?Número ?Tipo ?Titulo
+        Order by desc (?Data)`
     )
         .execute()
         //getting the content we want

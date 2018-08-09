@@ -1,26 +1,9 @@
-var alt = new Vue({
-    el: '#alteracao',
+var classe = new Vue({
+    el: '#classe-form',
     data: {
-        // Variáveis gerais da pag
-        id: null,
-        entidade: {
-            nome: "Teste"
-        },
-        table:{
-            subReady: {},
-            header: [],
-            data: [],
-            ready: false,
-            cwidth: ['9%','88%'],
-            subTemp: [],
-            nEdits: 0,
-        },
-        classShow: false,
-
-
-        // Variáveis relativas ao modal de consulta/update das classes
         message: "",
         delConfirm: false,
+        id: "",
         orgList: [],
         participantLists: {
             Apreciador: [],
@@ -72,7 +55,6 @@ var alt = new Vue({
         subcountTypes: [],
 
         clas: {
-            ID: "",
             Title: "",
             Children: "",
             Code: "",
@@ -242,11 +224,7 @@ var alt = new Vue({
             utilidadeAdmin: -1,         // PCA - criterio de utilidade administrativa (rels: suplementoPara)
             densidadeInfo: -1,          // DF - criterio dansidade informaconal (rels: sinteseDe/sintetizadoPor)
             complementaridadeInfo: -1   // DF - criterio complementaridade informacional (rels: complementar de)
-        },
-
-
-
-        editedClasses: [],
+        }
     },
     components: {
         accordion: VueStrap.accordion,
@@ -263,152 +241,11 @@ var alt = new Vue({
         }
     },
     watch: {
-        classShow: function(){
-            if(!this.classShow){
-                for(const key in this.edit){
-                    if(key!="PCA" && key!="DF"){
-                        this.edit[key]=false;  
-                    }
-                }
-                for(const key in this.edit.PCA){
-                    this.edit.PCA[key]=false; 
-                }
-                for(const key in this.edit.DF){
-                    this.edit.DF[key]=false; 
-                }
-            }
-        },
         relationsSelectedClone: function(newVal, oldVal){
             this.relationsSelectedOld=JSON.parse(JSON.stringify(oldVal));
         }
     },
     methods: {
-        loadTS: function(){
-            var content = [];
-
-            this.$http.get("/api/tabelasSelecao/"+this.id+"/classes")
-            .then( function(response) {
-                content = response.body;
-            })
-            .then( function() {
-                this.table.data = this.parseTS(content);
-                this.table.ready=true;
-            })
-            .catch( function(error) { 
-                console.error(error); 
-            });
-        },
-        rowClicked: function(params){
-            this.$refs.spinner.show();
-
-            this.clas.ID = params.trueID;
-            this.clas.Level = params.trueID.split('.').length;
-
-            var content;
-
-            this.$http.get("/api/classes/" + this.clas.ID)
-                .then(function (response) {
-                    content = response.body;
-                })
-                .then(function () {
-                    console.log(content);
-                    this.prepData(content[0]);
-                })
-                .catch(function (error) {
-                    console.error(error);
-                });
-        },
-        parseTS: function (dataToParse) {
-            var destination = [];
-            const indexes = {};
-            let avo;
-            let pai;
-
-            let level= this.level;
-            let activeClass= this.activeClass;
-
-            for (let pn of dataToParse) {
-                let codeAvo = pn.AvoCodigo.value;
-                let indexesAvo = indexes[codeAvo];
-                let codePai = pn.PaiCodigo.value;
-
-                if (indexesAvo) {
-                    avo = indexesAvo.i;
-
-                    if (indexesAvo.sub[codePai] != undefined) {
-                        pai = indexesAvo.sub[codePai];
-                    }
-                    else {
-                        pai = Object.keys(indexesAvo.sub).length;
-
-                        indexes[codeAvo].sub[codePai] = pai;
-
-                        let infoPai = {
-                            codeID: pn.Pai.value.replace(/[^#]+#(.*)/, '$1'),
-                            content: [codePai, pn.PaiTitulo.value],
-                            drop: false,
-                            subReady: true,
-                            sublevel: []
-                        }
-                        destination[avo].sublevel.push(infoPai);
-                    }
-                }
-                else {
-                    avo = Object.keys(indexes).length;
-                    pai = 0;
-
-                    indexes[codeAvo] = { i: avo, sub: {} };
-                    indexes[codeAvo].sub[codePai] = pai;
-
-                    let infoAvo = {
-                        codeID: pn.Avo.value.replace(/[^#]+#(.*)/, '$1'),
-                        content: [codeAvo, pn.AvoTitulo.value],
-                        drop: false,
-                        subReady: true,
-                        sublevel: [{
-                            codeID: pn.Pai.value.replace(/[^#]+#(.*)/, '$1'),
-                            content: [codePai, pn.PaiTitulo.value],
-                            drop: false,
-                            subReady: true,
-                            sublevel: [],
-                        }]
-                    }
-                    destination.push(infoAvo);
-                }
-
-                let pninfo = {
-                    codeID: pn.PN.value.replace(/[^#]+#(.*)/, '$1'),
-                    content: [pn.PNCodigo.value, pn.PNTitulo.value],
-                    drop: false,
-                }
-
-                if (pn.Filhos.value.length) {
-                    pninfo.subReady = true;
-                    pninfo.sublevel = [];
-
-                    for (let filho of pn.Filhos.value.split('###')) {
-                        let filhoInfo = filho.split(':::');
-
-                        pninfo.sublevel.push({
-                            codeID: filhoInfo[0].replace(/[^#]+#(.*)/, '$1'),
-                            content: [filhoInfo[1], filhoInfo[2]],
-                            drop: false,
-                        });
-                    }
-                }
-                destination[avo].sublevel[pai].sublevel.push(pninfo);
-            }
-
-            return destination;
-        },
-        classUpdated: function(id){
-            this.editedClasses.push(id);
-
-            this.table.ready=false;
-            this.loadTS(); 
-        },
-
-        
         relChanged: function(index, rel){
             if(rel.relType == "eSuplementoPara"){
                 if(this.autoCritIndexes.utilidadeAdmin==-1){
@@ -441,10 +278,10 @@ var alt = new Vue({
             }
             else if(rel.relType == "eSinteseDe" || rel.relType == "eSintetizadoPor"){
                 if((rel.relType == "eSinteseDe" && this.checkIfExistsRelation("eSintetizadoPor")) || (rel.relType == "eSintetizadoPor" && this.checkIfExistsRelation("eSinteseDe"))) {
-                    messageL.showMsg("Não podem existir ao mesmo tempo as relações 'Síntese De' e 'Sintetizado Por'!");
+                    this.showMsg("Não podem existir ao mesmo tempo as relações 'Síntese De' e 'Sintetizado Por'!");
                 }
                 else if (rel.relType == "eSintetizadoPor" && this.checkIfExistsRelation("eComplementarDe")){
-                    messageL.showMsg("Não podem existir ao mesmo tempo as relações 'Sintetizado Por' e 'Complementar De'!");
+                    this.showMsg("Não podem existir ao mesmo tempo as relações 'Sintetizado Por' e 'Complementar De'!");
                 }
                 else {
                     this.edit.DF.dest=true;
@@ -458,17 +295,17 @@ var alt = new Vue({
                         for(let [i,crit] of this.newClass.DF.criteria.entries()){
                             if(crit.type.value=="CriterioJustificacaoDensidadeInfo"){
                                 critIndex=i;
-
+    
                                 crit.edit=true;
-
+    
                                 break;
                             }
                         }
-
+    
                         //se não existir criar
                         if(critIndex==-1){
                             critIndex = this.addNewCrit("DF");
-
+    
                             this.newClass.DF.criteria[critIndex].type = {
                                 value: "CriterioJustificacaoDensidadeInfo",
                                 label: "Densidade Informacional",
@@ -481,7 +318,7 @@ var alt = new Vue({
             }
             else if(rel.relType == "eComplementarDe"){
                 if(this.checkIfExistsRelation("eSintetizadoPor")){
-                    messageL.showMsg("Não podem existir ao mesmo tempo as relações 'Sintetizado Por' e 'Complementar De'!");
+                    this.showMsg("Não podem existir ao mesmo tempo as relações 'Sintetizado Por' e 'Complementar De'!");
                 }
                 else{
                     this.edit.DF.dest=true;
@@ -564,8 +401,6 @@ var alt = new Vue({
             this.loadChildren();
 
             this.pageReady = true;
-            this.classShow=true;
-            this.$refs.spinner.hide();
 
             if (dataObj.Desc) {
                 this.clas.Desc = dataObj.Desc.value;
@@ -653,7 +488,7 @@ var alt = new Vue({
             var indexesToParse = [];
             var keys = ["id", "Termo"];
 
-            this.$http.get("/api/termosIndice/filtrar/" + this.clas.ID)
+            this.$http.get("/api/termosIndice/filtrar/" + this.id)
                 .then(function (response) {
                     indexesToParse = response.body;
                 })
@@ -670,7 +505,7 @@ var alt = new Vue({
             var classesToParse = [];
             var keys = ["Child", "Code", "Title"];
 
-            this.$http.get("/api/classes/" + this.clas.ID + "/descendencia")
+            this.$http.get("/api/classes/" + this.id + "/descendencia")
                 .then(function (response) {
                     classesToParse = response.body;
                 })
@@ -764,7 +599,7 @@ var alt = new Vue({
             var orgsToParse = [];
             var keys = ["id", "Sigla", "Designacao"];
 
-            this.$http.get("/api/classes/" + this.clas.ID + "/donos")
+            this.$http.get("/api/classes/" + this.id + "/donos")
                 .then(function (response) {
                     orgsToParse = response.body;
                 })
@@ -819,7 +654,7 @@ var alt = new Vue({
             var legsToParse = [];
             var keys = ["id", "Tipo", "Número", "Titulo"];
 
-            this.$http.get("/api/classes/" + this.clas.ID + "/legislacao")
+            this.$http.get("/api/classes/" + this.id + "/legislacao")
                 .then(function (response) {
                     legsToParse = response.body;
                 })
@@ -838,7 +673,7 @@ var alt = new Vue({
             var notesToParse = [];
             var keys = ["id", "Nota"];
 
-            this.$http.get("/api/classes/" + this.clas.ID + "/notasAp")
+            this.$http.get("/api/classes/" + this.id + "/notasAp")
                 .then(function (response) {
                     notesToParse = response.body;
                 })
@@ -856,7 +691,7 @@ var alt = new Vue({
             var notesToParse = [];
             var keys = ["id", "Nota"];
 
-            this.$http.get("/api/classes/" + this.clas.ID + "/notasEx")
+            this.$http.get("/api/classes/" + this.id + "/notasEx")
                 .then(function (response) {
                     notesToParse = response.body;
                 })
@@ -881,7 +716,7 @@ var alt = new Vue({
             var notesToParse = [];
             var keys = ["Exemplo"];
 
-            this.$http.get("/api/classes/" + this.clas.ID + "/exemplosNotasAp")
+            this.$http.get("/api/classes/" + this.id + "/exemplosNotasAp")
                 .then(function (response) {
                     notesToParse = response.body;
                 })
@@ -1022,7 +857,7 @@ var alt = new Vue({
             var relProcsToParse = [];
             var keys = ["id", "Code", "Title"];
 
-            this.$http.get("/api/classes/" + this.clas.ID + "/relacionados")
+            this.$http.get("/api/classes/" + this.id + "/relacionados")
                 .then(function (response) {
                     relProcsToParse = response.body;
                 })
@@ -1089,7 +924,7 @@ var alt = new Vue({
             var participantsToParse = [];
             var keys = ['id', 'Designacao', 'Sigla'];
 
-            this.$http.get("/api/classes/" + this.clas.ID + "/participantes")
+            this.$http.get("/api/classes/" + this.id + "/participantes")
                 .then(function (response) {
                     participantsToParse = response.body;
                 })
@@ -1136,7 +971,7 @@ var alt = new Vue({
         loadPCA: function () {
             var infoToParse = [];
 
-            this.$http.get("/api/classes/" + this.clas.ID + "/pca")
+            this.$http.get("/api/classes/" + this.id + "/pca")
                 .then(function (response) {
                     infoToParse = response.body;
                 })
@@ -1291,7 +1126,7 @@ var alt = new Vue({
         loadDF: function () {
             var infoToParse = [];
 
-            this.$http.get("/api/classes/" + this.clas.ID + "/df")
+            this.$http.get("/api/classes/" + this.id + "/df")
                 .then(function (response) {
                     infoToParse = response.body;
                 })
@@ -1552,7 +1387,7 @@ var alt = new Vue({
                 if (i != n) break;
                 else i++;
             }
-            let newID = "crit_just_" + dest.toLowerCase() + "_" + this.clas.ID + "_" + i;
+            let newID = "crit_just_" + dest.toLowerCase() + "_" + this.id + "_" + i;
 
             this.newClass[dest].criteria.push({
                 legToSelect: [],
@@ -1623,7 +1458,7 @@ var alt = new Vue({
             } else {
                 newID = noteList.length + 1;
             }
-            return prefix + "_" + this.clas.ID + "_" + newID;
+            return prefix + "_" + this.id + "_" + newID;
         },
         readyToUpdate: function () {
             var keys = Object.keys(this.edit);
@@ -1754,6 +1589,10 @@ var alt = new Vue({
                 }
             }
         },
+        showMsg(text) {
+            this.modalMsg = text;
+            this.modalMsgShow = true;
+        },
         subtractArray: function (from, minus) {
             if (!from) {
                 return null;
@@ -1777,10 +1616,8 @@ var alt = new Vue({
 
             this.$refs.spinner.show();
 
-
-            // Objeto a enviar no http.PUT
             var dataObj = {
-                id: this.clas.ID,
+                id: this.id,
                 Title: null,
                 Status: null,
                 Desc: null,
@@ -1920,8 +1757,10 @@ var alt = new Vue({
                 }
             }
 
-            
-
+            /*if(!this.checkRelations()){
+                this.showMsg("Não podem existir ao mesmo tempo as relações 'Síntese De' e 'Sintetizado Por'!");
+                okToGo=false;
+            }*/
             var relationKeys = Object.keys(this.clas.RelProcs);
 
             if (this.edit.RelProcs) {
@@ -1952,10 +1791,8 @@ var alt = new Vue({
                         dataObj.PCA.subcount = this.newClass.PCA.subcount.id;
                     }
                     else {
-                        messageL.showMsg("Um PCA com forma de contagem 'Conforme disposição legal' necessita de uma sub-forma de contagem")
+                        this.showMsg("Um PCA com forma de contagem 'Conforme disposição legal' necessita de uma sub-forma de contagem")
                         okToGo = false;
-
-                        return false;
                     }
                 }
             }
@@ -2021,68 +1858,50 @@ var alt = new Vue({
 
             console.log(JSON.stringify(dataObj, null, "\t"));
             if (okToGo) {    
-                this.$http.put('/api/classes/'+this.clas.ID, dataObj,{
+                this.$http.put('/api/classes/'+this.id, dataObj,{
                     headers: {
                         'content-type' : 'application/json'
                     }
                 })
                 .then(function (response) {
-                    this.classUpdated(this.clas.ID);
                     this.$refs.spinner.hide();
-                    messageL.showMsg(response.body);
-                    this.classShow=false;
+                    
+                    this.showMsg(response.body);
+                    window.location.href = '/classes/consultar/'+this.id;
                 })
                 .catch(function (error) {
                     console.error(error);
                 });
             }
         },
-        
-
-        submeter: function(){
+        deleteClass: function () {
             this.$refs.spinner.show();
+            this.$http.delete('/api/classes/' + this.id)
+                .then(function (response) {
+                    this.$refs.spinner.hide();
+                    this.showMsg(response.body);
+                    window.location.href = '/classes';
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        }
+    },
+    created: function () {
+        this.id = window.location.pathname.split('/')[3];
+        this.clas.Level = this.id.split('.').length;
 
-            var dataObj = {
-                type: "Criação de TS",
-                desc: "Nova tabela de seleção.",
-                id: this.id,
-                alt: this.editedClasses
-            }
+        var content;
 
-            this.$http.post('/api/pedidos', dataObj,{
-                headers: {
-                    'content-type' : 'application/json'
-                }
-            })
+        this.$http.get("/api/classes/" + this.id)
             .then(function (response) {
-                regex = new RegExp(/[0-9]+\-[0-9]+/, "gi");
-
-                if(regex.test(response.body)){
-                    window.location.href = '/users/pedido_submetido/'+response.body;
-                }
-                else {
-                    messageL.showMsg(response.body);
-                }
-
-                this.$refs.spinner.hide();
+                content = response.body;
+            })
+            .then(function () {
+                this.prepData(content[0]);
             })
             .catch(function (error) {
                 console.error(error);
             });
-
-        },
-        retroceder: function(){
-            window.location.href= '/tabelasSelecao/submeter/escolher_processos';
-        }
-    },
-    created: function(){
-        this.id = window.location.pathname.split('/')[4];
-
-        this.table.header=[
-            "CLASSE",
-            "TÍTULO"
-        ];
-        
-        this.loadTS();
     }
 })
