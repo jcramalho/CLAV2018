@@ -47,7 +47,7 @@ var users = new Vue({
                 `
             },
             {
-                valor: 'Tipologias',
+                valor: 'Tipologias de Entidades',
                 consultar: '/tipologias',
                 submeter: '/tipologias/adicionar',
                 style: `
