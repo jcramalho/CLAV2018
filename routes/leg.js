@@ -15,7 +15,7 @@ router.get('/consultar/:id', function(req, res) {
     res.render('leg/consulta',{legID: req.params.id, title: "Dados de diploma"});
 });
 
-router.get('/editar/:id', function(req, res) {
+router.get('/editar/:id', Auth.isLoggedIn, function(req, res) {
     res.render('leg/edicao',{legID: req.params.id, title: "Editar diploma"});
 });
 

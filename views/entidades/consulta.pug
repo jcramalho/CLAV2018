@@ -5,7 +5,7 @@ block corpo
             h1.page-header 
                 div {{ entName }}
                     if user
-                        a(:href="'/tipologias/editar/'+id" style="float:right")  
+                        a(:href="'/entidades/editar/'+id" style="float:right")  
                             span.glyphicon.glyphicon-edit
         .panel-body
             .form-group
@@ -69,6 +69,9 @@ block corpo
                                 li(v-for="o in myTipolList")
                                     a(:href="'/tipologias/consultar/'+o.id") {{ o.Sigla }} 
                                     | - {{ o.Designacao }}
+            if user
+                a(:href="'/entidades/editar/'+id").btn.btn-xs.btn-default.col-sm-1
+                    | Editar
                         
     //-
 
