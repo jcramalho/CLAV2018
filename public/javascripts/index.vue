@@ -40,7 +40,7 @@ new Vue({
                 notlogged: 'Para novas propostas, faça Login.'
             },
             {
-                valor: 'Tipologias',
+                valor: 'Tipologias de Entidades',
                 consultar: '/tipologias',
                 submeter: '/tipologias/adicionar',
                 text: 'Lista tipologias de entidades que estão envolvidas nos processos de negócio da Administração Pública e que foram identificadas até ao momento. Em atualização constante.',
@@ -93,7 +93,7 @@ new Vue({
                 <p>Para mais esclarecimentos, poderá contactar-nos pelo endereço <a href="mailto:dsan@dglab.gov.pt">dsan@dglab.gov.pt</a> . </p>`
             },
             {
-                title: "Projeto de Decreto-Lei que torna obrigatório o usa da plataforma CLAV encontra-se em tramitação",
+                title: "Projeto de Decreto-Lei que torna obrigatório o uso da plataforma CLAV encontra-se em tramitação",
                 date: "20 de maio de 2018",
                 body: `<p>Encontra-se em tramitação a proposta de Decreto-Lei que torna obrigatório o uso da Plataforma CLAV, o uso da Lista Consolidada e a elaboração de tabelas de classificação e avaliação da informação decorrente do exercício de funções públicas, entre outras, nas seguintes entidades: </p>
                 <ol type="a">
