@@ -62,6 +62,10 @@ block corpo
                                 li(v-for="e in myElems")
                                     a(:href="'/entidades/consultar/'+e.id") {{ e.Sigla }} 
                                     | - {{ e.Designacao }}
+            
+            if user
+                a(:href="'/tipologias/editar/'+id").btn.btn-xs.btn-default.col-sm-1
+                    | Editar
                         
     //-
 

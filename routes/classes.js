@@ -15,5 +15,9 @@ router.get('/consultar/:id', function(req, res) {
     res.render('classes/consulta',{classID: req.params.id, sidebar: true, title: "Dados de classe"});
 });
 
+router.get('/editar/:id', Auth.isLoggedIn, function(req, res) {
+    res.render('classes/edicao',{title: "Editar classe", classID: req.params.id});
+});
+
 
 module.exports = router;
