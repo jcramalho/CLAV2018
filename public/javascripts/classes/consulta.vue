@@ -210,13 +210,19 @@ var classe = new Vue({
                 })
                 .then(function () {
                     this.clas.DelNotes = JSON.parse(JSON.stringify(this.parse(notesToParse, keys)));
+                    console.log(this.clas.DelNotes);
 
                     this.clas.DelNotes = this.clas.DelNotes.map(
-                        a => a.Nota = a.Nota.replace(
-                            /([0-9]{3}(\.?[0-9]+)*)/g,
-                            '<a href="/classes/consultar/c$1">$1</a>'
-                        )
+                        function(a){
+                            a.Nota = a.Nota.replace(
+                                /([0-9]{3}(\.?[0-9]+)*)/g,
+                                '<a href="/classes/consultar/c$1">$1</a>'
+                            )
+                            return a;
+                        }
+                        
                     );
+                    console.log(this.clas.DelNotes);
 
                     this.delNotesReady = true;
                 })
