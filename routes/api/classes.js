@@ -68,6 +68,14 @@ router.get('/:id/descendencia', function (req, res) {
         });
 })
 
+router.get('/:id/descendenciaIndex', function (req, res) {
+    Classes.children(req.params.id)
+        .then(list => res.send(list))
+        .catch(function (error) {
+            console.error(error);
+        });
+})
+
 router.get('/:id/donos', function (req, res) {
     Classes.owners(req.params.id)
         .then(owners => res.send(owners))

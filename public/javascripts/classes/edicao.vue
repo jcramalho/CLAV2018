@@ -308,7 +308,7 @@ var classe = new Vue({
     
                             this.newClass.DF.criteria[critIndex].type = {
                                 value: "CriterioJustificacaoDensidadeInfo",
-                                label: "Densidade Informacional",
+                                label: "Critério Densidade Informacional",
                                 rel: 2
                             };
                         }
@@ -1181,7 +1181,7 @@ var classe = new Vue({
                         CriterioJustificacaoUtilidadeAdministrativa: "Critério Utilidade Administrativa",
                         CriterioJustificacaoLegal: "Critério Legal",
                         CriterioJustificacaoGestionario: "Critério Gestionário",
-                        CriterioJustificacaoDensidadeInfo: "Densidade Informacional",
+                        CriterioJustificacaoDensidadeInfo: "Critério Densidade Informacional",
                     }
 
                     newCrit.tipo = critTypes[criterio.Tipo.value.replace(/[^#]+#(.*)/, '$1')];

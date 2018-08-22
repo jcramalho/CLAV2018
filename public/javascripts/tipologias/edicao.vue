@@ -108,7 +108,7 @@ var org = new Vue({
                 .then(function () {
                     this.classList = this.parseList(classesToParse, keys).map(function (item) {
                         return {
-                            label: item.Code + " - " + item.Title,
+                            label: item.Codigo + " - " + item.Titulo,
                             value: item,
                         }
                     }).sort(function (a, b) {

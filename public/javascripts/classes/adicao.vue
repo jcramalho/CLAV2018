@@ -978,7 +978,7 @@ var newClass = new Vue({
         },
         loadParents: function () {
             var classesToParse = [];
-            var keys = ["id", "Code", "Title"];
+            var keys = ["id", "Codigo", "Titulo"];
 
             this.$http.get("/api/classes/nivel=" + (this.type - 1))
                 .then(function (response) {
@@ -988,7 +988,7 @@ var newClass = new Vue({
                     this.parents = this.parse(classesToParse, keys)
                         .map(function (item) {
                             return {
-                                label: item.Code + " - " + item.Title,
+                                label: item.Codigo + " - " + item.Titulo,
                                 value: item.id,
                             }
                         }).sort(function (a, b) {

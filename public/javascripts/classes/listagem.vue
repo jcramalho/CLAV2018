@@ -93,7 +93,7 @@ var classes = new Vue({
                     codeID: pn.PN.value.replace(/[^#]+#(.*)/, '$1'),
                     content: [pn.PNCodigo.value, pn.PNTitulo.value],
                     title: pn.PNTitulo.value,
-                    indexTerms: pn.TermosIndice.value.split('###'),
+                    indexTerms: pn.TermosPesquisa.value.split('###'),
                     drop: false,
                 }
 

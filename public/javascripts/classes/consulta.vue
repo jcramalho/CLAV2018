@@ -500,7 +500,7 @@ var classe = new Vue({
                         CriterioJustificacaoUtilidadeAdministrativa: "Critério Utilidade Administrativa",
                         CriterioJustificacaoLegal: "Critério Legal",
                         CriterioJustificacaoGestionario: "Critério Gestionário",
-                        CriterioJustificacaoDensidadeInfo: "Densidade Informacional",
+                        CriterioJustificacaoDensidadeInfo: "Critério Densidade Informacional",
                     }
 
                     newCrit.tipo = critTypes[criterio.Tipo.value.replace(/[^#]+#(.*)/, '$1')];
