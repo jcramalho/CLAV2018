@@ -2,7 +2,7 @@ const client = require('../../config/database').onthology;
 
 var Classes = module.exports
 
-Classes.list = function (level, status) {
+Classes.list = function (level) {
     if (!level) { level = 1 }
 
     var listQuery = `
@@ -13,7 +13,7 @@ Classes.list = function (level, status) {
             (GROUP_CONCAT(?tp; SEPARATOR="###") AS ?TermosPesquisa)
             (COUNT(?desc) AS ?Descendencia)
         Where {
-            ?id rdf:type clav:Classe_N4 ;
+            ?id rdf:type clav:Classe_N${level} ;
                     clav:classeStatus 'A';
                     clav:codigo ?Codigo ;
                     clav:titulo ?Titulo .
@@ -33,9 +33,9 @@ Classes.list = function (level, status) {
             OPTIONAL {
                 ?desc clav:temPai ?id .
             }
-        } Group by ?id ?Codigo ?Titulo 
-        `;
-
+        } Group by ?id ?Codigo ?Titulo
+        Order by ?id 
+    `;
 
     return client.query(listQuery).execute()
         .then(response => Promise.resolve(response.results.bindings))
@@ -43,8 +43,6 @@ Classes.list = function (level, status) {
             console.error(error);
         });
 }
-
-
 
 Classes.stats = function (id) {
     var fetchQuery = `
@@ -269,9 +267,9 @@ Classes.childrenNew = function (id) {
             OPTIONAL {
                 ?desc clav:temPai ?id .
             }
-        } Group by ?id ?Codigo ?Titulo 
+        } Group by ?id ?Codigo ?Titulo
+        Order by ?id 
     `;
-
 
     return client.query(fetchQuery)
         .execute()
@@ -281,8 +279,6 @@ Classes.childrenNew = function (id) {
             console.error(error);
         });
 }
-
-
 
 Classes.owners = function (id) {
     var fetchQuery = `
@@ -663,6 +659,11 @@ Classes.filterNone = function () {
                 ?Filho clav:temPai ?PN;
                    clav:codigo ?FilhoCodigo;
                    clav:titulo ?FilhoTitulo
+
+                OPTIONAL {
+                    ?fTI clav:estaAssocClasse ?Filho;
+                         clav:termo ?FilhoTi
+                }
             }
             OPTIONAL {
                 {

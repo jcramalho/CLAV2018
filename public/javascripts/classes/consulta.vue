@@ -210,8 +210,7 @@ var classe = new Vue({
                 })
                 .then(function () {
                     this.clas.DelNotes = JSON.parse(JSON.stringify(this.parse(notesToParse, keys)));
-                    console.log(this.clas.DelNotes);
-
+                    
                     this.clas.DelNotes = this.clas.DelNotes.map(
                         function(a){
                             a.Nota = a.Nota.replace(
@@ -222,7 +221,6 @@ var classe = new Vue({
                         }
                         
                     );
-                    console.log(this.clas.DelNotes);
 
                     this.delNotesReady = true;
                 })

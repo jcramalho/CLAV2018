@@ -69,7 +69,7 @@ router.get('/:id/descendencia', function (req, res) {
 })
 
 router.get('/:id/descendenciaIndex', function (req, res) {
-    Classes.children(req.params.id)
+    Classes.childrenNew(req.params.id)
         .then(list => res.send(list))
         .catch(function (error) {
             console.error(error);
