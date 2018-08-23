@@ -2,28 +2,40 @@ const client = require('../../config/database').onthology;
 
 var Classes = module.exports
 
-Classes.list = function (level, status) {
+Classes.list = function (level) {
     if (!level) { level = 1 }
 
     var listQuery = `
-            SELECT ?id ?Code ?Title (count(?sub) as ?NChilds)
-            WHERE {
-                ?id rdf:type clav:Classe_N${level} ;
+        Select
+            ?id 
+            ?Codigo 
+            ?Titulo 
+            (GROUP_CONCAT(?tp; SEPARATOR="###") AS ?TermosPesquisa)
+            (COUNT(?desc) AS ?Descendencia)
+        Where {
+            ?id rdf:type clav:Classe_N${level} ;
                     clav:classeStatus 'A';
-                    clav:codigo ?Code ;
-                    clav:titulo ?Title .
-
-                OPTIONAL {
-                    ?sub clav:temPai ?id .
-                }
-
-                MINUS { 
-                    ?id clav:pertenceLC ?lc
-                    filter( ?lc != clav:lc1 )
-                }
-            }Group by ?id ?Code ?Title
-        `;
-
+                    clav:codigo ?Codigo ;
+                    clav:titulo ?Titulo .
+            
+            Optional {
+                {
+                    ?ti clav:estaAssocClasse ?id ;
+                        clav:termo ?tp .
+                } UNION {
+                    ?id clav:exemploNA ?tp .
+                } UNION {
+                    ?id clav:temNotaAplicacao ?na.
+                    ?na clav:conteudo ?tp .
+                }   
+            }
+            
+            OPTIONAL {
+                ?desc clav:temPai ?id .
+            }
+        } Group by ?id ?Codigo ?Titulo
+        Order by ?id 
+    `;
 
     return client.query(listQuery).execute()
         .then(response => Promise.resolve(response.results.bindings))
@@ -214,8 +226,50 @@ Classes.children = function (id) {
                 ?sub clav:temPai ?Child .
             }
         }Group by ?Child ?Code ?Title
-        `;
+    `;
 
+
+    return client.query(fetchQuery)
+        .execute()
+        //getting the content we want
+        .then(response => Promise.resolve(response.results.bindings))
+        .catch(function (error) {
+            console.error(error);
+        });
+}
+
+Classes.childrenNew = function (id) {
+    var fetchQuery = `
+        SELECT
+            ?id 
+            ?Codigo 
+            ?Titulo 
+            (GROUP_CONCAT (DISTINCT ?tp; SEPARATOR="###") AS ?TermosPesquisa)
+            (COUNT (?desc) as ?Descendencia)
+        WHERE {
+            ?id clav:temPai clav:${id} ;
+                clav:classeStatus 'A';
+                clav:codigo ?Codigo ;
+                clav:titulo ?Titulo .
+            
+            Optional {
+                {
+                    ?ti clav:estaAssocClasse ?id ;
+                        clav:termo ?tp .
+                } UNION {
+                    ?id clav:exemploNA ?tp .
+                } UNION {
+                    ?id clav:temNotaAplicacao ?na.
+                    ?na clav:conteudo ?tp .
+                }   
+            }
+            
+            OPTIONAL {
+                ?desc clav:temPai ?id .
+            }
+        } Group by ?id ?Codigo ?Titulo
+        Order by ?id 
+    `;
 
     return client.query(fetchQuery)
         .execute()
@@ -578,7 +632,7 @@ Classes.filterNone = function () {
             ?PN ?PNCodigo ?PNTitulo   
             (GROUP_CONCAT(DISTINCT(CONCAT(STR(?Filho),":::",?FilhoCodigo, ":::",?FilhoTitulo)); SEPARATOR="###") AS ?Filhos)
 			(GROUP_CONCAT(CONCAT(STR(?FilhoCodigo),":::",?FilhoTi);Separator="###") AS ?TIsFilhos)
-            (GROUP_CONCAT(?TermoI; SEPARATOR="###") AS ?TermosIndice)
+            (GROUP_CONCAT(?TermoI; SEPARATOR="###") AS ?TermosPesquisa)
         WHERE {  
             
             ?PN rdf:type clav:Classe_N3
@@ -612,9 +666,16 @@ Classes.filterNone = function () {
                 }
             }
             OPTIONAL {
-        		?ti clav:estaAssocClasse ?PN ;
-              		clav:termo ?TermoI .
-    		}
+                {
+                    ?ti clav:estaAssocClasse ?PN ;
+                        clav:termo ?TermoI .
+                } UNION {
+                    ?PN clav:exemploNA ?TermoI .
+                } UNION {
+                    ?PN clav:temNotaAplicacao ?pNA.
+                    ?pNA clav:conteudo ?TermoI .
+                }
+            }
         }
         Group By ?PN ?PNCodigo ?PNTitulo ?Pai ?PaiCodigo ?PaiTitulo ?Avo ?AvoCodigo ?AvoTitulo 
         Order By ?PN

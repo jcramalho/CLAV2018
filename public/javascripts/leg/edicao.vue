@@ -69,7 +69,7 @@ var leg = new Vue({
         },
         loadClasses: function () {
             var classesToParse = [];
-            var keys = ["id", "Code", "Title"];
+            var keys = ["id", "Codigo", "Titulo"];
 
             this.$http.get("/api/classes/nivel=3")
                 .then(function (response) {
@@ -78,7 +78,7 @@ var leg = new Vue({
                 .then(function () {
                     this.classList = this.parseList(classesToParse, keys).map(function(item){
                         return {
-                            label: item.Code+" - "+item.Title,
+                            label: item.Codigo+" - "+item.Titulo,
                             value: item,
                         }
                     }).sort(function (a, b) {

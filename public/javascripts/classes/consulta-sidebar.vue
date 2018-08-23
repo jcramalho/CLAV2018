@@ -112,7 +112,7 @@ var classesSide = new Vue({
                     codeID: pn.PN.value.replace(/[^#]+#(.*)/, '$1'),
                     content: [pn.PNCodigo.value],
                     title: pn.PNTitulo.value,
-                    indexTerms: pn.TermosIndice.value.split('###'),
+                    indexTerms: pn.TermosPesquisa.value.split('###'),
                     drop: this.activeClass.includes(pn.PNCodigo.value),
                     selected: pnSelected,
                     active: active==pn.PNCodigo.value
@@ -137,6 +137,7 @@ var classesSide = new Vue({
 
                     for (let filho of pn.Filhos.value.split('###')) {
                         let filhoInfo = filho.split(':::');
+                        let indexFilho = [];
 
                         if(tisFilhos.length){
                             indexFilho = tisFilhos
