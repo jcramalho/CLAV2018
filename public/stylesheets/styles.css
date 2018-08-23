@@ -768,7 +768,3 @@ body {
     content: counter(list, lower-alpha) ") ";
     counter-increment: list;
 }
-
-.pesquisa-codigo {
-    z-index: 100100 !important;
-}
