@@ -6,7 +6,7 @@ var escolha = new Vue({
         },
         newTipol: null,
 
-        tipolsTableHeader: ["#", "Sigla", "Nome"],
+        tipolsTableHeader: ["#", "Sigla", "Designação"],
         tipolsTableWidth: ["4%", "20%", "80%"],
         tipolList: [],
         myTipolList: [],
@@ -79,9 +79,9 @@ var escolha = new Vue({
             this.tipolList = [];
             
             let orgsToParse = [];
-            let keys = ["id", "Tipo", "Nome", "Sigla"];
+            let keys = ["id", "Designacao", "Sigla"];
 
-            this.$http.get("/api/organizacoes")
+            this.$http.get("/api/tipologias")
                 .then(function (response) {
                     orgsToParse = response.body;
                 })
@@ -91,11 +91,9 @@ var escolha = new Vue({
 
                     let selection = this.myTipolList;
                     //tipologias
-                    this.tipolList = completeList.filter(
-                        a => (a.Tipo == "Tipologia")
-                    ).map(function (item) {
+                    this.tipolList = completeList.map(function (item) {
                         return {
-                            data: [i++, item.Sigla, item.Nome],
+                            data: [i++, item.Sigla, item.Designacao],
                             selected: selection.indexOf(item.id) != -1,
                             id: item.id
                         }
