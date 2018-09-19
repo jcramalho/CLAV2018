@@ -16,7 +16,7 @@ var leg = new Vue({
                 original: "",
             },
             title: {
-                label: "Título",
+                label: "Sumário",
                 original: "",
             },
             link: {
@@ -24,6 +24,7 @@ var leg = new Vue({
                 original: "",
             },
             org: {
+                label: "",
                 original: [],
             }
         },
@@ -53,7 +54,8 @@ var leg = new Vue({
                 .then(function () {
                     this.processes = JSON.parse(JSON.stringify(this.parseList(classesToParse, keys)));
 
-                    this.processesReady = true;
+                    if(this.processes.length>0)
+                        this.processesReady = true;
                 })
                 .catch(function (error) {
                     console.error(error);
@@ -69,7 +71,7 @@ var leg = new Vue({
                     temp[keys[j]] = content[i][keys[j]].value;
 
                     if (keys[j] == "id") {
-                        temp.id = temp.id.replace(/[^#]+#(.*)/, '$1');
+                        temp.id = temp.id.replace(/[^#]+#(.*)/, '$1'); // Retira os prefixos RDF
                     }
                 }
 
@@ -100,6 +102,9 @@ var leg = new Vue({
                         }
                     }
                 );
+                for(l in this.legData.org.original){
+                    this.legData.org.label += " " + this.legData.org.original[l].sigla;
+                }
             }
         
             this.ready=true;

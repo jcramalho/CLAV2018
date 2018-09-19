@@ -3,7 +3,7 @@ block corpo
     #legislacao-form.panel.panel-default.panel-custom
         .panel-heading
             h1.page-header 
-                div {{ legData.type.original }} {{ legData.number.original }}
+                div {{ legData.type.original }} {{ legData.org.label }} {{ legData.number.original }}
                     if user
                         a(:href="'/legislacao/editar/'+id" style="float:right")  
                             span.glyphicon.glyphicon-edit 
