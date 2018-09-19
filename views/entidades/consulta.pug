@@ -10,12 +10,6 @@ block corpo
         .panel-body
             .form-group
                 table.consulta
-                    //- NOME
-                    tr
-                        td(style="width:10%")
-                            label Nome: 
-                        td(style="width:80%")
-                            | {{ entName }}  
                     
                     //- SIGLA
                     tr
@@ -23,6 +17,13 @@ block corpo
                             label Sigla: 
                         td(style="width:80%")
                             | {{ entInitials }} 
+
+                    //- ESTADO
+                    tr
+                        td(style="width:10%")
+                            label Estado: 
+                        td(style="width:80%")
+                            | Ativa
                     
                     //- INTERNACIONAL
                     tr
