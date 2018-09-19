@@ -28,7 +28,11 @@ var org = new Vue({
         },
         domainCollapsed: true,
 
-        myTipolList: [],
+        tipologiasList: [],
+        tipologiasReady: false,
+
+        entRelsList: [],
+        entRelsReady: false,
 
         participationsDic: {
             Apreciador: "Apreciar",
@@ -53,7 +57,8 @@ var org = new Vue({
                     this.domain = JSON.parse(JSON.stringify(this.parseList(classesToParse, keys)));
                     this.newDomain = JSON.parse(JSON.stringify(this.parseList(classesToParse, keys)));
 
-                    this.domainReady = true;
+                    if(this.domain.length>0)
+                        this.domainReady = true;
                 })
                 .catch(function (error) {
                     console.error(error);
@@ -71,7 +76,8 @@ var org = new Vue({
                     this.participations = this.parseParticipants(partsToParse, keys);
                     this.newParticipations = JSON.parse(JSON.stringify(this.participations));
 
-                    this.partsReady = true;
+                    if(this.participations.length>0)
+                        this.partsReady = true;
                 })
                 .catch(function (error) {
                     console.error(error);
@@ -86,11 +92,17 @@ var org = new Vue({
                     dataToParse = response.body;
                 })
                 .then(function () {
-                    this.myTipolList = this.parseList(dataToParse, keys);
+                    this.tipologiasList = this.parseList(dataToParse, keys);
+
+                    if(this.tipologiasList.length>0)
+                        this.tipologiasReady = true;
                 })
                 .catch(function (error) {
                     console.error(error);
                 });
+        },
+        loadEntRels: function() {
+            this.entRelsReady = false;
         },
         parse: function (content) {
             this.entName = content[0].Designacao.value;

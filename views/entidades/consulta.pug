@@ -36,39 +36,42 @@ block corpo
                 //- Segunda secção
                 //- TIPOLOGIAS A QUE PERTENCE
                 table.consulta  
-                    tr(v-if="type!='Tipologia'")
+                    tr
                         td(style="width:100%")
                             .info-label Pertence às tipologias de Entidade:
-                            ul(style="padding-left:20px")
-                                li(v-for="o in myTipolList")
-                                    a(:href="'/tipologias/consultar/'+o.id") {{ o.Sigla }} 
-                                    | - {{ o.Designacao }}
-                    //- Fim da primeira secção
+                            table(v-if="tipologiasReady")
+                                tr
+                                    td
+                                        ul(style="padding-left:20px")
+                                            li(v-for="o in tipologiasList")
+                                                a(:href="'/tipologias/consultar/'+o.id") {{ o.Sigla }} 
+                                                | - {{ o.Designacao }}
+                            p(v-else) Não está associada a nenhuma Tipologia.
+                    //- Fim da segunda secção
                 //- Terceira secção            
                 //- Intervenção nos PN
                 table.consulta 
                     tr
                         td(style="width:100%")
                             .info-label Natureza de intervenção nos Processos de Negócio:
-                            table
-                                tr
+                            table(v-if="domainReady || partsReady")
+                                tr(v-if="domainReady")
                                     td
                                         label Como Dono:
                                     td
-                                        ul(v-if="domainReady" style="padding-left:20px" :class="{'is-collapsed' : domainCollapsed }")
+                                        ul(style="padding-left:20px" :class="{'is-collapsed' : domainCollapsed }")
                                             li(v-for="c in domain")
                                                 a(:href="'/classes/consultar/'+c.id") {{ c.Code }}
                                                 | - {{ c.Title }}
                                         a(@click="domainCollapsed=!domainCollapsed" v-if="domain.length>6").maozinha
                                             span(v-if="domainCollapsed") Mostrar mais...
                                             span(v-else) Mostrar menos...
-                        
-                                //- PARTICIPAÇÕES
-                                tr
+                
+                                tr(v-if="partsReady")
                                     td
                                         label Como Participante:    
                                     td
-                                        ul(v-if="partsReady" style="padding-left:20px")
+                                        ul(style="padding-left:20px")
                                             li(v-for="key in Object.keys(participations)" v-if="participations[key].length>0")
                                                 b  {{ participationsDic[key] }}:
                                                 ul(:class="{'is-collapsed' : partsCollapsed[key] }")
@@ -78,12 +81,26 @@ block corpo
                                                 a(@click="partsCollapsed[key]=!partsCollapsed[key]" v-if="participations[key].length>6").maozinha
                                                     span(v-if="partsCollapsed[key]") Mostrar mais...
                                                     span(v-else) Mostrar menos...
-                        
+                            p(v-else) Não tem nenhuma intervenção definida.
+                    //- Fim da terceira secção
+                //- Quarta secção            
+                //- Relações entre entidades
+                table.consulta 
+                    tr
+                        td(style="width:100%")
+                            .info-label Relações entre entidades:
+                            table(v-if="entRelsReady")
+                                tr
+                                    td
+                                        ul(style="padding-left:20px")
+                                            li(v-for="o in tipologiasList")
+                                                a(:href="'/tipologias/consultar/'+o.id") {{ o.Sigla }} 
+                                                | - {{ o.Designacao }}
+                            p(v-else) Não tem relações com outras entidades.
+                //- Fim da quarta secção
             if user
                 a(:href="'/entidades/editar/'+id").btn.btn-xs.btn-default.col-sm-1
                     | Editar
-                        
-    //-
 
 append scripts    
     script(src="/javascripts/entidades/consulta.vue")
