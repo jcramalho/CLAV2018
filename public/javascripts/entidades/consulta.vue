@@ -7,6 +7,7 @@ var org = new Vue({
         entName: "",
 
         entInitials: "",
+        entEstado: "Ativa",
         entInternational: "",
         content: [],
 

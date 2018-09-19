@@ -14,62 +14,71 @@ block corpo
                     //- SIGLA
                     tr
                         td(style="width:10%")
-                            label Sigla: 
+                            .info-label Sigla: 
                         td(style="width:80%")
                             | {{ entInitials }} 
 
                     //- ESTADO
                     tr
                         td(style="width:10%")
-                            label Estado: 
+                            .info-label Estado: 
                         td(style="width:80%")
-                            | Ativa
+                            | {{ entEstado }}
                     
                     //- INTERNACIONAL
                     tr
                         td(style="width:10%")
-                            label Internacional: 
+                            .info-label Internacional: 
                         td(style="width:80%")
                             | {{ entInternational }} 
 
-                    //- DOMINIO
-                    tr
-                        td(style="width:10%")
-                            label Dono de:
-                        td(style="width:80%")
-                            ul(v-if="domainReady" style="padding-left:20px" :class="{'is-collapsed' : domainCollapsed }")
-                                li(v-for="c in domain")
-                                    a(:href="'/classes/consultar/'+c.id") {{ c.Code }}
-                                    |  - {{ c.Title }}
-                            a(@click="domainCollapsed=!domainCollapsed" v-if="domain.length>6").maozinha
-                                span(v-if="domainCollapsed") Mostrar mais...
-                                span(v-else) Mostrar menos...
-                        
-                    //- PARTICIPAÇÕES
-                    tr
-                        td(style="width:10%")
-                            label Tipo de Participação:    
-                        td(style="width:80%")
-                            ul(v-if="partsReady" style="padding-left:20px")
-                                li(v-for="key in Object.keys(participations)" v-if="participations[key].length>0")
-                                    b  {{ participationsDic[key] }}:
-                                    ul(:class="{'is-collapsed' : partsCollapsed[key] }")
-                                        li(v-for="p in participations[key]")
-                                            a(:href="'/classes/consultar/'+p.id") {{ p.Code }}
-                                            |  - {{ p.Title }}
-                                    a(@click="partsCollapsed[key]=!partsCollapsed[key]" v-if="participations[key].length>6").maozinha
-                                        span(v-if="partsCollapsed[key]") Mostrar mais...
-                                        span(v-else) Mostrar menos...
-                        
-                    //- TIPOLOGIAS A QUE PERTENCE
+                    //- Fim da primeira secção
+                //- Segunda secção
+                //- TIPOLOGIAS A QUE PERTENCE
+                table.consulta  
                     tr(v-if="type!='Tipologia'")
-                        td(style="width:10%")
-                            label Tipologias:
-                        td(style="width:80%")
+                        td(style="width:100%")
+                            .info-label Pertence às tipologias de Entidade:
                             ul(style="padding-left:20px")
                                 li(v-for="o in myTipolList")
                                     a(:href="'/tipologias/consultar/'+o.id") {{ o.Sigla }} 
                                     | - {{ o.Designacao }}
+                    //- Fim da primeira secção
+                //- Terceira secção            
+                //- Intervenção nos PN
+                table.consulta 
+                    tr
+                        td(style="width:100%")
+                            .info-label Natureza de intervenção nos Processos de Negócio:
+                            table
+                                tr
+                                    td
+                                        label Como Dono:
+                                    td
+                                        ul(v-if="domainReady" style="padding-left:20px" :class="{'is-collapsed' : domainCollapsed }")
+                                            li(v-for="c in domain")
+                                                a(:href="'/classes/consultar/'+c.id") {{ c.Code }}
+                                                | - {{ c.Title }}
+                                        a(@click="domainCollapsed=!domainCollapsed" v-if="domain.length>6").maozinha
+                                            span(v-if="domainCollapsed") Mostrar mais...
+                                            span(v-else) Mostrar menos...
+                        
+                                //- PARTICIPAÇÕES
+                                tr
+                                    td
+                                        label Como Participante:    
+                                    td
+                                        ul(v-if="partsReady" style="padding-left:20px")
+                                            li(v-for="key in Object.keys(participations)" v-if="participations[key].length>0")
+                                                b  {{ participationsDic[key] }}:
+                                                ul(:class="{'is-collapsed' : partsCollapsed[key] }")
+                                                    li(v-for="p in participations[key]")
+                                                        a(:href="'/classes/consultar/'+p.id") {{ p.Code }}
+                                                        |  - {{ p.Title }}
+                                                a(@click="partsCollapsed[key]=!partsCollapsed[key]" v-if="participations[key].length>6").maozinha
+                                                    span(v-if="partsCollapsed[key]") Mostrar mais...
+                                                    span(v-else) Mostrar menos...
+                        
             if user
                 a(:href="'/entidades/editar/'+id").btn.btn-xs.btn-default.col-sm-1
                     | Editar
