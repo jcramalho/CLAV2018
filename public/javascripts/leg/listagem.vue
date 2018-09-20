@@ -1,7 +1,7 @@
 var legs = new Vue({
     el: '#tabela-legislacoes',
     data: {
-        tableHeader: ["#", "Tipo", "Entidade(s)", "Número", "Titulo", "Data"],
+        tableHeader: ["#", "Tipo", "Entidade(s)", "Número", "Sumário", "Data"],
         tableData: [[]],
         ready: false,
         content: [],

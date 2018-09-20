@@ -10,45 +10,6 @@ block corpo
         .panel-body
             .form-group
                 table(v-if="ready").consulta
-
-                    //- TÍTULO
-                    tr
-                        td(style="width:12%")
-                            .info-label {{ legData.title.label }}:
-                        
-                        td(style="width:80%")
-                            | {{ legData.title.original }}
-
-
-                    //- Tipo
-                    tr
-                        td(style="width:12%")
-                            .info-label {{ legData.type.label }}:
-                        
-                        td(style="width:80%")
-                            | {{ legData.type.original }}
-
-
-                    //- Número
-                    tr
-                        td(style="width:12%")
-                            .info-label {{ legData.number.label }}:
-                        
-                        td(style="width:80%")
-                            | {{ legData.number.original }}
-
-
-                    //- Entidades
-                    tr
-                        td(style="width:12%")
-                            .info-label Entidade(s):
-                        
-                        td(style="width:80%")
-                            ul
-                                li(v-for="org in legData.org.original")
-                                    a(:href="'/organizacoes/consultar/'+org.id") {{org.sigla}}
-                                    |  - {{org.nome}}
-
                     //- Data
                     tr
                         td(style="width:12%")
@@ -57,6 +18,13 @@ block corpo
                         td(style="width:80%")
                             | {{ legData.date.original }}
 
+                    //- Sumário
+                    tr
+                        td(style="width:12%")
+                            .info-label {{ legData.title.label }}:
+                        
+                        td(style="width:80%")
+                            | {{ legData.title.original }}
 
                     //- Link
                     tr
@@ -64,13 +32,12 @@ block corpo
                             .info-label {{ legData.link.label }}:
                         
                         td(style="width:80%")
-                            a(:href="legData.link.original" target="_blank") Ficheiro
-
+                            a(:href="legData.link.original" target="_blank") {{legData.link.original}}
 
                     //- PROCESSOS
                     tr
                         td(style="width:10%")
-                            .info-label Processos Regulamentados:
+                            .info-label Regula os Processos de Negócio:
                         td(style="width:80%")
                             ul(v-if="processesReady" style="padding-left:20px" :class="{'is-collapsed' : processesCollapsed }")
                                 li(v-for="c in processes")
