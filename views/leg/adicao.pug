@@ -7,16 +7,6 @@ block corpo
             .form-group
                 table.consulta(style="border-color: white; border-style:solid; margin-bottom:20px")
                     
-                    //- TÍTULO
-                    tr
-                        td(style="width: 10%")
-                            .info-label Título: 
-                        td(style="width:80%")
-                            input(
-                                size="50"
-                                v-model="diploma.Titulo"
-                            )
-                    
                     //- Tipo
                     tr
                         td(style="width: 10%")
@@ -37,20 +27,8 @@ block corpo
                                 v-model="diploma.Numero"
                                 pattern="[0-9]+(\-\w)?/[0-9]+"
                             )
-                    
-                    //- Data
-                    tr
-                        td(style="width: 10%")
-                            .info-label Data: 
-                        td(style="width:80%")
-                            datepicker(
-                                value=""
-                                @input="dataEscolhida($event)"
-                                format="yyyy/MM/dd"
-                                placeholder="AAAA/MM/DD"
-                            )
 
-                    //- DONOS
+                    //- Entidades
                     tr(style="padding-bottom:30px")
                         td(style="width: 10%")
                             .info-label Entidades:
@@ -73,7 +51,28 @@ block corpo
                                     h4(
                                         v-else
                                     ) A carregar...
+                    //- Data
+                    tr
+                        td(style="width: 10%")
+                            .info-label Data: 
+                        td(style="width:80%")
+                            datepicker(
+                                value=""
+                                @input="dataEscolhida($event)"
+                                format="yyyy/MM/dd"
+                                placeholder="AAAA/MM/DD"
+                            )
                     
+                    //- Sumário
+                    tr
+                        td(style="width: 10%")
+                            .info-label Sumário: 
+                        td(style="width:80%")
+                            input(
+                                size="50"
+                                v-model="diploma.Titulo"
+                            )
+       
                     //- Link
                     tr
                         td(style="width: 10%")
