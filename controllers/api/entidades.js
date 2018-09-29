@@ -138,15 +138,18 @@ Entidades.checkNameAvailability = function (name) {
         });
 }
 
-Entidades.createEntidade = function (id, name, initials, international) {
+Entidades.createEntidade = function (id, name, initials, international, tipologias) {
     var createQuery = `
         INSERT DATA {
             clav:${id} rdf:type owl:NamedIndividual ,
                     clav:Entidade ;
                 clav:entDesignacao '${name}' ;
                 clav:entSigla '${initials}' ;
-                clav:entEstado "Harmonização" ;
-                clav:entInternacional '${international}' .
+                clav:entInternacional '${international}' ;\n`
+    for(var i=0; i < tipologias.length; ++i){
+        createQuery += `\t\tclav:pertenceTipologiaEnt clav:${tipologias[i].id} ; \n`
+    }
+    createQuery += `\t\tclav:entEstado "Harmonização" .
         }
     `;
 

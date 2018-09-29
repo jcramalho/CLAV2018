@@ -105,6 +105,7 @@ var org = new Vue({
             this.entRelsReady = false;
         },
         parse: function (content) {
+            this.entEstado = content[0].Estado.value
             this.entName = content[0].Designacao.value;
             this.newName = content[0].Designacao.value;
             this.entInitials = content[0].Sigla.value;

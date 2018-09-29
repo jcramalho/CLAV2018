@@ -5,7 +5,9 @@ var newOrg = new Vue({
         initials: "",
         international: "Não",
         message: "",
-        tipologias: []
+        tip: "",
+        tipologias: [],
+        tipologiasSel: []
     },
     created: function(){
         this.$http.get("/api/tipologias")
@@ -14,7 +16,8 @@ var newOrg = new Vue({
             var i, t
             for( i=0; i < this.content.length; i++){ 
                 t = this.content[i]
-                var myTipol = {sigla: t.Sigla.value, designacao: t.Designacao.value, id: t.id.value}
+                var myID = t.id.value.split('#')
+                var myTipol = {sigla: t.Sigla.value, designacao: t.Designacao.value, id: myID[1]}
                 this.tipologias.push(myTipol)
             }
             this.tipologias.sort(this.dynamicSort("sigla"))
@@ -39,6 +42,18 @@ var newOrg = new Vue({
                 return result * sortOrder;
             }
         },
+        findTip: function(tid){
+            var i=0, encontrado = false
+            while((i < this.tipologias.length)&&(!encontrado)){
+                if(tid == this.tipologias[i].id) encontrado = true
+                else i++
+            }
+            return encontrado?i:-1
+        },
+        addTip: function(){
+            var ind = this.findTip(this.tip)
+            this.tipologiasSel.push(this.tipologias[ind])
+        },
         add: function () {
             this.$refs.spinner.show();
 
@@ -46,6 +61,7 @@ var newOrg = new Vue({
                 name: this.name,
                 initials: this.initials,
                 international: this.international,
+                tipologias: this.tipologiasSel
             }
 
             this.$http.post('/api/entidades/', dataObj, {

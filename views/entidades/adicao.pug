@@ -30,15 +30,23 @@ block corpo
                         td(style="padding-top:10px")
                             label Tipologias: 
                         td
-                            select
+                            select.col-sm-10(v-model="tip")
+                                option Se pretender selecione uma tipologia de cada vez
                                 option(v-for="t in tipologias" :value="t.id") {{t.sigla}} - {{t.designacao}}
+                            input.btn.btn-xs.btn-default.col-sm-2(
+                                type="button" 
+                                @click="addTip" 
+                                value="Adicionar" 
+                            )
+                            ul(v-if="tipologiasSel.length")
+                                li(v-for="t in tipologiasSel") {{ t.sigla }} - {{ t.designacao }}
 
             spinner(ref="spinner" fixed size="lg" text="Por favor aguarde...")
 
             input.btn.btn-xs.btn-default.col-sm-2(
                 type="button" 
                 @click="add" 
-                value="Adicionar" 
+                value="Adicionar entidade" 
                 :disabled="!(name && initials)"
             )
             p.col-sm-7 {{ message }}

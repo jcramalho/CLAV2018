@@ -49,6 +49,7 @@ router.post('/', Auth.isLoggedInAPI, function (req, res) {
     var initials = req.body.initials;
     var international = req.body.international;
     var name = req.body.name;
+    var tipologias = req.body.tipologias
     var id = 'ent_'+initials;
 
     Entidades.checkAvailability(name, initials)
@@ -57,7 +58,7 @@ router.post('/', Auth.isLoggedInAPI, function (req, res) {
                 res.send("Designação e/ou Sigla já existente(s)!");
             }
             else {
-                Entidades.createEntidade(id, name, initials, international)
+                Entidades.createEntidade(id, name, initials, international, tipologias)
                     .then(function () {
                         Logging.logger.info('Criada entidade \'' + id + '\' por utilizador \'' + req.user._id + '\'');
 
