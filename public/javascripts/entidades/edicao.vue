@@ -13,6 +13,8 @@ var org = new Vue({
         message: "",
         delConfirm: false,
 
+        entEstado: "",
+
         entInternational: "",
         newInternational: "",
         editInternational: false,
@@ -102,23 +104,17 @@ var org = new Vue({
             return ret;
         },
         loadClasses: function () {
-            var classesToParse = [];
-            var keys = ["id", "Codigo", "Titulo"];
+            var classesToProcess = []
 
             this.$http.get("/api/classes/nivel=3")
                 .then(function (response) {
-                    classesToParse = response.body;
-                })
-                .then(function () {
-                    this.classList = this.parseList(classesToParse, keys).map(function (item) {
-                        return {
-                            label: item.Codigo + " - " + item.Titulo,
-                            value: item,
-                        }
-                    }).sort(function (a, b) {
-                        return a.label.localeCompare(b.label);
-                    });
-
+                    classesToProcess = response.body
+                    var i, c
+                    for( i=0; i < classesToProcess.length; i++){ 
+                        c = classesToProcess[i]
+                        var myClasse = {codigo: c.Codigo.value, titulo: c.Titulo.value, label: c.Codigo.value + ' - ' + c.Titulo.value }
+                        this.classList.push(myClasse)
+                    }
                     this.classesReady = true;
                 })
                 .catch(function (error) {
@@ -138,7 +134,7 @@ var org = new Vue({
 
                     this.tipolList = completeList.map(function (item) {
                         return {
-                            label: item.Sigla +"-"+ item.Designacao,
+                            label: item.Sigla +" - "+ item.Designacao,
                             value: item,
                         }
                     }).sort(function (a, b) {
@@ -210,6 +206,7 @@ var org = new Vue({
             this.entName = content[0].Designacao.value;
             this.newName = content[0].Designacao.value;
             this.entInitials = content[0].Sigla.value;
+            this.entEstado = content[0].Estado.value
             this.entInternational = content[0].Internacional.value;
         },
         parseList: function (content, keys) {

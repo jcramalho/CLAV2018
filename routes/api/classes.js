@@ -17,7 +17,7 @@ router.get('/', function (req, res) {
 })
 
 router.get('/nivel=:n', function (req, res) {
-    Classes.list(req.params.n)
+    Classes.listMeta(req.params.n)
         .then(list => res.send(list))
         .catch(function (error) {
             console.error(error);

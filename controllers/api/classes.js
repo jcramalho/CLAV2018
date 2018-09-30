@@ -2,6 +2,30 @@ const client = require('../../config/database').onthology;
 
 var Classes = module.exports
 
+Classes.listMeta = function (level) {
+    if (!level) { level = 1 }
+
+    var listQuery = `
+        Select
+            ?id 
+            ?Codigo 
+            ?Titulo 
+        Where {
+            ?id rdf:type clav:Classe_N${level} ;
+                    clav:classeStatus 'A';
+                    clav:codigo ?Codigo ;
+                    clav:titulo ?Titulo .
+        } 
+        Order by ?id 
+    `;
+
+    return client.query(listQuery).execute()
+        .then(response => Promise.resolve(response.results.bindings))
+        .catch(function (error) {
+            console.error(error);
+        });
+}
+
 Classes.list = function (level) {
     if (!level) { level = 1 }
 

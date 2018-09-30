@@ -31,7 +31,7 @@ block corpo
                             label Tipologias: 
                         td
                             select.col-sm-10(v-model="tip")
-                                option Se pretender selecione uma tipologia de cada vez
+                                option(disabled selected value) Se pretender adicionar tipologias selecione uma de cada vez
                                 option(v-for="t in tipologias" :value="t.id") {{t.sigla}} - {{t.designacao}}
                             input.btn.btn-xs.btn-default.col-sm-2(
                                 type="button" 

@@ -9,7 +9,7 @@ block corpo
                     //- NOME
                     tr
                         td(style="width:10%")
-                            label Nome: 
+                            .info-label Nome: 
                         td(v-if="editName" style="width:80%")
                             input(
                                 size="50"
@@ -34,14 +34,21 @@ block corpo
                     //- SIGLA
                     tr
                         td
-                            label Sigla: 
+                            .info-label Sigla: 
                         td
                             | {{ entInitials }} 
+
+                    //- Estado
+                    tr
+                        td
+                            .info-label Estado: 
+                        td
+                            | {{ entEstado }} 
 
                     //- INTERNACIONAL
                     tr
                         td(style="width:10%")
-                            label Internacional: 
+                            .info-label Internacional: 
                         td(v-if="editInternational" style="width:80%")
                             select(
                                 v-model="newInternational"
@@ -50,6 +57,7 @@ block corpo
                                     value="Sim"
                                 )   Sim
                                 option(
+                                    selected
                                     value="Não"
                                 )   Não
                         td(v-else style="width:80%")
@@ -67,10 +75,51 @@ block corpo
                                     class="drop-row"
                                 )
 
-                    //- DOMINIO
+                    //- Pertence às tipologias
+                    tr(v-if="type!='Tipologia'")
+                        td(style="width:10%")
+                            .info-label Pertence às tipologias de Entidade:
+                        td(v-if="editTipol" style="width:80%")
+                            table
+                                tr
+                                    td
+                                        v-select.custom-select( 
+                                            v-model="newTipol"
+                                            :options="tipolList"
+                                        )
+                                    td
+                                        button(
+                                            @click="myNewTipolList.unshift(newTipol.value)"
+                                        ) +
+                                tr(v-if="myNewTipolList.length")
+                                    td
+                                        ul(style="padding-left:20px")
+                                            li(v-for="(o,index) in myNewTipolList")
+                                                | {{ o.Sigla }} - {{ o.Designacao }}
+                                                button(
+                                                    @click="myNewTipolList.splice(index,1)"
+                                                ) x
+                        td(v-else style="width:80%")
+                            ul(style="padding-left:20px")
+                                li(v-for="o in myTipolList")
+                                    a(:href="'/tipologias/consultar/'+o.id") {{ o.Sigla }} 
+                                    | - {{ o.Designacao }}
+                        if user
+                            td(style="width:10%")
+                                label(
+                                    for="editTipol"
+                                    :class="[editTipol ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
+                                )
+                                input(
+                                    id="editTipol"
+                                    type="checkbox"
+                                    v-model="editTipol"
+                                    class="drop-row"
+                                )
+                    //- Intervenção nos PN
                     tr
                         td(style="width:10%")
-                            label Dono de:
+                            .info-label Natureza de intervenção nos Processos de Negócio:
                         //- edição
                         td(v-if="editDomain" style="width:80%")
                             table
@@ -78,28 +127,31 @@ block corpo
                                     td(width="1000px")
                                         v-select.custom-select(
                                             v-model="newClass"
+                                            label="label"
                                             :options="classList"
                                         )
                                     td
                                         button(
-                                            @click="newDomain.unshift(newClass.value)"
+                                            @click="newDomain.unshift(newClass)"
                                         ) +
                                 tr(v-if="newDomain.length")
                                     td(colspan="2")
                                         ul(style="padding-left:20px")
                                             li(v-for="(c,index) in newDomain")
-                                                | {{ c.Code }} - {{ c.Title }}
+                                                | {{ c.label }} 
                                                 button(
                                                     @click="newDomain.splice(index,1)"
                                                 ) x
                         td(v-else style="width:80%")
-                            ul(v-if="domainReady" style="padding-left:20px" :class="{'is-collapsed' : domainCollapsed }")
-                                li(v-for="c in domain")
-                                    a(:href="'/classes/consultar/'+c.id") {{ c.Code }}
-                                    |  - {{ c.Title }}
-                            a(@click="domainCollapsed=!domainCollapsed" v-if="domain.length>6").maozinha
-                                span(v-if="domainCollapsed") Mostrar mais...
-                                span(v-else) Mostrar menos...
+                            .col-sm
+                                label Como Dono:
+                            .col-sm
+                                ul(v-if="domainReady" style="padding-left:50px" :class="{'is-collapsed' : domainCollapsed }")
+                                    li(v-for="c in domain")
+                                        a(:href="'/classes/consultar/'+c.id") {{ c.label }}
+                                a(@click="domainCollapsed=!domainCollapsed" v-if="domain.length>6").maozinha
+                                    span(v-if="domainCollapsed") Mostrar mais...
+                                    span(v-else) Mostrar menos...
                         if user
                             td(style="width:10%")
                                 label(
@@ -167,48 +219,6 @@ block corpo
                                     id="editParts"
                                     type="checkbox"
                                     v-model="editParts"
-                                    class="drop-row"
-                                )
-
-                    //- TIPOLOGIAS A QUE PERTENCE
-                    tr(v-if="type!='Tipologia'")
-                        td(style="width:10%")
-                            label Tipologias:
-                        td(v-if="editTipol" style="width:80%")
-                            table
-                                tr
-                                    td
-                                        v-select.custom-select( 
-                                            v-model="newTipol"
-                                            :options="tipolList"
-                                        )
-                                    td
-                                        button(
-                                            @click="myNewTipolList.unshift(newTipol.value)"
-                                        ) +
-                                tr(v-if="myNewTipolList.length")
-                                    td(colspan="2")
-                                        ul(style="padding-left:20px")
-                                            li(v-for="(o,index) in myNewTipolList")
-                                                | {{ o.Sigla }} - {{ o.Designacao }}
-                                                button(
-                                                    @click="myNewTipolList.splice(index,1)"
-                                                ) x
-                        td(v-else style="width:80%")
-                            ul(style="padding-left:20px")
-                                li(v-for="o in myTipolList")
-                                    a(:href="'/tipologias/consultar/'+o.id") {{ o.Sigla }} 
-                                    | - {{ o.Designacao }}
-                        if user
-                            td(style="width:10%")
-                                label(
-                                    for="editTipol"
-                                    :class="[editTipol ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
-                                )
-                                input(
-                                    id="editTipol"
-                                    type="checkbox"
-                                    v-model="editTipol"
                                     class="drop-row"
                                 )
 
