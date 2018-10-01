@@ -1,12 +1,31 @@
 var Pedido = require('../models/pedido');
-var Entidade = require('../models/entidade');
 
 var Pedidos = module.exports
 
 var Logging = require('../controllers/logging');
 var Pedido = require('../models/pedido');
-var Entidade = require('../models/entidade');
 
+Pedidos.novo = function(email, objeto, estado) {
+    var novoPedido = new Pedido({
+        numero: "1-2018",
+        criadoPor: email,
+        objeto: {
+            codigo: objeto.codigo,
+            tipo: objeto.tipo,
+            acao: objeto.acao,
+        },
+        distribuicao: estado ? [estado] : [],
+    });
+
+    Pedido.createPedido(novoPedido, function(err, request) {
+        if (err) {
+            console.log(err);
+        } else {
+            Logging.logger.info('Criado pedido ' + request.numero);
+        }
+    });
+}
+/*
 Pedidos.add = function(dataObj, req, res){
     var today = new Date();
     var dd = today.getDate();
@@ -33,10 +52,10 @@ Pedidos.add = function(dataObj, req, res){
                     console.log(err);
                     res.send("Ocorreu um erro!");    
                 }
-                /*else if(!entity) {
+                else if(!entity) {
                     console.log("Utilizador sem entidade relacionada");
                     res.send("Ocorreu um erro! Sem entidade associada!"); 
-                }*/
+                }
                 else{
                     if(!entity){
                         entity = {
@@ -86,4 +105,4 @@ Pedidos.add = function(dataObj, req, res){
         }
     });
 }
-
+*/

@@ -1,4 +1,6 @@
 const client = require('../../config/database').onthology;
+var Pedidos = require('../pedidos');
+var Auth = require('../auth.js');
 
 var Entidades = module.exports
 
@@ -155,6 +157,7 @@ Entidades.createEntidade = function (id, name, initials, international, tipologi
 
     return client.query(createQuery).execute()
         .then(response => Promise.resolve(response))
+        .then(Pedidos.novo("alguem@mail.com", { codigo: id, tipo: "Entidade", acao: "Criação" }, { estado: "Submetido" }))
         .catch(error => console.error("Error in create:\n" + error));
 }
 

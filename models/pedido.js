@@ -9,49 +9,45 @@ mongoose.connect(dataBases.userDB, {
 
 var db = mongoose.connection;
 
-// Pedido Schema
 var PedidoSchema = mongoose.Schema({
     numero: {
         type: String,
-        index: true
+        index: true,
+        match: /\d{1,}-\d{4}/,  // O código é no formato "nr-yyyy"
     },
-    tipo: {
-        type: String,
+    criadoPor: {
+        type: String,           // Email do utilizador que criou o pedido
+        required: true
     },
-    descricao: {
-        type: String,
-    },
-    entidade: {
-        nome: {
-            type: String
+    objeto: {
+        codigo: {
+            type: String,
         },
-        email: {
-            type: String
-        }
-    },
-    utilizador: {
-        nome: {
-            type: String
+        tipo: {
+            type: String,
+            enum: ["Processo de negócio", "Tabela de seleção", "Entidade", "Legislação"],
         },
-        email: {
-            type: String
+        acao: {
+            type: String,
+            enum: ["Criação", "Alteração"],
+        },
+    },
+    distribuicao: [{
+        estado: {
+            type: String,
+            enum: ["Em trabalho", "Submetido", "Em apreciação", "Em validação"],
+        },
+        responsavel: {
+            type: String    // Email do técnico responsável pelo pedido neste estado
+        },
+        data: {
+            type: Date,
+            default: Date.now,
+        },
+        despacho: {
+            type: String,
         }
-    },
-    data: {
-        type: String
-    },
-    prazo: {
-        type: String
-    },
-    estado: {
-        type: String
-    },
-    objetoID: {
-        type: String
-    },
-    alteracoes: {
-        type: Object
-    }
+    }]
 });
 
 var Pedido = module.exports = mongoose.model('Pedido', PedidoSchema);
@@ -65,20 +61,16 @@ module.exports.getPedidoByNumber = function (n, callback) {
     Pedido.findOne(query, callback);
 }
 
-module.exports.getPedidosByState = function (e, callback) {
+/*module.exports.getPedidosByState = function (e, callback) {
     var query = { estado: e };
     Pedido.find(query, callback);
-}
+}*/
 
 module.exports.getPedidosByUser = function (e, callback) {
-    var query = { 'utilizador.email': e };
+    var query = { 'criadoPor': e };
     Pedido.find(query, callback);
 }
 
 module.exports.getCountPedidos = function (callback) {
     Pedido.count({}, callback);
-}
-
-module.exports.getPedidoById = function (id, callback) {
-    Pedido.findById(id, callback);
 }
