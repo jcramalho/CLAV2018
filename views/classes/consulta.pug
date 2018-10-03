@@ -283,7 +283,16 @@ block corpo
                                                         td 
                                                             p(v-html="criterio.nota")
 
-                    panel(header="Notas" v-if="clas.Notas")
+                    //- Notas 
+                    panel(header="Notas" v-if="clas.Level==3")
+                        table.consulta(v-if="pageReady" style="border-color: white; border-style:solid; width:100%")
+                                ul(style="padding-left:20px" v-if="clas.PCA.notas!=\"\"")
+                                    li(v-for="note in clas.PCA.notas")
+                                        | {{note}} 
+
+                                ul(v-else-if="clas.PCA.notas==\"\"")
+                                    | Sem Notas
+                                                                        
                                                              
             //- Buttons
             spinner(ref="spinner" size="lg" fixed text="Por favor aguarde...")
