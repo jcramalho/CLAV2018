@@ -29,6 +29,23 @@ Leg.list = function () {
         });
 }
 
+Leg.ultNum = function(){
+    var fetchQuery = `
+        select (count (?s) as ?num)  where { 
+            ?s a clav:Legislacao .
+        }
+    `
+    return client.query(fetchQuery)
+        .execute()
+        // a obter o número de legislações na BD
+        .then(response => {
+            return(response.results.bindings[0].num.value)
+        })
+        .catch(function (error) {
+            console.error("Legislação: Erro ao executar a query de contagem: " + error)
+        })
+}
+
 Leg.stats = function (id) {
     var fetchQuery = `
         SELECT  
@@ -106,10 +123,10 @@ Leg.checkNumberAvailability = function (number) {
         });
 }
 
-Leg.createDoc = function (newID, dataObj) {
+Leg.createDoc = function (novoId, dataObj) {
     var createQuery = `
         INSERT DATA {
-            clav:${newID} rdf:type owl:NamedIndividual ,
+            clav:${novoId} rdf:type owl:NamedIndividual ,
                     clav:Legislacao ;
                 clav:diplomaData '${dataObj.Data}' ;
                 clav:diplomaNumero '${dataObj.Numero}' ;
@@ -120,7 +137,7 @@ Leg.createDoc = function (newID, dataObj) {
 
     for(org of dataObj.Orgs){
         createQuery += `
-            clav:${newID} clav:diplomaEntidade clav:${org}.
+            clav:${novoId} clav:diplomaEntidade clav:${org}.
         `;    
     }
 

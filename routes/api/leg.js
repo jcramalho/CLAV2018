@@ -5,10 +5,19 @@ var Leg = require('../../controllers/api/leg.js');
 var express = require('express');
 var router = express.Router();
 
-
 router.get('/', function (req, res) {
     Leg.list()
         .then(legs => res.send(legs))
+        .catch(function (error) {
+            console.error(error);
+        });
+})
+
+router.get('/numElems', function (req, res) {
+    Leg.ultNum()
+        .then(n => {
+            res.send(n)
+        })
         .catch(function (error) {
             console.error(error);
         });
@@ -30,29 +39,6 @@ router.get('/:id/regula', function (req, res) {
 })
 
 router.post('/', Auth.isLoggedInAPI, function (req, res) {
-    function genID(ids) {
-        var newIDNum = 1;
-
-        var list = ids
-            .map(item => parseInt(
-                item.id.value.replace(/[^#]+#leg_(.*)/, '$1')
-            ))
-            .sort((a, b) => a - b);
-
-
-        for (var i = 0; i < list.length; i++) {
-            var idNum = list[i];
-
-            if (newIDNum == idNum) {
-                newIDNum++;
-            }
-            else {
-                break;
-            }
-        }
-        return "leg_" + newIDNum;
-    }
-
     var dataObj = req.body;
 
     Leg.checkNumberAvailability(dataObj.Number)
@@ -61,24 +47,25 @@ router.post('/', Auth.isLoggedInAPI, function (req, res) {
                 res.send("Número já existente!");
             }
             else {
-                Leg.list()
-                    .then(function (ids) {
-                        var newID = genID(ids)
-
-                        Leg.createDoc(newID, dataObj)
+                Leg.ultNum()
+                    .then(legId => {
+                        console.log("ID recebido: " + legId)
+                        var novoID = "leg_" + parseInt(legId.split("leg_")) + 1
+                        console.log("Leg: " + novoID)
+                    
+                        Leg.createDoc(novoID, dataObj)
                             .then(function () {
-                                Logging.logger.info('Criada legislação \'' + newID + '\' por utilizador \'' + req.user._id + '\'');
+                                Logging.logger.info('Criada legislação \'' + novoID + '\' por utilizador \'' + req.user._id + '\'');
 
                                 req.flash('success_msg', 'Diploma inserido');
-                                res.send(newID);
+                                res.send(novoID);
                             })
-                            .catch(error => console.error(error));
-
-                    })
-                    .catch(error => console.error("newID error: \n\t" + error))
+                            .catch(error => console.error(error))
+                        }) 
+                    .catch(error => console.error('Legislação: Erro na contagem do catálogo: ' + error))  
             }
         })
-        .catch(error => console.error("General error:\n" + error));
+        .catch(error => console.error("Legislação: Erro na verificação do número da legislação: " + error));
 })
 
 router.put('/:id', function (req, res) {
