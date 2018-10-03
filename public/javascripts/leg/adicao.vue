@@ -79,16 +79,12 @@ var newLeg = new Vue({
             });
         },
         loadOrgs: function () {
-            var dataToParse = [];
-            var keys = ["id", "Sigla", "Desinacao"];
+            var keys = ["id", "Sigla", "Designacao"];
             var i = 0;
 
             this.$http.get("/api/entidades")
                 .then(function (response) {
-                    dataToParse = response.body;
-                })
-                .then(function () {
-                    this.orgs = this.parse(dataToParse, keys)
+                    this.orgs = this.parse(response.body, keys)
                         .map(function (item) {
                             return {
                                 data: [i++, item.Sigla, item.Designacao, "Entidade"],
@@ -103,7 +99,7 @@ var newLeg = new Vue({
                 })
                 .catch(function (error) {
                     console.error(error);
-                });
+                });       
         },
         parse: function (content, keys) {
             var dest = [];
