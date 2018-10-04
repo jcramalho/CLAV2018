@@ -5,10 +5,10 @@ var Pedidos = module.exports
 var Logging = require('../controllers/logging');
 var Pedido = require('../models/pedido');
 
-Pedidos.novo = function(email, objeto, estado) {
+Pedidos.novo = function(user, objeto, estado) {
     var novoPedido = new Pedido({
         numero: "1-2018",
-        criadoPor: email,
+        criadoPor: user,
         objeto: {
             codigo: objeto.codigo,
             tipo: objeto.tipo,

@@ -22,14 +22,17 @@ var PedidoSchema = mongoose.Schema({
     objeto: {
         codigo: {
             type: String,
+            required: true,
         },
         tipo: {
             type: String,
             enum: ["Processo de negócio", "Tabela de seleção", "Entidade", "Legislação"],
+            required: true,
         },
         acao: {
             type: String,
             enum: ["Criação", "Alteração"],
+            required: true,
         },
     },
     distribuicao: [{

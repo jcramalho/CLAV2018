@@ -58,7 +58,7 @@ router.post('/', Auth.isLoggedInAPI, function (req, res) {
                 res.send("Designação e/ou Sigla já existente(s)!");
             }
             else {
-                Entidades.createEntidade(id, name, initials, international, tipologias)
+                Entidades.createEntidade(id, name, initials, international, tipologias, req.user.email)
                     .then(function () {
                         Logging.logger.info('Criada entidade \'' + id + '\' por utilizador \'' + req.user._id + '\'');
 

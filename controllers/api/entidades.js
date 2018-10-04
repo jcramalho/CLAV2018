@@ -140,7 +140,7 @@ Entidades.checkNameAvailability = function (name) {
         });
 }
 
-Entidades.createEntidade = function (id, name, initials, international, tipologias) {
+Entidades.createEntidade = function (id, name, initials, international, tipologias, user) {
     var createQuery = `
         INSERT DATA {
             clav:${id} rdf:type owl:NamedIndividual ,
@@ -157,7 +157,7 @@ Entidades.createEntidade = function (id, name, initials, international, tipologi
 
     return client.query(createQuery).execute()
         .then(response => Promise.resolve(response))
-        .then(Pedidos.novo("alguem@mail.com", { codigo: id, tipo: "Entidade", acao: "Criação" }, { estado: "Submetido" }))
+        .then(Pedidos.novo(user, { codigo: initials, tipo: "Entidade", acao: "Criação" }, { estado: "Submetido" }))
         .catch(error => console.error("Error in create:\n" + error));
 }
 
