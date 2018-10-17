@@ -93,7 +93,7 @@ Entidades.participations = function (id) {
         .execute()
         .then(response => Promise.resolve(response.results.bindings))
         .catch(function (error) {
-            console.error("Participações de org: " + error);
+            console.error("Erro no acesso ao GraphDB, participações de uma entidade: " + error);
         });
 }
 

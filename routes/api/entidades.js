@@ -9,7 +9,19 @@ router.get('/', function (req, res) {
     Entidades.list()
         .then(list => res.send(list))
         .catch(function (error) {
-            console.error("Chamada a Listagem: " + error);
+            console.error("Erro na listagem das entidades: " + error);
+        });
+})
+
+router.get('/teste', function (req, res) {
+    Entidades.list()
+        .then(list => {
+            res.writeHead(200, {'Content-Type': 'application/json'})
+            res.write(JSON.stringify(list))
+            res.end()
+        })
+        .catch(function (error) {
+            console.error("Erro na listagem das entidades: " + error);
         });
 })
 
@@ -41,7 +53,7 @@ router.get('/:id/participacoes', function (req, res) {
     Entidades.participations(req.params.id)
         .then(org => res.send(org))
         .catch(function (error) {
-            console.error("Chamada de participações: " + error);
+            console.error("Erro na query sobre as participações de uma entidade: " + error);
         });
 })
 

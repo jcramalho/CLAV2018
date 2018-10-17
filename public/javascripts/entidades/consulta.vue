@@ -14,7 +14,14 @@ var org = new Vue({
         domain: [],
         domainReady: false,
 
-        participations: [],
+        participations: {
+                Apreciador: [],
+                Assessor: [],
+                Comunicador: [],
+                Decisor: [],
+                Executor: [],
+                Iniciador: [],
+            },
         partsReady: false,
 
 
@@ -65,19 +72,25 @@ var org = new Vue({
                 });
         },
         loadParticipations: function () {
-            var partsToParse = [];
-            var keys = ['id', 'Title', 'Code'];
+            var type = ""
+            var participa = false
 
             this.$http.get("/api/entidades/" + this.id + "/participacoes")
                 .then(function (response) {
-                    partsToParse = response.body;
-                })
-                .then(function () {
-                    this.participations = this.parseParticipants(partsToParse, keys);
-                    this.newParticipations = JSON.parse(JSON.stringify(this.participations));
+                    var partsToParse = response.body;
+                
+                    for(var i=0; i < partsToParse.length; i++ ){
+                        type = partsToParse[i].Type.value.replace(/.*temParticipante(.*)/, '$1')
+                        this.participations[type].push(
+                                     { id: partsToParse[i].id.value.replace(/[^#]+#(.*)/, '$1'),
+                                       Type: partsToParse[i].Type.value,
+                                       Title: partsToParse[i].Title.value,
+                                       Code: partsToParse[i].Code.value })
+                        
+                        participa = true
+                    }
 
-                    if(this.participations.length>0)
-                        this.partsReady = true;
+                    if(participa) this.partsReady = true;
                 })
                 .catch(function (error) {
                     console.error(error);
@@ -130,42 +143,6 @@ var org = new Vue({
             return dest.sort(function (a, b) {
                 return a.id.localeCompare(b.id);
             });
-        },
-        parseParticipants: function (content, keys) {
-            var dest = {
-                Apreciador: [],
-                Assessor: [],
-                Comunicador: [],
-                Decisor: [],
-                Executor: [],
-                Iniciador: [],
-            };
-            var temp = {};
-
-            // parsing the JSON
-            for (var i = 0; i < content.length; i++) {
-                for (var j = 0; j < keys.length; j++) {
-
-                    temp[keys[j]] = content[i][keys[j]].value;
-
-                    if (keys[j] == "id") {
-                        temp.id = temp.id.replace(/[^#]+#(.*)/, '$1');
-                    }
-                }
-                var type = content[i].Type.value.replace(/.*temParticipante(.*)/, '$1');
-
-                dest[type].push(JSON.parse(JSON.stringify(temp)));
-            }
-
-            var types = Object.keys(dest);
-
-            for (var i = 0; i < types.length; i++) {
-                dest[types[i]] = dest[types[i]].sort(function (a, b) {
-                    return a.id.localeCompare(b.id);
-                });
-            }
-
-            return dest;
         },
     },
     created: function () {
