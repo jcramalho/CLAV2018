@@ -1,45 +1,10 @@
 const client = require('../../config/database').onthology;
-var Pedidos = require('../pedidos');
-var Auth = require('../auth.js');
+var Pedidos = require('../../controllers/api/pedidos');
 
 var Entidades = module.exports
 
-Entidades.list = function () {
-    return client.query(
-        `SELECT * {
-            ?id rdf:type clav:Entidade ;
-                clav:entEstado "Ativa";
-                clav:entDesignacao ?Designacao ;
-                clav:entSigla ?Sigla ;
-                clav:entInternacional ?Internacional.
-        }`
-    )
-        .execute()
-        .then(response => Promise.resolve(response.results.bindings))
-        .catch(function (error) {
-            console.error("Listagem: " + error);
-        });
-}
-
-Entidades.inTipols = function (id) {
-    var fetchQuery = `
-        SELECT * WHERE {
-            clav:${id} clav:pertenceTipologiaEnt ?id .
-            
-            ?id clav:tipEstado "Ativa";
-                clav:tipSigla ?Sigla;
-                clav:tipDesignacao ?Designacao.
-        }
-    `;
-
-    return client.query(fetchQuery).execute()
-        .then(response => Promise.resolve(response.results.bindings))
-        .catch(function (error) {
-            console.error("Tipologias a que x pertence: " + error);
-        });
-}
-
-
+// TODO: Este GET id esta a devolver uma lista, e não um objecto singular!!
+// Ainda não posso substituir porque a interface está a contar com uma lista
 Entidades.stats = function (id) {
     return client.query(`
         SELECT * where {
@@ -57,57 +22,12 @@ Entidades.stats = function (id) {
         });
 }
 
-Entidades.domain = function (id) {
-    var fetchQuery = `
-        SELECT * WHERE {
-            ?id clav:temDono clav:${id} ;
-                clav:codigo ?Code ;
-                clav:titulo ?Title ;
-                clav:pertenceLC clav:lc1 ;
-                clav:classeStatus "A" .
-        }
-    `;
-
-    return client.query(fetchQuery)
-        .execute()
-        .then(response => Promise.resolve(response.results.bindings))
-        .catch(function (error) {
-            console.error("Dominio de org: " + error);
-        });
-}
-
-Entidades.participations = function (id) {
-    var fetchQuery = `
-        select * where { 
-            ?id clav:temParticipante clav:${id} ;
-                ?Type clav:${id} ;
-            
-                clav:titulo ?Title ;
-                clav:codigo ?Code ;
-                clav:pertenceLC clav:lc1 ;
-                clav:classeStatus "A" .
-            
-            filter (?Type!=clav:temParticipante && ?Type!=clav:temDono)
-        }`
-        ;
-
-    return client.query(fetchQuery)
-        .execute()
-        .then(response => Promise.resolve(response.results.bindings))
-        .catch(function (error) {
-            console.error("Participações de org: " + error);
-        });
-}
-
 Entidades.checkAvailability = function (name, initials) {
     var checkQuery = `
         SELECT (count(*) as ?Count) where { 
-            {
-                ?t clav:tipSigla ?s ;
-                    clav:tipDesignacao ?n .
-            } UNION {
-                ?e clav:entSigla ?s ;
-                    clav:entDesignacao ?n .
+            { ?t clav:tipSigla ?s ; clav:tipDesignacao ?n . }
+            UNION
+            { ?e clav:entSigla ?s ; clav:entDesignacao ?n .
             }
             filter (?s='${initials}' || ?n='${name}').
         }
@@ -119,46 +39,6 @@ Entidades.checkAvailability = function (name, initials) {
         .catch(function (error) {
             console.error("Error in check:\n" + error);
         });
-}
-
-Entidades.checkNameAvailability = function (name) {
-    var checkQuery = ` 
-        SELECT (count(*) as ?Count) where { 
-            {
-                ?t clav:tipDesignacao '${name}' .
-            } UNION {
-                ?e clav:entDesignacao '${name}' .
-            }
-        }
-    `;
-
-    return client.query(checkQuery).execute()
-        //Getting the content we want
-        .then(response => Promise.resolve(response.results.bindings[0].Count.value))
-        .catch(function (error) {
-            console.error("Error in check:\n" + error);
-        });
-}
-
-Entidades.createEntidade = function (id, name, initials, international, tipologias, user) {
-    var createQuery = `
-        INSERT DATA {
-            clav:${id} rdf:type owl:NamedIndividual ,
-                    clav:Entidade ;
-                clav:entDesignacao '${name}' ;
-                clav:entSigla '${initials}' ;
-                clav:entInternacional '${international}' ;\n`
-    for(var i=0; i < tipologias.length; ++i){
-        createQuery += `\t\tclav:pertenceTipologiaEnt clav:${tipologias[i].id} ; \n`
-    }
-    createQuery += `\t\tclav:entEstado "Harmonização" .
-        }
-    `;
-
-    return client.query(createQuery).execute()
-        .then(response => Promise.resolve(response))
-        .then(Pedidos.novo(user, { codigo: initials, tipo: "Entidade", acao: "Criação" }, { estado: "Submetido" }))
-        .catch(error => console.error("Error in create:\n" + error));
 }
 
 Entidades.updateEntidade = function (dataObj) {
@@ -247,36 +127,152 @@ Entidades.updateEntidade = function (dataObj) {
 
     var updateQuery = deletePart + inserTPart + wherePart;
 
+    console.log(deletePart);
+    console.log(inserTPart);
+    console.log(wherePart);
+
     return client.query(updateQuery).execute()
         .then(response => Promise.resolve(response))
         .catch(error => console.error("Error in update:\n" + error));
 }
 
-Entidades.deleteEntidade = function (id) {
-    /*var deleteQuery = `
-        DELETE {
-            clav:${id} ?o ?p .
-            ?s ?o clav:${id}
-        }
-        WHERE { ?s ?o ?p }
-    `;*/
+Entidades.list = (req, res) => {
+    const listQuery = `SELECT * {
+        ?id rdf:type clav:Entidade ;
+            clav:entEstado "Ativa";
+            clav:entDesignacao ?Designacao ;
+            clav:entSigla ?Sigla ;
+            clav:entInternacional ?Internacional.
+    }`;
 
-    var deleteQuery = `
-        DELETE {
-            clav:${id} clav:entEstado ?status .
-        }
-        INSERT {
-            clav:${id} clav:entEstado 'Inativa' .
-        }
-        WHERE {
-            clav:${id} clav:entEstado ?status .
-        }
-    `;
+    return client.query(listQuery).execute()
+        .then(response => Promise.resolve(response.results.bindings))
+        .then(entidades => res.json(entidades))
+        .catch(error => res.sendStatus(500));
+};
+
+Entidades.isAvailable = (req, res, next) => {
+    const isAvailableQuery = `ASK {
+        { ?e clav:entDesignacao|clav:tipDesignacao '${req.body.name}' }
+        UNION
+        { ?s clav:entSigla|clav:tipSigla '${req.body.initials}' }
+    }`;
+
+    return client.query(isAvailableQuery).execute()
+        .then(results => Promise.resolve(!results.boolean))
+        .then(isAvailable => isAvailable ? next() : res.sendStatus(409))
+        .catch(error => res.sendStatus(500));
+}
+
+Entidades.create = (req, res) => {
+    const createQuery = `INSERT DATA {
+        clav:ent_${req.body.initials} rdf:type owl:NamedIndividual , clav:Entidade;
+            clav:entDesignacao '${req.body.name}' ;
+            clav:entSigla '${req.body.initials}' ;
+            clav:entInternacional '${req.body.international}' ;
+            ${req.body.tipologias.map(tipologia => `clav:pertenceTipologiaEnt clav:${tipologia.id} ;`).join('\n')}
+            clav:entEstado 'Harmonização' .
+    }`;
+
+    return client.query(createQuery).execute()
+        .then(response => Promise.resolve(response))
+        .then(response => {
+            // Após sucesso na criação da entidade, fazer um redirect para
+            // /pedidos e criar o novo pedido de criação de entidade
+            var pedido = {
+                criadoPor: req.body.email,  // TODO: mudar para req.user.email
+                objeto: {
+                    codigo: req.body.initials,
+                    tipo: "Entidade",
+                    acao: "Criação"
+                },
+                distribuicao: [{
+                    estado: "Submetido"
+                }]
+            };
+            req.body = pedido;
+            Pedidos.criar(req, res);
+        })
+        .catch(error => res.sendStatus(500));
+};
+
+Entidades.detail = (req, res) => {
+    const detailQuery = `SELECT * where {
+        clav:${req.params.id} clav:entDesignacao ?Designacao ;
+            clav:entSigla ?Sigla ;
+            clav:entEstado ?Estado ;
+            clav:entInternacional ?Internacional .
+    }`
+
+    return client.query(detailQuery).execute()
+        .then(response => Promise.resolve(response.results.bindings[0]))
+        .then(entidade => entidade ? res.json(entidade) : res.sendStatus(404))
+        .catch(error => res.sendStatus(500));
+};
+
+Entidades.update = (req, res) => {
+    return null;
+};
+
+Entidades.delete = (req, res) => {
+    const deleteQuery = `DELETE { clav:${req.params.id} clav:entEstado ?status .
+    } INSERT {
+        clav:${req.params.id} clav:entEstado 'Inativa' .
+    } WHERE {
+        clav:${req.params.id} clav:entEstado ?status .
+    }`;
 
     return client.query(deleteQuery).execute()
-        //getting the content we want
         .then(response => Promise.resolve(response))
-        .catch(function (error) {
-            console.error(error);
-        });
-}
+        .then(response => res.sendStatus(200))
+        .catch(error => res.sendStatus(500));
+};
+
+Entidades.tipologias = (req, res) => {
+    const tipologiasQuery = `SELECT * WHERE {
+        clav:${req.params.id} clav:pertenceTipologiaEnt ?id .
+        
+        ?id clav:tipEstado "Ativa";
+            clav:tipSigla ?Sigla;
+            clav:tipDesignacao ?Designacao.
+    }`;
+
+    return client.query(tipologiasQuery).execute()
+        .then(response => Promise.resolve(response.results.bindings))
+        .then(tipologias => res.json(tipologias))
+        .catch(error => res.sendStatus(500));
+};
+
+Entidades.dominio = (req, res) => {
+    const dominioQuery = `SELECT * WHERE {
+        ?id clav:temDono clav:${req.params.id} ;
+            clav:codigo ?Code ;
+            clav:titulo ?Title ;
+            clav:pertenceLC clav:lc1 ;
+            clav:classeStatus "A" .
+    }`;
+
+    return client.query(dominioQuery).execute()
+        .then(response => Promise.resolve(response.results.bindings))
+        .then(dominio => res.json(dominio))
+        .catch(error => res.sendStatus(500));
+};
+
+Entidades.participacoes = (req, res) => {
+    const participacoesQuery = `SELECT * WHERE { 
+        ?id clav:temParticipante clav:${req.params.id} ;
+            ?Type clav:${req.params.id} ;
+        
+            clav:titulo ?Title ;
+            clav:codigo ?Code ;
+            clav:pertenceLC clav:lc1 ;
+            clav:classeStatus "A" .
+        
+        FILTER (?Type!=clav:temParticipante && ?Type!=clav:temDono)
+    }`;
+
+    return client.query(participacoesQuery).execute()
+        .then(response => Promise.resolve(response.results.bindings))
+        .then(participacoes => res.json(participacoes))
+        .catch(error => res.sendStatus(500));
+};

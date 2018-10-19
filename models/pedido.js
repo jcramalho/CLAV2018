@@ -54,26 +54,3 @@ var PedidoSchema = mongoose.Schema({
 });
 
 var Pedido = module.exports = mongoose.model('Pedido', PedidoSchema);
-
-module.exports.createPedido = function (newPedido, callback) {
-    newPedido.save(callback);
-}
-
-module.exports.getPedidoByNumber = function (n, callback) {
-    var query = { numero: n };
-    Pedido.findOne(query, callback);
-}
-
-/*module.exports.getPedidosByState = function (e, callback) {
-    var query = { estado: e };
-    Pedido.find(query, callback);
-}*/
-
-module.exports.getPedidosByUser = function (e, callback) {
-    var query = { 'criadoPor': e };
-    Pedido.find(query, callback);
-}
-
-module.exports.getCountPedidos = function (callback) {
-    Pedido.count({}, callback);
-}
