@@ -5,57 +5,46 @@ var Entidades = require('../../controllers/api/entidades.js');
 var express = require('express');
 var router = express.Router();
 
-router.get('/', function (req, res) {
-    Entidades.list()
-        .then(list => res.send(list))
-        .catch(function (error) {
-            console.error("Erro na listagem das entidades: " + error);
-        });
-})
+router.get('/erro', (req, res) => res.jsonp({cod: "Código do Erro", mensagem: "Mensagem de erro."}));
 
-router.get('/teste', function (req, res) {
-    Entidades.list()
-        .then(list => {
-            res.writeHead(200, {'Content-Type': 'application/json'})
-            res.write(JSON.stringify(list))
-            res.end()
-        })
-        .catch(function (error) {
-            console.error("Erro na listagem das entidades: " + error);
-        });
-})
+// Lista todas as entidades: id, sigla, designacao, internacional
+router.get('/', (req, res) => {
+    Entidades.listar()      
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.jsonp({cod: "408", mensagem: `Erro na listagem das entidades: ${erro}`}))
+});
 
-router.get('/:id', function (req, res) {
-    Entidades.stats(req.params.id)
-        .then(stats => res.send(stats))
-        .catch(function (error) {
-            console.error("Chamada de dados de uma org: " + error);
-        });
-})
+// Consulta de uma entidade: sigla, designacao, estado, internacional
+router.get('/:id', (req, res) => {
+    Entidades.consultar(req.params.id)
+        .then(dados => dados ? res.jsonp(dados) : res.jsonp({cod: "404", mensagem: `Erro. A entidade '${req.params.id}' não existe`}))
+        .catch(erro => res.jsonp({cod: "408", mensagem: `Erro na consulta da entidade '${req.params.id}': ${erro}`}))
+});
 
-router.get('/:id/tipologias', function (req, res) {
-    Entidades.inTipols(req.params.id)
-        .then(list => res.send(list))
-        .catch(function (error) {
-            console.error("Chamada de tipologias a que x pertence: " + error);
-        });
-})
+// Lista as tipologias a que uma entidade pertence: id, sigla, designacao
+router.get('/:id/tipologias', (req, res) => {
+    Entidades.tipologias(req.params.id)
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.jsonp({cod: "408", mensagem: `Erro na consulta das tipologias a que '${req.params.id}' pertence: ${erro}`}))
+});
 
-router.get('/:id/dominio', function (req, res) {
-    Entidades.domain(req.params.id)
-        .then(org => res.send(org))
-        .catch(function (error) {
-            console.error("Chamada de dominio: " + error);
-        });
-})
+// Lista os processos em que uma entidade intervem como dono
+router.get('/:id/intervencao/dono', (req, res) => {
+    Entidades.dono(req.params.id)
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.jsonp({cod: "408", mensagem: `Erro na consulta dos PNs em que '${req.params.id}' é dono: ${erro}`}))
+});
 
-router.get('/:id/participacoes', function (req, res) {
-    Entidades.participations(req.params.id)
-        .then(org => res.send(org))
-        .catch(function (error) {
-            console.error("Erro na query sobre as participações de uma entidade: " + error);
-        });
-})
+// Lista os processos em que uma entidade intervem como participante
+router.get('/:id/intervencao/participante', (req, res) => {
+    Entidades.participante(req.params.id)
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.jsonp({cod: "408", mensagem: `Erro na query sobre as participações da entidade '${req.params.id}': ${erro}`}))
+});
+
+module.exports = router;
+
+/*
 
 router.post('/', Auth.isLoggedInAPI, function (req, res) {
     var initials = req.body.initials;
@@ -120,4 +109,4 @@ router.delete('/:id', Auth.isLoggedInAPI, function (req, res) {
         });
 })
 
-module.exports = router;
+module.exports = router;*/
