@@ -13,10 +13,7 @@ Entidades.listar = () => {
 
     return client.query(query)
         .execute()
-        .then(response => Promise.resolve(normalize(response)))
-        .catch(function(error) {
-            console.error(`Listagem: ${error}`);
-        });
+        .then(response => normalize(response));
 };
 
 Entidades.tipologias = (id) => {
@@ -30,10 +27,7 @@ Entidades.tipologias = (id) => {
 
     return client.query(query)
         .execute()
-        .then(response => Promise.resolve(normalize(response)))
-        .catch(function(error) {
-            console.error(`Tipologias a que x pertence: ${error}`);
-        });
+        .then(response => normalize(response));
 };
 
 Entidades.consultar = (id) => {
@@ -47,10 +41,7 @@ Entidades.consultar = (id) => {
 
     return client.query(query)
         .execute()
-        .then(response => Promise.resolve(normalize(response)[0]))
-        .catch(function(error) {
-            console.error(`Erro na consulta de uma entidade: ${error}`);
-        });
+        .then(response => normalize(response)[0]);
 };
 
 Entidades.dono = (id) => {
@@ -64,10 +55,7 @@ Entidades.dono = (id) => {
 
     return client.query(query)
         .execute()
-        .then(response => Promise.resolve(normalize(response)))
-        .catch(function(error) {
-            console.error(`Dominio de org: ${error}`);
-        });
+        .then(response => normalize(response));
 };
 
 Entidades.participante = (id) => {
@@ -84,8 +72,5 @@ Entidades.participante = (id) => {
 
     return client.query(query)
         .execute()
-        .then(response => Promise.resolve(normalize(response)))
-        .catch(function(error) {
-            console.error(`Erro no acesso ao GraphDB, participações de uma entidade: ${error}`);
-        });
+        .then(response => normalize(response));
 };
