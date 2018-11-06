@@ -55,6 +55,16 @@ app.use(expressValidator({
 // Connect Flash
 app.use(flash());
 
+// Connect mongo and mongoose
+var dataBases = require('./config/database');
+var mongoose = require('mongoose');
+mongoose.Promise = global.Promise;
+mongoose.connect(dataBases.userDB, {
+	useMongoClient: true,
+});
+
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 // Global Vars
 app.use(function (req, res, next) {
