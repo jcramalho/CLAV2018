@@ -2,36 +2,32 @@ var orgs = new Vue({
     el: '#tabela-entidades',
     data: {
         tableData: [],
-        ready: false,
         content: [],
+        ready: false,
     },
     methods: {
         rowClicked: function(row){
-            var id = this.content[row[0]-1].id.value;
+            var id = this.content[row[0]-1].id;
             id = id.replace(/[^#]+#(.*)/,'$1');
             
-            window.location.href = '/entidades/consultar/'+id;
+            window.location.href = '/entidades/'+id;
         },
         parse: function(){    
-            // key names for table header and parsing
-            var keys=["Designacao","Sigla","Internacional"];
-
             var temp=[];
 
-            // parsing the JSON
+            // adiciona um index à tabela dos dados (para que?)
             for (var i=0; i<this.content.length; i++) {
                 temp[0]=i+1;
+                temp[1] = this.content[i].designacao;
+                temp[2] = this.content[i].sigla;
+                temp[3] = this.content[i].internacional;
 
-                for (var j=0; j<keys.length; j++){
-                    temp[j+1] = this.content[i][keys[j]].value;
-                }
-                
                 this.tableData[i]=temp.slice();
-
             }
             
         }
     },
+    // Vai buscar a listagem normalizada a "/api/entidades"
     created: function(){
         this.$http.get("/api/entidades")
         .then( function(response) { 

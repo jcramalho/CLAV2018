@@ -3,7 +3,7 @@ const normalize = require('../../controllers/api/aux').normalize;
 const Entidades = module.exports;
 
 Entidades.listar = () => {
-    const query = `SELECT ?sigla ?designacao ?internacional {
+    const query = `SELECT ?id ?sigla ?designacao ?internacional {
         ?id rdf:type clav:Entidade ;
             clav:entEstado "Ativa";
             clav:entDesignacao ?designacao ;

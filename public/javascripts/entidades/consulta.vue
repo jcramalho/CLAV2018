@@ -52,11 +52,11 @@ var org = new Vue({
 
     },
     methods: {
-        loadDomain: function () {
+        loadDono: function () {
             var classesToParse = [];
             var keys = ["id", "Code", "Title"];
 
-            this.$http.get("/api/entidades/" + this.id+"/dominio")
+            this.$http.get("/api/entidades/" + this.id + "intervencao/dono")
                 .then(function (response) {
                     classesToParse = response.body;
                 })
@@ -145,6 +145,8 @@ var org = new Vue({
             });
         },
     },
+
+    //Corre o código depois da instancia criada
     created: function () {
         this.id = window.location.pathname.split('/')[3];
         
