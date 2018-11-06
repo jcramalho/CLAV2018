@@ -5,11 +5,42 @@ var Entidades = require('../../controllers/api/entidades.js');
 var express = require('express');
 var router = express.Router();
 
+// Middleware de verificação de disponibilidade de uma entidade
+const estaDisponivel = (req, res, next) => {
+    const entidade = {
+        sigla: req.body.sigla,
+        designacao: req.body.designacao,
+    };
+
+    Entidades.existe(entidade)
+        .then(function(existe) {
+            if (existe) {
+                res.status(409).send(`Já existe uma entidade com a sigla '${entidade.sigla}' ou designação '${entidade.designacao}'`);
+            } else {
+                next();
+            }
+        })
+};
+
 // Lista todas as entidades: id, sigla, designacao, internacional
 router.get('/', (req, res) => {
     Entidades.listar()      
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na listagem das entidades: ${erro}`));
+});
+
+// Criação de uma nova entidade. Em caso de sucesso gera um novo pedido
+router.post('/', estaDisponivel, (req, res) => {
+    const entidade = {
+        sigla: req.body.sigla,
+        designacao: req.body.designacao,
+        internacional: req.body.internacional,
+        tipologias: req.body.tipologias,
+    };
+
+    return Entidades.criar(entidade)
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.status(500).send(`Erro na criação da entidade: ${erro}`));
 });
 
 // Consulta de uma entidade: sigla, designacao, estado, internacional
@@ -43,33 +74,6 @@ router.get('/:id/intervencao/participante', (req, res) => {
 module.exports = router;
 
 /*
-
-router.post('/', Auth.isLoggedInAPI, function (req, res) {
-    var initials = req.body.initials;
-    var international = req.body.international;
-    var name = req.body.name;
-    var tipologias = req.body.tipologias
-    var id = 'ent_'+initials;
-
-    Entidades.checkAvailability(name, initials)
-        .then(function (count) {
-            if (count > 0) {
-                res.send("Designação e/ou Sigla já existente(s)!");
-            }
-            else {
-                Entidades.createEntidade(id, name, initials, international, tipologias)
-                    .then(function () {
-                        Logging.logger.info('Criada entidade \'' + id + '\' por utilizador \'' + req.user._id + '\'');
-
-                        req.flash('success_msg', 'Entidade adicionada');
-                        res.send(id);
-                    })
-                    .catch(error => console.error(error));
-            }
-        })
-        .catch(error => console.error("General error:\n" + error));
-})
-
 router.put('/:id', Auth.isLoggedInAPI, function (req, res) {
     var dataObj = req.body;
 

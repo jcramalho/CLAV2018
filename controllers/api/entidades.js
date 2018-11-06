@@ -1,5 +1,6 @@
 const client = require('../../config/database').onthology;
 const normalize = require('../../controllers/api/aux').normalize;
+const Pedidos = require('../../controllers/api/pedidos');
 const Entidades = module.exports;
 
 Entidades.listar = () => {
@@ -42,6 +43,41 @@ Entidades.consultar = (id) => {
     return client.query(query)
         .execute()
         .then(response => normalize(response)[0]);
+};
+
+Entidades.existe = (entidade) => {
+    const query = `ASK {
+        { ?e clav:entDesignacao|clav:tipDesignacao '${entidade.designacao}' }
+        UNION
+        { ?s clav:entSigla|clav:tipSigla '${entidade.sigla}' }
+    }`;
+
+    return client.query(query)
+        .execute()
+        .then(response => response.boolean);
+};
+
+Entidades.criar = (entidade) => {
+    const query = `INSERT DATA {
+        clav:ent_${entidade.sigla} rdf:type owl:NamedIndividual , clav:Entidade;
+            clav:entDesignacao '${entidade.designacao}' ;
+            clav:entSigla '${entidade.sigla}' ;
+            clav:entInternacional '${entidade.internacional}' ;
+            ${entidade.tipologias.map(tipologia => `clav:pertenceTipologiaEnt clav:${tipologia.id} ;`).join('\n')}
+            clav:entEstado 'Harmonização' .
+    }`;
+
+    return client.query(query)
+        .execute()
+        .then(() => Pedidos.criar({
+            criadoPor: 'a70387@alunos.uminho.pt',
+            objeto: {
+                codigo: entidade.sigla,
+                tipo: 'Entidade',
+                acao: 'Criação',
+            },
+            distribuicao: []
+        }));
 };
 
 Entidades.dono = (id) => {
