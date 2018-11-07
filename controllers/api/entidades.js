@@ -4,13 +4,15 @@ const Pedidos = require('../../controllers/api/pedidos');
 const Entidades = module.exports;
 
 Entidades.listar = () => {
-    const query = `SELECT ?id ?sigla ?designacao ?internacional {
+    const query = `SELECT ?id ?sigla ?designacao ?internacional 
+        WHERE {
         ?id rdf:type clav:Entidade ;
             clav:entEstado "Ativa";
             clav:entDesignacao ?designacao ;
             clav:entSigla ?sigla ;
             clav:entInternacional ?internacional.
-    }`;
+        }
+        ORDER BY ?designacao`;
 
     return client.query(query)
         .execute()
