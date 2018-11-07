@@ -1,437 +1,273 @@
-const client = require('../../config/database').onthology;
+const client = require('../../config/database').onthology
+const normalize = require('../../controllers/api/aux').normalize
+const Pedidos = require('../../controllers/api/pedidos')
+const Classes = module.exports
 
-var Classes = module.exports
+// Devolve a lista de classes de um determinado nível, por omissão do nível 1
+Classes.listar = nivel => {
+    if (!level) { nivel = 1 }
 
-Classes.listMeta = function (level) {
-    if (!level) { level = 1 }
-
-    var listQuery = `
+    var query = `
         Select
             ?id 
-            ?Codigo 
-            ?Titulo 
+            ?codigo 
+            ?titulo 
         Where {
-            ?id rdf:type clav:Classe_N${level} ;
+            ?id rdf:type clav:Classe_N${nivel} ;
                     clav:classeStatus 'A';
-                    clav:codigo ?Codigo ;
-                    clav:titulo ?Titulo .
+                    clav:codigo ?codigo ;
+                    clav:titulo ?titulo .
         } 
         Order by ?id 
-    `;
-
-    return client.query(listQuery).execute()
-        .then(response => Promise.resolve(response.results.bindings))
-        .catch(function (error) {
-            console.error(error);
-        });
+    `
+    return client.query(query)
+        .execute()
+        .then(response => normalize(response))
 }
 
-Classes.list = function (level) {
-    if (!level) { level = 1 }
-
-    var listQuery = `
-        Select
-            ?id 
-            ?Codigo 
-            ?Titulo 
-            (GROUP_CONCAT(?tp; SEPARATOR="###") AS ?TermosPesquisa)
-            (COUNT(?desc) AS ?Descendencia)
-        Where {
-            ?id rdf:type clav:Classe_N${level} ;
-                    clav:classeStatus 'A';
-                    clav:codigo ?Codigo ;
-                    clav:titulo ?Titulo .
-            
-            Optional {
-                {
-                    ?ti clav:estaAssocClasse ?id ;
-                        clav:termo ?tp .
-                } UNION {
-                    ?id clav:exemploNA ?tp .
-                } UNION {
-                    ?id clav:temNotaAplicacao ?na.
-                    ?na clav:conteudo ?tp .
-                }   
-            }
-            
-            OPTIONAL {
-                ?desc clav:temPai ?id .
-            }
-        } Group by ?id ?Codigo ?Titulo
-        Order by ?id 
-    `;
-
-    return client.query(listQuery).execute()
-        .then(response => Promise.resolve(response.results.bindings))
-        .catch(function (error) {
-            console.error(error);
-        });
-}
-
-Classes.stats = function (id) {
-    var fetchQuery = `
+// Devolve a metainformação de uma classe: codigo, titulo, status, desc, codigoPai?, tituloPai?, procTipo?
+Classes.consultar = id => {
+    var query = `
             SELECT * WHERE { 
-                clav:${id} clav:titulo ?Titulo;
-                    clav:codigo ?Codigo;
-                    clav:classeStatus ?Status;
-                    clav:descricao ?Desc.
+                clav:${id} clav:titulo ?titulo;
+                    clav:codigo ?codigo;
+                    clav:classeStatus ?status;
+                    clav:descricao ?desc.
 
                 OPTIONAL {
-                    clav:${id} clav:temPai ?Pai.
-                    ?Pai clav:codigo ?CodigoPai;
-                        clav:titulo ?TituloPai.
+                    clav:${id} clav:temPai ?pai.
+                    ?pai clav:codigo ?codigoPai;
+                        clav:titulo ?tituloPai.
                 } 
                 
                 OPTIONAL {
-                    clav:${id} clav:processoTransversal ?ProcTrans;
-                        clav:processoTipoVC ?PT.
-                    ?PT skos:prefLabel ?ProcTipo.
+                    clav:${id} clav:processoTransversal ?procTrans;
+                        clav:processoTipoVC ?pt.
+                    ?pt skos:prefLabel ?procTipo.
                 }
-            }`;
-
-
-    return client.query(fetchQuery)
+            }`
+    return client.query(query)
         .execute()
-        //getting the content we want
-        .then(response => Promise.resolve(response.results.bindings))
-        .catch(function (error) {
-            console.error(error);
-        });
+        .then(response => normalize(response))
 }
 
-Classes.completeData = function (classes) {
-    var fetchQuery = `
-        SELECT 
-            ?id 
-            ?Titulo 
-            ?Codigo 
-            ?Pai 
-            ?CodigoPai 
-            ?TituloPai 
-            ?Status 
-            ?Descricao 
-            ?ProcTipo 
-            ?ProcTrans 
-            ?PCAcontagem
-            ?PCAsubcontagem
-            ?PCAvalor
-            ?DFvalor
-            (group_concat(distinct ?Exemplo;separator="%%") as ?Exemplos) 
-            (group_concat(distinct ?Dono;separator="%%") as ?Donos) 
-            (group_concat(distinct Concat(STR(?NotaA),"::",?NotaACont);separator="%%") as ?NotasA) 
-            (group_concat(distinct Concat(STR(?NotaE),"::",?NotaECont);separator="%%") as ?NotasE)
-            (group_concat(distinct ?Participante1;separator="%%") as ?Parts1) 
-            (group_concat(distinct ?Participante2;separator="%%") as ?Parts2) 
-            (group_concat(distinct ?Participante3;separator="%%") as ?Parts3) 
-            (group_concat(distinct ?Participante4;separator="%%") as ?Parts4) 
-            (group_concat(distinct ?Participante5;separator="%%") as ?Parts5) 
-            (group_concat(distinct ?Participante6;separator="%%") as ?Parts6) 
-            (group_concat(distinct ?Leg;separator="%%") as ?Diplomas) 
-            (group_concat(distinct ?Rel1;separator="%%") as ?Rels1) 
-            (group_concat(distinct ?Rel2;separator="%%") as ?Rels2) 
-            (group_concat(distinct ?Rel3;separator="%%") as ?Rels3) 
-            (group_concat(distinct ?Rel4;separator="%%") as ?Rels4) 
-            (group_concat(distinct ?Rel5;separator="%%") as ?Rels5) 
-            (group_concat(distinct ?Rel6;separator="%%") as ?Rels6) 
-            (group_concat(distinct ?Rel7;separator="%%") as ?Rels7) 
-            (CONCAT(group_concat(distinct ?CritPCA;separator="%%"),"%%",group_concat(distinct ?CritDF;separator="%%")) as ?Crits)
-        FROM noInferences: WHERE {
-            VALUES ?id { ${'clav:' + classes.join(' clav:')} }
-            ?id clav:titulo ?Titulo;
-                clav:codigo ?Codigo;
-                clav:classeStatus ?Status;
-                clav:descricao ?Descricao.
-
-            OPTIONAL {
-                ?id clav:temPai ?Pai.
-                ?Pai clav:codigo ?CodigoPai;
-                    clav:titulo ?TituloPai.
-            } 
-            OPTIONAL {
-                ?id clav:processoTipoVC ?ProcTipo.
-            } 
-            OPTIONAL {
-                ?id clav:processoTransversal ?ProcTrans.
-            } 
-            OPTIONAL {
-                ?id clav:exemploNA ?Exemplo.
-            }
-            OPTIONAL {
-                ?id clav:temDono ?Dono.
-            }
-            OPTIONAL {
-                ?id clav:temNotaAplicacao ?NotaA.
-        		?NotaA clav:conteudo ?NotaACont.
-            }
-            OPTIONAL {
-                ?id clav:temNotaExclusao ?NotaE.
-        		?NotaE clav:conteudo ?NotaECont.
-            }
-            OPTIONAL {
-                ?id clav:temParticipanteApreciador ?Participante1.
-            }
-            OPTIONAL {
-                ?id clav:temParticipanteAssessor ?Participante2.
-            }
-            OPTIONAL {
-                ?id clav:temParticipanteComunicador ?Participante3.
-            }
-            OPTIONAL {
-                ?id clav:temParticipanteDecisor ?Participante4.
-            }
-            OPTIONAL {
-                ?id clav:temParticipanteExecutor ?Participante5.
-            }
-            OPTIONAL {
-                ?id clav:temParticipanteIniciador ?Participante6.
-            }
-            OPTIONAL {
-                ?id clav:temLegislacao ?Leg.
-            }
-            OPTIONAL {
-                ?id clav:eSintetizadoPor ?Rel1.
-            }
-            OPTIONAL {
-                ?id clav:eSinteseDe ?Rel2.
-            }
-            OPTIONAL {
-                ?id clav:eComplementarDe ?Rel3.
-            }
-            OPTIONAL {
-                ?id clav:eCruzadoCom ?Rel4.
-            }
-            OPTIONAL {
-                ?id clav:eSuplementoPara ?Rel5.
-            }
-            OPTIONAL {
-                ?id clav:eSucessorDe ?Rel6.
-            }
-            OPTIONAL {
-                ?id clav:eAntecessorDe ?Rel7.
-            }
-            OPTIONAL {
-                ?id clav:temPCA ?pca ;
-                    clav:temDF	?df .
-                
-                ?pca clav:pcaFormaContagemNormalizada ?PCAcontagem ;
-                     clav:pcaValor ?PCAvalor.
-                optional {
-                    ?pca clav:pcaSubformaContagem ?PCAsubcontagem .
-                }
-                
-                ?df clav:dfValor ?DFvalor .
-                
-                ?pca clav:temJustificacao ?justPCA .
-                ?df clav:temJustificacao ?justDF .
-                
-                ?justPCA clav:temCriterio ?CritPCA .
-                ?justDF clav:temCriterio ?CritDF .
-            }
-        } GROUP BY ?id ?Titulo ?Codigo ?Pai ?CodigoPai ?TituloPai ?Status ?Descricao ?ProcTipo ?ProcTrans ?PCAcontagem ?PCAsubcontagem ?PCAvalor ?DFvalor
-    `;
-
-    console.log(fetchQuery);
-
-    return client.query(fetchQuery).execute()
-        .then(response => Promise.resolve(response.results.bindings))
-        .catch(function (error) {
-            console.error("Error in check:\n" + error);
-        });
-}
-
-Classes.children = function (id) {
-    var fetchQuery = `
-        SELECT ?Child ?Code ?Title (count(?sub) as ?NChilds)
-        WHERE {
-            ?Child clav:temPai clav:${id} ;
-                    clav:codigo ?Code ;
-                    clav:titulo ?Title .
-            optional {
-                ?sub clav:temPai ?Child .
-            }
-        }Group by ?Child ?Code ?Title
-    `;
-
-
-    return client.query(fetchQuery)
-        .execute()
-        //getting the content we want
-        .then(response => Promise.resolve(response.results.bindings))
-        .catch(function (error) {
-            console.error(error);
-        });
-}
-
-Classes.childrenNew = function (id) {
-    var fetchQuery = `
-        SELECT
-            ?id 
-            ?Codigo 
-            ?Titulo 
-            (GROUP_CONCAT (DISTINCT ?tp; SEPARATOR="###") AS ?TermosPesquisa)
-            (COUNT (?desc) as ?Descendencia)
+// Devolve a lista de filhos de uma classe: id, codigo, titulo, nFilhos
+Classes.descendencia = id => {
+    var query = `
+        SELECT ?id ?codigo ?titulo (count(?sub) as ?nFilhos)
         WHERE {
             ?id clav:temPai clav:${id} ;
-                clav:classeStatus 'A';
-                clav:codigo ?Codigo ;
-                clav:titulo ?Titulo .
-            
-            Optional {
-                {
-                    ?ti clav:estaAssocClasse ?id ;
-                        clav:termo ?tp .
-                } UNION {
-                    ?id clav:exemploNA ?tp .
-                } UNION {
-                    ?id clav:temNotaAplicacao ?na.
-                    ?na clav:conteudo ?tp .
-                }   
+                    clav:codigo ?codigo ;
+                    clav:titulo ?titulo .
+            optional {
+                ?sub clav:temPai ?id .
             }
-            
-            OPTIONAL {
-                ?desc clav:temPai ?id .
-            }
-        } Group by ?id ?Codigo ?Titulo
-        Order by ?id 
-    `;
-
-    return client.query(fetchQuery)
+        }Group by ?id ?codigo ?titulo
+    `
+    return client.query(query)
         .execute()
-        //getting the content we want
-        .then(response => Promise.resolve(response.results.bindings))
-        .catch(function (error) {
-            console.error(error);
-        });
+        .then(response => normalize(response))
 }
 
-Classes.owners = function (id) {
-    var fetchQuery = `
-                SELECT * WHERE { 
-                    clav:${id} clav:temDono ?id.
-                    {
-                        ?id clav:entDesignacao ?Designacao;
-                            clav:entSigla ?Sigla.
-                    } UNION {
-                        ?id clav:tipDesignacao ?Designacao;
-                            clav:tipSigla ?Sigla .
-                    }
-                }`;
-
-
-    return client.query(fetchQuery).execute()
-        .then(response => Promise.resolve(response.results.bindings))
-        .catch(function (error) {
-            console.error(error);
-        });
-}
-
-Classes.legislation = function (id) {
-    var fetchQuery = `
+// Devolve a lista de notas de aplicação de uma classe: idNota, nota
+Classes.notasAp = id => {
+    var query = `
             SELECT * WHERE { 
-                clav:${id} clav:temLegislacao ?id.
-                ?id clav:diplomaNumero ?Número;
-                    clav:diplomaTitulo ?Titulo;
-                    clav:diplomaTipo ?Tipo;
-            }`;
-
-
-    return client.query(fetchQuery).execute()
-        .then(response => Promise.resolve(response.results.bindings))
-        .catch(function (error) {
-            console.error(error);
-        });
+                clav:${id} clav:temNotaAplicacao ?idNota.
+                ?idNota clav:conteudo ?nota .
+            }`
+    return client.query(query)
+        .execute()
+        .then(response => normalize(response))
 }
 
-Classes.exAppNotes = function (id) {
-    var fetchQuery = `
+// Devolve a lista de exemplos de notas de aplicação de uma classe: [exemplo]
+Classes.exemplosNotasAp = id => {
+    var query = `
             SELECT * WHERE { 
-                clav:${id} clav:exemploNA ?Exemplo.
-            }`;
-
-
-    return client.query(fetchQuery).execute()
-        .then(response => Promise.resolve(response.results.bindings))
-        .catch(function (error) {
-            console.error(error);
-        });
+                clav:${id} clav:exemploNA ?exemplo.
+            }`
+    return client.query(query)
+        .execute()
+        .then(response => normalize(response))
 }
 
-Classes.appNotes = function (id) {
-    var fetchQuery = `
+// Devolve a lista de notas de exclusão de uma classe: idNota, nota
+Classes.notasEx = id => {
+    var query = `
             SELECT * WHERE { 
-                clav:${id} clav:temNotaAplicacao ?id.
-                ?id clav:conteudo ?Nota .
-            }`;
-
-
-    return client.query(fetchQuery).execute()
-        .then(response => Promise.resolve(response.results.bindings))
-        .catch(function (error) {
-            console.error(error);
-        });
+                clav:${id} clav:temNotaExclusao ?idNota.
+                ?idNota clav:conteudo ?nota .
+            }`
+    return client.query(query)
+        .execute()
+        .then(response => normalize(response))
 }
 
-Classes.delNotes = function (id) {
-    var fetchQuery = `
-            SELECT * WHERE { 
-                clav:${id} clav:temNotaExclusao ?id.
-                ?id clav:conteudo ?Nota .
-            }`;
-
-
-    return client.query(fetchQuery).execute()
-        .then(response => Promise.resolve(response.results.bindings))
-        .catch(function (error) {
-            console.error(error);
-        });
+// Devolve os termos de índice de uma classe: idTI, termo
+Classes.ti = id => {
+    var query = `
+    SELECT * WHERE { 
+        ?idTI a clav:TermoIndice;
+              clav:estaAssocClasse clav:${id} ;
+              clav:termo ?termo
+    }`
+    return client.query(query)
+        .execute()
+        .then(response => normalize(response))
 }
 
-Classes.related = function (id) {
-    var fetchQuery = `
-            select DISTINCT ?id ?Type ?Code ?Title {
-                clav:${id} clav:temRelProc ?id;
-                    ?Type ?id.
-                
-                ?id clav:codigo ?Code;
-                    clav:titulo ?Title;
-                    clav:classeStatus 'A'.
-                
-                filter (?Type!=clav:temRelProc)
-            } Order by ?Type
-        `;
-
-    return client.query(fetchQuery).execute()
-        .then(response => Promise.resolve(response.results.bindings))
-        .catch(function (error) {
-            console.error(error);
-        });
-}
-
-Classes.participants = function (id) {
-    var fetchQuery = `
-            select * where { 
-                clav:${id} clav:temParticipante ?id ;
-                    ?Type ?id .
-                
-                {
-                    ?id clav:entDesignacao ?Designacao;
-                        clav:entSigla ?Sigla .
-                } UNION {
-                    ?id clav:tipDesignacao ?Designacao;
-                        clav:tipSigla ?Sigla .
-                }
-                
-                filter (?Type!=clav:temParticipante && ?Type!=clav:temDono)
+// Devolve a(s) entidade(s) dona(s) do processo: id, tipo, sigla, designacao
+Classes.dono = id => {
+    var query = `
+        SELECT ?id ?tipo ?sigla ?designacao WHERE { 
+            clav:${id} clav:temDono ?id.
+            {
+                ?id clav:entDesignacao ?designacao;
+                    a ?tipo;
+                    clav:entSigla ?sigla.
+            } UNION {
+                ?id clav:tipDesignacao ?designacao;
+                a ?tipo;
+                clav:tipSigla ?sigla .
             }
-        `;
-
-
-    return client.query(fetchQuery).execute()
-        .then(response => Promise.resolve(response.results.bindings))
-        .catch(function (error) {
-            console.error(error);
-        });
+        FILTER ( ?tipo NOT IN (owl:NamedIndividual) )
+        }`  
+    return client.query(query)
+        .execute()
+        .then(response => normalize(response))
 }
+
+// Devolve a(s) entidade(s) participante(s) no processo: id, sigla, designacao, tipoParticip
+Classes.participante = id => {
+    var query = `
+        select ?id ?sigla ?designacao ?tipoParticip where { 
+            clav:${id} clav:temParticipante ?id ;
+                            ?tipoParticip ?id .
+                {
+                    ?id clav:entDesignacao ?designacao;
+                        clav:entSigla ?sigla .
+                } UNION {
+                    ?id clav:tipDesignacao ?designacao;
+                        clav:tipSigla ?sigla .
+                }      
+        filter (?tipoParticip NOT IN (clav:temParticipante, clav:temDono))
+        }`
+    return client.query(query)
+        .execute()
+        .then(response => normalize(response))
+}
+
+// Devolve o(s) processo(s) relacionado(s): id, codigo, titulo, tipoRel
+Classes.procRel = id => {
+    var query = `
+        select ?id ?codigo ?titulo ?tipoRel {
+            clav:${id} clav:temRelProc ?id;
+                        ?tipoRel ?id.
+        
+            ?id clav:codigo ?codigo;
+                clav:titulo ?titulo;
+                clav:classeStatus 'A'.
+        
+        filter (?tipoRel!=clav:temRelProc)
+        } Order by ?tipoRel ?codigo
+        `
+    return client.query(query)
+        .execute()
+        .then(response => normalize(response))
+}
+
+// Devolve a legislação associada ao contexto de avaliação: id, tipo, numero, sumario
+Classes.legislacao = id => {
+    var query = `
+        SELECT ?id ?tipo ?numero ?sumario WHERE { 
+            clav:${id} clav:temLegislacao ?id.
+            ?id clav:diplomaNumero ?numero;
+                clav:diplomaTitulo ?sumario;
+                clav:diplomaTipo ?tipo.
+        } order by ?tipo ?numero`
+    return client.query(query)
+        .execute()
+        .then(response => normalize(response))
+}
+
+// Devolve a informação base do PCA: idPCA, formaContagem, subFormaContagem, idJustificacao, valores, notas
+Classes.pca = id => {
+    var query = `
+        SELECT 
+            ?idPCA
+            ?formaContagem
+            ?subFormaContagem
+            ?idJustificacao
+            (GROUP_CONCAT(DISTINCT ?valor; SEPARATOR="###") AS ?valores)
+            (GROUP_CONCAT(DISTINCT ?nota; SEPARATOR="###") AS ?notas)
+        WHERE { 
+            clav:${id} clav:temPCA ?idPCA .
+            OPTIONAL {
+                ?idPCA clav:pcaFormaContagemNormalizada ?contNormID .    
+                ?contNormID skos:prefLabel ?formaContagem .
+            }
+            OPTIONAL {
+                ?idPCA clav:pcaSubformaContagem ?subContID .
+                ?subContID skos:scopeNote ?subFormaContagem .
+            }
+            OPTIONAL {
+                ?idPCA clav:pcaNota ?nota .
+            }
+            OPTIONAL {
+                ?idPCA clav:pcaValor ?valor .
+            }
+            OPTIONAL {
+                ?idPCA clav:temJustificacao ?idJustificacao .
+            }    
+        }GROUP BY ?idPCA ?formaContagem ?subFormaContagem ?idJustificacao 
+    `
+    return client.query(query)
+        .execute()
+        .then(response => normalize(response))
+}
+
+// Devolve uma justificação, PCA ou DF, que é composta por uma lista de critérios: criterio, tipoLabel, conteudo
+Classes.justificacao = id => {
+    var query = `
+        SELECT
+            ?criterio ?tipoLabel ?conteudo
+        WHERE {
+            clav:${id} clav:temCriterio ?criterio . 
+            ?criterio clav:conteudo ?conteudo.
+            ?criterio a ?tipo.
+            ?tipo rdfs:subClassOf clav:CriterioJustificacao.
+            ?tipo rdfs:label ?tipoLabel.
+        }`
+    return client.query(query)
+        .execute()
+        .then(response => normalize(response))
+}
+
+// Devolve a informação base do DF: idDF, valor, idJustificacao
+Classes.df = function (id) {
+    var query = `
+        SELECT 
+            ?idDF ?valor ?idJustificacao
+        WHERE { 
+            clav:${id} clav:temDF ?idDF .
+            OPTIONAL {
+                ?idDF clav:dfValor ?valor ;
+            }
+            OPTIONAL {
+                ?idDF clav:dfNota ?Nota ;
+            }
+            OPTIONAL {
+                ?idDF clav:temJustificacao ?idJustificacao .
+            }    
+        }`
+    return client.query(query)
+        .execute()
+        .then(response => normalize(response))
+}
+
+
+// ============================================================================
 
 Classes.checkCodeAvailability = function (code, level) {
     var checkQuery = `
@@ -450,203 +286,9 @@ Classes.checkCodeAvailability = function (code, level) {
         });
 }
 
-Classes.pca = function (id) {
-    var fetchQuery = `
-        SELECT 
-            ?SubContID
-            ?SubContagem
-            ?ContNormID
-            ?ContagemNorm
-            (GROUP_CONCAT(DISTINCT ?Nota; SEPARATOR="###") AS ?Notas)
-            (GROUP_CONCAT(DISTINCT ?Valor; SEPARATOR="###") AS ?Valores)
-            (GROUP_CONCAT(DISTINCT ?Criterio; SEPARATOR="###") AS ?Criterios)
-        WHERE { 
-            clav:${id} clav:temPCA ?pca .
-            optional {
-                ?pca clav:pcaSubformaContagem ?SubContID .
-                ?SubContID skos:scopeNote ?SubContagem .
-            }
-            optional {
-                ?pca clav:pcaFormaContagemNormalizada ?ContNormID .    
-                ?ContNormID skos:prefLabel ?ContagemNorm .
-            }
-            OPTIONAL {
-                ?pca clav:pcaNota ?Nota ;
-            }
-            OPTIONAL {
-                ?pca clav:pcaValor ?Valor ;
-            }
-            OPTIONAL {
-                ?pca clav:temJustificacao ?just .
-                ?just clav:temCriterio ?Criterio
-            }    
-        }GROUP BY ?SubContagem ?ContagemNorm ?SubContID ?ContNormID
-    `;
 
-    return client.query(fetchQuery).execute()
-        //Getting the content we want
-        .then(response => Promise.resolve(response.results.bindings[0]))
-        .catch(function (error) {
-            console.error("Error in check:\n" + error);
-        });
-}
 
-Classes.df = function (id) {
-    var fetchQuery = `
-        SELECT 
-            ?Nota
-            (GROUP_CONCAT(DISTINCT ?Valor; SEPARATOR="###") AS ?Valores)
-            (GROUP_CONCAT(DISTINCT ?Criterio; SEPARATOR="###") AS ?Criterios)
-        WHERE { 
-            clav:${id} clav:temDF ?df .
-            OPTIONAL {
-                ?df clav:dfValor ?Valor ;
-            }
-            OPTIONAL {
-                ?df clav:dfNota ?Nota ;
-            }
-            OPTIONAL {
-                ?df clav:temJustificacao ?just .
-                ?just clav:temCriterio ?Criterio
-            }    
-        }GROUP BY ?df ?Nota
-    `;
 
-    return client.query(fetchQuery).execute()
-        //Getting the content we want
-        .then(response => Promise.resolve(response.results.bindings[0]))
-        .catch(function (error) {
-            console.error("Error in check:\n" + error);
-        });
-}
-
-Classes.criteria = function (criteria) {
-    var fetchQuery = `
-        SELECT
-            ?id
-            ?Tipo
-            ?Conteudo
-            (GROUP_CONCAT(CONCAT(STR(?leg),":::",?LegTipo, ":::",?LegNumero); SEPARATOR="###") AS ?Legislacao)
-            (GROUP_CONCAT(CONCAT(STR(?proc),":::",?Codigo, ":::",?Titulo); SEPARATOR="###") AS ?Processos)
-        WHERE { 
-            VALUES ?id { ${'clav:' + criteria.join(' clav:')} }
-            ?id rdf:type ?Tipo ;
-                clav:conteudo ?Conteudo .
-
-            OPTIONAL {
-                ?id clav:temLegislacao ?leg .
-                ?leg clav:diplomaNumero ?LegNumero ;
-                    clav:diplomaTipo ?LegTipo .
-            }
-
-            OPTIONAL {
-                {
-                	?id clav:temProcessoRelacionado ?proc .
-        		} UNION {
-            		?id clav:eComplementarDe ?proc .
-        		}
-                ?proc clav:codigo ?Codigo ;
-                      clav:titulo ?Titulo .
-            }
-            FILTER(?Tipo != owl:NamedIndividual && ?Tipo != clav:CriterioJustificacao && ?Tipo != clav:AtributoComposto)
-        } GROUP BY ?id ?Tipo ?Conteudo
-    `;
-
-    return client.query(fetchQuery).execute()
-        .then(response => Promise.resolve(response.results.bindings))
-        .catch(function (error) {
-            console.error("Error in check:\n" + error);
-        });
-}
-
-Classes.criteriaMin = function (criteria) {
-    var fetchQuery = `
-        SELECT
-            ?id
-            ?Tipo
-            ?Conteudo
-            (GROUP_CONCAT(?leg; SEPARATOR="###") AS ?Legislacao)
-            (GROUP_CONCAT(?proc; SEPARATOR="###") AS ?Processos)
-        WHERE { 
-            VALUES ?id { ${'clav:' + criteria.join(' clav:')} }
-            ?id rdf:type ?Tipo ;
-                clav:conteudo ?Conteudo .
-
-            OPTIONAL {
-                ?id clav:temLegislacao ?leg .
-            }
-
-            OPTIONAL {
-                {
-                	?id clav:temProcessoRelacionado ?proc .
-        		} UNION {
-            		?id clav:eComplementarDe ?proc .
-        		}
-            }
-            FILTER(?Tipo != owl:NamedIndividual && ?Tipo != clav:CriterioJustificacao && ?Tipo != clav:AtributoComposto)
-        } GROUP BY ?id ?Tipo ?Conteudo
-    `;
-
-    return client.query(fetchQuery).execute()
-        .then(response => Promise.resolve(response.results.bindings))
-        .catch(function (error) {
-            console.error("Error in check:\n" + error);
-        });
-}
-
-Classes.filterByOrgs = function (orgs) {
-    var fetchQuery = `
-        SELECT DISTINCT
-            ?Avo ?AvoCodigo ?AvoTitulo 
-            ?Pai ?PaiCodigo ?PaiTitulo 
-            ?PN ?PNCodigo ?PNTitulo   
-            (GROUP_CONCAT(CONCAT(STR(?Filho),":::",?FilhoCodigo, ":::",?FilhoTitulo); SEPARATOR="###") AS ?Filhos)
-        WHERE {  
-            {
-                SELECT ?PN where {
-                    VALUES ?org { clav:${orgs.join(' clav:')} }
-                    ?org clav:eDonoProcesso ?PN .
-                }
-            } UNION {
-                SELECT ?PN where {
-                    VALUES ?org { clav:${orgs.join(' clav:')} }
-                    ?org clav:participaEm ?PN .
-                }
-            } MINUS { 
-                ?PN clav:pertenceLC ?lc
-                filter( ?lc != clav:lc1 )
-            }
-            ?PN clav:classeStatus 'A'.
-            
-            ?PN clav:temPai ?Pai.
-            ?Pai clav:temPai ?Avo.
-            
-            ?PN clav:codigo ?PNCodigo;
-                clav:titulo ?PNTitulo.
-            
-            ?Pai clav:codigo ?PaiCodigo;
-                clav:titulo ?PaiTitulo.
-            
-            ?Avo clav:codigo ?AvoCodigo;
-                clav:titulo ?AvoTitulo.
-            
-            OPTIONAL {
-                ?Filho clav:temPai ?PN;
-                   clav:codigo ?FilhoCodigo;
-                   clav:titulo ?FilhoTitulo
-            }
-        }
-        Group By ?PN ?PNCodigo ?PNTitulo ?Pai ?PaiCodigo ?PaiTitulo ?Avo ?AvoCodigo ?AvoTitulo 
-        Order By ?PN
-    `;
-
-    return client.query(fetchQuery).execute()
-        //Getting the content we want
-        .then(response => Promise.resolve(response.results.bindings))
-        .catch(function (error) {
-            console.error("Error in check:\n" + error);
-        });
-}
 
 Classes.filterNone = function () {
     var fetchQuery = `
