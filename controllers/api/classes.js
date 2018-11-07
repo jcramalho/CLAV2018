@@ -5,7 +5,7 @@ const Classes = module.exports
 
 // Devolve a lista de classes de um determinado nível, por omissão do nível 1
 Classes.listar = nivel => {
-    if (!level) { nivel = 1 }
+    if (!nivel) { nivel = 1 }
 
     var query = `
         Select
@@ -84,7 +84,7 @@ Classes.notasAp = id => {
 // Devolve a lista de exemplos de notas de aplicação de uma classe: [exemplo]
 Classes.exemplosNotasAp = id => {
     var query = `
-            SELECT * WHERE { 
+            SELECT ?exemplo WHERE { 
                 clav:${id} clav:exemploNA ?exemplo.
             }`
     return client.query(query)
