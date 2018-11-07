@@ -1,83 +1,63 @@
 const client = require('../../config/database').onthology;
+const normalize = require('../../controllers/api/aux').normalize;
+const Pedidos = require('../../controllers/api/pedidos');
+const Leg = module.exports;
 
-var Leg = module.exports
-
-Leg.list = function () {
-    return client.query(
+// Lista todos os itens legislativos: id, data, numero, tipo, sumario, entidades
+Leg.listar = () => {
+    const query =
         `SELECT  
-            ?id ?Data ?Número ?Tipo ?Titulo
-            (GROUP_CONCAT(CONCAT(STR(?Ent),"::",?EntSigla); SEPARATOR=";") AS ?Entidades)
+            ?id ?data ?numero ?tipo ?sumario
+            (GROUP_CONCAT(CONCAT(STR(?ent),"::",?entSigla); SEPARATOR=";") AS ?entidades)
         WHERE { 
             ?id rdf:type clav:Legislacao;
-                clav:diplomaData ?Data;
-                clav:diplomaNumero ?Número;
-                clav:diplomaTipo ?Tipo;
-                clav:diplomaTitulo ?Titulo.
+                clav:diplomaData ?data;
+                clav:diplomaNumero ?numero;
+                clav:diplomaTipo ?tipo;
+                clav:diplomaTitulo ?sumario.
             optional{
-                ?id clav:diplomaEntidade ?Ent.
-                ?Ent clav:entSigla ?EntSigla;
+                ?id clav:diplomaEntidade ?ent.
+                ?ent clav:entSigla ?entSigla;
             }
         }
-        Group by ?id ?Data ?Número ?Tipo ?Titulo
-        Order by desc (?Data)`
-    )
-        .execute()
-        //getting the content we want
-        .then(response => Promise.resolve(response.results.bindings))
-        .catch(function (error) {
-            console.error(error);
-        });
+        Group by ?id ?data ?numero ?tipo ?sumario
+        Order by desc (?data)`
+
+        return client.query(query)
+            .execute()
+            .then(response => normalize(response));
 }
 
-Leg.ultNum = function(){
-    var fetchQuery = `
-        select (count (?s) as ?num)  where { 
-            ?s a clav:Legislacao .
-        }
-    `
-    return client.query(fetchQuery)
-        .execute()
-        // a obter o número de legislações na BD
-        .then(response => {
-            return(response.results.bindings[0].num.value)
-        })
-        .catch(function (error) {
-            console.error("Legislação: Erro ao executar a query de contagem: " + error)
-        })
-}
-
-Leg.stats = function (id) {
-    var fetchQuery = `
+// Devolve a informação associada a um documento legislativo: tipo data numero sumario link entidades
+Leg.consultar = id => {
+    var query = `
         SELECT  
-            ?Data ?Número ?Tipo ?Titulo ?Link
-            (GROUP_CONCAT(CONCAT(STR(?Ent),"::",?EntSigla,"::",?EntDesignacao); SEPARATOR=";") AS ?Entidades)
+            ?tipo ?data ?numero ?sumario ?link
+            (GROUP_CONCAT(CONCAT(STR(?ent),"::",?entSigla,"::",?entDesignacao); SEPARATOR=";") AS ?entidades)
         WHERE { 
-            clav:${id} clav:diplomaData ?Data;
-                clav:diplomaNumero ?Número;
-                clav:diplomaTipo ?Tipo;
-                clav:diplomaTitulo ?Titulo;
-                clav:diplomaLink ?Link;
+            clav:${id} a clav:Legislacao;
+                clav:diplomaData ?data;
+                clav:diplomaNumero ?numero;
+                clav:diplomaTipo ?tipo;
+                clav:diplomaTitulo ?sumario;
+                clav:diplomaLink ?link;
 
             OPTIONAL{
-                clav:${id} clav:diplomaEntidade ?Ent.
-                ?Ent clav:entSigla ?EntSigla;
-                     clav:entDesignacao ?EntDesignacao.
+                clav:${id} clav:diplomaEntidade ?ent.
+                ?ent clav:entSigla ?entSigla;
+                     clav:entDesignacao ?entDesignacao.
             }
-        } GROUP BY ?Data ?Número ?Tipo ?Titulo ?Link
-    `;
-
-    return client.query(fetchQuery)
+        } GROUP BY ?tipo ?data ?numero ?sumario ?link
+    `
+    return client.query(query)
         .execute()
-        //getting the content we want
-        .then(response => Promise.resolve(response.results.bindings))
-        .catch(function (error) {
-            console.error(error);
-        });
+        .then(response => normalize(response));
 }
 
-Leg.regulates = function (id) {
-    var fetchQuery = `
-        SELECT DISTINCT ?id ?Code ?Title WHERE { 
+// Devolve a lista de processos regulados pelo documento: id, codigo, titulo
+Leg.regula = id => {
+    var query = `
+        SELECT DISTINCT ?id ?codigo ?titulo WHERE { 
             {
                 ?id clav:temLegislacao clav:${id};
             } 
@@ -93,19 +73,30 @@ Leg.regulates = function (id) {
                     ?id clav:temDF ?aval ;
                 }
             }
-            ?id clav:codigo ?Code;
-                clav:titulo ?Title;
+            ?id clav:codigo ?codigo;
+                clav:titulo ?titulo;
                 clav:classeStatus 'A'.
                 
-        } ORDER BY ?Code
-    `;
-
-    return client.query(fetchQuery).execute()
-        .then(response => Promise.resolve(response.results.bindings))
-        .catch(function (error) {
-            console.error(error);
-        });
+        } ORDER BY ?codigo
+    `
+    return client.query(query)
+        .execute()
+        .then(response => normalize(response));
 }
+
+// Devolve o número de documentos legislativos catalogados para efeitos de geração dum novo id ou de contagem
+Leg.ultNum = ()=>{
+    var query = `
+        select (count (?s) as ?num)  where { 
+            ?s a clav:Legislacao .
+        }`
+    return client.query(query)
+        .execute()
+        .then(response => normalize(response));
+}
+
+
+
 
 Leg.checkNumberAvailability = function (number) {
     var checkQuery = `

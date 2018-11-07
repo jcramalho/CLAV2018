@@ -82,7 +82,7 @@ Entidades.criar = (entidade) => {
         }));
 };
 
-Entidades.dono = (id) => {
+Entidades.dono = id => {
     const query = `SELECT ?codigo ?titulo WHERE {
         ?id clav:temDono clav:${id} ;
             clav:codigo ?codigo ;
@@ -96,7 +96,7 @@ Entidades.dono = (id) => {
         .then(response => normalize(response));
 };
 
-Entidades.participante = (id) => {
+Entidades.participante = id => {
     const query = `SELECT ?codigo ?titulo WHERE { 
         ?id clav:temParticipante clav:${id} ;
             ?Type clav:${id} ;
