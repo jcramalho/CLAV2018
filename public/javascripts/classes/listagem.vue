@@ -3,7 +3,7 @@ var classes = new Vue({
     data: {
         subReady: {},
         tableHeader: [],
-        tableData: [],
+        classesLista: [],
         ready: false,
         content: [],
         cwidth: ['9%','88%'],
@@ -20,11 +20,8 @@ var classes = new Vue({
 
             this.$http.get("/api/classes")
                 .then(function (response) {
-                    content = response.body;
-                })
-                .then(function () {
-                    this.tableData = this.parseClasses(content);
-
+                    alert(JSON.stringify(response.body))
+                    this.classesLista = response.body;
                     this.ready = true;
                 })
                 .catch(function (error) {
