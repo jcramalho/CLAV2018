@@ -1,5 +1,5 @@
 const client = require('../../config/database').onthology
-const normalize = require('../../controllers/api/aux').normalize
+const normalize = require('../../controllers/api/utils').normalize
 const Pedidos = require('../../controllers/api/pedidos')
 const Classes = module.exports
 
