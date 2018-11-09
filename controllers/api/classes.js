@@ -27,22 +27,6 @@ Classes.listar = async nivel => {
     catch(erro) { throw (erro);}
 }
 
-
-async function getX() {
-    if(success) {
-        return "ola";
-    } else throw "error"
-}
-
-function getY() {
-    return new Promise((resolve, reject) => {
-        resolve("resul");
-        reject("erro");
-    }); 
-}
-
-
-
 // Devolve a metainformação de uma classe: codigo, titulo, status, desc, codigoPai?, tituloPai?, procTipo?
 Classes.consultar = id => {
     var query = `
@@ -79,8 +63,8 @@ Classes.descendencia = async id => {
                     clav:titulo ?titulo .
         }
     `
-        let resultado = await client.query(query).execute();
-        return normalize(resultado);
+    let resultado = await client.query(query).execute();
+    return normalize(resultado);
 }
 
 // Devolve a lista de notas de aplicação de uma classe: idNota, nota
