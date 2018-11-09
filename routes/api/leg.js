@@ -5,38 +5,34 @@ var Leg = require('../../controllers/api/leg.js');
 var express = require('express');
 var router = express.Router();
 
-router.get('/', function (req, res) {
-    Leg.list()
-        .then(legs => res.send(legs))
-        .catch(function (error) {
-            console.error(error);
-        });
+// Lista todos os doucmentos legislativos: id, data, numero, tipo, sumario, entidades
+router.get('/', (req, res) => {
+    Leg.listar()
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.status(500).send(`Erro na listagem das entidades: ${erro}`));
 })
 
-router.get('/numElems', function (req, res) {
-    Leg.ultNum()
-        .then(n => {
-            res.send(n)
-        })
-        .catch(function (error) {
-            console.error(error);
-        });
+// Devolve a informação associada a um documento legislativo: tipo data numero sumario link entidades
+router.get('/:id', (req, res) => {
+    Leg.consultar(req.params.id)
+    .then(dados => res.jsonp(dados))
+    .catch(erro => res.status(500).send(`Erro na consulta da leg ${req.params.id}: ${erro}`));
 })
 
-router.get('/:id', function (req, res) {
-    Leg.stats(req.params.id).then(leg => res.send(leg))
-        .catch(function (error) {
-            console.error(error);
-        });
-})
-
+// Devolve a lista de processos regulados pelo documento: id, codigo, titulo
 router.get('/:id/regula', function (req, res) {
-    Leg.regulates(req.params.id)
-        .then(legs => res.send(legs))
-        .catch(function (error) {
-            console.error(error);
-        });
+    Leg.regula(req.params.id)
+    .then(dados => res.jsonp(dados))
+    .catch(erro => res.status(500).send(`Erro na consulta dos processos regulados por ${req.params.id}: ${erro}`));
 })
+
+// Devolve o número de documentos legislativos catalogados para efeitos de geração dum novo id ou de contagem
+router.get('/numElems', (req, res) => {
+    Leg.ultNum()
+    .then(dados => res.jsonp(dados))
+    .catch(erro => res.status(500).send(`Erro na contagem dos documentos: ${erro}`));
+})
+
 
 router.post('/', Auth.isLoggedInAPI, function (req, res) {
     var dataObj = req.body;

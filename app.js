@@ -2,6 +2,9 @@
 var express = require('express'),
     app = express();
 
+// Logging na consola do admin
+var logger = require('morgan')
+
 //body parser for post requests
 var bodyParser = require('body-parser')
 app.use(bodyParser.json());         // to support JSON-encoded bodies
@@ -51,6 +54,9 @@ app.use(expressValidator({
         };
     }
 }));
+
+// Logging middleware
+app.use(logger('dev'))
 
 // Connect Flash
 app.use(flash());

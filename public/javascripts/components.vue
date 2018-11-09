@@ -740,7 +740,7 @@ Vue.component('custom-table-waterfall', {
     data: function () {
         return {
             "rows": [],
-            "rowsShow": [[]],
+            "rowsShow": [],
             "order": 0,
             "activePage": 1,
             "pages": [0],
