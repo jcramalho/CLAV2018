@@ -3,7 +3,7 @@ block corpo
     #organizacao-form.panel.panel-default.panel-custom
         .panel-heading
             h1.page-header 
-                div {{ entName }}
+                div {{ myEntidade.designacao }}  
                     if user
                         a(:href="'/entidades/editar/'+id" style="float:right")  
                             span.glyphicon.glyphicon-edit
@@ -16,21 +16,21 @@ block corpo
                         td(style="width:10%")
                             .info-label Sigla: 
                         td(style="width:80%")
-                            | {{ entInitials }} 
+                            | {{ myEntidade.sigla }} 
 
                     //- ESTADO
                     tr
                         td(style="width:10%")
                             .info-label Estado: 
                         td(style="width:80%")
-                            | {{ entEstado }}
+                            | {{ myEntidade.estado }}
                     
                     //- INTERNACIONAL
                     tr
                         td(style="width:10%")
                             .info-label Internacional: 
                         td(style="width:80%")
-                            | {{ entInternational }} 
+                            | {{ myEntidade.internacional }} 
 
                     //- Fim da primeira secção
                 //- Segunda secção
@@ -43,14 +43,14 @@ block corpo
                                 tr
                                     td
                                         ul(style="padding-left:20px")
-                                            li(v-for="o in tipologiasList")
-                                                a(:href="'/tipologias/consultar/'+o.id") {{ o.Sigla }} 
-                                                | - {{ o.Designacao }}
+                                            li(v-for="o in listaTipologias")
+                                                a(:href="'/tipologias/consultar/'+o.id") {{ o.sigla }} 
+                                                | - {{ o.designacao }}
                             // p(v-else) Não está associada a nenhuma Tipologia.
                     //- Fim da segunda secção
                 //- Terceira secção            
                 //- Intervenção nos PN
-                table.consulta(v-if="domainReady || partsReady") 
+                //-table.consulta(v-if="domainReady || partsReady") 
                     tr
                         td(style="width:100%")
                             .info-label Natureza de intervenção nos Processos de Negócio:
@@ -98,7 +98,7 @@ block corpo
                                                 | - {{ o.Designacao }}
                             // p(v-else) Não tem relações com outras entidades.
                 //- Fim da quarta secção
-            if user
+            //-if user
                 a(:href="'/entidades/editar/'+id").btn.btn-xs.btn-default.col-sm-1
                     | Editar
 

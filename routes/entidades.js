@@ -11,7 +11,7 @@ router.get('/adicionar', Auth.isLoggedIn, function(req, res) {
     res.render('entidades/adicao', {title: "Nova entidade"});
 });
 
-router.get('/consultar/:id', function(req, res) {
+router.get('/:id', function(req, res) {
     res.render('entidades/consulta',{orgID: req.params.id, title: "Dados de entidade"});
 });
 

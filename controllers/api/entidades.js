@@ -37,7 +37,7 @@ Entidades.listar = (filtro) => {
  * @return {Promise<[Tipologia|Error]>}
  */
 Entidades.tipologias = (id) => {
-    const query = `SELECT ?sigla ?designacao WHERE {
+    const query = `SELECT ?id ?sigla ?designacao WHERE {
         clav:${id} clav:pertenceTipologiaEnt ?id .
             
         ?id clav:tipEstado "Ativa";
