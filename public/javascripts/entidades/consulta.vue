@@ -4,12 +4,13 @@ var org = new Vue({
         myEntidade: {},
 
         listaTipologias: [],
+        tipologiasReady: false,
 
-        id: "",
-        type: "",
+        donoProcessos: [],
+        eDonoProcessos: false,
 
-        domain: [],
-        domainReady: false,
+        participantePNs:[],
+        partsReady: false,
 
         participations: {
                 Apreciador: [],
@@ -19,8 +20,14 @@ var org = new Vue({
                 Executor: [],
                 Iniciador: [],
             },
-        partsReady: false,
-
+        participationsDic: {
+            Apreciador: "Apreciar",
+            Assessor: "Assessorar",
+            Comunicador: "Comunicar",
+            Decisor: "Decidir",
+            Executor: "Executar",
+            Iniciador: "Iniciar"
+        },
 
         partsCollapsed: {
             Apreciador: true,
@@ -30,91 +37,59 @@ var org = new Vue({
             Executor: true,
             Iniciador: true,
         },
-        domainCollapsed: true,
-
-        tipologiasReady: false,
-
-        entRelsList: [],
-        entRelsReady: false,
-
-        participationsDic: {
-            Apreciador: "Apreciar",
-            Assessor: "Assessorar",
-            Comunicador: "Comunicar",
-            Decisor: "Decidir",
-            Executor: "Executar",
-            Iniciador: "Iniciar"
-        }
-
+        domainCollapsed: true
     },
     methods: {
         loadTipologias: function () {
-            var dataToParse = [];
-            
+
             this.$http.get("/api/entidades/" + this.myEntidade.id + "/tipologias")
                 .then(function (response) { 
                     this.listaTipologias = response.body;
                 })
                 .then(function () {
-                    // id da tipologia
                     for (var i = 0; i < this.listaTipologias.length; i++) {
                         this.listaTipologias[i].id = this.listaTipologias[i].id.replace(/[^#]+#(.*)/, '$1');
                     }
 
-                    if(this.listaTipologias.length>0)
-                        this.tipologiasReady = true;
+                    if(this.listaTipologias.length>0) this.tipologiasReady = true;
                 })
                 .catch(function (error) {
                     console.error(error);
                 });
         },
-        loadDono: function () {
-            var classesToParse = [];
-            var keys = ["id", "Code", "Title"];
+        processosDono: function () {
 
-            this.$http.get("/api/entidades/" + this.id + "/intervencao/dono")
+            this.$http.get("/api/entidades/" + this.myEntidade.id + "/intervencao/dono")
                 .then(function (response) {
-                    classesToParse = response.body;
-                    console.log(response.body)
-                })
-                .then(function () {
-                    this.domain = JSON.parse(JSON.stringify(this.parseList(classesToParse, keys)));
-                    this.newDomain = JSON.parse(JSON.stringify(this.parseList(classesToParse, keys)));
-
-                    if(this.domain.length>0)
-                        this.domainReady = true;
+                    this.donoProcessos = response.body
+                    if(this.donoProcessos.length > 0) this.eDonoProcessos = true
                 })
                 .catch(function (error) {
                     console.error(error);
                 });
         },
-        loadParticipations: function () {
-            var type = ""
-            var participa = false
+        loadParticipantes: function () {
+            var participa = false;
+            var tipoPar = "";
 
-            this.$http.get("/api/entidades/" + this.id + "/participacoes")
+            this.$http.get("/api/entidades/" + this.myEntidade.id + "/intervencao/participante")
                 .then(function (response) {
-                    var partsToParse = response.body;
-                
-                    for(var i=0; i < partsToParse.length; i++ ){
-                        type = partsToParse[i].Type.value.replace(/.*temParticipante(.*)/, '$1')
-                        this.participations[type].push(
-                                     { id: partsToParse[i].id.value.replace(/[^#]+#(.*)/, '$1'),
-                                       Type: partsToParse[i].Type.value,
-                                       Title: partsToParse[i].Title.value,
-                                       Code: partsToParse[i].Code.value })
-                        
+                    this.participantePNs = response.body;
+                    
+                    for(var i=0; i < this.participantePNs.length; i++ ){
+                        tipoPar = this.participantePNs[i].tipoPar.replace(/.*temParticipante(.*)/, '$1');
+
+                        this.participations[tipoPar].push(
+                                     { titulo: this.participantePNs[i].titulo,
+                                       codigo: this.participantePNs[i].codigo 
+                                       })
                         participa = true
                     }
-
                     if(participa) this.partsReady = true;
                 })
                 .catch(function (error) {
                     console.error(error);
                 });
-        },
-        loadEntRels: function() {
-            this.entRelsReady = false;
         },
     },
     created: function () {
@@ -128,6 +103,8 @@ var org = new Vue({
             })
             .then(function (){
                 this.loadTipologias();
+                this.processosDono();
+                this.loadParticipantes();
             })
             .catch(function (error) {
                 console.error(error);

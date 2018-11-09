@@ -54,17 +54,14 @@ exports.normalize = function(response) {
         Object.entries(obj)
             .reduce((new_obj, [k,v]) => (new_obj[k] = v.value, new_obj),
                     new Object()));
-};
-
+}
 /**
  * Faz o pré-cálculo da árvore de classes, grava-o no ficheiro /data/classes-preCalc.json e devolve essa estrutura
  * 
  */
-
-var Classes = require(__dirname + '/classes.js')
+ var Classes = require(__dirname + '/classes.js')
 var jsonfile = require('jsonfile')
-
-exports.preCalc = ()=>{
+ exports.preCalc = ()=>{
     return new Promise((resolve,reject)=>{
         Classes.listar(null)
             .then(dados => {
@@ -77,8 +74,7 @@ exports.preCalc = ()=>{
                 console.dir(classesN1[0])
                 return  classesN1   
             
-
-                /*for(let i=0; i < classesN1.length; i++){
+                 /*for(let i=0; i < classesN1.length; i++){
                     cid = classesN1[i].id.split('#')[1] // Vou buscar o id da classe N1
                     Classes.descendencia(cid)
                         .then(filhos => { 

@@ -1,5 +1,5 @@
 const client = require('../../config/database').onthology;
-const normalize = require('../../controllers/api/aux').normalize;
+const normalize = require('../../controllers/api/utils').normalize;
 const Pedidos = require('../../controllers/api/pedidos');
 const Entidades = module.exports;
 
@@ -114,15 +114,15 @@ Entidades.dono = id => {
 };
 
 Entidades.participante = id => {
-    const query = `SELECT ?codigo ?titulo WHERE { 
+    const query = `SELECT ?tipoPar ?codigo ?titulo WHERE { 
         ?id clav:temParticipante clav:${id} ;
-            ?Type clav:${id} ;
+            ?tipoPar clav:${id} ;
             clav:titulo ?titulo ;
             clav:codigo ?codigo ;
             clav:pertenceLC clav:lc1 ;
             clav:classeStatus "A" .
             
-        FILTER (?Type != clav:temParticipante && ?Type != clav:temDono)
+        FILTER (?tipoPar != clav:temParticipante && ?tipoPar != clav:temDono)
     }`;
 
     return client.query(query)
