@@ -2,15 +2,42 @@ var Logging = require('../../controllers/logging');
 var Auth = require('../../controllers/auth.js');
 var Classes = require('../../controllers/api/classes.js');
 
+var preCalc = require('../../controllers/api/aux').preCalc
+var jsonfile = require('jsonfile')
+var classesPreCalc = new Promise((resolve,reject)=>{
+    jsonfile.readFile(__dirname + '/../../data/classes-preCalc.json', (erro, classes)=>{
+        if(erro){
+            console.log('Erro no carregamento das classes PreCalc: ' + erro)
+            reject([])
+        } 
+        else if(classes.length == 0){
+            console.log('Pré-calculando a árvore de classes...')
+            preCalc()
+                .then(classes2 => {
+                    resolve(classes2)
+                })
+                .catch(erro => reject([]))
+        }
+        else resolve(classes)
+    })
+})
+    
+
 var express = require('express');
 var router = express.Router();
 
-// Devolve a lista de classes de nível 1: id, codigo, titulo
 router.get('/', (req, res) => { 
+    classesPreCalc
+        .then(v => res.jsonp(v))
+        .catch(erro => res.status(500).send(`Erro na listagem das classes de nível 1 (classesPreCalc): ${erro}`)) 
+})
+
+// Devolve a lista de classes de nível 1: id, codigo, titulo
+/*router.get('/', (req, res) => { 
     Classes.listar(null)
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na listagem das classes de nível 1 (omisso na query): ${erro}`))
-})
+})*/
 
 // Devolve a lista de classes de nível n [1..4]: [id, codigo, titulo]
 router.get('/nivel/:n', (req, res) => {
