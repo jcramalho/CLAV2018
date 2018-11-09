@@ -1,49 +1,43 @@
 var Logging = require('../../controllers/logging');
 var Auth = require('../../controllers/auth.js');
 var Classes = require('../../controllers/api/classes.js');
-
-var preCalc = require('../../controllers/api/aux').preCalc
-var jsonfile = require('jsonfile')
-var classesPreCalc = new Promise((resolve,reject)=>{
-    jsonfile.readFile(__dirname + '/../../data/classes-preCalc.json', (erro, classes)=>{
-        if(erro){
-            console.log('Erro no carregamento das classes PreCalc: ' + erro)
-            reject([])
-        } 
-        else if(classes.length == 0){
-            console.log('Pré-calculando a árvore de classes...')
-            preCalc()
-                .then(classes2 => {
-                    resolve(classes2)
-                })
-                .catch(erro => reject([]))
-        }
-        else resolve(classes)
-    })
-})
-    
+var State = require('../../controllers/state.js')
 
 var express = require('express');
 var router = express.Router();
 
-router.get('/', (req, res) => { 
-    classesPreCalc
-        .then(v => res.jsonp(v))
-        .catch(erro => res.status(500).send(`Erro na listagem das classes de nível 1 (classesPreCalc): ${erro}`)) 
+router.get('/', async (req, res) => { 
+    try {
+        res.jsonp(await State.getAllClasses());  
+    } catch(err) {
+        res.status(500).send(`Erro na listagem geral das classes: ${err}`)
+    }
 })
 
-// Devolve a lista de classes de nível 1: id, codigo, titulo
-/*router.get('/', (req, res) => { 
-    Classes.listar(null)
-        .then(dados => res.jsonp(dados))
-        .catch(erro => res.status(500).send(`Erro na listagem das classes de nível 1 (omisso na query): ${erro}`))
-})*/
-
 // Devolve a lista de classes de nível n [1..4]: [id, codigo, titulo]
-router.get('/nivel/:n', (req, res) => {
-    Classes.listar(req.params.n)
-        .then(dados => res.jsonp(dados))
-        .catch(erro => res.status(500).send(`Erro na listagem das classes de nível  ${req.params.n}: ${erro}`))
+router.get('/nivel/:n', async (req, res) => {
+    switch(req.params.n){
+        case '1': try {
+                res.jsonp(await State.getLevel1Classes());  
+            } catch(err) {
+                res.status(500).send(`Erro na listagem geral das classes de nível 1: ${err}`)
+            }
+        case '2': try {
+                res.jsonp(await State.getLevel2Classes());  
+            } catch(err) {
+                res.status(500).send(`Erro na listagem geral das classes de nível 2: ${err}`)
+            }  
+        case '3': try {
+                res.jsonp(await State.getLevel3Classes());  
+            } catch(err) {
+                res.status(500).send(`Erro na listagem geral das classes de nível 3: ${err}`)
+            }
+        case '4': try {
+                res.jsonp(await State.getLevel4Classes());  
+            } catch(err) {
+                res.status(500).send(`Erro na listagem geral das classes de nível 4: ${err}`)
+            }
+    }
 })
 
 // Devolve a metainformação de uma classe: codigo, titulo, status, desc, codigoPai?, tituloPai?, procTrans?, procTipo?

@@ -1,15 +1,12 @@
 var org = new Vue({
     el: '#organizacao-form',
     data: {
+        myEntidade: {},
+
+        listaTipologias: [],
+
         id: "",
         type: "",
-
-        entName: "",
-
-        entInitials: "",
-        entEstado: "Ativa",
-        entInternational: "",
-        content: [],
 
         domain: [],
         domainReady: false,
@@ -35,7 +32,6 @@ var org = new Vue({
         },
         domainCollapsed: true,
 
-        tipologiasList: [],
         tipologiasReady: false,
 
         entRelsList: [],
@@ -52,13 +48,34 @@ var org = new Vue({
 
     },
     methods: {
+        loadTipologias: function () {
+            var dataToParse = [];
+            
+            this.$http.get("/api/entidades/" + this.myEntidade.id + "/tipologias")
+                .then(function (response) { 
+                    this.listaTipologias = response.body;
+                })
+                .then(function () {
+                    // id da tipologia
+                    for (var i = 0; i < this.listaTipologias.length; i++) {
+                        this.listaTipologias[i].id = this.listaTipologias[i].id.replace(/[^#]+#(.*)/, '$1');
+                    }
+
+                    if(this.listaTipologias.length>0)
+                        this.tipologiasReady = true;
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        },
         loadDono: function () {
             var classesToParse = [];
             var keys = ["id", "Code", "Title"];
 
-            this.$http.get("/api/entidades/" + this.id + "intervencao/dono")
+            this.$http.get("/api/entidades/" + this.id + "/intervencao/dono")
                 .then(function (response) {
                     classesToParse = response.body;
+                    console.log(response.body)
                 })
                 .then(function () {
                     this.domain = JSON.parse(JSON.stringify(this.parseList(classesToParse, keys)));
@@ -96,68 +113,21 @@ var org = new Vue({
                     console.error(error);
                 });
         },
-        loadTipols: function () {
-            var dataToParse = [];
-            var keys = ["id", "Designacao", "Sigla"];
-
-            this.$http.get("/api/entidades/" + this.id + "/tipologias")
-                .then(function (response) {
-                    dataToParse = response.body;
-                })
-                .then(function () {
-                    this.tipologiasList = this.parseList(dataToParse, keys);
-
-                    if(this.tipologiasList.length>0)
-                        this.tipologiasReady = true;
-                })
-                .catch(function (error) {
-                    console.error(error);
-                });
-        },
         loadEntRels: function() {
             this.entRelsReady = false;
         },
-        parse: function (content) {
-            this.entEstado = content[0].Estado.value
-            this.entName = content[0].Designacao.value;
-            this.newName = content[0].Designacao.value;
-            this.entInitials = content[0].Sigla.value;
-            this.entInternational = content[0].Internacional.value;
-        },
-        parseList: function (content, keys) {
-            var dest = [];
-            var temp = {};
-            // parsing the JSON
-            for (var i = 0; i < content.length; i++) {
-                for (var j = 0; j < keys.length; j++) {
-                    temp[keys[j]] = content[i][keys[j]].value;
-
-                    if (keys[j] == "id") {
-                        temp.id = temp.id.replace(/[^#]+#(.*)/, '$1');
-                    }
-                }
-
-                dest[i] = JSON.parse(JSON.stringify(temp));
-            }
-
-            return dest.sort(function (a, b) {
-                return a.id.localeCompare(b.id);
-            });
-        },
     },
-
-    //Corre o código depois da instancia criada
     created: function () {
-        this.id = window.location.pathname.split('/')[3];
+        // exemplo: "entidades/ent_CEE" fica com o id "ent_CEE"
+        var ident = window.location.pathname.split('/')[2];
         
-        this.$http.get("/api/entidades/" + this.id)
+        this.$http.get("/api/entidades/" + ident)
             .then(function (response) {
-                this.parse(response.body);
+                this.myEntidade = response.body;
+                this.myEntidade.id = window.location.pathname.split('/')[2];
             })
-            .then(function () {
-                this.loadDomain();
-                this.loadParticipations();
-                this.loadTipols();
+            .then(function (){
+                this.loadTipologias();
             })
             .catch(function (error) {
                 console.error(error);

@@ -3,24 +3,41 @@ const normalize = require('../../controllers/api/aux').normalize;
 const Pedidos = require('../../controllers/api/pedidos');
 const Entidades = module.exports;
 
-Entidades.listar = () => {
-    const query = `SELECT ?id ?sigla ?designacao ?internacional 
-        WHERE {
+/**
+ * 
+ * @param {Object} filtro
+ * @param {string} filtro.sigla
+ * @param {string} filtro.designacao
+ * @param {string} filtro.internacional "Sim" ou "Não"
+ * @param {string} filtro.estado "Ativa"
+ * @return {Promise<[Entidade]|Error>}
+ */
+Entidades.listar = (filtro) => {
+    const query = `SELECT ?id ?sigla ?designacao ?internacional ?estado {
         ?id rdf:type clav:Entidade ;
-            clav:entEstado "Ativa";
+            clav:entEstado ?estado;
             clav:entDesignacao ?designacao ;
             clav:entSigla ?sigla ;
             clav:entInternacional ?internacional.
-        }
-        ORDER BY ?designacao`;
+
+        FILTER (${Object.entries(filtro)
+            .filter(([k,v]) => v !== undefined)
+            .map(([k,v]) => `?${k} = "${v}"` )
+            .join(' && ')})
+    } ORDER BY ?sigla`;
 
     return client.query(query)
         .execute()
         .then(response => normalize(response));
 };
 
+/**
+ * 
+ * @param {string} id
+ * @return {Promise<[Tipologia|Error]>}
+ */
 Entidades.tipologias = (id) => {
-    const query = `SELECT ?sigla ?designacao WHERE {
+    const query = `SELECT ?id ?sigla ?designacao WHERE {
         clav:${id} clav:pertenceTipologiaEnt ?id .
             
         ?id clav:tipEstado "Ativa";

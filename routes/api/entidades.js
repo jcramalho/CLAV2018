@@ -24,7 +24,14 @@ const estaDisponivel = (req, res, next) => {
 
 // Lista todas as entidades: id, sigla, designacao, internacional
 router.get('/', (req, res) => {
-    Entidades.listar()      
+    const filtro = {
+        sigla: req.query.sigla,
+        designacao: req.query.designacao,
+        internacional: req.query.internacional,
+        estado: req.query.estado ? req.query.estado : "Ativa",
+    };
+
+    return Entidades.listar(filtro)
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na listagem das entidades: ${erro}`));
 });
