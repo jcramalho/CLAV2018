@@ -1,15 +1,33 @@
 var legs = new Vue({
     el: '#tabela-legislacoes',
     data: {
-        tableHeader: ["#", "Tipo", "Entidade(s)", "Número", "Sumário", "Data"],
-        tableData: [[]],
+        listaLegs: [],
         ready: false,
-        content: [],
-        cwidth: ['1%', '12%','10%', '10%', '53%', '15%'],
     },
     methods: {
+        parseEntidades: function () {
+            var temp = [];
+
+            // Vai ao campo "entidades" e gera o link de consulta e o html respetivo
+            for (var i = 0; i < this.listaLegs.length; i++) {
+
+                if(this.listaLegs[i].entidades.length>0){
+                    temp = this.listaLegs[i].entidades.split(";").map(
+                        function(e){
+                            let data = e.split("::");
+                            
+                            let link = `/entidades/${data[0].replace(/[^#]+#(.*)/, '$1')}`;
+                            
+                            return `<a href="${link}">${data[1]}</a>`;
+                        }
+                    ).join(',');
+
+                this.listaLegs[i].entidades = temp.slice();
+                }
+            }
+        },
         rowClicked: function (row) {
-            var id = this.content[row[0] - 1].id.value;
+            var id = row.id;
             id = id.replace(/[^#]+#(.*)/, '$1');
 
             window.location.href = '/legislacao/consultar/' + id;
@@ -17,44 +35,14 @@ var legs = new Vue({
         addLeg: function (row) {
             window.location.href = '/legislacao/adicionar';
         },
-        parse: function () {
-            // key names for parsing
-            var keys = ["Tipo", "Entidades", "Número", "Titulo", "Data"];
-
-            var temp = [];
-
-            // parsing the JSON
-            for (var i = 0; i < this.content.length; i++) {
-                temp[0] = i + 1;
-
-                for (var j = 0; j < keys.length; j++) {
-                    temp[j + 1] = this.content[i][keys[j]].value;
-                }
-
-                if(temp[2].length>0){
-                    temp[2] = temp[2].split(";").map(
-                        function(e){
-                            let data = e.split("::");
-                            
-                            let link = `/entidades/consultar/${data[0].replace(/[^#]+#(.*)/, '$1')}`;
-                            
-                            return `<a href="${link}">${data[1]}</a>`;
-                        }
-                    ).join(',');
-
-                }
-                this.tableData[i] = temp.slice();
-
-            }
-        }
     },
     created: function () {
         this.$http.get("/api/legislacao")
             .then(function (response) {
-                this.content = response.body;
+                this.listaLegs = response.body;
             })
             .then(function () {
-                this.parse();
+                this.parseEntidades();
                 this.ready = true;
             })
             .catch(function (error) {
