@@ -1,12 +1,31 @@
 var Auth = module.exports
 
+var jwt = require('jsonwebtoken');
+var ConfigJWT = require('./../config/jwt');
+
+//Novo middleware de autenticação com JWT
 Auth.isLoggedIn = function (req, res, next) {
-    if (req.isAuthenticated()) {
-        return next();
+    if(req.isAuthenticated()){
+        jwt.verify(req.session.token, ConfigJWT.jwt.secret, function(err, decoded){
+            if(decoded!=undefined){
+                if(decoded.exp < new Date().getTime()/1000){
+                    req.logout();
+                    req.flash('error_msg', 'Token JWT expirado! Faça login novamente.');
+                    res.redirect('/');
+                }
+                return next();
+            }else{
+                req.logout();
+                req.flash('error_msg', 'Token JWT expirado! Faça login novamente.');
+                res.redirect('/');
+            }
+        }); 
+    }else{
+        req.flash('warn_msg', 'Login necessário para aceder a esta página.');
+        res.redirect('/users/login');
     }
-    req.flash('warn_msg', 'Login necessário para aceder a esta página');
-    res.redirect('/users/login');
 }
+
 
 Auth.isInternal = function (req, res, next) {
     if (req.isAuthenticated()) {
