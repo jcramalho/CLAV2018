@@ -1,5 +1,5 @@
 const client = require('../../config/database').onthology;
-const normalize = require('../../controllers/api/aux').normalize;
+const normalize = require('../../controllers/api/utils').normalize;
 const Pedidos = require('../../controllers/api/pedidos');
 const Leg = module.exports;
 
@@ -30,29 +30,31 @@ Leg.listar = () => {
 
 // Devolve a informação associada a um documento legislativo: tipo data numero sumario link entidades
 Leg.consultar = id => {
-    var query = `
-        SELECT  
-            ?tipo ?data ?numero ?sumario ?link
-            (GROUP_CONCAT(CONCAT(STR(?ent),"::",?entSigla,"::",?entDesignacao); SEPARATOR=";") AS ?entidades)
-        WHERE { 
-            clav:${id} a clav:Legislacao;
-                clav:diplomaData ?data;
-                clav:diplomaNumero ?numero;
-                clav:diplomaTipo ?tipo;
-                clav:diplomaTitulo ?sumario;
-                clav:diplomaLink ?link;
+    const query = `SELECT ?tipo ?data ?numero ?sumario ?link WHERE { 
+        clav:${id} a clav:Legislacao;
+            clav:diplomaData ?data;
+            clav:diplomaNumero ?numero;
+            clav:diplomaTipo ?tipo;
+            clav:diplomaTitulo ?sumario;
+            clav:diplomaLink ?link;
+     }`;
 
-            OPTIONAL{
-                clav:${id} clav:diplomaEntidade ?ent.
-                ?ent clav:entSigla ?entSigla;
-                     clav:entDesignacao ?entDesignacao.
-            }
-        } GROUP BY ?tipo ?data ?numero ?sumario ?link
-    `
+    const entidadesQuery = `SELECT ?ent ?entSigla ?entDesignacao {
+        clav:${id} clav:diplomaEntidade ?ent .
+        ?ent clav:entSigla ?entSigla .
+        ?ent clav:entDesignacao ?entDesignacao
+    }`;
+
     return client.query(query)
         .execute()
-        .then(response => normalize(response));
-}
+        .then(leg_response => client.query(entidadesQuery)
+            .execute()
+            .then((ent_response) => {
+                const legislacao = normalize(leg_response)[0];
+                legislacao.entidades = normalize(ent_response);
+                return legislacao;
+            }));
+};
 
 // Devolve a lista de processos regulados pelo documento: id, codigo, titulo
 Leg.regula = id => {

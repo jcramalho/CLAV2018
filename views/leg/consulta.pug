@@ -3,7 +3,7 @@ block corpo
     #legislacao-form.panel.panel-default.panel-custom
         .panel-heading
             h1.page-header 
-                div {{ legData.type.original }} {{ legData.org.label }} {{ legData.number.original }}
+                div {{ myLegislacao.tipo }} {{ entidades }} {{ myLegislacao.numero }}
                     if user
                         a(:href="'/legislacao/editar/'+id" style="float:right")  
                             span.glyphicon.glyphicon-edit 
@@ -13,26 +13,26 @@ block corpo
                     //- Data
                     tr
                         td(style="width:12%")
-                            .info-label {{ legData.date.label }}:
+                            .info-label Data:
                         
                         td(style="width:80%")
-                            | {{ legData.date.original }}
+                            | {{ myLegislacao.data }}
 
                     //- Sumário
                     tr
                         td(style="width:12%")
-                            .info-label {{ legData.title.label }}:
+                            .info-label Sumário:
                         
                         td(style="width:80%")
-                            | {{ legData.title.original }}
+                            | {{ myLegislacao.sumario }}
 
                     //- Link
                     tr
                         td(style="width:12%")
-                            .info-label {{ legData.link.label }}:
+                            .info-label Link:
                         
                         td(style="width:80%")
-                            a(:href="legData.link.original" target="_blank") {{legData.link.original}}
+                            a(:href="myLegislacao.link" target="_blank") {{ myLegislacao.link }}
 
                     //- PROCESSOS
                     tr
@@ -41,8 +41,8 @@ block corpo
                         td(style="width:80%")
                             ul(v-if="processesReady" style="padding-left:20px" :class="{'is-collapsed' : processesCollapsed }")
                                 li(v-for="c in processes")
-                                    a(:href="'/classes/consultar/'+c.id") {{ c.Code }}
-                                    |  - {{ c.Title }}
+                                    a(:href="'/classes/c'+c.codigo") {{ c.codigo }}
+                                    |  - {{ c.titulo }}
                             a(@click="processesCollapsed=!processesCollapsed" v-if="processes.length>6").maozinha
                                 span(v-if="processesCollapsed") Mostrar mais...
                                 span(v-else) Mostrar menos...

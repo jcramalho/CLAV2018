@@ -66,7 +66,7 @@ var newLeg = new Vue({
                 regex = new RegExp(/leg_[0-9]+/, "gi");
 
                 if(regex.test(response.body)){
-                    window.location.href = '/legislacao/consultar/'+response.body;
+                    window.location.href = '/legislacao/'+response.body;
                     this.message = "Diploma adicionado! Vai ser redirecionado para a página de consulta/edição..."
                 }
                 else {

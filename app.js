@@ -82,6 +82,10 @@ app.use(function (req, res, next) {
     next();
 });
 
+//loads APP State
+var State = require('./controllers/state.js')
+State.reset()
+
 //routes and API
 app.use('/',require('./routes/index'));
 app.use('/users',require('./routes/users'));

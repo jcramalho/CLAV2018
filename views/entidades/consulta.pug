@@ -3,7 +3,7 @@ block corpo
     #organizacao-form.panel.panel-default.panel-custom
         .panel-heading
             h1.page-header 
-                div {{ entName }}
+                div {{ myEntidade.designacao }}  
                     if user
                         a(:href="'/entidades/editar/'+id" style="float:right")  
                             span.glyphicon.glyphicon-edit
@@ -16,21 +16,21 @@ block corpo
                         td(style="width:10%")
                             .info-label Sigla: 
                         td(style="width:80%")
-                            | {{ entInitials }} 
+                            | {{ myEntidade.sigla }} 
 
                     //- ESTADO
                     tr
                         td(style="width:10%")
                             .info-label Estado: 
                         td(style="width:80%")
-                            | {{ entEstado }}
+                            | {{ myEntidade.estado }}
                     
                     //- INTERNACIONAL
                     tr
                         td(style="width:10%")
                             .info-label Internacional: 
                         td(style="width:80%")
-                            | {{ entInternational }} 
+                            | {{ myEntidade.internacional }} 
 
                     //- Fim da primeira secção
                 //- Segunda secção
@@ -43,27 +43,27 @@ block corpo
                                 tr
                                     td
                                         ul(style="padding-left:20px")
-                                            li(v-for="o in tipologiasList")
-                                                a(:href="'/tipologias/consultar/'+o.id") {{ o.Sigla }} 
-                                                | - {{ o.Designacao }}
+                                            li(v-for="o in listaTipologias")
+                                                a(:href="'/tipologias/consultar/'+o.id") {{ o.sigla }} 
+                                                | - {{ o.designacao }}
                             // p(v-else) Não está associada a nenhuma Tipologia.
                     //- Fim da segunda secção
                 //- Terceira secção            
                 //- Intervenção nos PN
-                table.consulta(v-if="domainReady || partsReady") 
+                table.consulta(v-if="eDonoProcessos || partsReady") 
                     tr
                         td(style="width:100%")
                             .info-label Natureza de intervenção nos Processos de Negócio:
                             table
-                                tr(v-if="domainReady")
+                                tr(v-if="eDonoProcessos")
                                     td
                                         label Como Dono:
                                     td
                                         ul(style="padding-left:20px" :class="{'is-collapsed' : domainCollapsed }")
-                                            li(v-for="c in domain")
-                                                a(:href="'/classes/consultar/'+c.id") {{ c.Code }}
-                                                | - {{ c.Title }}
-                                        a(@click="domainCollapsed=!domainCollapsed" v-if="domain.length>6").maozinha
+                                            li(v-for="p in donoProcessos")
+                                                a(:href="'/classes/consultar/c' + p.codigo") {{ p.codigo }}
+                                                | - {{ p.titulo }}
+                                        a(@click="domainCollapsed=!domainCollapsed" v-if="donoProcessos.length>6").maozinha
                                             span(v-if="domainCollapsed") Mostrar mais...
                                             span(v-else) Mostrar menos...
                 
@@ -74,10 +74,10 @@ block corpo
                                         ul(style="padding-left:20px")
                                             li(v-for="key in Object.keys(participations)" v-if="participations[key].length>0")
                                                 b  {{ participationsDic[key] }}:
-                                                ul(:class="{'is-collapsed' : partsCollapsed[key] }")
+                                                ul(:class="{'is-collapsed' : partsCollapsed[key] }") 
                                                     li(v-for="p in participations[key]")
-                                                        a(:href="'/classes/consultar/'+p.id") {{ p.Code }}
-                                                        |  - {{ p.Title }}
+                                                        a(:href="'/classes/consultar/c'+p.codigo") {{ p.codigo }}
+                                                        |  - {{ p.titulo }}
                                                 a(@click="partsCollapsed[key]=!partsCollapsed[key]" v-if="participations[key].length>6").maozinha
                                                     span(v-if="partsCollapsed[key]") Mostrar mais...
                                                     span(v-else) Mostrar menos...
@@ -85,7 +85,7 @@ block corpo
                     //- Fim da terceira secção
                 //- Quarta secção            
                 //- Relações entre entidades
-                table.consulta(v-if="entRelsReady") 
+                //-table.consulta(v-if="entRelsReady") 
                     tr
                         td(style="width:100%")
                             .info-label Relações entre entidades:

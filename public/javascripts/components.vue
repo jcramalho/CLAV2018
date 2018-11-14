@@ -23,29 +23,20 @@ Vue.component('custom-table-simple', {
             <table :class="classTable">
                 <thead v-if="header">
                     <tr>
-                        <th v-if="index>0" v-for="(item,index) in header" @click="sort(index)" class="sorter" :style="{width: cwidth[index]}">
+                        <th v-for="(item,index) in header" @click="sort(index)" class="sorter" :style="{width: cwidth[index]}">
                             {{ item }} <span class="caret"></span>
                         </th>
                     </tr>
                 </thead>
                 <tbody name="table">
-                    <tr v-for="(row,index) in rowsShow" :key="row[0]" @click="rowClick(index)">
-                        <td 
-                            v-if="index>0" 
-                            v-for="(item,index) in row" 
+                    <tr v-for="(row,index) in rowsShow" @click="rowClick(index)">
+                        <td
+                            v-for="campo in displayOrder" 
                             class="custom-table-cell"
-                        >
+                            > 
                             <div 
-                                v-if="item.charAt(0)!='<'"
                                 class="custom-table-text" 
-                                v-html="item"
-                                :title="item"
-                            ></div>
-                            <div 
-                                v-else
-                                class="custom-table-text" 
-                                v-html="item"
-                            ></div>
+                                v-html="row[campo]"></div> 
                         </td>
                     </tr>
                 </tbody>
@@ -62,6 +53,7 @@ Vue.component('custom-table-simple', {
         'classTable',
         'completeRows',
         'header',
+        'displayOrder',
         'ready',
         'cwidth',
         'add',
@@ -69,7 +61,7 @@ Vue.component('custom-table-simple', {
     data: function () {
         return {
             "rows": [],
-            "rowsShow": [[]],
+            "rowsShow": [],
             "filt": '',
             "order": 0,
             "activePage": 1,
@@ -94,9 +86,8 @@ Vue.component('custom-table-simple', {
         },
     },
     methods: {
-        completeFilter: function (filt) { //filter rows according to what is written in the input box
+        completeFilter: function (filt) { //filtra as linhas de acordo com as palavras introduzidas no filtro
             tempRows = this.completeRows;
-
             filters = filt.split(" ");
 
             for (i = 0; i < filters.length; i++) {
@@ -105,39 +96,28 @@ Vue.component('custom-table-simple', {
 
             this.rows = tempRows;
         },
-        filter: function (list, filt) {
-            var retList;
+        filter: function (lista, filtro) {
+            var retList = []
+            regex = new RegExp(filtro, "gi")
 
-            regex = new RegExp(filt, "gi");
-
-            retList = list.filter(function (item) {
-
-                for (var i = 0; i < item.length; i++) {
-                    if (regex.test(item[i])) {
-                        return true;
-                    }
-                }
-                return false;
+            retList = lista.filter(item => {
+                var match = false
+                Object.values(item).forEach(value => {
+                    if(regex.test(value)) match = true
+                })
+                return match
             })
-            if (retList.length == 0) {
-                retList = [[]];
-            }
-
             return retList;
         },
-        sort: function (index) { //sort rows by header[index]
-            if (this.order == index) {
-                this.rows.reverse();
-                this.order = -index;
-            } else {
-                this.rows.sort(function (a, b) {
-                    if (typeof a[index] === 'string' || a[index] instanceof String)
-                        return a[index].localeCompare(b[index]);
-                    else
-                        return a[index] - b[index];
-                })
-                this.order = index;
-            }
+        sort: function (index) { //ordena as linhas por displayOrder[index]
+            var chaveOrd = this.displayOrder[index]
+            this.rows.reverse()
+            this.rows.sort(function (a, b) {
+                if (typeof a.chaveOrd === 'string' || a.chaveOrd instanceof String)
+                    return a.chaveOrd.localeCompare(b.chaveOrd);
+                else
+                    return a.chaveOrd - b.chaveOrd;
+            })
         },
         rowClick: function (index) { //emit event when a row is clicked
             this.$emit('row-clicked', this.rowsShow[index]);

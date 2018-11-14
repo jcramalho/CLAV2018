@@ -1,11 +1,11 @@
 const client = require('../../config/database').onthology
-const normalize = require('../../controllers/api/aux').normalize
+const normalize = require('../../controllers/api/utils').normalize
 const Pedidos = require('../../controllers/api/pedidos')
 const Classes = module.exports
 
 // Devolve a lista de classes de um determinado nível, por omissão do nível 1
-Classes.listar = nivel => {
-    if (!nivel) { nivel = 1 }
+Classes.listar = async nivel => {
+    if (!nivel)  nivel = 1;
 
     var query = `
         Select
@@ -20,9 +20,11 @@ Classes.listar = nivel => {
         } 
         Order by ?id 
     `
-    return client.query(query)
-        .execute()
-        .then(response => normalize(response))
+    try {
+        let result = await client.query(query).execute();
+        return normalize(result);
+    } 
+    catch(erro) { throw (erro);}
 }
 
 // Devolve a metainformação de uma classe: codigo, titulo, status, desc, codigoPai?, tituloPai?, procTipo?
@@ -52,21 +54,17 @@ Classes.consultar = id => {
 }
 
 // Devolve a lista de filhos de uma classe: id, codigo, titulo, nFilhos
-Classes.descendencia = id => {
+Classes.descendencia = async id => {
     var query = `
-        SELECT ?id ?codigo ?titulo (count(?sub) as ?nFilhos)
+        SELECT ?id ?codigo ?titulo
         WHERE {
             ?id clav:temPai clav:${id} ;
                     clav:codigo ?codigo ;
                     clav:titulo ?titulo .
-            optional {
-                ?sub clav:temPai ?id .
-            }
-        }Group by ?id ?codigo ?titulo
+        }
     `
-    return client.query(query)
-        .execute()
-        .then(response => normalize(response))
+    let resultado = await client.query(query).execute();
+    return normalize(resultado);
 }
 
 // Devolve a lista de notas de aplicação de uma classe: idNota, nota

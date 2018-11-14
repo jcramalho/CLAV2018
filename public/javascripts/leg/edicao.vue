@@ -226,7 +226,7 @@ var leg = new Vue({
             .then( function(response) { 
                 messageL.showMsg(response.body);
                 if(this.message=="Actualizado!"){
-                    window.location.href = '/legislacao/consultar/'+this.id;
+                    window.location.href = '/legislacao/'+this.id;
                 }
                 this.$refs.spinner.hide();
             })
