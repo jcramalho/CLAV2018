@@ -4,7 +4,7 @@ var router = express.Router();
 var Auth = require('../controllers/auth.js');
 
 router.get('/', function(req, res, next) {
-	res.render('classes/listagem', {title: "Lista Consolidada"});
+	res.render('classes/classesTree', {title: "Lista Consolidada"});
 });
 
 router.get('/adicionar', Auth.isLoggedIn, function(req, res) {

@@ -30,7 +30,7 @@ var legs = new Vue({
             var id = row.id;
             id = id.replace(/[^#]+#(.*)/, '$1');
 
-            window.location.href = '/legislacao/consultar/' + id;
+            window.location.href = '/legislacao/' + id;
         },
         addLeg: function (row) {
             window.location.href = '/legislacao/adicionar';
