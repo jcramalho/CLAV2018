@@ -73,14 +73,15 @@ router.post('/login', function (req, res) {
         }
         req.login(user, (err) => {
             if (err) {
-               res.send(err);
+                req.flash('warn_msg', 'Ocorreu um erro ao realizar o login! Por favor verifique as suas credenciais.');
+                res.redirect('/users/login');
+            }else{
+                var token = jwt.sign({user}, ConfigJWT.jwt.secret,{
+                    expiresIn: ConfigJWT.jwt.expiration
+                });
+                req.session.token = token;
+                res.redirect('/');
             }
-            var token = jwt.sign({user}, ConfigJWT.jwt.secret,{
-                            expiresIn: ConfigJWT.jwt.expiration
-                        });
-            
-            req.session.token = token;
-            res.redirect('/');
         });
     })(req, res);
 });
@@ -103,12 +104,9 @@ router.get('/logout', function (req, res) {
     var location = parts.query.l;
 
     req.logout();
-
     req.flash('success_msg', 'Logout efetuado!');
-
     res.redirect(location);
 });
-
 
 router.post('/submeterEntidade', function (req, res) {
     var errors = [];
