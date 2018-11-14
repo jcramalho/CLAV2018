@@ -11,13 +11,16 @@ Auth.isLoggedIn = function (req, res, next) {
                 if(decoded.exp < new Date().getTime()/1000){
                     req.logout();
                     req.flash('error_msg', 'Token JWT expirado! Faça login novamente.');
-                    res.redirect('/');
+                    res.redirect('/users/login');
                 }
+                req.logout();
+                req.flash('error_msg', 'Token JWT expirado! Faça login novamente.');
+                    res.redirect('/users/login');
                 return next();
             }else{
                 req.logout();
                 req.flash('error_msg', 'Token JWT expirado! Faça login novamente.');
-                res.redirect('/');
+                res.redirect('/users/login');
             }
         }); 
     }else{
