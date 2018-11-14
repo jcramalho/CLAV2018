@@ -146,50 +146,29 @@ Entidades.criar = (entidade, utilizador) => {
 };
 
 /**
+ * Gera um pedido de remoção da entidade.
+ * Nenhuma alteração será feita à entidade, só quando o pedido for
+ * validado é que esta passará para o estado "Inativa"
  * 
- * @param id
- * @param utilizador
- */
-Entidades.aceitar_criacao = (id, pedido, utilizador) => {
-    const query = `DELETE {
-        clav:${id} clav:entEstado "Harmonização" .
-    } INSERT {
-        clav:${id} clav:entEstado "Ativa" .
-    } WHERE {
-        clav:${id} clav:entEstado ?status .
-    }`;
-
-   // Pedidos.adicionar_distribuicao(pedido, )
-};
-
-/**
+ * @see pedidos
  * 
  * @param {string} id código identificador da entidade (p.e, "ent_CEE")
  * @param {string} utilizador email do utilizador que apagou a entidade
- * @return {Promise<Pedido | Error>}
+ * @return {Promise<Pedido | Error>} promessa que quando cumprida possui o
+ * pedido gerado para a remoção da entidade
  */
 Entidades.apagar = (id, utilizador) => {
-    const query = `DELETE {
-        clav:${id} clav:entEstado ?status .
-    } INSERT {
-        clav:${id} clav:entEstado 'Inativa' .
-    } WHERE {
-        clav:${id} clav:entEstado ?status .
-    }`;
-
-    return client.query(query)
-        .execute()
-        .then(() => Pedidos.criar({
-            criadoPor: utilizador,
-            objeto: {
-                codigo: id,
-                tipo: 'Entidade',
-                acao: 'Remoção',
-            },
-            distribuicao: [{
-                estado: "Submetido",
-            }]
-        }));
+    return Pedidos.criar({
+        criadoPor: utilizador,
+        objeto: {
+            codigo: id,
+            tipo: 'Entidade',
+            acao: 'Remoção',
+        },
+        distribuicao: [{
+            estado: "Submetido",
+        }]
+    });
 };
 
 /**
@@ -198,7 +177,7 @@ Entidades.apagar = (id, utilizador) => {
  * @param {string} id código identificador da entidade (p.e, "ent_CEE")
  * @return {Promise<{codigo: string, titulo: string} | Error>} promessa que
  * quando cumprida contém os códigos e títulos dos processos onde a entidade
- * participa como donas
+ * participa como dona
  */
 Entidades.dono = id => {
     const query = `SELECT ?codigo ?titulo WHERE {

@@ -45,7 +45,7 @@ router.post('/', estaDisponivel, (req, res) => {
         tipologias: req.body.tipologias,
     };
 
-    return Entidades.criar(entidade)
+    return Entidades.criar(entidade, 'xxx@email.com')
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na criação da entidade: ${erro}`));
 });
@@ -55,6 +55,13 @@ router.get('/:id', (req, res) => {
     Entidades.consultar(req.params.id)
         .then(dados => dados ? res.jsonp(dados) : res.status(404).send(`Erro. A entidade '${req.params.id}' não existe`))
         .catch(erro => res.status(500).send(`Erro na consulta da entidade '${req.params.id}': ${erro}`));
+});
+
+// Apaga uma entidade identificada por uma sigla. Em caso de sucesso gera um novo pedido
+router.delete('/:id', (req, res) => {
+    Entidades.apagar(req.params.id, 'xxx@email.com')
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.status(500).send(`Erro na remoção da entidade '${req.params.id}': ${erro}`));
 });
 
 // Lista as tipologias a que uma entidade pertence: id, sigla, designacao
@@ -104,18 +111,4 @@ router.put('/:id', Auth.isLoggedInAPI, function (req, res) {
         .catch(error => console.error("Initials error:\n" + error));
 
 })
-
-router.delete('/:id', Auth.isLoggedInAPI, function (req, res) {
-    Entidades.deleteEntidade(req.params.id)
-        .then(function () {
-            Logging.logger.info('Desativada entidade \'' + req.params.id + '\' por utilizador \'' + req.user._id + '\'');
-
-            req.flash('success_msg', 'Entrada desativada');
-            res.send("Entrada desativada!");
-        })
-        .catch(function (error) {
-            console.error(error);
-        });
-})
-
-module.exports = router;*/
+*/
