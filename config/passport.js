@@ -1,12 +1,16 @@
 var LocalStrategy = require('passport-local').Strategy;
-var FacebookStrategy = require('passport-facebook').Strategy;
-var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
+var JwtStrategy = require('passport-jwt').Strategy;
+var ExtractJwt = require('passport-jwt').ExtractJwt;
 
 var User = require('../models/user');
-var ConfigAuth = require('./credentials');
+var ConfigJWT = require('./jwt');
+
+//Needed for JWT Authentication
+var opts = {}
+opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
+opts.secretOrKey = ConfigJWT.jwt.secret;
 
 module.exports = function(passport) {
-
     passport.use(new LocalStrategy(
         function (email, password, done) {
             User.getUserByEmail(email, function (err, user) {
@@ -27,84 +31,17 @@ module.exports = function(passport) {
         })
     );
 
-    passport.use(new FacebookStrategy(
-        {
-            clientID: ConfigAuth.facebookAuth.ID,
-            clientSecret: ConfigAuth.facebookAuth.Secret,
-            callbackURL: ConfigAuth.facebookAuth.callbackURL,
-            passReqToCallback : true,
-            profileFields: ['id', 'emails', 'name']
-        },
-        function (req, accessToken, refreshToken, profile, done) {
-            process.nextTick(function () {
-                
-                var newUser = new User({
-                    level: 1,
-                    email: profile.emails[0].value,
-                    name: profile.name.givenName + ' ' + profile.name.familyName,
-                    facebook: {
-                        id: profile.id,
-                        token: accessToken
-                    }
-                })
-
-                User.findOne({'facebook.id': profile.id}, function(err, user){
-                    if (err)
-                        return done(err);
-                    if (user)
-                        return done(null, user);
-                    else {
-                        newUser.save(function (err) {
-                            if (err)
-                                throw err;
-                            return done(null, newUser);
-                        })
-                        console.log(profile);
-                    }
-                })
+    passport.use(new JwtStrategy(opts,
+        function(jwt_payload, done){
+            User.findOne({id: jwt_payload.id}, function(err,user) {
+                if(err) throw err;
+                if(user){
+                    done(null,user);
+                }else{
+                    done(null,false);
+                }
             });
         }
-
-    ));
-
-    passport.use(new GoogleStrategy(
-        {
-            clientID: ConfigAuth.googleAuth.ID,
-            clientSecret: ConfigAuth.googleAuth.Secret,
-            callbackURL: ConfigAuth.googleAuth.callbackURL,
-            passReqToCallback : true,
-            profileFields: ['id', 'emails', 'name']
-        },
-        function (req, accessToken, refreshToken, profile, done) {
-            process.nextTick(function () {
-                
-                var newUser = new User({
-                    level: 1,
-                    email: profile.emails[0].value,
-                    name: profile.displayName,
-                    google: {
-                        id: profile.id,
-                        token: accessToken
-                    }
-                })
-
-                User.findOne({'google.id': profile.id}, function(err, user){
-                    if (err)
-                        return done(err);
-                    if (user)
-                        return done(null, user);
-                    else {
-                        newUser.save(function (err) {
-                            if (err)
-                                throw err;
-                            return done(null, newUser);
-                        })
-                        console.log(profile);
-                    }
-                })
-            });
-        }
-
     ));
 
     passport.serializeUser(function (user, done) {
@@ -116,5 +53,4 @@ module.exports = function(passport) {
             done(err, user);
         });
     });
-
 };

@@ -7,7 +7,10 @@ var router = express.Router();
 var User = require('../../models/user');
 var Entidade = require('../../models/entidade');
 
-/*/ Local user registration/
+var jwt = require('jsonwebtoken');
+var ConfigJWT = require('./../../config/jwt');
+
+// Local user registration
 router.post('/registar', function (req, res) {
     var name = req.body.name;
     var email = req.body.email;
@@ -15,7 +18,6 @@ router.post('/registar', function (req, res) {
     var internal = (type > 1);
     var password = req.body.password;
     var password2 = req.body.password2;
-
 
     // Validation
     req.checkBody('name', 'Nome é obrigatório').notEmpty();
@@ -52,7 +54,6 @@ router.post('/registar', function (req, res) {
                 });
 
                 req.flash('success_msg', 'A sua conta foi criada, pode agora fazer login');
-
                 res.redirect('/');
             }
             else {
@@ -62,16 +63,39 @@ router.post('/registar', function (req, res) {
             }
         });
     }
-});*/
+});
 
-// Local authentication
-router.post('/login',
-    passport.authenticate('local', { failureRedirect: '/users/login', failureFlash: true }),
-    function (req, res) {
-        res.redirect('/');
+/* POST login. */
+router.post('/login', function (req, res) {
+    passport.authenticate('local', { failureRedirect: '/users/login', failureFlash: true }, (err, user) => {
+        if (err) {
+            res.send(err)
+        }
+        req.login(user, (err) => {
+            if (err) {
+               res.send(err);
+            }
+            var token = jwt.sign({user}, ConfigJWT.jwt.secret,{
+                            expiresIn: ConfigJWT.jwt.expiration
+                        });
+            
+            req.session.token = token;
+            res.redirect('/');
+        });
+    })(req, res);
+});
+
+// JWT token verification
+router.get('/testeJWT',function(req,res){
+    passport.authenticate('jwt'),
+        jwt.verify(req.session.token, ConfigJWT.jwt.secret, (err, user) => {
+            if(err){
+                res.send(err);
+            }
+            return res.json(user); 
+        })
     }
 );
-
 
 router.get('/logout', function (req, res) {
     var url = require('url');
@@ -143,35 +167,3 @@ router.post('/submeterEntidade', function (req, res) {
     }
 });
 module.exports = router;
-
-
-/*
-    // Facebook authentication
-    router.get('/loginFB', passport.authenticate(
-        'facebook',
-        passport.authorize('facebook', {
-            scope: ['email']
-        })
-    ));
-
-    router.get('/loginFB/callback',
-        passport.authenticate('facebook', {
-            successRedirect: '/',
-            failureRedirect: '/'
-        })
-    );
-
-    // Google authentication
-    router.get('/loginG', passport.authenticate(
-        'google',
-        { scope: ['profile', 'email'] }
-    ));
-
-    router.get('/loginG/callback',
-        passport.authenticate('google', {
-            successRedirect: '/',
-            failureRedirect: '/'
-        })
-    );
-*/
-
