@@ -78,24 +78,24 @@ router.post('/login', function (req, res) {
             var token = jwt.sign({user}, ConfigJWT.jwt.secret,{
                             expiresIn: ConfigJWT.jwt.expiration
                         });
-
-            //res.redirect('/');
-            res.json({user, token});
+            
+            req.session.token = token;
+            res.redirect('/');
         });
     })(req, res);
 });
 
 // JWT token verification
-router.get('/testeJWT',
-    passport.authenticate('jwt'),function(req,res){
-        jwt.verify(req.headers.authorization.split(' ')[1], ConfigJWT.jwt.secret, (err, user) => {
+router.get('/testeJWT',function(req,res){
+    passport.authenticate('jwt'),
+        jwt.verify(req.session.token, ConfigJWT.jwt.secret, (err, user) => {
             if(err){
-                res.send(err)
+                res.send(err);
             }
             return res.json(user); 
-        });
+        })
     }
-)
+);
 
 router.get('/logout', function (req, res) {
     var url = require('url');
