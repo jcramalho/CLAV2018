@@ -1,6 +1,7 @@
 var org = new Vue({
     el: '#organizacao-form',
     data: {
+        id: "",
         myEntidade: {},
 
         listaTipologias: [],
@@ -41,7 +42,6 @@ var org = new Vue({
     },
     methods: {
         loadTipologias: function () {
-
             this.$http.get("/api/entidades/" + this.myEntidade.id + "/tipologias")
                 .then(function (response) { 
                     this.listaTipologias = response.body;
@@ -74,6 +74,7 @@ var org = new Vue({
 
             this.$http.get("/api/entidades/" + this.myEntidade.id + "/intervencao/participante")
                 .then(function (response) {
+                    
                     this.participantePNs = response.body;
                     
                     for(var i=0; i < this.participantePNs.length; i++ ){
@@ -94,12 +95,13 @@ var org = new Vue({
     },
     created: function () {
         // exemplo: "entidades/ent_CEE" fica com o id "ent_CEE"
-        var ident = window.location.pathname.split('/')[2];
-        
-        this.$http.get("/api/entidades/" + ident)
+        //var ident = window.location.pathname.split('/')[2];
+        this.id = window.location.pathname.split('/')[2];
+
+        this.$http.get("/api/entidades/" + this.id)
             .then(function (response) {
                 this.myEntidade = response.body;
-                this.myEntidade.id = window.location.pathname.split('/')[2];
+                this.myEntidade.id = this.id;
             })
             .then(function (){
                 this.loadTipologias();

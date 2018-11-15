@@ -1,0 +1,10 @@
+extends ../layout
+block corpo
+    h1.page-header= title
+    .row
+        #classesTree.row.placeholders
+            tree-menu(:nodes = "myClassesTree")
+        
+    //-
+append scripts    
+    script(src="/javascripts/classes/classesTree.vue")
