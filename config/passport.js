@@ -36,9 +36,9 @@ module.exports = function(passport) {
             User.findOne({id: jwt_payload.id}, function(err,user) {
                 if(err) throw err;
                 if(user){
-                    done(null,user);
+                    return done(null, user);
                 }else{
-                    done(null,false);
+                    return done(null, false);
                 }
             });
         }

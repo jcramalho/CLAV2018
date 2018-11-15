@@ -67,7 +67,7 @@ router.post('/registar', function (req, res) {
 
 /* POST login. */
 router.post('/login', function (req, res) {
-    passport.authenticate('local', { failureRedirect: '/users/login', failureFlash: true }, (err, user) => {
+    passport.authenticate('local', (err, user) => {
         if (err) {
             res.send(err)
         }

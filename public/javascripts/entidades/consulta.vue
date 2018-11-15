@@ -102,7 +102,6 @@ var org = new Vue({
             .then(function (response) {
                 this.myEntidade = response.body;
                 this.myEntidade.id = this.id;
-                console.log(this.myEntidade);
             })
             .then(function (){
                 this.loadTipologias();
