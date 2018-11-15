@@ -88,12 +88,13 @@ router.post('/login', function (req, res) {
 
 // JWT token verification
 router.get('/testeJWT',function(req,res){
+    var token = req.session.token;
     passport.authenticate('jwt'),
-        jwt.verify(req.session.token, ConfigJWT.jwt.secret, (err, user) => {
+        jwt.verify(token, ConfigJWT.jwt.secret, (err, user) => {
             if(err){
                 res.send(err);
             }
-            return res.json(user); 
+            return res.json({user, token}); 
         })
     }
 );
