@@ -7,28 +7,19 @@ var ConfigJWT = require('./../config/jwt');
 Auth.isLoggedIn = function (req, res, next) {
     if(req.isAuthenticated()){
         jwt.verify(req.session.token, ConfigJWT.jwt.secret, function(err, decoded){
-            if(decoded!=undefined){
-                if(decoded.exp < new Date().getTime()/1000){
-                    req.logout();
-                    req.flash('error_msg', 'Token JWT expirado! Faça login novamente.');
-                    res.redirect('/users/login');
-                }
-                req.logout();
-                req.flash('error_msg', 'Token JWT expirado! Faça login novamente.');
-                    res.redirect('/users/login');
-                return next();
-            }else{
+            if(err){
                 req.logout();
                 req.flash('error_msg', 'Token JWT expirado! Faça login novamente.');
                 res.redirect('/users/login');
-            }
+            }else{
+                return next();
+            }  
         }); 
     }else{
-        req.flash('warn_msg', 'Login necessário para aceder a esta página.');
+        req.flash('warn_msg', 'Login necessário para aceder a esta página');
         res.redirect('/users/login');
     }
 }
-
 
 Auth.isInternal = function (req, res, next) {
     if (req.isAuthenticated()) {
