@@ -212,7 +212,7 @@ Entidades.participante = id => {
             clav:pertenceLC clav:lc1 ;
             clav:classeStatus "A" .
         BIND (STRAFTER(STR(?tipoParURI), 'clav#') AS ?tipoPar).
-        FILTER (?tipoParURI != clav:temParticipante && ?tipoPar != clav:temDono)
+        FILTER (?tipoParURI != clav:temParticipante && ?tipoParURI != clav:temDono)
     }`;
 
     return client.query(query)
