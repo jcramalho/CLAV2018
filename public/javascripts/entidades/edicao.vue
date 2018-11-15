@@ -1,6 +1,8 @@
 var org = new Vue({
     el: '#organizacao-form',
     data: {
+        myEntidade: [],
+
         id: "",
         type: "",
 
@@ -9,7 +11,6 @@ var org = new Vue({
         editName: false,
 
         entInitials: "",
-        content: [],
         message: "",
         delConfirm: false,
 
@@ -78,6 +79,16 @@ var org = new Vue({
         modal: VueStrap.modal,
     },
     methods: {
+        processosDono: function () {
+            this.$http.get("/api/entidades/" + this.id + "/intervencao/dono")
+                .then(function (response) {
+                    this.donoProcessos = response.body
+                    if(this.donoProcessos.length > 0) this.eDonoProcessos = true
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        },
         subtractArray: function (from, minus) {
             var ret;
 
@@ -148,24 +159,6 @@ var org = new Vue({
                     console.error(error);
                 });
         },
-        loadDomain: function () {
-            var classesToParse = [];
-            var keys = ["id", "Code", "Title"];
-
-            this.$http.get("/api/entidades/" + this.id+"/dominio")
-                .then(function (response) {
-                    classesToParse = response.body;
-                })
-                .then(function () {
-                    this.domain = JSON.parse(JSON.stringify(this.parseList(classesToParse, keys)));
-                    this.newDomain = JSON.parse(JSON.stringify(this.parseList(classesToParse, keys)));
-
-                    this.domainReady = true;
-                })
-                .catch(function (error) {
-                    console.error(error);
-                });
-        },
         loadParticipations: function () {
             var partsToParse = [];
             var keys = ['id', 'Title', 'Code'];
@@ -201,13 +194,6 @@ var org = new Vue({
                 .catch(function (error) {
                     console.error(error);
                 });
-        },
-        parse: function (content) {
-            this.entName = content[0].Designacao.value;
-            this.newName = content[0].Designacao.value;
-            this.entInitials = content[0].Sigla.value;
-            this.entEstado = content[0].Estado.value
-            this.entInternational = content[0].Internacional.value;
         },
         parseList: function (content, keys) {
             var dest = [];
@@ -391,10 +377,10 @@ var org = new Vue({
         
         this.$http.get("/api/entidades/" + this.id)
             .then(function (response) {
-                this.parse(response.body);
+                this.myEntidade = response.body;
             })
             .then(function () {
-                this.loadDomain();
+                this.processosDono();
                 this.loadParticipations();
                 this.loadClasses();
                 this.loadTipols();
