@@ -5,23 +5,22 @@ const Leg = module.exports;
 
 // Lista todos os itens legislativos: id, data, numero, tipo, sumario, entidades
 Leg.listar = () => {
-    const query =
-        `SELECT  
-            ?id ?data ?numero ?tipo ?sumario
-            (GROUP_CONCAT(CONCAT(STR(?ent),"::",?entSigla); SEPARATOR=";") AS ?entidades)
-        WHERE { 
-            ?id rdf:type clav:Legislacao;
-                clav:diplomaData ?data;
-                clav:diplomaNumero ?numero;
-                clav:diplomaTipo ?tipo;
-                clav:diplomaTitulo ?sumario.
-            optional{
-                ?id clav:diplomaEntidade ?ent.
-                ?ent clav:entSigla ?entSigla;
-            }
+    const query = `SELECT ?id ?data ?numero ?tipo ?sumario
+        (GROUP_CONCAT(CONCAT(STR(?ent),"::",?entSigla); SEPARATOR=";") AS ?entidades)
+    WHERE { 
+	    ?uri rdf:type clav:Legislacao;
+    	    clav:diplomaData ?data;
+            clav:diplomaNumero ?numero;
+            clav:diplomaTipo ?tipo;
+            clav:diplomaTitulo ?sumario.
+        BIND(STRAFTER(STR(?uri), 'clav#') AS ?id).
+        optional{
+            ?uri clav:diplomaEntidade ?ent.
+        	?ent clav:entSigla ?entSigla;
         }
-        Group by ?id ?data ?numero ?tipo ?sumario
-        Order by desc (?data)`
+    }
+    Group by ?id ?data ?numero ?tipo ?sumario
+    Order by desc (?data)`;
 
         return client.query(query)
             .execute()
