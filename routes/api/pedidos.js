@@ -2,9 +2,16 @@ var Pedidos = require('../../controllers/api/pedidos');
 var express = require('express');
 var router = express.Router();
 
-// Lista todos os pedidos
+// Lista todos os pedidos que statisfazem uma condição
 router.get('/', (req, res) => {
-    Pedidos.listar()
+    const filtro = {
+        criadoPor: req.query.criadoPor,
+        'objeto.codigo': req.query.objeto,
+        'objeto.tipo': req.query.tipo,
+        'objeto.acao': req.query.acao,
+    };
+
+    Pedidos.listar(filtro)
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na listagem de pedidos: ${erro}`));
 });
