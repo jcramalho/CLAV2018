@@ -47,10 +47,6 @@ var org = new Vue({
                     this.listaTipologias = response.body;
                 })
                 .then(function () {
-                    for (var i = 0; i < this.listaTipologias.length; i++) {
-                        this.listaTipologias[i].id = this.listaTipologias[i].id.replace(/[^#]+#(.*)/, '$1');
-                    }
-
                     if(this.listaTipologias.length>0) this.tipologiasReady = true;
                 })
                 .catch(function (error) {
@@ -76,7 +72,6 @@ var org = new Vue({
                 .then(function (response) {
                     
                     this.participantePNs = response.body;
-                    
                     for(var i=0; i < this.participantePNs.length; i++ ){
                         tipoPar = this.participantePNs[i].tipoPar.replace(/.*temParticipante(.*)/, '$1');
 

@@ -5,6 +5,7 @@ const Entidades = module.exports;
 
 /**
  * @typedef {Object} Entidade
+ * @property {string} id (ex: "ent_AR")
  * @property {string} sigla (ex: "AR")
  * @property {string} designacao (ex: "Assembleia da República")
  * @property {string} internacional (ex: "Sim" ou "Não")
@@ -26,11 +27,12 @@ const Entidades = module.exports;
  */
 Entidades.listar = (filtro) => {
     const query = `SELECT ?id ?sigla ?designacao ?internacional ?estado {
-        ?id rdf:type clav:Entidade ;
+        ?uri rdf:type clav:Entidade ;
             clav:entEstado ?estado;
             clav:entDesignacao ?designacao ;
             clav:entSigla ?sigla ;
             clav:entInternacional ?internacional.
+        BIND(CONCAT('ent_', ?sigla) AS ?id).
 
         FILTER (${Object.entries(filtro)
             .filter(([k,v]) => v !== undefined)
@@ -53,11 +55,11 @@ Entidades.listar = (filtro) => {
  */
 Entidades.tipologias = (id) => {
     const query = `SELECT ?id ?sigla ?designacao WHERE {
-        clav:${id} clav:pertenceTipologiaEnt ?id .
-            
-        ?id clav:tipEstado "Ativa";
+        clav:ent_ACSS clav:pertenceTipologiaEnt ?uri .
+        ?uri clav:tipEstado "Ativa";
             clav:tipSigla ?sigla;
             clav:tipDesignacao ?designacao.
+        BIND (CONCAT('tip_', ?sigla) AS ?id)
     }`;
 
     return client.query(query)
@@ -203,14 +205,14 @@ Entidades.dono = id => {
  */
 Entidades.participante = id => {
     const query = `SELECT ?tipoPar ?codigo ?titulo WHERE { 
-        ?id clav:temParticipante clav:${id} ;
-            ?tipoPar clav:${id} ;
+        ?uri clav:temParticipante clav:${id} ;
+            ?tipoParURI clav:${id} ;
             clav:titulo ?titulo ;
             clav:codigo ?codigo ;
             clav:pertenceLC clav:lc1 ;
             clav:classeStatus "A" .
-            
-        FILTER (?tipoPar != clav:temParticipante && ?tipoPar != clav:temDono)
+        BIND (STRAFTER(STR(?tipoParURI), 'clav#') AS ?tipoPar).
+        FILTER (?tipoParURI != clav:temParticipante && ?tipoParURI != clav:temDono)
     }`;
 
     return client.query(query)

@@ -28,7 +28,6 @@ var legs = new Vue({
         },
         rowClicked: function (row) {
             var id = row.id;
-            id = id.replace(/[^#]+#(.*)/, '$1');
 
             window.location.href = '/legislacao/' + id;
         },
