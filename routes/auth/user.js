@@ -87,26 +87,20 @@ router.post('/login', function (req, res) {
 });
 
 // JWT token verification
-router.get('/testeJWT',function(req,res){
-    var token = req.session.token;
-    passport.authenticate('jwt'),
-        jwt.verify(token, ConfigJWT.jwt.secret, (err, user) => {
-            if(err){
-                res.send(err);
-            }
-            return res.json({user, token}); 
-        })
-    }
-);
+router.get('/testeJWT',function(req,res) {
+    jwt.verify(req.session.token, ConfigJWT.jwt.secret, function(err, decoded){
+        if(err){
+            res.json('JWT expirou.')
+        }else{
+            res.json('JWT válido.')
+        }
+    });
+});
 
 router.get('/logout', function (req, res) {
-    var url = require('url');
-    var parts = url.parse(req.url, true);
-    var location = parts.query.l;
-
     req.logout();
     req.flash('success_msg', 'Logout efetuado!');
-    res.redirect(location);
+    res.redirect('/');
 });
 
 router.post('/submeterEntidade', function (req, res) {
