@@ -65,12 +65,12 @@ app.use(flash());
 var dataBases = require('./config/database');
 var mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
-mongoose.connect(dataBases.userDB, {
-	useMongoClient: true,
-});
+mongoose.connect(dataBases.userDB, {useMongoClient: true,})
+    .then(()=> console.log('Mongo ready: ' + mongoose.connection.readyState))
+    .catch(()=> console.log('Mongo: erro na conexão...'))
 
 var db = mongoose.connection;
-db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+db.on('error', console.error.bind(console, 'Mongo erro na conexão: '));
 
 // Global Vars
 app.use(function (req, res, next) {

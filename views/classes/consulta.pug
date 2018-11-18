@@ -23,7 +23,7 @@ block corpo
     #classe-form.panel.panel-default.panel-custom
         .panel-heading
             h3.page-header
-                div {{ clas.Code }} - {{ clas.Title }} 
+                div {{ clas.codigo }} - {{ clas.titulo }} 
                     if user
                         a(:href="'/classes/editar/'+id" style="float:right")  
                             span.glyphicon.glyphicon-edit 
@@ -37,7 +37,7 @@ block corpo
                             .info-label Estado: 
 
                         td(style="width:80%" valign="center")
-                            | {{ clas.Status=="A" ? "Ativo" : (clas.Status=="H" ? "Harmonização" : "Inativo") }} 
+                            | {{ clas.status=="A" ? "Ativo" : (clas.status=="H" ? "Harmonização" : "Inativo") }} 
 
 
                     //- CLASSE PAI
@@ -45,33 +45,33 @@ block corpo
                         td(style="width: 10%")
                             .info-label Classe Pai: 
                         td(style="width:80%")
-                            a(:href="'/classes/consultar/'+clas.Parent.id") {{ clas.Parent.code }}
-                            |  - {{ clas.Parent.title }}
+                            a(:href="'/classes/consultar/'+clas.pai.id") {{ clas.pai.codigo }}
+                            |  - {{ clas.pai.titulo }}
 
                     //- CLASSES DESCENDENTES
-                    tr(v-if="clas.Level<4 && clas.Children")
+                    tr(v-if="clas.Level<4 && clas.filhos")
                         td(style="width: 10%")
                             .info-label Descendência: 
                         td(style="width:80%")
                             ul(style="padding-left:20px")
-                                li(v-for="child in clas.Children")
-                                    a(:href="'/classes/consultar/c'+child.Code")
-                                        | {{ child.Code }}
-                                    |  - {{ child.Title }}
+                                li(v-for="f in clas.filhos")
+                                    a(:href="'/classes/consultar/c'+f.codigo")
+                                        | {{ f.codigo }}
+                                    |  - {{ f.titulo }}
                     
                     //- CÓDIGO
                     tr 
                         td(style="width: 10%")
                             .info-label Código: 
                         td(style="width:80%")
-                            | {{ clas.Code }}  
+                            | {{ clas.codigo }}  
 
                     //- TÍTULO
                     tr
                         td(style="width: 10%")
                             .info-label Título: 
                         td(style="width:80%")
-                            | {{ clas.Title }} 
+                            | {{ clas.titulo }} 
 
                 accordion.info-classe
                     panel(header="Descritivo da Classe")
@@ -82,7 +82,7 @@ block corpo
                                 td(style="width: 10%")
                                     .info-label Descrição: 
                                 td(style="width:80%")
-                                    | {{ clas.Desc }} 
+                                    | {{ clas.desc }} 
 
 
                             //- NOTAS DE APLICAçÃO                        
@@ -91,9 +91,9 @@ block corpo
                                     .info-label Nota(s) de Aplicação:
                                 
                                 td(style="width:80%")
-                                    ul(style="padding-left:20px" v-if="appNotesReady")
-                                        li(v-for="note in clas.AppNotes")
-                                            | {{note.Nota}}
+                                    ul(style="padding-left:20px" v-if="notasApReady")
+                                        li(v-for="nota in clas.notasAp")
+                                            | {{nota.nota}}
                                 
                             //- EXEMPLOS DE NOTAS DE APLICAçÃO                        
                             tr
@@ -101,9 +101,9 @@ block corpo
                                     .info-label Exemplo(s) de Nota(s) de Aplicação:
                                 
                                 td(style="width:80%")
-                                    ul(style="padding-left:20px" v-if="exAppNotesReady")
-                                        li(v-for="note in clas.ExAppNotes")
-                                            | {{note.Exemplo}}
+                                    ul(style="padding-left:20px" v-if="exemplosNotasApReady")
+                                        li(v-for="exemplo in clas.exemplosNotasAp")
+                                            | {{exemplo.exemplo}}
 
                             //- NOTAS DE EXCLUSÃO                        
                             tr
@@ -111,9 +111,9 @@ block corpo
                                     .info-label Nota(s) de Exclusão:
                                 
                                 td(style="width:80%")
-                                    ul(style="padding-left:20px" v-if="delNotesReady")
-                                        li(v-for="note in clas.DelNotes")
-                                            span(v-html="note.Nota")
+                                    ul(style="padding-left:20px" v-if="notasExReady")
+                                        li(v-for="nota in clas.notasEx")
+                                            span(v-html="nota.nota")
 
 
                             //- TERMOS DE ÍNDICE
@@ -123,8 +123,8 @@ block corpo
                                 
                                 td(style="width:80%")
                                     ul(style="padding-left:20px")
-                                        li(v-for="index in clas.Indexes")
-                                            | {{ index.Termo }}
+                                        li(v-for="termo in clas.ti")
+                                            | {{ termo.termo }}
 
                     panel(header="Contexto de Avaliação" v-if="clas.Level>=3")
                         table.consulta(v-if="pageReady" style="border-color: white; border-style:solid; width:100%")
@@ -139,7 +139,7 @@ block corpo
                                                     .info-label Tipo de Processo: 
                                               
                                                 td(style="width:80%")
-                                                    | {{ clas.ProcType }}  
+                                                    | {{ clas.procTipo }}  
 
 
                                         //- PROCESSO TRANSVERSAL
@@ -149,7 +149,7 @@ block corpo
                                                     .info-label Processo Transversal: 
                                                 
                                                 td(style="width:80%")
-                                                    | {{ clas.ProcTrans=="S" ? "Sim" : "Não" }}  
+                                                    | {{ clas.procTrans=="S" ? "Sim" : "Não" }}  
 
                             //- DONOS
                             tr
@@ -158,132 +158,128 @@ block corpo
 
                                 
                                 td(style="width:80%")
-                                    ul(v-if="ownersReady" style="padding-left:20px")
-                                        li(v-for="o in clas.Owners")
-                                            a(:href="o.id.startsWith('tip') ? '/tipologias/consultar/'+o.id : '/entidades/consultar/'+o.id") {{ o.Sigla }}
-                                            |  - {{ o.Designacao }}
+                                    ul(v-if="donosReady" style="padding-left:20px")
+                                        li(v-for="d in clas.donos")
+                                            a(:href="d.tipo == 'TipologiaEntidade' ? '/tipologias/consultar/'+d.id : '/entidades/consultar/'+d.id") {{ d.sigla }}
+                                            |  - {{ d.designacao }}
                                 
 
                             //- PARTICIPANTES
-                            tr(v-if="clas.ProcTrans=='S'")
+                            tr(v-if="clas.procTrans=='S'")
                                 td(style="width: 10%")
                                     .info-label Tipo de intervenção do(s) Participante(s):
                                     
                                 td(style="width:80%")
-                                    ul(v-if="relProcsReady" style="padding-left:20px")
-                                        li(v-for="key in Object.keys(clas.Participants)" v-if="clas.Participants[key].length>0")
-                                            b {{participationsDic[key]}}:
+                                    ul(v-if="participantesReady" style="padding-left:20px")
+                                        li(v-for="key in Object.keys(clas.participacaoGroupBy)" v-if="clas.participacaoGroupBy[key].membros.length>0")
+                                            b {{clas.participacaoGroupBy[key].label}}:
                                             ul
-                                                li(v-for="p in clas.Participants[key]")
-                                                    a(:href="p.id.startsWith('tip') ? '/tipologias/consultar/'+p.id : '/entidades/consultar/'+p.id") {{ p.Sigla }}
-                                                    |  - {{ p.Designacao }}
+                                                li(v-for="entidade in clas.participacaoGroupBy[key].membros")
+                                                    a(:href="entidade.id.startsWith('tip') ? '/tipologias/consultar/'+entidade.id : '/entidades/consultar/'+entidade.id") {{ entidade.sigla }}
+                                                    |  - {{ entidade.designacao }}
                                 
-
                             //- PROCESSOS RELACIONADOS
                             tr
                                 td(style="width: 10%")
                                     .info-label Processo(s) Relacionado(s):
                                     
                                 td(style="width:80%")
-                                    ul(v-if="relProcsReady" style="padding-left:20px")
-                                        li(v-for="key in Object.keys(clas.RelProcs)" v-if="clas.RelProcs[key].length>0")
-                                            b É {{ key }}
+                                    ul(v-if="procRelReady" style="padding-left:20px")
+                                        li(v-for="key in Object.keys(clas.procRelTipoGroupBy)" v-if="clas.procRelTipoGroupBy[key].membros.length>0")
+                                            b  {{ clas.procRelTipoGroupBy[key].label }}
                                             ul
-                                                li(v-for="c in clas.RelProcs[key]")
-                                                    a(:href="'/classes/consultar/'+c.id") {{ c.Code }}
-                                                    |  - {{ c.Title }}
+                                                li(v-for="p in clas.procRelTipoGroupBy[key].membros")
+                                                    a(:href="'/classes/consultar/c'+p.codigo") {{ p.codigo }}
+                                                    |  - {{ p.titulo }}
                                 
-
                             //- LEGISLAÇÃO
                             tr
                                 td(style="width: 10%")
                                     .info-label Legislação:
                                 
                                 td(style="width:80%")
-                                    ul(v-if="legsReady" style="padding-left:20px")
-                                        li(v-for="l in clas.Legs")
-                                            | {{ l.Tipo }} - 
-                                            a(:href="'/legislacao/consultar/'+l.id") {{ l.Número }} 
-                                            | - {{ l.Titulo }}
+                                    ul(v-if="legislacaoReady" style="padding-left:20px")
+                                        li(v-for="l in clas.legislacao")
+                                            | {{ l.tipo }} - 
+                                            a(:href="'/legislacao/consultar/'+l.id") {{ l.numero }} 
+                                            | - {{ l.sumario }}
 
-                    panel(header="Decisões de Avaliação" v-if="(clas.Level==3)&&(clas.Children)") Consultar as decisões de avaliação nas classes descendentes:
+                    panel(header="Decisões de Avaliação" v-if="(clas.Level==3)&&(clas.filhos.length>0)") Consultar as decisões de avaliação nas classes descendentes:
                         ul(style="padding-left:20px")
-                                li(v-for="child in clas.Children")
-                                    a(:href="'/classes/consultar/c'+child.Code")
-                                        | {{ child.Code }}
-                                    |  - {{ child.Title }}
+                                li(v-for="filho in clas.filhos")
+                                    a(:href="'/classes/consultar/c'+filho.codigo")
+                                        | {{ filho.codigo }}
+                                    |  - {{ filho.titulo }}
 
                     panel(header="Decisões de Avaliação" v-else-if="clas.Level>=3")
                         table.consulta.noborder(v-if="pageReady" style="border-color: white; border-style:solid")
+
                             //- PRAZO DE CONSERVAÇÃO ADMINISTRATIVA
-                            tr(v-if="clas.PCA.valores.length")
+                            tr(v-if="pcaReady")
                                 td
                                     .info-label(style="text-align:center")
                                         | Prazo de Conservação Administrativa
-                            tr(v-if="clas.PCA.valores.length")
+                            tr(v-if="pcaReady")
                                 td
                                     table.noborder
                                         tr
                                             td(width="125px")
                                                 .info-label Prazo:
                                             td(style="width:150px")
-                                                | {{ clas.PCA.valores.join(', ') }}
+                                                | {{ clas.pca.valores.join(', ') }}
                                             
 
                                             td(style="padding-left:10px" width="170px")
                                                 .info-label Forma de Contagem:
                                             td
-                                                | {{ clas.PCA.contagemnormalizada }}
+                                                | {{ clas.pca.formaContagem }}
                                             
                                                     
-                                        tr(v-if="clas.PCA.contagemnormalizada=='Conforme disposição legal'")
+                                        tr(v-if="clas.pca.formaContagem == 'Conforme disposição legal'")
                                             td
                                                 .info-label Sub-forma de Contagem:
                                             td(colspan=5)
-                                                | {{ clas.PCA.subContagem }}
+                                                | {{ clas.pca.subFormaContagem }}
                                             
                                         tr
                                             td
                                                 .info-label Justificação:
                                             
                                             td(colspan=5)
-                                                table(v-for="(criterio,index) in clas.PCA.criterios")
+                                                table(v-for="criterio in clas.pca.justificacao")
                                                     tr
                                                         td
-                                                            b {{ criterio.tipo }}
+                                                            b {{ criterio.tipoLabel }}
                                                     tr
                                                         td 
-                                                            p(v-html="criterio.nota")
+                                                            p(v-html="criterio.conteudo")
                                             
                             //- DESTINO FINAL
-                            tr(v-if="clas.DF.valores.length")
+                            tr(v-if="dfReady")
                                 td
                                     .info-label(style="text-align:center") 
                                         | Destino Final
-                            tr(v-if="clas.DF.valores.length")
+                            tr(v-if="dfReady")
                                 td
                                     table.noborder
                                         tr
                                             td(width="120px")
                                                 .info-label Destino:
-
                                             td(colspan=4)
-                                                | {{ clas.DF.valores.join(', ') }} 
-                                          
+                                                | {{ clas.df.valor }} 
                                         tr
                                             td
                                                 .info-label Justificação:
-                                            
                                             td(colspan=5)
-                                                table(v-for="(criterio,index) in clas.DF.criterios")
+                                                table(v-for="criterio in clas.df.justificacao")
                                                     tr
                                                         td
-                                                            b {{ criterio.tipo }}
+                                                            b {{ criterio.tipoLabel }}
                                                     tr
                                                         td 
-                                                            p(v-html="criterio.nota")
+                                                            p(v-html="criterio.conteudo")
 
-                    panel(header="Notas" v-if="clas.Notas")
+                    panel(header="Notas" v-if="clas.notas.length>0")
                                                              
             //- Buttons
             spinner(ref="spinner" size="lg" fixed text="Por favor aguarde...")
