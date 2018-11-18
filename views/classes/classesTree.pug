@@ -1,9 +1,28 @@
-extends ../layout
+extends ../layout-tree
 block corpo
-    h1.page-header= title
+    h1.page-header Classes (v.classesTree)
     .row
-        #classesTree.row.placeholders
-            tree-menu(:nodes = "myClassesTree")
+        #tabela-classes.row.placeholders
+            custom-table-waterfall(
+                v-if="ready"
+
+                filter-on="true"
+                pages-on="true"
+
+                :header="tableHeader"
+                :complete-rows="classesTree"
+                :sub-ready="subReady"
+                :cwidth="cwidth"
+                :n-edits="nEdits"
+                
+                table-class='table table-hover'
+                
+                @row-clicked="rowClicked($event)"
+                @add-clicked="addClass"
+            )
+            h4(
+                v-else
+            ) A carregar...
         
     //-
 append scripts    

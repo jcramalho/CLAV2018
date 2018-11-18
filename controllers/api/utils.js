@@ -2,49 +2,20 @@
  * Normaliza e simplifica os resultados de uma query SPARQL.
  * 
  * @example
- * // Assumindo o seguinte resultado de uma query:
- * {  
- *   "head":{  
- *     "vars":[  
- *       "sigla",
- *       "designacao",
- *       "estado",
- *       "internacional"
- *     ]
- *   },
- *   "results":{  
- *     "bindings":[  
- *       {  
- *         "estado":{  
- *           "type":"literal",
- *           "value":"Ativa"
- *         },
- *         "sigla":{  
- *           "type":"literal",
- *           "value":"PGR"
- *         },
- *         "designacao":{  
- *           "type":"literal",
- *           "value":"Procuradoria-Geral da República"
- *         },
- *         "internacional":{  
- *           "type":"literal",
- *           "value":"Não"
- *         }
- *       }
- *     ]
+ * response = {  
+ *   head: { vars: ["sigla", "designacao", "estado", "internacional"] },
+ *   results: {
+ *     bindings: [{  
+ *       estado:{ type: "literal", value:"Ativa" },
+ *       sigla: { type:"literal", value:"AR" },
+ *       designacao: { type:"literal", value:"Assembeia da República" },
+ *       internacional: { type:"literal", value:"Não" }
+ *     }]
  *   }
  * }
  * 
  * // O resultado da normalização da resposta acima será:
- * [
- *   {  
- *     "estado":"Ativa",
- *     "sigla":"PGR",
- *     "designacao":"Procuradoria-Geral da República",
- *     "internacional":"Não"
- *   }
- * ]
+ * [{ estado: "Ativa", sigla: "PGR", designacao:"Assembleia da República", internacional:"Não" }]
  * 
  * @param response objeto de resposta da query SPARQL
  * @return objeto normalizado e simplificado
@@ -55,3 +26,46 @@ exports.normalize = function(response) {
             .reduce((new_obj, [k,v]) => (new_obj[k] = v.value, new_obj),
                     new Object()));
 };
+
+/**
+ * @example
+ * objs = [
+ *  { sigla: "AR", designacao: "Assembleia da República", legislacao: "leg_1" },
+ *  { sigla: "AR", designacao: "Assembleia da República", legislacao: "leg_2" },
+ *  { sigla: "CEE", designacao: "Comunidade Económica Europeia", legislacao: "leg_1" },
+ *  { sigla: "DGAV", designacao: "Direção Geral de Alimentação e Veterinária" } 
+ * ];
+ * projection(objs, ["sigla", "designacao"], ["legislacao"]) === [
+ *  { sigla: "AR", designacao: "Assembleia da República", legislacao: ["leg_1","leg_2"] },
+ *  { sigla: "CEE", designacao: "Comunidade Económica Europeia", legislacao: ["leg_1"] },
+ *  { sigla :"DGAV", designacao: "Direção Geral de Alimentação e Veterinária", legislacao:[]}
+ * ];
+ * 
+ * @param {[Object]} objs lista de objetos 
+ * @param {[string]} fields lista de campos sobre os quais se fará a projeção
+ * @param {[string]} group lista de campos a agrupar
+ * @return
+ */
+exports.projection = function(objs, fields, group) {
+    let result = new Map();
+    for (obj of objs) {
+        const proj = JSON.stringify(fields.reduce((new_obj, col) => Object.defineProperty(new_obj, col, {
+            value: obj[col],
+            enumerable: !0
+        }), new Object()));
+        let g = {};
+        if (result.has(proj)) {
+            g = Object.entries(result.get(proj)).reduce((new_obj, [k, v]) => Object.defineProperty(new_obj, k, {
+                value: (v.push(obj[k]), v),
+                enumerable: !0
+            }), new Object())
+        } else {
+            g = group.reduce((new_obj, k) => Object.defineProperty(new_obj, k, {
+                value: obj[k] ? [obj[k]] : [],
+                enumerable: !0
+            }), new Object())
+        }
+        result.set(proj, g)
+    }
+    return Array.from(result.entries()).map(([x, y]) => Object.assign(JSON.parse(x), y))
+}

@@ -1,6 +1,6 @@
 extends ./_bootstrap
 append head
-	title M51-CLAV 
+	title CLAV 
 		if title
 			| - #{title}
 
@@ -155,7 +155,6 @@ block footer
 
 append scripts
 	script(src="/javascripts/base/vue.min.js")
-	//-script(src="/javascripts/base/vue.js")
 	script(src="/javascripts/base/vue-resource.js")
 	script(src="/javascripts/base/vue-select.js")
 	script(src="/javascripts/base/vue-strap.js")
@@ -164,6 +163,7 @@ append scripts
 	script(src="/javascripts/base/lodash.min.js")
 	
 	script(src="/javascripts/components.vue")
+	script(src="/javascripts/component-tree.vue")
 	script(src="/javascripts/layout.vue")
 
 	|<script>
