@@ -2,7 +2,7 @@ extends ../layout
 block corpo
     #organizacao-form.panel.panel-default.panel-custom
         .panel-heading
-            h1.page-header {{ entName }}  
+            h1.page-header {{ myEntidade.designacao }}  
         .panel-body
             .form-group
                 table.consulta
@@ -17,7 +17,7 @@ block corpo
                                 :placeholder="entName"
                             )
                         td(v-else style="width:80%")
-                            | {{ entName }}  
+                            | {{ myEntidade.designacao }}  
                         if user
                             td(style="width:10%")
                                 label(

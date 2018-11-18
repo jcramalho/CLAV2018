@@ -8,7 +8,6 @@ var orgs = new Vue({
         rowClicked: function(row){
             // permite navegar ate a  entidade em questao
             var id = row.id;
-            id = id.replace(/[^#]+#(.*)/,'$1');
             
             window.location.href = '/entidades/'+id;
         },

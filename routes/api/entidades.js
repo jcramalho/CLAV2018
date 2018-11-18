@@ -23,7 +23,7 @@ const estaDisponivel = (req, res, next) => {
 };
 
 // Lista todas as entidades: id, sigla, designacao, internacional
-router.get('/', (req, res) => {
+router.get('/', Auth.checkLevel1, (req, res) => {
     const filtro = {
         sigla: req.query.sigla,
         designacao: req.query.designacao,
