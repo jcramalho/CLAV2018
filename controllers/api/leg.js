@@ -1,30 +1,37 @@
 const client = require('../../config/database').onthology;
 const normalize = require('../../controllers/api/utils').normalize;
+const projection = require('../../controllers/api/utils').projection;
 const Pedidos = require('../../controllers/api/pedidos');
 const Leg = module.exports;
 
 // Lista todos os itens legislativos: id, data, numero, tipo, sumario, entidades
 Leg.listar = () => {
-    const query = `SELECT ?id ?data ?numero ?tipo ?sumario
-        (GROUP_CONCAT(CONCAT(STR(?ent),"::",?entSigla); SEPARATOR=";") AS ?entidades)
-    WHERE { 
-	    ?uri rdf:type clav:Legislacao;
-    	    clav:diplomaData ?data;
-            clav:diplomaNumero ?numero;
-            clav:diplomaTipo ?tipo;
-            clav:diplomaTitulo ?sumario.
-        BIND(STRAFTER(STR(?uri), 'clav#') AS ?id).
-        optional{
+    const query = `SELECT ?id ?data ?numero ?tipo ?sumario ?entidades WHERE {
+        ?uri rdf:type clav:Legislacao;
+             clav:diplomaData ?data;
+             clav:diplomaNumero ?numero;
+             clav:diplomaTipo ?tipo;
+             clav:diplomaTitulo ?sumario.
+        OPTIONAL {
             ?uri clav:diplomaEntidade ?ent.
-        	?ent clav:entSigla ?entSigla;
+            ?ent clav:entSigla ?entidades;
         }
-    }
-    Group by ?id ?data ?numero ?tipo ?sumario
-    Order by desc (?data)`;
+        BIND(STRAFTER(STR(?uri), 'clav#') AS ?id).
+    } ORDER BY DESC (?data)`;
+    const campos = ["id", "data", "numero", "tipo", "sumario"];
+    const agrupar = ["entidades"];
 
-        return client.query(query)
-            .execute()
-            .then(response => normalize(response));
+    return client.query(query)
+        .execute()
+        .then(response => {
+            let legs = projection(normalize(response), campos, agrupar);
+            
+            for (leg of legs) {
+                leg.entidades = leg.entidades.map(ent => ({ id: `ent_${ent}`, sigla: ent }));
+            }
+        
+            return legs;
+        });
 }
 
 // Devolve a informação associada a um documento legislativo: tipo data numero sumario link entidades
