@@ -5,45 +5,35 @@ var Tipologias = require('../../controllers/api/tipologias.js');
 var express = require('express');
 var router = express.Router();
 
-router.get('/', function (req, res) {
-    Tipologias.list()
-        .then(list => res.send(list))
-        .catch(function (error) {
-            console.error("Chamada a Listagem: " + error);
-        });
+router.get('/', (req, res) => {
+    return Tipologias.listar()
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.status(500).send(`Erro na listagem das tipologias: ${erro}`));
 })
 
-router.get('/:id', function (req, res) {
-    Tipologias.stats(req.params.id)
-        .then(stats => res.send(stats))
-        .catch(function (error) {
-            console.error("Chamada de dados de uma org: " + error);
-        });
-})
+router.get('/:id', (req, res) => {
+    return Tipologias.consultar(req.params.id)
+        .then(dados => dados ? res.jsonp(dados) : res.status(404).send(`Erro. A tipologia '${req.params.id}' não existe`))
+        .catch(erro => res.status(500).send(`Erro na consulta da tipologia '${req.params.id}': ${erro}`));
+});
 
-router.get('/:id/elementos', function (req, res) {
-    Tipologias.elems(req.params.id)
-        .then(list => res.send(list))
-        .catch(function (error) {
-            console.error("Chamada de elementos de x: " + error);
-        });
-})
+router.get('/:id/elementos', (req, res) => {
+    return Tipologias.elementos(req.params.id)
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.status(500).send(`Erro na consula dos elementos da tipologia '${req.params.id}': ${erro}`));
+});
 
-router.get('/:id/dominio', function (req, res) {
-    Tipologias.domain(req.params.id)
-        .then(org => res.send(org))
-        .catch(function (error) {
-            console.error("Chamada de dominio: " + error);
-        });
-})
+router.get('/:id/intervencao/dono', (req, res) => {
+    return Tipologias.dono(req.params.id)
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.status(500).send(`Erro na consulta dos PNs em que '${req.params.id}' é dono: ${erro}`));
+});
 
-router.get('/:id/participacoes', function (req, res) {
-    Tipologias.participations(req.params.id)
-        .then(org => res.send(org))
-        .catch(function (error) {
-            console.error("Chamada de participações: " + error);
-        });
-})
+router.get('/:id/intervencao/participante', (req, res) => {
+    return Tipologias.participante(req.params.id)
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.status(500).send(`Erro na query sobre as participações da entidade '${req.params.id}': ${erro}`));
+});
 
 router.post('/', Auth.isLoggedInAPI, function (req, res) {
     var initials = req.body.initials;
