@@ -1,32 +1,43 @@
-Vue.component('tree-menu', {
-    template: `<div class="tree-menu">
-                    <div>{{ label }}</div>
-                    <tree-menu 
-                        v-for="c in classesTree" 
-                        :children="c.filhos" 
-                        :label="c.titulo"
-                    >
-                    </tree-menu>
-            </div>`,
-    props: [ 'label', 'children' ]
-})
+var classes = new Vue({
+    el: '#tabela-classes',
+    data: {
+        subReady: {},
+        tableHeader: [],
+        classesTree: [],
+        ready: false,
+        cwidth: ['9%','88%'],
+        subTemp: [],
+        nEdits: 0,
+    },
+    methods: {
+        rowClicked: function(params){
+            window.location.href = '/classes/consultar/c'+params.rowData.codigo;
+        },
 
-var myTree = new Vue({
-  el: '#classesTree',
-  data: {
-    myClassesTree: [],
-    ready: false
-  },
-  created: function(){
-    this.$http.get("/api/classes")
-        .then(function (response) {
-            alert(JSON.stringify(response.body))
-            this.myClassesTree = response.body;
-            this.ready = true;
-        })
-        .catch(function (error) {
-            console.error(error);
-        });
+        loadClasses: function() {
+            this.ready=false;
+
+            this.$http.get("/api/classes")
+                .then(function (response) {
+                    this.classesTree = response.body;
+                    this.ready = true;
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        },
+        
+        addClass: function(row){
+            window.location.href = '/classes/adicionar';
+        },
+    },
+    created: function(){
+        this.tableHeader=[
+            "CLASSE",
+            "TÍTULO"
+        ];
+
+        this.loadClasses();
     }
 })
   

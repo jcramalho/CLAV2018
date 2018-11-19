@@ -8,9 +8,22 @@ var classesSide = new Vue({
     },
     methods: {
         rowClicked: function(params){
-            window.location.href = '/classes/consultar/c'+params.rowData[0];
+            alert(JSON.stringify(params))
+            window.location.href = '/classes/consultar/c'+params.rowData.codigo;
         },
+
         loadClasses: function() {
+            this.$http.get("/api/classes")
+                .then(function (response) {
+                    this.tableData = response.body;
+                    this.ready = true;
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        },
+
+        /* loadClasses: function() {
             this.ready=false;
             let content = [];
 
@@ -27,18 +40,14 @@ var classesSide = new Vue({
 
             this.$http.get(link)
                 .then(function (response) {
-                    content = response.body;
-                })
-                .then(function () {
-                    this.tableData = this.parseClasses(content);
-
+                    this.tableData = response.body;
                     this.ready = true;
                 })
                 .catch(function (error) {
                     console.error(error);
                 });
-        },
-        parseClasses: function (dataToParse) {
+        }, */
+        /* parseClasses: function (dataToParse) {
             var destination = [];
             const indexes = {};
             let avo;
@@ -160,7 +169,7 @@ var classesSide = new Vue({
             }
 
             return destination;
-        },
+        }, */
     },
     created: function(){
         this.activeClass = window.location.pathname.split('/')[3];
