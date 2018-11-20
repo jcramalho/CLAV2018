@@ -10,20 +10,19 @@ var legs = new Vue({
 
             // Vai ao campo "entidades" e gera o link de consulta e o html respetivo
             for (var i = 0; i < this.listaLegs.length; i++) {
-
+                
                 if(this.listaLegs[i].entidades.length>0){
-                    temp = this.listaLegs[i].entidades.split(";").map(
+                    temp = this.listaLegs[i].entidades.map(
                         function(e){
-                            let data = e.split("::");
+                            let link = `/entidades/${e.id}`;
                             
-                            let link = `/entidades/${data[0].replace(/[^#]+#(.*)/, '$1')}`;
-                            
-                            return `<a href="${link}">${data[1]}</a>`;
+                            return `<a href="${link}">${e.sigla}</a>`;
                         }
                     ).join(',');
 
                 this.listaLegs[i].entidades = temp.slice();
                 }
+                else this.listaLegs[i].entidades = "";
             }
         },
         rowClicked: function (row) {

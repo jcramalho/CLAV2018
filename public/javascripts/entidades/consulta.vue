@@ -55,7 +55,7 @@ var org = new Vue({
         },
         processosDono: function () {
 
-            this.$http.get("/api/entidades/" + this.myEntidade.id + "/intervencao/dono")
+            this.$http.get("/api/entidades/" + this.id + "/intervencao/dono")
                 .then(function (response) {
                     this.donoProcessos = response.body
                     if(this.donoProcessos.length > 0) this.eDonoProcessos = true
@@ -68,7 +68,7 @@ var org = new Vue({
             var participa = false;
             var tipoPar = "";
 
-            this.$http.get("/api/entidades/" + this.myEntidade.id + "/intervencao/participante")
+            this.$http.get("/api/entidades/" + this.id + "/intervencao/participante")
                 .then(function (response) {
                     
                     this.participantePNs = response.body;
@@ -90,7 +90,6 @@ var org = new Vue({
     },
     created: function () {
         // exemplo: "entidades/ent_CEE" fica com o id "ent_CEE"
-        //var ident = window.location.pathname.split('/')[2];
         this.id = window.location.pathname.split('/')[2];
 
         this.$http.get("/api/entidades/" + this.id)

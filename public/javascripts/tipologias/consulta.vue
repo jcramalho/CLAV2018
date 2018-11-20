@@ -2,20 +2,32 @@ var org = new Vue({
     el: '#organizacao-form',
     data: {
         id: "",
-        type: "",
 
-        entName: "",
+        tipologia: "",
 
-        entInitials: "",
-        content: [],
+        donoProcessos: [],
+        eDonoProcessos: false,
+        domainCollapsed: true,
 
-        domain: [],
-        domainReady: false,
-
-        participations: [],
+        participantePNs: [],
         partsReady: false,
 
-
+        participations: {
+            Apreciador: [],
+            Assessor: [],
+            Comunicador: [],
+            Decisor: [],
+            Executor: [],
+            Iniciador: [],
+        },
+        participationsDic: {
+            Apreciador: "Apreciar",
+            Assessor: "Assessorar",
+            Comunicador: "Comunicar",
+            Decisor: "Decidir",
+            Executor: "Executar",
+            Iniciador: "Iniciar"
+        },
         partsCollapsed: {
             Apreciador: true,
             Assessor: true,
@@ -24,145 +36,68 @@ var org = new Vue({
             Executor: true,
             Iniciador: true,
         },
-        domainCollapsed: true,
 
-        myElems: [],
-
-        participationsDic: {
-            Apreciador: "Apreciar",
-            Assessor: "Assessorar",
-            Comunicador: "Comunicar",
-            Decisor: "Decidir",
-            Executor: "Executar",
-            Iniciador: "Iniciar"
-        }
-
+        elementos: [],
+        elemsReady: false
     },
     methods: {
-        loadDomain: function () {
-            var classesToParse = [];
-            var keys = ["id", "Code", "Title"];
+        processosDono: function () {
 
-            this.$http.get("/api/tipologias/" + this.id+"/dominio")
+            this.$http.get("/api/tipologias/" + this.id+"/intervencao/dono")
                 .then(function (response) {
-                    classesToParse = response.body;
-                })
-                .then(function () {
-                    this.domain = JSON.parse(JSON.stringify(this.parseList(classesToParse, keys)));
-
-                    this.domainReady = true;
+                    this.donoProcessos = response.body;
+                    if(this.donoProcessos.length > 0) this.eDonoProcessos = true;
                 })
                 .catch(function (error) {
                     console.error(error);
                 });
         },
-        loadParticipations: function () {
-            var partsToParse = [];
-            var keys = ['id', 'Title', 'Code'];
+        loadParticipantes: function () {
+            var participa = false;
+            var tipoPar = "";
 
-            this.$http.get("/api/tipologias/" + this.id + "/participacoes")
+            this.$http.get("/api/tipologias/" + this.id + "/intervencao/participante")
                 .then(function (response) {
-                    partsToParse = response.body;
-                })
-                .then(function () {
-                    this.participations = this.parseParticipants(partsToParse, keys);
+                    this.participantePNs = response.body;
 
-                    this.partsReady = true;
-                })
+                    for(var i=0; i < this.participantePNs.length; i++ ){
+                        tipoPar = this.participantePNs[i].tipoPar.replace(/.*temParticipante(.*)/, '$1');
+                        
+                        this.participations[tipoPar].push(
+                            { titulo: this.participantePNs[i].titulo,
+                              codigo: this.participantePNs[i].codigo 
+                              })
+                        participa = true
+                    }
+                    if(participa) this.partsReady = true;
+                 })
                 .catch(function (error) {
                     console.error(error);
                 });
         },
-        loadElems: function () {
-            var dataToParse = [];
-            var keys = ["id", "Designacao", "Sigla"];
-
+        loadElementos: function () {
+            
             this.$http.get("/api/tipologias/" + this.id + "/elementos")
                 .then(function (response) {
-                    dataToParse = response.body;
-                })
-                .then(function () {
-                    this.myElems = this.parseList(dataToParse, keys);
-
-                    this.tipolsReady = true;
+                    this.elementos = response.body;
+                    this.elemsReady = true;
                 })
                 .catch(function (error) {
                     console.error(error);
                 });
-        },
-        parse: function (content) {
-            this.entName = content[0].Designacao.value;
-            this.newName = content[0].Designacao.value;
-            this.entInitials = content[0].Sigla.value;
-        },
-        parseList: function (content, keys) {
-            var dest = [];
-            var temp = {};
-            // parsing the JSON
-            for (var i = 0; i < content.length; i++) {
-                for (var j = 0; j < keys.length; j++) {
-                    temp[keys[j]] = content[i][keys[j]].value;
-
-                    if (keys[j] == "id") {
-                        temp.id = temp.id.replace(/[^#]+#(.*)/, '$1');
-                    }
-                }
-
-                dest[i] = JSON.parse(JSON.stringify(temp));
-            }
-
-            return dest.sort(function (a, b) {
-                return a.id.localeCompare(b.id);
-            });
-        },
-        parseParticipants: function (content, keys) {
-            var dest = {
-                Apreciador: [],
-                Assessor: [],
-                Comunicador: [],
-                Decisor: [],
-                Executor: [],
-                Iniciador: [],
-            };
-            var temp = {};
-
-            // parsing the JSON
-            for (var i = 0; i < content.length; i++) {
-                for (var j = 0; j < keys.length; j++) {
-
-                    temp[keys[j]] = content[i][keys[j]].value;
-
-                    if (keys[j] == "id") {
-                        temp.id = temp.id.replace(/[^#]+#(.*)/, '$1');
-                    }
-                }
-                var type = content[i].Type.value.replace(/.*temParticipante(.*)/, '$1');
-
-                dest[type].push(JSON.parse(JSON.stringify(temp)));
-            }
-
-            var types = Object.keys(dest);
-
-            for (var i = 0; i < types.length; i++) {
-                dest[types[i]] = dest[types[i]].sort(function (a, b) {
-                    return a.id.localeCompare(b.id);
-                });
-            }
-
-            return dest;
         },
     },
     created: function () {
-        this.id = window.location.pathname.split('/')[3];
+        this.id = window.location.pathname.split('/')[2];
         
         this.$http.get("/api/tipologias/" + this.id)
             .then(function (response) {
-                this.parse(response.body);
+                this.tipologia = response.body;
             })
             .then(function () {
-                this.loadDomain();
-                this.loadParticipations();
-                this.loadElems();
+                this.processosDono();
+                this.loadParticipantes();
+                this.loadElementos();
             })
             .catch(function (error) {
                 console.error(error);
