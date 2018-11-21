@@ -52,35 +52,35 @@ router.post('/', Auth.isLoggedIn, estaDisponivel, (req, res) => {
 
 // Consulta de uma entidade: sigla, designacao, estado, internacional
 router.get('/:id', (req, res) => {
-    Entidades.consultar(req.params.id)
+    return Entidades.consultar(req.params.id)
         .then(dados => dados ? res.jsonp(dados) : res.status(404).send(`Erro. A entidade '${req.params.id}' não existe`))
         .catch(erro => res.status(500).send(`Erro na consulta da entidade '${req.params.id}': ${erro}`));
 });
 
 // Apaga uma entidade identificada por uma sigla. Em caso de sucesso gera um novo pedido
 router.delete('/:id', Auth.isLoggedIn, (req, res) => {
-    Entidades.apagar(req.params.id, 'xxx@email.com')
+    return Entidades.apagar(req.params.id, req.user.email)
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na remoção da entidade '${req.params.id}': ${erro}`));
 });
 
 // Lista as tipologias a que uma entidade pertence: id, sigla, designacao
 router.get('/:id/tipologias', (req, res) => {
-    Entidades.tipologias(req.params.id)
+    return Entidades.tipologias(req.params.id)
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na consulta das tipologias a que '${req.params.id}' pertence: ${erro}`));
 });
 
 // Lista os processos em que uma entidade intervem como dono
 router.get('/:id/intervencao/dono', (req, res) => {
-    Entidades.dono(req.params.id)
+    return Entidades.dono(req.params.id)
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na consulta dos PNs em que '${req.params.id}' é dono: ${erro}`));
 });
 
 // Lista os processos em que uma entidade intervem como participante
 router.get('/:id/intervencao/participante', (req, res) => {
-    Entidades.participante(req.params.id)
+    return Entidades.participante(req.params.id)
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na query sobre as participações da entidade '${req.params.id}': ${erro}`));
 });
