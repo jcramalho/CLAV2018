@@ -31,14 +31,17 @@ async function loadClasses() {
             let classes = await Classes.listar(null);
             level1Classes = JSON.parse(JSON.stringify(classes))
             for(var i = 0; i < classes.length; i++){
+                classes[i].drop = false
                 let cid = classes[i].id.split('#')[1]
                 let desc = await Classes.descendencia(cid)
                 level2Classes = level2Classes.concat(JSON.parse(JSON.stringify(desc)))
                 for(var j=0; j < desc.length; j++){
                     let cid2 = desc[j].id.split('#')[1]
+                    desc[j].drop = false
                     let desc2 = await Classes.descendencia(cid2)
                     level3Classes = level3Classes.concat(JSON.parse(JSON.stringify(desc2)))
                     for(var k=0; k < desc2.length; k++){
+                        desc2[k].drop = false
                         let cid3 = desc2[k].id.split('#')[1]
                         let desc3 = await Classes.descendencia(cid3)
                         level4Classes = level4Classes.concat(JSON.parse(JSON.stringify(desc3)))

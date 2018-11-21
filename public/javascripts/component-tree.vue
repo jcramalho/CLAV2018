@@ -6,7 +6,7 @@ Vue.component('row-waterfall', {
                     <tbody name="table">
                         <tr>
                             <td 
-                                v-if="row.filhos" 
+                                v-if="row.filhos.length>0" 
                                 @click="row.drop=!row.drop"
                                 :class="[(selectLeft && level>=3) ? 'cascata-drop-select cascata-plus' :'cascata-drop cascata-plus']"
                             >
@@ -81,14 +81,14 @@ Vue.component('row-waterfall', {
                             </td>
                         </tr>
 
-                        <row-waterfall 
-                            v-for="(line,index) in row.filhos"
+                        <row-waterfall v-if="row.drop && row.filhos.length>0"
+                            v-for="filho in row.filhos"
 
                             :select-on="selectOn"
                             :select-left="selectLeft"
-                            :id="row.codigo"
-                            :row="line"
-                            :key="row.codigo"
+                            :id="filho.codigo"
+                            :row="filho"
+                            :key="filho.codigo"
                             :cwidth="cwidth"
                             :suffix="suffix"
 
@@ -96,10 +96,6 @@ Vue.component('row-waterfall', {
 
                             :table-class="tableClass+' cascata'"
                         />
-
-                        <tr v-if="row.drop && !row.subReady">
-                            <td colspan=4> A carregar... </td>
-                        </tr>
                     </tbody>
                 </table>
             </td>
@@ -175,9 +171,6 @@ Vue.component('row-waterfall', {
                 }
             };
             this.$emit('eventWaterfall', eventContent);
-        },
-        genId: function (index) { //generate an ID for the child component
-            return this.id + "." + index;
         },
         eventPass: function (event) { //pass up an event from child component
             this.$emit('eventWaterfall', event);
@@ -395,14 +388,6 @@ Vue.component('custom-table-waterfall', {
             });
 
             return retList;
-        },
-        genID: function (index) {
-            for (var i = 0; i < this.completeRows.length; i++) {
-                if (this.rowsShow[index].codigo == this.completeRows[i].codigo) {
-                    return i + "";
-                }
-            }
-            return "-1";
         },
         sort: function (index) { //sort rows by header[index]
             if (this.order == index) {

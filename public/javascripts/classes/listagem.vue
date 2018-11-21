@@ -8,7 +8,7 @@ var classes = new Vue({
         content: [],
         cwidth: ['9%','88%'],
         subTemp: [],
-        nEdits: 0,
+        nEdits: 0
     },
     methods: {
         rowClicked: function(params){
