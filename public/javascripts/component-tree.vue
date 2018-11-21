@@ -81,7 +81,7 @@ Vue.component('row-waterfall', {
                             </td>
                         </tr>
 
-                        <row-waterfall v-if="row.drop && row.subReady"
+                        <row-waterfall 
                             v-for="(line,index) in row.filhos"
 
                             :select-on="selectOn"

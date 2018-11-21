@@ -1,99 +1,83 @@
 const client = require('../../config/database').onthology;
+const normalize = require('../../controllers/api/utils').normalize;
 
-var Tipologias = module.exports
+var Tipologias = module.exports;
 
-Tipologias.list = function () {
-    return client.query(
-        `SELECT * {
-            ?id rdf:type clav:TipologiaEntidade ;
-                clav:tipEstado "Ativa";
-                clav:tipDesignacao ?Designacao ;
-                clav:tipSigla ?Sigla .
-        }`
-    )
+Tipologias.listar = () => {
+    const query = `SELECT ?id ?designacao ?sigla {
+        ?uri rdf:type clav:TipologiaEntidade ;
+            clav:tipEstado "Ativa";
+            clav:tipDesignacao ?designacao ;
+            clav:tipSigla ?sigla .
+        BIND(STRAFTER(STR(?uri), 'clav#') AS ?id)
+    }`;
+
+    return client.query(query)
         .execute()
-        .then(response => Promise.resolve(response.results.bindings))
-        .catch(function (error) {
-            console.error("Listagem: " + error);
-        });
-}
+        .then(response => normalize(response));
+};
 
-Tipologias.elems = function (id) {
-    var fetchQuery = `
-        SELECT * WHERE {
-            ?id clav:pertenceTipologiaEnt clav:${id} .
-            
-            ?id clav:entEstado "Ativa";
-                clav:entSigla ?Sigla;
-                clav:entDesignacao ?Designacao.
-        }
-    `;
+Tipologias.consultar = (id) => {
+    const query = `SELECT ?designacao ?sigla ?estado where {
+        clav:${id} clav:tipDesignacao ?designacao ;
+            clav:tipSigla ?sigla ;
+            clav:tipEstado ?estado .
+    }`;
 
-    return client.query(fetchQuery).execute()
-        .then(response => Promise.resolve(response.results.bindings))
-        .catch(function (error) {
-            console.error("Entidades que pertencem a x: " + error);
-        });
-}
-
-
-Tipologias.stats = function (id) {
-    return client.query(`
-        SELECT * where {
-            clav:${id} clav:tipDesignacao ?Designacao ;
-                clav:tipSigla ?Sigla ;
-                clav:tipEstado ?Estado ;
-        }`
-    )
+    return client.query(query)
         .execute()
-        //getting the content we want
-        .then(response => Promise.resolve(response.results.bindings))
-        .catch(function (error) {
-            console.error("Dados de uma tipologia: " + error);
-        });
-}
+        .then(response => normalize(response)[0]);
+};
 
-Tipologias.domain = function (id) {
-    var fetchQuery = `
-        SELECT * WHERE {
-            ?id clav:temDono clav:${id} ;
-                clav:codigo ?Code ;
-                clav:titulo ?Title ;
-                clav:pertenceLC clav:lc1 ;
-                clav:classeStatus "A" .
-        }
-    `;
+Tipologias.elementos = (id) => {
+    const query = `SELECT ?id ?sigla ?designacao WHERE {
+        ?uri clav:pertenceTipologiaEnt clav:${id} .
+        
+        ?uri clav:entEstado "Ativa";
+            clav:entSigla ?sigla;
+            clav:entDesignacao ?designacao.
 
-    return client.query(fetchQuery)
+        BIND(STRAFTER(STR(?uri), 'clav#') AS ?id)
+    }`;
+
+    return client.query(query)
         .execute()
-        .then(response => Promise.resolve(response.results.bindings))
-        .catch(function (error) {
-            console.error("Dominio de uma tipologia: " + error);
-        });
-}
+        .then(response => normalize(response));
+};
 
-Tipologias.participations = function (id) {
-    var fetchQuery = `
-        select * where { 
-            ?id clav:temParticipante clav:${id} ;
-                ?Type clav:${id} ;
-            
-                clav:titulo ?Title ;
-                clav:codigo ?Code ;
-                clav:pertenceLC clav:lc1 ;
-                clav:classeStatus "A" .
-            
-            filter (?Type!=clav:temParticipante && ?Type!=clav:temDono)
-        }`
-        ;
+Tipologias.dono = (id) => {
+    const query = `SELECT ?id ?codigo ?titulo WHERE {
+        ?uri clav:temDono clav:tip_AP ;
+            clav:codigo ?codigo ;
+            clav:titulo ?titulo ;
+            clav:pertenceLC clav:lc1 ;
+            clav:classeStatus "A" .
+        BIND(STRAFTER(STR(?uri), 'clav#') AS ?id)
+    }`;
 
-    return client.query(fetchQuery)
+    return client.query(query)
         .execute()
-        .then(response => Promise.resolve(response.results.bindings))
-        .catch(function (error) {
-            console.error("Participações de uma tipologia: " + error);
-        });
-}
+        .then(response => normalize(response));
+};
+
+Tipologias.participante = (id) => {
+    const query = `SELECT ?id ?tipoPar ?titulo ?codigo WHERE {
+        ?uri clav:temParticipante clav:${id} ;
+        ?tipoParURI clav:${id} ;
+            clav:titulo ?titulo ;
+            clav:codigo ?codigo ;
+            clav:pertenceLC clav:lc1 ;
+            clav:classeStatus "A" .
+    
+        BIND (STRAFTER(STR(?uri), 'clav#') AS ?id).
+        BIND (STRAFTER(STR(?tipoParURI), 'clav#') AS ?tipoPar).  
+        FILTER (?tipoParURI != clav:temParticipante && ?tipoParURI != clav:temDono)
+    }`;
+
+    return client.query(query)
+        .execute()
+        .then(response => normalize(response));
+};
 
 Tipologias.checkAvailability = function (name, initials) {
     var checkQuery = `

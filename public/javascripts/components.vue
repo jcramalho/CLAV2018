@@ -120,7 +120,7 @@ Vue.component('custom-table-simple', {
             })
         },
         rowClick: function (index) { //emit event when a row is clicked
-            this.$emit('row-clicked', this.rowsShow[index].codigo);
+            this.$emit('row-clicked', this.rowsShow[index]);
         },
         addClick: function (index) { //emit event when the '+' button is clicked
             this.$emit('add-clicked');
