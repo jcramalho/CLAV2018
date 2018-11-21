@@ -37,7 +37,7 @@ router.get('/', (req, res) => {
 });
 
 // Criação de uma nova entidade. Em caso de sucesso gera um novo pedido
-router.post('/', estaDisponivel, (req, res) => {
+router.post('/', Auth.isLoggedIn, estaDisponivel, (req, res) => {
     const entidade = {
         sigla: req.body.sigla,
         designacao: req.body.designacao,
@@ -45,7 +45,7 @@ router.post('/', estaDisponivel, (req, res) => {
         tipologias: req.body.tipologias,
     };
 
-    return Entidades.criar(entidade, 'xxx@email.com')
+    return Entidades.criar(entidade, req.user.email)
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na criação da entidade: ${erro}`));
 });
@@ -58,7 +58,7 @@ router.get('/:id', (req, res) => {
 });
 
 // Apaga uma entidade identificada por uma sigla. Em caso de sucesso gera um novo pedido
-router.delete('/:id', (req, res) => {
+router.delete('/:id', Auth.isLoggedIn, (req, res) => {
     Entidades.apagar(req.params.id, 'xxx@email.com')
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na remoção da entidade '${req.params.id}': ${erro}`));
