@@ -28,6 +28,8 @@ exports.normalize = function(response) {
 };
 
 /**
+ * Efetua uma projeção sobre uma lista de objetos.
+ * 
  * @example
  * objs = [
  *  { sigla: "AR", designacao: "Assembleia da República", legislacao: "leg_1" },
@@ -44,7 +46,7 @@ exports.normalize = function(response) {
  * @param {[Object]} objs lista de objetos 
  * @param {[string]} fields lista de campos sobre os quais se fará a projeção
  * @param {[string]} group lista de campos a agrupar
- * @return
+ * @return lista de objetos com os campos selecionados da projeção
  */
 exports.projection = function(objs, fields, group) {
     let result = new Map();

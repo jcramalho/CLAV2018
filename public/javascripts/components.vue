@@ -441,18 +441,6 @@ Vue.component('custom-table-select', {
                                     :for="'toggle'+id+suffix"
                                     :class="[row.drop ? 'glyphicon glyphicon-minus' : 'glyphicon glyphicon-plus']"
                                 />
-                                <!--
-                                    <label
-                                        :for="'toggle'+id+suffix"
-                                        :class="[row.drop ? 'glyphicon glyphicon-minus' : 'glyphicon glyphicon-plus']"
-                                    />
-                                    <input
-                                        :id="'toggle'+id+suffix"
-                                        type="checkbox"
-                                        v-model="row.drop"
-                                        class="drop-row"
-                                    />
-                                /-->
                             </td>
                             
                             <td v-else class="cascata-drop">
@@ -513,14 +501,14 @@ Vue.component('custom-table-select', {
                             </td>
                         </tr>
 
-                        <row-waterfall v-if="row.drop && row.subReady"
-                            v-for="(line,index) in row.sublevel"
+                        <row-waterfall v-if="row.drop && row.filhos.length>0"
+                            v-for="filho in row.filhos"
 
                             :select-on="selectOn"
                             :select-left="selectLeft"
-                            :id="genId(index)"
-                            :row="line"
-                            :key="index"
+                            :id="filho.codigo"
+                            :row="filho"
+                            :key="filho.codigo"
                             :cwidth="cwidth"
                             :suffix="suffix"
 
@@ -528,10 +516,6 @@ Vue.component('custom-table-select', {
 
                             :table-class="tableClass+' cascata'"
                         />
-
-                        <tr v-if="row.drop && !row.subReady">
-                            <td colspan=4> A carregar... </td>
-                        </tr>
                     </tbody>
                 </table>
             </td>

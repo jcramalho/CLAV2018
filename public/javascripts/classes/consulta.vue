@@ -297,7 +297,7 @@ var classe = new Vue({
 
         this.$http.get("/api/classes/" + this.id)
             .then(function (response) {
-                // neste caso o resltado é um array singular
+                // neste caso o resultado é um array singular
                 this.prepData(response.body[0]); 
             })
             .catch(function (error) {

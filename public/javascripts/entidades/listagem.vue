@@ -5,11 +5,9 @@ var orgs = new Vue({
         ready: false
     },
     methods: {
-        rowClicked: function(row){
+        rowClicked: function(eid){
             // permite navegar ate a  entidade em questao
-            var id = row.id;
-            
-            window.location.href = '/entidades/'+id;
+            window.location.href = '/entidades/'+eid;
         },
     },
     // Obtem a listagem normalizada a "/api/entidades"
