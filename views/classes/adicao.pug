@@ -18,11 +18,6 @@ block corpo
                         td(style="width:10%")
                             .info-label Nível de classe: 
                         td
-                            //select( v-model="type")
-                                option(value=1) Classe_N1
-                                option(value=2) Classe_N2
-                                option(value=3) Classe_N3
-                                option(value=4) Classe_N4
                             table
                                 tr(style="border:none")
                                     td(v-for="i in [1,2,3,4]" style="vertical-align:middle; padding-right:10px; padding-left:5px")
@@ -609,8 +604,6 @@ block corpo
              )
             p.col-sm-7 {{ message }}
     //-
-
-    
 
 append scripts    
     script(src="/javascripts/classes/adicao.vue")
