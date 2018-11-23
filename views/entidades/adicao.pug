@@ -10,19 +10,19 @@ block corpo
                         td(style="width:10%")
                             label Designação: 
                         td(style="width:80%")
-                            input(size="70" v-model="name")
+                            input(size="70" v-model="designacao")
 
                     tr
                         td(style="padding-top:10px")
                             label Sigla: 
                         td
-                            input(size="70" v-model="initials")
+                            input(size="70" v-model="sigla")
 
                     tr
                         td(style="padding-top:10px")
                             label Internacional: 
                         td
-                            select(v-model="international")
+                            select(v-model="internacional")
                                 option(value="Sim") Sim
                                 option(value="Não" selected) Não
 
@@ -47,7 +47,7 @@ block corpo
                 type="button" 
                 @click="add" 
                 value="Adicionar entidade" 
-                :disabled="!(name && initials)"
+                :disabled="!(designacao && sigla)"
             )
             p.col-sm-7 {{ message }}
     //-

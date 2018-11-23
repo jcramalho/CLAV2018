@@ -988,5 +988,39 @@ Vue.component('hidden-table', {
     }
 })
 
+Vue.component('normal-table', {
+    template: `
+            <table class="normal-table">
+                <thead>
+                    <th v-for="item in cabecalho">
+                        <div :class="{ 'blue-border-box': item!=''}">
+                            {{item}}
+                        </div>
+                    </th>
+                </thead>
+                <tbody>
+                    <tr v-for="linha in linhas">
+                        <td v-for="(item,i) in linha">
+                            <div 
+                                width="100%"
+                                :class="{ 'blue-border-box': (i<linha.length-1)}" 
+                                v-html="item"
+                            ></div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+    `,
+    props: [
+        'cabecalho',
+        'linhas',
+    ],
+    methods: {
+        emitEvent: function (evento) {
+            console.log(evento);
+        }
+    }
+})
+
 
 Vue.component('v-select', VueSelect.VueSelect);

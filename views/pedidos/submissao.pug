@@ -1,0 +1,18 @@
+extends ../layout
+block corpo
+    #submissao-form.panel.panel-default.panel-custom
+        .panel-heading
+            h1.page-header
+                div Pedido submetido
+
+        normal-table(
+            v-if="submissaoReady"
+            :cabecalho='["Nº", "Tipo","Descrição", "Data de submissão"]'
+            :linhas="{descPedido}"
+        )
+    
+        h4 Pedido submetido com sucesso. 
+        h4 Aguarde a notificação de resposta ao seu pedido.
+
+append scripts
+    script(src="/javascripts/pedidos/submissao.vue")
