@@ -845,7 +845,7 @@ var newClass = new Vue({
                 }
             }
         },
-        loadOrgs: function () {
+        loadEntidades: function () {
             var entsToParse = [];
             var tipsToParse = [];
             var keys = ["id", "Sigla", "Designacao"];
@@ -977,23 +977,16 @@ var newClass = new Vue({
                 });
         },
         loadParents: function () {
-            var classesToParse = [];
-            var keys = ["id", "Codigo", "Titulo"];
-
-            this.$http.get("/api/classes/nivel=" + (this.type - 1))
+            this.$http.get("/api/classes/nivel/" + (this.type - 1))
                 .then(function (response) {
-                    classesToParse = response.body;
-                })
-                .then(function () {
-                    this.parents = this.parse(classesToParse, keys)
-                        .map(function (item) {
-                            return {
-                                label: item.Codigo + " - " + item.Titulo,
-                                value: item.id,
-                            }
-                        }).sort(function (a, b) {
-                            return a.label.localeCompare(b.label);
-                        });
+                    this.parents = response.body.map(function (item) {
+                        return {
+                            label: item.codigo + " - " + item.titulo,
+                            value: item.id.split('#')[1],
+                        }
+                    }).sort(function (a, b) {
+                        return a.label.localeCompare(b.label);
+                    });
                     this.parentsReady = true;
                 })
                 .catch(function (error) {
@@ -1300,7 +1293,7 @@ var newClass = new Vue({
         }
     },
     created: function () {
-        this.loadOrgs();
+        this.loadEntidades();
         this.loadLegs();
         this.loadClasses();
         this.loadCountTypes();

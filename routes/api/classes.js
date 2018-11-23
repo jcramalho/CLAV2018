@@ -18,24 +18,32 @@ router.get('/', async (req, res) => {
 router.get('/nivel/:n', async (req, res) => {
     switch(req.params.n){
         case '1': try {
-                res.jsonp(await State.getLevel1Classes());  
+                res.jsonp(await State.getLevel1Classes());
+                break  
             } catch(err) {
                 res.status(500).send(`Erro na listagem geral das classes de nível 1: ${err}`)
+                break
             }
         case '2': try {
                 res.jsonp(await State.getLevel2Classes());  
+                break
             } catch(err) {
                 res.status(500).send(`Erro na listagem geral das classes de nível 2: ${err}`)
+                break
             }  
         case '3': try {
-                res.jsonp(await State.getLevel3Classes());  
+                res.jsonp(await State.getLevel3Classes()); 
+                break 
             } catch(err) {
                 res.status(500).send(`Erro na listagem geral das classes de nível 3: ${err}`)
+                break
             }
         case '4': try {
-                res.jsonp(await State.getLevel4Classes());  
+                res.jsonp(await State.getLevel4Classes()); 
+                break 
             } catch(err) {
                 res.status(500).send(`Erro na listagem geral das classes de nível 4: ${err}`)
+                break
             }
     }
 })
@@ -133,6 +141,12 @@ router.get('/:id/df', (req, res) => {
         .catch(erro => res.jsonp({cod: "404", mensagem: "Erro na consulta do DF associado à classe "+req.params.id+": " + erro}))
 })
 
+// Falta testar e decidir o que devolver
+router.get('verifica/:codigo', (req, res) => {
+    Classes.verificaCodigo(req.params.codigo, req.params.codigo.split('.').length)
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.status(500).send(`Erro na verificação da existência do código ${req.params.codigo}: ${erro}`))
+})
 
 
 // ================================================================================
