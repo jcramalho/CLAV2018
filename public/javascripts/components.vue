@@ -937,6 +937,47 @@ Vue.component('custom-table-select', {
     }
 }) */
 
+Vue.component('hidden-table-v2', {
+    template: `
+        <accordion :type="tabClass">
+            <panel :header="titulo" :is-open="open">
+                <table class="hidden-table">
+                    <tbody>
+                        <tr v-for="linha in linhas">
+                            <td v-for="(item,i) in linha">
+                                <div 
+                                    width="100%"
+                                    v-html="item"
+                                ></div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </panel>
+        </accordion>
+    `,
+    props: [
+        'titulo',
+        'cabecalho',
+        'linhas',
+        'open',
+        'tableClass'
+    ],
+    computed: {
+        tabClass: function(){
+            return this.tableClass ? this.tabClass : 'custom';
+        }
+    },
+    components: {
+        accordion: VueStrap.accordion,
+        panel: VueStrap.panel,
+    },
+    methods: {
+        emitEvent: function (evento) {
+            console.log(evento);
+        }
+    }
+})
 
 Vue.component('hidden-table', {
     template: `

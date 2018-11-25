@@ -3,8 +3,8 @@ block corpo
     .container
         form#registo.form-signin(action="/auth/registar" method="post" style="width:60%")
             h2.form-signin-heading Registar
-            
-            select#type(name="type" form="registo")
+
+            select.form-control#type(name="type" form="registo")
                 option(value="7") Administrador de Perfil Tecnológico
                 option(value="6") Administrador de Perfil Funcional
                 option(value="5") Utilizador Validador
@@ -12,19 +12,19 @@ block corpo
                 option(value="3") Utilizador Decisor
                 option(value="2" Selected="true") Utilizador Simples
                 option(value="1") Representante Entidade
-            
+        
             label.sr-only(for='name') Nome
             input#name.form-control(name='name' type='text', placeholder='Nome Apelido', required='', autofocus='')
-            
+
             label.sr-only(for='email') Email
             input#email.form-control(name='email' type='email', placeholder='Email', required='')
-            
+
             label.sr-only(for='password') Password
             input#password.form-control(name='password' type='password', placeholder='Password', required='')
-            
+
             label.sr-only(for='password2') Repetir Password
             input#password2.form-control(name='password2' type='password', placeholder='Repetir Password', required='')
-            
+
             button.btn.btn-lg.btn-primary.btn-block(type='submit') Registar
 
     .infobox
