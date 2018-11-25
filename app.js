@@ -97,6 +97,7 @@ app.use('/classes',require('./routes/classes'));
 app.use('/tabelasSelecao',require('./routes/tabsSel'));
 app.use('/termosIndice',require('./routes/termosIndice'));
 app.use('/gestao',require('./routes/admin'));
+app.use('/pedidos',require('./routes/pedidos'))
 
 //app.use('/api/organizacoes',require('./routes/api/orgs'));
 app.use('/api/entidades',require('./routes/api/entidades'));

@@ -1,40 +1,47 @@
 var org = new Vue({
     el: '#organizacao-form',
     data: {
+        id: "",
+
         myEntidade: [],
 
-        id: "",
-        type: "",
+        editDes: false,
+        newDes: "",
+        entDes: "",
 
-        entName: "",
-        newName: "",
-        editName: false,
+        editInternacional: false,
+        newInternacional: "",
 
-        entInitials: "",
-        message: "",
-        delConfirm: false,
+        listaTipologias: [],
+        newListaTipologias: [],
 
-        entEstado: "",
+        editTipologia: false,
+        tipoListaCompleta: [],
+        newTipologia:"",
 
-        entInternational: "",
-        newInternational: "",
-        editInternational: false,
+        editDono: false,
 
-        domain: [],
-        newClass: "",
-        newDomain: [],
-        domainReady: false,
-        editDomain: false,
+        donoProcessos: [],
+        eDonoProcessos: false,
+        domainCollapsed: true,
 
-        participations: [],
-        newPartType: "",
-        newPart: "",
-        newParticipations: [],
         partsReady: false,
-        editParts: false,
-
-        classList: [],
-
+        participations: {
+            Apreciador: [],
+            Assessor: [],
+            Comunicador: [],
+            Decisor: [],
+            Executor: [],
+            Iniciador: [],
+        },
+        participationsDic: {
+            Apreciador: "Apreciar",
+            Assessor: "Assessorar",
+            Comunicador: "Comunicar",
+            Decisor: "Decidir",
+            Executor: "Executar",
+            Iniciador: "Iniciar"
+        },
         partsCollapsed: {
             Apreciador: true,
             Assessor: true,
@@ -43,55 +50,32 @@ var org = new Vue({
             Executor: true,
             Iniciador: true,
         },
-        domainCollapsed: true,
 
-        editTipol: false,
-        newTipol: "",
-        tipolList: [],
-        myTipolList: [],
-        myNewTipolList: [],
-
-        participationsDic: {
-            Apreciador: "Apreciar",
-            Assessor: "Assessorar",
-            Comunicador: "Comunicar",
-            Decisor: "Decidir",
-            Executor: "Executar",
-            Iniciador: "Iniciar"
-        }
-
+        editParts:false,
     },
-    computed: {
-        partOptions: function(){
-            var dictionary = this.participationsDic;
-            return Object.keys(this.participations).map(
-                function(a){
-                    return{
-                        label: dictionary[a],
-                        value: a
-                    }
-                }
-            )
-        }
-    },
+    //componentes necessários para o funcionamento do Vue
     components: {
         spinner: VueStrap.spinner,
         modal: VueStrap.modal,
     },
     methods: {
-        processosDono: function () {
-            this.$http.get("/api/entidades/" + this.id + "/intervencao/dono")
+        loadTipologias: function () {
+
+            this.$http.get("/api/entidades/" + this.id + "/tipologias")
                 .then(function (response) {
-                    this.donoProcessos = response.body
-                    if(this.donoProcessos.length > 0) this.eDonoProcessos = true
+                    this.listaTipologias = response.body;
+                })
+                .then(function () {
+                    this.newListaTipologias = JSON.parse(JSON.stringify(this.listaTipologias));
+                    this.tipolsReady = true;
                 })
                 .catch(function (error) {
                     console.error(error);
                 });
         },
-        subtractArray: function (from, minus) {
+        ///Ver com o back end
+        subtractArray: function(from, minus){
             var ret;
-
             if (!from) {
                 ret = null;
             }
@@ -107,210 +91,71 @@ var org = new Vue({
                             break;
                         }
                     }
-
                     return r;
                 });
             }
-
             return ret;
         },
-        loadClasses: function () {
-            var classesToProcess = []
+        //falta o back end das tipologias
+        //loadTipoListaCompleta: function(){
 
-            this.$http.get("/api/classes/nivel=3")
+        //}
+        processosDono: function () {
+            this.$http.get("/api/entidades/" + this.id + "/intervencao/dono")
                 .then(function (response) {
-                    classesToProcess = response.body
-                    var i, c
-                    for( i=0; i < classesToProcess.length; i++){ 
-                        c = classesToProcess[i]
-                        var myClasse = {codigo: c.Codigo.value, titulo: c.Titulo.value, label: c.Codigo.value + ' - ' + c.Titulo.value }
-                        this.classList.push(myClasse)
+                    this.donoProcessos = response.body
+                    if(this.donoProcessos.length > 0) this.eDonoProcessos = true
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        },
+        loadParticipantes: function () {
+            var participa = false;
+            var tipoPar = "";
+
+            this.$http.get("/api/entidades/" + this.id + "/intervencao/participante")
+                .then(function (response) {
+                    
+                    this.participantePNs = response.body;
+                    for(var i=0; i < this.participantePNs.length; i++ ){
+                        tipoPar = this.participantePNs[i].tipoPar.replace(/.*temParticipante(.*)/, '$1');
+
+                        this.participations[tipoPar].push(
+                                     { titulo: this.participantePNs[i].titulo,
+                                       codigo: this.participantePNs[i].codigo 
+                                       })
+                        participa = true
                     }
-                    this.classesReady = true;
-                })
-                .catch(function (error) {
-                    console.error(error);
-                });
-        },
-        loadTipolList: function () {
-            var dataToParse = [];
-            var keys = ["id", "Designacao", "Sigla"];
-
-            this.$http.get("/api/tipologias")
-                .then(function (response) {
-                    dataToParse = response.body;
-                })
-                .then(function () {
-                    var completeList = this.parseList(dataToParse, keys);
-
-                    this.tipolList = completeList.map(function (item) {
-                        return {
-                            label: item.Sigla +" - "+ item.Designacao,
-                            value: item,
-                        }
-                    }).sort(function (a, b) {
-                        return a.label.localeCompare(b.label);
-                    });
-
-
-                    this.tipolsReady = true;
-                })
-                .catch(function (error) {
-                    console.error(error);
-                });
-        },
-        loadParticipations: function () {
-            var partsToParse = [];
-            var keys = ['id', 'Title', 'Code'];
-
-            this.$http.get("/api/entidades/" + this.id + "/participacoes")
-                .then(function (response) {
-                    partsToParse = response.body;
-                })
-                .then(function () {
-                    this.participations = this.parseParticipants(partsToParse, keys);
                     this.newParticipations = JSON.parse(JSON.stringify(this.participations));
-
-                    this.partsReady = true;
+                    if(participa) this.partsReady = true;
                 })
                 .catch(function (error) {
                     console.error(error);
                 });
         },
-        loadTipols: function () {
-            var dataToParse = [];
-            var keys = ["id", "Designacao", "Sigla"];
-
-            this.$http.get("/api/entidades/" + this.id + "/tipologias")
-                .then(function (response) {
-                    dataToParse = response.body;
-                })
-                .then(function () {
-                    this.myTipolList = this.parseList(dataToParse, keys);
-                    this.myNewTipolList = JSON.parse(JSON.stringify(this.myTipolList));
-
-                    this.tipolsReady = true;
-                })
-                .catch(function (error) {
-                    console.error(error);
-                });
-        },
-        parseList: function (content, keys) {
-            var dest = [];
-            var temp = {};
-            // parsing the JSON
-            for (var i = 0; i < content.length; i++) {
-                for (var j = 0; j < keys.length; j++) {
-                    temp[keys[j]] = content[i][keys[j]].value;
-
-                    if (keys[j] == "id") {
-                        temp.id = temp.id.replace(/[^#]+#(.*)/, '$1');
-                    }
-                }
-
-                dest[i] = JSON.parse(JSON.stringify(temp));
-            }
-
-            return dest.sort(function (a, b) {
-                return a.id.localeCompare(b.id);
-            });
-        },
-        parseParticipants: function (content, keys) {
-            var dest = {
-                Apreciador: [],
-                Assessor: [],
-                Comunicador: [],
-                Decisor: [],
-                Executor: [],
-                Iniciador: [],
-            };
-            var temp = {};
-
-            // parsing the JSON
-            for (var i = 0; i < content.length; i++) {
-                for (var j = 0; j < keys.length; j++) {
-
-                    temp[keys[j]] = content[i][keys[j]].value;
-
-                    if (keys[j] == "id") {
-                        temp.id = temp.id.replace(/[^#]+#(.*)/, '$1');
-                    }
-                }
-                var type = content[i].Type.value.replace(/.*temParticipante(.*)/, '$1');
-
-                dest[type].push(JSON.parse(JSON.stringify(temp)));
-            }
-
-            var types = Object.keys(dest);
-
-            for (var i = 0; i < types.length; i++) {
-                dest[types[i]] = dest[types[i]].sort(function (a, b) {
-                    return a.id.localeCompare(b.id);
-                });
-            }
-
-            return dest;
-        },
-        update: function () {
-            this.$refs.spinner.show();            
+        //funcao de update
+        update: function() {
+            this.$refs.spinner.show(); 
 
             var dataObj = {
-                id: this.id,
-                international: null,
-                name: null,
-                domain: {
-                    add: null,
-                    del: null,
-                },
-                parts: {
-                    Apreciador: {
-                        add: null,
-                        del: null,
-                    },
-                    Assessor: {
-                        add: null,
-                        del: null,
-                    },
-                    Comunicador: {
-                        add: null,
-                        del: null,
-                    },
-                    Decisor: {
-                        add: null,
-                        del: null,
-                    },
-                    Executor: {
-                        add: null,
-                        del: null,
-                    },
-                    Iniciador: {
-                        add: null,
-                        del: null,
-                    },
-                },
-                tipols: {
-                    add: null,
-                    del: null,
-                },
+                des: null,
+                internacional: null,
             }
-
-            if (this.editName) {
-                dataObj.name = this.newName;
+            if(this.editDes) {
+                dataObj.des = this.newDes;
             }
-            if (this.editInternational) {
-                dataObj.international = this.newInternational;
+            if(this.editInternacional){
+                dataObj.internacional = this.newInternacional;
             }
-            if (this.editDomain) {
-
+            if(this.editTipologia){
                 var temp = {
                     add: null,
                     delete: null,
                 };
 
-                temp.add = this.subtractArray(this.newDomain, this.domain);
-                temp.del = this.subtractArray(this.domain, this.newDomain);
-
-                dataObj.domain = JSON.parse(JSON.stringify(temp));
+                temp.add = this.subtractArray(this.newListaTipologias, this.listaTipologias);
+                temp.del = this.subtractArray(this.listaTipologias, this.newListaTipologias);
             }
             if (this.editParts) {
                 for (const pType in this.participations) {
@@ -326,29 +171,19 @@ var org = new Vue({
                     dataObj.parts[pType] = JSON.parse(JSON.stringify(temp));
                 }
             }
-            if (this.editTipol) {
-                var temp = {
-                    add: null,
-                    delete: null,
-                };
-
-                temp.add = this.subtractArray(this.myNewTipolList, this.myTipolList);
-                temp.del = this.subtractArray(this.myTipolList, this.myNewTipolList);
-
-                dataObj.tipols = JSON.parse(JSON.stringify(temp));
-            }
-
+            //Realiza um put apos update
+            ////////////////////////////
             this.$http.put('/api/entidades/'+this.id, dataObj, {
-                headers: {
-                    'content-type': 'application/json'
-                }
-            })
-                .then(function (response) {
+                    headers: {
+                        'content-type': 'application/json'
+                    }
+                })
+                .then(function (response){
                     this.$refs.spinner.hide();
-                    
+                        
                     var resp = response.body;
                     if (resp != "Designação já existentente!") {
-                        window.location.href = '/entidades/consultar/' + this.id;
+                        window.location.href = '/entidades/' + this.id;
                     } else {
                         messageL.showMsg(resp);
                     }
@@ -356,23 +191,10 @@ var org = new Vue({
                 .catch(function (error) {
                     console.error(error);
                 });
-        },
-        deleteOrg: function () {
-            this.$refs.spinner.show();
-            
-            this.$http.delete('/api/entidades/'+this.id)
-                .then(function (response) {
-                    this.$refs.spinner.hide();
-
-                    messageL.showMsg(response.body);
-                    window.location.href = '/entidades';
-                })
-                .catch(function (error) {
-                    console.error(error);
-                });
+                //////////////////////////
         }
     },
-    created: function () {
+    created: function() {
         this.id = window.location.pathname.split('/')[3];
         
         this.$http.get("/api/entidades/" + this.id)
@@ -380,11 +202,9 @@ var org = new Vue({
                 this.myEntidade = response.body;
             })
             .then(function () {
+                this.loadTipologias();
                 this.processosDono();
-                this.loadParticipations();
-                this.loadClasses();
-                this.loadTipols();
-                this.loadTipolList();
+                this.loadParticipantes();
             })
             .catch(function (error) {
                 console.error(error);

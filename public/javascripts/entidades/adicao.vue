@@ -1,25 +1,25 @@
 var newOrg = new Vue({
     el: '#nova-entidade-form',
     data: {
-        name: "",
-        initials: "",
-        international: "Não",
+        tipologias: [],
+        ready: false,
+
+        designacao: "",
+        sigla: "",
+        internacional: "Não",
         message: "",
         tip: "",
-        tipologias: [],
+        
         tipologiasSel: []
     },
     created: function(){
-        this.$http.get("/api/tipologias")
+        //dá a lista de tipologias, para o utilizador adicionar a que tipologias pertence
+        this.$http.get("/api/tipologias/")
         .then( function(response) { 
-            this.content = response.body;
-            var i, t
-            for( i=0; i < this.content.length; i++){ 
-                t = this.content[i]
-                var myID = t.id.value.split('#')
-                var myTipol = {sigla: t.Sigla.value, designacao: t.Designacao.value, id: myID[1]}
-                this.tipologias.push(myTipol)
-            }
+            this.tipologias = response.body;
+            console.log(this.tipologias)
+        })
+        .then( function(){
             this.tipologias.sort(this.dynamicSort("sigla"))
             this.ready=true
         })
@@ -58,9 +58,9 @@ var newOrg = new Vue({
             this.$refs.spinner.show();
 
             var dataObj = {
-                name: this.name,
-                initials: this.initials,
-                international: this.international,
+                designacao: this.designacao,
+                sigla: this.sigla,
+                internacional: this.internacional,
                 tipologias: this.tipologiasSel
             }
 
@@ -69,11 +69,12 @@ var newOrg = new Vue({
                     'content-type': 'application/json'
                 }
             })
-                .then(function (response) {    
+                .then(function (response) {
                     this.$refs.spinner.hide();
                     
+                    console.log(response)
                     if (response.body != "Designação e/ou Sigla já existente(s)!") {
-                        window.location.href = '/entidades/consultar/' + response.body;
+                        window.location.href = '/pedidos/submissao';
                     }
                     else {
                         messageL.showMsg(response.body);
