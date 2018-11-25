@@ -31,6 +31,21 @@ block corpo
             :linhas="linhas"
         )
 
+    if user.level==7
+        .titlebox
+            | Gestão de Utilizadores
+
+        #novouser
+            hidden-table-v2(
+                titulo="Registo de um novo utilizador"
+                :linhas="linhas"
+            )
+        
+        #editaruser
+            hidden-table-v2(
+                titulo="Editar informação de um utilizador"
+                :linhas="linhas"
+            )
 
 append scripts    
     script(src="/javascripts/admin/gestao_pedidos.vue")

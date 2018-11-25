@@ -1,0 +1,26 @@
+extends ../layout
+block corpo
+    h1.page-header Utilizadores
+    .row
+        #tabela-utilizadores.row.placeholders
+            tabela-utilizadores(
+                v-if="ready"
+
+                :header='["Nome","Email","Nível de utilizador","id"]'
+                :display-order="['name','email','level','id']"
+                :complete-rows="listaUsers"
+                :ready="ready"
+                :cwidth="['30%','25%','15%','20%']"
+                
+                class-table='table table-hover'
+
+                @row-clicked="rowClicked($event)"
+            )
+            h4(
+                v-else
+            ) A carregar...    
+    //-
+
+append scripts    
+    script(src="/javascripts/users/listagem.vue")
+    script(src="/javascripts/users/component-tabela-users.vue")

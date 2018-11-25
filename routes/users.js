@@ -20,9 +20,18 @@ router.get('/perfil', Auth.isLoggedIn, function(req, res) {
     res.render('users/perfil', {title: "Perfil"});
 });
 
+router.get('/listagem', Auth.isLoggedIn, function(req, res) {
+    res.render('users/listagem', {title: "Listagem de utilizadores"});
+});
+
 router.get('/pedido_submetido/:id', Auth.isLoggedIn, function(req, res) {
     res.render('users/pedido_submetido', {title: "Pedido submetido"});
 });
+
+router.get('/editar/:id', Auth.isLoggedIn, function(req, res) {
+    res.render('users/editar', {title: "Edição utilizador"});
+});
+
 
 // Entidade do utilizador autenticado
 router.get('/entidade', Auth.isLoggedInAPI, function (req, res) {

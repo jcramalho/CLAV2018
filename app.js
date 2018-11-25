@@ -109,6 +109,7 @@ app.use('/api/termosIndice',require('./routes/api/termosIndice'));
 app.use('/api/vocabulario',require('./routes/api/vocabulario'));
 app.use('/api/pedidos',require('./routes/api/pedidos'));
 app.use('/api/trabalhos',require('./routes/api/trabalhos'));
+app.use('/api/users',require('./routes/api/users'));
 app.use('/auth',require('./routes/auth/user'));
 
 // catch 404 and forward to error handler

@@ -78,3 +78,20 @@ var autorizados = new Vue({
     },
 })
 
+var novouser = new Vue({
+    el: '#novouser',
+    data: {
+        linhas:[
+            ["De modo a proceder ao registo de um novo utilizador na plataforma CLAV, por favor clique no seguinte botão.   ",'<form method="get" action="/users/registar"><button type="submit">Registo</button></form>'],
+        ]
+    },
+})
+
+var editaruser = new Vue({
+    el: '#editaruser',
+    data: {
+        linhas:[
+            ["De modo a proceder à edição de um utilizador já existente na plataforma CLAV, por favor clique no seguinte botão.   ",'<form method="get" action="/users/listagem"><button type="submit">Editar</button></form>'],
+        ]
+    },
+})
