@@ -1,9 +1,15 @@
 extends ../layout
 block corpo
-    #pedidos-form.panel.panel-default.panel-custom
-        .panel-heading
-            h1.page-header
-                div Pedidos
+    h1.page-header Pedidos
+    .row
+        #tabela-pedidos.panel.panel-default.panel-custom
+            tabela-generica(
+
+            )
+            h4(
+                v-else
+            ) A carregar... 
 
 append scripts
     script(src="javascripts/pedidos/pedidos.vue")
+    script(src="javascripts/component-tabela-generica.vue")

@@ -15,17 +15,16 @@ var newOrg = new Vue({
     created: function(){
         //dá a lista de tipologias, para o utilizador adicionar a que tipologias pertence
         this.$http.get("/api/tipologias/")
-        .then( function(response) { 
-            this.tipologias = response.body;
-            console.log(this.tipologias)
-        })
-        .then( function(){
-            this.tipologias.sort(this.dynamicSort("sigla"))
-            this.ready=true
-        })
-        .catch( function(error) { 
-            console.error(error); 
-        });
+            .then( function(response) { 
+                this.tipologias = response.body;
+            })
+            .then( function(){
+                this.tipologias.sort(this.dynamicSort("sigla"))
+                this.ready=true
+            })
+            .catch( function(error) { 
+                console.error(error); 
+            });
     },
     components: {
         spinner: VueStrap.spinner
@@ -72,7 +71,6 @@ var newOrg = new Vue({
                 .then(function (response) {
                     this.$refs.spinner.hide();
                     
-                    console.log(response)
                     if (response.body != "Designação e/ou Sigla já existente(s)!") {
                         window.location.href = '/pedidos/submissao';
                     }

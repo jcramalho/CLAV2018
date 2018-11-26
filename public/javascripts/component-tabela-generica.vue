@@ -1,4 +1,4 @@
-Vue.component('tabela-entidades', {
+Vue.component('tabela-generica', {
     template: `
         <div>
             <div class="col-sm-4">

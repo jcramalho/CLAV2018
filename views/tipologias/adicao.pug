@@ -12,7 +12,7 @@ block corpo
                         td(style="width:80%")
                             input(
                                 size="70"
-                                v-model="name"
+                                v-model="des"
                             )
                     tr
                         td(style="padding-top:10px")
@@ -20,7 +20,7 @@ block corpo
                         td
                             input(
                                 size="70"
-                                v-model="initials"
+                                v-model="sigla"
                             )
 
 
@@ -30,7 +30,7 @@ block corpo
                 type="button" 
                 @click="add" 
                 value="Adicionar" 
-                :disabled="!(name && initials)"
+                :disabled="!(des && sigla)"
             )
             p.col-sm-7 {{ message }}
     //-
