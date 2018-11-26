@@ -4,7 +4,17 @@ block corpo
     .row
         #tabela-pedidos.panel.panel-default.panel-custom
             tabela-generica(
+                v-if="tabelaReady"
 
+                :header='["Codigo","Criado Por","Data de submissão","Estado","Ação","Objecto"]'
+                :display-order="['codigo','criadoPor','data','estado','acao','objeto']"
+                :complete-rows="listaPedidos"
+                :ready="tabelaReady"
+                :cwidth="['15%','35%','15%','15%','10%', '10%']"
+
+                class-table='table table-hover'
+
+                @row-clicked="rowClicked($event)"
             )
             h4(
                 v-else
