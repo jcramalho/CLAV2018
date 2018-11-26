@@ -6,11 +6,11 @@ block corpo
             tabela-utilizadores(
                 v-if="ready"
 
-                :header='["Nome","Email","Nível de utilizador","id"]'
-                :display-order="['name','email','level','id']"
+                :header='["Nome","Email","Nível de utilizador"]'
+                :display-order="['name','email','level']"
                 :complete-rows="listaUsers"
                 :ready="ready"
-                :cwidth="['30%','25%','15%','20%']"
+                :cwidth="['50%','25%','25%']"
                 
                 class-table='table table-hover'
 
