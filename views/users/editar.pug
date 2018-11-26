@@ -23,13 +23,30 @@ block corpo
                         td(style="width:10%")
                             label Nível: 
                         td(v-if="edit.Level" style="width:80%")
-                            input(
-                                size="50"
-                                v-model="newLevel"
-                                placeholder=""
-                            )
+                            select.form-control#type(v-model="selected")
+                                option Administrador de Perfil Tecnológico
+                                option Administrador de Perfil Funcional
+                                option Utilizador Validador
+                                option Utilizador Avançado
+                                option Utilizador Decisor
+                                option Utilizador Simples
+                                option Representante Entidade
                         td(v-else style="width:80%")
-                            | #{utilizador.level}
+                            case utilizador.level
+                                when 7
+                                    | Administrador de Perfil Tecnológico
+                                when 6
+                                    | Administrador de Perfil Funcional
+                                when 5
+                                    | Utilizador Validador
+                                when 4
+                                    | Utilizador Avançado
+                                when 3
+                                    | Utilizador Decisor
+                                when 2
+                                    | Utilizador Simples
+                                when 1
+                                    | Representante Entidade
                         td(style="width:10%")
                             label(style="padding-right:5px") Editar
                             input(
@@ -42,7 +59,6 @@ block corpo
                     type="submit" 
                     onclick='window.location.href = "/users/listagem";'
                     value="Confirmar" 
-                    :disabled="!checkready()"
                  )
 
 append scripts    

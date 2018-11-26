@@ -12,7 +12,29 @@ router.get('/', (req, res) => {
             for(var i = 0; i < users.length; i++) {
                 item = {}
                 item["name"] = users[i].name;
-                item["level"] = users[i].level;
+                switch(users[i].level) {
+                    case 7:
+                        item["level"] = 'Administrador de Perfil Tecnológico (Nível 7)';
+                        break;
+                    case 6:
+                        item["level"] = 'Administrador de Perfil Funcional (Nível 6)';
+                        break;
+                    case 5:
+                        item["level"] = 'Utilizador Validador (Nível 5)';
+                        break;
+                    case 4:
+                        item["level"] = 'Utilizador Avançado (Nível 4)';
+                        break;
+                    case 3:
+                        item["level"] = 'Utilizador Decisor (Nível 3)';
+                        break;
+                    case 2:
+                        item["level"] = 'Utilizador Simples (Nível 2)';
+                        break;
+                    case 1:
+                        item["level"] = 'Representante Entidade (Nível 1)'
+                        break;
+                }
                 item["email"] = users[i].email;
                 item["id"] = users[i]._id;
                 jsonObj.push(item);
