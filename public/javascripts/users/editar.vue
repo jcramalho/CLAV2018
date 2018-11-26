@@ -2,30 +2,40 @@ var perfil = new Vue({
     el: '#profile',
     data: {
         edit: {
-            Level: false,
+            Level : false
         },
-        newLevel: "",
+        level: "",
+        selected: "Utilizador Simples",
     },
     methods: {
-        checkready: _.debounce(
-            function () {
-                this.passMessage = "";
-                if (!this.edit.Level) {
-                    return false;
-                }
-                else {
-                    var ready = true;
-                    if (this.edit.Level) {
-                        ready = (ready && this.newLevel >= 0 && this.newLevel <= 7);
-                    }
-                    return ready;
-                }
-            },
-            300
-        ),
         update: function () {
+            console.log(this.selected)
+            switch(this.selected) {
+                case 'Administrador de Perfil Tecnológico':
+                    this.level = 7;
+                    break;
+                case 'Administrador de Perfil Funcional':
+                    this.level = 6;
+                    break;
+                case 'Utilizador Validador':
+                    this.level = 5;
+                    break;
+                case 'Utilizador Avançado':
+                    this.level = 4;
+                    break;
+                case 'Utilizador Decisor':
+                    this.level = 3;
+                    break;
+                case 'Utilizador Simples':
+                    this.level = 2;
+                    break;
+                case 'Representante Entidade':
+                    this.level = 1;
+                    break;
+            }
+
             var dataObj = {
-                Level: this.newLevel,
+                Level: this.level,
                 id: window.location.pathname.split('/')[3],
             }
 
