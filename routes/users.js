@@ -29,9 +29,14 @@ router.get('/pedido_submetido/:id', Auth.isLoggedIn, function(req, res) {
 });
 
 router.get('/editar/:id', Auth.isLoggedIn, function(req, res) {
-    res.render('users/editar', {title: "Edição utilizador"});
+    User.getUserById(req.params.id, function(err, user){
+		if (err) {	
+			throw err;
+		} else {
+            res.render('users/editar', { utilizador:user, title: "Edição utilizador"});
+        }
+	});
 });
-
 
 // Entidade do utilizador autenticado
 router.get('/entidade', Auth.isLoggedInAPI, function (req, res) {
@@ -45,6 +50,24 @@ router.get('/entidade', Auth.isLoggedInAPI, function (req, res) {
         }
         else{
             res.send(entity.nome);
+        }
+    });
+});
+
+//Atualizar nivel de utilizador
+router.post('/updateLevel/', Auth.isLoggedIn, function(req, res) {
+    User.getUserById(req.body.id, function(err, user){
+		if (err) {	
+			throw err;
+		} else {
+            user.level = req.body.Level;
+            user.save(function(err) {
+                if (err) {
+                    throw err;
+                } else {
+                    return res.redirect('back');
+                }
+            });
         }
     });
 });

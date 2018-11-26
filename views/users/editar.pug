@@ -1,3 +1,49 @@
 extends ../layout
 block corpo
-    h1.page-header TODO
+    #profile.panel.panel-default.panel-custom
+        .panel-heading
+            h1.page-header #{utilizador.name}  
+        .panel-body
+            .form-group
+                table.consulta(width="100%")
+                    //-NOME
+                    tr
+                        td(style="width:10%")
+                            label Nome: 
+                        td(style="width:80%")
+                            | #{utilizador.name}
+                    //-EMAIL
+                    tr
+                        td(style="width:10%")
+                            label Email: 
+                        td(style="width:80%")
+                            | #{utilizador.email}
+                    //-NIVEL
+                    tr
+                        td(style="width:10%")
+                            label Nível: 
+                        td(v-if="edit.Level" style="width:80%")
+                            input(
+                                size="50"
+                                v-model="newLevel"
+                                placeholder=""
+                            )
+                        td(v-else style="width:80%")
+                            | #{utilizador.level}
+                        td(style="width:10%")
+                            label(style="padding-right:5px") Editar
+                            input(
+                                type="checkbox"
+                                v-model="edit.Level"
+                            )
+
+                input.btn.btn-xs.btn-default.col-sm-1(
+                    @click="update"
+                    type="submit" 
+                    onclick='window.location.href = "/users/listagem";'
+                    value="Confirmar" 
+                    :disabled="!checkready()"
+                 )
+
+append scripts    
+    script(src="/javascripts/users/editar.vue")
