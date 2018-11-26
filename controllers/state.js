@@ -26,6 +26,24 @@ exports.getLevel2Classes = async () => { return level2Classes }
 exports.getLevel3Classes = async () => { return level3Classes }
 exports.getLevel4Classes = async () => { return level4Classes }
 
+// Verifica a existência do código de uma classe: true == existe, false == não existe
+exports.verificaCodigo = async (cod) => {
+    var nivel = cod.split('.').length
+    var r = false
+    switch(nivel){
+        case 1: r = await level1Classes.filter(c => c.codigo == cod).length != 0
+                break
+        case 2: r = await level2Classes.filter(c => c.codigo == cod).length != 0
+                break
+        case 3: r = await level3Classes.filter(c => c.codigo == cod).length != 0
+                break
+        case 4: r = await level4Classes.filter(c => c.codigo == cod).length != 0
+                break
+        default: console.log('Classe de nível inexistente: ' + cod)
+    }
+    return r
+}
+
 async function loadClasses() {
         try {
             let classes = await Classes.listar(null);

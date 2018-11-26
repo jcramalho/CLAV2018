@@ -6,11 +6,21 @@ var State = require('../../controllers/state.js')
 var express = require('express');
 var router = express.Router();
 
+// Devolve a árvore de classes em arrays aninhados
 router.get('/', async (req, res) => { 
     try {
         res.jsonp(await State.getAllClasses());  
     } catch(err) {
         res.status(500).send(`Erro na listagem geral das classes: ${err}`)
+    }
+})
+
+// Verifica se um determinado código de classe já existe
+router.get('/verificar/:codigo', async (req, res) => {
+    try {
+        res.jsonp(await State.verificaCodigo(req.params.codigo)) 
+    } catch(err) {
+        res.status(500).send(`Erro na verificação de um código: ${err}`)
     }
 })
 
@@ -309,13 +319,6 @@ router.get('/:id/df', function (req, res) {
         .catch(error=>console.error(error));
 })
 
-router.get('/:code/check/:level', function (req, res) {
-    Classes.checkCodeAvailability(req.params.code, req.params.level)
-        .then(function (count) {
-            res.send(count);
-        })
-        .catch(error=>console.error(error));
-})
 
 router.put('/:id', Auth.isLoggedInAPI, function (req, res) {
     var dataObj = req.body;

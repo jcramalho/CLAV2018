@@ -129,12 +129,6 @@ var newClass = new Vue({
 
         title: null,
 
-        orgsTableHeader: ["#", "Sigla", "Designacao", "Tipo"],
-        orgsTableWidth: ["4%", "15%", "70%", "15%"],
-        ownerList: [],
-        selectedOwners: [],
-        orgsReady: false,
-
         legsTableHeader: ["#", "Tipo", "Número", "Título", "Data"],
         legsTableWidth: ['5%', '19%', '11%', '50%', '15%'],
         legList: [],
@@ -160,6 +154,18 @@ var newClass = new Vue({
         procType: "pc",
 
         procTrans: "N",
+
+        orgsTableHeader: ["#", "Sigla", "Designacao", "Tipo"],
+        orgsTableWidth: ["4%", "15%", "70%", "15%"],
+        ownerList: [],
+        selectedOwners: [],
+        orgsReady: false,
+
+        entidadesTableHeader: ["#", "Sigla", "Designacao", "Tipo"],
+        entidadesTableWidth: ["4%", "15%", "70%", "15%"],
+        donos: [],
+        donosSelecionados: [],
+        entidadesReady: false,
 
         partDic: {
             Apreciador: "Apreciar",
@@ -439,14 +445,9 @@ var newClass = new Vue({
     methods: {
         checkCodeAvailability: _.debounce(
             function (code) {
-                var count;
-
-                this.$http.get(`/api/classes/${code}/check/${this.type}`)
-                    .then(function (response) {
-                        count = response.body;
-                    })
-                    .then(function () {
-                        if (parseInt(count) > 0) {
+                this.$http.get('/api/classes/verificar/' + code)
+                    .then(response => {
+                        if (response.body) {
                             this.codeMessage = "Codigo já existe!";
                         }
                     })
@@ -577,52 +578,23 @@ var newClass = new Vue({
             this.modalMsgShow = true;
         },
         loadCountTypes: function () {
-            var dataToParse = [];
-            var keys = ["id", "Label"];
-            var i = 0;
-
             this.$http.get("/api/vocabulario/formasContagemPCA")
                 .then(function (response) {
-                    dataToParse = response.body;
-                })
-                .then(function () {
-                    this.countTypes = this.parse(dataToParse, keys)
-                        .map(function (a) {
-                            return {
-                                label: a.Label,
-                                id: a.id,
-                            }
-                        });
+                    this.countTypes = response.body
+                        .map(function (a) { return { label: a.label, id: a.id }});
 
                     this.countsReady = true;
                 })
-                .catch(function (error) {
-                    console.error(error);
-                });
+                .catch(function (error) { console.error(error);});
         },
         loadSubCountTypes: function () {
-            var dataToParse = [];
-            var keys = ["id", "Label"];
-            var i = 0;
-
             this.$http.get("/api/vocabulario/subFormasContagemPCA")
                 .then(function (response) {
-                    dataToParse = response.body;
-                })
-                .then(function () {
-                    this.subcountTypes = this.parse(dataToParse, keys)
-                        .map(function (a) {
-                            return {
-                                label: a.Label,
-                                id: a.id,
-                            }
-                        });
-
+                    this.subcountTypes = response.body.map(function (a) {
+                            return { label: a.Label, id: a.id } });
                     this.subcountsReady = true;
                 })
-                .catch(function (error) {
-                    console.error(error);
-                });
+                .catch(function (error) { console.error(error); });
         },
         cleanSelection: function (path) {
             for (var line of path) {
@@ -846,36 +818,25 @@ var newClass = new Vue({
             }
         },
         loadEntidades: function () {
-            var entsToParse = [];
-            var tipsToParse = [];
-            var keys = ["id", "Sigla", "Designacao"];
             var i = 0;
 
             this.$http.get("/api/entidades")
-                .then(function (response) {
-                    entsToParse = response.body;
-                })
-                .then(function () {
-                    
-                    this.ownerList = this.parse(entsToParse, keys)
+                .then(response => {
+                    this.ownerList = response.body
                         .map(function (item) {
                             return {
-                                data: [i++, item.Sigla, item.Designacao, "Entidade"],
+                                data: [i++, item.sigla, item.designacao, "Entidade"],
                                 selected: false,
                                 id: item.id
                             }
                         });
-
                     this.$http.get("/api/tipologias")
-                        .then(function (response) {
-                            tipsToParse = response.body;
-                        })
-                        .then(function () {
+                        .then(response => {
                             this.ownerList = this.ownerList.concat(
-                                this.parse(tipsToParse, keys)
+                                response.body
                                     .map(function (item) {
                                         return {
-                                            data: [i++, item.Sigla, item.Designacao, "Tipologia"],
+                                            data: [i++, item.sigla, item.designacao, "Tipologia"],
                                             selected: false,
                                             id: item.id
                                         }
@@ -946,31 +907,21 @@ var newClass = new Vue({
             }
         },
         loadLegs: function () {
-            var legsToParse = [];
-            var keys = ["id", "Número", "Titulo", "Tipo", "Data"];
             var i = 0;
 
             this.$http.get("/api/legislacao")
-                .then(function (response) {
-                    legsToParse = response.body;
-                })
-                .then(function () {
-                    this.legList = this.parse(legsToParse, keys)
+                .then(response => {
+                    this.legList = response.body
                         .map(function (item) {
                             return {
-                                data: [i++, item.Tipo, item.Número, item.Titulo, item.Data],
+                                data: [i++, item.tipo, item.numero, item.sumario, item.data],
                                 selected: false,
                                 id: item.id
                             }
                         });
-                    this.pca.criteria.legislation = JSON.parse(
-                        JSON.stringify(this.legList)
-                    );
-                    this.df.criteria.legislation = JSON.parse(
-                        JSON.stringify(this.legList)
-                    );
-
-                    this.legsReady = true;
+                    this.pca.criteria.legislation = this.legList
+                    this.df.criteria.legislation = this.legList
+                    this.legsReady = true
                 })
                 .catch(function (error) {
                     console.error(error);
