@@ -28,6 +28,16 @@ router.get('/pedido_submetido/:id', Auth.isLoggedIn, function(req, res) {
     res.render('users/pedido_submetido', {title: "Pedido submetido"});
 });
 
+router.get('/listagem/:id', Auth.isLoggedIn, function(req, res) {
+    User.getUserById(req.params.id, function(err, user){
+		if (err) {	
+			throw err;
+		} else {
+            res.render('users/listagem_user', {utilizador:user, title: "Perfil utilizador"});
+        }
+	});
+});
+
 router.get('/editar/:id', Auth.isLoggedIn, function(req, res) {
     User.getUserById(req.params.id, function(err, user){
 		if (err) {	
