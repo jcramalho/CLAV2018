@@ -30,7 +30,7 @@ router.post('/', Auth.isLoggedIn, (req, res) => {
 // Devolve a informação associada a um documento legislativo: tipo data numero sumario link entidades
 router.get('/:id', (req, res) => {
     return Leg.consultar(req.params.id)
-        .then(dados => res.jsonp(dados))
+        .then(dados => dados ? res.jsonp(dados) : res.status(404).send(`Erro. A legislação '${req.params.id}' não existe`))
         .catch(erro => res.status(500).send(`Erro na consulta da leg ${req.params.id}: ${erro}`));
 });
 
