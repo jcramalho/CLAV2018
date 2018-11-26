@@ -3,8 +3,12 @@ block corpo
     #profile.panel.panel-default.panel-custom
         .panel-heading
             h1.page-header #{utilizador.name}
-                a(href='../editar/'+utilizador.id style="float:right")  
-                    span.glyphicon.glyphicon-edit
+                a(href='../remover/'+utilizador.id style="float:right" margin-left: 80px)  
+                    span.glyphicon.glyphicon-remove
+                a(href='../desativar/'+utilizador.id style="float:right" margin-left: 80px)  
+                    span.glyphicon.glyphicon-lock(style="padding-right:15px")
+                a(href='../editar/'+utilizador.id style="float:right" margin-left: 80px)  
+                    span.glyphicon.glyphicon-edit(style="padding-right:15px")
         .panel-body
             .form-group
                 table.consulta(width="100%")

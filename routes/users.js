@@ -48,6 +48,26 @@ router.get('/editar/:id', Auth.isLoggedIn, function(req, res) {
 	});
 });
 
+router.get('/desativar/:id', Auth.isLoggedIn, function(req, res) {
+    User.getUserById(req.params.id, function(err, user){
+		if (err) {	
+			throw err;
+		} else {
+            return res.send('TODO')
+        }
+	});
+});
+
+router.get('/remover/:id', Auth.isLoggedIn, function(req, res) {
+    User.getUserById(req.params.id, function(err, user){
+		if (err) {	
+			throw err;
+		} else {
+            return res.send('TODO')
+        }
+	});
+});
+
 // Entidade do utilizador autenticado
 router.get('/entidade', Auth.isLoggedInAPI, function (req, res) {
     Entidade.getEntidadeByRepresentante(req.user.email, function(err, entity){
