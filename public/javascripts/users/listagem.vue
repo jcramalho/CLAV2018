@@ -7,12 +7,12 @@ var orgs = new Vue({
     methods: {
         rowClicked: function(uid){
             // permite navegar ate ao user em questao
-            window.location.href = '/users/editar/'+uid;
+            window.location.href = '/users/listagem/'+uid;
         },
     },
     // Obtem a listagem normalizada a "/api/users"
     created: function(){
-        this.$http.get("/api/users")
+        this.$http.get("/api/users/listagem")
         .then( function(response) { 
             this.listaUsers = response.body;
             this.ready=true;

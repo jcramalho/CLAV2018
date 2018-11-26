@@ -3,7 +3,7 @@ var router = express.Router();
 
 var User = require('../../models/user');
 
-router.get('/', (req, res) => {
+router.get('/listagem', (req, res) => {
     User.find({}, function(err, users){
         if (err) {
             throw err;
@@ -40,9 +40,19 @@ router.get('/', (req, res) => {
                 jsonObj.push(item);
             }
         }
-
         return res.send(jsonObj);
     });
+});
+
+
+router.get('/getEmail/:id', function(req, res) {
+    User.findOne({_id: req.params.id}, function(err, user){
+		if (err) {	
+			throw err;
+		} else {
+            return res.send(user)
+        }
+	});
 });
 
 module.exports = router;

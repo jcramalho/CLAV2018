@@ -3,6 +3,8 @@ block corpo
     #profile.panel.panel-default.panel-custom
         .panel-heading
             h1.page-header #{utilizador.name}
+                a(href='../editar/'+utilizador.id style="float:right")  
+                    span.glyphicon.glyphicon-edit
         .panel-body
             .form-group
                 table.consulta(width="100%")
@@ -22,16 +24,7 @@ block corpo
                     tr
                         td
                             .info-label Nível: 
-                        td(v-if="edit.Level" style="width:80%")
-                            select.form-control#type(v-model="selected")
-                                option Administrador de Perfil Tecnológico
-                                option Administrador de Perfil Funcional
-                                option Utilizador Validador
-                                option Utilizador Avançado
-                                option Utilizador Decisor
-                                option Utilizador Simples
-                                option Representante Entidade
-                        td(v-else style="width:80%")
+                        td(style="width:80%")
                             case utilizador.level
                                 when 7
                                     | Administrador de Perfil Tecnológico
@@ -47,23 +40,26 @@ block corpo
                                     | Utilizador Simples
                                 when 1
                                     | Representante Entidade
-                        td
-                            label(
-                                    for="edit.Level"
-                                    :class="[edit.Level ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']" 
-                                ) 
-                            input(
-                                    id="edit.Level"
-                                    type="checkbox"
-                                    v-model="edit.Level"
-                                    class="drop-row"
-                                )
-                input.btn.btn-block.btn-default.col-sm-1(
-                    @click="update"
-                    type="submit" 
-                    onclick='window.location.href = "/users/listagem";'
-                    value="Confirmar" 
-                 )
+    #profile.panel.panel-default.panel-custom
+        .panel-heading
+            h2.page-header Pedidos do utilizador
+        .panel-body
+            #tabela-pedidos.panel.panel-default.panel-custom
+                tabela-generica(
+                    v-if="tabelaReady"
+
+                    :header='["Codigo","Data de submissão","Estado","Ação","Objecto"]'
+                    :display-order="['codigo','data','estado','acao','objeto']"
+                    :complete-rows="listaPedidos"
+                    :ready="tabelaReady"
+                    :cwidth="['15%','15%','15%','10%', '10%']"
+
+                    class-table='table table-hover'
+                )
+                h4(
+                    v-else
+                ) Este utilizador não possui pedidos registados.
 
 append scripts    
-    script(src="/javascripts/users/editar.vue")
+    script(src="/javascripts/users/pedidos.vue")
+    script(src="/javascripts/component-tabela-generica.vue")
