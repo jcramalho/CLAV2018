@@ -6,19 +6,19 @@ const Leg = module.exports;
 
 // Lista todos os itens legislativos: id, data, numero, tipo, sumario, entidades
 Leg.listar = () => {
-    const query = `SELECT ?id ?data ?numero ?tipo ?sumario ?entidades WHERE {
+    const query = `SELECT ?id ?data ?numero ?tipo ?titulo ?entidades WHERE {
         ?uri rdf:type clav:Legislacao;
              clav:diplomaData ?data;
              clav:diplomaNumero ?numero;
              clav:diplomaTipo ?tipo;
-             clav:diplomaTitulo ?sumario.
+             clav:diplomaTitulo ?titulo.
         OPTIONAL {
             ?uri clav:diplomaEntidade ?ent.
             ?ent clav:entSigla ?entidades;
         }
         BIND(STRAFTER(STR(?uri), 'clav#') AS ?id).
     } ORDER BY DESC (?data)`;
-    const campos = ["id", "data", "numero", "tipo", "sumario"];
+    const campos = ["id", "data", "numero", "tipo", "titulo"];
     const agrupar = ["entidades"];
 
     return client.query(query)
@@ -32,16 +32,16 @@ Leg.listar = () => {
         
             return legs;
         });
-}
+};
 
 // Devolve a informação associada a um documento legislativo: tipo data numero sumario link entidades
 Leg.consultar = id => {
-    const query = `SELECT ?tipo ?data ?numero ?sumario ?link WHERE { 
+    const query = `SELECT ?tipo ?data ?numero ?titulo ?link WHERE { 
         clav:${id} a clav:Legislacao;
             clav:diplomaData ?data;
             clav:diplomaNumero ?numero;
             clav:diplomaTipo ?tipo;
-            clav:diplomaTitulo ?sumario;
+            clav:diplomaTitulo ?titulo;
             clav:diplomaLink ?link;
      }`;
 
@@ -61,6 +61,57 @@ Leg.consultar = id => {
                 return legislacao;
             }));
 };
+
+// 
+Leg.criar = async (legislacao, utilizador) => {
+    const contaQuery = `SELECT (count(distinct ?uri) as ?count) {
+        ?uri rdf:type owl:NamedIndividual , clav:Legislacao.
+    }`;
+    const id = await client.query(contaQuery)
+        .execute()
+        .then(response => `leg_${normalize(response)[0].count + 1}`);
+    const query = `INSERT DATA {
+        clav:${id} rdf:type owl:NamedIndividual ,
+            clav:Legislacao ;
+            clav:diplomaData '${legislacao.data}' ;
+            clav:diplomaNumero '${legislacao.numero}' ;
+            clav:diplomaTipo '${legislacao.tipo}' ;
+            clav:diplomaTitulo '${legislacao.titulo}' ;
+            clav:diplomaLink '${legislacao.link}' .
+        
+        ${legislacao.entidades.map(entidade => `clav:${id} clav:diplomaEntidade clav:${entidade}.`).join('\n')}
+    }`;
+
+    return client.query(query)
+        .execute()
+        .then(() => Pedidos.criar({
+            criadoPor: utilizador,
+            objeto: {
+                codigo: `${id}`,
+                tipo: `Legislação`,
+                acao: `Criação`,
+            },
+            distribuicao: [{
+                estado: "Submetido",
+            }]
+        }));
+};
+
+//
+Leg.apagar = (id, utilizador) => {
+    return Pedidos.criar({
+        criadoPor: utilizador,
+        objeto: {
+            codigo: id,
+            tipo: 'Legislação',
+            acao: 'Remoção',
+        },
+        distribuicao: [{
+            estado: "Submetido",
+        }]
+    });
+};
+
 
 // Devolve a lista de processos regulados pelo documento: id, codigo, titulo
 Leg.regula = id => {
@@ -90,66 +141,9 @@ Leg.regula = id => {
     return client.query(query)
         .execute()
         .then(response => normalize(response));
-}
+};
 
-// Devolve o número de documentos legislativos catalogados para efeitos de geração dum novo id ou de contagem
-Leg.ultNum = ()=>{
-    var query = `
-        select (count (?s) as ?num)  where { 
-            ?s a clav:Legislacao .
-        }`
-    return client.query(query)
-        .execute()
-        .then(response => normalize(response));
-}
-
-
-
-
-Leg.checkNumberAvailability = function (number) {
-    var checkQuery = `
-            SELECT (count(*) AS ?Count) WHERE {
-                ?leg rdf:type clav:Legislacao ;
-                    clav:diplomaNumero '${number}'
-            }
-        `;
-
-    return client.query(checkQuery).execute()
-        //Getting the content we want
-        .then(response => Promise.resolve(response.results.bindings[0].Count.value))
-        .catch(function (error) {
-            console.error("Error in check:\n" + error);
-        });
-}
-
-Leg.createDoc = function (novoId, dataObj) {
-    var createQuery = `
-        INSERT DATA {
-            clav:${novoId} rdf:type owl:NamedIndividual ,
-                    clav:Legislacao ;
-                clav:diplomaData '${dataObj.Data}' ;
-                clav:diplomaNumero '${dataObj.Numero}' ;
-                clav:diplomaTipo '${dataObj.Tipo}' ;
-                clav:diplomaTitulo '${dataObj.Titulo}' ;
-                clav:diplomaLink '${dataObj.Link}' .
-    `;
-
-    for(org of dataObj.Orgs){
-        createQuery += `
-            clav:${novoId} clav:diplomaEntidade clav:${org}.
-        `;    
-    }
-
-    createQuery += `
-        }
-    `;
-
-    
-    return client.query(createQuery).execute()
-        .then(response => Promise.resolve(response))
-        .catch(error => console.error("Error in create:\n" + error));
-}
-
+/*
 Leg.updateDoc = function (dataObj) {
 
     var del = "";
@@ -200,18 +194,4 @@ Leg.updateDoc = function (dataObj) {
     return client.query(updateQuery).execute()
         .then(response => Promise.resolve(response))
         .catch(error => console.error("Error in update:\n" + error));
-}
-
-Leg.deleteDoc = function (id) {
-    return client.query(`
-                DELETE {
-                    clav:${id} ?o ?p
-                }
-                WHERE { ?s ?o ?p }
-            `).execute()
-        //getting the content we want
-        .then(response => Promise.resolve(response))
-        .catch(function (error) {
-            console.error(error);
-        });
-}
+};*/
