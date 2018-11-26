@@ -1,9 +1,25 @@
 extends ../layout
 block corpo
-    #pedidos-form.panel.panel-default.panel-custom
-        .panel-heading
-            h1.page-header
-                div Pedidos
+    h1.page-header Pedidos
+    .row
+        #tabela-pedidos.panel.panel-default.panel-custom
+            tabela-generica(
+                v-if="tabelaReady"
+
+                :header='["Codigo","Criado Por","Data de submissão","Estado","Ação","Objecto"]'
+                :display-order="['codigo','criadoPor','data','estado','acao','objeto']"
+                :complete-rows="listaPedidos"
+                :ready="tabelaReady"
+                :cwidth="['15%','35%','15%','15%','10%', '10%']"
+
+                class-table='table table-hover'
+
+                @row-clicked="rowClicked($event)"
+            )
+            h4(
+                v-else
+            ) A carregar... 
 
 append scripts
     script(src="javascripts/pedidos/pedidos.vue")
+    script(src="javascripts/component-tabela-generica.vue")

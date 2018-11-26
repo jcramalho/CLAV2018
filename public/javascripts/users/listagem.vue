@@ -1,5 +1,5 @@
 var orgs = new Vue({
-    el: '#tabela-utilizadores',
+    el: '#tabela-users',
     data: {
         listaUsers: [],
         ready: false

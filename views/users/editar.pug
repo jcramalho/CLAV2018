@@ -1,3 +1,64 @@
 extends ../layout
 block corpo
-    h1.page-header TODO
+    #profile.panel.panel-default.panel-custom
+        .panel-heading
+            h1.page-header #{utilizador.name}  
+        .panel-body
+            .form-group
+                table.consulta(width="100%")
+                    //-NOME
+                    tr
+                        td(style="width:10%")
+                            label Nome: 
+                        td(style="width:80%")
+                            | #{utilizador.name}
+                    //-EMAIL
+                    tr
+                        td(style="width:10%")
+                            label Email: 
+                        td(style="width:80%")
+                            | #{utilizador.email}
+                    //-NIVEL
+                    tr
+                        td(style="width:10%")
+                            label Nível: 
+                        td(v-if="edit.Level" style="width:80%")
+                            select.form-control#type(v-model="selected")
+                                option Administrador de Perfil Tecnológico
+                                option Administrador de Perfil Funcional
+                                option Utilizador Validador
+                                option Utilizador Avançado
+                                option Utilizador Decisor
+                                option Utilizador Simples
+                                option Representante Entidade
+                        td(v-else style="width:80%")
+                            case utilizador.level
+                                when 7
+                                    | Administrador de Perfil Tecnológico
+                                when 6
+                                    | Administrador de Perfil Funcional
+                                when 5
+                                    | Utilizador Validador
+                                when 4
+                                    | Utilizador Avançado
+                                when 3
+                                    | Utilizador Decisor
+                                when 2
+                                    | Utilizador Simples
+                                when 1
+                                    | Representante Entidade
+                        td(style="width:10%")
+                            label(style="padding-right:5px") Editar
+                            input(
+                                type="checkbox"
+                                v-model="edit.Level"
+                            )
+                input.btn.btn-block.btn-default.col-sm-1(
+                    @click="update"
+                    type="submit" 
+                    onclick='window.location.href = "/users/listagem";'
+                    value="Confirmar" 
+                 )
+
+append scripts    
+    script(src="/javascripts/users/editar.vue")

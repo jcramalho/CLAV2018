@@ -2,15 +2,15 @@ extends ../layout
 block corpo
     h1.page-header Utilizadores
     .row
-        #tabela-utilizadores.row.placeholders
-            tabela-utilizadores(
+        #tabela-users.row.placeholders
+            tabela-generica(
                 v-if="ready"
 
-                :header='["Nome","Email","Nível de utilizador","id"]'
-                :display-order="['name','email','level','id']"
+                :header='["Nome","Email","Nível de utilizador"]'
+                :display-order="['name','email','level']"
                 :complete-rows="listaUsers"
                 :ready="ready"
-                :cwidth="['30%','25%','15%','20%']"
+                :cwidth="['40%','20%','40%']"
                 
                 class-table='table table-hover'
 
@@ -23,4 +23,4 @@ block corpo
 
 append scripts    
     script(src="/javascripts/users/listagem.vue")
-    script(src="/javascripts/users/component-tabela-users.vue")
+    script(src="/javascripts/component-tabela-generica.vue")

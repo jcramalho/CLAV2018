@@ -1,4 +1,4 @@
-var pedidos = new Vue({
+var subPedidos = new Vue({
     el: '#submissao-form',
     data: {
         id: "",
@@ -11,8 +11,8 @@ var pedidos = new Vue({
         parsePedido: function() {
             let link="/pedidos/" + this.pedido.codigo;
             let date = new Date(this.pedido.distribuicao[0].data);
-            
-            var data = date.getDay() + "-" + date.getMonth() + "-" + date.getFullYear();
+
+            var data = date.getDate() + "-" + (parseInt(date.getMonth()) + 1) + "-" + date.getFullYear();
 
             this.descPedido[0] = this.pedido.codigo;
             this.descPedido[1] = this.pedido.objeto.acao + " " + this.pedido.objeto.tipo;

@@ -62,32 +62,30 @@ var newLeg = new Vue({
                     'content-type' : 'application/json'
                 }
             })
-            .then( function(response) { 
-                regex = new RegExp(/leg_[0-9]+/, "gi");
+                .then( function(response) { 
+                    regex = new RegExp(/leg_[0-9]+/, "gi");
 
-                if(regex.test(response.body)){
-                    window.location.href = '/legislacao/'+response.body;
-                    this.message = "Diploma adicionado! Vai ser redirecionado para a página de consulta/edição..."
-                }
-                else {
-                    messageL.showMsg(response.body);
-                }
-                this.$refs.spinner.hide();
-            })
-            .catch( function(error) { 
-                console.error(error); 
-            });
+                    if(regex.test(response.body)){
+                        window.location.href = '/pedidos/submissao';
+                    }
+                    else {
+                        messageL.showMsg(response.body);
+                    }
+                    this.$refs.spinner.hide();
+                })
+                .catch( function(error) { 
+                    console.error(error); 
+                });
         },
         loadOrgs: function () {
-            var keys = ["id", "Sigla", "Designacao"];
             var i = 0;
 
             this.$http.get("/api/entidades")
                 .then(function (response) {
-                    this.orgs = this.parse(response.body, keys)
+                    this.orgs = response.body
                         .map(function (item) {
                             return {
-                                data: [i++, item.Sigla, item.Designacao, "Entidade"],
+                                data: [i++, item.sigla, item.designacao, "Entidade"],
                                 selected: false,
                                 id: item.id
                             }
@@ -100,25 +98,6 @@ var newLeg = new Vue({
                 .catch(function (error) {
                     console.error(error);
                 });       
-        },
-        parse: function (content, keys) {
-            var dest = [];
-            var temp = {};
-
-            // parsing the JSON
-            for (var i = 0; i < content.length; i++) {
-                for (var j = 0; j < keys.length; j++) {
-                    temp[keys[j]] = content[i][keys[j]].value;
-
-                    if (keys[j] == "id") {
-                        temp.id = temp.id.replace(/[^#]+#(.*)/, '$1');
-                    }
-                }
-
-                dest[i] = JSON.parse(JSON.stringify(temp));
-            }
-
-            return dest;
         },
         orgSelected: function (row, list, partType) {
             if (!row.selected) {
