@@ -3,11 +3,11 @@ block corpo
     h1.page-header Legislação
     .row
         #tabela-legislacoes.row.placeholders
-            custom-table-simple(
+            tabela-generica(
                 v-if="ready"
 
                 :header= '["Tipo", "Entidade(s)", "Número", "Sumário", "Data"]'
-                :display-order='["tipo","entidades","numero","sumario","data"]'
+                :display-order='["tipo","entidades","numero","titulo","data"]'
                 :complete-rows="listaLegs"
                 :ready="ready"
                 :cwidth="['12%','10%', '10%', '54%', '14%']"
@@ -24,3 +24,4 @@ block corpo
     //-
 append scripts    
     script(src="/javascripts/leg/listagem.vue")
+    script(src="/javascripts/component-tabela-generica.vue")

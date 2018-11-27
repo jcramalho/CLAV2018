@@ -74,7 +74,7 @@ Leg.consultar = id => {
             ?ent clav:entSigla ?entidades;
         }
      }`;
-     const campos = ["id", "data", "numero", "tipo", "titulo"];
+     const campos = ["id", "data", "numero", "tipo", "titulo", "link"];
      const agrupar = ["entidades"];
 
      return client.query(query)

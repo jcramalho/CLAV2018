@@ -31,6 +31,13 @@ block corpo
             :linhas="linhas"
         )
 
+    table.table.tabela-navegacao
+        tr
+            td(style="padding-left:50px ")
+                a(href="/pedidos")
+                    .linkbox(style="margin-bottom:0px")
+                        |Ver lista de todos os pedidos
+
     if user.level==7
         .titlebox
             | Gestão de Utilizadores

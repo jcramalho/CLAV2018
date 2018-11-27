@@ -3,7 +3,7 @@ block corpo
     h1.page-header Tipologias
     .row
         #tabela-tipologias.row.placeholders
-            custom-table-simple(
+            tabela-generica(
                 v-if="ready"
 
                 :header='["Designação","Sigla"]'
@@ -23,3 +23,4 @@ block corpo
 
 append scripts    
     script(src="/javascripts/tipologias/listagem.vue")
+    script(src="/javascripts/component-tabela-generica.vue")
