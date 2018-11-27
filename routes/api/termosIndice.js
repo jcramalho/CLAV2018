@@ -5,21 +5,18 @@ var TermosIndice = require('../../controllers/api/termosIndice.js');
 var express = require('express');
 var router = express.Router();
 
-
+// Devolve a lista dos termos de índice
 router.get('/', function (req, res) {
-    TermosIndice.list()
-        .then(tis => res.send(tis))
-        .catch(function (error) {
-            console.error(error);
-        });
+    return TermosIndice.listar()
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.status(500).send(`Erro na listagem dos termos de índice: ${erro}`));
 })
 
-router.get('/filtrar/:clas', function (req, res) {
-    TermosIndice.fromClass(req.params.clas)
-        .then(tis => res.send(tis))
-        .catch(function (error) {
-            console.error(error);
-        });
+// Devolve a lista dos termos de índice associados a uma determinada classe
+router.get('/classe/:classe', function (req, res) {
+    TermosIndice.assocClasse(req.params.classe)
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.status(500).send(`Erro na listagem dos termos de índice de uma classe: ${erro}`));
 })
 
 module.exports = router;
