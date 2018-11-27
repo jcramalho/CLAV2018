@@ -2,13 +2,13 @@ extends ../layout
 block corpo
     #profile.panel.panel-default.panel-custom
         .panel-heading
-            h1.page-header #{utilizador.name}
+            h1.page-header Utilizador
                 a(href='../remover/'+utilizador.id style="float:right" margin-left: 80px)  
-                    span.glyphicon.glyphicon-remove
+                    span.glyphicon.glyphicon-remove(data-toggle="tooltip" title="Remover utilizador")
                 a(href='../desativar/'+utilizador.id style="float:right" margin-left: 80px)  
-                    span.glyphicon.glyphicon-lock(style="padding-right:15px")
+                    span.glyphicon.glyphicon-lock(style="padding-right:15px" data-toggle="tooltip" title="Desativar utilizador")
                 a(href='../editar/'+utilizador.id style="float:right" margin-left: 80px)  
-                    span.glyphicon.glyphicon-edit(style="padding-right:15px")
+                    span.glyphicon.glyphicon-edit(style="padding-right:15px" data-toggle="tooltip" title="Editar nível utilizador")
         .panel-body
             .form-group
                 table.consulta(width="100%")
@@ -44,6 +44,8 @@ block corpo
                                     | Utilizador Simples
                                 when 1
                                     | Representante Entidade
+                                when -1
+                                    | Utilizador desativado
     #profile.panel.panel-default.panel-custom
         .panel-heading
             h2.page-header Pedidos do utilizador

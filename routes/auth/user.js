@@ -67,13 +67,14 @@ router.post('/registar', function (req, res) {
 
 /* POST login. */
 router.post('/login', function (req, res) {
-    passport.authenticate('local', (err, user) => {
+    passport.authenticate('local', (err, user, info) => {
+        var msg = info.message;
         if (err) {
             res.send(err)
         }
         req.login(user, (err) => {
             if (err) {
-                req.flash('warn_msg', 'Ocorreu um erro ao realizar o login! Por favor verifique as suas credenciais.');
+                req.flash('warn_msg', msg);
                 res.redirect('/users/login');
             }else{
                 var token = jwt.sign({user}, ConfigJWT.jwt.secret,{
