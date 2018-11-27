@@ -6,10 +6,11 @@ block corpo
             custom-table-simple(
                 v-if="ready"
 
-                :header="tableHeader"
+                :header="['#','Termo','Classe', 'Título da Classe']"
+                :display-order="['id', 'termo', 'idClasse', 'tituloClasse']"
                 :complete-rows="tableData"
                 :ready="ready"
-                :cwidth="cwidth"
+                :cwidth="['10%','45%','10%','35%']"
                 
                 class-table='table table-hover'
                 add="true"

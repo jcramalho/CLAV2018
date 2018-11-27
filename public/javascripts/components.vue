@@ -120,7 +120,7 @@ Vue.component('custom-table-simple', {
             })
         },
         rowClick: function (index) { //emit event when a row is clicked
-            this.$emit('row-clicked', this.rowsShow[index]);
+            this.$emit('row-clicked', this.rowsShow[index].idClasse);
         },
         addClick: function (index) { //emit event when the '+' button is clicked
             this.$emit('add-clicked');
@@ -187,6 +187,7 @@ Vue.component('custom-table-simple', {
             this.pages = ret;
 
             this.rowsShow = this.completeRows.slice(0, this.rowsPerPage);
+            alert(JSON.stringify(this.rowsShow))
         },
     },
     beforeMount: function () {
