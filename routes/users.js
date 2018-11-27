@@ -38,7 +38,7 @@ router.get('/listagem/:id', Auth.isLoggedIn, function(req, res) {
 	});
 });
 
-router.get('/editar/:id', Auth.isLoggedIn, function(req, res) {
+router.get('/editar/:id', Auth.isLoggedIn, Auth.checkLevel6, function(req, res) {
     User.getUserById(req.params.id, function(err, user){
 		if (err) {	
 			throw err;
@@ -46,6 +46,45 @@ router.get('/editar/:id', Auth.isLoggedIn, function(req, res) {
             res.render('users/editar', { utilizador:user, title: "Edição utilizador"});
         }
 	});
+});
+
+router.get('/desativar/:id', Auth.isLoggedIn, Auth.checkLevel6, function(req, res) {
+    if(req.user.id!=req.params.id){
+        User.getUserById(req.params.id, function(err, user){
+            if (err) {	
+                throw err;
+            } else {
+                user.level = -1;
+                user.save(function(err) {
+                    if (err) {
+                        throw err;
+                    } else {
+                        req.flash('success_msg', 'Utilizador desativado com sucesso.');
+                        res.redirect('/users/listagem');
+                    }
+                });
+            }
+        });
+    }else{
+        req.flash('warn_msg', 'Não pode desativar o seu próprio utilizador.');
+        res.redirect('back');
+    }
+});
+
+router.get('/remover/:id', Auth.isLoggedIn, Auth.checkLevel7 , function(req, res) {
+    if(req.user.id!=req.params.id){
+        User.findOneAndRemove({_id:req.params.id}, function(err, user){
+            if (err) {	
+                throw err;
+            } else {
+                req.flash('success_msg', 'Utilizador removido com sucesso.');
+                res.redirect('/users/listagem');
+            }
+        });
+    }else{
+        req.flash('warn_msg', 'Não pode remover o seu próprio utilizador.');
+        res.redirect('back');
+    }
 });
 
 // Entidade do utilizador autenticado
@@ -65,7 +104,7 @@ router.get('/entidade', Auth.isLoggedInAPI, function (req, res) {
 });
 
 //Atualizar nivel de utilizador
-router.post('/updateLevel/', Auth.isLoggedIn, function(req, res) {
+router.post('/updateLevel/', Auth.isLoggedIn, Auth.checkLevel6, function(req, res) {
     User.getUserById(req.body.id, function(err, user){
 		if (err) {	
 			throw err;
@@ -75,7 +114,8 @@ router.post('/updateLevel/', Auth.isLoggedIn, function(req, res) {
                 if (err) {
                     throw err;
                 } else {
-                    return res.redirect('back');
+                    req.flash('success_msg', 'Nível de utilizador modificado com sucesso!');
+                    res.redirect('/users/listagem');
                 }
             });
         }
@@ -85,7 +125,6 @@ router.post('/updateLevel/', Auth.isLoggedIn, function(req, res) {
 // Guardar trabalho
 router.put('/save/:type', Auth.isLoggedInAPI, function (req, res) {
     User.getUserById(req.user._id, function(err, user){
-
 		if (err) {	
 			throw err;
 		}

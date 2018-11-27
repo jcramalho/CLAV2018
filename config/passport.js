@@ -22,9 +22,13 @@ module.exports = function(passport) {
                 User.comparePassword(password, user.local.password, function (err, isMatch) {
                     if (err) throw err;
                     if (isMatch) {
-                        return done(null, user);
+                        if(user.level==-1){
+                            return done(null, false, { message: 'Utilizador desativado.' });
+                        }else{
+                            return done(null, user, { message: 'Login efetuado com sucesso.' });
+                        }
                     } else {
-                        return done(null, false, { message: 'Password Inválida' });
+                        return done(null, false, { message: 'Ocorreu um erro ao realizar o login! Por favor verifique as suas credenciais.' });
                     }
                 });
             });
