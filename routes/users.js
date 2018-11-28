@@ -1,4 +1,5 @@
 var express = require('express');
+var bcrypt = require('bcryptjs')
 var router = express.Router();
 
 var Logging = require('../controllers/logging');
@@ -104,6 +105,24 @@ router.post('/updateLevel/', Auth.isLoggedIn, Auth.checkLevel7, function(req, re
                 }
             });
         }
+    });
+});
+
+//Atualizar password de utilizador
+router.post('/updatePassword/', Auth.isLoggedIn, function(req, res) {
+    User.getUserById({'_id': req.user.id}, function(err, user){
+		if (err) {	
+			throw err;
+		} else {
+            User.updatePassword(user,req.body.Password, function (err, user) {
+                if (err){
+                    throw err;
+                }
+            });
+        }
+        req.logout();
+        req.flash('success_msg', 'Password modificada com sucesso! Por favor faça login novamente.');
+        res.redirect('/');
     });
 });
 
