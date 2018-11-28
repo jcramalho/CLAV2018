@@ -81,7 +81,7 @@ block corpo
                         td
 
                     //-PASSWORD
-                    //tr
+                    tr
                         td(style="width:10%")
                             label Password: 
                         td(v-if="edit.Password" style="width:80%" colspans=2)
@@ -104,11 +104,12 @@ block corpo
                                 @click="edit.Password=!edit.Password"
                             ) Alterar Password
 
-                //input.btn.btn-xs.btn-default.col-sm-1(
+                input.btn.btn-xs.btn-default.col-sm-1(
                     @click="update"
                     type="button" 
                     value="Confirmar" 
                     :disabled="!checkready()"
+                    onclick='window.location.href = "/";'
                  )
 
 append scripts    
