@@ -5,7 +5,6 @@ var pedidos = new Vue({
         listaPedidos: [],
 
         data: "",
-        pid: "",
     },
     methods: {
         rowClicked: function(pid){

@@ -25,10 +25,8 @@ var legs = new Vue({
                 else this.listaLegs[i].entidades = "";
             }
         },
-        rowClicked: function (row) {
-            var id = row.id;
-
-            window.location.href = '/legislacao/' + id;
+        rowClicked: function (lid) {
+            window.location.href = '/legislacao/' + lid;
         },
         addLeg: function (row) {
             window.location.href = '/legislacao/adicionar';

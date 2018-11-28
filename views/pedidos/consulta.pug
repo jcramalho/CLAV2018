@@ -3,7 +3,44 @@ block corpo
     #pedido-form.panel.panel-default.panel-custom
         .panel-heading
             h1.page-header
-                div Consulta de pedido
+                div Consulta do pedido {{ pedido.codigo }}
 
+        .panel-body
+            .form-group
+                table.consulta(v-if="pedidoReady")
+
+                    //- Codigo
+                    tr
+                        td(style="width:10%")
+                            .info-label Número do pedido: 
+                        td(style="width:80%")
+                            | {{ pedido.codigo }}
+
+                    //- Tipo do pedido
+                    tr
+                        td(style="width:10%")
+                            .info-label Tipo: 
+                        td(style="width:80%")
+                            | {{ pedido.objeto.acao + " de " +pedido.objeto.tipo }}  
+
+                    //- Data de submissão
+                    tr
+                        td(style="width:10%")
+                            .info-label Data de submissão: 
+                        td(style="width:80%")
+                            | {{ dist[0].data }}
+
+                    //- Link
+                    tr
+                        td(style="width:10%")
+                            .info-label Link para o objeto: 
+                        td(style="width:80%")
+                            a(:href="'/' + tipoObj +'/' + pedido.objeto.codigo") {{ pedido.objeto.codigo }}
+
+
+                    normal-table(
+
+                    )
+                    
 append scripts
     script(src="/javascripts/pedidos/consulta.vue")

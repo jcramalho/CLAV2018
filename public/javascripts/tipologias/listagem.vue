@@ -5,11 +5,10 @@ var orgs = new Vue({
         ready: false,
     },
     methods: {
-        rowClicked: function(row){
+        rowClicked: function(tid){
             // permite navegar ate a tipologia em questao
-            var id = row.id;
             
-            window.location.href = '/tipologias/'+id;
+            window.location.href = '/tipologias/'+tid;
         },
     },
     created: function(){
