@@ -55,7 +55,7 @@ Entidades.listar = (filtro) => {
  */
 Entidades.tipologias = (id) => {
     const query = `SELECT ?id ?sigla ?designacao WHERE {
-        clav:ent_ACSS clav:pertenceTipologiaEnt ?uri .
+        clav:${id} clav:pertenceTipologiaEnt ?uri .
         ?uri clav:tipEstado "Ativa";
             clav:tipSigla ?sigla;
             clav:tipDesignacao ?designacao.

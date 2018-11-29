@@ -5,6 +5,7 @@
 var Classes = require('./api/classes.js');
 
 var classTree = []
+var classList = []
 var level1Classes = []
 var level2Classes = []
 var level3Classes = []
@@ -14,6 +15,7 @@ exports.reset = async () => {
     try {
         console.debug("Loading classes from DB")
         classTree = await loadClasses();
+        classList = level1Classes.concat(level2Classes, level3Classes, level4Classes)
         console.debug("Finished loading...")
     } catch(err) {
         throw err
@@ -21,6 +23,7 @@ exports.reset = async () => {
 }
 
 exports.getAllClasses = async () => { return classTree }
+exports.getClassesFlatList = async () => { return classList }
 exports.getLevel1Classes = async () => { return level1Classes }
 exports.getLevel2Classes = async () => { return level2Classes }
 exports.getLevel3Classes = async () => { return level3Classes }
