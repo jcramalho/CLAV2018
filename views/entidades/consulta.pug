@@ -44,7 +44,7 @@ block corpo
                                     td
                                         ul(style="padding-left:20px")
                                             li(v-for="o in listaTipologias")
-                                                a(:href="'/tipologias/consultar/'+o.id") {{ o.sigla }} 
+                                                a(:href="'/tipologias/'+o.id") {{ o.sigla }} 
                                                 | - {{ o.designacao }}
                             // p(v-else) Não está associada a nenhuma Tipologia.
                     //- Fim da segunda secção

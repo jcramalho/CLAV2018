@@ -34,6 +34,9 @@ router.get('/listagem', (req, res) => {
                     case 1:
                         item["level"] = 'Representante Entidade (Nível 1)'
                         break;
+                    case -1:
+                        item["level"] = 'Utilizador desativado (Nível -1)'
+                        break;
                 }
                 item["email"] = users[i].email;
                 item["id"] = users[i]._id;

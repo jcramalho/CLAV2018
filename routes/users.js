@@ -1,4 +1,5 @@
 var express = require('express');
+var bcrypt = require('bcryptjs')
 var router = express.Router();
 
 var Logging = require('../controllers/logging');
@@ -20,25 +21,26 @@ router.get('/perfil', Auth.isLoggedIn, function(req, res) {
     res.render('users/perfil', {title: "Perfil"});
 });
 
-router.get('/listagem', Auth.isLoggedIn, function(req, res) {
-    res.render('users/listagem', {title: "Listagem de utilizadores"});
-});
 
 router.get('/pedido_submetido/:id', Auth.isLoggedIn, function(req, res) {
     res.render('users/pedido_submetido', {title: "Pedido submetido"});
 });
 
-router.get('/listagem/:id', Auth.isLoggedIn, function(req, res) {
+router.get('/listagem', Auth.isLoggedIn, Auth.checkLevel6, function(req, res) {
+    res.render('users/listagem', {title: "Listagem de utilizadores"});
+});
+
+router.get('/listagem/:id', Auth.isLoggedIn, Auth.checkLevel6, function(req, res) {
     User.getUserById(req.params.id, function(err, user){
 		if (err) {	
 			throw err;
 		} else {
-            res.render('users/listagem_user', {utilizador:user, title: "Perfil utilizador"});
+            res.render('users/listagem_user', { utilizador:user, title: "Perfil utilizador"});
         }
 	});
 });
 
-router.get('/editar/:id', Auth.isLoggedIn, function(req, res) {
+router.get('/editar/:id', Auth.isLoggedIn, Auth.checkLevel6, function(req, res) {
     User.getUserById(req.params.id, function(err, user){
 		if (err) {	
 			throw err;
@@ -46,6 +48,29 @@ router.get('/editar/:id', Auth.isLoggedIn, function(req, res) {
             res.render('users/editar', { utilizador:user, title: "Edição utilizador"});
         }
 	});
+});
+
+router.get('/desativar/:id', Auth.isLoggedIn, Auth.checkLevel6, function(req, res) {
+    if(req.user.id!=req.params.id){
+        User.getUserById(req.params.id, function(err, user){
+            if (err) {	
+                throw err;
+            } else {
+                user.level = -1;
+                user.save(function(err) {
+                    if (err) {
+                        throw err;
+                    } else {
+                        req.flash('success_msg', 'Utilizador desativado com sucesso.');
+                        res.redirect('/users/listagem');
+                    }
+                });
+            }
+        });
+    }else{
+        req.flash('warn_msg', 'Não pode desativar o seu próprio utilizador.');
+        res.redirect('back');
+    }
 });
 
 // Entidade do utilizador autenticado
@@ -65,7 +90,7 @@ router.get('/entidade', Auth.isLoggedInAPI, function (req, res) {
 });
 
 //Atualizar nivel de utilizador
-router.post('/updateLevel/', Auth.isLoggedIn, function(req, res) {
+router.post('/updateLevel/', Auth.isLoggedIn, Auth.checkLevel7, function(req, res) {
     User.getUserById(req.body.id, function(err, user){
 		if (err) {	
 			throw err;
@@ -75,17 +100,35 @@ router.post('/updateLevel/', Auth.isLoggedIn, function(req, res) {
                 if (err) {
                     throw err;
                 } else {
-                    return res.redirect('back');
+                    req.flash('success_msg', 'Nível de utilizador modificado com sucesso!');
+                    res.redirect('/users/listagem');
                 }
             });
         }
     });
 });
 
+//Atualizar password de utilizador
+router.post('/updatePassword/', Auth.isLoggedIn, function(req, res) {
+    User.getUserById({'_id': req.user.id}, function(err, user){
+		if (err) {	
+			throw err;
+		} else {
+            User.updatePassword(user,req.body.Password, function (err, user) {
+                if (err){
+                    throw err;
+                }
+            });
+        }
+        req.logout();
+        req.flash('success_msg', 'Password modificada com sucesso! Por favor faça login novamente.');
+        res.redirect('/');
+    });
+});
+
 // Guardar trabalho
 router.put('/save/:type', Auth.isLoggedInAPI, function (req, res) {
     User.getUserById(req.user._id, function(err, user){
-
 		if (err) {	
 			throw err;
 		}
