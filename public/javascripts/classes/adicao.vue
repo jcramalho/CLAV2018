@@ -118,9 +118,17 @@ var newClass = new Vue({
         modal: VueStrap.modal,
     },
     data: {
-        nEdits: 0,
-        type: 1,
+        codeFormats: {
+                1: /^[0-9]{3}$/,
+                2: /^[0-9]{3}\.[0-9]{2}$/,
+                3: /^[0-9]{3}\.[0-9]{2}\.[0-9]{3}$/,
+                4: /^[0-9]{3}\.[0-9]{2}\.[0-9]{3}\.[0-9]{3}$/,
+        },
 
+        classLevel: 1,
+
+        nEdits: 0,
+        
         parent: null,
         parents: null,
         parentsReady: false,
@@ -201,8 +209,6 @@ var newClass = new Vue({
             Iniciador: [],
         },
 
-        classesTableHeader: ["CLASSE", "TÍTULO"],
-        cwidth: ['16%', '81%'],
         relationList: [],
         relationsSelected: [],
         relationTypes: [
@@ -342,20 +348,20 @@ var newClass = new Vue({
         parent: function () {
             this.code = this.parent.slice(1, this.parent.length) + ".";
         },
-        type: function () {
+        classLevel: function () {
             this.parent = "";
-            if (this.type > 1) {
+            if (this.classLevel > 1) {
                 this.loadParents();
             }
-            if (this.type >= 3 && !this.classesReady) {
+            if (this.classLevel >= 3 && !this.classesReady) {
                 this.loadClasses();
             }
-            side.changeNav(this.type);
+            side.changeNav(this.classLevel);
         },
         code: function () {
             this.codeMessage = "";
 
-            if (this.type > 1) {
+            if (this.classLevel > 1) {
                 if (this.code.indexOf(this.parent.slice(1, this.parent.length)) != 0) {
                     this.code = this.parent.slice(1, this.parent.length) + ".";
                 }
@@ -363,14 +369,8 @@ var newClass = new Vue({
                     this.code = this.parent.slice(1, this.parent.length) + ".";
                 }
             }
-            let reg = {
-                1: /^[0-9]{3}$/,
-                2: /^[0-9]{3}\.[0-9]{2}$/,
-                3: /^[0-9]{3}\.[0-9]{2}\.[0-9]{3}$/,
-                4: /^[0-9]{3}\.[0-9]{2}\.[0-9]{3}\.[0-9]{3}$/,
-            }
 
-            if (!reg[this.type].test(this.code)) {
+            if (!this.codeFormats[this.classLevel].test(this.code)) {
                 this.codeMessage = "Formato inválido";
             }
             else {
@@ -670,126 +670,25 @@ var newClass = new Vue({
 
             this.$http.get("/api/classes")
                 .then(function (response) {
-                    content = response.body;
-                })
-                .then(function () {
-                    var classList = [];
-                    classList = this.parseClasses(content);
-
-                    this.relationLists = JSON.parse(
-                        JSON.stringify(classList)
-                    );
-
-                    this.pca.criteria.classes = JSON.parse(
-                        JSON.stringify(classList)
-                    );
-
-                    this.df.criteria.classes = JSON.parse(
-                        JSON.stringify(classList)
-                    );
-
+                    this.relationLists = response.body;
+                    this.pca.criteria.classes = response.body;
+                    this.df.criteria.classes = response.body;
                     this.classesReady = true;
                 })
                 .catch(function (error) {
                     console.error(error);
                 });
         },
-        parseClasses: function (dataToParse) {
-            var destination = [];
-            const indexes = {};
-            let avo;
-            let pai;
-
-            for (let pn of dataToParse) {
-                let codeAvo = pn.AvoCodigo.value;
-                let indexesAvo = indexes[codeAvo];
-                let codePai = pn.PaiCodigo.value;
-
-                let pnSelected = false;
-
-
-                if (indexesAvo) {
-                    avo = indexesAvo.i;
-
-                    if (indexesAvo.sub[codePai] != undefined) {
-                        pai = indexesAvo.sub[codePai];
-                    }
-                    else {
-                        pai = Object.keys(indexesAvo.sub).length;
-
-                        indexes[codeAvo].sub[codePai] = pai;
-
-                        let infoPai = {
-                            codeID: pn.Pai.value.replace(/[^#]+#(.*)/, '$1'),
-                            content: [codePai, pn.PaiTitulo.value],
-                            drop: false,
-                            selected: pnSelected,
-                            subReady: true,
-                            sublevel: []
-                        }
-                        destination[avo].sublevel.push(infoPai);
-                    }
-                }
-                else {
-                    avo = Object.keys(indexes).length;
-                    pai = 0;
-
-                    indexes[codeAvo] = { i: avo, sub: {} };
-                    indexes[codeAvo].sub[codePai] = pai;
-
-                    let infoAvo = {
-                        codeID: pn.Avo.value.replace(/[^#]+#(.*)/, '$1'),
-                        content: [codeAvo, pn.AvoTitulo.value],
-                        drop: false,
-                        selected: pnSelected,
-                        subReady: true,
-                        sublevel: [{
-                            codeID: pn.Pai.value.replace(/[^#]+#(.*)/, '$1'),
-                            content: [codePai, pn.PaiTitulo.value],
-                            drop: false,
-                            selected: pnSelected,
-                            subReady: true,
-                            sublevel: [],
-                        }]
-                    }
-                    destination.push(infoAvo);
-                }
-
-                let pninfo = {
-                    codeID: pn.PN.value.replace(/[^#]+#(.*)/, '$1'),
-                    content: [pn.PNCodigo.value, pn.PNTitulo.value],
-                    drop: false,
-                    selected: pnSelected,
-                }
-
-                if (pn.Filhos.value.length) {
-                    pninfo.subReady = true;
-                    pninfo.sublevel = [];
-
-                    for (let filho of pn.Filhos.value.split('###')) {
-                        let filhoInfo = filho.split(':::');
-
-                        pninfo.sublevel.push({
-                            codeID: filhoInfo[0].replace(/[^#]+#(.*)/, '$1'),
-                            content: [filhoInfo[1], filhoInfo[2]],
-                            drop: false,
-                            selected: pnSelected,
-                        });
-                    }
-                }
-                destination[avo].sublevel[pai].sublevel.push(pninfo);
-            }
-
-            return destination;
-        },
         selectClicked(payload) {
+            alert(JSON.stringify(payload))
             var row = payload.rowData;
 
             if (!row.selected) {
                 let newPN = {
-                    name: row.content[1],
-                    code: row.content[0],
-                    id: row.codeID,
+                    selected: true,
+                    titulo: row.titulo,
+                    codigo: row.codigo,
+                    id: 'c' + row.codigo,
                     relType: null
                 };
 
@@ -797,21 +696,20 @@ var newClass = new Vue({
 
                 this.relationsSelected.sort(
                     function (a, b) {
-                        return a.code.localeCompare(b.code);
+                        return a.codigo.localeCompare(b.code);
                     }
                 );
             }
 
             else {
                 let index = 0;
+                let found = false;
 
-                for (pn of this.relationsSelected) {
-                    if (pn.id == row.codeID) {
-                        break;
-                    }
+                while(index < this.relationsSelected.length && !found){
+                    if (this.relationsSelected[index].codigo == row.codigo) found=true;
                     index++;
                 }
-
+                    
                 if (index < this.relationsSelected.length) {
                     this.relationsSelected.splice(index, 1);
                 }
@@ -928,7 +826,7 @@ var newClass = new Vue({
                 });
         },
         loadParents: function () {
-            this.$http.get("/api/classes/nivel/" + (this.type - 1))
+            this.$http.get("/api/classes/nivel/" + (this.classLevel - 1))
                 .then(function (response) {
                     this.parents = response.body.map(function (item) {
                         return {
@@ -1003,11 +901,11 @@ var newClass = new Vue({
                 }
             }
 
-            if (this.type == 1) {
+            if (this.classLevel == 1) {
                 //verificar campos obrigatórios
                 if (this.code && this.title) {
                     dataObj = {
-                        Level: this.type,               //
+                        Level: this.classLevel,               //
                         Parent: null,                   //
                         Code: this.code,                //
                         Title: this.title,              //
@@ -1036,7 +934,7 @@ var newClass = new Vue({
             }
             else {
                 if (this.parent && this.code && this.title) {
-                    if (this.type >= 3) {
+                    if (this.classLevel >= 3) {
                         if (this.procTrans == 'S') {
                             let check = 0;
 
@@ -1050,7 +948,7 @@ var newClass = new Vue({
                             }
                             else {
                                 dataObj = {
-                                    Level: this.type,                       //
+                                    Level: this.classLevel,                       //
                                     Parent: this.parent,                    //
                                     Code: this.code,                        //
                                     Title: this.title,                      //
@@ -1101,7 +999,7 @@ var newClass = new Vue({
                         }
                         else {
                             dataObj = {
-                                Level: this.type,                   //
+                                Level: this.classLevel,                   //
                                 Parent: this.parent,                //
                                 Code: this.code,                    //
                                 Title: this.title,                  //
@@ -1152,7 +1050,7 @@ var newClass = new Vue({
                     }
                     else {
                         dataObj = {
-                            Level: this.type,               //
+                            Level: this.classLevel,               //
                             Parent: this.parent,            //
                             Code: this.code,                //
                             Title: this.title,              //
