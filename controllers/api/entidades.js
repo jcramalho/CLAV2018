@@ -9,6 +9,7 @@ const Entidades = module.exports;
  * @property {string} sigla (ex: "AR")
  * @property {string} designacao (ex: "Assembleia da República")
  * @property {string} internacional (ex: "Sim" ou "Não")
+ * @property {string} sioe  (id para sistema SIOE)
  * @property {string} estado (ex: "Ativa", "Inativa" ou "Harmonização")
  */
 
@@ -21,17 +22,19 @@ const Entidades = module.exports;
  * @param {string} filtro.sigla (ex: "AR")
  * @param {string} filtro.designacao (ex: "Assembleia da República")
  * @param {string} filtro.internacional (ex: "Sim" ou "Não")
+ * @param {string} filtro.sioe (ex: "875780390")
  * @param {string} filtro.estado (ex: "Ativa", "Inativa" ou "Harmonização")
  * @return {Promise<[Entidade] | Error>} promessa que quando cumprida contém a
  * lista das entidades existentes que respeitam o filtro dado
  */
-Entidades.listar = (filtro) => {
-    const query = `SELECT ?id ?sigla ?designacao ?internacional ?estado {
+Entidades.listar = async (filtro) => {
+    const query = `SELECT ?id ?sigla ?designacao ?internacional ?sioe ?estado {
         ?uri rdf:type clav:Entidade ;
             clav:entEstado ?estado;
             clav:entDesignacao ?designacao ;
             clav:entSigla ?sigla ;
-            clav:entInternacional ?internacional.
+            clav:entInternacional ?internacional ;
+            clav:entSIOE ?sioe.
         BIND(CONCAT('ent_', ?sigla) AS ?id).
 
         FILTER (${Object.entries(filtro)
@@ -77,12 +80,13 @@ Entidades.tipologias = (id) => {
  * então a promessa conterá o valor `undefined`
  */
 Entidades.consultar = (id) => {
-    const query = `SELECT ?sigla ?designacao ?estado ?internacional WHERE {
+    const query = `SELECT ?sigla ?designacao ?estado ?internacional ?sioe WHERE {
         clav:${id} rdf:type clav:Entidade ;
             clav:entDesignacao ?designacao ;
             clav:entSigla ?sigla ;
             clav:entEstado ?estado ;
-            clav:entInternacional ?internacional .
+            clav:entInternacional ?internacional ;
+            clav:entSIOE ?sioe .
     }`;
 
     return client.query(query)
@@ -131,20 +135,21 @@ Entidades.criar = (entidade, utilizador) => {
             ${entidade.tipologias.map(tipologia => `clav:pertenceTipologiaEnt clav:${tipologia.id} ;`).join('\n')}
             clav:entEstado 'Harmonização' .
     }`;
+    const pedido = {
+        criadoPor: utilizador,
+        objeto: {
+            codigo: `ent_${entidade.sigla}`,
+            tipo: 'Entidade',
+            acao: 'Criação',
+        },
+        distribuicao: [{
+            estado: "Submetido",
+        }]
+    };
 
     return client.query(query)
         .execute()
-        .then(() => Pedidos.criar({
-            criadoPor: utilizador,
-            objeto: {
-                codigo: `ent_${entidade.sigla}`,
-                tipo: 'Entidade',
-                acao: 'Criação',
-            },
-            distribuicao: [{
-                estado: "Submetido",
-            }]
-        }));
+        .then(() => Pedidos.criar(pedido));
 };
 
 /**
@@ -160,7 +165,7 @@ Entidades.criar = (entidade, utilizador) => {
  * pedido gerado para a remoção da entidade
  */
 Entidades.apagar = (id, utilizador) => {
-    return Pedidos.criar({
+    const pedido = {
         criadoPor: utilizador,
         objeto: {
             codigo: id,
@@ -170,7 +175,9 @@ Entidades.apagar = (id, utilizador) => {
         distribuicao: [{
             estado: "Submetido",
         }]
-    });
+    };
+
+    return Pedidos.criar(pedido);
 };
 
 /**
