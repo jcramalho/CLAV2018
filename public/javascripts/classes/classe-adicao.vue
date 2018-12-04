@@ -1,107 +1,3 @@
-var side = new Vue({
-    el: '#sidenav',
-    data: {
-        navComplete: [
-            {
-                label: "Nível",
-                anchor: "#nivel",
-                lvl: 1
-            },
-            {
-                label: "Classe Pai",
-                anchor: "#pai",
-                lvl: 2
-            },
-            {
-                label: "Código",
-                anchor: "#codigo",
-                lvl: 1
-            },
-            {
-                label: "Título",
-                anchor: "#titulo",
-                lvl: 1
-            },
-            {
-                label: "Descrição",
-                anchor: "#descricao",
-                lvl: 1
-            },
-            {
-                label: "Notas de Aplicação",
-                anchor: "#notasA",
-                lvl: 1
-            },
-            {
-                label: "Exemplos de Notas de Aplicação",
-                anchor: "#exemplos",
-                lvl: 1
-            },
-            {
-                label: "Notas de Exclusão",
-                anchor: "#notasE",
-                lvl: 1
-            },
-            {
-                label: "Termos de Índice",
-                anchor: "#termosI",
-                lvl: 3
-            },
-            {
-                label: "Tipo de Processo",
-                anchor: "#tipoTrans",
-                lvl: 3
-            },
-            {
-                label: "Processo Tranversal",
-                anchor: "#tipTrans",
-                lvl: 3
-            },
-            {
-                label: "Donos",
-                anchor: "#donos",
-                lvl: 3
-            },
-            {
-                label: "Participantes",
-                anchor: "#participantes",
-                lvl: 3
-            },
-            {
-                label: "Processos Relacionados",
-                anchor: "#PNrel",
-                lvl: 3
-            },
-            {
-                label: "Legislação",
-                anchor: "#legislacao",
-                lvl: 3
-            },
-            {
-                label: "PCA",
-                anchor: "#PCA",
-                lvl: 3
-            },
-            {
-                label: "Destino Final",
-                anchor: "#DF",
-                lvl: 3
-            },
-        ],
-        nav: []
-    },
-    methods: {
-        changeNav: function (type) {
-            this.nav = this.navComplete.filter(
-                a => a.lvl <= type
-            )
-        }
-    },
-    mounted() {
-        this.changeNav(1);
-    }
-})
-
 var newClass = new Vue({
     el: '#nova-classe-form',
     http: {
@@ -125,73 +21,43 @@ var newClass = new Vue({
                 4: /^[0-9]{3}\.[0-9]{2}\.[0-9]{3}\.[0-9]{3}$/,
         },
 
-        classLevel: 1,
+        classe: {               // Objeto da classe que será gravado nas caches dos pedidps e pendentes
+            nivel: 1,
+            classePai: null,
+            codigo: null,
+            titulo: null,
+            descricao: null,
+            notasAp: [],
+            exemplosNotasAp: [],
+            notasEx: [],
+            termosInd: [],
+            tipoProcesso: "pc",
+            processoTransversal: "N",
+            donos: [],
+            participantes: {
+                Apreciador: [],
+                Assessor: [],
+                Comunicador: [],
+                Decisor: [],
+                Iniciador: [],
+                Executor: [],
+            },
+            processosRelacionados: [],
+        },
+
+        classesPai: null,
 
         nEdits: 0,
-        
-        parent: null,
-        parents: null,
         parentsReady: false,
-
-        code: null,
-
-        title: null,
+        legsReady: false,
+        entidadesReady: false,
+        classesReady: false,
 
         legsTableHeader: ["#", "Tipo", "Número", "Título", "Data"],
         legsTableWidth: ['5%', '19%', '11%', '50%', '15%'],
         legList: [],
         selectedLegs: [],
-        legsReady: false,
-
-        description: null,
-
-        newExAppNote: null,
-        exAppNotes: [],
-
-        newAppNote: null,
-        appNotes: [],
-
-        newDelNote: null,
-        delNotes: [],
-
-        newIndex: null,
-        indexes: [],
-
-        status: "H",
-
-        procType: "pc",
-
-        procTrans: "N",
-
-        orgsTableHeader: ["#", "Sigla", "Designacao", "Tipo"],
-        orgsTableWidth: ["4%", "15%", "70%", "15%"],
-        ownerList: [],
-        selectedOwners: [],
-        orgsReady: false,
-
-        entidadesTableHeader: ["#", "Sigla", "Designacao", "Tipo"],
-        entidadesTableWidth: ["4%", "15%", "70%", "15%"],
-        donos: [],
         donosSelecionados: [],
-        entidadesReady: false,
-
-        partDic: {
-            Apreciador: "Apreciar",
-            Assessor: "Assessorar",
-            Comunicador: "Comunicar",
-            Decisor: "Decidir",
-            Executor: "Executar",
-            Iniciador: "Iniciar",
-        },
-
-        participantLists: {
-            Apreciador: [],
-            Assessor: [],
-            Comunicador: [],
-            Decisor: [],
-            Iniciador: [],
-            Executor: [],
-        },
         participantsSelected: {
             Apreciador: [],
             Assessor: [],
@@ -208,9 +74,31 @@ var newClass = new Vue({
             Executor: [],
             Iniciador: [],
         },
-
-        relationList: [],
         relationsSelected: [],
+        relationsSelectedInfo: [],
+        
+        newExAppNote: null,
+        newAppNote: null,
+        newDelNote: null,
+
+        newIndex: null,
+        indexes: [],
+
+        status: "H",
+
+        entidadesTableHeader: ["#", "Sigla", "Designacao", "Tipo"],
+        entidadesTableWidth: ["4%", "15%", "70%", "15%"],
+
+        partDic: {
+            Apreciador: "Apreciar",
+            Assessor: "Assessorar",
+            Comunicador: "Comunicar",
+            Decisor: "Decidir",
+            Executor: "Executar",
+            Iniciador: "Iniciar",
+        },
+
+        
         relationTypes: [
             {
                 label: 'Antecessor de',
@@ -245,8 +133,8 @@ var newClass = new Vue({
                 value: 'eSuplementoPara',
             }
         ],
-        relationsSelectedInfo: [],
-        classesReady: false,
+        
+        
 
         pca: {
             dueDate: null,
