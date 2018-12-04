@@ -79,7 +79,7 @@ var users = new Vue({
             {
                 valor: 'Termos de Índice',
                 consultar: '/termosIndice',
-                submeter: '#',
+                submeter: '/termosIndice/adicionar',
                 style: `
                     border-width:1px;
                     border-color: #5c6bc0;

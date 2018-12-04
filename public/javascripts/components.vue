@@ -187,7 +187,7 @@ Vue.component('custom-table-simple', {
             this.pages = ret;
 
             this.rowsShow = this.completeRows.slice(0, this.rowsPerPage);
-            alert(JSON.stringify(this.rowsShow))
+            //alert(JSON.stringify(this.rowsShow))
         },
     },
     beforeMount: function () {

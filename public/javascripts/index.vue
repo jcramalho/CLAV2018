@@ -61,6 +61,7 @@ new Vue({
             {
                 valor: 'Termos de Índice',
                 consultar: '/termosIndice',
+                submeter: '/termosIndice/adicionar',
                 text: 'Lista dos Termos de Índice. Em atualização constante.',
                 notlogged: 'Para novas propostas, faça Login.'
             },

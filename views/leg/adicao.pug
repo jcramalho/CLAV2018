@@ -14,7 +14,7 @@ block corpo
                         td(style="width:80%")
                             input(
                                 size="50"
-                                v-model="diploma.Tipo"
+                                v-model="diploma.tipo"
                             )
                     
                     //- Número
@@ -24,7 +24,7 @@ block corpo
                         td(style="width:80%")
                             input(
                                 size="50"
-                                v-model="diploma.Numero"
+                                v-model="diploma.numero"
                                 pattern="[0-9]+(\-\w)?/[0-9]+"
                             )
 
@@ -46,7 +46,7 @@ block corpo
                                         
                                         class-table='table table-condensed'
 
-                                        @select-clicked="orgSelected($event,diploma.Orgs)"
+                                        @select-clicked="orgSelected($event,diploma.entidades)"
                                     )
                                     h4(
                                         v-else
@@ -66,11 +66,11 @@ block corpo
                     //- Sumário
                     tr
                         td(style="width: 10%")
-                            .info-label Sumário: 
+                            .info-label Título: 
                         td(style="width:80%")
                             input(
                                 size="50"
-                                v-model="diploma.Titulo"
+                                v-model="diploma.titulo"
                             )
        
                     //- Link
@@ -80,7 +80,7 @@ block corpo
                         td(style="width:80%")
                             input(
                                 size="50"
-                                v-model="diploma.Link"
+                                v-model="diploma.link"
                             )
 
             spinner(ref="spinner" size="lg" fixed text="Por favor aguarde...")
