@@ -33,8 +33,10 @@ Entidades.listar = async (filtro) => {
             clav:entEstado ?estado;
             clav:entDesignacao ?designacao ;
             clav:entSigla ?sigla ;
-            clav:entInternacional ?internacional ;
-            clav:entSIOE ?sioe.
+            clav:entInternacional ?internacional .
+        OPTIONAL {
+            ?uri clav:entSIOE ?sioe.
+        }
         BIND(CONCAT('ent_', ?sigla) AS ?id).
 
         FILTER (${Object.entries(filtro)
@@ -85,8 +87,10 @@ Entidades.consultar = (id) => {
             clav:entDesignacao ?designacao ;
             clav:entSigla ?sigla ;
             clav:entEstado ?estado ;
-            clav:entInternacional ?internacional ;
-            clav:entSIOE ?sioe .
+            clav:entInternacional ?internacional .
+        OPTIONAL {
+            clav:${id} clav:entSIOE ?sioe
+        }
     }`;
 
     return client.query(query)
@@ -128,7 +132,7 @@ Entidades.existe = (entidade) => {
  */
 Entidades.criar = (entidade, utilizador) => {
     const query = `INSERT DATA {
-        clav:ent_${entidade.sigla} rdf:type owl:NamedIndividual , clav:Entidade;
+        clav:ent_${entidade.sigla} rdf:type owl:NamedIndividual , clav:Entidade ;
             clav:entDesignacao '${entidade.designacao}' ;
             clav:entSigla '${entidade.sigla}' ;
             clav:entInternacional '${entidade.internacional}' ;
