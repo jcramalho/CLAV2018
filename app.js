@@ -18,6 +18,9 @@ var expressValidator = require('express-validator');
 var session = require('express-session');
 var passport = require('passport');
 var flash = require('connect-flash');
+var FileStore = require('session-file-store')(session);
+var uuid = require('uuid/v4');
+
 require('./config/passport')(passport);
 
 //config
@@ -28,9 +31,11 @@ app.use(express.static(__dirname + '/public'));
 
 // Express Session
 app.use(session({
-    secret: 'secret',
+    secret: 'DBK8R6L3Y0QQS3KKVI0QG5W0',
     saveUninitialized: true,
-    resave: true
+    resave: true,
+    store: new FileStore(),
+    genid: () =>  {return uuid()}
 }));
 
 // Passport init
