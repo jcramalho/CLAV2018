@@ -1,0 +1,29 @@
+extend ../layout
+block corpo
+    #novo-termo-indice.panel.panel-defaul.panel-custom
+        .panel-heading
+            h1.page-header Novo Termo de Índice
+        .panel-body
+            .form-group
+                table
+                    tr
+                        td(style="width:10%")
+                            label Termo: 
+                        td(style="width:80%")
+                            input(
+                                size="70"
+                                v-model="termo"
+                            )
+
+            spinner(ref="spinner" fixed size="lg" text="Por favor aguarde...")
+
+            input.btn.btn-xs.btn-default.col-sm-2(
+                type="button" 
+                @click="add" 
+                value="Adicionar" 
+                :disabled="!(termo)"
+            )
+            p.col-sm-7 {{ message }}
+
+append scripts    
+    script(src="/javascripts/tipologias/adicao.vue")

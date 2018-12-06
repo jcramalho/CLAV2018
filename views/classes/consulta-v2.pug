@@ -1,18 +1,12 @@
 extends ../layout
 block lateral
     #sidebar-tabela-classes
-        custom-table-waterfall(
-            v-if="ready"
+        tree(
+            class="tree--small"
+            :data="treeData"
+            :options="treeOptions"
 
-            filter-on="true"
-            sidebar="true"
-
-            :complete-rows="tableData"
-            :n-edits="nEdits"
-            
-            class='sidebar-nav-table'
-            
-            @row-clicked="rowClicked($event)"
+            @node:selected="onNodeSelected"
         )
         
 block corpo
@@ -288,5 +282,5 @@ block corpo
 
 append scripts    
     script(src="/javascripts/classes/consulta.vue")
-    script(src="/javascripts/classes/consulta-sidebar.vue")
+    script(src="/javascripts/classes/consulta-sidebar-v2.vue")
     script(src="/javascripts/v-components/liquor-tree.umd.js")

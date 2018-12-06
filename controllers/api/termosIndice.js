@@ -68,3 +68,38 @@ TermosIndice.lastID = function () {
             console.error(error);
         });
 }
+
+/**
+ * Insere um novo termo de indice no sistema, gerando um pedido apropriado.
+ * O TI criado encontrar-se-á no estado "Harmonização".
+ * NOTA: Esta função altera sempre o estado da base de dados, devendo-se por
+ * isso verificar primeiro se o identificador da entidade a inserir ainda não
+ * se encontra em uso.
+ * 
+ * @see pedidos 
+ * 
+ * @param {TermosIndice}  termoIndice termos de indice que se pretende criar
+ * @param {string} utilizador email do utilizador que criou a entidade
+ * @return {Promise<Pedido | Error>} promessa que quando cumprida possui o
+ * pedido gerado para a criação de novo termo de indice
+ */
+/*TermosIndice.criar = (termoIndice, utilizador) => {
+    const query = `INSERT DATA {
+        clav:ent_${termoIndice.id} rdf:type owl:NamedIndividual , clav:TermoIndice;
+
+    }`;
+
+    return client.query(query)
+        .execute()
+        .then(() => Pedidos.criar({
+            criadoPor: utilizador,
+            objeto: {
+                codigo: `ti_${termoIndice.id}`,
+                tipo: 'Termo de indice',
+                acao: 'Criação',
+            },
+            distribuicao: [{
+                estado: "Submetido",
+            }]
+        }));
+};*/

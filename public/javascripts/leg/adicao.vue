@@ -2,12 +2,12 @@ var newLeg = new Vue({
     el: '#nova-legislacao-form',
     data: {
         diploma : {
-            Titulo: "",
-            Tipo: "",
-            Numero: "",
-            Data: "",
-            Link: "",
-            Orgs: [],
+            titulo: "",
+            tipo: "",
+            numero: "",
+            data: "",
+            link: "",
+            entidades: [],
         },
         orgs: [],
         orgsReady: false,
@@ -24,21 +24,20 @@ var newLeg = new Vue({
     },
     methods: {
         dataEscolhida: function(payload){
-            this.diploma.Data=""+payload;
+            this.diploma.data=""+payload;
         },
         readyToCreate: function(){
             for(let field in this.diploma){
-                if(this.diploma[field].length==0) return false;   
+                if(this.diploma[field].length==0  && field!="entidades" ) return false;   
             }
-
             return true;
         },
         add: function(){
             this.message="";
 
             var formats= {
-                Numero: new RegExp(/[0-9]+(\-\w)?\/[0-9]+/),
-                Data: new RegExp(/[0-9]+\/[0-9]+\/[0-9]+/)
+                numero: new RegExp(/[0-9]+(\-\w)?\/[0-9]+/),
+                data: new RegExp(/[0-9]+\/[0-9]+\/[0-9]+/)
             }
 
             for(let field in formats){
@@ -48,16 +47,16 @@ var newLeg = new Vue({
                 }
             }
 
-            let link = new RegExp(/https?:\/\/.+/);
+            let Link = new RegExp(/https?:\/\/.+/);
 
-            if(!link.test(this.diploma.Link)){
-                this.diploma.Link = "http://"+this.diploma.Link;
+            if(!Link.test(this.diploma.link)){
+                this.diploma.link = "http://"+this.diploma.link;
             }
 
             this.$refs.spinner.show();
-            var dataObj = JSON.parse(JSON.stringify(this.diploma));            
+            var dataObj = JSON.parse(JSON.stringify(this.diploma));  
 
-            this.$http.post('/api/legislacao/',dataObj,{
+            this.$http.post('/api/legislacao/', dataObj,{
                 headers: {
                     'content-type' : 'application/json'
                 }
@@ -65,7 +64,7 @@ var newLeg = new Vue({
                 .then( function(response) { 
                     regex = new RegExp(/leg_[0-9]+/, "gi");
 
-                    if(regex.test(response.body)){
+                    if(regex.test(response.body.objeto.codigo)){
                         window.location.href = '/pedidos/submissao';
                     }
                     else {

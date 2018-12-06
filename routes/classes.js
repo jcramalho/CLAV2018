@@ -12,7 +12,7 @@ router.get('/adicionar', Auth.isLoggedIn, function(req, res) {
 });
 
 router.get('/consultar/:id', function(req, res) {
-    res.render('classes/consulta',{classID: req.params.id, sidebar: true, title: "Dados de classe"});
+    res.render('classes/consulta-v2',{classID: req.params.id, sidebar: true, title: "Dados de classe"});
 });
 
 router.get('/editar/:id', Auth.isLoggedIn, function(req, res) {

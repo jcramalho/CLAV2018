@@ -15,6 +15,15 @@ router.get('/', async (req, res) => {
     }
 })
 
+// Devolve a lista de classes em num array simples
+router.get('/lista', async (req, res) => { 
+    try {
+        res.jsonp(await State.getClassesFlatList());  
+    } catch(err) {
+        res.status(500).send(`Erro na listagem das classes em formato "flat list": ${err}`)
+    }
+})
+
 // Verifica se um determinado código de classe já existe
 router.get('/verificar/:codigo', async (req, res) => {
     try {
@@ -147,8 +156,8 @@ router.get('/:id/df', (req, res) => {
     Classes.df(req.params.id)
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na consulta do DF associado à classe ${req.params.id}: ${erro}`))
-        .then(dados => res.jsonp(fa.simplificaSPARQLRes(dados, ['idDF', 'valor', 'idJustificacao'])))
-        .catch(erro => res.jsonp({cod: "404", mensagem: "Erro na consulta do DF associado à classe "+req.params.id+": " + erro}))
+        //.then(dados => res.jsonp(fa.simplificaSPARQLRes(dados, ['idDF', 'valor', 'idJustificacao'])))
+        //.catch(erro => res.jsonp({cod: "404", mensagem: "Erro na consulta do DF associado à classe "+req.params.id+": " + erro}))
 })
 
 // Falta testar e decidir o que devolver
@@ -202,22 +211,6 @@ router.get('/filtrar/:orgs', function (req, res) {
         });
 })
 
-router.get('/:id', function (req, res) {
-    Classes.stats(req.params.id)
-        .then(clas => res.send(clas))
-        .catch(function (error) {
-            console.error(error);
-        });
-})
-
-router.get('/:id/descendencia', function (req, res) {
-    Classes.children(req.params.id)
-        .then(list => res.send(list))
-        .catch(function (error) {
-            console.error(error);
-        });
-})
-
 router.get('/:id/descendenciaIndex', function (req, res) {
     Classes.childrenNew(req.params.id)
         .then(list => res.send(list))
@@ -225,100 +218,6 @@ router.get('/:id/descendenciaIndex', function (req, res) {
             console.error(error);
         });
 })
-
-router.get('/:id/donos', function (req, res) {
-    Classes.owners(req.params.id)
-        .then(owners => res.send(owners))
-        .catch(function (error) {
-            console.error(error);
-        });
-})
-
-router.get('/:id/legislacao', function (req, res) {
-    Classes.legislation(req.params.id)
-        .then(legs => res.send(legs))
-        .catch(function (error) {
-            console.error(error);
-        });
-})
-
-router.get('/:id/exemplosNotasAp', function (req, res) {
-    Classes.exAppNotes(req.params.id)
-        .then(list => res.send(list))
-        .catch(function (error) {
-            console.error(error);
-        });
-})
-
-router.get('/:id/notasAp', function (req, res) {
-    Classes.appNotes(req.params.id)
-        .then(list => res.send(list))
-        .catch(function (error) {
-            console.error(error);
-        });
-})
-
-router.get('/:id/notasEx', function (req, res) {
-    Classes.delNotes(req.params.id)
-        .then(list => res.send(list))
-        .catch(function (error) {
-            console.error(error);
-        });
-})
-
-router.get('/:id/relacionados', function (req, res) {
-    Classes.related(req.params.id)
-        .then(list => res.send(list))
-        .catch(function (error) {
-            console.error(error);
-        });
-})
-
-router.get('/:id/participantes', function (req, res) {
-    Classes.participants(req.params.id)
-        .then(list => res.send(list))
-        .catch(function (error) {
-            console.error(error);
-        });
-})
-
-router.get('/:id/pca', function (req, res) {
-    Classes.pca(req.params.id)
-        .then(function (data) {
-            let criteria = data.Criterios.value.split("###");
-            criteria = criteria.map(a => a.replace(/[^#]+#(.*)/, '$1'));
-
-            Classes.criteria(criteria)
-                .then(function (criteriaData) {
-
-                    data.Criterios.type = "array";
-                    data.Criterios.value = criteriaData;
-
-                    res.send(data);
-                })
-                .catch(error=>console.error(error));
-        })
-        .catch(error=>console.error(error));
-})
-
-router.get('/:id/df', function (req, res) {
-    Classes.df(req.params.id)
-        .then(function (data) {
-            let criteria = data.Criterios.value.split("###");
-            criteria = criteria.map(a => a.replace(/[^#]+#(.*)/, '$1'));
-
-            Classes.criteria(criteria)
-                .then(function (criteriaData) {
-                    data.Criterios.type = "array";
-                    data.Criterios.value = criteriaData;
-
-                    res.send(data);
-                })
-                .catch(error=>console.error(error));
-        })
-        .catch(error=>console.error(error));
-})
-
 
 router.put('/:id', Auth.isLoggedInAPI, function (req, res) {
     var dataObj = req.body;

@@ -79,25 +79,26 @@ Tipologias.consultar = (id) => {
  */
 Tipologias.criar = (tipologia, utilizador) => {
     const query = `INSERT DATA {
-        clav:${tipologia.sigla} rdf:type owl:NamedIndividual , clav:TipologiaEntidade ;
+        clav:tip_${tipologia.sigla} rdf:type owl:NamedIndividual , clav:TipologiaEntidade ;
             clav:tipDesignacao '${tipologia.designacao}' ;
             clav:tipSigla '${tipologia.sigla}' ;
             clav:tipEstado "Harmonização" .
     }`;
+    const pedido = {
+        criadoPor: utilizador,
+        objeto: {
+            codigo: `tip_${tipologia.sigla}`,
+            tipo: 'Tipologia',
+            acao: 'Criação',
+        },
+        distribuicao: [{
+            estado: "Submetido",
+        }]
+    };
 
     return client.query(query)
         .execute()
-        .then(() => Pedidos.criar({
-            criadoPor: utilizador,
-            objeto: {
-                codigo: `tip_${tipologia.sigla}`,
-                tipo: 'Tipologia',
-                acao: 'Criação',
-            },
-            distribuicao: [{
-                estado: "Submetido",
-            }]
-        }));
+        .then(() => Pedidos.criar(pedido));
 };
 
 /**

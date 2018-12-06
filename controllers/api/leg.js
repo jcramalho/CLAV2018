@@ -11,6 +11,7 @@ const Leg = module.exports;
  * @property {string} data (ex: "2018/11/26")
  * @property {string} tipo (ex: "Lei", "Deliberação", "Regulamento", "Estatuto", etc...)
  * @property {string} titulo descrição da legislação
+ * @property {string} estado (ex: "Ativa", "Inativa" ou "Harmonização")
  * @property {[string]} entidades (ex: ["ent_CEE", "ent_AR"])
  */
 
@@ -24,19 +25,20 @@ const Leg = module.exports;
  * lista das legislacoes existentes que respeitam o filtro dado
  */
 Leg.listar = (filtro) => {
-    const query = `SELECT ?id ?data ?numero ?tipo ?titulo ?entidades WHERE {
+    const query = `SELECT ?id ?data ?numero ?tipo ?titulo ?estado ?entidades WHERE {
         ?uri rdf:type clav:Legislacao;
              clav:diplomaData ?data;
              clav:diplomaNumero ?numero;
              clav:diplomaTipo ?tipo;
-             clav:diplomaTitulo ?titulo.
+             clav:diplomaTitulo ?titulo;
+             clav:diplomaEstado ?estado;
         OPTIONAL {
             ?uri clav:diplomaEntidade ?ent.
             ?ent clav:entSigla ?entidades;
         }
         BIND(STRAFTER(STR(?uri), 'clav#') AS ?id).
     } ORDER BY DESC (?data)`;
-    const campos = ["id", "data", "numero", "tipo", "titulo"];
+    const campos = ["id", "data", "numero", "tipo", "titulo", "estado"];
     const agrupar = ["entidades"];
 
     return client.query(query)
@@ -62,19 +64,20 @@ Leg.listar = (filtro) => {
  * então a promessa conterá o valor `undefined`
  */
 Leg.consultar = id => {
-    const query = `SELECT ?tipo ?data ?numero ?titulo ?link ?entidades WHERE { 
+    const query = `SELECT ?tipo ?data ?numero ?titulo ?link ?estado ?entidades WHERE { 
         clav:${id} a clav:Legislacao;
             clav:diplomaData ?data;
             clav:diplomaNumero ?numero;
             clav:diplomaTipo ?tipo;
             clav:diplomaTitulo ?titulo;
             clav:diplomaLink ?link;
+            clav:diplomaEstado ?estado;
         OPTIONAL {
             clav:${id} clav:diplomaEntidade ?ent.
             ?ent clav:entSigla ?entidades;
         }
      }`;
-     const campos = ["id", "data", "numero", "tipo", "titulo", "link"];
+     const campos = ["id", "data", "numero", "tipo", "titulo", "link", "estado"];
      const agrupar = ["entidades"];
 
      return client.query(query)
@@ -85,7 +88,8 @@ Leg.consultar = id => {
 /**
  * Insere uma nova legislação no sistema, gerando um pedido apropriado.
  * O identificador da nova legislação é gerado sequencialmente.
- *
+ * A legislação criada encontrar-se-á no estado "Harmonização".
+ * 
  * @see pedidos
  *
  * @param {Legislacao} legislacao legislação que se pretende criar
@@ -107,24 +111,26 @@ Leg.criar = async (legislacao, utilizador) => {
             clav:diplomaNumero '${legislacao.numero}' ;
             clav:diplomaTipo '${legislacao.tipo}' ;
             clav:diplomaTitulo '${legislacao.titulo}' ;
+            clav:diplomaEstado 'Harmonização' ;
             clav:diplomaLink '${legislacao.link}' .
         
         ${legislacao.entidades.map(entidade => `clav:${id} clav:diplomaEntidade clav:${entidade}.`).join('\n')}
     }`;
+    const pedido = {
+        criadoPor: utilizador,
+        objeto: {
+            codigo: `${id}`,
+            tipo: `Legislação`,
+            acao: `Criação`,
+        },
+        distribuicao: [{
+            estado: "Submetido",
+        }]
+    };
 
     return client.query(query)
         .execute()
-        .then(() => Pedidos.criar({
-            criadoPor: utilizador,
-            objeto: {
-                codigo: `${id}`,
-                tipo: `Legislação`,
-                acao: `Criação`,
-            },
-            distribuicao: [{
-                estado: "Submetido",
-            }]
-        }));
+        .then(() => Pedidos.criar(pedido));
 };
 
 /**

@@ -25,13 +25,13 @@ block corpo
                                             :id="'n'+i"
                                             type="radio"
                                             :value="i"
-                                            v-model="type"
+                                            v-model="classLevel"
                                         ) 
                                         label(:for="'n'+i") Nível {{i}}
 
                     //- CLASSE PAI
                     a(name="pai")
-                    tr(v-if="type>1")
+                    tr(v-if="classLevel>1")
                         td(style="width: 10%")
                             .info-label Classe Pai: 
                         td.smaller
@@ -154,7 +154,7 @@ block corpo
 
                             //- TERMOS DE ÍNDICE
                             a(name="termosI")
-                            tr(v-if="type>=3")
+                            tr(v-if="classLevel >= 3")
                                 td(style="width: 10%")
                                     .info-label Termos de Índice:
                                 td
@@ -175,7 +175,7 @@ block corpo
                                         | Novo termo
 
 
-                    panel(header="Contexto de Avaliação" v-if="type>=3" is-open=true)
+                    panel(header="Contexto de Avaliação" v-if="classLevel >= 3" is-open=true)
                         table.consulta(style="border-color: white; border-style:solid; width:100%")
                             //- TIPO/TRANSVERSAL
                             a(name="tipoTrans")
@@ -249,7 +249,7 @@ block corpo
 
                             //- PARTICIPANTES
                             a(name="participantes")
-                            tr(v-if="type>=3 && procTrans=='S'")
+                            tr(v-if="classLevel >= 3 && procTrans == 'S'")
                                 td(style="width: 10%")
                                     .info-label Participante(s):
                                     
@@ -296,9 +296,10 @@ block corpo
                                         select-left="true"
                                         pages-on="true"
 
-                                        :header="classesTableHeader"
+                                        :header="['CLASSE', 'TÍTULO']"
+                                        :cwidth="['16%', '81%']"
+
                                         :complete-rows="relationLists"
-                                        :cwidth="cwidth"
                                         :n-edits="nEdits"
 
                                         filter-on="true"
@@ -354,7 +355,7 @@ block corpo
                                     ) A carregar...
 
 
-                    panel(header="Decisões de Avaliação" v-if="type>=3" is-open)
+                    panel(header="Decisões de Avaliação" v-if="classLevel >= 3" is-open)
                         table.consulta.noborder(style="border-color: white; border-style:solid")
                             //- PRAZO DE CONSERVAÇÃO ADMINISTRATIVA
                             a(name="PCA")
@@ -382,7 +383,7 @@ block corpo
                                                     v-model="pca.count"
                                                 )        
                                         //- SUB-FORMA DE CONTAGEM
-                                        tr(v-if="subcountsReady && pca.count.id=='vc_pcaFormaContagem_disposicaoLegal'")
+                                        tr(v-if="subcountsReady && pca.count.id=='disposicaoLegal'")
                                             td
                                                 .info-label Sub-forma de contagem:
                                             td(colspan=3)
@@ -598,7 +599,7 @@ block corpo
                 @click="add" 
                 value="Adicionar" 
                 :disabled=`!(
-                    ((type>1 && parent) || type==1) && 
+                    ((classLevel>1 && parent) || classLevel==1) && 
                     code
                 )`
              )
