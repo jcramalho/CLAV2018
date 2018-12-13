@@ -58,6 +58,20 @@ router.get('/:id', (req, res) => {
         .catch(erro => res.status(500).send(`Erro na consulta da entidade '${req.params.id}': ${erro}`));
 });
 
+router.put('/:id', Auth.isLoggedIn, (req, res) => {
+    const alteracoes = {
+        designacao: req.body.designacao,
+        internacional: req.body.internacional,
+        estado: req.body.estado,
+        sioe: req.body.sioe,
+        tipologias: req.body.tipologias,
+    };
+
+    return Entidades.alterar(req.params.id, alteracoes, req.user.email)
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.status(500).send(`Erro na alteração da entidade '${req.params.id}': ${erro}`));
+})
+
 // Apaga uma entidade identificada por uma sigla. Em caso de sucesso gera um novo pedido
 router.delete('/:id', Auth.isLoggedIn, (req, res) => {
     return Entidades.apagar(req.params.id, req.user.email)

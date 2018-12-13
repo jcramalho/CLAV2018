@@ -136,7 +136,8 @@ Entidades.criar = (entidade, utilizador) => {
             clav:entDesignacao '${entidade.designacao}' ;
             clav:entSigla '${entidade.sigla}' ;
             clav:entInternacional '${entidade.internacional}' ;
-            ${entidade.tipologias.map(tipologia => `clav:pertenceTipologiaEnt clav:${tipologia.id} ;`).join('\n')}
+
+            ${entidade.tipologias.map(tipologia => `clav:pertenceTipologiaEnt clav:${tipologia} ;`).join('\n')}
             clav:entEstado 'Harmonização' .
     }`;
     const pedido = {
@@ -147,7 +148,7 @@ Entidades.criar = (entidade, utilizador) => {
             acao: 'Criação',
         },
         distribuicao: [{
-            estado: "Submetido",
+            estado: 'Submetido',
         }]
     };
 
@@ -177,12 +178,75 @@ Entidades.apagar = (id, utilizador) => {
             acao: 'Remoção',
         },
         distribuicao: [{
-            estado: "Submetido",
+            estado: 'Submetido',
         }]
     };
 
     return Pedidos.criar(pedido);
 };
+
+/**
+ * Gera um pedido de alteração de uma entidade.
+ * Nenhuma alteração será feita à entidade, só quando o pedido for
+ * validado.
+ * 
+ * @see pedidos
+ * 
+ * @param {string} id código identificador da entidade (p.e, "ent_CEE")
+ * @param {Object} alteracoes
+ * @param {string} alteracoes.designacao (ex: "Assembleia da República")
+ * @param {string} alteracoes.internacional (ex: "Sim" ou "Não")
+ * @param {string} alteracoes.sioe id para sistema SIOE
+ * @param {string} alteracoes.estado (ex: "Ativa", "Inativa" ou "Harmonização")
+ * @param {[string]} alteracoes.tipologias lista de identificadores das tipologias
+ * @param {string} utilizador email do utilizador que alterou a entidade
+ */
+Entidades.alterar = (id, alteracoes, utilizador) => {
+    const pedido = {
+        criadoPor: utilizador,
+        objeto: {
+            codigo: id,
+            tipo: 'Entidade',
+            acao: 'Alteração',
+            alteracoes: [
+                {
+                    campo: 'designacao',
+                    valor: alteracoes.designacao,
+                    predicado: 'clav:entDesignacao',
+                },
+                {
+                    campo: 'internacional',
+                    valor: alteracoes.internacional,
+                    predicado: 'clav:entInternacional',
+                },
+                {
+                    campo: 'sioe',
+                    valor: alteracoes.sioe,
+                    predicado: 'clav:entSIOE',
+                },
+                {
+                    campo: 'estado',
+                    valor: alteracoes.estado,
+                    predicado: 'clav:entEstado',
+                },
+                {
+                    campo: 'tipologias',
+                    valor: alteracoes.tipologias,
+                    predicado: 'clav:pertenceTipologiaEnt',
+                }
+            ],
+        },
+        distribuicao: [{
+            estado: 'Submetido',
+        }]
+    };
+
+    // Remover campos vazios
+    pedido.objeto.alteracoes = pedido.objeto.alteracoes
+        .filter(alteracao => alteracao.valor !== undefined);
+
+    return Pedidos.criar(pedido);
+}
 
 /**
  * Lista os processos em que uma entidade intervem como dona.
