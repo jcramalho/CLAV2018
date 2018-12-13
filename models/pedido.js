@@ -26,6 +26,7 @@ const PedidoSchema = mongoose.Schema({
             enum: ["Criação", "Alteração", "Remoção"],
             required: true,
         },
+        alteracoes: [{ campo: String, valor: String, predicado: String }],
     },
     distribuicao: [{
         estado: {

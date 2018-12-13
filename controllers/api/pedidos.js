@@ -44,6 +44,7 @@ Pedidos.criar = (pedido) => {
             codigo: pedido.objeto.codigo,
             tipo: pedido.objeto.tipo,
             acao: pedido.objeto.acao,
+            alteracoes: pedido.objeto.alteracoes,
         },
         distribuicao: pedido.distribuicao,
     }).save();
