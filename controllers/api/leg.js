@@ -105,8 +105,7 @@ Leg.criar = async (legislacao, utilizador) => {
         .execute()
         .then(response => `leg_${normalize(response)[0].count + 1}`);
     const query = `INSERT DATA {
-        clav:${id} rdf:type owl:NamedIndividual ,
-            clav:Legislacao ;
+        clav:${id} rdf:type owl:NamedIndividual , clav:Legislacao ;
             clav:diplomaData '${legislacao.data}' ;
             clav:diplomaNumero '${legislacao.numero}' ;
             clav:diplomaTipo '${legislacao.tipo}' ;
