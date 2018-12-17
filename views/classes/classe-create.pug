@@ -25,20 +25,20 @@ block corpo
                                             :id="'n'+i"
                                             type="radio"
                                             :value="i"
-                                            v-model="classeNivel"
+                                            v-model="classe.nivel"
                                         ) 
                                         label(:for="'n'+i") Nível {{i}}
 
                     //- CLASSE PAI
                     a(name="pai")
-                    tr(v-if="classeNivel>1")
+                    tr(v-if="classe.nivel>1")
                         td(style="width: 10%")
                             .info-label Classe Pai: 
                         td.smaller
                             v-select.custom-select(
                                 v-if="parentsReady"
                                 style="width=100px"
-                                v-model="classePai"
+                                v-model="classe.pai"
                                 :options="parents"
                             )
 
@@ -50,7 +50,7 @@ block corpo
                         td
                             input(
                                 size="70"
-                                v-model="classeCodigo"
+                                v-model="classe.codigo"
                             ) 
                             p(style="color: red") {{ mensValCodigo }}
 
@@ -62,7 +62,7 @@ block corpo
                         td
                             input(
                                 size="70"
-                                v-model="classeTitulo"
+                                v-model="classe.titulo"
                             )
 
                 accordion.info-classe
@@ -78,7 +78,7 @@ block corpo
                                     textarea(
                                         cols="72"
                                         lines="5"
-                                        v-model="classeDescricao"
+                                        v-model="classe.descricao"
                                     )
 
                             //- NOTAS DE APLICAçÃO                        
@@ -87,20 +87,20 @@ block corpo
                                 td(style="width: 10%")
                                     .info-label Nota(s) de Aplicação:
                                 td
-                                    div(v-for="(nota, index) in classeNotasAp")
+                                    div(v-for="(nota, index) in classe.notasAP")
                                         textarea(
                                             cols="72"
                                             lines="5"
-                                            v-model="classeNotasAp[index].conteudo"
+                                            v-model="classe.notasAP[index].conteudo"
                                         )
                                         span.glyphicon.glyphicon-remove(
-                                            @click="classeNotasAp.splice(index,1)"
+                                            @click="classe.notasAP.splice(index,1)"
                                             style="padding-left: 5px; vertical-align:top"
                                         )
                                     
                                     button(
                                         style="margin-bottom:10px"
-                                        @click="classeNotasAp.push({id:'',conteudo:''})"
+                                        @click="classe.notasAP.push({id:'',conteudo:''})"
                                     )
                                         | Nova nota
                                 
@@ -111,20 +111,20 @@ block corpo
                                 td(style="width: 10%")
                                     .info-label Exemplo(s) de Nota(s) de Aplicação:
                                 td
-                                    div(v-for="(exemplo, index) in classeExemplosNotasAp")
+                                    div(v-for="(exemplo, index) in classe.exemplosNotasAp")
                                         textarea(
                                             cols="72"
                                             lines="5"
-                                            v-model="classeExemplosNotasAp[index]"
+                                            v-model="classe.exemplosNotasAp[index]"
                                         )
                                         span.glyphicon.glyphicon-remove(
-                                            @click="classeExemplosNotasAp.splice(index,1)"
+                                            @click="classe.exemplosNotasAp.splice(index,1)"
                                             style="padding-left: 5px; vertical-align:top"
                                         )
                                     
                                     button(
                                         style="margin-bottom:10px"
-                                        @click="classeExemplosNotasAp.push('')"
+                                        @click="classe.exemplosNotasAp.push('')"
                                     )
                                         | Novo exemplo
 
@@ -135,46 +135,46 @@ block corpo
                                 td(style="width: 10%")
                                     .info-label Nota(s) de Exclusão:
                                 td
-                                    div(v-for="(nota, index) in classeNotasEx")
+                                    div(v-for="(nota, index) in classe.notasEx")
                                         textarea(
                                             cols="72"
                                             lines="5"
-                                            v-model="classeNotasEx[index].conteudo"
+                                            v-model="classe.notasEx[index].conteudo"
                                         )
                                         span.glyphicon.glyphicon-remove(
-                                            @click="classeNotasEx.splice(index,1)"
+                                            @click="classe.notasEx.splice(index,1)"
                                             style="padding-left: 5px; vertical-align:top"
                                         )
                                     
                                     button(
                                         style="margin-bottom:10px"
-                                        @click="classeNotasEx.push({id:'', conteudo:''})"
+                                        @click="classe.notasEx.push({id:'', conteudo:''})"
                                     )
                                         | Nova nota
 
                             //- TERMOS DE ÍNDICE
                             a(name="termosI")
-                            tr(v-if="classeNivel >= 3")
+                            tr(v-if="classe.nivel >= 3")
                                 td(style="width: 10%")
                                     .info-label Termos de Índice:
                                 td
-                                    div(v-for="(ti, index) in classeTermosInd")
+                                    div(v-for="(ti, index) in classe.termosInd")
                                         input(
                                             size="70    "
                                             v-model="ti.termo"
                                         )
                                         span.glyphicon.glyphicon-remove(
-                                            @click="classeTermosInd.splice(index,1)"
+                                            @click="classe.termosInd.splice(index,1)"
                                             style="padding-left: 5px; vertical-align:top"
                                         )
                                     
                                     button(
                                         style="margin-bottom:10px"
-                                        @click="classeTermosInd.push({id:'', termo:''})"
+                                        @click="classe.termosInd.push({id:'', termo:''})"
                                     )
                                         | Novo termo
 
-                    panel(header="Contexto de Avaliação" v-if="classeNivel >= 3" is-open=true)
+                    panel(header="Contexto de Avaliação" v-if="classe.nivel >= 3" is-open=true)
                         table.consulta(style="border-color: white; border-style:solid; width:100%")
                             //- TIPO/TRANSVERSAL
                             a(name="tipoTrans")
@@ -190,14 +190,14 @@ block corpo
                                                     input(
                                                         type="radio"
                                                         value="PC"
-                                                        v-model="classeTipoProc"
+                                                        v-model="classe.tipoProc"
                                                     ) 
                                                     |  Processo Comum
                                                     br
                                                     input(
                                                         type="radio"
                                                         value="PE"
-                                                        v-model="classeTipoProc"
+                                                        v-model="classe.tipoProc"
                                                     )
                                                     |  Processo Específico
 
@@ -210,14 +210,14 @@ block corpo
                                                     input(
                                                         type="radio"
                                                         value="S"
-                                                        v-model="classeProcTrans"
+                                                        v-model="classe.procTrans"
                                                     ) 
                                                     |  Sim
                                                     br
                                                     input(
                                                         type="radio"
                                                         value="N"
-                                                        v-model="classeProcTrans"
+                                                        v-model="classe.procTrans"
                                                     )
                                                     |  Não
 
@@ -230,16 +230,16 @@ block corpo
 
                                 td
                                     custom-table-select(
-                                        v-if="classeEntidadesReady"
+                                        v-if="semaforos.entidadesReady"
 
-                                        :header="classeEntidadesTableHeader"
-                                        :complete-rows="classeListaDonos"
-                                        :ready="classeEntidadesReady"
-                                        :cwidth="classeEntidadesTableWidth"
+                                        :header="estilo.entidadesTableHeader"
+                                        :complete-rows="entidades"
+                                        :ready="semaforos.entidadesReady"
+                                        :cwidth="estilo.entidadesTableWidth"
                                         
                                         class-table='table table-condensed'
 
-                                        @select-clicked="orgSelected($event,selectedOwners,'dono')"
+                                        @select-clicked="selecionarDono($event)"
                                     )
                                     h4(
                                         v-else
@@ -248,30 +248,28 @@ block corpo
 
                             //- PARTICIPANTES
                             a(name="participantes")
-                            tr(v-if="classeNivel >= 3 && classeProcTrans == 'S'")
+                            tr(v-if="classe.nivel >= 3 && classe.procTrans == 'S'")
                                 td(style="width: 10%")
                                     .info-label Participante(s):
                                     
                                 td
                                     table
                                         tr
-                                            tabs
-                                                tab(:header="partDic[key]" v-for="(key,index) in Object.keys(participantLists)" :key="index")
-                                                    custom-table-select(
-                                                        v-if="classeEntidadesReady && participantLists[key].length>0"
+                                            tabela-selecao-participantes(
+                                                v-if="semaforos.entidadesReady"
 
-                                                        :header="classeEntidadesTableHeader"
-                                                        :complete-rows="participantLists[key]"
-                                                        :ready="classeEntidadesReady"
-                                                        :cwidth="classeEntidadesTableWidth"
+                                                :header="estilo.participantesTableHeader"
+                                                :complete-rows="entidades"
+                                                :ready="semaforos.entidadesReady"
+                                                :cwidth="estilo.participantesTableWidth"
                                                         
-                                                        class-table='table table-condensed'
+                                                class-table='table table-condensed'
 
-                                                        @select-clicked="orgSelected($event,participantsSelected[key], key)"
+                                                @select-clicked="selecionarParticipante($event)"
                                                     )
-                                                    h4(
-                                                        v-else
-                                                    ) A carregar...
+                                            h4(
+                                                v-else
+                                            ) A carregar...
                                         tr
                                             td(colspan="3")
                                                 ul
@@ -373,8 +371,8 @@ block corpo
                 @click="add" 
                 value="Adicionar" 
                 :disabled=`!(
-                    ((classeNivel>1 && parent) || classeNivel==1) && 
-                    classeCodigo
+                    ((classe.nivel>1 && parent) || classe.nivel==1) && 
+                    classe.codigo
                 )`
              )
             p.col-sm-7 {{ message }}
@@ -382,3 +380,4 @@ block corpo
 append scripts    
     script(src="/javascripts/classes/classe-create-lateral-menu.vue")
     script(src="/javascripts/classes/classe-create.vue")
+    script(src="/javascripts/component-sel-participantes.vue")
