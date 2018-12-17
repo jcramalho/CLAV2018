@@ -1,0 +1,384 @@
+extends ../layout
+block lateral
+    ul#sideNav
+        li(v-for="l in sideNav")
+            a(:href="l.anchor") {{ l.label }}
+
+block corpo
+    #nova-classe-form.panel.panel-default.panel-custom
+        .panel-heading
+            h1.page-header Nova Classe  
+        .panel-body
+            .form-group
+                table.consulta(style="border-color: white; border-style:solid; margin-bottom:20px")
+                    
+                    //-TIPO/ NIVEL
+                    a(name="nivel")
+                    tr
+                        td(style="width:10%")
+                            .info-label Nível de classe: 
+                        td
+                            table
+                                tr(style="border:none")
+                                    td(v-for="i in [1,2,3,4]" style="vertical-align:middle; padding-right:10px; padding-left:5px")
+                                        input(
+                                            :id="'n'+i"
+                                            type="radio"
+                                            :value="i"
+                                            v-model="classeNivel"
+                                        ) 
+                                        label(:for="'n'+i") Nível {{i}}
+
+                    //- CLASSE PAI
+                    a(name="pai")
+                    tr(v-if="classeNivel>1")
+                        td(style="width: 10%")
+                            .info-label Classe Pai: 
+                        td.smaller
+                            v-select.custom-select(
+                                v-if="parentsReady"
+                                style="width=100px"
+                                v-model="classePai"
+                                :options="parents"
+                            )
+
+                    //- CÓDIGO
+                    a(name="codigo")
+                    tr 
+                        td(style="width: 10%")
+                            .info-label Código: 
+                        td
+                            input(
+                                size="70"
+                                v-model="classeCodigo"
+                            ) 
+                            p(style="color: red") {{ mensValCodigo }}
+
+                    //- TÍTULO
+                    a(name="titulo")
+                    tr
+                        td(style="width: 10%")
+                            .info-label Título: 
+                        td
+                            input(
+                                size="70"
+                                v-model="classeTitulo"
+                            )
+
+                accordion.info-classe
+                    panel(header="Descritivo da Classe" is-open=true)
+                        table.consulta(style="border-color: white; border-style:solid")                
+
+                            //- DESCRIÇÃO
+                            a(name="descricao")
+                            tr
+                                td(style="width: 10%")
+                                    .info-label Descrição: 
+                                td
+                                    textarea(
+                                        cols="72"
+                                        lines="5"
+                                        v-model="classeDescricao"
+                                    )
+
+                            //- NOTAS DE APLICAçÃO                        
+                            a(name="notasA")
+                            tr
+                                td(style="width: 10%")
+                                    .info-label Nota(s) de Aplicação:
+                                td
+                                    div(v-for="(nota, index) in classeNotasAp")
+                                        textarea(
+                                            cols="72"
+                                            lines="5"
+                                            v-model="classeNotasAp[index].conteudo"
+                                        )
+                                        span.glyphicon.glyphicon-remove(
+                                            @click="classeNotasAp.splice(index,1)"
+                                            style="padding-left: 5px; vertical-align:top"
+                                        )
+                                    
+                                    button(
+                                        style="margin-bottom:10px"
+                                        @click="classeNotasAp.push({id:'',conteudo:''})"
+                                    )
+                                        | Nova nota
+                                
+
+                            //- EXEMPLOS DE NOTAS DE APLICAçÃO                        
+                            a(name="exemplos")
+                            tr
+                                td(style="width: 10%")
+                                    .info-label Exemplo(s) de Nota(s) de Aplicação:
+                                td
+                                    div(v-for="(exemplo, index) in classeExemplosNotasAp")
+                                        textarea(
+                                            cols="72"
+                                            lines="5"
+                                            v-model="classeExemplosNotasAp[index]"
+                                        )
+                                        span.glyphicon.glyphicon-remove(
+                                            @click="classeExemplosNotasAp.splice(index,1)"
+                                            style="padding-left: 5px; vertical-align:top"
+                                        )
+                                    
+                                    button(
+                                        style="margin-bottom:10px"
+                                        @click="classeExemplosNotasAp.push('')"
+                                    )
+                                        | Novo exemplo
+
+
+                            //- NOTAS DE EXCLUSÃO                        
+                            a(name="notasE")
+                            tr
+                                td(style="width: 10%")
+                                    .info-label Nota(s) de Exclusão:
+                                td
+                                    div(v-for="(nota, index) in classeNotasEx")
+                                        textarea(
+                                            cols="72"
+                                            lines="5"
+                                            v-model="classeNotasEx[index].conteudo"
+                                        )
+                                        span.glyphicon.glyphicon-remove(
+                                            @click="classeNotasEx.splice(index,1)"
+                                            style="padding-left: 5px; vertical-align:top"
+                                        )
+                                    
+                                    button(
+                                        style="margin-bottom:10px"
+                                        @click="classeNotasEx.push({id:'', conteudo:''})"
+                                    )
+                                        | Nova nota
+
+                            //- TERMOS DE ÍNDICE
+                            a(name="termosI")
+                            tr(v-if="classeNivel >= 3")
+                                td(style="width: 10%")
+                                    .info-label Termos de Índice:
+                                td
+                                    div(v-for="(ti, index) in classeTermosInd")
+                                        input(
+                                            size="70    "
+                                            v-model="ti.termo"
+                                        )
+                                        span.glyphicon.glyphicon-remove(
+                                            @click="classeTermosInd.splice(index,1)"
+                                            style="padding-left: 5px; vertical-align:top"
+                                        )
+                                    
+                                    button(
+                                        style="margin-bottom:10px"
+                                        @click="classeTermosInd.push({id:'', termo:''})"
+                                    )
+                                        | Novo termo
+
+                    panel(header="Contexto de Avaliação" v-if="classeNivel >= 3" is-open=true)
+                        table.consulta(style="border-color: white; border-style:solid; width:100%")
+                            //- TIPO/TRANSVERSAL
+                            a(name="tipoTrans")
+                            tr
+                                td(colspan=2)
+                                    table.noborder
+                                        //- TIPO DE PROCESSO
+                                        td(style="width: 50%")
+                                            table
+                                                td(style="width: 10%")
+                                                    .info-label Tipo de Processo: 
+                                                td
+                                                    input(
+                                                        type="radio"
+                                                        value="PC"
+                                                        v-model="classeTipoProc"
+                                                    ) 
+                                                    |  Processo Comum
+                                                    br
+                                                    input(
+                                                        type="radio"
+                                                        value="PE"
+                                                        v-model="classeTipoProc"
+                                                    )
+                                                    |  Processo Específico
+
+                                        //- PROCESSO TRANVERSAL
+                                        td(style="width: 50%")
+                                            table
+                                                td(style="width: 10%")
+                                                    .info-label Processo Transversal: 
+                                                td
+                                                    input(
+                                                        type="radio"
+                                                        value="S"
+                                                        v-model="classeProcTrans"
+                                                    ) 
+                                                    |  Sim
+                                                    br
+                                                    input(
+                                                        type="radio"
+                                                        value="N"
+                                                        v-model="classeProcTrans"
+                                                    )
+                                                    |  Não
+
+                            
+                            //- DONOS
+                            a(name="donos")
+                            tr(style="padding-bottom:30px")
+                                td(style="width: 10%")
+                                    .info-label Donos:
+
+                                td
+                                    custom-table-select(
+                                        v-if="classeEntidadesReady"
+
+                                        :header="classeEntidadesTableHeader"
+                                        :complete-rows="classeListaDonos"
+                                        :ready="classeEntidadesReady"
+                                        :cwidth="classeEntidadesTableWidth"
+                                        
+                                        class-table='table table-condensed'
+
+                                        @select-clicked="orgSelected($event,selectedOwners,'dono')"
+                                    )
+                                    h4(
+                                        v-else
+                                    ) A carregar...
+
+
+                            //- PARTICIPANTES
+                            a(name="participantes")
+                            tr(v-if="classeNivel >= 3 && classeProcTrans == 'S'")
+                                td(style="width: 10%")
+                                    .info-label Participante(s):
+                                    
+                                td
+                                    table
+                                        tr
+                                            tabs
+                                                tab(:header="partDic[key]" v-for="(key,index) in Object.keys(participantLists)" :key="index")
+                                                    custom-table-select(
+                                                        v-if="classeEntidadesReady && participantLists[key].length>0"
+
+                                                        :header="classeEntidadesTableHeader"
+                                                        :complete-rows="participantLists[key]"
+                                                        :ready="classeEntidadesReady"
+                                                        :cwidth="classeEntidadesTableWidth"
+                                                        
+                                                        class-table='table table-condensed'
+
+                                                        @select-clicked="orgSelected($event,participantsSelected[key], key)"
+                                                    )
+                                                    h4(
+                                                        v-else
+                                                    ) A carregar...
+                                        tr
+                                            td(colspan="3")
+                                                ul
+                                                    li(v-for="key in Object.keys(participantsSelected)" v-if="participantsSelected[key].length>0")
+                                                        b {{ partDic[key] }}
+                                                        ul
+                                                            li(v-for="(p, index) in participantsSelectedInfo[key]")
+                                                                | {{ p[1] }} - {{ p[2] }}
+                            
+
+                            //- PROCESSOS RELACIONADOS
+                            a(name="PNrel")
+                            tr
+                                td(style="width: 10%")
+                                    .info-label Processo(s) Relacionado(s):
+                                    
+                                td
+                                    custom-table-waterfall(
+                                        v-if="classesReady"
+
+                                        select-left="true"
+                                        pages-on="true"
+
+                                        :header="['CLASSE', 'TÍTULO']"
+                                        :cwidth="['16%', '81%']"
+
+                                        :complete-rows="relationLists"
+                                        :n-edits="nEdits"
+
+                                        filter-on="true"
+                                        
+                                        table-class='table table-hover'
+                                        
+                                        @left-select-clicked="selectClicked($event)"
+                                    )
+                                    h4(
+                                        v-else
+                                    ) A carregar...
+                                    
+                                    div(v-if="relationsSelected.length>0")
+                                        .info-label(style="text-align:center;width:100%;margin-top:25px;margin-bottom:10px")
+                                            | Tipos de Relação
+                                        
+                                        table.noborder(style="margin-bottom:30px")
+                                            tr(
+                                                style="padding-bottom:5px"
+                                                v-for="pn in relationsSelected" 
+                                            )    
+                                                td(width="1px")
+                                                    select(v-model="pn.relType" @change="relChanged(index,pn)")
+                                                        option(v-for="rel in relationTypes" :value="rel.value")
+                                                            | {{rel.label}}
+                                                td(style="text-align:left")
+                                                    b(style="margin-left:5px")
+                                                        | {{pn.code}}
+                                                    |  - {{pn.name}}
+                                                                        
+
+                            //- LEGISLAÇÃO
+                            a(name="legislacao")
+                            tr(style="padding-bottom:30px")
+                                td(style="width: 10%")
+                                    .info-label Legislação:
+
+                                td
+                                    custom-table-select(
+                                        v-if="legsReady"
+
+                                        :header="legsTableHeader"
+                                        :complete-rows="legList"
+                                        :ready="legsReady"
+                                        :cwidth="legsTableWidth"
+                                        
+                                        class-table='table table-condensed'
+
+                                        @select-clicked="orgSelected($event,selectedLegs)"
+                                    )
+                                    h4(
+                                        v-else
+                                    ) A carregar...
+                                        
+            
+            spinner(ref="spinner" fixed size="lg" text="Por favor aguarde...")
+
+            modal(
+                title="Atenção!" 
+                :value="modalMsgShow"
+                @closed="modalMsgShow=false"
+
+                small
+            ) 
+                .modal-body(slot="modal-body")
+                    center {{modalMsg}}
+                .modal-footer(slot="modal-footer")
+                    button(@click="modalMsgShow=false") Ok
+
+            input.btn.btn-xs.btn-default.col-sm-2(
+                type="button" 
+                @click="add" 
+                value="Adicionar" 
+                :disabled=`!(
+                    ((classeNivel>1 && parent) || classeNivel==1) && 
+                    classeCodigo
+                )`
+             )
+            p.col-sm-7 {{ message }}
+
+append scripts    
+    script(src="/javascripts/classes/classe-create-lateral-menu.vue")
+    script(src="/javascripts/classes/classe-create.vue")
