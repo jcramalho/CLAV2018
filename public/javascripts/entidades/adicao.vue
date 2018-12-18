@@ -27,7 +27,9 @@ var newOrg = new Vue({
             });
     },
     components: {
-        spinner: VueStrap.spinner
+        spinner: VueStrap.spinner,
+        modal: VueStrap.modal,
+         panel: VueStrap.panel,
     },
     methods: {
         dynamicSort: function(property) {
@@ -68,17 +70,15 @@ var newOrg = new Vue({
                     'content-type': 'application/json'
                 }
             })
-                .then(function (response) {
+                .then(function () {
                     this.$refs.spinner.hide();
                     
-                    if (response.body != "Designação e/ou Sigla já existente(s)!") {
-                        window.location.href = '/pedidos/submissao';
-                    }
-                    else {
-                        messageL.showMsg(response.body);
-                    }
+                    window.location.href = '/pedidos/submissao';
                 })
-                .catch(function (error) {
+                .catch(error => {if (error.status === 409) {
+                        messageL.showMsg(error.body);
+                        this.$refs.spinner.hide();
+                    } 
                     console.error(error);
                 });
         }
