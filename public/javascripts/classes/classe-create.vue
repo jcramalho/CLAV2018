@@ -94,39 +94,12 @@ var newClass = new Vue({
         legList: [],
         selectedLegs: [],
         donosSelecionados: [],
-        participantsSelected: {
-            Apreciador: [],
-            Assessor: [],
-            Comunicador: [],
-            Decisor: [],
-            Executor: [],
-            Iniciador: [],
-        },
-        participantsSelectedInfo: {
-            Apreciador: [],
-            Assessor: [],
-            Comunicador: [],
-            Decisor: [],
-            Executor: [],
-            Iniciador: [],
-        },
+        
         relationsSelected: [],
         relationsSelectedInfo: [],
 
         status: "H",
 
-        
-
-        partDic: {
-            Apreciador: "Apreciar",
-            Assessor: "Assessorar",
-            Comunicador: "Comunicar",
-            Decisor: "Decidir",
-            Executor: "Executar",
-            Iniciador: "Iniciar",
-        },
-
-        
         relationTypes: [
             {
                 label: 'Antecessor de',
@@ -675,7 +648,6 @@ var newClass = new Vue({
             }
         },
         selecionarParticipante: function (row) {
-            alert(JSON.stringify(row))
             if (!row.selected) {
                 this.classe.participantes[row.data[3]].push(row.id);
             }

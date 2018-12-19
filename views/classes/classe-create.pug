@@ -266,20 +266,10 @@ block corpo
                                                 class-table='table table-condensed'
 
                                                 @select-clicked="selecionarParticipante($event)"
-                                                @interv-change="mudarIntervencao()"
                                                     )
                                             h4(
                                                 v-else
                                             ) A carregar...
-                                        tr
-                                            td(colspan="3")
-                                                ul
-                                                    li(v-for="key in Object.keys(participantsSelected)" v-if="participantsSelected[key].length>0")
-                                                        b {{ partDic[key] }}
-                                                        ul
-                                                            li(v-for="(p, index) in participantsSelectedInfo[key]")
-                                                                | {{ p[1] }} - {{ p[2] }}
-                            
 
                             //- PROCESSOS RELACIONADOS
                             a(name="PNrel")
