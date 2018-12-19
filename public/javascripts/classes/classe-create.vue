@@ -64,7 +64,8 @@ var newClass = new Vue({
 
         // Estruturas auxiliares
 
-        entidades: [],
+        entidadesD: [],
+        entidadesP: [],
 
         semaforos: {
             entidadesReady: false,
@@ -628,21 +629,21 @@ var newClass = new Vue({
         loadEntidades: function () {
             this.$http.get("/api/entidades")
                 .then(response => {
-                    this.entidades = response.body
+                    this.entidadesD = response.body
                         .map(function (item) {
                             return {
-                                data: [item.sigla, item.designacao, "Entidade"],
+                                data: [item.sigla, item.designacao, "Entidade", "Apreciador"],
                                 selected: false,
                                 id: item.id
                             }
                         });
                     this.$http.get("/api/tipologias")
                         .then(response => {
-                            this.entidades = this.entidades.concat(
+                            this.entidadesD = this.entidadesD.concat(
                                 response.body
                                     .map(function (item) {
                                         return {
-                                            data: [item.sigla, item.designacao, "Tipologia"],
+                                            data: [item.sigla, item.designacao, "Tipologia", "Apreciador"],
                                             selected: false,
                                             id: item.id
                                         }
@@ -651,6 +652,7 @@ var newClass = new Vue({
                                 return a.data[1].localeCompare(b.data[1]);
                             });
 
+                            this.entidadesP = JSON.parse(JSON.stringify(this.entidadesD));
                             this.semaforos.entidadesReady = true;
                         })
                         .catch(function (error) {
@@ -674,15 +676,15 @@ var newClass = new Vue({
         },
         selecionarParticipante: function (row) {
             alert(JSON.stringify(row))
-            /* if (!row.selected) {
-                this.classe.donos.push(row.id);
+            if (!row.selected) {
+                this.classe.participantes[row.data[3]].push(row.id);
             }
             else {
-                let index = this.classe.donos.indexOf(row.id);
+                let index = this.classe.participantes[row.data[3]].indexOf(row.id);
                 if (index != -1) {
-                    this.classe.donos.splice(index, 1);
+                    this.classe.participantes[row.data[3]].splice(index, 1);
                 }
-            } */
+            } 
         },
         loadLegs: function () {
             var i = 0;

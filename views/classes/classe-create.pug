@@ -233,7 +233,7 @@ block corpo
                                         v-if="semaforos.entidadesReady"
 
                                         :header="estilo.entidadesTableHeader"
-                                        :complete-rows="entidades"
+                                        :complete-rows="entidadesD"
                                         :ready="semaforos.entidadesReady"
                                         :cwidth="estilo.entidadesTableWidth"
                                         
@@ -259,13 +259,14 @@ block corpo
                                                 v-if="semaforos.entidadesReady"
 
                                                 :header="estilo.participantesTableHeader"
-                                                :complete-rows="entidades"
+                                                :complete-rows="entidadesP"
                                                 :ready="semaforos.entidadesReady"
                                                 :cwidth="estilo.participantesTableWidth"
                                                         
                                                 class-table='table table-condensed'
 
                                                 @select-clicked="selecionarParticipante($event)"
+                                                @interv-change="mudarIntervencao()"
                                                     )
                                             h4(
                                                 v-else

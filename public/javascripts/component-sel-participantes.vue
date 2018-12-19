@@ -1,3 +1,26 @@
+Vue.component('selecao-intervencao', {
+  template: `
+    <select v-model="intervencao">
+        <option value="Apreciador">Apreciar</option>
+        <option value="Assessor">Assessorar</option>
+        <option value="Comunicador">Comunicar</option>
+        <option value="Decisor">Decidir</option>
+        <option value="Executor">Executar</option>
+        <option value="Iniciador">Iniciar</option>
+    </select>
+  `,
+  data: function() {
+      return {
+          "intervencao": "Apreciador"
+      }
+  },
+  watch: {
+        intervencao: function () {
+            this.$emit('interv-change', this.intervencao);
+        }
+  }
+})
+
 Vue.component('tabela-selecao-participantes', {
     template: `
         <div style="padding-bottom:30px">
@@ -32,27 +55,12 @@ Vue.component('tabela-selecao-participantes', {
                                 v-model="row.selected"
                                 @click="selectClicked(index)"
                             />
-                        <td 
-                            v-if="idx=>0" 
-                            v-for="(item,idx) in row.data" 
-                            class="custom-table-cell-select"
-                            @click="selectRow(index)"
-                        >
-                            <div 
-                                class="custom-table-text" 
-                                v-html="item"
-                                :title="item"
-                            ></div>
-                        </td>
+                        <td>{{ row.data[0] }}</td>
+                        <td>{{ row.data[1] }}</td>
+                        <td>{{ row.data[2] }}</td>
+                        
                         <td>
-                            <select onchange="row['intervencao'] = this">
-                                <option value="Apreciador">Apreciar</option>
-                                <option value="Assessor">Assessorar</option>
-                                <option value="Comunicador">Comunicar</option>
-                                <option value="Decisor">Decidir</option>
-                                <option value="Executor">Executar</option>
-                                <option value="Iniciador§">Iniciar</option>
-                            </select>
+                            <selecao-intervencao @interv-change="mudarIntervencao($event, row)"/>
                         </td>
                     </tr>
                     <tr v-else>
@@ -104,6 +112,9 @@ Vue.component('tabela-selecao-participantes', {
         },
     },
     methods: {
+        mudarIntervencao: function(nova, entidade){
+            entidade.data[3] = nova
+        },
         selectRow: function (index) {
             this.$emit('select-clicked', this.rowsShow[index]);
             this.rowsShow[index].selected = !this.rowsShow[index].selected;
