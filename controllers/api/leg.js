@@ -135,7 +135,7 @@ Leg.criar = async (legislacao, utilizador) => {
 /**
  * Verifica se um determinado numero de legislação existe no sistema.
  * 
- * @param {Entidade} entidade
+ * @param {Legislacao} legislacao
  * @return {Promise<boolean | Error>}
  */
 Leg.existe = (legislacao) => {
