@@ -1,6 +1,6 @@
 extends ../layout
 block corpo
-    #nova-entidade-form.panel.panel-default.panel-custom
+    #nova-tipologia-form.panel.panel-default.panel-custom
         .panel-heading
             h1.page-header Nova Tipologia
         .panel-body
@@ -13,7 +13,7 @@ block corpo
                         td(style="width:80%")
                             input(
                                 size="70"
-                                v-model="tipologia.des"
+                                v-model="tipologia.designacao"
                             )
                     //- Sigla        
                     tr
@@ -43,7 +43,7 @@ block corpo
                                         
                                         class-table='table table-condensed'
 
-                                        @select-clicked="entSelected($event,entidades)"
+                                        @select-clicked="entSelected($event,ent)"
                                     )
                                     h4(
                                         v-else
@@ -55,7 +55,7 @@ block corpo
                 type="button" 
                 @click="add" 
                 value="Adicionar" 
-                :disabled="!(tipologia.des && tipologia.sigla)"
+                :disabled="!(tipologia.designacao && tipologia.sigla)"
             )
             p.col-sm-7 {{ message }}
     //-

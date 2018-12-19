@@ -62,17 +62,15 @@ var newLeg = new Vue({
                 }
             })
                 .then( function(response) { 
-                    regex = new RegExp(/leg_[0-9]+/, "gi");
-
-                    if(regex.test(response.body.objeto.codigo)){
-                        window.location.href = '/pedidos/submissao';
-                    }
-                    else {
-                        messageL.showMsg(response.body);
-                    }
                     this.$refs.spinner.hide();
+
+                    window.location.href = '/pedidos/submissao';
+                       
                 })
-                .catch( function(error) { 
+                .catch( error => {if (error.status === 409 ){
+                    messageL.showMsg(error.body);
+                    this.$refs.spinner.hide();
+                }  
                     console.error(error); 
                 });
         },
