@@ -102,6 +102,24 @@ Tipologias.criar = (tipologia, utilizador) => {
 };
 
 /**
+ * Verifica se uma determinada tipologia existe no sistema.
+ * 
+ * @param {Tipologias} tipologia
+ * @return {Promise<boolean | Error>}
+ */
+Tipologias.existe = (tipologia) => {
+    const query = `ASK {
+        { ?e clav:tipDesignacao '${tipologia.designacao}' }
+        UNION
+        { ?s clav:tipSigla '${tipologia.sigla}' }
+    }`;
+
+    return client.query(query)
+        .execute()
+        .then(response => response.boolean);
+};
+
+/**
  * Gera um pedido de remoção da tipologia
  * Nenhuma alteração será feita à tipologia, só quando o pedido for
  * validado é que esta passará para o estado "Inativa"

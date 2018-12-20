@@ -77,17 +77,15 @@ var newOrg = new Vue({
             })
                 .then(function (response) {    
                     this.$refs.spinner.hide();
-                    
-                    if (response.body != "Designação e/ou Sigla já existente(s)!") {
-                        window.location.href = '/pedidos/submissao';
-                    }
-                    else {
-                        messageL.showMsg(response.body);
-                    }
+
+                    window.location.href = '/pedidos/submissao';
                 })
-                .catch(function (error) {
-                    console.error(error);
-                });
+                .catch(error => {if (error.status === 409) {
+                    messageL.showMsg(error.body);
+                    this.$refs.spinner.hide();
+                } 
+                console.error(error);
+            });
         }
     },
     created: function () {

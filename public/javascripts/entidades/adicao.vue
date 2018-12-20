@@ -6,6 +6,7 @@ var newOrg = new Vue({
 
         designacao: "",
         sigla: "",
+        sioe: "",
         internacional: "Não",
         message: "",
         tip: "",
