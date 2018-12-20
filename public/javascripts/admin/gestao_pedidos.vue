@@ -25,26 +25,46 @@ var parsePedidos = function(content){
 var novos = new Vue({
     el: '#novos',
     data: {
-        cabecalho:["Nº", "Tipo", "Descrição", "Entidade", "Submissão", "Prazo resposta", ""],
-        linhas:[
-            ["1","Tipo","DGLAB","1/1/2000","1/1/3000","<button>Ver Pedido</button>"],
-        ]
+        cabecalho:["Nº", "Tipo", "Entidade", "Submissão", "Prazo resposta", ""],
+        linhas:[[]],
+        pedidosReady: false,
+        listaPedidos: [],
+    },
+    methods: {
+        parse: function () {
+            for( var i = 0; i<this.listaPedidos.length; i++){
+                if(this.listaPedidos[i].distribuicao[0].estado == "Submetido"){
+                    let pedido = [];
+
+                    let date = new Date(this.listaPedidos[i].distribuicao[0].data);
+                    let data = date.getDate() + "-" + (parseInt(date.getMonth()) + 1) + "-" + date.getFullYear();
+
+                    pedido[0] = this.listaPedidos[i].codigo;
+                    pedido[1] = this.listaPedidos[i].objeto.acao + " " + this.listaPedidos[i].objeto.tipo;
+                    pedido[2] = this.listaPedidos[i].criadoPor;
+                    pedido[3] = data;
+                    pedido[4] = "20 dias"
+                    pedido[5] = "<button><a href='/pedidos/" + this.listaPedidos[i].codigo + "'>Ver Pedido</a></button>"
+                    console.log(pedido)
+                    this.linhas.push(pedido)
+                }
+            }
+        }
     },
     created: function(){
         var content = [];
 
-        this.$http.get("/api/pedidos/estado/Novo")
-        .then( function(response) { 
-            content = response.body;
-        })
-        .then( function() {
-            console.log(content);
-            this.linhas=parsePedidos(content);
-            this.pedidosReady=true;
-        })
-        .catch( function(error) { 
-            console.error(error); 
-        });
+        this.$http.get("/api/pedidos/")
+            .then( function(response) { 
+                this.listaPedidos = response.body;
+            })
+            .then( function() {
+                this.parse();
+                this.pedidosReady=true;
+            })
+            .catch( function(error) { 
+                console.error(error); 
+            });
     }
 })
 
