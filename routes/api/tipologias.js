@@ -5,6 +5,23 @@ var Tipologias = require('../../controllers/api/tipologias.js');
 var express = require('express');
 var router = express.Router();
 
+// Middleware de verificação de disponibilidade de uma tipologia
+const estaDisponivel = (req, res, next) => {
+    const tipologia = {
+        sigla: req.body.sigla,
+        designacao: req.body.designacao,
+    };
+
+    Tipologias.existe(tipologia)
+        .then(function(existe) {
+            if (existe) {
+                res.status(409).send(`Já existe uma tipologia com a sigla '${tipologia.sigla}' ou designação '${tipologia.designacao}'`);
+            } else {
+                next();
+            }
+        })
+};
+
 // Lista todas as tipologias: id, sigla, designacao
 router.get('/', (req, res) => {
     const filtro = {
@@ -18,13 +35,8 @@ router.get('/', (req, res) => {
 });
 
 // Criação de uma nova tipologia. Em caso de sucesso gera um novo pedido
-router.post('/', Auth.isLoggedIn, (req, res) => {
-    const tipologia = {
-        sigla: req.body.sigla,
-        designacao: req.body.designacao,
-    };
-
-    return Tipologias.criar(tipologia, req.user.email)
+router.post('/', Auth.isLoggedIn, estaDisponivel, (req, res) => {
+    return Tipologias.criar(req.body, req.user.email)
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na criação da tipologia: ${erro}`));
 });

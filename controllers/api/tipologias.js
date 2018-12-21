@@ -83,6 +83,7 @@ Tipologias.criar = (tipologia, utilizador) => {
             clav:tipDesignacao '${tipologia.designacao}' ;
             clav:tipSigla '${tipologia.sigla}' ;
             clav:tipEstado "Harmonização" .
+        ${tipologia.entidades.map(entidade => `clav:${entidade} clav:pertenceTipologiaEnt clav:tip_${tipologia.sigla} .`).join('\n')}
     }`;
     const pedido = {
         criadoPor: utilizador,
@@ -99,6 +100,24 @@ Tipologias.criar = (tipologia, utilizador) => {
     return client.query(query)
         .execute()
         .then(() => Pedidos.criar(pedido));
+};
+
+/**
+ * Verifica se uma determinada tipologia existe no sistema.
+ * 
+ * @param {Tipologias} tipologia
+ * @return {Promise<boolean | Error>}
+ */
+Tipologias.existe = (tipologia) => {
+    const query = `ASK {
+        { ?e clav:tipDesignacao '${tipologia.designacao}' }
+        UNION
+        { ?s clav:tipSigla '${tipologia.sigla}' }
+    }`;
+
+    return client.query(query)
+        .execute()
+        .then(response => response.boolean);
 };
 
 /**

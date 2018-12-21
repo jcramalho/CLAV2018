@@ -25,6 +25,12 @@ block corpo
                             select(v-model="internacional")
                                 option(value="Sim") Sim
                                 option(value="Não" selected) Não
+                            
+                    tr
+                        td(style="padding-top:10px")
+                            label SIOE: 
+                        td
+                            input(size="70" v-model="sioe")
 
                     tr
                         td(style="padding-top:10px")

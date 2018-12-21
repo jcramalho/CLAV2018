@@ -4,7 +4,7 @@ var Leg = require('../../controllers/api/leg.js');
 var express = require('express');
 var router = express.Router();
 
-// Middleware de verificação de disponibilidade de uma entidade
+// Middleware de verificação de disponibilidade de uma legislação
 const estaDisponivel = (req, res, next) => {
     const legislacao = {
         numero: req.body.numero,

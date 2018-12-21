@@ -27,7 +27,7 @@ const Entidades = module.exports;
  * @return {Promise<[Entidade] | Error>} promessa que quando cumprida contém a
  * lista das entidades existentes que respeitam o filtro dado
  */
-Entidades.listar = async (filtro) => {
+Entidades.listar = (filtro) => {
     const query = `SELECT ?id ?sigla ?designacao ?internacional ?sioe ?estado {
         ?uri rdf:type clav:Entidade ;
             clav:entEstado ?estado;
@@ -41,7 +41,8 @@ Entidades.listar = async (filtro) => {
 
         FILTER (${Object.entries(filtro)
             .filter(([k,v]) => v !== undefined)
-            .map(([k,v]) => `?${k} = "${v}"` )
+            .map(([k,v]) => `?${k} = "${v}"`)
+            .concat(["True"])
             .join(' && ')})
     } ORDER BY ?sigla`;
 
@@ -147,6 +148,7 @@ Entidades.criar = (entidade, utilizador) => {
             tipo: 'Entidade',
             acao: 'Criação',
         },
+        triplos: [],
         distribuicao: [{
             estado: 'Submetido',
         }]
@@ -208,32 +210,13 @@ Entidades.alterar = (id, alteracoes, utilizador) => {
             codigo: id,
             tipo: 'Entidade',
             acao: 'Alteração',
-            alteracoes: [
+            triplos: [
                 {
-                    campo: 'designacao',
-                    valor: alteracoes.designacao,
+                    nome: 'designacao',
+                    sujeito: id,
                     predicado: 'clav:entDesignacao',
+                    objeto: alteracoes.designacao,
                 },
-                {
-                    campo: 'internacional',
-                    valor: alteracoes.internacional,
-                    predicado: 'clav:entInternacional',
-                },
-                {
-                    campo: 'sioe',
-                    valor: alteracoes.sioe,
-                    predicado: 'clav:entSIOE',
-                },
-                {
-                    campo: 'estado',
-                    valor: alteracoes.estado,
-                    predicado: 'clav:entEstado',
-                },
-                {
-                    campo: 'tipologias',
-                    valor: alteracoes.tipologias,
-                    predicado: 'clav:pertenceTipologiaEnt',
-                }
             ],
         },
         distribuicao: [{
@@ -241,9 +224,9 @@ Entidades.alterar = (id, alteracoes, utilizador) => {
         }]
     };
 
-    // Remover campos vazios
-    pedido.objeto.alteracoes = pedido.objeto.alteracoes
-        .filter(alteracao => alteracao.valor !== undefined);
+    // Remover triplos vazios
+    pedido.objeto.triplos = pedido.objeto.triplos
+        .filter(triplo => triplo.objeto !== undefined);
 
     return Pedidos.criar(pedido);
 }

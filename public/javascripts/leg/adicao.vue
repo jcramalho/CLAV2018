@@ -28,7 +28,7 @@ var newLeg = new Vue({
         },
         readyToCreate: function(){
             for(let field in this.diploma){
-                if(this.diploma[field].length==0  && field!="entidades" ) return false;   
+                if(this.diploma[field].length==0  && field!="entidades"  && field!="link") return false;   
             }
             return true;
         },

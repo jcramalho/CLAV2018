@@ -120,7 +120,7 @@ Vue.component('tabela-generica', {
             })
         },
         rowClick: function (index) { //emit event when a row is clicked
-            this.$emit('row-clicked', this.rowsShow[index].id);
+            this.$emit('row-clicked', this.rowsShow[index].id || this.rowsShow[index].codigo );
         },
         addClick: function (index) { //emit event when the '+' button is clicked
             this.$emit('add-clicked');
