@@ -1,22 +1,31 @@
-Vue.component('selecao-intervencao', {
+/*     
+    Componente que permite selecionar o tipo de intervenção;
+    Sempre que o utilizador a muda é gerado um evento que envia o novo valor ao componente pai.
+
+    Recebe como parâmetro um array de opções: options.
+    Em que cada elemento é um objeto com dois campos: label e value.
+*/
+
+Vue.component('select-value-from-list', {
   template: `
-    <select v-model="intervencao">
-        <option value="Apreciador">Apreciar</option>
-        <option value="Assessor">Assessorar</option>
-        <option value="Comunicador">Comunicar</option>
-        <option value="Decisor">Decidir</option>
-        <option value="Executor">Executar</option>
-        <option value="Iniciador">Iniciar</option>
+    <select v-model="current-value">
+        <option v-for='op in options' :value='op.value'>{{op.label}}</option>
     </select>
   `,
+  props: {
+      options: {
+          type: Array,
+          required: true
+      }
+  },
   data: function() {
       return {
-          "intervencao": "Apreciador"
+          "current-value": "Por selecionar"
       }
   },
   watch: {
-        intervencao: function () {
-            this.$emit('interv-change', this.intervencao);
+        current-value: function () {
+            this.$emit('value-change', this.current-value);
         }
   }
 })
@@ -60,7 +69,15 @@ Vue.component('tabela-selecao-participantes', {
                         <td>{{ row.data[2] }}</td>
                         
                         <td>
-                            <selecao-intervencao @interv-change="mudarIntervencao($event, row)"/>
+                            <select-value-from-list 
+                                :options = "[{label: 'Apreciar', value: 'Apreciador'},
+                                            {label: 'Assessorar', value: 'Assessor'},
+                                            {label: 'Comunicar', value: 'Comunicador'},
+                                            {label: 'Decidir', value: 'Decisor'},
+                                            {label: 'Executar', value: 'Executor'},
+                                            {label: 'Iniciar', value: 'Iniciador'}]"
+                                @value-change="mudarIntervencao($event, row)"
+                            />
                         </td>
                     </tr>
                     <tr v-else>
