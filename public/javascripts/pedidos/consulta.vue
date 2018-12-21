@@ -3,6 +3,7 @@ var consPedido = new Vue({
     data: {
         pedido: {},
         dist: [{}],
+        estados: [],
 
         pedidoReady: false,
         tipoObj: "",
@@ -12,12 +13,17 @@ var consPedido = new Vue({
 
             for(var i = 0; i<this.pedido.distribuicao.length; i++){
                 let date = new Date(this.pedido.distribuicao[i].data);
+                let estadoAtual = [];
 
                 var data = date.getDate() + "-" + (parseInt(date.getMonth()) + 1) + "-" + date.getFullYear();
                 
                 this.dist[i].data = data;
-                
+                estadoAtual[0] = data;
+                estadoAtual[1] = this.pedido.distribuicao[i].estado;
+                estadoAtual[2] = "";
+                this.estados.push(estadoAtual);
             }
+            console.log(this.dist)
             this.pedidoReady = true;
         },
         tipoObjeto: function() {
@@ -31,7 +37,6 @@ var consPedido = new Vue({
                 this.tipoObj = "legislacao";
             }
         }
-
     },
     created: function (){
         this.id = window.location.pathname.split('/')[2];
