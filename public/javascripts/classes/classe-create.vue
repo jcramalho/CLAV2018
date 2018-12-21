@@ -64,10 +64,13 @@ var newClass = new Vue({
 
         // Estruturas auxiliares
 
+        classesPai: [],
         entidadesD: [],
         entidadesP: [],
 
         semaforos: {
+            paisReady: false,
+            classesReady: false,
             entidadesReady: false,
         },
 
@@ -76,6 +79,8 @@ var newClass = new Vue({
             entidadesTableWidth: ["15%", "70%", "15%"],
             participantesTableHeader: ["Sigla", "Designacao", "Tipo", "Intervenção"],
             participantesTableWidth: ["15%", "55%", "15%", "15%"],
+            processosRelacionadosTableHeader: ['CLASSE', 'TÍTULO'],
+            processosRelacionadosTableWidth: ['16%', '81%'],
         },
 
     // Mensagens de validação
@@ -84,16 +89,12 @@ var newClass = new Vue({
 
         classesPai: null,
 
-        nEdits: 0,
-        parentsReady: false,
         legsReady: false,
-        classesReady: false,
-
+        
         legsTableHeader: ["#", "Tipo", "Número", "Título", "Data"],
         legsTableWidth: ['5%', '19%', '11%', '50%', '15%'],
         legList: [],
         selectedLegs: [],
-        donosSelecionados: [],
         
         relationsSelected: [],
         relationsSelectedInfo: [],
@@ -215,12 +216,6 @@ var newClass = new Vue({
                 ],
                 list: []
             }
-        },
-
-        autoCritIndexes: {
-            utilidadeAdmin: -1,         // PCA - criterio de utilidade administrativa (rels: suplementoPara)
-            densidadeInfo: -1,          // DF - criterio dansidade informaconal (rels: sinteseDe/sintetizadoPor)
-            complementaridadeInfo: -1   // DF - criterio complementaridade informacional (rels: complementar de)
         },
 
         message: null,
@@ -605,7 +600,7 @@ var newClass = new Vue({
                     this.entidadesD = response.body
                         .map(function (item) {
                             return {
-                                data: [item.sigla, item.designacao, "Entidade", "Apreciador"],
+                                data: [item.sigla, item.designacao, "Entidade", "Por selecionar"],
                                 selected: false,
                                 id: item.id
                             }
@@ -616,7 +611,7 @@ var newClass = new Vue({
                                 response.body
                                     .map(function (item) {
                                         return {
-                                            data: [item.sigla, item.designacao, "Tipologia", "Apreciador"],
+                                            data: [item.sigla, item.designacao, "Tipologia", "Por Selecionar"],
                                             selected: false,
                                             id: item.id
                                         }
@@ -682,7 +677,7 @@ var newClass = new Vue({
         loadParents: function () {
             this.$http.get("/api/classes/nivel/" + (this.classe.nivel - 1))
                 .then(function (response) {
-                    this.parents = response.body.map(function (item) {
+                    this.classesPai = response.body.map(function (item) {
                         return {
                             label: item.codigo + " - " + item.titulo,
                             value: item.id.split('#')[1],
@@ -690,7 +685,7 @@ var newClass = new Vue({
                     }).sort(function (a, b) {
                         return a.label.localeCompare(b.label);
                     });
-                    this.parentsReady = true;
+                    this.paisReady = true;
                 })
                 .catch(function (error) {
                     console.error(error);

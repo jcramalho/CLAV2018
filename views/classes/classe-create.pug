@@ -36,10 +36,10 @@ block corpo
                             .info-label Classe Pai: 
                         td.smaller
                             v-select.custom-select(
-                                v-if="parentsReady"
+                                v-if="paisReady"
                                 style="width=100px"
                                 v-model="classe.pai"
-                                :options="parents"
+                                :options="classesPai"
                             )
 
                     //- CÓDIGO
@@ -284,11 +284,10 @@ block corpo
                                         select-left="true"
                                         pages-on="true"
 
-                                        :header="['CLASSE', 'TÍTULO']"
-                                        :cwidth="['16%', '81%']"
+                                        :header="processosRelacionadosTableHeader"
+                                        :cwidth="processosRelacionadosTableWidth"
 
                                         :complete-rows="relationLists"
-                                        :n-edits="nEdits"
 
                                         filter-on="true"
                                         

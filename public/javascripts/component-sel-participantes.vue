@@ -8,7 +8,7 @@
 
 Vue.component('select-value-from-list', {
   template: `
-    <select v-model="current-value">
+    <select v-model="currentValue">
         <option v-for='op in options' :value='op.value'>{{op.label}}</option>
     </select>
   `,
@@ -20,12 +20,12 @@ Vue.component('select-value-from-list', {
   },
   data: function() {
       return {
-          "current-value": "Por selecionar"
+          "currentValue": "Indefinido"
       }
   },
   watch: {
-        current-value: function () {
-            this.$emit('value-change', this.current-value);
+        currentValue: function () {
+            this.$emit('value-change', this.currentValue);
         }
   }
 })
@@ -70,12 +70,13 @@ Vue.component('tabela-selecao-participantes', {
                         
                         <td>
                             <select-value-from-list 
-                                :options = "[{label: 'Apreciar', value: 'Apreciador'},
-                                            {label: 'Assessorar', value: 'Assessor'},
-                                            {label: 'Comunicar', value: 'Comunicador'},
-                                            {label: 'Decidir', value: 'Decisor'},
-                                            {label: 'Executar', value: 'Executor'},
-                                            {label: 'Iniciar', value: 'Iniciador'}]"
+                                :options = "[{label: 'Por selecionar', value: 'Indefinido', selected: 'selected'},
+                                            {label: 'Apreciar', value: 'Apreciador', selected: false},
+                                            {label: 'Assessorar', value: 'Assessor', selected: false},
+                                            {label: 'Comunicar', value: 'Comunicador', selected: false},
+                                            {label: 'Decidir', value: 'Decisor', selected: false},
+                                            {label: 'Executar', value: 'Executor', selected: false},
+                                            {label: 'Iniciar', value: 'Iniciador', selected: false}]"
                                 @value-change="mudarIntervencao($event, row)"
                             />
                         </td>
