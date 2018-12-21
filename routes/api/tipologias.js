@@ -36,12 +36,7 @@ router.get('/', (req, res) => {
 
 // Criação de uma nova tipologia. Em caso de sucesso gera um novo pedido
 router.post('/', Auth.isLoggedIn, estaDisponivel, (req, res) => {
-    const tipologia = {
-        sigla: req.body.sigla,
-        designacao: req.body.designacao,
-    };
-
-    return Tipologias.criar(tipologia, req.user.email)
+    return Tipologias.criar(req.body, req.user.email)
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na criação da tipologia: ${erro}`));
 });

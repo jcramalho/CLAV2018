@@ -83,6 +83,7 @@ Tipologias.criar = (tipologia, utilizador) => {
             clav:tipDesignacao '${tipologia.designacao}' ;
             clav:tipSigla '${tipologia.sigla}' ;
             clav:tipEstado "Harmonização" .
+        ${tipologia.entidades.map(entidade => `clav:${entidade} clav:pertenceTipologiaEnt clav:tip_${tipologia.sigla} .`).join('\n')}
     }`;
     const pedido = {
         criadoPor: utilizador,
