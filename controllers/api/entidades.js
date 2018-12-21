@@ -27,7 +27,7 @@ const Entidades = module.exports;
  * @return {Promise<[Entidade] | Error>} promessa que quando cumprida contém a
  * lista das entidades existentes que respeitam o filtro dado
  */
-Entidades.listar = async (filtro) => {
+Entidades.listar = (filtro) => {
     const query = `SELECT ?id ?sigla ?designacao ?internacional ?sioe ?estado {
         ?uri rdf:type clav:Entidade ;
             clav:entEstado ?estado;
@@ -41,7 +41,8 @@ Entidades.listar = async (filtro) => {
 
         FILTER (${Object.entries(filtro)
             .filter(([k,v]) => v !== undefined)
-            .map(([k,v]) => `?${k} = "${v}"` )
+            .map(([k,v]) => `?${k} = "${v}"`)
+            .concat(["True"])
             .join(' && ')})
     } ORDER BY ?sigla`;
 
