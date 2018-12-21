@@ -4,6 +4,22 @@ var Leg = require('../../controllers/api/leg.js');
 var express = require('express');
 var router = express.Router();
 
+// Middleware de verificação de disponibilidade de uma legislação
+const estaDisponivel = (req, res, next) => {
+    const legislacao = {
+        numero: req.body.numero,
+    };
+
+    Leg.existe(legislacao)
+        .then(function(existe) {
+            if (existe) {
+                res.status(409).send(`Já existe uma legislação com o número '${legislacao.numero}'`);
+            } else {
+                next();
+            }
+        })
+};
+
 // Lista todos os doucmentos legislativos: id, data, numero, tipo, sumario, entidades
 router.get('/', (req, res) => {
     return Leg.listar()
@@ -12,7 +28,7 @@ router.get('/', (req, res) => {
 });
 
 // Criação de uma nova legislacao. Em caso de sucesso gera um novo pedido
-router.post('/', Auth.isLoggedIn, (req, res) => {
+router.post('/', Auth.isLoggedIn, estaDisponivel, (req, res) => {
     const legislacao = {
         titulo: req.body.titulo,
         data: req.body.data,

@@ -1,16 +1,16 @@
 var newOrg = new Vue({
-    el: '#nova-entidade-form',
+    el: '#nova-tipologia-form',
     data: {
         tipologia: {
-            des: "",
+            designacao: "",
             sigla: "",
         },
         message: "",
-        entidades: [],
         ent: [],
         entReady: false,
         entTableHeader: ["#", "Sigla", "Nome", "Tipo"],
         entTableWidth: ["4%", "15%", "70%", "15%"],
+        list: [],
     },
     components: {
         spinner: VueStrap.spinner,
@@ -41,14 +41,14 @@ var newOrg = new Vue({
                     console.error(error);
                 });       
         },
-        entSelected: function (row, list, partType) {
+        entSelected: function (row) {
             if (!row.selected) {
-                list.push(row.id);
+                this.list.push(row.id);
             }
             else {
-                let index = list.indexOf(row.id);
+                let index = this.list.indexOf(row.id);
                 if (index != -1) {
-                    list.splice(index, 1);
+                    this.list.splice(index, 1);
                 }
             }
         },
@@ -56,9 +56,19 @@ var newOrg = new Vue({
             this.$refs.spinner.show();
 
             var dataObj = {
-                des: this.tipologia.des,
+                designacao: this.tipologia.designacao,
                 sigla: this.tipologia.sigla,
             }
+
+            var listObj = {
+                elementos: this.list,
+            }
+
+            this.$http.post('/api/tipologias/tip_' + this.tipologia.sigla + '/elementos', listObj, {
+                headers: {
+                    'content-type': 'application/json'
+                }
+            })
 
             this.$http.post('/api/tipologias/', dataObj, {
                 headers: {
@@ -67,17 +77,15 @@ var newOrg = new Vue({
             })
                 .then(function (response) {    
                     this.$refs.spinner.hide();
-                    
-                    if (response.body != "Designação e/ou Sigla já existente(s)!") {
-                        window.location.href = '/pedidos/submissao';
-                    }
-                    else {
-                        messageL.showMsg(response.body);
-                    }
+
+                    window.location.href = '/pedidos/submissao';
                 })
-                .catch(function (error) {
-                    console.error(error);
-                });
+                .catch(error => {if (error.status === 409) {
+                    messageL.showMsg(error.body);
+                    this.$refs.spinner.hide();
+                } 
+                console.error(error);
+            });
         }
     },
     created: function () {

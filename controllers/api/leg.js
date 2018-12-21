@@ -133,6 +133,22 @@ Leg.criar = async (legislacao, utilizador) => {
 };
 
 /**
+ * Verifica se um determinado numero de legislação existe no sistema.
+ * 
+ * @param {Legislacao} legislacao
+ * @return {Promise<boolean | Error>}
+ */
+Leg.existe = (legislacao) => {
+    const query = `ASK {
+            ?e clav:diplomaNumero '${legislacao.numero}'
+        }`;
+
+    return client.query(query)
+        .execute()
+        .then(response => response.boolean);
+};
+
+/**
  * Gera um pedido de remoção da legislação.
  * Nenhuma alteração será feita à legislação., só quando o pedido for
  * validado

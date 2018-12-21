@@ -21,9 +21,13 @@ var newClass = new Vue({
                 4: /^[0-9]{3}\.[0-9]{2}\.[0-9]{3}\.[0-9]{3}$/,
         },
 
-        classe: {               // Objeto da classe que será gravado nas caches dos pedidps e pendentes
+    // Objeto que guarda uma classe
+
+        classe: {
+            // Metainformação e campos da área de Descrição
+
             nivel: 1,
-            classePai: null,
+            pai: null,
             codigo: null,
             titulo: null,
             descricao: null,
@@ -31,9 +35,19 @@ var newClass = new Vue({
             exemplosNotasAp: [],
             notasEx: [],
             termosInd: [],
-            tipoProcesso: "pc",
-            processoTransversal: "N",
+
+            // Campos da área do Contexto de Avaliação
+            // Tipo de processo
+
+            tipoProc: "PC",
+            procTrans: "N",
+
+            // Donos do processo: lista de entidades
+
             donos: [],
+
+            // Participantes no processo: lista de entidades
+
             participantes: {
                 Apreciador: [],
                 Assessor: [],
@@ -42,15 +56,37 @@ var newClass = new Vue({
                 Iniciador: [],
                 Executor: [],
             },
+
+            // Processos Relacionados
+
             processosRelacionados: [],
         },
+
+        // Estruturas auxiliares
+
+        entidadesD: [],
+        entidadesP: [],
+
+        semaforos: {
+            entidadesReady: false,
+        },
+
+        estilo: {
+            entidadesTableHeader: ["Sigla", "Designacao", "Tipo"],
+            entidadesTableWidth: ["15%", "70%", "15%"],
+            participantesTableHeader: ["Sigla", "Designacao", "Tipo", "Intervenção"],
+            participantesTableWidth: ["15%", "55%", "15%", "15%"],
+        },
+
+    // Mensagens de validação
+
+        mensValCodigo: "",
 
         classesPai: null,
 
         nEdits: 0,
         parentsReady: false,
         legsReady: false,
-        entidadesReady: false,
         classesReady: false,
 
         legsTableHeader: ["#", "Tipo", "Número", "Título", "Data"],
@@ -58,47 +94,12 @@ var newClass = new Vue({
         legList: [],
         selectedLegs: [],
         donosSelecionados: [],
-        participantsSelected: {
-            Apreciador: [],
-            Assessor: [],
-            Comunicador: [],
-            Decisor: [],
-            Executor: [],
-            Iniciador: [],
-        },
-        participantsSelectedInfo: {
-            Apreciador: [],
-            Assessor: [],
-            Comunicador: [],
-            Decisor: [],
-            Executor: [],
-            Iniciador: [],
-        },
+        
         relationsSelected: [],
         relationsSelectedInfo: [],
-        
-        newExAppNote: null,
-        newAppNote: null,
-        newDelNote: null,
-
-        newIndex: null,
-        indexes: [],
 
         status: "H",
 
-        entidadesTableHeader: ["#", "Sigla", "Designacao", "Tipo"],
-        entidadesTableWidth: ["4%", "15%", "70%", "15%"],
-
-        partDic: {
-            Apreciador: "Apreciar",
-            Assessor: "Assessorar",
-            Comunicador: "Comunicar",
-            Decisor: "Decidir",
-            Executor: "Executar",
-            Iniciador: "Iniciar",
-        },
-
-        
         relationTypes: [
             {
                 label: 'Antecessor de',
@@ -223,46 +224,42 @@ var newClass = new Vue({
         },
 
         message: null,
-        codeMessage: "",
-        parentvalue: "",
 
         modalMsgShow: false,
         modalMsg: "",
     },
     watch: {
-        parentvalue: function () {
-            this.parent = this.parentvalue.value;
+        'classe.pai': function () {
+            if(this.classe.pai)
+                this.classe.codigo = this.classe.pai.value.slice(1, this.classe.pai.value.length) + ".";
         },
-        parent: function () {
-            this.code = this.parent.slice(1, this.parent.length) + ".";
-        },
-        classLevel: function () {
-            this.parent = "";
-            if (this.classLevel > 1) {
+        'classe.nivel': function () {
+            this.classe.pai = "";
+            if (this.classe.nivel > 1) {
                 this.loadParents();
             }
-            if (this.classLevel >= 3 && !this.classesReady) {
+            if (this.classe.nivel >= 3 && !this.classesReady) {
                 this.loadClasses();
             }
-            side.changeNav(this.classLevel);
+            sideNav.changeNav(this.classe.nivel);
         },
-        code: function () {
-            this.codeMessage = "";
+        'classe.codigo': function () {
+            this.mensValCodigo = "";
 
-            if (this.classLevel > 1) {
-                if (this.code.indexOf(this.parent.slice(1, this.parent.length)) != 0) {
-                    this.code = this.parent.slice(1, this.parent.length) + ".";
+            if (this.classe.nivel > 1) {
+                if (this.classe.codigo.indexOf(this.classe.pai.value.slice(1, this.classe.pai.value.length)) != 0) {
+                    this.classe.codigo = this.classe.pai.value.slice(1, this.classe.pai.value.length) + ".";
                 }
-                if (this.code[this.parent.length - 1] != '.') {
-                    this.code = this.parent.slice(1, this.parent.length) + ".";
+                if (this.classe.codigo[this.classe.pai.value.length - 1] != '.') {
+                    this.classe.codigo = this.classe.pai.value.slice(1, this.classe.pai.value.length) + ".";
                 }
             }
 
-            if (!this.codeFormats[this.classLevel].test(this.code)) {
-                this.codeMessage = "Formato inválido";
+            if (!this.codeFormats[this.classe.nivel].test(this.classe.codigo)) {
+                this.mensValCodigo = "Formato inválido";
             }
             else {
-                this.checkCodeAvailability(this.code);
+                this.verificaExistenciaCodigo(this.classe.codigo);
             }
         },
         relationsSelected: {
@@ -331,12 +328,12 @@ var newClass = new Vue({
         }
     },
     methods: {
-        checkCodeAvailability: _.debounce(
-            function (code) {
-                this.$http.get('/api/classes/verificar/' + code)
+        verificaExistenciaCodigo: _.debounce(
+            function (codigo) {
+                this.$http.get('/api/classes/verificar/' + codigo)
                     .then(response => {
                         if (response.body) {
-                            this.codeMessage = "Codigo já existe!";
+                            this.mensValCodigo = "Este código já existe!";
                         }
                     })
             }, 500
@@ -603,25 +600,23 @@ var newClass = new Vue({
             }
         },
         loadEntidades: function () {
-            var i = 0;
-
             this.$http.get("/api/entidades")
                 .then(response => {
-                    this.ownerList = response.body
+                    this.entidadesD = response.body
                         .map(function (item) {
                             return {
-                                data: [i++, item.sigla, item.designacao, "Entidade"],
+                                data: [item.sigla, item.designacao, "Entidade", "Apreciador"],
                                 selected: false,
                                 id: item.id
                             }
                         });
                     this.$http.get("/api/tipologias")
                         .then(response => {
-                            this.ownerList = this.ownerList.concat(
+                            this.entidadesD = this.entidadesD.concat(
                                 response.body
                                     .map(function (item) {
                                         return {
-                                            data: [i++, item.sigla, item.designacao, "Tipologia"],
+                                            data: [item.sigla, item.designacao, "Tipologia", "Apreciador"],
                                             selected: false,
                                             id: item.id
                                         }
@@ -630,15 +625,8 @@ var newClass = new Vue({
                                 return a.data[1].localeCompare(b.data[1]);
                             });
 
-                            for (let type in this.participantLists) {
-                                if (type != "Executor") {
-                                    this.participantLists[type] = JSON.parse(
-                                        JSON.stringify(this.ownerList)
-                                    );
-                                }
-                            }
-
-                            this.orgsReady = true;
+                            this.entidadesP = JSON.parse(JSON.stringify(this.entidadesD));
+                            this.semaforos.entidadesReady = true;
                         })
                         .catch(function (error) {
                             console.error(error);
@@ -648,48 +636,27 @@ var newClass = new Vue({
                     console.error(error);
                 });
         },
-        orgSelected: function (row, list, partType) {
-            var findIndex = function (list, id) {
-                for (let [index, item] of list.entries()) {
-                    if (id == item.id) {
-                        return index;
-                    }
-                }
-                return -1;
-            }
-
+        selecionarDono: function (row) {
             if (!row.selected) {
-                list.push(row.id);
-
-                if (partType && partType != 'dono') {
-                    this.participantsSelectedInfo[partType].push(row.data);
-                }
-                if (partType && partType == 'dono') {
-                    this.participantLists.Executor.push(JSON.parse(JSON.stringify(row)));
-                }
+                this.classe.donos.push(row.id);
             }
             else {
-                let index = list.indexOf(row.id);
+                let index = this.classe.donos.indexOf(row.id);
                 if (index != -1) {
-                    list.splice(index, 1);
-
-                    if (partType && partType != 'dono') {
-                        this.participantsSelectedInfo[partType].splice(index, 1);
-                    }
-                    else if (partType && partType == 'dono') {
-                        let exIndex = this.participantsSelected.Executor.indexOf(row.id);
-                        if (exIndex != -1) {
-                            this.participantsSelected.Executor.splice(exIndex, 1);
-                            this.participantsSelectedInfo.Executor.splice(exIndex, 1);
-                        }
-
-                        let listIndex = findIndex(this.participantLists.Executor, row.id);
-                        if (listIndex != -1) {
-                            this.participantLists.Executor.splice(listIndex, 1);
-                        }
-                    }
+                    this.classe.donos.splice(index, 1);
                 }
             }
+        },
+        selecionarParticipante: function (row) {
+            if (!row.selected) {
+                this.classe.participantes[row.data[3]].push(row.id);
+            }
+            else {
+                let index = this.classe.participantes[row.data[3]].indexOf(row.id);
+                if (index != -1) {
+                    this.classe.participantes[row.data[3]].splice(index, 1);
+                }
+            } 
         },
         loadLegs: function () {
             var i = 0;
@@ -713,7 +680,7 @@ var newClass = new Vue({
                 });
         },
         loadParents: function () {
-            this.$http.get("/api/classes/nivel/" + (this.classLevel - 1))
+            this.$http.get("/api/classes/nivel/" + (this.classe.nivel - 1))
                 .then(function (response) {
                     this.parents = response.body.map(function (item) {
                         return {
@@ -728,25 +695,6 @@ var newClass = new Vue({
                 .catch(function (error) {
                     console.error(error);
                 });
-        },
-        parse: function (content, keys) {
-            var dest = [];
-            var temp = {};
-
-            // parsing the JSON
-            for (var i = 0; i < content.length; i++) {
-                for (var j = 0; j < keys.length; j++) {
-                    temp[keys[j]] = content[i][keys[j]].value;
-
-                    if (keys[j] == "id") {
-                        temp.id = temp.id.replace(/[^#]+#(.*)/, '$1');
-                    }
-                }
-
-                dest[i] = JSON.parse(JSON.stringify(temp));
-            }
-
-            return dest;
         },
         addNewIndex: function () {
             if (this.newIndex) {
@@ -763,7 +711,7 @@ var newClass = new Vue({
                 return false;
             }
 
-            if (this.codeMessage.length > 0) {
+            if (this.mensValCodigo.length > 0) {
                 messageL.showMsg("Formato do código errado!");
                 return false;
             }
@@ -788,11 +736,11 @@ var newClass = new Vue({
                 }
             }
 
-            if (this.classLevel == 1) {
+            if (this.classe.nivel == 1) {
                 //verificar campos obrigatórios
                 if (this.code && this.title) {
                     dataObj = {
-                        Level: this.classLevel,               //
+                        Level: this.classe.nivel,               //
                         Parent: null,                   //
                         Code: this.code,                //
                         Title: this.title,              //
@@ -821,8 +769,8 @@ var newClass = new Vue({
             }
             else {
                 if (this.parent && this.code && this.title) {
-                    if (this.classLevel >= 3) {
-                        if (this.procTrans == 'S') {
+                    if (this.classe.nivel >= 3) {
+                        if (this.classe.procTrans == 'S') {
                             let check = 0;
 
                             for (const key in this.participantsSelected) {
@@ -835,7 +783,7 @@ var newClass = new Vue({
                             }
                             else {
                                 dataObj = {
-                                    Level: this.classLevel,                       //
+                                    Level: this.classe.nivel,                       //
                                     Parent: this.parent,                    //
                                     Code: this.code,                        //
                                     Title: this.title,                      //
@@ -845,7 +793,7 @@ var newClass = new Vue({
                                     DelNotes: this.delNotes,                //
                                     Indexes: this.indexes,                  //
                                     Type: this.procType,                    //
-                                    Trans: this.procTrans,                  //
+                                    Trans: this.classe.procTrans,                  //
                                     Owners: this.selectedOwners,            //
                                     Participants: this.participantsSelected,//
                                     RelProcs: this.relationsSelected,       //
@@ -886,7 +834,7 @@ var newClass = new Vue({
                         }
                         else {
                             dataObj = {
-                                Level: this.classLevel,                   //
+                                Level: this.classe.nivel,                   //
                                 Parent: this.parent,                //
                                 Code: this.code,                    //
                                 Title: this.title,                  //
@@ -896,7 +844,7 @@ var newClass = new Vue({
                                 DelNotes: this.delNotes,            //
                                 Indexes: this.indexes,              //
                                 Type: this.procType,                //
-                                Trans: this.procTrans,              //
+                                Trans: this.classe.procTrans,              //
                                 Owners: this.selectedOwners,        //
                                 Participants: null,                 //
                                 RelProcs: this.relationsSelected,   //
@@ -937,7 +885,7 @@ var newClass = new Vue({
                     }
                     else {
                         dataObj = {
-                            Level: this.classLevel,               //
+                            Level: this.classe.nivel,               //
                             Parent: this.parent,            //
                             Code: this.code,                //
                             Title: this.title,              //
@@ -967,7 +915,10 @@ var newClass = new Vue({
             }
         },
         add: function () {
-            this.$refs.spinner.show();
+
+            alert(JSON.stringify(this.classe))
+
+            /* this.$refs.spinner.show();
 
             for ([i, note] of this.appNotes.entries()) {
                 note.id = "na_c" + this.code + "_" + (i + 1);
@@ -1025,7 +976,7 @@ var newClass = new Vue({
             }
             else {
                 this.$refs.spinner.hide();
-            }
+            } */
         }
     },
     created: function () {
