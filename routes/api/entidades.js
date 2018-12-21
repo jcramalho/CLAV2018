@@ -24,29 +24,14 @@ const estaDisponivel = (req, res, next) => {
 
 // Lista todas as entidades: id, sigla, designacao, internacional
 router.get('/', async (req, res) => {
-    const filtro = {
-        sigla: req.query.sigla,
-        designacao: req.query.designacao,
-        internacional: req.query.internacional,
-        sioe: req.query.sioe,
-        estado: req.query.estado ? req.query.estado : "Ativa",
-    };
-    
-    return Entidades.listar(filtro)
+    return Entidades.listar(req.query)
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na listagem das entidades: ${erro}`));
 });
 
 // Criação de uma nova entidade. Em caso de sucesso gera um novo pedido
 router.post('/', Auth.isLoggedIn, estaDisponivel, (req, res) => {
-    const entidade = {
-        sigla: req.body.sigla,
-        designacao: req.body.designacao,
-        internacional: req.body.internacional,
-        tipologias: req.body.tipologias,
-    };
-
-    return Entidades.criar(entidade, req.user.email)
+    return Entidades.criar(req.body, req.user.email)
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na criação da entidade: ${erro}`));
 });
@@ -59,15 +44,7 @@ router.get('/:id', (req, res) => {
 });
 
 router.put('/:id', Auth.isLoggedIn, (req, res) => {
-    const alteracoes = {
-        designacao: req.body.designacao,
-        internacional: req.body.internacional,
-        estado: req.body.estado,
-        sioe: req.body.sioe,
-        tipologias: req.body.tipologias,
-    };
-
-    return Entidades.alterar(req.params.id, alteracoes, req.user.email)
+    return Entidades.alterar(req.params.id, req.body, req.user.email)
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na alteração da entidade '${req.params.id}': ${erro}`));
 })

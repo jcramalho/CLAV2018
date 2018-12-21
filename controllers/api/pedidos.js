@@ -38,14 +38,5 @@ Pedidos.consultar = (codigo) => {
  * @return {Pedido} pedido criado.
  */
 Pedidos.criar = (pedido) => {
-    return new Pedido({
-        criadoPor: pedido.criadoPor,
-        objeto: {
-            codigo: pedido.objeto.codigo,
-            tipo: pedido.objeto.tipo,
-            acao: pedido.objeto.acao,
-            alteracoes: pedido.objeto.alteracoes,
-        },
-        distribuicao: pedido.distribuicao,
-    }).save();
+    return new Pedido(pedido).save();
 };

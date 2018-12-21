@@ -147,6 +147,7 @@ Entidades.criar = (entidade, utilizador) => {
             tipo: 'Entidade',
             acao: 'Criação',
         },
+        triplos: [],
         distribuicao: [{
             estado: 'Submetido',
         }]
@@ -208,32 +209,13 @@ Entidades.alterar = (id, alteracoes, utilizador) => {
             codigo: id,
             tipo: 'Entidade',
             acao: 'Alteração',
-            alteracoes: [
+            triplos: [
                 {
-                    campo: 'designacao',
-                    valor: alteracoes.designacao,
+                    nome: 'designacao',
+                    sujeito: id,
                     predicado: 'clav:entDesignacao',
+                    objeto: alteracoes.designacao,
                 },
-                {
-                    campo: 'internacional',
-                    valor: alteracoes.internacional,
-                    predicado: 'clav:entInternacional',
-                },
-                {
-                    campo: 'sioe',
-                    valor: alteracoes.sioe,
-                    predicado: 'clav:entSIOE',
-                },
-                {
-                    campo: 'estado',
-                    valor: alteracoes.estado,
-                    predicado: 'clav:entEstado',
-                },
-                {
-                    campo: 'tipologias',
-                    valor: alteracoes.tipologias,
-                    predicado: 'clav:pertenceTipologiaEnt',
-                }
             ],
         },
         distribuicao: [{
@@ -241,9 +223,9 @@ Entidades.alterar = (id, alteracoes, utilizador) => {
         }]
     };
 
-    // Remover campos vazios
-    pedido.objeto.alteracoes = pedido.objeto.alteracoes
-        .filter(alteracao => alteracao.valor !== undefined);
+    // Remover triplos vazios
+    pedido.objeto.triplos = pedido.objeto.triplos
+        .filter(triplo => triplo.objeto !== undefined);
 
     return Pedidos.criar(pedido);
 }
