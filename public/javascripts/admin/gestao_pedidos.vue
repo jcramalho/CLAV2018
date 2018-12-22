@@ -45,7 +45,6 @@ var novos = new Vue({
                     pedido[3] = data;
                     pedido[4] = "20 dias"
                     pedido[5] = "<button><a href='/pedidos/" + this.listaPedidos[i].codigo + "'>Ver Pedido</a></button>"
-                    console.log(pedido)
                     this.linhas.push(pedido)
                 }
             }

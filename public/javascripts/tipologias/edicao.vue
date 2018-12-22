@@ -97,7 +97,7 @@ var org = new Vue({
 
             return ret;
         },
-        loadClasses: function () {
+        /*loadClasses: function () {
             var classesToParse = [];
             var keys = ["id", "Code", "Title"];
 
@@ -120,7 +120,7 @@ var org = new Vue({
                 .catch(function (error) {
                     console.error(error);
                 });
-        },
+        },*/
         loadEntList: function () {
             var dataToParse = [];
             var keys = ["id", "Designacao", "Sigla"];
@@ -152,7 +152,7 @@ var org = new Vue({
             var classesToParse = [];
             var keys = ["id", "Code", "Title"];
 
-            this.$http.get("/api/tipologias/" + this.id+"/dominio")
+            this.$http.get("/api/tipologias/" + this.id+"/intervencao/dono")
                 .then(function (response) {
                     classesToParse = response.body;
                 })
@@ -170,9 +170,10 @@ var org = new Vue({
             var partsToParse = [];
             var keys = ['id', 'Title', 'Code'];
 
-            this.$http.get("/api/tipologias/" + this.id + "/participacoes")
+            this.$http.get("/api/tipologias/" + this.id + "/intervencao/participante")
                 .then(function (response) {
                     partsToParse = response.body;
+                    console.log(partsToParse);
                 })
                 .then(function () {
                     this.participations = this.parseParticipants(partsToParse, keys);
@@ -203,9 +204,9 @@ var org = new Vue({
                 });
         },
         parse: function (content) {
-            this.tipName = content[0].Designacao.value;
-            this.newName = content[0].Designacao.value;
-            this.tipInitials = content[0].Sigla.value;
+            this.tipName = content.designacao;
+            this.newName = content.designacao;
+            this.tipInitials = content.sigla;
         },
         parseList: function (content, keys) {
             var dest = [];
@@ -213,7 +214,7 @@ var org = new Vue({
             // parsing the JSON
             for (var i = 0; i < content.length; i++) {
                 for (var j = 0; j < keys.length; j++) {
-                    temp[keys[j]] = content[i][keys[j]].value;
+                    temp[keys[j]] = content[i][keys[j]];
 
                     if (keys[j] == "id") {
                         temp.id = temp.id.replace(/[^#]+#(.*)/, '$1');
@@ -242,13 +243,13 @@ var org = new Vue({
             for (var i = 0; i < content.length; i++) {
                 for (var j = 0; j < keys.length; j++) {
 
-                    temp[keys[j]] = content[i][keys[j]].value;
+                    temp[keys[j]] = content[i][keys[j]];
 
                     if (keys[j] == "id") {
                         temp.id = temp.id.replace(/[^#]+#(.*)/, '$1');
                     }
                 }
-                var type = content[i].Type.value.replace(/.*temParticipante(.*)/, '$1');
+                var type = content[i].tipoPar.replace(/.*temParticipante(.*)/, '$1');
 
                 dest[type].push(JSON.parse(JSON.stringify(temp)));
             }
@@ -392,7 +393,7 @@ var org = new Vue({
             .then(function () {
                 this.loadDomain();
                 this.loadParticipations();
-                this.loadClasses();
+                //-this.loadClasses();
                 this.loadElems();
                 this.loadEntList();
             })

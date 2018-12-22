@@ -67,7 +67,7 @@ var leg = new Vue({
         dateChosen: function(payload){
             this.legData.date.new=""+payload;
         },
-        loadClasses: function () {
+        /*loadClasses: function () {
             var classesToParse = [];
             var keys = ["id", "Codigo", "Titulo"];
 
@@ -90,18 +90,17 @@ var leg = new Vue({
                 .catch(function (error) {
                     console.error(error);
                 });
-        },
+        },*/
         loadProcesses: function () {
             var classesToParse = [];
-            var keys = ["id", "Code", "Title"];
 
             this.$http.get("/api/legislacao/" + this.id+"/regula")
                 .then(function (response) {
                     classesToParse = response.body;
                 })
                 .then(function () {
-                    this.processes = JSON.parse(JSON.stringify(this.parseList(classesToParse, keys)));
-                    this.newProcesses = JSON.parse(JSON.stringify(this.parseList(classesToParse, keys)));
+                    this.processes = JSON.parse(JSON.stringify(classesToParse));
+                    this.newProcesses = JSON.parse(JSON.stringify(classesToParse));
 
                     this.processesReady = true;
                 })
@@ -111,7 +110,6 @@ var leg = new Vue({
         },
         loadOrgs: function () {
             var dataToParse = [];
-            var keys = ["id", "Sigla", "Designacao"];
             var i = 0;
 
             var selectedOrgs = this.legData.org.original.map(a=>a.id);
@@ -122,10 +120,10 @@ var leg = new Vue({
                     dataToParse = response.body;
                 })
                 .then(function () {
-                    this.orgs = this.parseList(dataToParse, keys)
+                    this.orgs = dataToParse
                        .map(function (item) {
                             return {
-                                data: [i++, item.Sigla, item.Designacao, "Entidade"],
+                                data: [i++, item.sigla, item.designacao, "Entidade"],
                                 selected: (selectedOrgs.indexOf(item.id)!=-1),
                                 id: item.id
                             }
@@ -138,36 +136,15 @@ var leg = new Vue({
                 .catch(function (error) {
                     console.error(error);
                 });
-        },
-        parseList: function (content, keys) {
-            var dest = [];
-            var temp = {};
-
-            // parsing the JSON
-            for (var i = 0; i < content.length; i++) {
-                for (var j = 0; j < keys.length; j++) {
-                    temp[keys[j]] = content[i][keys[j]].value;
-
-                    if (keys[j] == "id") {
-                        temp.id = temp.id.replace(/[^#]+#(.*)/, '$1');
-                    }
-                }
-
-                dest[i] = JSON.parse(JSON.stringify(temp));
-            }
-
-            return dest.sort(function (a, b) {
-                return a.id.localeCompare(b.id);
-            });
-        },   
+        }, 
         parse: function(){    
-            this.legData.date.original=this.content[0].Data.value;
-            this.legData.number.original=this.content[0].Número.value;
-            this.legData.type.original=this.content[0].Tipo.value;
-            this.legData.title.original=this.content[0].Titulo.value;
-            this.legData.link.original=this.content[0].Link.value;
+            this.legData.date.original=this.content.data;
+            this.legData.number.original=this.content.numero;
+            this.legData.type.original=this.content.tipo;
+            this.legData.title.original=this.content.titulo;
+            this.legData.link.original=this.content.entidades;
 
-            let ent = this.content[0].Entidades.value;
+            let ent = this.content.entidades;
 
             if(ent.length>0){
                 this.legData.org.original = ent.split(";").map(
@@ -260,7 +237,7 @@ var leg = new Vue({
             this.loadProcesses();
 
             this.loadOrgs();
-            this.loadClasses();
+            //-this.loadClasses();
         })
         .catch( function(error) { 
             console.error(error); 
