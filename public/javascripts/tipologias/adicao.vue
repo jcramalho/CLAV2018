@@ -4,6 +4,7 @@ var newOrg = new Vue({
         tipologia: {
             designacao: "",
             sigla: "",
+            entidades: [],
         },
         message: "",
         ent: [],
@@ -58,17 +59,8 @@ var newOrg = new Vue({
             var dataObj = {
                 designacao: this.tipologia.designacao,
                 sigla: this.tipologia.sigla,
+                entidades: this.list,
             }
-
-            var listObj = {
-                elementos: this.list,
-            }
-
-            this.$http.post('/api/tipologias/tip_' + this.tipologia.sigla + '/elementos', listObj, {
-                headers: {
-                    'content-type': 'application/json'
-                }
-            })
 
             this.$http.post('/api/tipologias/', dataObj, {
                 headers: {

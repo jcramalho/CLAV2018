@@ -23,7 +23,6 @@ var consPedido = new Vue({
                 estadoAtual[2] = "";
                 this.estados.push(estadoAtual);
             }
-            console.log(this.dist)
             this.pedidoReady = true;
         },
         tipoObjeto: function() {
