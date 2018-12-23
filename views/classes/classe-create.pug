@@ -36,7 +36,7 @@ block corpo
                             .info-label Classe Pai: 
                         td.smaller
                             v-select.custom-select(
-                                v-if="paisReady"
+                                v-if="semaforos.paisReady"
                                 style="width=100px"
                                 v-model="classe.pai"
                                 :options="classesPai"
@@ -278,45 +278,26 @@ block corpo
                                     .info-label Processo(s) Relacionado(s):
                                     
                                 td
-                                    custom-table-waterfall(
+                                    tabela-selecao-proc-relacionados(
                                         v-if="classesReady"
 
                                         select-left="true"
                                         pages-on="true"
 
-                                        :header="processosRelacionadosTableHeader"
-                                        :cwidth="processosRelacionadosTableWidth"
+                                        :header="estilo.processosRelacionadosTableHeader"
+                                        :cwidth="estilo.processosRelacionadosTableWidth"
 
-                                        :complete-rows="relationLists"
+                                        :complete-rows="listaProcessos"
 
                                         filter-on="true"
                                         
                                         table-class='table table-hover'
                                         
-                                        @left-select-clicked="selectClicked($event)"
+                                        @proc-select-clicked="selecionarProcesso($event)"
                                     )
                                     h4(
                                         v-else
-                                    ) A carregar...
-                                    
-                                    div(v-if="relationsSelected.length>0")
-                                        .info-label(style="text-align:center;width:100%;margin-top:25px;margin-bottom:10px")
-                                            | Tipos de Relação
-                                        
-                                        table.noborder(style="margin-bottom:30px")
-                                            tr(
-                                                style="padding-bottom:5px"
-                                                v-for="pn in relationsSelected" 
-                                            )    
-                                                td(width="1px")
-                                                    select(v-model="pn.relType" @change="relChanged(index,pn)")
-                                                        option(v-for="rel in relationTypes" :value="rel.value")
-                                                            | {{rel.label}}
-                                                td(style="text-align:left")
-                                                    b(style="margin-left:5px")
-                                                        | {{pn.code}}
-                                                    |  - {{pn.name}}
-                                                                        
+                                    ) A carregar...                     
 
                             //- LEGISLAÇÃO
                             a(name="legislacao")
@@ -328,10 +309,11 @@ block corpo
                                     custom-table-select(
                                         v-if="legsReady"
 
-                                        :header="legsTableHeader"
+                                        :header="estilo.legislacaoTableHeader"
+                                        :cwidth="estilo.legislacaoTableWidth"
+
                                         :complete-rows="legList"
                                         :ready="legsReady"
-                                        :cwidth="legsTableWidth"
                                         
                                         class-table='table table-condensed'
 
@@ -371,3 +353,4 @@ append scripts
     script(src="/javascripts/classes/classe-create-lateral-menu.vue")
     script(src="/javascripts/classes/classe-create.vue")
     script(src="/javascripts/component-sel-participantes.vue")
+    script(src="/javascripts/component-sel-procRelacionados.vue")

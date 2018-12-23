@@ -30,7 +30,7 @@ Vue.component('select-value-from-list', {
   }
 })
 
-Vue.component('tabela-selecao-participantes', {
+Vue.component('tabela-selecao-proc-relacionados', {
     template: `
         <div style="padding-bottom:30px">
             <div class="col-sm-4">
@@ -64,22 +64,23 @@ Vue.component('tabela-selecao-participantes', {
                                 v-model="row.selected"
                                 @click="selectClicked(index)"
                             />
-                        <td>{{ row.data[0] }}</td>
-                        <td>{{ row.data[1] }}</td>
-                        <td>{{ row.data[2] }}</td>
-                        
                         <td>
                             <select-value-from-list 
                                 :options = "[{label: 'Por selecionar', value: 'Indefinido'},
-                                            {label: 'Apreciar', value: 'Apreciador'},
-                                            {label: 'Assessorar', value: 'Assessor'},
-                                            {label: 'Comunicar', value: 'Comunicador'},
-                                            {label: 'Decidir', value: 'Decisor'},
-                                            {label: 'Executar', value: 'Executor'},
-                                            {label: 'Iniciar', value: 'Iniciador'}]"
-                                @value-change="mudarIntervencao($event, row)"
+                                             {label: 'Antecessor de', value: 'eAntecessorDe'},
+                                             {label: 'Sucessor de', value: 'eSucessorDe'},
+                                             {label: 'Complementar de', value: 'eComplementarDe'},
+                                             {label: 'Cruzado com', value: 'eCruzadoCom'},
+                                             {label: 'Sintese de', value: 'eSinteseDe'},
+                                             {label: 'Sintetizado por', value: 'eSintetizadoPor'},
+                                             {label: 'Suplemento de', value: 'eSuplementoDe'},
+                                             {label: 'Suplemento para', value: 'eSuplementoPara'}
+                                            ]"
+                                @value-change="mudarRelacao($event, row)"
                             />
                         </td>
+                        <td>{{ row.data[1] }}</td>
+                        <td>{{ row.data[2] }}</td>
                     </tr>
                     <tr v-else>
                         <td colspan=3>Lista vazia.</td>
@@ -130,15 +131,15 @@ Vue.component('tabela-selecao-participantes', {
         },
     },
     methods: {
-        mudarIntervencao: function(nova, entidade){
-            entidade.data[3] = nova
+        mudarRelacao: function(nova, proc){
+            proc.data[0] = nova
         },
         selectRow: function (index) {
             this.$emit('select-clicked', this.rowsShow[index]);
             this.rowsShow[index].selected = !this.rowsShow[index].selected;
         },
         selectClicked: function (index) { //emit event when a row is selected
-            this.$emit('select-clicked', this.rowsShow[index]);
+            this.$emit('proc-select-clicked', this.rowsShow[index]);
         },
         completeFilter: function (filt) { //filter rows according to what is written in the input box
             tempRows = this.completeRows;
