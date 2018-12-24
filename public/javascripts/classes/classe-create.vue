@@ -71,6 +71,8 @@ var newClass = new Vue({
             },
 
             // Legislação Associada
+
+            legislacao: []
         },
 
         // Estruturas auxiliares
@@ -79,11 +81,13 @@ var newClass = new Vue({
         entidadesD: [],
         entidadesP: [],
         listaProcessos: [],
+        listaLegislacao: [],
 
         semaforos: {
             paisReady: false,
             classesReady: false,
             entidadesReady: false,
+            legislacaoReady: false
         },
 
         estilo: {
@@ -93,19 +97,13 @@ var newClass = new Vue({
             participantesTableWidth: ["15%", "55%", "15%", "15%"],
             processosRelacionadosTableHeader: ['Relação', 'Processo', 'Título'],
             processosRelacionadosTableWidth: ['20%', '15%', '65%'],
-            legislacaoTableHeader: ["#", "Tipo", "Número", "Título", "Data"],
-            legislacaoTableWidth: ['5%', '19%', '11%', '50%', '15%']
+            legislacaoTableHeader: ["Tipo", "Número", "Sumário", "Data"],
+            legislacaoTableWidth: ['20%', '15%', '50%', '15%']
         },
 
     // Mensagens de validação
 
         mensValCodigo: "",
-
-        legsReady: false,
-        
-        
-        legList: [],
-        selectedLegs: [],
         
         relationsSelected: [],
         relationsSelectedInfo: [],
@@ -284,9 +282,6 @@ var newClass = new Vue({
         // Carrega os Processos da BD....................
 
         loadProcessos: function () {
-            this.ready = false;
-            let content = [];
-
             this.$http.get("/api/classes/nivel/3")
                 .then(function (response) {
                     this.listaProcessos = response.body
@@ -313,17 +308,18 @@ var newClass = new Vue({
 
             this.$http.get("/api/legislacao")
                 .then(response => {
-                    this.legList = response.body
+                    this.listaLegislacao = response.body
                         .map(function (item) {
                             return {
-                                data: [i++, item.tipo, item.numero, item.sumario, item.data],
+                                data: [item.tipo, item.numero, item.sumario, item.data],
                                 selected: false,
                                 id: item.id
                             }
+                        })
+                        .sort(function (a, b) {
+                            return -1 * a.data[3].localeCompare(b.data[3]);
                         });
-                    this.pca.criteria.legislation = this.legList
-                    this.df.criteria.legislation = this.legList
-                    this.legsReady = true
+                    this.legislacaoReady = true
                 })
                 .catch(function (error) {
                     console.error(error);
@@ -399,6 +395,19 @@ var newClass = new Vue({
                     this.classe.processosRelacionados[row.data[0]].splice(index, 1);
                 }
             } 
+        },
+        // Trata a seleção ou desseleção de um diploma legislativo....................
+
+        selecionarLegislacao: function (row) {
+            if (!row.selected) {
+                this.classe.legislacao.push(row.id);
+            }
+            else {
+                let index = this.classe.legislacao.indexOf(row.id);
+                if (index != -1) {
+                    this.classe.legislacao.splice(index, 1);
+                }
+            }
         },
 
         showMsg(text) {

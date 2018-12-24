@@ -232,7 +232,6 @@ Vue.component('custom-table-select', {
                                 @click="selectClicked(index)"
                             />
                         <td 
-                            v-if="idx=>0" 
                             v-for="(item,idx) in row.data" 
                             class="custom-table-cell-select"
                             @click="selectRow(index)"

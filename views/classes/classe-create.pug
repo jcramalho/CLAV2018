@@ -307,17 +307,16 @@ block corpo
 
                                 td
                                     custom-table-select(
-                                        v-if="legsReady"
+                                        v-if="legislacaoReady"
 
                                         :header="estilo.legislacaoTableHeader"
                                         :cwidth="estilo.legislacaoTableWidth"
 
-                                        :complete-rows="legList"
-                                        :ready="legsReady"
+                                        :complete-rows="listaLegislacao"
                                         
                                         class-table='table table-condensed'
 
-                                        @select-clicked="orgSelected($event,selectedLegs)"
+                                        @select-clicked="selecionarLegislacao($event)"
                                     )
                                     h4(
                                         v-else
@@ -350,6 +349,7 @@ block corpo
             p.col-sm-7 {{ message }}
 
 append scripts    
+    script(src="/javascripts/component-select-value-from-list.vue")
     script(src="/javascripts/classes/classe-create-lateral-menu.vue")
     script(src="/javascripts/classes/classe-create.vue")
     script(src="/javascripts/component-sel-participantes.vue")
