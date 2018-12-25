@@ -15,11 +15,14 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 //authentication dependencies
 var cookieParser = require('cookie-parser');
 var expressValidator = require('express-validator');
-var session = require('express-session');
 var passport = require('passport');
 var flash = require('connect-flash');
-var FileStore = require('session-file-store')(session);
-var uuid = require('uuid/v4');
+
+//MongoDB session setuo
+var session = require('express-session');
+var MongoStore = require('connect-mongo')(session);
+var dataBases = require('./config/database');
+var mongoose = require('mongoose');
 
 require('./config/passport')(passport);
 
@@ -29,13 +32,17 @@ app.set('views', __dirname + '/views');
 
 app.use(express.static(__dirname + '/public'));
 
-// Express Session
+// MongoDB Express Session
 app.use(session({
     secret: 'DBK8R6L3Y0QQS3KKVI0QG5W0',
     saveUninitialized: true,
     resave: true,
-    store: new FileStore(),
-    genid: () =>  {return uuid()}
+    autoRemove: 'interval',
+    autoRemoveInterval: 15, //minutes
+    store: new MongoStore({
+      url: dataBases.userDB,
+      ttl: 1800 //seconds
+    })
 }));
 
 // Passport init
@@ -67,8 +74,6 @@ app.use(logger('dev'))
 app.use(flash());
 
 // Connect mongo and mongoose
-var dataBases = require('./config/database');
-var mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 mongoose.connect(dataBases.userDB, {useMongoClient: true,})
     .then(()=> console.log('Mongo ready: ' + mongoose.connection.readyState))
@@ -94,7 +99,7 @@ State.reset()
 //routes and API
 app.use('/',require('./routes/index'));
 app.use('/users',require('./routes/users'));
-//app.use('/organizacoes',require('./routes/orgs'));
+app.use('/organizacoes',require('./routes/orgs'));
 app.use('/entidades',require('./routes/entidades'));
 app.use('/tipologias',require('./routes/tipologias'));
 app.use('/legislacao',require('./routes/leg'));

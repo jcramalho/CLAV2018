@@ -7,9 +7,6 @@ var router = express.Router();
 var User = require('../../models/user');
 var Entidade = require('../../models/entidade');
 
-var jwt = require('jsonwebtoken');
-var ConfigJWT = require('./../../config/jwt');
-
 // Local user registration
 router.post('/registar', function (req, res) {
     var name = req.body.name;
@@ -65,38 +62,13 @@ router.post('/registar', function (req, res) {
     }
 });
 
-/* POST login. */
-router.post('/login', function (req, res) {
-    passport.authenticate('local', (err, user, info) => {
-        var msg = info.message;
-        if (err) {
-            res.send(err)
-        }
-        req.login(user, (err) => {
-            if (err) {
-                req.flash('warn_msg', msg);
-                res.redirect('/users/login');
-            }else{
-                var token = jwt.sign({user}, ConfigJWT.jwt.secret,{
-                    expiresIn: ConfigJWT.jwt.expiration
-                });
-                req.session.token = token;
-                res.redirect('/');
-            }
-        });
-    })(req, res);
-});
-
-// JWT token verification
-router.get('/testeJWT',function(req,res) {
-    jwt.verify(req.session.token, ConfigJWT.jwt.secret, function(err, decoded){
-        if(err){
-            res.json('JWT expirou.')
-        }else{
-            res.json('JWT válido.')
-        }
-    });
-});
+/// Local authentication
+    router.post('/login',
+    passport.authenticate('local', { failureRedirect: '/users/login', failureFlash: true }),
+    function (req, res) {
+        res.redirect('/');
+    }
+);
 
 router.get('/logout', function (req, res) {
     req.logout();
