@@ -7,6 +7,10 @@ var subPedidos = new Vue({
         descPedido: [],
         submissaoReady: false,
     },
+    components: {
+        spinner: VueStrap.spinner,
+        modal: VueStrap.modal,
+    },
     methods: {
         parsePedido: function() {
             let link="/pedidos/" + this.pedido.codigo;

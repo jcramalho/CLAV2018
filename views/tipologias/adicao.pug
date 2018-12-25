@@ -1,28 +1,53 @@
 extends ../layout
 block corpo
-    #nova-entidade-form.panel.panel-default.panel-custom
+    #nova-tipologia-form.panel.panel-default.panel-custom
         .panel-heading
             h1.page-header Nova Tipologia
         .panel-body
             .form-group 
                 table
+                    //- Nome/designação
                     tr
                         td(style="width:10%")
-                            label Designação: 
+                            label Nome: 
                         td(style="width:80%")
                             input(
                                 size="70"
-                                v-model="des"
+                                v-model="tipologia.designacao"
                             )
+                    //- Sigla        
                     tr
                         td(style="padding-top:10px")
                             label Sigla: 
                         td
                             input(
                                 size="70"
-                                v-model="sigla"
+                                v-model="tipologia.sigla"
                             )
 
+                    //- Entidades
+                    tr(style="padding-bottom:30px")
+                        td(style="width: 10%")
+                            label Elementos:
+
+                        td
+                            accordion
+                                panel(type="white" header="Selecionar Entidades")
+                                    custom-table-select(
+                                        v-if="entReady"
+
+                                        :header="entTableHeader"
+                                        :complete-rows="ent"
+                                        :ready="entReady"
+                                        :cwidth="entTableWidth"
+                                        
+                                        class-table='table table-condensed'
+
+                                        @select-clicked="entSelected($event,ent)"
+                                    )
+                                    h4(
+                                        v-else
+                                    ) A carregar...
 
             spinner(ref="spinner" fixed size="lg" text="Por favor aguarde...")
 
@@ -30,7 +55,7 @@ block corpo
                 type="button" 
                 @click="add" 
                 value="Adicionar" 
-                :disabled="!(des && sigla)"
+                :disabled="!(tipologia.designacao && tipologia.sigla)"
             )
             p.col-sm-7 {{ message }}
     //-

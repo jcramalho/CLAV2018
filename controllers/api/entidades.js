@@ -27,7 +27,7 @@ const Entidades = module.exports;
  * @return {Promise<[Entidade] | Error>} promessa que quando cumprida contém a
  * lista das entidades existentes que respeitam o filtro dado
  */
-Entidades.listar = async (filtro) => {
+Entidades.listar = (filtro) => {
     const query = `SELECT ?id ?sigla ?designacao ?internacional ?sioe ?estado {
         ?uri rdf:type clav:Entidade ;
             clav:entEstado ?estado;
@@ -41,7 +41,8 @@ Entidades.listar = async (filtro) => {
 
         FILTER (${Object.entries(filtro)
             .filter(([k,v]) => v !== undefined)
-            .map(([k,v]) => `?${k} = "${v}"` )
+            .map(([k,v]) => `?${k} = "${v}"`)
+            .concat(["True"])
             .join(' && ')})
     } ORDER BY ?sigla`;
 
@@ -136,7 +137,8 @@ Entidades.criar = (entidade, utilizador) => {
             clav:entDesignacao '${entidade.designacao}' ;
             clav:entSigla '${entidade.sigla}' ;
             clav:entInternacional '${entidade.internacional}' ;
-            ${entidade.tipologias.map(tipologia => `clav:pertenceTipologiaEnt clav:${tipologia.id} ;`).join('\n')}
+
+            ${entidade.tipologias.map(tipologia => `clav:pertenceTipologiaEnt clav:${tipologia} ;`).join('\n')}
             clav:entEstado 'Harmonização' .
     }`;
     const pedido = {
@@ -146,8 +148,9 @@ Entidades.criar = (entidade, utilizador) => {
             tipo: 'Entidade',
             acao: 'Criação',
         },
+        triplos: [],
         distribuicao: [{
-            estado: "Submetido",
+            estado: 'Submetido',
         }]
     };
 
@@ -177,12 +180,56 @@ Entidades.apagar = (id, utilizador) => {
             acao: 'Remoção',
         },
         distribuicao: [{
-            estado: "Submetido",
+            estado: 'Submetido',
         }]
     };
 
     return Pedidos.criar(pedido);
 };
+
+/**
+ * Gera um pedido de alteração de uma entidade.
+ * Nenhuma alteração será feita à entidade, só quando o pedido for
+ * validado.
+ * 
+ * @see pedidos
+ * 
+ * @param {string} id código identificador da entidade (p.e, "ent_CEE")
+ * @param {Object} alteracoes
+ * @param {string} alteracoes.designacao (ex: "Assembleia da República")
+ * @param {string} alteracoes.internacional (ex: "Sim" ou "Não")
+ * @param {string} alteracoes.sioe id para sistema SIOE
+ * @param {string} alteracoes.estado (ex: "Ativa", "Inativa" ou "Harmonização")
+ * @param {[string]} alteracoes.tipologias lista de identificadores das tipologias
+ * @param {string} utilizador email do utilizador que alterou a entidade
+ */
+Entidades.alterar = (id, alteracoes, utilizador) => {
+    const pedido = {
+        criadoPor: utilizador,
+        objeto: {
+            codigo: id,
+            tipo: 'Entidade',
+            acao: 'Alteração',
+            triplos: [
+                {
+                    nome: 'designacao',
+                    sujeito: id,
+                    predicado: 'clav:entDesignacao',
+                    objeto: alteracoes.designacao,
+                },
+            ],
+        },
+        distribuicao: [{
+            estado: 'Submetido',
+        }]
+    };
+
+    // Remover triplos vazios
+    pedido.objeto.triplos = pedido.objeto.triplos
+        .filter(triplo => triplo.objeto !== undefined);
+
+    return Pedidos.criar(pedido);
+}
 
 /**
  * Lista os processos em que uma entidade intervem como dona.

@@ -25,12 +25,12 @@ const Leg = module.exports;
  * lista das legislacoes existentes que respeitam o filtro dado
  */
 Leg.listar = (filtro) => {
-    const query = `SELECT ?id ?data ?numero ?tipo ?titulo ?estado ?entidades WHERE {
+    const query = `SELECT ?id ?data ?numero ?tipo ?sumario ?estado ?entidades WHERE {
         ?uri rdf:type clav:Legislacao;
              clav:diplomaData ?data;
              clav:diplomaNumero ?numero;
              clav:diplomaTipo ?tipo;
-             clav:diplomaTitulo ?titulo;
+             clav:diplomaTitulo ?sumario;
              clav:diplomaEstado ?estado;
         OPTIONAL {
             ?uri clav:diplomaEntidade ?ent.
@@ -38,7 +38,7 @@ Leg.listar = (filtro) => {
         }
         BIND(STRAFTER(STR(?uri), 'clav#') AS ?id).
     } ORDER BY DESC (?data)`;
-    const campos = ["id", "data", "numero", "tipo", "titulo", "estado"];
+    const campos = ["id", "data", "numero", "tipo", "sumario", "estado"];
     const agrupar = ["entidades"];
 
     return client.query(query)
@@ -64,12 +64,12 @@ Leg.listar = (filtro) => {
  * então a promessa conterá o valor `undefined`
  */
 Leg.consultar = id => {
-    const query = `SELECT ?tipo ?data ?numero ?titulo ?link ?estado ?entidades WHERE { 
+    const query = `SELECT ?tipo ?data ?numero ?sumario ?link ?estado ?entidades WHERE { 
         clav:${id} a clav:Legislacao;
             clav:diplomaData ?data;
             clav:diplomaNumero ?numero;
             clav:diplomaTipo ?tipo;
-            clav:diplomaTitulo ?titulo;
+            clav:diplomaTitulo ?sumario;
             clav:diplomaLink ?link;
             clav:diplomaEstado ?estado;
         OPTIONAL {
@@ -77,7 +77,7 @@ Leg.consultar = id => {
             ?ent clav:entSigla ?entidades;
         }
      }`;
-     const campos = ["id", "data", "numero", "tipo", "titulo", "link", "estado"];
+     const campos = ["id", "data", "numero", "tipo", "sumario", "link", "estado"];
      const agrupar = ["entidades"];
 
      return client.query(query)
@@ -105,12 +105,11 @@ Leg.criar = async (legislacao, utilizador) => {
         .execute()
         .then(response => `leg_${normalize(response)[0].count + 1}`);
     const query = `INSERT DATA {
-        clav:${id} rdf:type owl:NamedIndividual ,
-            clav:Legislacao ;
+        clav:${id} rdf:type owl:NamedIndividual , clav:Legislacao ;
             clav:diplomaData '${legislacao.data}' ;
             clav:diplomaNumero '${legislacao.numero}' ;
             clav:diplomaTipo '${legislacao.tipo}' ;
-            clav:diplomaTitulo '${legislacao.titulo}' ;
+            clav:diplomaSumario '${legislacao.sumario}' ;
             clav:diplomaEstado 'Harmonização' ;
             clav:diplomaLink '${legislacao.link}' .
         
@@ -131,6 +130,22 @@ Leg.criar = async (legislacao, utilizador) => {
     return client.query(query)
         .execute()
         .then(() => Pedidos.criar(pedido));
+};
+
+/**
+ * Verifica se um determinado numero de legislação existe no sistema.
+ * 
+ * @param {Legislacao} legislacao
+ * @return {Promise<boolean | Error>}
+ */
+Leg.existe = (legislacao) => {
+    const query = `ASK {
+            ?e clav:diplomaNumero '${legislacao.numero}'
+        }`;
+
+    return client.query(query)
+        .execute()
+        .then(response => response.boolean);
 };
 
 /**

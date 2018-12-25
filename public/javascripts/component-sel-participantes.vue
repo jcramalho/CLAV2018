@@ -1,6 +1,6 @@
-Vue.component('tabela-generica', {
+Vue.component('tabela-selecao-participantes', {
     template: `
-        <div>
+        <div style="padding-bottom:30px">
             <div class="col-sm-4">
                 Mostrar
                 <select v-model="rowsPerPage">
@@ -12,32 +12,45 @@ Vue.component('tabela-generica', {
                 entradas
             </div>
             <div class="col-sm-7">
-                <input class="form-control" v-model="filt" type="text" placeholder="Filtrar"/>
-            </div>
-            <div class="col-sm-1"  v-if="add" style="float:right">
-                <button type="button" class="btn btn-default btn-circle" @click="addClick">
-                    <span class="glyphicon glyphicon-plus"/>
-                </button>
+                <input v-if="!nosearch" class="form-control" v-model="filt" type="text" placeholder="Filtrar"/>
             </div>
 
             <table :class="classTable">
                 <thead v-if="header">
                     <tr>
-                        <th v-for="(item,index) in header" @click="sort(index)" class="sorter" :style="{width: cwidth[index]}">
+                        <th style="width: 4%"></th>
+                        <th v-if="index=>0" v-for="(item,index) in header" @click="sort(index)" class="sorter" :style="{width: cwidth[index]}">
                             {{ item }} <span class="caret"></span>
                         </th>
                     </tr>
                 </thead>
                 <tbody name="table">
-                    <tr v-for="(row,index) in rowsShow" @click="rowClick(index)">
-                        <td
-                            v-for="campo in displayOrder" 
-                            class="custom-table-cell"
-                            > 
-                            <div 
-                                class="custom-table-text" 
-                                v-html="row[campo]"></div> 
+                    <tr v-if="completeRows.length>0" v-for="(row,index) in rowsShow" :key="row[0]">
+                        <td>
+                            <input
+                                type="checkbox"
+                                v-model="row.selected"
+                                @click="selectClicked(index)"
+                            />
+                        <td>{{ row.data[0] }}</td>
+                        <td>{{ row.data[1] }}</td>
+                        <td>{{ row.data[2] }}</td>
+                        
+                        <td>
+                            <select-value-from-list 
+                                :options = "[{label: 'Por selecionar', value: 'Indefinido'},
+                                            {label: 'Apreciar', value: 'Apreciador'},
+                                            {label: 'Assessorar', value: 'Assessor'},
+                                            {label: 'Comunicar', value: 'Comunicador'},
+                                            {label: 'Decidir', value: 'Decisor'},
+                                            {label: 'Executar', value: 'Executor'},
+                                            {label: 'Iniciar', value: 'Iniciador'}]"
+                                @value-change="mudarIntervencao($event, row)"
+                            />
                         </td>
+                    </tr>
+                    <tr v-else>
+                        <td colspan=3>Lista vazia.</td>
                     </tr>
                 </tbody>
             </table>
@@ -51,17 +64,16 @@ Vue.component('tabela-generica', {
     `,
     props: [
         'classTable',
+        'nosearch',
         'completeRows',
         'header',
-        'displayOrder',
         'ready',
         'cwidth',
-        'add',
     ],
     data: function () {
         return {
             "rows": [],
-            "rowsShow": [],
+            "rowsShow": [[]],
             "filt": '',
             "order": 0,
             "activePage": 1,
@@ -86,8 +98,19 @@ Vue.component('tabela-generica', {
         },
     },
     methods: {
-        completeFilter: function (filt) { //filtra as linhas de acordo com as palavras introduzidas no filtro
+        mudarIntervencao: function(nova, entidade){
+            entidade.data[3] = nova
+        },
+        selectRow: function (index) {
+            this.$emit('select-clicked', this.rowsShow[index]);
+            this.rowsShow[index].selected = !this.rowsShow[index].selected;
+        },
+        selectClicked: function (index) { //emit event when a row is selected
+            this.$emit('select-clicked', this.rowsShow[index]);
+        },
+        completeFilter: function (filt) { //filter rows according to what is written in the input box
             tempRows = this.completeRows;
+
             filters = filt.split(" ");
 
             for (i = 0; i < filters.length; i++) {
@@ -96,34 +119,42 @@ Vue.component('tabela-generica', {
 
             this.rows = tempRows;
         },
-        filter: function (lista, filtro) {
-            var retList = []
-            regex = new RegExp(filtro, "gi")
+        filter: function (list, filt) {
+            var retList;
 
-            retList = lista.filter(item => {
-                var match = false
-                Object.values(item).forEach(value => {
-                    if(regex.test(value)) match = true
-                })
-                return match
+            regex = new RegExp(filt, "gi");
+
+            retList = list.filter(function (item) {
+                if (item.selected) {
+                    return true;
+                }
+
+                for (let cell of item.data) {
+                    if (regex.test(cell)) {
+                        return true;
+                    }
+                }
+                return false;
             })
+            if (retList.length == 0) {
+                retList = [[]];
+            }
+
             return retList;
         },
-        sort: function (index) { //ordena as linhas por displayOrder[index]
-            var chaveOrd = this.displayOrder[index]
-            this.rows.reverse()
-            this.rows.sort(function (a, b) {
-                if (typeof a.chaveOrd === 'string' || a.chaveOrd instanceof String)
-                    return a.chaveOrd.localeCompare(b.chaveOrd);
-                else
-                    return a.chaveOrd - b.chaveOrd;
-            })
-        },
-        rowClick: function (index) { //emit event when a row is clicked
-            this.$emit('row-clicked', this.rowsShow[index].id || this.rowsShow[index].codigo );
-        },
-        addClick: function (index) { //emit event when the '+' button is clicked
-            this.$emit('add-clicked');
+        sort: function (index) { //sort rows by header[index]
+            if (this.order == index) {
+                this.rows.reverse();
+                this.order = -index;
+            } else {
+                this.rows.sort(function (a, b) {
+                    if (typeof a.data[index] === 'string' || a.data[index] instanceof String)
+                        return a.data[index].localeCompare(b.data[index]);
+                    else
+                        return a.data[index] - b.data[index];
+                })
+                this.order = index;
+            }
         },
         loadPages: function () { //process page numbers
             var page = this.activePage;
@@ -194,3 +225,5 @@ Vue.component('tabela-generica', {
         this.rows = this.completeRows;
     }
 })
+
+Vue.component('v-select', VueSelect.VueSelect);

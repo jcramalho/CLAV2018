@@ -1,20 +1,65 @@
 var newOrg = new Vue({
-    el: '#nova-entidade-form',
+    el: '#nova-tipologia-form',
     data: {
-        des: "",
-        sigla: "",
+        tipologia: {
+            designacao: "",
+            sigla: "",
+            entidades: [],
+        },
         message: "",
+        ent: [],
+        entReady: false,
+        entTableHeader: ["#", "Sigla", "Nome", "Tipo"],
+        entTableWidth: ["4%", "15%", "70%", "15%"],
+        list: [],
     },
     components: {
-        spinner: VueStrap.spinner
+        spinner: VueStrap.spinner,
+        accordion: VueStrap.accordion,
+        panel: VueStrap.panel,
+        modal: VueStrap.modal,
     },
     methods: {
+        loadEnts: function () {
+            var i = 0;
+
+            this.$http.get("/api/entidades")
+                .then(function (response) {
+                    this.ent = response.body
+                        .map(function (item) {
+                            return {
+                                data: [i++, item.sigla, item.designacao, "Entidade"],
+                                selected: false,
+                                id: item.id
+                            }
+                        }).sort(function (a, b) {
+                            return a.data[1].localeCompare(b.data[1]);
+                        });
+
+                    this.entReady = true;
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });       
+        },
+        entSelected: function (row) {
+            if (!row.selected) {
+                this.list.push(row.id);
+            }
+            else {
+                let index = this.list.indexOf(row.id);
+                if (index != -1) {
+                    this.list.splice(index, 1);
+                }
+            }
+        },
         add: function () {
             this.$refs.spinner.show();
 
             var dataObj = {
-                des: this.des,
-                sigla: this.sigla,
+                designacao: this.tipologia.designacao,
+                sigla: this.tipologia.sigla,
+                entidades: this.list,
             }
 
             this.$http.post('/api/tipologias/', dataObj, {
@@ -24,17 +69,18 @@ var newOrg = new Vue({
             })
                 .then(function (response) {    
                     this.$refs.spinner.hide();
-                    
-                    if (response.body != "Designação e/ou Sigla já existente(s)!") {
-                        window.location.href = '/pedidos/submissao';
-                    }
-                    else {
-                        messageL.showMsg(response.body);
-                    }
+
+                    window.location.href = '/pedidos/submissao';
                 })
-                .catch(function (error) {
-                    console.error(error);
-                });
+                .catch(error => {if (error.status === 409) {
+                    messageL.showMsg(error.body);
+                    this.$refs.spinner.hide();
+                } 
+                console.error(error);
+            });
         }
+    },
+    created: function () {
+        this.loadEnts();
     }
 })

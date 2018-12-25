@@ -218,7 +218,7 @@ Vue.component('custom-table-select', {
                 <thead v-if="header">
                     <tr>
                         <th style="width: 4%"></th>
-                        <th v-if="index>0" v-for="(item,index) in header" @click="sort(index)" class="sorter" :style="{width: cwidth[index]}">
+                        <th v-if="index=>0" v-for="(item,index) in header" @click="sort(index)" class="sorter" :style="{width: cwidth[index]}">
                             {{ item }} <span class="caret"></span>
                         </th>
                     </tr>
@@ -232,7 +232,6 @@ Vue.component('custom-table-select', {
                                 @click="selectClicked(index)"
                             />
                         <td 
-                            v-if="idx>0" 
                             v-for="(item,idx) in row.data" 
                             class="custom-table-cell-select"
                             @click="selectRow(index)"
