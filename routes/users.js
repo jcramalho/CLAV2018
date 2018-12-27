@@ -1,5 +1,4 @@
 var express = require('express');
-var bcrypt = require('bcryptjs')
 var router = express.Router();
 
 var Logging = require('../controllers/logging');
