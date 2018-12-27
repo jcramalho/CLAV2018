@@ -307,7 +307,7 @@ block corpo
 
                                 td
                                     custom-table-select(
-                                        v-if="legislacaoReady"
+                                        v-if="semaforos.legislacaoReady"
 
                                         :header="estilo.legislacaoTableHeader"
                                         :cwidth="estilo.legislacaoTableWidth"
@@ -321,6 +321,41 @@ block corpo
                                     h4(
                                         v-else
                                     ) A carregar...
+
+                    panel(header="Decisões de Avaliação" v-if="classe.nivel >= 3" is-open)
+                        //- PRAZO DE CONSERVAÇÃO ADMINISTRATIVA
+                        a(name="PCA")
+                        .info-label(style="text-align:center")
+                            | Prazo de Conservação Administrativa
+                        table.consulta.noborder(style="border-color: white; border-style:solid")
+                            //- PRAZO / FORMA DE CONTAGEM
+                            tr
+                                td
+                                    .info-label Prazo:
+                                td(width="10%")
+                                    input(
+                                        size="15"
+                                        v-model="classe.pca.valor"
+                                    )
+                            tr
+                                td(style="padding-left:10px")
+                                    .info-label Forma de Contagem:
+                                td(v-if="semaforos.pcaFormasContagemReady")
+                                    select-value-from-list(
+                                        :options = "pcaFormasContagem"
+                                        @value-change="mudarFormaContagem($event)"
+                                    )
+                                                       
+                            //- SUB-FORMA DE CONTAGEM
+                            tr(v-if="semaforos.pcaSubFormasContagemReady && classe.pca.formaContagem=='vc_pcaFormaContagem_disposicaoLegal'")
+                                td
+                                    .info-label Sub-forma de contagem:
+                                td(colspan=3)
+                                    select-value-from-list(
+                                        :options = "pcaSubFormasContagem"
+                                        @value-change="mudarSubFormaContagem($event)"
+                                    )
+                                        
                                         
             
             spinner(ref="spinner" fixed size="lg" text="Por favor aguarde...")

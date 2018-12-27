@@ -106,7 +106,7 @@ app.use('/api/legislacao',require('./routes/api/leg'));
 app.use('/api/classes',require('./routes/api/classes'));
 app.use('/api/tabelasSelecao',require('./routes/api/tabsSel'));
 app.use('/api/termosIndice',require('./routes/api/termosIndice'));
-app.use('/api/vocabulario',require('./routes/api/vocabulario'));
+app.use('/api/vocabularios',require('./routes/api/vocabularios'));
 app.use('/api/pedidos',require('./routes/api/pedidos'));
 app.use('/api/trabalhos',require('./routes/api/trabalhos'));
 app.use('/api/users',require('./routes/api/users'));

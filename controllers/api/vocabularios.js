@@ -3,6 +3,47 @@ const normalize = require('../../controllers/api/utils').normalize
 
 var Vocabulario = module.exports
 
+Vocabulario.listar = async function() {
+    let query = `
+    SELECT ?id ?label ?desc
+    WHERE {
+        ?id a skos:ConceptScheme.
+        OPTIONAL {
+            ?id skos:prefLabel ?label.
+        } 
+        OPTIONAL {
+            ?id skos:scopeNote ?desc.
+        }       
+    } 
+    `
+    try {
+        let result = await client.query(query).execute();
+        return normalize(result);
+    } 
+    catch(erro) { throw (erro);}
+}
+
+// Devolve a lista de termos de um VC: idtermo, termo
+Vocabulario.consultar = async function(id) {
+    var query = `
+        SELECT ?idtermo ?termo ?desc
+        WHERE {
+            clav:${id} skos:hasTopConcept ?idtermo .
+            OPTIONAL {
+                ?idtermo skos:prefLabel ?termo .
+            }
+            OPTIONAL {
+                ?idtermo skos:scopeNote ?desc .
+            }
+        }
+    `
+    try {
+        let result = await client.query(query).execute();
+        return normalize(result);
+    } 
+    catch(erro) { throw (erro);}
+}
+
 // Devolve as formas de contagem do PCA, na forma: 
 /*
 [

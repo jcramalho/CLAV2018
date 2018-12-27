@@ -72,7 +72,15 @@ var newClass = new Vue({
 
             // Legislação Associada
 
-            legislacao: []
+            legislacao: [],
+
+            // PCA
+
+            pca: {
+                valor: null,
+                formaContagem: "",
+                subFormaContagem: ""
+            }
         },
 
         // Estruturas auxiliares
@@ -82,12 +90,16 @@ var newClass = new Vue({
         entidadesP: [],
         listaProcessos: [],
         listaLegislacao: [],
+        pcaFormasContagem: [{label: "Por selecionar", value: "Indefinido"}],
+        pcaSubFormasContagem: [{label: "Por selecionar", value: "Indefinido"}],
 
         semaforos: {
             paisReady: false,
             classesReady: false,
             entidadesReady: false,
-            legislacaoReady: false
+            legislacaoReady: false,
+            pcaFormasContagemReady: false,
+            pcaSubFormasContagemReady: false,
         },
 
         estilo: {
@@ -110,85 +122,10 @@ var newClass = new Vue({
 
         status: "H",
 
-        pca: {
-            dueDate: null,
-            count: { label: "Forma de Contagem", id: null },
-            subcount: { label: "Sub-forma de Contagem", id: null },
-            criteria: {
-                new: {
-                    type: { label: "Tipo de Critério", rel: 0 },
-                    content: null,
-                    pns: [],
-                    leg: [],
-                },
-                classes: [],
-                legislation: [],
-                pns: {
-                    CriterioJustificacaoUtilidadeAdministrativa: [],
-                    CriterioJustificacaoComplementaridadeInfo: [],
-                },
-                types: [
-                    {
-                        value: "CriterioJustificacaoLegal",
-                        label: "Critério Legal",
-                        rel: 1
-                    },
-                    {
-                        value: "CriterioJustificacaoUtilidadeAdministrativa",
-                        label: "Critério Utilidade Administrativa",
-                        rel: 2
-                    },
-                    {
-                        value: "CriterioJustificacaoGestionario",
-                        label: "Critério Gestionário",
-                        rel: 0
-                    },
-                ],
-                list: []
-            }
-        },
         countTypes: null,
         subcountTypes: null,
         countsReady: false,
         subcountsReady: false,
-        pnsTableHeader: ["#", "Código", "Título"],
-        pnsTableWidth: ["4%", "16%", "81%"],
-
-        df: {
-            end: null,
-            criteria: {
-                new: {
-                    type: { label: "Tipo de Critério", rel: 0 },
-                    content: null,
-                    pns: [],
-                    leg: [],
-                },
-                classes: [],
-                legislation: [],
-                pns: {
-                    CriterioJustificacaoDensidadeInfo: [],
-                    CriterioJustificacaoComplementaridadeInfo: [],
-                },
-                types: [
-                    {
-                        value: "CriterioJustificacaoLegal",
-                        label: "Critério Legal",
-                        rel: 1
-                    },
-                    {
-                        value: "CriterioJustificacaoDensidadeInfo",
-                        label: "Densidade Informacional",
-                        rel: 2
-                    },
-                    {
-                        value: "CriterioJustificacaoComplementaridadeInfo",
-                        label: "Critério Complementaridade Informacional",
-                        rel: 2
-                    },
-                ],
-                list: []
-            }
-        },
 
         message: null,
 
@@ -207,6 +144,9 @@ var newClass = new Vue({
             }
             if (this.classe.nivel >= 3 && !this.classesReady) {
                 this.loadProcessos();
+            }
+            if(this.classe.nivel >= 3){
+                this.loadPCA();
             }
             sideNav.changeNav(this.classe.nivel);
         },
@@ -236,8 +176,6 @@ var newClass = new Vue({
         this.loadEntidades();
         this.loadProcessos();
         this.loadLegislacao();
-        // this.loadCountTypes();
-        // this.loadSubCountTypes();
     },
     methods: {
         // Carrega as entidades da BD....................
@@ -319,12 +257,59 @@ var newClass = new Vue({
                         .sort(function (a, b) {
                             return -1 * a.data[3].localeCompare(b.data[3]);
                         });
-                    this.legislacaoReady = true
+                    this.semaforos.legislacaoReady = true
                 })
                 .catch(function (error) {
                     console.error(error);
                 });
         },
+        // Carrega a informação contextual relativa ao PCA: formas de contagem, etc....................
+
+        loadPCA: function(){
+            this.loadPCAFormasContagem();
+            this.loadPCASubFormasContagem();
+        },
+
+        // Carrega as possíveis formas de contagem do PCA....................
+
+        loadPCAFormasContagem: function(){
+            this.$http.get("/api/vocabularios/vc_pcaFormaContagem")
+                .then(function(response){
+                    this.pcaFormasContagem = this.pcaFormasContagem.concat(response.body.map(function (item) {
+                        return {
+                            label: item.termo,
+                            value: item.idtermo.split('#')[1],
+                        }
+                    }).sort(function (a, b) {
+                        return a.label.localeCompare(b.label);
+                    }));
+                    this.semaforos.pcaFormasContagemReady = true;
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        },
+
+        // Carrega as possíveis subformas de contagem do PCA....................
+
+        loadPCASubFormasContagem: function(){
+            this.$http.get("/api/vocabularios/vc_pcaSubformaContagem")
+                .then(function(response){
+                    this.pcaSubFormasContagem = this.pcaSubFormasContagem.concat(response.body.map(function (item) {
+                        return {
+                            label: item.desc,
+                            value: item.idtermo.split('#')[1],
+                        }
+                    }).sort(function (a, b) {
+                        return a.label.localeCompare(b.label);
+                    }));
+                    this.semaforos.pcaSubFormasContagemReady = true;
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        },
+
         // Carrega os potenciais pais da BD, quando alguém muda o nível para >1....................
 
         loadPais: function () {
@@ -408,6 +393,16 @@ var newClass = new Vue({
                     this.classe.legislacao.splice(index, 1);
                 }
             }
+        },
+        // Muda a Forma de Contagem do PCA para o novo valor selecionado....................
+        
+        mudarFormaContagem: function(nova){
+            this.classe.pca.formaContagem = nova;
+        },
+        // Muda a Subforma de Contagem do PCA para o novo valor selecionado....................
+        
+        mudarSubFormaContagem: function(nova){
+            this.classe.pca.subFormaContagem = nova;
         },
 
         showMsg(text) {
