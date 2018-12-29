@@ -25,7 +25,7 @@ Vue.component('tabela-selecao-proc-relacionados', {
                     </tr>
                 </thead>
                 <tbody name="table">
-                    <tr v-if="completeRows.length>0" v-for="(row,index) in rowsShow" :key="row[0]">
+                    <tr v-if="completeRows.length>0" v-for="(row,index) in rowsShow" :key="row[0]" :id="'proc_' + index">
                         <td>
                             <input
                                 type="checkbox"
@@ -107,6 +107,10 @@ Vue.component('tabela-selecao-proc-relacionados', {
             this.rowsShow[index].selected = !this.rowsShow[index].selected;
         },
         selectClicked: function (index) { //emit event when a row is selected
+            if(this.rowsShow[index].selected)
+                document.getElementById("proc_"+index).style.backgroundColor = "#FFFFFF";
+            else
+                document.getElementById("proc_"+index).style.backgroundColor = "#F0F8FF";
             this.$emit('proc-select-clicked', this.rowsShow[index]);
         },
         completeFilter: function (filt) { //filter rows according to what is written in the input box

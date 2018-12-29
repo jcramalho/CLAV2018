@@ -79,8 +79,9 @@ var newClass = new Vue({
             pca: {
                 valor: null,
                 formaContagem: "",
-                subFormaContagem: ""
-            }
+                subFormaContagem: "",
+                justificacao: []        // j = [criterio]
+            }                           // criterio = {id, nota, [proc], [leg]}
         },
 
         // Estruturas auxiliares

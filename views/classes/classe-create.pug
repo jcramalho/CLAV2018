@@ -220,7 +220,6 @@ block corpo
                                                         v-model="classe.procTrans"
                                                     )
                                                     |  Não
-
                             
                             //- DONOS
                             a(name="donos")
@@ -327,18 +326,18 @@ block corpo
                         a(name="PCA")
                         .info-label(style="text-align:center")
                             | Prazo de Conservação Administrativa
-                        table.consulta.noborder(style="border-color: white; border-style:solid")
+                        table.consulta.noborder(width='100%' style="border-color: white; border-style:solid")
                             //- PRAZO / FORMA DE CONTAGEM
                             tr
                                 td
                                     .info-label Prazo:
-                                td(width="10%")
+                                td
                                     input(
                                         size="15"
                                         v-model="classe.pca.valor"
                                     )
                             tr
-                                td(style="padding-left:10px")
+                                td
                                     .info-label Forma de Contagem:
                                 td(v-if="semaforos.pcaFormasContagemReady")
                                     select-value-from-list(
@@ -348,15 +347,15 @@ block corpo
                                                        
                             //- SUB-FORMA DE CONTAGEM
                             tr(v-if="semaforos.pcaSubFormasContagemReady && classe.pca.formaContagem=='vc_pcaFormaContagem_disposicaoLegal'")
-                                td
+                                td(width='22%')
                                     .info-label Sub-forma de contagem:
-                                td(colspan=3)
+                                td(width='75%')
                                     select-value-from-list(
                                         :options = "pcaSubFormasContagem"
                                         @value-change="mudarSubFormaContagem($event)"
                                     )
                                         
-                                        
+                                       
             
             spinner(ref="spinner" fixed size="lg" text="Por favor aguarde...")
 
