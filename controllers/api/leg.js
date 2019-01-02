@@ -30,7 +30,7 @@ Leg.listar = (filtro) => {
              clav:diplomaData ?data;
              clav:diplomaNumero ?numero;
              clav:diplomaTipo ?tipo;
-             clav:diplomaTitulo ?sumario;
+             clav:diplomaSumario ?sumario;
              clav:diplomaEstado ?estado;
         OPTIONAL {
             ?uri clav:diplomaEntidade ?ent.
@@ -69,7 +69,7 @@ Leg.consultar = id => {
             clav:diplomaData ?data;
             clav:diplomaNumero ?numero;
             clav:diplomaTipo ?tipo;
-            clav:diplomaTitulo ?sumario;
+            clav:diplomaSumario ?sumario;
             clav:diplomaLink ?link;
             clav:diplomaEstado ?estado;
         OPTIONAL {

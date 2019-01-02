@@ -93,6 +93,10 @@ var newClass = new Vue({
         listaLegislacao: [],
         pcaFormasContagem: [{label: "Por selecionar", value: "Indefinido"}],
         pcaSubFormasContagem: [{label: "Por selecionar", value: "Indefinido"}],
+        pcaTiposCriterio: [{label: 'Por selecionar', value: 'Indefinido'},
+                           {label: 'Critério Gestionário', value: 'CriterioJustificacaoGestionario'},
+                           {label: 'Critério Legal', value: 'CriterioJustificacaoLegal'},
+                           {label: 'Critério Utilidade Administrativa', value: 'CriterioJustificacaoUtilidadeAdministrativa'}],
 
         semaforos: {
             paisReady: false,
@@ -106,8 +110,8 @@ var newClass = new Vue({
         estilo: {
             entidadesTableHeader: ["Sigla", "Designacao", "Tipo"],
             entidadesTableWidth: ["15%", "70%", "15%"],
-            participantesTableHeader: ["Sigla", "Designacao", "Tipo", "Intervenção"],
-            participantesTableWidth: ["15%", "55%", "15%", "15%"],
+            participantesTableHeader: ["Intervenção", "Sigla", "Designacao", "Tipo"],
+            participantesTableWidth: ["15%", "15%", "55%", "15%"],
             processosRelacionadosTableHeader: ['Relação', 'Processo', 'Título'],
             processosRelacionadosTableWidth: ['20%', '15%', '65%'],
             legislacaoTableHeader: ["Tipo", "Número", "Sumário", "Data"],
@@ -258,7 +262,7 @@ var newClass = new Vue({
                         .sort(function (a, b) {
                             return -1 * a.data[3].localeCompare(b.data[3]);
                         });
-                    this.semaforos.legislacaoReady = true
+                    this.semaforos.legislacaoReady = true;
                 })
                 .catch(function (error) {
                     console.error(error);
@@ -358,22 +362,24 @@ var newClass = new Vue({
         // Trata a seleção ou desseleção de um participante....................
 
         selecionarParticipante: function (row) {
-            if (!row.selected) {
-                this.classe.participantes[row.data[3]].push(row.id);
+            if (row.selected) {
+                this.classe.participantes[row.nova].push(row.id);
+                row.data[0] = row.nova;
             }
             else {
-                let index = this.classe.participantes[row.data[3]].indexOf(row.id);
+                let index = this.classe.participantes[row.data[0]].indexOf(row.id);
                 if (index != -1) {
-                    this.classe.participantes[row.data[3]].splice(index, 1);
+                    this.classe.participantes[row.data[0]].splice(index, 1);
                 }
             } 
         },
 
         // Trata a seleção ou desseleção de um processo....................
 
-        selecionarProcesso: function (row) {
-            if (!row.selected) {
-                this.classe.processosRelacionados[row.data[0]].push(row.id);
+        selecionarProcesso: function (row, classe) {
+            if (row.selected) {
+                this.classe.processosRelacionados[row.nova].push(row.id);
+                row.data[0] = row.nova;
             }
             else {
                 let index = this.classe.processosRelacionados[row.data[0]].indexOf(row.id);
@@ -381,6 +387,10 @@ var newClass = new Vue({
                     this.classe.processosRelacionados[row.data[0]].splice(index, 1);
                 }
             } 
+            // Tratamento do invariante: se é Suplemento Para então cria-se um critério de Utilidade Administrativa
+            if(row.nova == "eSuplementoPara"){
+                this.AdCritPCA(this.classe.pca.justificacao, "CriterioJustificacaoUtilidadeAdministrativa", "", [row.id], []);
+            }
         },
         // Trata a seleção ou desseleção de um diploma legislativo....................
 
@@ -404,6 +414,30 @@ var newClass = new Vue({
         
         mudarSubFormaContagem: function(nova){
             this.classe.pca.subFormaContagem = nova;
+        },
+
+        // Adiciona um critério à lista de critérios do PCA....................
+
+        AdCritPCA: function (justificacao, tipo, notas, procRel, legislacao) {
+            var indice = justificacao.findIndex(crit => crit.tipo === tipo);
+            if(indice == -1){
+                justificacao.push({
+                    tipo: tipo,
+                    notas: notas,
+                    procRel: procRel,
+                    legislacao: legislacao
+                });
+            }
+            else{
+                justificacao[indice].procRel = justificacao[indice].procRel.concat(procRel);
+            }
+            
+        },
+
+        // Seleção do tipo de critério de justificação....................
+
+        selCritPCA(tipo, crit){
+            crit.tipo = tipo;
         },
 
         showMsg(text) {

@@ -240,9 +240,7 @@ block corpo
 
                                         @select-clicked="selecionarDono($event)"
                                     )
-                                    h4(
-                                        v-else
-                                    ) A carregar...
+                                    h4(v-else) A carregar...
 
 
                             //- PARTICIPANTES
@@ -265,10 +263,8 @@ block corpo
                                                 class-table='table table-condensed'
 
                                                 @select-clicked="selecionarParticipante($event)"
-                                                    )
-                                            h4(
-                                                v-else
-                                            ) A carregar...
+                                            )
+                                            h4(v-else) A carregar...
 
                             //- PROCESSOS RELACIONADOS
                             a(name="PNrel")
@@ -354,6 +350,47 @@ block corpo
                                         :options = "pcaSubFormasContagem"
                                         @value-change="mudarSubFormaContagem($event)"
                                     )
+
+                            //- JUSTIFICAÇÃO (CRITÉRIOS)
+                            tr
+                                td
+                                    .info-label Justificação:
+                                td(colspan=3)
+                                    table.blackborder(v-for="(crit, index) in classe.pca.justificacao" style="width:100%")
+                                        tr
+                                            td
+                                                .info-label Tipo:
+                                            td(v-if="crit.tipo=='Indefinido'") 
+                                                select-value-from-list( 
+                                                    :options = "pcaTiposCriterio"
+                                                    @value-change="selCritPCA($event, crit)")
+                                            td(v-else) {{crit.tipo}}
+                                        tr
+                                            td
+                                                .info-label Notas:
+                                            td
+                                                textarea(
+                                                    cols="60"
+                                                    lines="5"
+                                                    v-model="crit.notas"
+                                                )  
+                                        tr(v-if="crit.procRel.length > 0")
+                                            td
+                                                .info-label Processos relacionados:
+                                            td
+                                                p(v-for="(proc, i) in crit.procRel") {{proc}}
+                                        tr(v-if="crit.legislacao.length > 0")
+                                            td
+                                                .info-label Legislação associada:
+                                            td
+                                                b {{crit.legislacao}}
+
+                                        tr
+                                            td
+                                                button(@click="classe.pca.justificacao.splice(index,1)") 
+                                                    | Remover 
+                                                
+                                    button(@click="AdCritPCA(classe.pca.justificacao, 'Indefinido', '', [], [])") Adicionar Critério
                                         
                                        
             

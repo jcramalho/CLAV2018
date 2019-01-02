@@ -18,24 +18,13 @@ Vue.component('tabela-selecao-participantes', {
             <table :class="classTable">
                 <thead v-if="header">
                     <tr>
-                        <th style="width: 4%"></th>
                         <th v-if="index=>0" v-for="(item,index) in header" @click="sort(index)" class="sorter" :style="{width: cwidth[index]}">
                             {{ item }} <span class="caret"></span>
                         </th>
                     </tr>
                 </thead>
                 <tbody name="table">
-                    <tr v-if="completeRows.length>0" v-for="(row,index) in rowsShow" :key="row[0]">
-                        <td>
-                            <input
-                                type="checkbox"
-                                v-model="row.selected"
-                                @click="selectClicked(index)"
-                            />
-                        <td>{{ row.data[0] }}</td>
-                        <td>{{ row.data[1] }}</td>
-                        <td>{{ row.data[2] }}</td>
-                        
+                    <tr v-if="completeRows.length>0" v-for="(row,index) in rowsShow" :key="row[0]" :id="'particip_' + index">
                         <td>
                             <select-value-from-list 
                                 :options = "[{label: 'Por selecionar', value: 'Indefinido'},
@@ -45,9 +34,13 @@ Vue.component('tabela-selecao-participantes', {
                                             {label: 'Decidir', value: 'Decisor'},
                                             {label: 'Executar', value: 'Executor'},
                                             {label: 'Iniciar', value: 'Iniciador'}]"
-                                @value-change="mudarIntervencao($event, row)"
+                                @value-change="mudarIntervencao($event, index)"
                             />
                         </td>
+                        <td>{{ row.data[0] }}</td>
+                        <td>{{ row.data[1] }}</td>
+                        <td>{{ row.data[2] }}</td>
+                        
                     </tr>
                     <tr v-else>
                         <td colspan=3>Lista vazia.</td>
@@ -98,8 +91,17 @@ Vue.component('tabela-selecao-participantes', {
         },
     },
     methods: {
-        mudarIntervencao: function(nova, entidade){
-            entidade.data[3] = nova
+        mudarIntervencao: function(nova, i){
+            if(nova=="Indefinido"){
+                this.rowsShow[i].selected = false;
+                document.getElementById("particip_"+i).style.backgroundColor = "#FFFFFF";
+            }
+            else{
+                this.rowsShow[i].selected = true;
+                document.getElementById("particip_"+i).style.backgroundColor = "#F0F8FF";
+            }
+            this.rowsShow[i].nova = nova;
+            this.$emit('select-clicked', this.rowsShow[i]);
         },
         selectRow: function (index) {
             this.$emit('select-clicked', this.rowsShow[index]);

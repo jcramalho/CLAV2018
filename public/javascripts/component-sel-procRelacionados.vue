@@ -18,7 +18,6 @@ Vue.component('tabela-selecao-proc-relacionados', {
             <table :class="classTable">
                 <thead v-if="header">
                     <tr>
-                        <th style="width: 4%"></th>
                         <th v-if="index=>0" v-for="(item,index) in header" @click="sort(index)" class="sorter" :style="{width: cwidth[index]}">
                             {{ item }} <span class="caret"></span>
                         </th>
@@ -27,13 +26,8 @@ Vue.component('tabela-selecao-proc-relacionados', {
                 <tbody name="table">
                     <tr v-if="completeRows.length>0" v-for="(row,index) in rowsShow" :key="row[0]" :id="'proc_' + index">
                         <td>
-                            <input
-                                type="checkbox"
-                                v-model="row.selected"
-                                @click="selectClicked(index)"
-                            />
-                        <td>
                             <select-value-from-list 
+                                :id="'selRel_' + index"
                                 :options = "[{label: 'Por selecionar', value: 'Indefinido'},
                                              {label: 'Antecessor de', value: 'eAntecessorDe'},
                                              {label: 'Sucessor de', value: 'eSucessorDe'},
@@ -44,7 +38,7 @@ Vue.component('tabela-selecao-proc-relacionados', {
                                              {label: 'Suplemento de', value: 'eSuplementoDe'},
                                              {label: 'Suplemento para', value: 'eSuplementoPara'}
                                             ]"
-                                @value-change="mudarRelacao($event, row)"
+                                @value-change="mudarRelacao($event, index)"
                             />
                         </td>
                         <td>{{ row.data[1] }}</td>
@@ -99,19 +93,17 @@ Vue.component('tabela-selecao-proc-relacionados', {
         },
     },
     methods: {
-        mudarRelacao: function(nova, proc){
-            proc.data[0] = nova
-        },
-        selectRow: function (index) {
-            this.$emit('select-clicked', this.rowsShow[index]);
-            this.rowsShow[index].selected = !this.rowsShow[index].selected;
-        },
-        selectClicked: function (index) { //emit event when a row is selected
-            if(this.rowsShow[index].selected)
-                document.getElementById("proc_"+index).style.backgroundColor = "#FFFFFF";
-            else
-                document.getElementById("proc_"+index).style.backgroundColor = "#F0F8FF";
-            this.$emit('proc-select-clicked', this.rowsShow[index]);
+        mudarRelacao: function(nova, i){
+            if(nova=="Indefinido"){
+                this.rowsShow[i].selected = false;
+                document.getElementById("proc_"+i).style.backgroundColor = "#FFFFFF";
+            }
+            else{
+                this.rowsShow[i].selected = true;
+                document.getElementById("proc_"+i).style.backgroundColor = "#F0F8FF";
+            }
+            this.rowsShow[i].nova = nova;
+            this.$emit('proc-select-clicked', this.rowsShow[i]);
         },
         completeFilter: function (filt) { //filter rows according to what is written in the input box
             tempRows = this.completeRows;
