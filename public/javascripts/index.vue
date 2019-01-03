@@ -15,7 +15,7 @@ new Vue({
                 consultar: '/classes',
                 submeter: '/classes/adicionar',
                 newCons: 'Consultar e propor alteração',
-                newSub: 'Submeter novo PN',
+                newSub: 'Submeter nova classe',
                 text: 'Estrutura de classes da “Lista Consolidada para a classificação e avaliação da informação pública” que atualmente se encontra disponível. Inclui os níveis referentes aos processos de negócio da Administração Pública.',
                 notlogged: 'Para novos contributos, faça Login.'
             },

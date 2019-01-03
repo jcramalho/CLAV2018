@@ -98,10 +98,10 @@ var newClass = new Vue({
         listaProcessos: [],
         listaLegislacao: [],
         classeNiveis: [
-            {label: '1 - Função', value: '1'},
-            {label: '2 - Subfunção', value: '2'},
-            {label: '3 - Processo', value: '3'},
-            {label: '4 - Subprocesso', value: '4'}
+            {label: 'Nível 1', value: '1'},
+            {label: 'Nível 2', value: '2'},
+            {label: 'Nível 3', value: '3'},
+            {label: 'Nível 4', value: '4'}
         ],
         pcaFormasContagem: [{label: "Por selecionar", value: "Indefinido"}],
         pcaSubFormasContagem: [{label: "Por selecionar", value: "Indefinido"}],
@@ -167,10 +167,15 @@ var newClass = new Vue({
     },
     watch: {
         'classe.pai': function () {
+            // O código da classe depende da classe pai
+            this.classe.codigo = null;
             if(this.classe.pai)
                 this.classe.codigo = this.classe.pai.slice(1, this.classe.pai.length) + ".";
         },
         'classe.nivel': function () {
+            // A classe pai depende do nível 
+            this.classe.pai = null;
+            
             if (this.classe.nivel > 1) {
                 this.loadPais();
             }
@@ -184,6 +189,9 @@ var newClass = new Vue({
         },
         'classe.codigo': function () {
             this.mensValCodigo = "";
+            // O código das notasAp, dos termos de índice depende do código da classe
+            this.classe.notasAp = [];
+            this.classe.termosInd = [];
 
             if (this.classe.nivel > 1) {
                 if (this.classe.codigo.indexOf(this.classe.pai.slice(1, this.classe.pai.length)) != 0) {
@@ -276,7 +284,7 @@ var newClass = new Vue({
         loadLegislacao: function () {
             var i = 0;
 
-            this.$http.get("/api/legislacao")
+            this.$http.get("/api/legislacao?estado=A")
                 .then(response => {
                     this.listaLegislacao = response.body
                         .map(function (item) {

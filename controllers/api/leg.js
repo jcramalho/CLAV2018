@@ -54,6 +54,36 @@ Leg.listar = (filtro) => {
         });
 };
 
+Leg.listarAtivos = () => {
+    const query = `SELECT ?id ?data ?numero ?tipo ?sumario ?entidades WHERE {
+        ?uri rdf:type clav:Legislacao;
+             clav:diplomaData ?data;
+             clav:diplomaNumero ?numero;
+             clav:diplomaTipo ?tipo;
+             clav:diplomaSumario ?sumario;
+             clav:diplomaEstado 'Ativo';
+        OPTIONAL {
+            ?uri clav:diplomaEntidade ?ent.
+            ?ent clav:entSigla ?entidades;
+        }
+        BIND(STRAFTER(STR(?uri), 'clav#') AS ?id).
+    } ORDER BY DESC (?data)`;
+    const campos = ["id", "data", "numero", "tipo", "sumario"];
+    const agrupar = ["entidades"];
+
+    return client.query(query)
+        .execute()
+        .then(response => {
+            let legs = projection(normalize(response), campos, agrupar);
+            
+            for (leg of legs) {
+                leg.entidades = leg.entidades.map(ent => ({ id: `ent_${ent}`, sigla: ent }));
+            }
+        
+            return legs;
+        });
+};
+
 /**
  * Consulta a meta informação relativa a uma legislação
  * (tipo, data, número, título, link e entidades).

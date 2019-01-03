@@ -46,7 +46,7 @@ block corpo
                         v-model="classe.titulo"
                     )
 
-            .panel.panel-default
+            .panel.panel-default(v-if="classe.codigo")
                 .panel-heading
                     h4 Descritivo da Classe
                 .panel-body
@@ -66,14 +66,17 @@ block corpo
                         label.col-sm-2.col-form-label Nota(s) de Aplicação: 
                         .form-group.row.col-sm-10
                             .form-group.row(v-for="(nota, index) in classe.notasAp")
+                                div Identificador gerado: {{nota.id}}
                                 textarea(
                                     cols="72"
                                     lines="5"
                                     v-model="classe.notasAp[index].conteudo"
                                 )
                                 span.glyphicon.glyphicon-remove(@click="classe.notasAp.splice(index,1)")
-                        .col-sm-10
-                            button(@click="classe.notasAp.push({id:'',conteudo:''})") Nova nota
+                        .col-sm-10(v-if="classe.codigo")
+                            button(@click="classe.notasAp.push({id: 'na_' + classe.codigo + '_' + (classe.notasAp.length + 1).toString(),conteudo:''})") Nova nota
+                        .col-sm-10(v-else)
+                            div Para criar notas de aplicação o código da classe tem de estar definido.
                         hr 
                     //- EXEMPLOS DE NOTAS DE APLICAçÃO                        
                     a(name="exemplos")
@@ -377,7 +380,7 @@ block corpo
             input.btn.btn-xs.btn-default.col-sm-2(
                 type="button" 
                 @click="criarClasse" 
-                value="Adicionar" 
+                value="Submeter nova classe" 
                 :disabled=`!(
                     ((classe.nivel>1 && parent) || classe.nivel==1) && 
                     classe.codigo
