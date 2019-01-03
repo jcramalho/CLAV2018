@@ -81,7 +81,13 @@ var newClass = new Vue({
                 formaContagem: "",
                 subFormaContagem: "",
                 justificacao: []        // j = [criterio]
-            }                           // criterio = {id, nota, [proc], [leg]}
+            },                          // criterio = {tipo, notas, [proc], [leg]}
+
+            df: {
+                valor: "NE",
+                notas: null,
+                justificacao: []
+            }
         },
 
         // Estruturas auxiliares
@@ -91,12 +97,34 @@ var newClass = new Vue({
         entidadesP: [],
         listaProcessos: [],
         listaLegislacao: [],
+        classeNiveis: [
+            {label: '1 - Função', value: '1'},
+            {label: '2 - Subfunção', value: '2'},
+            {label: '3 - Processo', value: '3'},
+            {label: '4 - Subprocesso', value: '4'}
+        ],
         pcaFormasContagem: [{label: "Por selecionar", value: "Indefinido"}],
         pcaSubFormasContagem: [{label: "Por selecionar", value: "Indefinido"}],
-        pcaTiposCriterio: [{label: 'Por selecionar', value: 'Indefinido'},
-                           {label: 'Critério Gestionário', value: 'CriterioJustificacaoGestionario'},
-                           {label: 'Critério Legal', value: 'CriterioJustificacaoLegal'},
-                           {label: 'Critério Utilidade Administrativa', value: 'CriterioJustificacaoUtilidadeAdministrativa'}],
+        pcaTiposCriterio: [
+            {label: 'Por selecionar', value: 'Indefinido'},
+            {label: 'Critério Gestionário', value: 'CriterioJustificacaoGestionario'},
+            {label: 'Critério Legal', value: 'CriterioJustificacaoLegal'},
+            {label: 'Critério Utilidade Administrativa', value: 'CriterioJustificacaoUtilidadeAdministrativa'}
+        ],
+
+        destinoFinalTipos: [
+            {label: 'Não Especificado (NE)', value: 'NE'},
+            {label: 'Conservação (C)', value: 'C'},
+            {label: 'Conservação Parcial (CP)', value: 'CP'},
+            {label: 'Eliminação (E)', value: 'E'}
+        ],
+
+        criteriosDF: [
+            {label: 'Por selecionar', value: 'Indefinido'},
+            {label: 'Critério Complementaridade Informacional', value: 'CriterioJustificacaoComplementaridadeInfo'},
+            {label: 'Critério Densidade Informacional', value: 'CriterioJustificacaoDensidadeInfo'},
+            {label: 'Critério Legal', value: 'CriterioJustificacaoLegal'}
+        ],
 
         semaforos: {
             paisReady: false,
@@ -140,10 +168,9 @@ var newClass = new Vue({
     watch: {
         'classe.pai': function () {
             if(this.classe.pai)
-                this.classe.codigo = this.classe.pai.value.slice(1, this.classe.pai.value.length) + ".";
+                this.classe.codigo = this.classe.pai.slice(1, this.classe.pai.length) + ".";
         },
         'classe.nivel': function () {
-            this.classe.pai = "";
             if (this.classe.nivel > 1) {
                 this.loadPais();
             }
@@ -159,11 +186,11 @@ var newClass = new Vue({
             this.mensValCodigo = "";
 
             if (this.classe.nivel > 1) {
-                if (this.classe.codigo.indexOf(this.classe.pai.value.slice(1, this.classe.pai.value.length)) != 0) {
-                    this.classe.codigo = this.classe.pai.value.slice(1, this.classe.pai.value.length) + ".";
+                if (this.classe.codigo.indexOf(this.classe.pai.slice(1, this.classe.pai.length)) != 0) {
+                    this.classe.codigo = this.classe.pai.slice(1, this.classe.pai.length) + ".";
                 }
-                if (this.classe.codigo[this.classe.pai.value.length - 1] != '.') {
-                    this.classe.codigo = this.classe.pai.value.slice(1, this.classe.pai.value.length) + ".";
+                if (this.classe.codigo[this.classe.pai.length - 1] != '.') {
+                    this.classe.codigo = this.classe.pai.slice(1, this.classe.pai.length) + ".";
                 }
             }
 
@@ -301,8 +328,9 @@ var newClass = new Vue({
             this.$http.get("/api/vocabularios/vc_pcaSubformaContagem")
                 .then(function(response){
                     this.pcaSubFormasContagem = this.pcaSubFormasContagem.concat(response.body.map(function (item) {
+                        var formaID = item.termo.substring(item.termo.length - 6)
                         return {
-                            label: item.desc,
+                            label: formaID + ": " + item.desc.substring(0, 60) + "...",
                             value: item.idtermo.split('#')[1],
                         }
                     }).sort(function (a, b) {
@@ -318,16 +346,17 @@ var newClass = new Vue({
         // Carrega os potenciais pais da BD, quando alguém muda o nível para >1....................
 
         loadPais: function () {
+            this.classesPai = [{label: 'Por selecionar', value: 'Indefinido'}];
             this.$http.get("/api/classes/nivel/" + (this.classe.nivel - 1))
                 .then(function (response) {
-                    this.classesPai = response.body.map(function (item) {
+                    this.classesPai = this.classesPai.concat(response.body.map(function (item) {
                         return {
                             label: item.codigo + " - " + item.titulo,
                             value: item.id.split('#')[1],
                         }
                     }).sort(function (a, b) {
                         return a.label.localeCompare(b.label);
-                    });
+                    }));
                     this.semaforos.paisReady = true;
                 })
                 .catch(function (error) {
@@ -389,7 +418,7 @@ var newClass = new Vue({
             } 
             // Tratamento do invariante: se é Suplemento Para então cria-se um critério de Utilidade Administrativa
             if(row.nova == "eSuplementoPara"){
-                this.AdCritPCA(this.classe.pca.justificacao, "CriterioJustificacaoUtilidadeAdministrativa", "", [row.id], []);
+                this.adicionarCriterio(this.classe.pca.justificacao, "CriterioJustificacaoUtilidadeAdministrativa", "", [row.id], []);
             }
         },
         // Trata a seleção ou desseleção de um diploma legislativo....................
@@ -405,20 +434,10 @@ var newClass = new Vue({
                 }
             }
         },
-        // Muda a Forma de Contagem do PCA para o novo valor selecionado....................
-        
-        mudarFormaContagem: function(nova){
-            this.classe.pca.formaContagem = nova;
-        },
-        // Muda a Subforma de Contagem do PCA para o novo valor selecionado....................
-        
-        mudarSubFormaContagem: function(nova){
-            this.classe.pca.subFormaContagem = nova;
-        },
 
         // Adiciona um critério à lista de critérios do PCA....................
 
-        AdCritPCA: function (justificacao, tipo, notas, procRel, legislacao) {
+        adicionarCriterio: function (justificacao, tipo, notas, procRel, legislacao) {
             var indice = justificacao.findIndex(crit => crit.tipo === tipo);
             if(indice == -1){
                 justificacao.push({
@@ -434,12 +453,6 @@ var newClass = new Vue({
             
         },
 
-        // Seleção do tipo de critério de justificação....................
-
-        selCritPCA(tipo, crit){
-            crit.tipo = tipo;
-        },
-
         showMsg(text) {
             this.modalMsg = text;
             this.modalMsgShow = true;
@@ -447,8 +460,8 @@ var newClass = new Vue({
         
         // Vai adicionar a nova classe/processo à lista de pedidos
 
-        add: function () {
-            alert(JSON.stringify(this.classe))
+        criarClasse: function () {
+            alert("Neste momento, ainda não está pronta. A classe seria criada com a informação: " + JSON.stringify(this.classe))
         }
     }
 })

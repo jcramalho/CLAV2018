@@ -9,7 +9,9 @@
 Vue.component('select-value-from-list', {
   template: `
     <select v-model="currentValue">
-        <option v-for='op in options' :value='op.value'>{{op.label}}</option>
+        <option v-for='op in options' :value='op.value'>
+            {{op.label}}
+        </option>
     </select>
   `,
   props: {
@@ -18,6 +20,7 @@ Vue.component('select-value-from-list', {
           required: true
       }
   },
+  
   data: function() {
       return {
           "currentValue": "Indefinido"
