@@ -10,13 +10,13 @@ block corpo
                         td(style="width:10%")
                             label Designação: 
                         td(style="width:80%")
-                            input(size="70" v-model="designacao")
+                            input(size="70" v-model="designacao" maxlength="50")
 
                     tr
                         td(style="padding-top:10px")
                             label Sigla: 
                         td
-                            input(size="70" v-model="sigla")
+                            input(size="70" v-model="sigla" maxlength="10")
 
                     tr
                         td(style="padding-top:10px")
@@ -30,7 +30,7 @@ block corpo
                         td(style="padding-top:10px")
                             label SIOE: 
                         td
-                            input(size="70" v-model="sioe")
+                            input(size="70" v-model="sioe" maxlength="12")
 
                     tr
                         td(style="padding-top:10px")
