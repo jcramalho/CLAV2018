@@ -2,7 +2,7 @@ var newLeg = new Vue({
     el: '#nova-legislacao-form',
     data: {
         diploma : {
-            titulo: "",
+            sumario: "",
             tipo: "",
             numero: "",
             data: "",
@@ -49,7 +49,7 @@ var newLeg = new Vue({
 
             let Link = new RegExp(/https?:\/\/.+/);
 
-            if(!Link.test(this.diploma.link)){
+            if(!Link.test(this.diploma.link) && this.diploma.link!=""){
                 this.diploma.link = "http://"+this.diploma.link;
             }
 
