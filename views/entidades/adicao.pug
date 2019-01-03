@@ -55,7 +55,7 @@ block corpo
                 value="Adicionar entidade" 
                 :disabled="!(designacao && sigla)"
             )
-            p.col-sm-7 {{ message }}
+            div(v-html="message")
     //-
 
     

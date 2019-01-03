@@ -71,9 +71,19 @@ var newOrg = new Vue({
         add: function () {
             this.$refs.spinner.show();
 
+            this.message="";
+
+            var numeroSIOE = new RegExp(/[0-9]+(\-\w)?/);
+
+            if(!numeroSIOE.test(this.sioe)){
+                this.message+= "<p>Campo SIOE está no formato errado</p>";
+                return false;
+            }
+
             var dataObj = {
                 designacao: this.designacao,
                 sigla: this.sigla,
+                sioe: this.sioe,
                 internacional: this.internacional,
                 tipologias: this.tipologiasSel
             }
