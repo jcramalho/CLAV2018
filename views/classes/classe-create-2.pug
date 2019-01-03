@@ -327,7 +327,7 @@ block corpo
                                 b Justificação
                             .panel-body 
                                 .fieldset.form-group(v-for="(critDF, indexDF) in classe.df.justificacao")
-                                    .form-group.row(v-if="crit.tipo=='Indefinido'")
+                                    .form-group.row(v-if="critDF.tipo=='Indefinido'")
                                         label.col-sm-2.col-form-label Critério:
                                         select-value-from-list(
                                             :options = "criteriosDF"
@@ -335,7 +335,7 @@ block corpo
                                         )
                                     .form-group.row(v-else) 
                                         label.col-sm-2.col-form-label Critério:
-                                        span {{crit.tipo}}
+                                        span {{critDF.tipo}}
                                     .form-group.row
                                         label.col-sm-2.col-form-label Notas:
                                         textarea.col-sm-10(
@@ -343,6 +343,17 @@ block corpo
                                             lines="5"
                                             v-model="critDF.notas"
                                         )   
+                                    .form-group.row(v-if="critDF.procRel.length > 0") 
+                                        label.col-sm-2.col-form-label Processos relacionados: 
+                                        .col-sm-10
+                                            ul
+                                                li(v-for="(proc, i) in critDF.procRel") {{proc}}
+
+                                    .form-group.row(v-if="critDF.legislacao.length > 0") 
+                                        label.col-sm-2.col-form-label Legislação associada: 
+                                        .col-sm-10
+                                            ul
+                                                li(v-for="(leg, j) in critDF.legislacao") {{leg}}
                             
                                 button(@click="adicionarCriterio(classe.df.justificacao, 'Indefinido', '', [], [])") Adicionar Critério
                                          
