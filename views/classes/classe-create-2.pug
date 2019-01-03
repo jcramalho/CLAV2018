@@ -111,13 +111,16 @@ block corpo
                         label.col-sm-2.col-form-label Termos de Índice: 
                         .col-sm-10
                             .form-group.row(v-for="(ti, index) in classe.termosInd")
+                                div Identificador gerado: {{ti.id}}
                                 input(
                                     size="70    "
                                     v-model="ti.termo"
                                 )
                                 span.glyphicon.glyphicon-remove.pl-5(@click="classe.termosInd.splice(index,1)")
-                        .col-sm-10
-                            button(@click="classe.termosInd.push({id:'', termo:''})") Novo termo
+                        .col-sm-10(v-if="classe.codigo")
+                            button(@click="classe.termosInd.push({id: 'ti_' + classe.codigo + '_' + (classe.termosInd.length + 1).toString(), termo:''})") Novo termo
+                        .col-sm-10(v-else)
+                            div Para criar termos o código da classe tem de estar definido.
                     hr
 
             .panel.panel-default(v-if="classe.nivel >= 3")
@@ -356,8 +359,7 @@ block corpo
                                                 li(v-for="(leg, j) in critDF.legislacao") {{leg}}
                             
                                 button(@click="adicionarCriterio(classe.df.justificacao, 'Indefinido', '', [], [])") Adicionar Critério
-                                         
-
+                            
             spinner(ref="spinner" fixed size="lg" text="Por favor aguarde...")
 
             modal(

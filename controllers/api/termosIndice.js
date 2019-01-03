@@ -69,6 +69,18 @@ TermosIndice.lastID = function () {
         });
 }
 
+TermosIndice.contar = function() {
+    let query = `
+        SELECT (count (?s) as ?num) WHERE { 
+            ?s rdf:type clav:TermoIndice
+        }
+    `;
+
+    return client.query(query)
+        .execute()
+        .then(response => normalize(response));
+}
+
 /**
  * Insere um novo termo de indice no sistema, gerando um pedido apropriado.
  * O TI criado encontrar-se-á no estado "Harmonização".

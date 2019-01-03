@@ -12,6 +12,13 @@ router.get('/', function (req, res) {
         .catch(erro => res.status(500).send(`Erro na listagem dos termos de índice: ${erro}`));
 })
 
+// Devolve o número de termos na BD
+router.get('/quantos', function (req, res) {
+    return TermosIndice.contar()
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.status(500).send(`Erro na contagem dos termos de índice: ${erro}`));
+})
+
 // Criação de um novo termo de indice. Em caso de sucesso gera um novo pedido
 router.post('/', Auth.isLoggedIn, (req, res) => {
     const termoIndice = {
