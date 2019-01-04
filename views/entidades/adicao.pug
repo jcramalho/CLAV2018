@@ -45,7 +45,10 @@ block corpo
                                 value="Adicionar" 
                             )
                             ul(v-if="tipologiasSel.length")
-                                li(v-for="t in tipologiasSel") {{ t.sigla }} - {{ t.designacao }}
+                                li(v-for="(t,index) in tipologiasSel") {{ t.sigla }} - {{ t.designacao }}
+                                    button(
+                                            @click="tipologiasSel.splice(index,1)"
+                                            ) x
 
             spinner(ref="spinner" fixed size="lg" text="Por favor aguarde...")
 
