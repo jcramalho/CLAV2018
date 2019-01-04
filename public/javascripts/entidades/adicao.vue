@@ -54,14 +54,36 @@ var newOrg = new Vue({
         },
         addTip: function(){
             var ind = this.findTip(this.tip)
+            var existe = 0;
+            for(var i=0; i<this.tipologiasSel.length; i++){
+                if(this.tip==this.tipologiasSel[i].id){
+                    existe = 1;
+                    break;
+                }
+            }
+            if(existe==0){
             this.tipologiasSel.push(this.tipologias[ind])
+            }
+            else{
+                messageL.showMsg("Já selecionou essa tipologia!");
+            }
         },
         add: function () {
             this.$refs.spinner.show();
 
+            this.message="";
+
+            var numeroSIOE = new RegExp(/[0-9]+(\-\w)?/);
+
+            if(!numeroSIOE.test(this.sioe)){
+                this.message+= "<p>Campo SIOE está no formato errado</p>";
+                return false;
+            }
+
             var dataObj = {
                 designacao: this.designacao,
                 sigla: this.sigla,
+                sioe: this.sioe,
                 internacional: this.internacional,
                 tipologias: this.tipologiasSel
             }

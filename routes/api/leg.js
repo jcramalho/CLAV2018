@@ -40,7 +40,7 @@ router.get('/', (req, res) => {
 // Criação de uma nova legislacao. Em caso de sucesso gera um novo pedido
 router.post('/', Auth.isLoggedIn, estaDisponivel, (req, res) => {
     const legislacao = {
-        titulo: req.body.titulo,
+        sumario: req.body.sumario,
         data: req.body.data,
         numero: req.body.numero,
         tipo: req.body.tipo,
