@@ -334,7 +334,7 @@ var newClass = new Vue({
                     this.pcaSubFormasContagem = this.pcaSubFormasContagem.concat(response.body.map(function (item) {
                         var formaID = item.termo.substring(item.termo.length - 6)
                         return {
-                            label: formaID + ": " + item.desc.substring(0, 60) + "...",
+                            label: formaID + ": " + item.desc.substring(0, 70) + "...",
                             value: item.idtermo.split('#')[1],
                         }
                     }).sort(function (a, b) {
