@@ -470,6 +470,28 @@ var newClass = new Vue({
             }    
         },
 
+        insereNovaNota: function(notas, tipo){
+            axios.get("/api/utils/id")
+                .then(function(response){
+                    var n = {id: tipo + '_' + response.data, conteudo: ''};
+                    notas.push(n);
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        },
+
+        insereNovoTI: function(termos){
+            axios.get("/api/utils/id")
+                .then(function(response){
+                    var n = {id: 'ti_' + response.data, termo: '', existe: false};
+                    termos.push(n);
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        },
+
         showMsg(text) {
             this.modalMsg = text;
             this.modalMsgShow = true;

@@ -74,7 +74,7 @@ block corpo
                                 )
                                 span.glyphicon.glyphicon-remove(@click="classe.notasAp.splice(index,1)")
                         .col-sm-10
-                            button(@click="classe.notasAp.push({id: 'na_' + classe.codigo + '_' + (classe.notasAp.length + 1).toString(),conteudo:''})") Nova nota
+                            button(@click="insereNovaNota(classe.notasAp, 'na')") Nova nota
                         hr 
                     //- EXEMPLOS DE NOTAS DE APLICAçÃO                        
                     a(name="exemplos")
@@ -82,14 +82,15 @@ block corpo
                         label.col-sm-2.col-form-label Exemplo(s) de Nota(s) de Aplicação: 
                         .form-group.row.col-sm-10
                             .form-group.row(v-for="(exemplo, index) in classe.exemplosNotasAp")
+                                div Identificador gerado: {{exemplo.id}}
                                 textarea(
                                     cols="72"
                                     lines="5"
-                                    v-model="classe.exemplosNotasAp[index]"
+                                    v-model="classe.exemplosNotasAp[index].conteudo"
                                 )
                                 span.glyphicon.glyphicon-remove.pl-5(@click="classe.exemplosNotasAp.splice(index,1)")
                         .col-sm-10
-                            button(@click="classe.exemplosNotasAp.push('')") Novo exemplo
+                            button(@click="insereNovaNota(classe.exemplosNotasAp, 'exna')") Novo exemplo
                         hr
                     //- NOTAS DE EXCLUSÃO                        
                     a(name="notasE")
@@ -97,6 +98,7 @@ block corpo
                         label.col-sm-2.col-form-label Nota(s) de Exclusão: 
                         .form-group.row.col-sm-10
                             .form-group.row(v-for="(nota, index) in classe.notasEx")
+                                div Identificador gerado: {{nota.id}}
                                 textarea(
                                     cols="72"
                                     lines="5"
@@ -104,7 +106,7 @@ block corpo
                                 )
                                 span.glyphicon.glyphicon-remove.pl-5(@click="classe.notasEx.splice(index,1)")
                         .col-sm-10
-                            button(@click="classe.notasEx.push({id:'', conteudo:''})") Nova nota
+                            button(@click="insereNovaNota(classe.notasEx, 'ne')") Nova nota
                         hr
                     //- TERMOS DE ÍNDICE
                     a(name="termosI")
@@ -121,7 +123,7 @@ block corpo
                                 span(style="color:red" v-if="ti.existe") {{mensValTermoIndice}}
                                 span.glyphicon.glyphicon-remove.pl-5(@click="classe.termosInd.splice(index,1)")
                         .col-sm-10
-                            button(@click="classe.termosInd.push({id: 'ti_' + classe.codigo + '_' + (classe.termosInd.length + 1).toString(), termo:'', existe: false})") Novo termo
+                            button(@click="insereNovoTI(classe.termosInd)") Novo termo
                     hr
 
             .panel.panel-default(v-if="classe.nivel >= 3")

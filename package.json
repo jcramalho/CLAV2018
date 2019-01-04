@@ -37,6 +37,7 @@
     "mongodb": "^2.2.33",
     "mongoose": "^4.13.2",
     "morgan": "^1.9.1",
+    "nanoid": "^2.0.0",
     "npm": "^6.4.1",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
@@ -44,6 +45,7 @@
     "sparql-client-2": "^0.6.2",
     "vue": "^2.4.4",
     "vue-strap": "github:wffranco/vue-strap",
+    "vue-uuid": "^1.1.1",
     "vuelidate": "^0.7.4",
     "winston": "^2.4.0",
     "winston-daily-rotate-file": "^2.0.0-beta"
