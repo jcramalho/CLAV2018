@@ -149,17 +149,13 @@ var newClass = new Vue({
     // Mensagens de validação
 
         mensValCodigo: "",
+        mensValTermoIndice: "Termo de Índice já existente!",
         
         relationsSelected: [],
         relationsSelectedInfo: [],
 
         status: "H",
-
-        countTypes: null,
-        subcountTypes: null,
-        countsReady: false,
-        subcountsReady: false,
-
+        
         message: null,
 
         modalMsgShow: false,
@@ -443,7 +439,7 @@ var newClass = new Vue({
             }
         },
 
-        // Adiciona um critério à lista de critérios do PCA....................
+        // Adiciona um critério à lista de critérios do PCA ou do DF....................
 
         adicionarCriterio: function (justificacao, tipo, notas, procRel, legislacao) {
             var indice = justificacao.findIndex(crit => crit.tipo === tipo);
@@ -459,6 +455,18 @@ var newClass = new Vue({
                 justificacao[indice].procRel = justificacao[indice].procRel.concat(procRel);
             }
             
+        },
+
+        // Verifica se um TI já existe na BD
+
+        validaTI: function(termo) {
+            this.$http.get("/api/termosIndice?existe=" + termo)
+                .then(function (response) {
+                    return response.body;
+                })
+                .catch(function (error) {
+                    return(error);
+                });
         },
 
         showMsg(text) {

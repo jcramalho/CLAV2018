@@ -1,15 +1,24 @@
 var Logging = require('../../controllers/logging');
 var Auth = require('../../controllers/auth.js');
 var TermosIndice = require('../../controllers/api/termosIndice.js');
+var url = require('url');
 
 var express = require('express');
 var router = express.Router();
 
-// Devolve a lista dos termos de índice
+// Devolve a lista dos termos de índice ou processa uma query
 router.get('/', function (req, res) {
-    return TermosIndice.listar()
-        .then(dados => res.jsonp(dados))
-        .catch(erro => res.status(500).send(`Erro na listagem dos termos de índice: ${erro}`));
+    var queryData = url.parse(req.url, true).query;
+    if (queryData.existe){
+        return TermosIndice.existe(queryData.existe)
+            .then(dados => {console.dir(dados); res.jsonp(dados)})
+            .catch(erro => res.status(500).send(`Erro na pesquisa dum TI: ${erro}`));
+    }
+    else{
+        return TermosIndice.listar()
+            .then(dados => res.jsonp(dados))
+            .catch(erro => res.status(500).send(`Erro na listagem dos termos de índice: ${erro}`));
+    }
 })
 
 // Devolve o número de termos na BD

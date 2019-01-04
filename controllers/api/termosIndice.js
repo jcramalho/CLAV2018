@@ -37,6 +37,18 @@ TermosIndice.listar = () => {
         .then(response => normalize(response));
 }
 
+// Testa a existência de um determinado TI
+TermosIndice.existe = t => {
+    let query = `
+        ASK { 
+            ?s rdf:type clav:TermoIndice.
+            ?s clav:termo "${t}"
+        }`;
+    return client.query(query)
+        .execute()
+        .then(response => {return (response.boolean)});
+}
+
 TermosIndice.assocClasse = classe => {
     let query = `
         SELECT ?id ?termo WHERE { 

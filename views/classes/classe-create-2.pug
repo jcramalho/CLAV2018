@@ -118,10 +118,12 @@ block corpo
                                 input(
                                     size="70    "
                                     v-model="ti.termo"
+                                    @change="ti.existe = validaTI(ti.termo); alert(ti.existe)"
                                 )
+                                span(style="color:red" v-if="ti.existe") {{mensValTermoIndice}}
                                 span.glyphicon.glyphicon-remove.pl-5(@click="classe.termosInd.splice(index,1)")
                         .col-sm-10(v-if="classe.codigo")
-                            button(@click="classe.termosInd.push({id: 'ti_' + classe.codigo + '_' + (classe.termosInd.length + 1).toString(), termo:''})") Novo termo
+                            button(@click="classe.termosInd.push({id: 'ti_' + classe.codigo + '_' + (classe.termosInd.length + 1).toString(), termo:'', existe: false})") Novo termo
                         .col-sm-10(v-else)
                             div Para criar termos o código da classe tem de estar definido.
                     hr

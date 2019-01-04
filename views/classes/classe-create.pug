@@ -162,6 +162,7 @@ block corpo
                                         input(
                                             size="70    "
                                             v-model="ti.termo"
+                                            @change="validaTI(ti.termo)"
                                         )
                                         span.glyphicon.glyphicon-remove(
                                             @click="classe.termosInd.splice(index,1)"
