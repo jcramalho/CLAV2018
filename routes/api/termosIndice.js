@@ -11,7 +11,7 @@ router.get('/', function (req, res) {
     var queryData = url.parse(req.url, true).query;
     if (queryData.existe){
         return TermosIndice.existe(queryData.existe)
-            .then(dados => {console.dir(dados); res.jsonp(dados)})
+            .then(dados => res.jsonp(dados))
             .catch(erro => res.status(500).send(`Erro na pesquisa dum TI: ${erro}`));
     }
     else{

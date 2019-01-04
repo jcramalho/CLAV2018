@@ -46,7 +46,7 @@ block corpo
                         v-model="classe.titulo"
                     )
 
-            .panel.panel-default(v-if="classe.codigo")
+            .panel.panel-default
                 .panel-heading
                     h4 Descritivo da Classe
                 .panel-body
@@ -73,10 +73,8 @@ block corpo
                                     v-model="classe.notasAp[index].conteudo"
                                 )
                                 span.glyphicon.glyphicon-remove(@click="classe.notasAp.splice(index,1)")
-                        .col-sm-10(v-if="classe.codigo")
+                        .col-sm-10
                             button(@click="classe.notasAp.push({id: 'na_' + classe.codigo + '_' + (classe.notasAp.length + 1).toString(),conteudo:''})") Nova nota
-                        .col-sm-10(v-else)
-                            div Para criar notas de aplicação o código da classe tem de estar definido.
                         hr 
                     //- EXEMPLOS DE NOTAS DE APLICAçÃO                        
                     a(name="exemplos")
@@ -118,14 +116,12 @@ block corpo
                                 input(
                                     size="70    "
                                     v-model="ti.termo"
-                                    @change="ti.existe = validaTI(ti.termo); alert(ti.existe)"
+                                    @change="validaTI(ti)"
                                 )
                                 span(style="color:red" v-if="ti.existe") {{mensValTermoIndice}}
                                 span.glyphicon.glyphicon-remove.pl-5(@click="classe.termosInd.splice(index,1)")
-                        .col-sm-10(v-if="classe.codigo")
+                        .col-sm-10
                             button(@click="classe.termosInd.push({id: 'ti_' + classe.codigo + '_' + (classe.termosInd.length + 1).toString(), termo:'', existe: false})") Novo termo
-                        .col-sm-10(v-else)
-                            div Para criar termos o código da classe tem de estar definido.
                     hr
 
             .panel.panel-default(v-if="classe.nivel >= 3")

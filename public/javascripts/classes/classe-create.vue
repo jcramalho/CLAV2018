@@ -459,14 +459,15 @@ var newClass = new Vue({
 
         // Verifica se um TI já existe na BD
 
-        validaTI: function(termo) {
-            this.$http.get("/api/termosIndice?existe=" + termo)
-                .then(function (response) {
-                    return response.body;
-                })
-                .catch(function (error) {
-                    return(error);
-                });
+        validaTI: async function(ti) {
+            try {
+                let response = await axios.get("/api/termosIndice?existe=" + ti.termo)
+                ti.existe = response.data
+                return response.data
+            } 
+            catch (error) {
+                console.error(error)
+            }    
         },
 
         showMsg(text) {
