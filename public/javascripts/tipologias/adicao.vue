@@ -9,8 +9,8 @@ var newOrg = new Vue({
         message: "",
         ent: [],
         entReady: false,
-        entTableHeader: ["#", "Sigla", "Nome", "Tipo"],
-        entTableWidth: ["4%", "15%", "70%", "15%"],
+        entTableHeader: ["Sigla", "Nome"],
+        entTableWidth: ["15%", "85%"],
         list: [],
     },
     components: {
@@ -28,7 +28,7 @@ var newOrg = new Vue({
                     this.ent = response.body
                         .map(function (item) {
                             return {
-                                data: [i++, item.sigla, item.designacao, "Entidade"],
+                                data: [item.sigla, item.designacao],
                                 selected: false,
                                 id: item.id
                             }
