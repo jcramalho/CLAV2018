@@ -11,7 +11,7 @@ var newOrg = new Vue({
         message: "",
         tip: "",
         
-        tipologiasSel: []
+        tipologiasSel: [],        
     },
     created: function(){
         //dá a lista de tipologias, para o utilizador adicionar a que tipologias pertence
@@ -30,7 +30,7 @@ var newOrg = new Vue({
     components: {
         spinner: VueStrap.spinner,
         modal: VueStrap.modal,
-         panel: VueStrap.panel,
+        panel: VueStrap.panel,
     },
     methods: {
         dynamicSort: function(property) {

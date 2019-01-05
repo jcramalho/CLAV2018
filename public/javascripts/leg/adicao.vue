@@ -11,9 +11,12 @@ var newLeg = new Vue({
         },
         orgs: [],
         orgsReady: false,
-        orgsTableHeader: ["#", "Sigla", "Nome", "Tipo"],
-        orgsTableWidth: ["4%", "15%", "70%", "15%"],
+        orgsTableHeader: ["Sigla", "Nome"],
+        orgsTableWidth: ["15%", "85%"],
         message: "",
+        
+        //Apenas para teste:
+        tipoDiploma: ["DL", "Portaria", "Lei"]
     },
     components: {
         spinner: VueStrap.spinner,
@@ -36,13 +39,14 @@ var newLeg = new Vue({
             this.message="";
 
             var formats= {
-                numero: new RegExp(/[0-9]+(\-\w)?\/[0-9]+/),
+                numero: new RegExp(/[0-9]\d{6}$\/[0-9]\d{4}$/),
                 data: new RegExp(/[0-9]+\/[0-9]+\/[0-9]+/)
             }
 
             for(let field in formats){
                 if(!formats[field].test(this.diploma[field])){
-                    this.message+= "<p>Campo '"+field+"' está no formato errado</p>";
+                    messageL.showMsg("O campo " + field + " está no formato errado!");
+                    //this.message+= "<p>Campo '"+field+"' está no formato errado</p>";
                     return false;
                 }
             }
@@ -82,7 +86,7 @@ var newLeg = new Vue({
                     this.orgs = response.body
                         .map(function (item) {
                             return {
-                                data: [i++, item.sigla, item.designacao, "Entidade"],
+                                data: [item.sigla, item.designacao],
                                 selected: false,
                                 id: item.id
                             }
