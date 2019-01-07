@@ -420,7 +420,6 @@ var newClass = new Vue({
                     this.classe.participantes[row.intervencao].splice(index, 1);
                 }
             } 
-            alert(JSON.stringify(this.classe.participantes))
         },
 
         // Trata a seleção ou desseleção de um processo....................
