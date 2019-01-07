@@ -189,8 +189,6 @@ block corpo
                                 :ready="semaforos.entidadesReady"
                                 :cwidth="estilo.participantesTableWidth"
                                                         
-                                class-table='table table-condensed'
-
                                 @select-clicked="selecionarParticipante($event)"
                             )
                             h4(v-else) A carregar...
@@ -392,5 +390,5 @@ append scripts
     script(src="/javascripts/component-select-value-from-list.vue")
     script(src="/javascripts/classes/classe-create-lateral-menu.vue")
     script(src="/javascripts/classes/classe-create.vue")
-    script(src="/javascripts/component-sel-participantes.vue")
+    script(src="/javascripts/component-sel-participantes-2.vue")
     script(src="/javascripts/component-sel-procRelacionados.vue")

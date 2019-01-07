@@ -222,7 +222,7 @@ var newClass = new Vue({
                     this.entidadesD = response.body
                         .map(function (item) {
                             return {
-                                data: [item.sigla, item.designacao, "Entidade", "Por selecionar"],
+                                data: [item.sigla, item.designacao, "Entidade", "Indefinido"],
                                 selected: false,
                                 id: item.id
                             }
@@ -233,7 +233,7 @@ var newClass = new Vue({
                                 response.body
                                     .map(function (item) {
                                         return {
-                                            data: [item.sigla, item.designacao, "Tipologia", "Por Selecionar"],
+                                            data: [item.sigla, item.designacao, "Tipologia", "Indefinido"],
                                             selected: false,
                                             id: item.id
                                         }
@@ -243,6 +243,18 @@ var newClass = new Vue({
                             });
 
                             this.entidadesP = JSON.parse(JSON.stringify(this.entidadesD));
+
+                            // teste com alteração do modelo da linha para  participantes
+                            this.entidadesP = this.entidadesP.map(function (ent) {
+                                        return {
+                                            selected: false,
+                                            id: ent.id,
+                                            sigla: ent.data[0],
+                                            designacao: ent.data[1],
+                                            tipo: ent.data[2],
+                                            intervencao: ent.data[3]
+                                        }
+                                    })
                             this.semaforos.entidadesReady = true;
                         })
                         .catch(function (error) {
@@ -396,15 +408,19 @@ var newClass = new Vue({
 
         selecionarParticipante: function (row) {
             if (row.selected) {
-                this.classe.participantes[row.nova].push(row.id);
-                row.data[0] = row.nova;
+                let existe = this.classe.participantes[row.nova].indexOf(row.id) != -1;
+                if(!existe){
+                    this.classe.participantes[row.nova].push(row.id);
+                    row.intervencao = row.nova;
+                }
             }
             else {
-                let index = this.classe.participantes[row.data[0]].indexOf(row.id);
+                let index = this.classe.participantes[row.intervencao].indexOf(row.id);
                 if (index != -1) {
-                    this.classe.participantes[row.data[0]].splice(index, 1);
+                    this.classe.participantes[row.intervencao].splice(index, 1);
                 }
             } 
+            alert(JSON.stringify(this.classe.participantes))
         },
 
         // Trata a seleção ou desseleção de um processo....................

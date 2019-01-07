@@ -15,6 +15,9 @@ Vue.component('select-value-from-list', {
     </select>
   `,
   props: {
+      initialValue: {
+          type: String
+      },
       options: {
           type: Array,
           required: true
@@ -23,12 +26,16 @@ Vue.component('select-value-from-list', {
   
   data: function() {
       return {
-          "currentValue": "Indefinido"
+          currentValue: "Indefinido"
       }
   },
   watch: {
         currentValue: function () {
             this.$emit('value-change', this.currentValue);
         }
+  },
+  created: function() {
+      if(this.initialValue)
+        this.currentValue = this.initialValue;
   }
 })
