@@ -43,7 +43,6 @@ Vue.component('tabela-selecao-participantes', {
         </div>
     `,
     props: [
-        'classTable',
         'nosearch',
         'completeRows',
         'header',
@@ -109,7 +108,6 @@ Vue.component('tabela-selecao-participantes', {
         },
         filtraLinhas: function (filtro) { //filter rows according to what is written in the input box
             var tempRows = this.completeRows;
-
             var filtros = filtro.split(" ");
 
             for (i = 0; i < filtros.length; i++) {

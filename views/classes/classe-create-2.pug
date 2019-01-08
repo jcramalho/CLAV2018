@@ -200,21 +200,28 @@ block corpo
                     .form-group.row
                         label.col-sm-2.col-form-label Processo(s) Relacionado(s): 
                         .col-sm-10
+                            .row(v-if="classe.processosRelacionados.length > 0")
+                                table.table.table-condensed
+                                    tr
+                                        th Relação 
+                                        th Código
+                                        th Título
+                                        th Ação
+                                    tr(v-for="(p, index) in classe.processosRelacionados")
+                                        td {{p.relacao}}
+                                        td {{p.codigo}}
+                                        td {{p.titulo}}
+                                        td 
+                                            span.glyphicon.glyphicon-remove.pl-5(@click="desselecionarProcesso(p, index)")
+                            .row(v-else) Não tem processos relacionados.
                             tabela-selecao-proc-relacionados(
                                 v-if="classesReady"
-
-                                select-left="true"
                                 pages-on="true"
 
                                 :header="estilo.processosRelacionadosTableHeader"
                                 :cwidth="estilo.processosRelacionadosTableWidth"
-
                                 :complete-rows="listaProcessos"
 
-                                filter-on="true"
-                                        
-                                class-table='table table-condensed'
-                                        
                                 @proc-select-clicked="selecionarProcesso($event)"
                             )
                             h4(v-else) A carregar... 

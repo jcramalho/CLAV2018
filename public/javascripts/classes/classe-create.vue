@@ -59,16 +59,7 @@ var newClass = new Vue({
 
             // Processos Relacionados
 
-            processosRelacionados: {
-                'eAntecessorDe': [],
-                'eSucessorDe': [],
-                'eComplementarDe': [],
-                'eCruzadoCom': [],
-                'eSinteseDe': [],
-                'eSintetizadoPor': [],
-                'eSuplementoDe': [],
-                'eSuplementoPara': []
-            },
+            processosRelacionados: [],
 
             // Legislação Associada
 
@@ -273,13 +264,15 @@ var newClass = new Vue({
                     this.listaProcessos = response.body
                         .map(function (item) {
                                         return {
-                                            data: ["Por Selecionar", item.codigo, item.titulo],
                                             selected: false,
-                                            id: item.id.split('#')[1]
+                                            id: item.id.split('#')[1],
+                                            codigo: item.codigo,
+                                            titulo: item.titulo,
+                                            relacao: "Indefinido"
                                         }
                                     })
                         .sort(function (a, b) {
-                            return a.data[0].localeCompare(b.data[0]);
+                            return a.codigo.localeCompare(b.codigo);
                         });
                     this.classesReady = true;
                 })
@@ -424,22 +417,23 @@ var newClass = new Vue({
 
         // Trata a seleção ou desseleção de um processo....................
 
-        selecionarProcesso: function (row, classe) {
-            if (row.selected) {
-                this.classe.processosRelacionados[row.nova].push(row.id);
-                row.data[0] = row.nova;
-            }
-            else {
-                let index = this.classe.processosRelacionados[row.data[0]].indexOf(row.id);
-                if (index != -1) {
-                    this.classe.processosRelacionados[row.data[0]].splice(index, 1);
-                }
-            } 
+        selecionarProcesso: function (row) {
+            this.classe.processosRelacionados.push(row);
             // Tratamento do invariante: se é Suplemento Para então cria-se um critério de Utilidade Administrativa
-            if(row.nova == "eSuplementoPara"){
+            if(row.relacao == "eSuplementoPara"){
                 this.adicionarCriterio(this.classe.pca.justificacao, "CriterioJustificacaoUtilidadeAdministrativa", "", [row.id], []);
             }
         },
+
+        desselecionarProcesso: function(p, index) {
+            alert('Processo: ' + JSON.stringify(p))
+            alert('Index: ' + index)
+            p.selected = false;
+            p.relacao = "Indefinido";
+            this.classe.processosRelacionados.splice(index,1);
+            alert(JSON.stringify(this.classe.processosRelacionados));
+        },
+        
         // Trata a seleção ou desseleção de um diploma legislativo....................
 
         selecionarLegislacao: function (row) {
