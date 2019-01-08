@@ -423,12 +423,15 @@ var newClass = new Vue({
             if(row.relacao == "eSuplementoPara"){
                 this.adicionarCriterio(this.classe.pca.justificacao, "CriterioJustificacaoUtilidadeAdministrativa", "", [row.id], []);
             }
+            if(row.relacao == "eSuplementoDe"){
+                this.adicionarCriterio(this.classe.pca.justificacao, "CriterioJustificacaoLegal", "", [], this.classe.legislacao);
+            }
             else if(row.relacao == "eSinteseDe"){
                 this.classe.df.valor = "C";
                 this.adicionarCriterio(this.classe.df.justificacao, "CriterioJustificacaoDensidadeInfo", "", [row.id], []);
             }
             else if(row.relacao == "eSintetizadoPor"){
-                this.classe.df.valor = "E";
+                if(this.classe.df.valor == "NE") this.classe.df.valor = "E";
                 this.adicionarCriterio(this.classe.df.justificacao, "CriterioJustificacaoDensidadeInfo", "", [row.id], []);
             }
             else if(row.relacao == "eComplementarDe"){
@@ -439,6 +442,18 @@ var newClass = new Vue({
 
         desselecionarProcesso: function(p, index) {
             p.selected = false;
+            if(p.relacao == "eSuplementoPara") {
+                this.removerCriterio(this.classe.pca.justificacao, "CriterioJustificacaoUtilidadeAdministrativa", p.id);
+            }
+            else if(p.relacao == "eSinteseDe"){
+                this.removerCriterio(this.classe.df.justificacao, "CriterioJustificacaoDensidadeInfo", p.id);
+            }
+            else if(p.relacao == "eSintetizadoPor"){
+                this.removerCriterio(this.classe.df.justificacao, "CriterioJustificacaoDensidadeInfo", p.id);
+            }
+            else if(p.relacao == "eComplementarDe"){
+                this.removerCriterio(this.classe.df.justificacao, "CriterioJustificacaoComplementaridadeInfo", p.id);
+            }
             p.relacao = "Indefinido";
             this.classe.processosRelacionados.splice(index,1);
         },
@@ -473,6 +488,28 @@ var newClass = new Vue({
                 justificacao[indice].procRel = justificacao[indice].procRel.concat(procRel);
             }
             
+        },
+
+        // Remove um PN dum critério e se este ficar sem PNs, remove o critério também:
+        // criterio = {tipo: String, notas: [String], procRel: [proc], legislacao: [leg]}
+
+        removerCriterio: function(justificacao, tipo, pid){
+            alert('Just: ' + JSON.stringify(justificacao))
+            alert('tipo: ' + tipo)
+            alert('pid: ' + pid)
+            var indice = justificacao.findIndex(crit => crit.tipo === tipo);
+            if(indice == -1){
+                alert('Aviso: tentou remover um critério inexistente - ' + tipo)
+            }
+            else{
+                let index = justificacao[indice].procRel.indexOf(pid);
+                if (index != -1) {
+                    justificacao[indice].procRel.splice(index, 1);
+                }
+                if(justificacao[indice].procRel.length == 0){
+                    justificacao.splice(indice, 1)
+                }
+            }
         },
 
         // Verifica se um TI já existe na BD
