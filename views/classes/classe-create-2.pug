@@ -322,9 +322,12 @@ block corpo
                                     .form-group.row
                                         label.col-sm-2.col-form-label Destino:
                                         select-value-from-list(
+                                            v-if="classe.df.valor == 'NE'"
+                                            :initial-value = "classe.df.valor"
                                             :options = "destinoFinalTipos"
                                             @value-change="classe.df.valor = $event"
                                         )
+                                        span(v-else) {{ classe.df.valor }}
                                     .form-group.row
                                         label.col-sm-2.col-form-label(for="notas") Notas:
                                         textarea.col-sm-10(

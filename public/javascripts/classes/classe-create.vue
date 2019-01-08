@@ -423,6 +423,18 @@ var newClass = new Vue({
             if(row.relacao == "eSuplementoPara"){
                 this.adicionarCriterio(this.classe.pca.justificacao, "CriterioJustificacaoUtilidadeAdministrativa", "", [row.id], []);
             }
+            else if(row.relacao == "eSinteseDe"){
+                this.classe.df.valor = "C";
+                this.adicionarCriterio(this.classe.df.justificacao, "CriterioJustificacaoDensidadeInfo", "", [row.id], []);
+            }
+            else if(row.relacao == "eSintetizadoPor"){
+                this.classe.df.valor = "E";
+                this.adicionarCriterio(this.classe.df.justificacao, "CriterioJustificacaoDensidadeInfo", "", [row.id], []);
+            }
+            else if(row.relacao == "eComplementarDe"){
+                this.classe.df.valor = "C";
+                this.adicionarCriterio(this.classe.df.justificacao, "CriterioJustificacaoComplementaridadeInfo", "", [row.id], []);
+            }
         },
 
         desselecionarProcesso: function(p, index) {
