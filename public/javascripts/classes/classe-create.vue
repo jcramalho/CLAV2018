@@ -494,9 +494,6 @@ var newClass = new Vue({
         // criterio = {tipo: String, notas: [String], procRel: [proc], legislacao: [leg]}
 
         removerCriterio: function(justificacao, tipo, pid){
-            alert('Just: ' + JSON.stringify(justificacao))
-            alert('tipo: ' + tipo)
-            alert('pid: ' + pid)
             var indice = justificacao.findIndex(crit => crit.tipo === tipo);
             if(indice == -1){
                 alert('Aviso: tentou remover um critério inexistente - ' + tipo)

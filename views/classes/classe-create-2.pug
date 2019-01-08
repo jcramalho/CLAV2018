@@ -307,7 +307,7 @@ block corpo
                                         label.col-sm-2.col-form-label Legislação associada: 
                                         .col-sm-10
                                             ul
-                                                li(v-for="crit.legislacao.length > 0") {{crit.legislacao}}
+                                                li(v-for="(leg, i) in crit.legislacao") {{leg}}
 
                                 button(@click="adicionarCriterio(classe.pca.justificacao, 'Indefinido', '', [], [])") Adicionar Critério
 
