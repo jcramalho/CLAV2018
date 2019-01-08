@@ -426,12 +426,9 @@ var newClass = new Vue({
         },
 
         desselecionarProcesso: function(p, index) {
-            alert('Processo: ' + JSON.stringify(p))
-            alert('Index: ' + index)
             p.selected = false;
             p.relacao = "Indefinido";
             this.classe.processosRelacionados.splice(index,1);
-            alert(JSON.stringify(this.classe.processosRelacionados));
         },
         
         // Trata a seleção ou desseleção de um diploma legislativo....................
