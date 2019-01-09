@@ -191,8 +191,6 @@ block corpo
                                 :complete-rows="entidadesD"
                                 :ready="semaforos.entidadesReady"
                                 :cwidth="estilo.entidadesTableWidth"
-                                        
-                                class-table='table table-condensed'
 
                                 @select-clicked="selecionarDono($event)"
                             )
@@ -201,34 +199,50 @@ block corpo
 
                     //- PARTICIPANTES
                     a(name="participantes")
-                    .form-group.row(v-if="classe.nivel >= 3 && classe.procTrans == 'S'")
-                        label.col-sm-2.col-form-label Participante(s): 
-                        .col-sm-10
-                            tabela-selecao-participantes(
-                                v-if="semaforos.entidadesReady"
+                    div(v-if="classe.nivel >= 3 && classe.procTrans == 'S'")
+                        .form-group.row
+                            label.col-sm-2.col-form-label Participantes e respetivas intervenções: 
+                            .col-sm-10
+                                .row(v-if="classe.participantes.length > 0")
+                                    table.table.table-condensed
+                                        tr
+                                            th(v-for="h in estilo.participantesTableHeader") {{ h }} 
+                                            th Ação
+                                        tr(v-for="(p, index) in classe.participantes")
+                                            td {{p.intervencao}}
+                                            td {{p.sigla}}
+                                            td {{p.designacao}}
+                                            td {{p.tipo}}
+                                            td 
+                                                button.btn.btn-default(type="button")
+                                                    span.glyphicon.glyphicon-remove(@click="desselecionarParticipante(p, index)") 
+                                .row(v-else) Não tem processos relacionados.
+                        .form-group.row
+                            label.col-sm-2.col-form-label Participante(s): 
+                            .col-sm-10
+                                tabela-selecao-participantes(
+                                    v-if="semaforos.entidadesReady"
 
-                                :header="estilo.participantesTableHeader"
-                                :complete-rows="entidadesP"
-                                :ready="semaforos.entidadesReady"
-                                :cwidth="estilo.participantesTableWidth"
+                                    :header="estilo.participantesTableHeader"
+                                    :complete-rows="entidadesP"
+                                    :ready="semaforos.entidadesReady"
+                                    :cwidth="estilo.participantesTableWidth"
                                                         
-                                @select-clicked="selecionarParticipante($event)"
-                            )
-                            h4(v-else) A carregar...
+                                    @select-clicked="selecionarParticipante($event)"
+                                )
+                                h4(v-else) A carregar...
 
                     hr
 
                     //- PROCESSOS RELACIONADOS
                     a(name="PNrel")
                     .form-group.row
-                        label.col-sm-2.col-form-label Processo(s) Relacionado(s): 
+                        label.col-sm-2.col-form-label Processos Relacionados: 
                         .col-sm-10
                             .row(v-if="classe.processosRelacionados.length > 0")
                                 table.table.table-condensed
                                     tr
-                                        th Relação 
-                                        th Código
-                                        th Título
+                                        th(v-for="h in estilo.processosRelacionadosTableHeader") {{ h }} 
                                         th Ação
                                     tr(v-for="(p, index) in classe.processosRelacionados")
                                         td {{p.relacao}}
@@ -238,6 +252,9 @@ block corpo
                                             button.btn.btn-default(type="button")
                                                 span.glyphicon.glyphicon-remove(@click="desselecionarProcesso(p, index)") 
                             .row(v-else) Não tem processos relacionados.
+                    .form-group.row
+                        label.col-sm-2.col-form-label Processos Selecionáveis: 
+                        .col-sm-10
                             tabela-selecao-proc-relacionados(
                                 v-if="classesReady"
                                 pages-on="true"
@@ -255,17 +272,29 @@ block corpo
                     //- LEGISLAÇÃO
                     a(name="legislacao")
                     .form-group.row
-                        label.col-sm-2.col-form-label Legislação: 
+                        label.col-sm-2.col-form-label Legislação Selecionada: 
                         .col-sm-10
-                            custom-table-select(
+                            .row(v-if="classe.legislacao.length > 0")
+                                table.table.table-condensed
+                                    tr
+                                        th(v-for="h in estilo.legislacaoTableHeader") {{ h }}
+                                        th Ação
+                                    tr(v-for="(p, index) in classe.legislacao")
+                                        td(v-for="valor in p.data") {{ valor }}
+                                        td 
+                                            button.btn.btn-default(type="button")
+                                                span.glyphicon.glyphicon-remove(@click="desselecionarLegislacao(p, index)") 
+                            .row(v-else) Não tem legislação selecionada.
+                    .form-group.row
+                        label.col-sm-2.col-form-label Diplomas selecionáveis: 
+                        .col-sm-10
+                            select-row-from-table(
                                 v-if="semaforos.legislacaoReady"
 
                                 :header="estilo.legislacaoTableHeader"
                                 :cwidth="estilo.legislacaoTableWidth"
 
                                 :complete-rows="listaLegislacao"
-                                        
-                                class-table='table table-condensed'
 
                                 @select-clicked="selecionarLegislacao($event)"
                             )

@@ -2,7 +2,7 @@ Vue.component('tabela-selecao-participantes', {
     template: `
         <div style="padding-bottom:30px">
             <div class="col-sm-12">
-                <input v-if="!nosearch" class="form-control" v-model="filtro" type="text" placeholder="Filtrar"/>
+                <input class="form-control" v-model="filtro" type="text" placeholder="Filtrar"/>
             </div>
 
             <table class="table table-condensed">
@@ -14,7 +14,7 @@ Vue.component('tabela-selecao-participantes', {
                     </tr>
                 </thead>
                 <tbody name="table">
-                    <tr v-if="completeRows.length>0" v-for="(row,index) in rowsShow" :key="row.id" :id="'particip_' + index">
+                    <tr v-if="(completeRows.length>0) && (!row.selected)" v-for="(row,index) in rowsShow" :key="row.id" :id="'particip_' + index">
                         <td>
                             <select-value-from-list 
                                 :initial-value = "row.intervencao"
@@ -22,14 +22,11 @@ Vue.component('tabela-selecao-participantes', {
                                 @value-change="mudarIntervencao($event, index)"
                             />
                         </td>
-                        <td v-if="row.selected" style="background-color: #F0F8FF">{{ row.sigla }}</td>
-                        <td v-else style="background-color: #FFFFFF">{{ row.sigla }}</td>
-                        <td v-if="row.selected" style="background-color: #F0F8FF">{{ row.designacao }}</td>
-                        <td v-else style="background-color: #FFFFFF">{{ row.designacao }}</td>
-                        <td v-if="row.selected" style="background-color: #F0F8FF">{{ row.tipo }}</td>
-                        <td v-else style="background-color: #FFFFFF">{{ row.tipo }}</td>
+                        <td>{{ row.sigla }}</td>
+                        <td>{{ row.designacao }}</td>
+                        <td>{{ row.tipo }}</td>
                     </tr>
-                    <tr v-else>
+                    <tr v-if="completeRows.length <= 0">
                         <td colspan=3>Lista vazia.</td>
                     </tr>
                 </tbody>
@@ -90,22 +87,11 @@ Vue.component('tabela-selecao-participantes', {
     },
     methods: {
         mudarIntervencao: function(nova, i){
-            if(nova=="Indefinido"){
-                this.rowsShow[i].selected = false;
-            }
-            else{
-                this.rowsShow[i].selected = true;
-            }
-            this.rowsShow[i].nova = nova;
+            this.rowsShow[i].selected = true;
+            this.rowsShow[i].intervencao = nova;
             this.$emit('select-clicked', this.rowsShow[i]);
         },
-        selectRow: function (index) {
-            this.$emit('select-clicked', this.rowsShow[index]);
-            this.rowsShow[index].selected = !this.rowsShow[index].selected;
-        },
-        selectClicked: function (index) { //emit event when a row is selected
-            this.$emit('select-clicked', this.rowsShow[index]);
-        },
+        
         filtraLinhas: function (filtro) { //filter rows according to what is written in the input box
             var tempRows = this.completeRows;
             var filtros = filtro.split(" ");
