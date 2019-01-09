@@ -94,8 +94,21 @@ var newClass = new Vue({
             {label: 'Nível 3', value: '3'},
             {label: 'Nível 4', value: '4'}
         ],
+
+        processoTipos: [
+            {label: "Processo Comum", value: "PC"},
+            {label: "Processo Específico", value: "PE"}
+        ],
+        
+        simNao: [
+            {label: "Não", value: "N"},
+            {label: "Sim", value: "S"}
+        ],
+
         pcaFormasContagem: [{label: "Por selecionar", value: "Indefinido"}],
+
         pcaSubFormasContagem: [{label: "Por selecionar", value: "Indefinido"}],
+
         pcaTiposCriterio: [
             {label: 'Por selecionar', value: 'Indefinido'},
             {label: 'Critério Gestionário', value: 'CriterioJustificacaoGestionario'},
@@ -151,6 +164,7 @@ var newClass = new Vue({
 
         modalMsgShow: false,
         modalMsg: "",
+        helpWindow: null,
     },
     watch: {
         'classe.pai': function () {

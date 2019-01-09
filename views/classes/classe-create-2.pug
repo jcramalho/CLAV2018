@@ -14,6 +14,7 @@ block corpo
                 .form-group.row
                     label.col-sm-2.col-form-label Nível: 
                     select-value-from-list(
+                        :initial-value = "classeNiveis[0].value"
                         :options = "classeNiveis"
                         @value-change="classe.nivel = $event"
                     ) 
@@ -23,6 +24,7 @@ block corpo
                 .form-group.row(v-if="classe.nivel>1")
                     label.col-sm-2.col-form-label Classe Pai: 
                     select-value-from-list(
+                        :initial-value = "classesPai[0].value"
                         :options = "classesPai"
                         @value-change="classe.pai = $event"
                     )
@@ -135,24 +137,22 @@ block corpo
                     .form-group.row
                         label.col-sm-2.col-form-label Tipo de Processo: 
                         .col-sm-10
-                            .form-check.form-check-inline
-                                input.form-check-input(type="radio" id="pc" value="PC" v-model="classe.tipoProc")
-                                label.form-check-label(for="pc") Processo Comum
-                            .form-check.form-check-inline
-                                input.form-check-input(type="radio" id="pe" value="PE" v-model="classe.tipoProc")
-                                label.form-check-label(for="pe") Processo Específico
+                            select-value-from-list(
+                                :initial-value = "processoTipos[0].value"
+                                :options = "processoTipos"
+                                @value-change="classe.tipoProc = $event"
+                            ) 
 
                     //- PROCESSO TRANVERSAL
                     a(name="tipoTrans")
                     .form-group.row
                         label.col-sm-2.col-form-label Processo Transversal: 
                         .col-sm-10
-                            .form-check.form-check-inline
-                                input.form-check-input(type="radio" id="pt_s" value="S" v-model="classe.procTrans")
-                                label.form-check-label(for="pt_s") Sim
-                            .form-check.form-check-inline
-                                input.form-check-input(type="radio" id="pt_n" value="N" v-model="classe.procTrans")
-                                label.form-check-label(for="pt_n") Não
+                            select-value-from-list(
+                                :initial-value = "simNao[0].value"
+                                :options = "simNao"
+                                @value-change="classe.procTrans = $event"
+                            )
 
                     hr
 
@@ -212,7 +212,8 @@ block corpo
                                         td {{p.codigo}}
                                         td {{p.titulo}}
                                         td 
-                                            span.glyphicon.glyphicon-remove.pl-5(@click="desselecionarProcesso(p, index)")
+                                            button.btn.btn-default(type="button")
+                                                span.glyphicon.glyphicon-remove(@click="desselecionarProcesso(p, index)") 
                             .row(v-else) Não tem processos relacionados.
                             tabela-selecao-proc-relacionados(
                                 v-if="classesReady"
