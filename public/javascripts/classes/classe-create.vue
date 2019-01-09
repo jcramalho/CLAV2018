@@ -401,16 +401,15 @@ var newClass = new Vue({
         // Trata a seleção ou desseleção de um dono....................
 
         selecionarDono: function (row) {
-            if (!row.selected) {
-                this.classe.donos.push(row.id);
-            }
-            else {
-                let index = this.classe.donos.indexOf(row.id);
-                if (index != -1) {
-                    this.classe.donos.splice(index, 1);
-                }
-            }
+            this.classe.donos.push(row);
+            row.selected = true;
         },
+
+        desselecionarDono: function (row, index) {
+            row.selected = false;
+            this.classe.donos.splice(index, 1);
+        },
+        
         // Trata a seleção ou desseleção de um participante....................
 
         selecionarParticipante: function (row) {
