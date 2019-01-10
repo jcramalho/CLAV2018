@@ -48,14 +48,7 @@ var newClass = new Vue({
 
             // Participantes no processo: lista de entidades
 
-            participantes: {
-                Apreciador: [],
-                Assessor: [],
-                Comunicador: [],
-                Decisor: [],
-                Iniciador: [],
-                Executor: [],
-            },
+            participantes: [],
 
             // Processos Relacionados
 
@@ -401,32 +394,25 @@ var newClass = new Vue({
         // Trata a seleção ou desseleção de um dono....................
 
         selecionarDono: function (row) {
-            if (!row.selected) {
-                this.classe.donos.push(row.id);
-            }
-            else {
-                let index = this.classe.donos.indexOf(row.id);
-                if (index != -1) {
-                    this.classe.donos.splice(index, 1);
-                }
-            }
+            this.classe.donos.push(row);
+            row.selected = true;
         },
+
+        desselecionarDono: function (row, index) {
+            row.selected = false;
+            this.classe.donos.splice(index, 1);
+        },
+        
         // Trata a seleção ou desseleção de um participante....................
 
         selecionarParticipante: function (row) {
-            if (row.selected) {
-                let existe = this.classe.participantes[row.nova].indexOf(row.id) != -1;
-                if(!existe){
-                    this.classe.participantes[row.nova].push(row.id);
-                    row.intervencao = row.nova;
-                }
-            }
-            else {
-                let index = this.classe.participantes[row.intervencao].indexOf(row.id);
-                if (index != -1) {
-                    this.classe.participantes[row.intervencao].splice(index, 1);
-                }
-            } 
+            this.classe.participantes.push(row);
+        },
+
+        desselecionarParticipante: function(p, index) {
+            p.selected = false;
+            p.intervencao = "Indefinido";
+            this.classe.participantes.splice(index,1);
         },
 
         // Trata a seleção ou desseleção de um processo....................
@@ -475,15 +461,13 @@ var newClass = new Vue({
         // Trata a seleção ou desseleção de um diploma legislativo....................
 
         selecionarLegislacao: function (row) {
-            if (!row.selected) {
-                this.classe.legislacao.push(row.id);
-            }
-            else {
-                let index = this.classe.legislacao.indexOf(row.id);
-                if (index != -1) {
-                    this.classe.legislacao.splice(index, 1);
-                }
-            }
+            this.classe.legislacao.push(row);
+            row.selected = true;
+        },
+
+        desselecionarLegislacao: function (row, index) {
+            row.selected = false;
+            this.classe.legislacao.splice(index, 1);
         },
 
         // Adiciona um critério à lista de critérios do PCA ou do DF....................

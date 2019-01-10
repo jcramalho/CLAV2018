@@ -1,8 +1,8 @@
-Vue.component('tabela-selecao-participantes', {
+Vue.component('select-row-from-table', {
     template: `
         <div style="padding-bottom:30px">
             <div class="col-sm-12">
-                <input class="form-control" v-model="filtro" type="text" placeholder="Filtrar"/>
+                <input class="form-control" v-model="filt" type="text" placeholder="Filtrar"/>
             </div>
 
             <table class="table table-condensed">
@@ -14,19 +14,20 @@ Vue.component('tabela-selecao-participantes', {
                     </tr>
                 </thead>
                 <tbody name="table">
-                    <tr v-if="(completeRows.length>0) && (!row.selected)" v-for="(row,index) in rowsShow" :key="row.id" :id="'particip_' + index">
-                        <td>
-                            <select-value-from-list 
-                                :initial-value = "row.intervencao"
-                                :options = "tiposIntervencao"
-                                @value-change="mudarIntervencao($event, index)"
-                            />
+                    <tr v-if="(completeRows.length > 0) && (!row.selected)" v-for="(row,index) in rowsShow" :key="row[0]">
+                        <td 
+                            v-for="(item,idx) in row.data" 
+                            class="custom-table-cell-select"
+                            @click="selectRow(index)"
+                        >
+                            <div 
+                                class="custom-table-text" 
+                                v-html="item"
+                                :title="item"
+                            ></div>
                         </td>
-                        <td>{{ row.sigla }}</td>
-                        <td>{{ row.designacao }}</td>
-                        <td>{{ row.tipo }}</td>
                     </tr>
-                    <tr v-if="completeRows.length <= 0">
+                    <tr v-if="completeRows.length == 0">
                         <td colspan=3>Lista vazia.</td>
                     </tr>
                 </tbody>
@@ -40,7 +41,6 @@ Vue.component('tabela-selecao-participantes', {
         </div>
     `,
     props: [
-        'nosearch',
         'completeRows',
         'header',
         'ready',
@@ -50,29 +50,17 @@ Vue.component('tabela-selecao-participantes', {
         return {
             "rows": [],
             "rowsShow": [[]],
-            "filtro": '',
+            "filt": '',
             "order": 0,
             "activePage": 1,
             "pages": [0],
             "rowsPerPage": 10,
             "nPages": 1,
-
-            // Estruturas auxiliares
-
-            tiposIntervencao: [
-                {label: 'Por selecionar', value: 'Indefinido'},
-                {label: 'Apreciar', value: 'Apreciador'},
-                {label: 'Assessorar', value: 'Assessor'},
-                {label: 'Comunicar', value: 'Comunicador'},
-                {label: 'Decidir', value: 'Decisor'},
-                {label: 'Executar', value: 'Executor'},
-                {label: 'Iniciar', value: 'Iniciador'}
-            ],
         };
     },
     watch: {
-        filtro: function () {
-            this.filtraLinhas(this.filtro);
+        filt: function () {
+            this.completeFilter(this.filt);
         },
         rows: function () {
             this.loadPages();
@@ -86,32 +74,42 @@ Vue.component('tabela-selecao-participantes', {
         },
     },
     methods: {
-        mudarIntervencao: function(nova, i){
-            this.rowsShow[i].selected = true;
-            this.rowsShow[i].intervencao = nova;
-            this.$emit('select-clicked', this.rowsShow[i]);
+        selectRow: function (index) {
+            this.$emit('select-clicked', this.rowsShow[index]);
         },
         
-        filtraLinhas: function (filtro) { //filter rows according to what is written in the input box
-            var tempRows = this.completeRows;
-            var filtros = filtro.split(" ");
+        completeFilter: function (filt) { //filter rows according to what is written in the input box
+            tempRows = this.completeRows;
 
-            for (i = 0; i < filtros.length; i++) {
-                tempRows = this.filter(tempRows, filtros[i]);
+            filters = filt.split(" ");
+
+            for (i = 0; i < filters.length; i++) {
+                tempRows = this.filter(tempRows, filters[i]);
             }
 
             this.rows = tempRows;
         },
-        filter: function (list, filtro) {
-            var retList = [];
-            var regex = new RegExp(filtro, "gi");
+        filter: function (list, filt) {
+            var retList;
+
+            regex = new RegExp(filt, "gi");
 
             retList = list.filter(function (item) {
-                if ((item.selected)||(regex.test(item.id))||(regex.test(item.designacao)))
+                if (item.selected) {
                     return true;
-                else
-                    return false;
+                }
+
+                for (let cell of item.data) {
+                    if (regex.test(cell)) {
+                        return true;
+                    }
+                }
+                return false;
             })
+            if (retList.length == 0) {
+                retList = [[]];
+            }
+
             return retList;
         },
         sort: function (index) { //sort rows by header[index]
@@ -197,5 +195,3 @@ Vue.component('tabela-selecao-participantes', {
         this.rows = this.completeRows;
     }
 })
-
-Vue.component('v-select', VueSelect.VueSelect);
