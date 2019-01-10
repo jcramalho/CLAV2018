@@ -40,8 +40,8 @@ Entidades.listar = (filtro) => {
         BIND(CONCAT('ent_', ?sigla) AS ?id).
 
         FILTER (${Object.entries(filtro)
-            .filter(([k,v]) => v !== undefined)
-            .map(([k,v]) => `?${k} = "${v}"`)
+            .filter(([k, v]) => v !== undefined)
+            .map(([k, v]) => `?${k} = "${v}"`)
             .concat(["True"])
             .join(' && ')})
     } ORDER BY ?sigla`;
@@ -141,19 +141,43 @@ Entidades.criar = (entidade, utilizador) => {
             ${entidade.tipologias.map(tipologia => `clav:pertenceTipologiaEnt clav:${tipologia} ;`).join('\n')}
             clav:entEstado 'Harmonização' .
     }`;
+    const id = `clav:ent_${entidade.sigla}`;
     const pedido = {
         criadoPor: utilizador,
         objeto: {
             codigo: `ent_${entidade.sigla}`,
             tipo: 'Entidade',
             acao: 'Criação',
+            triplos: [
+                {
+                    nome: "Designação",
+                    sujeito: id,
+                    predicado: "clav:entDesignacao",
+                    objeto: entidade.designacao,
+                },
+                {
+                    nome: "Sigla",
+                    sujeito: id,
+                    predicado: "clav:entSigla",
+                    objeto: entidade.sigla,
+                },
+                {
+                    nome: "Internacional",
+                    sujeito: id,
+                    predicado: "clav:entInternacional",
+                    objeto: entidade.internacional,
+                },
+            ].concat(entidade.tipologias.map(tipologia => ({
+                nome: "Tipologias",
+                sujeito: id,
+                predicado: "clav:pertenceTipologiaEnt",
+                objeto: tipologia
+            }))),
+            distribuicao: [{
+                estado: 'Submetido',
+            }]
         },
-        triplos: [],
-        distribuicao: [{
-            estado: 'Submetido',
-        }]
     };
-
     return client.query(query)
         .execute()
         .then(() => Pedidos.criar(pedido));

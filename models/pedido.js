@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const PedidoSchema = mongoose.Schema({
+const PedidoSchema = new mongoose.Schema({
     codigo: {
         type: String,
         index: true,
@@ -59,7 +59,8 @@ PedidoSchema.pre('validate', async function(next) {
     next();
 });
 
-PedidoSchema.methods.sparql_query = function() {
+PedidoSchema.methods.sparqlQuery = function() {
+    console.log(JSON.stringify(this));
     const rdf_types = {
         "Entidade": "clav:Entidade",
         "Legislação": "clav:Legislacao",
