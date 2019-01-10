@@ -76,11 +76,8 @@ PedidoSchema.methods.sparqlQuery = function() {
         }`;
     } else if (this.objeto.acao === 'Edição') {
         query = `DELETE {
-
         } WHERE {
-
         } INSERT {
-            
         }`
     } else if (this.objeto.acao === 'Remoção') {
     }
