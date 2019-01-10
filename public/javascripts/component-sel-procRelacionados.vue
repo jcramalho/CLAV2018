@@ -67,7 +67,7 @@ Vue.component('tabela-selecao-proc-relacionados', {
                 {label: 'Sintetizado por', value: 'eSintetizadoPor'},
                 {label: 'Suplemento de', value: 'eSuplementoDe'},
                 {label: 'Suplemento para', value: 'eSuplementoPara'}
-            ],
+            ]
         };
     },
     watch: {
@@ -87,8 +87,14 @@ Vue.component('tabela-selecao-proc-relacionados', {
     },
     methods: {
         mudarRelacao: function(nova, i){
+
+            let myrel = this.tiposRelacao.filter(function(item){
+                if(item.value == nova) return true;
+                else return false;
+            });
             this.rowsShow[i].selected = true;
             this.rowsShow[i].relacao = nova;
+            this.rowsShow[i].relLabel = myrel[0].label;
             this.$emit('proc-select-clicked', this.rowsShow[i]);
         },
         filtraLinhas: function (filt) { //filter rows according to what is written in the input box

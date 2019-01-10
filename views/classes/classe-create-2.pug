@@ -245,7 +245,7 @@ block corpo
                                         th(v-for="h in estilo.processosRelacionadosTableHeader") {{ h }} 
                                         th Ação
                                     tr(v-for="(p, index) in classe.processosRelacionados")
-                                        td {{p.relacao}}
+                                        td {{p.relLabel}}
                                         td {{p.codigo}}
                                         td {{p.titulo}}
                                         td 
@@ -283,7 +283,7 @@ block corpo
                                         td(v-for="valor in p.data") {{ valor }}
                                         td 
                                             button.btn.btn-default(type="button")
-                                                span.glyphicon.glyphicon-remove(@click="desselecionarLegislacao(p, index)") 
+                                                span.glyphicon.glyphicon-remove(@click="desselecionarLegislacao(classe.legislacao, p, index)") 
                             .row(v-else) Não tem legislação selecionada.
                     .form-group.row
                         label.col-sm-2.col-form-label Diplomas selecionáveis: 
@@ -333,7 +333,7 @@ block corpo
                             .panel-heading 
                                 b Justificação
                             .panel-body 
-                                .fieldset.form-group(v-for="(crit, index) in classe.pca.justificacao")
+                                .fieldset.form-group(v-for="(crit, cindex) in classe.pca.justificacao")
                                     .form-group.row(v-if="crit.tipo=='Indefinido'")
                                         label.col-sm-2.col-form-label Critério:
                                         select-value-from-list( 
@@ -341,8 +341,7 @@ block corpo
                                             @value-change="crit.tipo = $event"
                                         )
                                     .form-group.row(v-else) 
-                                        label.col-sm-2.col-form-label Critério:
-                                        .col-sm-10 {{crit.tipo}}
+                                        label.col-sm-12.col-form-label {{ crit.label }}
                                     .form-group.row
                                         label.col-sm-2.col-form-label Notas:
                                         textarea.col-sm-10(
@@ -353,16 +352,32 @@ block corpo
                                     .form-group.row(v-if="crit.procRel.length > 0") 
                                         label.col-sm-2.col-form-label Processos relacionados: 
                                         .col-sm-10
-                                            ul
-                                                li(v-for="(proc, i) in crit.procRel") {{proc}}
+                                            table.table.table-condensed
+                                                tr
+                                                    th Relação
+                                                    th Código
+                                                    th Título
+                                                tr(v-for="(proc, i) in crit.procRel")
+                                                    td {{ proc.relLabel }}
+                                                    td {{ proc.codigo }}
+                                                    td {{ proc.titulo }}
 
                                     .form-group.row(v-if="crit.legislacao.length > 0") 
                                         label.col-sm-2.col-form-label Legislação associada: 
                                         .col-sm-10
-                                            ul
-                                                li(v-for="(leg, i) in crit.legislacao") {{leg}}
-
-                                button(@click="adicionarCriterio(classe.pca.justificacao, 'Indefinido', '', [], [])") Adicionar Critério
+                                            table.table.table-condensed
+                                                tr
+                                                    th(v-for="h in estilo.legislacaoTableHeader") {{ h }}
+                                                    th Ação
+                                                tr(v-for="(leg, index) in crit.legislacao")
+                                                    td(v-for="valor in leg.data") {{ valor }}
+                                                    td 
+                                                        button.btn.btn-default(type="button")
+                                                            span.glyphicon.glyphicon-remove(@click="desselecionarLegislacao(crit.legislacao, leg, index)")
+                                    button(@click="removerCriterioLegal(classe.pca.justificacao, cindex)") Remover Critério Legal
+                                    hr
+                                    
+                                button(@click="adicionarCriterio(classe.pca.justificacao, 'CriterioJustificacaoLegal', 'Critério Legal', '', [], classe.legislacao)") Adicionar Critério Legal
 
                     //- DESTINO FINAL
                     .panel-group
@@ -401,8 +416,7 @@ block corpo
                                             @value-change="critDF.tipo = $event"
                                         )
                                     .form-group.row(v-else) 
-                                        label.col-sm-2.col-form-label Critério:
-                                        span {{critDF.tipo}}
+                                        label.col-sm-12.col-form-label {{ critDF.label }}
                                     .form-group.row
                                         label.col-sm-2.col-form-label Notas:
                                         textarea.col-sm-10(
@@ -413,16 +427,32 @@ block corpo
                                     .form-group.row(v-if="critDF.procRel.length > 0") 
                                         label.col-sm-2.col-form-label Processos relacionados: 
                                         .col-sm-10
-                                            ul
-                                                li(v-for="(proc, i) in critDF.procRel") {{proc}}
-
+                                            table.table.table-condensed
+                                                tr
+                                                    th Relação
+                                                    th Código
+                                                    th Título
+                                                tr(v-for="(proc, i) in critDF.procRel")
+                                                    td {{ proc.relLabel }}
+                                                    td {{ proc.codigo }}
+                                                    td {{ proc.titulo }}
+                                                
                                     .form-group.row(v-if="critDF.legislacao.length > 0") 
                                         label.col-sm-2.col-form-label Legislação associada: 
                                         .col-sm-10
-                                            ul
-                                                li(v-for="(leg, j) in critDF.legislacao") {{leg}}
-                            
-                                button(@click="adicionarCriterio(classe.df.justificacao, 'Indefinido', '', [], [])") Adicionar Critério
+                                            table.table.table-condensed
+                                                tr
+                                                    th(v-for="h in estilo.legislacaoTableHeader") {{ h }}
+                                                    th Ação
+                                                tr(v-for="(leg, index) in critDF.legislacao")
+                                                    td(v-for="valor in leg.data") {{ valor }}
+                                                    td 
+                                                        button.btn.btn-default(type="button")
+                                                            span.glyphicon.glyphicon-remove(@click="desselecionarLegislacao(critDF.legislacao, leg, index)")
+                                    button(@click="removerCriterioLegal(classe.df.justificacao, indexDF)") Remover Critério Legal
+                                    hr
+
+                                button(@click="adicionarCriterio(classe.df.justificacao, 'CriterioJustificacaoLegal', 'Critério Legal', '', [], classe.legislacao)") Adicionar Critério Legal
                             
             spinner(ref="spinner" fixed size="lg" text="Por favor aguarde...")
 

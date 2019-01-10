@@ -416,27 +416,28 @@ var newClass = new Vue({
         },
 
         // Trata a seleção ou desseleção de um processo....................
+        
 
         selecionarProcesso: function (row) {
             this.classe.processosRelacionados.push(row);
             // Tratamento do invariante: se é Suplemento Para então cria-se um critério de Utilidade Administrativa
             if(row.relacao == "eSuplementoPara"){
-                this.adicionarCriterio(this.classe.pca.justificacao, "CriterioJustificacaoUtilidadeAdministrativa", "", [row.id], []);
+                this.adicionarCriterio(this.classe.pca.justificacao, "CriterioJustificacaoUtilidadeAdministrativa", "Critério de Utilidade Administrativa", "", [row], []);
             }
             if(row.relacao == "eSuplementoDe"){
-                this.adicionarCriterio(this.classe.pca.justificacao, "CriterioJustificacaoLegal", "", [], this.classe.legislacao);
+                this.adicionarCriterio(this.classe.pca.justificacao, "CriterioJustificacaoLegal", "Critério Legal", "", [row], this.classe.legislacao);
             }
             else if(row.relacao == "eSinteseDe"){
                 this.classe.df.valor = "C";
-                this.adicionarCriterio(this.classe.df.justificacao, "CriterioJustificacaoDensidadeInfo", "", [row.id], []);
+                this.adicionarCriterio(this.classe.df.justificacao, "CriterioJustificacaoDensidadeInfo", "Critério de Densidade Informacional", "", [row], []);
             }
             else if(row.relacao == "eSintetizadoPor"){
                 if(this.classe.df.valor == "NE") this.classe.df.valor = "E";
-                this.adicionarCriterio(this.classe.df.justificacao, "CriterioJustificacaoDensidadeInfo", "", [row.id], []);
+                this.adicionarCriterio(this.classe.df.justificacao, "CriterioJustificacaoDensidadeInfo", "Critério de Densidade Informacional", "", [row], []);
             }
             else if(row.relacao == "eComplementarDe"){
                 this.classe.df.valor = "C";
-                this.adicionarCriterio(this.classe.df.justificacao, "CriterioJustificacaoComplementaridadeInfo", "", [row.id], []);
+                this.adicionarCriterio(this.classe.df.justificacao, "CriterioJustificacaoComplementaridadeInfo", "Critério de Complementaridade Informacional", "", [row], []);
             }
         },
 
@@ -465,25 +466,30 @@ var newClass = new Vue({
             row.selected = true;
         },
 
-        desselecionarLegislacao: function (row, index) {
+        desselecionarLegislacao: function (lista, row, index) {
             row.selected = false;
-            this.classe.legislacao.splice(index, 1);
+            lista.splice(index, 1);
         },
 
         // Adiciona um critério à lista de critérios do PCA ou do DF....................
 
-        adicionarCriterio: function (justificacao, tipo, notas, procRel, legislacao) {
+        adicionarCriterio: function (justificacao, tipo, label, notas, procRel, legislacao) {
+            let myProcRel = JSON.parse(JSON.stringify(procRel));
+            let myLeg = JSON.parse(JSON.stringify(legislacao));
+            
             var indice = justificacao.findIndex(crit => crit.tipo === tipo);
             if(indice == -1){
                 justificacao.push({
                     tipo: tipo,
+                    label, label,
                     notas: notas,
-                    procRel: procRel,
-                    legislacao: legislacao
+                    procRel: myProcRel,
+                    legislacao: myLeg
                 });
             }
             else{
-                justificacao[indice].procRel = justificacao[indice].procRel.concat(procRel);
+                justificacao[indice].procRel = justificacao[indice].procRel.concat(myProcRel);
+                justificacao[indice].legislacao = justificacao[indice].legislacao.concat(myLeg);
             }
             
         },
@@ -505,6 +511,12 @@ var newClass = new Vue({
                     justificacao.splice(indice, 1)
                 }
             }
+        },
+
+        // Remove um critério legal
+
+        removerCriterioLegal: function(justificacao, i){
+            justificacao.splice(i, 1)
         },
 
         // Verifica se um TI já existe na BD
