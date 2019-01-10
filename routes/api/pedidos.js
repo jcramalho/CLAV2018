@@ -23,4 +23,11 @@ router.get('/:codigo', (req, res) => {
         .catch(erro => res.status(500).send(`Erro na consulta do pedido: ${erro}`));
 });
 
+// Adição de distribuição
+router.post('/:codigo/distribuicao', (req, res) => {
+    Pedidos.adicionarDistribuicao(req.params.codigo, req.body)
+        .then(dados => dados ? res.jsonp(dados) : res.status(404).send(`Erro. O pedido '${req.params.codigo}' não existe`))
+        .catch(erro => res.status(500).send(`Erro na distribuição do pedido: ${erro}`));
+});
+
 module.exports = router;
