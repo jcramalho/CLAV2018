@@ -116,6 +116,13 @@ var newClass = new Vue({
             {label: 'Eliminação (E)', value: 'E'}
         ],
 
+        destinoFinalLabels: {
+            'NE': 'Não Especificado (NE)', 
+            'C': 'Conservação (C)',
+            'CP': 'Conservação Parcial (CP)',
+            'E': 'Eliminação (E)'
+        },
+
         criteriosDF: [
             {label: 'Por selecionar', value: 'Indefinido'},
             {label: 'Critério Complementaridade Informacional', value: 'CriterioJustificacaoComplementaridadeInfo'},
@@ -430,25 +437,27 @@ var newClass = new Vue({
             }
             // Tratamento do invariante: se é Síntese De então cria-se um critério de Densidade Informacional
             else if(row.relacao == "eSinteseDe"){
-                this.classe.df.valor = "C";
                 this.adicionarCriterio(this.classe.df.justificacao, "CriterioJustificacaoDensidadeInfo", "Critério de Densidade Informacional", "", [row], []);
             }
             // Tratamento do invariante: se é Síntetizado Por então cria-se um critério de Densidade Informacional
             else if(row.relacao == "eSintetizadoPor"){
-                if(this.classe.df.valor == "NE") this.classe.df.valor = "E";
                 this.adicionarCriterio(this.classe.df.justificacao, "CriterioJustificacaoDensidadeInfo", "Critério de Densidade Informacional", "", [row], []);
             }
             // Tratamento do invariante: se é Complementar De então cria-se um critério de Complementaridade Informacional
             else if(row.relacao == "eComplementarDe"){
-                this.classe.df.valor = "C";
                 this.adicionarCriterio(this.classe.df.justificacao, "CriterioJustificacaoComplementaridadeInfo", "Critério de Complementaridade Informacional", "", [row], []);
             }
+
+            this.classe.df.valor = this.calcDF(this.classe.processosRelacionados);
         },
 
         desselecionarProcesso: function(p, index) {
             p.selected = false;
             if(p.relacao == "eSuplementoPara") {
                 this.removerCriterio(this.classe.pca.justificacao, "CriterioJustificacaoUtilidadeAdministrativa", p.id);
+            }
+            else if(p.relacao == "eSuplementoDe") {
+                this.removerCriterio(this.classe.pca.justificacao, "CriterioJustificacaoLegal", p.id);
             }
             else if(p.relacao == "eSinteseDe"){
                 this.removerCriterio(this.classe.df.justificacao, "CriterioJustificacaoDensidadeInfo", p.id);
@@ -461,6 +470,9 @@ var newClass = new Vue({
             }
             p.relacao = "Indefinido";
             this.classe.processosRelacionados.splice(index,1);
+
+            // No fim recalcula-se o valor do destino final
+            this.classe.df.valor = this.calcDF(this.classe.processosRelacionados);
         },
         
         // Trata a seleção ou desseleção de um diploma legislativo....................
@@ -502,18 +514,14 @@ var newClass = new Vue({
         // criterio = {tipo: String, notas: [String], procRel: [proc], legislacao: [leg]}
 
         removerCriterio: function(justificacao, tipo, pid){
-            var indice = justificacao.findIndex(crit => crit.tipo === tipo);
-            if(indice == -1){
-                alert('Aviso: tentou remover um critério inexistente - ' + tipo)
+            var i = justificacao.findIndex(crit => crit.tipo === tipo);
+             
+            var j = justificacao[i].procRel.findIndex(p => p.id == pid);
+            if (j != -1) {
+                justificacao[i].procRel.splice(j, 1);
             }
-            else{
-                let index = justificacao[indice].procRel.indexOf(pid);
-                if (index != -1) {
-                    justificacao[indice].procRel.splice(index, 1);
-                }
-                if(justificacao[indice].procRel.length == 0){
-                    justificacao.splice(indice, 1)
-                }
+            if(justificacao[i].procRel.length == 0){
+                justificacao.splice(i, 1)
             }
         },
 
@@ -556,6 +564,31 @@ var newClass = new Vue({
                 .catch(function (error) {
                     console.error(error);
                 });
+        },
+
+        calcDF: function(listaProc){
+            var res = "NE";
+
+            var complementar = listaProc.findIndex(p => p.relacao == 'eComplementarDe');
+            if(complementar != -1){
+                res = "C";
+            }
+            else{
+                var sinteseDe = listaProc.findIndex(p => p.relacao == 'eSinteseDe');
+                if(sinteseDe != -1){
+                    res = "C";
+                }
+                else{
+                    var sintetizado = listaProc.findIndex(p => p.relacao == 'eSintetizadoPor');
+                    if(sintetizado != -1){
+                        res = "E";
+                    }
+                    else{
+                        res = "NE";
+                    }
+                }
+            }
+            return res;
         },
 
         showMsg(text) {

@@ -61,12 +61,12 @@ Vue.component('tabela-selecao-participantes', {
 
             tiposIntervencao: [
                 {label: 'Por selecionar', value: 'Indefinido'},
-                {label: 'Apreciar', value: 'Apreciador'},
-                {label: 'Assessorar', value: 'Assessor'},
-                {label: 'Comunicar', value: 'Comunicador'},
-                {label: 'Decidir', value: 'Decisor'},
-                {label: 'Executar', value: 'Executor'},
-                {label: 'Iniciar', value: 'Iniciador'}
+                {label: 'Apreciar', value: 'Apreciar'},
+                {label: 'Assessorar', value: 'Assessorar'},
+                {label: 'Comunicar', value: 'Comunicar'},
+                {label: 'Decidir', value: 'Decidir'},
+                {label: 'Executar', value: 'Executar'},
+                {label: 'Iniciar', value: 'Iniciar'}
             ],
         };
     },
