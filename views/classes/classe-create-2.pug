@@ -73,7 +73,7 @@ block corpo
                         label.col-sm-2.col-form-label Nota(s) de Aplicação: 
                         .form-group.row.col-sm-10
                             .form-group.row(v-for="(nota, index) in classe.notasAp")
-                                div Identificador gerado: {{nota.id}}
+                                //- div Identificador gerado: {{nota.id}}
                                 textarea(
                                     cols="72"
                                     lines="5"
@@ -89,7 +89,7 @@ block corpo
                         label.col-sm-2.col-form-label Exemplo(s) de Nota(s) de Aplicação: 
                         .form-group.row.col-sm-10
                             .form-group.row(v-for="(exemplo, index) in classe.exemplosNotasAp")
-                                div Identificador gerado: {{exemplo.id}}
+                                //- div Identificador gerado: {{exemplo.id}}
                                 textarea(
                                     cols="72"
                                     lines="5"
@@ -105,7 +105,7 @@ block corpo
                         label.col-sm-2.col-form-label Nota(s) de Exclusão: 
                         .form-group.row.col-sm-10
                             .form-group.row(v-for="(nota, index) in classe.notasEx")
-                                div Identificador gerado: {{nota.id}}
+                                //- div Identificador gerado: {{nota.id}}
                                 textarea(
                                     cols="72"
                                     lines="5"
@@ -121,7 +121,7 @@ block corpo
                         label.col-sm-2.col-form-label Termos de Índice: 
                         .col-sm-10
                             .form-group.row(v-for="(ti, index) in classe.termosInd")
-                                div Identificador gerado: {{ti.id}}
+                                //- div Identificador gerado: {{ti.id}}
                                 input(
                                     size="70    "
                                     v-model="ti.termo"
@@ -164,10 +164,10 @@ block corpo
                     //- DONOS
                     a(name="donos")
                     .form-group.row
-                        label.col-sm-2.col-form-label Donos Selecionados: 
+                        label.col-sm-2.col-form-label Donos do processo: 
                         .col-sm-10
                             .row(v-if="classe.donos.length > 0")
-                                table.table.table-condensed
+                                table.table.table-condensed.table-hover
                                     tr
                                         th Sigla 
                                         th Designação
@@ -182,7 +182,7 @@ block corpo
                                                 span.glyphicon.glyphicon-remove(@click="desselecionarDono(p, index)") 
                             .row(v-else) Não tem donos selecionados.
                     .form-group.row
-                        label.col-sm-2.col-form-label Entidades selecionáveis para donos: 
+                        label.col-sm-2.col-form-label Selecionar donos do processo: 
                         .col-sm-10
                             select-row-from-table(
                                 v-if="semaforos.entidadesReady"
@@ -218,7 +218,7 @@ block corpo
                                                     span.glyphicon.glyphicon-remove(@click="desselecionarParticipante(p, index)") 
                                 .row(v-else) Não tem processos relacionados.
                         .form-group.row
-                            label.col-sm-2.col-form-label Participante(s): 
+                            label.col-sm-2.col-form-label Selecionar participantes no processo: 
                             .col-sm-10
                                 tabela-selecao-participantes(
                                     v-if="semaforos.entidadesReady"
@@ -253,7 +253,7 @@ block corpo
                                                 span.glyphicon.glyphicon-remove(@click="desselecionarProcesso(p, index)") 
                             .row(v-else) Não tem processos relacionados.
                     .form-group.row
-                        label.col-sm-2.col-form-label Processos Selecionáveis: 
+                        label.col-sm-2.col-form-label Selecionar processos relacionados: 
                         .col-sm-10
                             tabela-selecao-proc-relacionados(
                                 v-if="classesReady"
@@ -272,7 +272,7 @@ block corpo
                     //- LEGISLAÇÃO
                     a(name="legislacao")
                     .form-group.row
-                        label.col-sm-2.col-form-label Legislação Selecionada: 
+                        label.col-sm-2.col-form-label Legislação: diplomas jurídico-normativos 
                         .col-sm-10
                             .row(v-if="classe.legislacao.length > 0")
                                 table.table.table-condensed
@@ -286,7 +286,7 @@ block corpo
                                                 span.glyphicon.glyphicon-remove(@click="desselecionarLegislacao(classe.legislacao, p, index)") 
                             .row(v-else) Não tem legislação selecionada.
                     .form-group.row
-                        label.col-sm-2.col-form-label Diplomas selecionáveis: 
+                        label.col-sm-2.col-form-label Selecionar diplomas jurídico-normativos: 
                         .col-sm-10
                             select-row-from-table(
                                 v-if="semaforos.legislacaoReady"

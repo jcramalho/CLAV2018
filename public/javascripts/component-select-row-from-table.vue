@@ -5,7 +5,7 @@ Vue.component('select-row-from-table', {
                 <input class="form-control" v-model="filt" type="text" placeholder="Filtrar"/>
             </div>
 
-            <table class="table table-condensed">
+            <table class="table table-condensed table-hover">
                 <thead v-if="header">
                     <tr>
                         <th v-if="index=>0" v-for="(item,index) in header" @click="sort(index)" class="sorter" :style="{width: cwidth[index]}">
