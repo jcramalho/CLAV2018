@@ -424,17 +424,21 @@ var newClass = new Vue({
             if(row.relacao == "eSuplementoPara"){
                 this.adicionarCriterio(this.classe.pca.justificacao, "CriterioJustificacaoUtilidadeAdministrativa", "Critério de Utilidade Administrativa", "", [row], []);
             }
-            if(row.relacao == "eSuplementoDe"){
+            // Tratamento do invariante: se é Suplemento De então cria-se um critério Legal com toda a legislação selecionada associada
+            else if(row.relacao == "eSuplementoDe"){
                 this.adicionarCriterio(this.classe.pca.justificacao, "CriterioJustificacaoLegal", "Critério Legal", "", [row], this.classe.legislacao);
             }
+            // Tratamento do invariante: se é Síntese De então cria-se um critério de Densidade Informacional
             else if(row.relacao == "eSinteseDe"){
                 this.classe.df.valor = "C";
                 this.adicionarCriterio(this.classe.df.justificacao, "CriterioJustificacaoDensidadeInfo", "Critério de Densidade Informacional", "", [row], []);
             }
+            // Tratamento do invariante: se é Síntetizado Por então cria-se um critério de Densidade Informacional
             else if(row.relacao == "eSintetizadoPor"){
                 if(this.classe.df.valor == "NE") this.classe.df.valor = "E";
                 this.adicionarCriterio(this.classe.df.justificacao, "CriterioJustificacaoDensidadeInfo", "Critério de Densidade Informacional", "", [row], []);
             }
+            // Tratamento do invariante: se é Complementar De então cria-se um critério de Complementaridade Informacional
             else if(row.relacao == "eComplementarDe"){
                 this.classe.df.valor = "C";
                 this.adicionarCriterio(this.classe.df.justificacao, "CriterioJustificacaoComplementaridadeInfo", "Critério de Complementaridade Informacional", "", [row], []);
@@ -513,9 +517,9 @@ var newClass = new Vue({
             }
         },
 
-        // Remove um critério legal
+        // Remove um critério completo duma vez
 
-        removerCriterioLegal: function(justificacao, i){
+        removerCriterioTodo: function(justificacao, i){
             justificacao.splice(i, 1)
         },
 

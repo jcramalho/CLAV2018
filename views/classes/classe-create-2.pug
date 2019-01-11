@@ -374,10 +374,11 @@ block corpo
                                                     td 
                                                         button.btn.btn-default(type="button")
                                                             span.glyphicon.glyphicon-remove(@click="desselecionarLegislacao(crit.legislacao, leg, index)")
-                                    button(@click="removerCriterioLegal(classe.pca.justificacao, cindex)") Remover Critério Legal
+                                    button(@click="removerCriterioTodo(classe.pca.justificacao, cindex)") Remover Critério
                                     hr
                                     
                                 button(@click="adicionarCriterio(classe.pca.justificacao, 'CriterioJustificacaoLegal', 'Critério Legal', '', [], classe.legislacao)") Adicionar Critério Legal
+                                button(@click="adicionarCriterio(classe.pca.justificacao, 'CriterioJustificacaoGestionario', 'Critério Gestionário', '', [], [])") Adicionar Critério Gestionário
 
                     //- DESTINO FINAL
                     .panel-group
