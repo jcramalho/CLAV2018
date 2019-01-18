@@ -132,7 +132,29 @@ block corpo
                         .col-sm-10
                             button(@click="insereNovoTI(classe.termosInd)") Novo termo
                     hr
-
+            
+            .panel.panel-default(v-if="classe.nivel == 3")
+                .panel-heading
+                    h4 Esta classe de 3º nível irá ter subclasses de 4º nível?
+                .panel-body
+                    p Se responder sim o bloco de decisões irá parecer nos quartos níveis.
+                    p Os quartos níveis irão herdar o contexto do 3º nível.
+                    select-value-from-list(
+                        :initial-value = "classe.temSubclasses4Nivel"
+                        :options = "trueFalse"
+                        @value-change="classe.temSubclasses4Nivel = $event"
+                    )
+                    .panel.panel-default(v-if="classe.temSubclasses4Nivel")
+                        .panel-heading
+                            h4 Qual a razão deste desdobramento? 
+                        .panel-body
+                            p Selecione uma das razões
+                            select-value-from-list(
+                                :initial-value = "'PCA'"
+                                :options = "razaoDesdobramento"
+                                @value-change=""
+                            )
+      
             .panel.panel-default(v-if="classe.nivel >= 3")
                 .panel-heading
                     h4 Contexto de Avaliação

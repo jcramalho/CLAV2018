@@ -36,6 +36,8 @@ var newClass = new Vue({
             notasEx: [],
             termosInd: [],
 
+            temSubclasses4Nivel: false,
+
             // Campos da área do Contexto de Avaliação
             // Tipo de processo
 
@@ -96,6 +98,16 @@ var newClass = new Vue({
         simNao: [
             {label: "Não", value: "N"},
             {label: "Sim", value: "S"}
+        ],
+
+        trueFalse: [
+            {label: "Não", value: false},
+            {label: "Sim", value: true}
+        ],
+
+        razaoDesdobramento: [
+            {label: "PCA distinto", value: "PCA"},
+            {label: "DF distinto", value: "DF"}
         ],
 
         pcaFormasContagem: [{label: "Por selecionar", value: "Indefinido"}],
