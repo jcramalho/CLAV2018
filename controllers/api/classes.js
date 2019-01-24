@@ -59,6 +59,7 @@ Classes.descendencia = async id => {
         SELECT ?id ?codigo ?titulo
         WHERE {
             ?id clav:temPai clav:${id} ;
+                    clav:classeStatus 'A';
                     clav:codigo ?codigo ;
                     clav:titulo ?titulo .
         }
