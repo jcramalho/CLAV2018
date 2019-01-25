@@ -53,6 +53,29 @@ block corpo
                         v-model="classe.titulo"
                     )
 
+            .panel.panel-default(v-if="classe.nivel == 3")
+                .panel-heading
+                    h4 Desdobramento da classe em subclasses de nível 4
+                .panel-body
+                    h4 Esta classe de 3º nível irá ter subclasses de 4º nível?
+                    p Se responder sim o bloco de decisões irá parecer nos quartos níveis.
+                    p Os quartos níveis irão herdar o contexto do 3º nível.
+                    label.radio-inline
+                        input(type="radio" :value="false" v-model="classe.temSubclasses4Nivel") 
+                        | Não
+                    label.radio-inline
+                        input(type="radio" :value="true" v-model="classe.temSubclasses4Nivel") 
+                        | Sim
+                    div(v-if="classe.temSubclasses4Nivel")
+                        h4 Qual a razão deste desdobramento? 
+                        p Selecione uma das razões:
+                        label.radio-inline
+                            input(type="radio" :value="'pca'" v-model="classe.temSubclasses4NivelRazao") 
+                            | PCA distinto
+                        label.radio-inline
+                            input(type="radio" :value="'df'" v-model="classe.temSubclasses4NivelRazao") 
+                            | DF distinto
+
             .panel.panel-default
                 .panel-heading
                     h4 Descritivo da Classe
@@ -132,30 +155,8 @@ block corpo
                         .col-sm-10
                             button(@click="insereNovoTI(classe.termosInd)") Novo termo
                     hr
-            
-            .panel.panel-default(v-if="classe.nivel == 3")
-                .panel-heading
-                    h4 Esta classe de 3º nível irá ter subclasses de 4º nível?
-                .panel-body
-                    p Se responder sim o bloco de decisões irá parecer nos quartos níveis.
-                    p Os quartos níveis irão herdar o contexto do 3º nível.
-                    select-value-from-list(
-                        :initial-value = "classe.temSubclasses4Nivel"
-                        :options = "trueFalse"
-                        @value-change="classe.temSubclasses4Nivel = $event"
-                    )
-                    .panel.panel-default(v-if="classe.temSubclasses4Nivel")
-                        .panel-heading
-                            h4 Qual a razão deste desdobramento? 
-                        .panel-body
-                            p Selecione uma das razões
-                            select-value-from-list(
-                                :initial-value = "'PCA'"
-                                :options = "razaoDesdobramento"
-                                @value-change=""
-                            )
       
-            .panel.panel-default(v-if="classe.nivel >= 3")
+            .panel.panel-default(v-if="classe.nivel == 3")
                 .panel-heading
                     h4 Contexto de Avaliação
                 .panel-body
@@ -322,7 +323,7 @@ block corpo
                             )
                             h4(v-else) A carregar...
 
-            .panel.panel-default(v-if="classe.nivel >= 3")
+            .panel.panel-default(v-if="(classe.nivel == 3) && !classe.temSubclasses4Nivel")
                 .panel-heading
                     h4 Decisões de Avaliação
                 .panel-body
@@ -477,6 +478,22 @@ block corpo
 
                                 button(@click="adicionarCriterio(classe.df.justificacao, 'CriterioJustificacaoLegal', 'Critério Legal', '', [], classe.legislacao)") Adicionar Critério Legal
                             
+            .panel.panel-default(v-if="classe.temSubclasses4Nivel")
+                .panel-heading
+                    h4 Subclasses de nível 4
+                .panel-body
+                    div(v-for="subClasse in classe.subclasses")
+                        h4 {{ subClasse.codigo }} 
+                        dl.dl-horizontal
+                            dt Nível:
+                            dd {{ subClasse.nivel }}
+                            dt Código do pai:
+                            dd {{ subClasse.pai }}
+                            dt Título:
+                            dd 
+                                input(type="text" v-model="subClasse.titulo")
+                            
+
             spinner(ref="spinner" fixed size="lg" text="Por favor aguarde...")
 
             modal(

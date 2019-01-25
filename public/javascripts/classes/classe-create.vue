@@ -37,6 +37,7 @@ var newClass = new Vue({
             termosInd: [],
 
             temSubclasses4Nivel: false,
+            temSubclasses4NivelRazao: "pca",
 
             // Campos da área do Contexto de Avaliação
             // Tipo de processo
@@ -60,7 +61,7 @@ var newClass = new Vue({
 
             legislacao: [],
 
-            // PCA
+            // Bloco de decisão de avaliação: PCA e DF
 
             pca: {
                 valor: null,
@@ -73,7 +74,11 @@ var newClass = new Vue({
                 valor: "NE",
                 notas: null,
                 justificacao: []
-            }
+            },
+
+            // Bloco de subclasses de nível 4, caso haja desdobramento
+
+            subclasses: []
         },
 
         // Estruturas auxiliares
@@ -221,6 +226,37 @@ var newClass = new Vue({
             else {
                 this.verificaExistenciaCodigo(this.classe.codigo);
             }
+        },
+        'classe.temSubclasses4Nivel': function(){
+            // Se passou a verdade vamos criar um par de subclasses
+            // Informação base:
+            if(this.classe.temSubclasses4Nivel){
+                var novaSubclasse1 = {
+                    nivel: 4,
+                    pai: this.classe.codigo,
+                    codigo: this.classe.codigo + '.01',
+                    titulo: this.classe.titulo + ': ...',
+                    descricao: null,
+                    termosInd: this.classe.termosInd
+                };
+                var novaSubclasse2 = {
+                    nivel: 4,
+                    pai: this.classe.codigo,
+                    codigo: this.classe.codigo + '.02',
+                    titulo: this.classe.titulo + ': ...',
+                    descricao: null,
+                    termosInd: this.classe.termosInd
+                };
+
+                this.classe.subclasses.push(novaSubclasse1);
+                this.classe.subclasses.push(novaSubclasse2);
+            }
+
+            // Se passou a falso vamos eliminar as subclasses
+
+            else{
+                this.classe.subclasses = [];
+            }  
         },
     },
     // Função principal que cria as estruturas necessárias com informação da BD....................
