@@ -70,15 +70,12 @@ block corpo
                         | Sim
                     div(v-if="classe.temSubclasses4Nivel")
                         h4 Selecione o(s) motivo(s) da subdivisão em 4ºs níveis: 
-                        label.radio-inline
-                            input(type="radio" :value="'pca'" v-model="classe.temSubclasses4NivelRazao") 
+                        label.checkbox-inline
+                            input(type="checkbox" :value="true" v-model="classe.temSubclasses4NivelPCA") 
                             | Prazo de conservação administrativa distinto
-                        label.radio-inline
-                            input(type="radio" :value="'df'" v-model="classe.temSubclasses4NivelRazao") 
+                        label.checkbox-inline
+                            input(type="checkbox" :value="true" v-model="classe.temSubclasses4NivelDF") 
                             | Destino final distinto
-                        label.radio-inline
-                            input(type="radio" :value="'ambos'" v-model="classe.temSubclasses4NivelRazao") 
-                            | Ambos os motivos
 
             .panel.panel-default
                 .panel-heading
@@ -144,13 +141,13 @@ block corpo
                         hr
                     //- TERMOS DE ÍNDICE
                     a(name="termosI")
-                    .form-group.row
+                    .form-group.row(v-if="!classe.temSubclasses4Nivel")
                         label.col-sm-2.col-form-label Termos de Índice: 
                         .col-sm-10
                             .form-group.row(v-for="(ti, index) in classe.termosInd")
                                 //- div Identificador gerado: {{ti.id}}
                                 input(
-                                    size="70    "
+                                    size="70"
                                     v-model="ti.termo"
                                     @change="validaTI(ti)"
                                 )
@@ -486,17 +483,32 @@ block corpo
                 .panel-heading
                     h4 Subclasses de nível 4
                 .panel-body
-                    div(v-for="subClasse in classe.subclasses")
-                        h4 {{ subClasse.codigo }} 
-                        dl.dl-horizontal
-                            dt Nível:
-                            dd {{ subClasse.nivel }}
-                            dt Código do pai:
-                            dd {{ subClasse.pai }}
-                            dt Título:
-                            dd 
-                                input(type="text" v-model="subClasse.titulo")
-                            
+                    .card-columns
+                        .card.mt-2.mb-3(v-for="subClasse in classe.subclasses")
+                            .card-body
+                                h5.card-title {{ subClasse.codigo }} 
+                                dl.dl-horizontal
+                                    dt Nível:
+                                    dd {{ subClasse.nivel }}
+                                    dt Código do pai:
+                                    dd {{ subClasse.pai }}
+                                    dt Título:
+                                    dd 
+                                        input(type="text" v-model="subClasse.titulo")
+                                    dt Descrição:
+                                    dd
+                                        textarea(cols="72" lines="5" v-model="subClasse.descricao")
+                                .form-group.row
+                                    label.col-sm-2.col-form-label Termos de Índice: 
+                                    .col-sm-10
+                                        .form-group.row(v-for="(ti, index) in subClasse.termosInd")
+                                            //- div Identificador gerado: {{ti.id}}
+                                            input(size="70" v-model="ti.termo" @change="validaTI(ti)")
+                                            span(style="color:red" v-if="ti.existe") {{mensValTermoIndice}}
+                                            span.glyphicon.glyphicon-remove.pl-5(@click="subClasse.termosInd.splice(index,1)")
+                                    .col-sm-10
+                                        button(@click="insereNovoTI(subClasse.termosInd)") Novo termo
+                                hr
 
             spinner(ref="spinner" fixed size="lg" text="Por favor aguarde...")
 

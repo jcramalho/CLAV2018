@@ -37,7 +37,8 @@ var newClass = new Vue({
             termosInd: [],
 
             temSubclasses4Nivel: false,
-            temSubclasses4NivelRazao: "pca",
+            temSubclasses4NivelPCA: false,
+            temSubclasses4NivelDF: false,
 
             // Campos da área do Contexto de Avaliação
             // Tipo de processo
@@ -235,17 +236,17 @@ var newClass = new Vue({
                     nivel: 4,
                     pai: this.classe.codigo,
                     codigo: this.classe.codigo + '.01',
-                    titulo: this.classe.titulo + ': ...',
+                    titulo: this.classe.titulo + ': ',
                     descricao: null,
-                    termosInd: this.classe.termosInd
+                    termosInd: JSON.parse(JSON.stringify(this.classe.termosInd))
                 };
                 var novaSubclasse2 = {
                     nivel: 4,
                     pai: this.classe.codigo,
                     codigo: this.classe.codigo + '.02',
-                    titulo: this.classe.titulo + ': ...',
-                    descricao: null,
-                    termosInd: this.classe.termosInd
+                    titulo: this.classe.titulo + ': ',
+                    descricao: "",
+                    termosInd: JSON.parse(JSON.stringify(this.classe.termosInd))
                 };
 
                 this.classe.subclasses.push(novaSubclasse1);
