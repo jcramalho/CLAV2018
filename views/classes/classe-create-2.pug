@@ -478,37 +478,211 @@ block corpo
                                     hr
 
                                 button(@click="adicionarCriterio(classe.df.justificacao, 'CriterioJustificacaoLegal', 'Critério Legal', '', [], classe.legislacao)") Adicionar Critério Legal
-                            
+
+            //- SUBCLASSES DE NÍVEL 4  
             .panel.panel-default(v-if="classe.temSubclasses4Nivel")
                 .panel-heading
                     h4 Subclasses de nível 4
                 .panel-body
-                    .card-columns
-                        .card.mt-2.mb-3(v-for="subClasse in classe.subclasses")
-                            .card-body
-                                h5.card-title {{ subClasse.codigo }} 
-                                dl.dl-horizontal
-                                    dt Nível:
-                                    dd {{ subClasse.nivel }}
-                                    dt Código do pai:
-                                    dd {{ subClasse.pai }}
-                                    dt Título:
-                                    dd 
+                    .panel.panel-default(v-for="(subClasse, cindex) in classe.subclasses")
+                        .panel-heading
+                            h4 Subclasse {{ subClasse.codigo }}
+                        .panel-body
+                            .form-group.row
+                                label.col-sm-2.col-form-label Código do pai: 
+                                .col-sm-10
+                                    p {{ subClasse.pai }}
+                            .form-group.row
+                                label.col-sm-2.col-form-label Título:
+                                .col-sm-10
+                                    p 
                                         input(type="text" v-model="subClasse.titulo")
-                                    dt Descrição:
-                                    dd
-                                        textarea(cols="72" lines="5" v-model="subClasse.descricao")
-                                .form-group.row
-                                    label.col-sm-2.col-form-label Termos de Índice: 
-                                    .col-sm-10
-                                        .form-group.row(v-for="(ti, index) in subClasse.termosInd")
-                                            //- div Identificador gerado: {{ti.id}}
-                                            input(size="70" v-model="ti.termo" @change="validaTI(ti)")
-                                            span(style="color:red" v-if="ti.existe") {{mensValTermoIndice}}
-                                            span.glyphicon.glyphicon-remove.pl-5(@click="subClasse.termosInd.splice(index,1)")
-                                    .col-sm-10
-                                        button(@click="insereNovoTI(subClasse.termosInd)") Novo termo
-                                hr
+                            .form-group.row
+                                label.col-sm-2.col-form-label Descrição:
+                                .col-sm-10
+                                    p 
+                                        textarea(cols="72" lines="5" v-model="subClasse.descricao")    
+                                
+                            .form-group.row
+                                label.col-sm-2.col-form-label Termos de Índice: 
+                                .col-sm-10
+                                    .form-group.row(v-for="(ti, index) in subClasse.termosInd")
+                                        //- div Identificador gerado: {{ti.id}}
+                                        input(size="70" v-model="ti.termo" @change="validaTI(ti, index, cindex)")
+                                        span(style="color:red" v-if="ti.existe") {{mensValTermoIndice}}
+                                        span.glyphicon.glyphicon-remove.pl-5(@click="subClasse.termosInd.splice(index,1)")
+                                .col-sm-10
+                                    button(@click="insereNovoTI(subClasse.termosInd)") Novo termo
+                            
+                            .panel.panel-default
+                                .panel-heading
+                                    h4 Contexto de Avaliação (herdado do 3º nível)
+                                .panel-body
+                                    //- PROCESSOS RELACIONADOS
+                                    .form-group.row
+                                        label.col-sm-2.col-form-label Processos Relacionados: 
+                                        .col-sm-10
+                                            .row(v-if="subClasse.processosRelacionados.length > 0")
+                                                table.table.table-condensed
+                                                    tr
+                                                        th(v-for="h in estilo.processosRelacionadosTableHeader") {{ h }} 
+                                                    tr(v-for="(p, index) in subClasse.processosRelacionados")
+                                                        td {{p.relLabel}}
+                                                        td {{p.codigo}}
+                                                        td {{p.titulo}}
+                                            .row(v-else) Não tem processos relacionados.
+
+                                    //- LEGISLAÇÃO
+                                    .form-group.row
+                                        label.col-sm-2.col-form-label Legislação: diplomas jurídico-normativos 
+                                        .col-sm-10
+                                            .row(v-if="subClasse.legislacao.length > 0")
+                                                table.table.table-condensed
+                                                    tr
+                                                        th(v-for="h in estilo.legislacaoTableHeader") {{ h }}
+                                                    tr(v-for="(p, index) in subClasse.legislacao")
+                                                        td(v-for="valor in p.data") {{ valor }} 
+                                            .row(v-else) Não tem legislação selecionada.
+
+                            .panel.panel-default
+                                .panel-heading
+                                    h4 Decisões de Avaliação 
+                                .panel-body
+                                    //- PRAZO DE CONSERVAÇÃO ADMINISTRATIVA
+                                    .panel-group
+                                        .panel.panel-default
+                                            .panel-heading 
+                                                b Prazo de Conservação Administrativa
+                                            .panel-body 
+                                                form
+                                                    .form-group.row
+                                                        label.col-sm-2.col-form-label Prazo:
+                                                        input(size="15" v-model="subClasse.pca.valor")
+                                                    .form-group.row(v-if="semaforos.pcaFormasContagemReady")
+                                                        label.col-sm-2.col-form-label Forma de Contagem:
+                                                        select-value-from-list(
+                                                            :options = "pcaFormasContagem"
+                                                            @value-change="subClasse.pca.formaContagem = $event"
+                                                        ) 
+                                                    .form-group.row(v-if="semaforos.pcaSubFormasContagemReady && subClasse.pca.formaContagem=='vc_pcaFormaContagem_disposicaoLegal'")
+                                                        label.col-sm-2.col-form-label Subforma de contagem:
+                                                        select-value-from-list(
+                                                            :options = "pcaSubFormasContagem"
+                                                            @value-change="subClasse.pca.subFormaContagem = $event"
+                                                        )
+                                        .panel.panel-default
+                                            .panel-heading 
+                                                b Justificação
+                                            .panel-body 
+                                                .fieldset.form-group(v-for="(crit, cindex) in subClasse.pca.justificacao")
+                                                    .form-group.row(v-if="crit.tipo=='Indefinido'")
+                                                        label.col-sm-2.col-form-label Critério:
+                                                        select-value-from-list( 
+                                                            :options = "pcaTiposCriterio"
+                                                            @value-change="crit.tipo = $event"
+                                                        )
+                                                    .form-group.row(v-else) 
+                                                        label.col-sm-12.col-form-label {{ crit.label }}
+                                                    .form-group.row
+                                                        label.col-sm-2.col-form-label Notas:
+                                                        textarea.col-sm-10(cols="60" lines="5" v-model="crit.notas")  
+                                                    .form-group.row(v-if="crit.procRel.length > 0") 
+                                                        label.col-sm-2.col-form-label Processos relacionados: 
+                                                        .col-sm-10
+                                                            table.table.table-condensed
+                                                                tr
+                                                                    th Relação
+                                                                    th Código
+                                                                    th Título
+                                                                tr(v-for="(proc, i) in crit.procRel")
+                                                                    td {{ proc.relLabel }}
+                                                                    td {{ proc.codigo }}
+                                                                    td {{ proc.titulo }}
+
+                                                    .form-group.row(v-if="crit.legislacao.length > 0") 
+                                                        label.col-sm-2.col-form-label Legislação associada: 
+                                                        .col-sm-10
+                                                            table.table.table-condensed
+                                                                tr
+                                                                    th(v-for="h in estilo.legislacaoTableHeader") {{ h }}
+                                                                    th Ação
+                                                                tr(v-for="(leg, index) in crit.legislacao")
+                                                                    td(v-for="valor in leg.data") {{ valor }}
+                                                                    td 
+                                                                        button.btn.btn-default(type="button")
+                                                                            span.glyphicon.glyphicon-remove(@click="desselecionarLegislacao(crit.legislacao, leg, index)")
+                                                    button(@click="removerCriterioTodo(subClasse.pca.justificacao, cindex)") Remover Critério
+                                                    hr
+                                    
+                                                button(@click="adicionarCriterio(subClasse.pca.justificacao, 'CriterioJustificacaoLegal', 'Critério Legal', '', [], classe.legislacao)") Adicionar Critério Legal
+                                                button(@click="adicionarCriterio(subClasse.pca.justificacao, 'CriterioJustificacaoGestionario', 'Critério Gestionário', '', [], [])") Adicionar Critério Gestionário
+
+                                    //- DESTINO FINAL
+                                    .panel-group
+                                        .panel.panel-default
+                                            .panel-heading 
+                                                b Destino Final
+                                            .panel-body 
+                                                form
+                                                    .form-group.row
+                                                        label.col-sm-2.col-form-label Destino:
+                                                        select-value-from-list(
+                                                            v-if="subClasse.df.valor == 'NE'"
+                                                            :initial-value = "subClasse.df.valor"
+                                                            :options = "destinoFinalTipos"
+                                                            @value-change="subClasse.df.valor = $event"
+                                                        )
+                                                        span(v-else) {{ destinoFinalLabels[subClasse.df.valor] }}
+                                                    .form-group.row
+                                                        label.col-sm-2.col-form-label Notas:
+                                                        textarea.col-sm-10(cols="60" lines="5" v-model="subClasse.df.notas")   
+                                        .panel.panel-default
+                                            .panel-heading 
+                                                b Justificação
+                                            .panel-body 
+                                                .fieldset.form-group(v-for="(critDF, indexDF) in subClasse.df.justificacao")
+                                                    .form-group.row(v-if="critDF.tipo=='Indefinido'")
+                                                        label.col-sm-2.col-form-label Critério:
+                                                        select-value-from-list(
+                                                            :options = "criteriosDF"
+                                                            @value-change="critDF.tipo = $event"
+                                                        )
+                                                    .form-group.row(v-else) 
+                                                        label.col-sm-12.col-form-label {{ critDF.label }}
+                                                    .form-group.row
+                                                        label.col-sm-2.col-form-label Notas:
+                                                        textarea.col-sm-10(cols="60" lines="5" v-model="critDF.notas")   
+
+                                                    .form-group.row(v-if="critDF.procRel.length > 0") 
+                                                        label.col-sm-2.col-form-label Processos relacionados: 
+                                                        .col-sm-10
+                                                            table.table.table-condensed
+                                                                tr
+                                                                    th Relação
+                                                                    th Código
+                                                                    th Título
+                                                                tr(v-for="(proc, i) in critDF.procRel")
+                                                                    td {{ proc.relLabel }}
+                                                                    td {{ proc.codigo }}
+                                                                    td {{ proc.titulo }}
+                                                
+                                                    .form-group.row(v-if="critDF.legislacao.length > 0") 
+                                                        label.col-sm-2.col-form-label Legislação associada: 
+                                                        .col-sm-10
+                                                            table.table.table-condensed
+                                                                tr
+                                                                    th(v-for="h in estilo.legislacaoTableHeader") {{ h }}
+                                                                    th Ação
+                                                                tr(v-for="(leg, index) in critDF.legislacao")
+                                                                    td(v-for="valor in leg.data") {{ valor }}
+                                                                    td 
+                                                                        button.btn.btn-default(type="button")
+                                                                            span.glyphicon.glyphicon-remove(@click="desselecionarLegislacao(critDF.legislacao, leg, index)")
+                                                    button(@click="removerCriterioLegal(subClasse.df.justificacao, indexDF)") Remover Critério Legal
+                                                    hr
+
+                                                button(@click="adicionarCriterio(subClasse.df.justificacao, 'CriterioJustificacaoLegal', 'Critério Legal', '', [], classe.legislacao)") Adicionar Critério Legal
+             
 
             spinner(ref="spinner" fixed size="lg" text="Por favor aguarde...")
 

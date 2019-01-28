@@ -27,10 +27,10 @@ var newClass = new Vue({
             // Metainformação e campos da área de Descrição
 
             nivel: 1,
-            pai: null,
-            codigo: null,
-            titulo: null,
-            descricao: null,
+            pai: "",
+            codigo: "",
+            titulo: "",
+            descricao: "",
             notasAp: [],
             exemplosNotasAp: [],
             notasEx: [],
@@ -92,8 +92,7 @@ var newClass = new Vue({
         classeNiveis: [
             {label: 'Nível 1', value: '1'},
             {label: 'Nível 2', value: '2'},
-            {label: 'Nível 3', value: '3'},
-            {label: 'Nível 4', value: '4'}
+            {label: 'Nível 3', value: '3'}
         ],
 
         processoTipos: [
@@ -238,7 +237,27 @@ var newClass = new Vue({
                     codigo: this.classe.codigo + '.01',
                     titulo: this.classe.titulo + ': ',
                     descricao: null,
-                    termosInd: JSON.parse(JSON.stringify(this.classe.termosInd))
+                    termosInd: JSON.parse(JSON.stringify(this.classe.termosInd)),
+
+                    // Bloco de contexto de avaliação
+
+                    processosRelacionados: JSON.parse(JSON.stringify(this.classe.processosRelacionados)),
+                    legislacao: JSON.parse(JSON.stringify(this.classe.legislacao)),
+
+                    // Bloco de decisão de avaliação: PCA e DF
+
+                    pca: {
+                        valor: null,
+                        formaContagem: "",
+                        subFormaContagem: "",
+                        justificacao: []        // j = [criterio]
+                    },                          // criterio = {tipo, notas, [proc], [leg]}
+
+                    df: {
+                        valor: "NE",
+                        notas: null,
+                        justificacao: []
+                    }
                 };
                 var novaSubclasse2 = {
                     nivel: 4,
@@ -246,8 +265,31 @@ var newClass = new Vue({
                     codigo: this.classe.codigo + '.02',
                     titulo: this.classe.titulo + ': ',
                     descricao: "",
-                    termosInd: JSON.parse(JSON.stringify(this.classe.termosInd))
+                    termosInd: JSON.parse(JSON.stringify(this.classe.termosInd)),
+                    
+                    // Bloco de contexto de avaliação
+
+                    processosRelacionados: JSON.parse(JSON.stringify(this.classe.processosRelacionados)),
+                    legislacao: JSON.parse(JSON.stringify(this.classe.legislacao)),
+                    
+                    // Bloco de decisão de avaliação: PCA e DF
+
+                    pca: {
+                        valor: null,
+                        formaContagem: "",
+                        subFormaContagem: "",
+                        justificacao: []  
+                    },                          
+
+                    df: {
+                        valor: "NE",
+                        notas: null,
+                        justificacao: []
+                    }
                 };
+
+                this.procHeranca(this.classe.processosRelacionados, novaSubclasse1);
+                this.procHeranca(this.classe.processosRelacionados, novaSubclasse2);
 
                 this.classe.subclasses.push(novaSubclasse1);
                 this.classe.subclasses.push(novaSubclasse2);
@@ -498,6 +540,11 @@ var newClass = new Vue({
             }
 
             this.classe.df.valor = this.calcDF(this.classe.processosRelacionados);
+            if(this.classe.temSubclasses4Nivel){
+                for(i=0; i < this.classe.subclasses.length; i++){
+                    this.classe.subclasses[i].df.valor = this.calcDF(this.classe.processosRelacionados);
+                }
+            }
         },
 
         desselecionarProcesso: function(p, index) {
@@ -522,6 +569,11 @@ var newClass = new Vue({
 
             // No fim recalcula-se o valor do destino final
             this.classe.df.valor = this.calcDF(this.classe.processosRelacionados);
+            if(this.classe.temSubclasses4Nivel){
+                for(i=0; i < this.classe.subclasses.length; i++){
+                    this.classe.subclasses[i].df.valor = this.calcDF(this.classe.processosRelacionados);
+                }
+            }
         },
         
         // Trata a seleção ou desseleção de um diploma legislativo....................
@@ -582,11 +634,59 @@ var newClass = new Vue({
 
         // Verifica se um TI já existe na BD
 
-        validaTI: async function(ti) {
+        findTI: async function(listaTI, termo, index){
+            try{
+                var encontrado = false;
+                for(var i=0; (i < listaTI.length) && !encontrado; ++i){
+                    if((termo == listaTI[i].termo)&&(i != index)) encontrado = true;
+                }
+                return encontrado;
+            }
+            catch (error) {
+                return (error)
+            } 
+        },
+
+        // No ato de um desdobramento em 4ºs níveis, trata a herança das relações
+
+        procHeranca: function (procRel, novaClasse){
+            for(var i=0; i < procRel.length; i++){
+                // Tratamento do invariante: se é Suplemento Para então cria-se um critério de Utilidade Administrativa
+                if(procRel[i].relacao == "eSuplementoPara"){
+                    this.adicionarCriterio(novaClasse.pca.justificacao, "CriterioJustificacaoUtilidadeAdministrativa", "Critério de Utilidade Administrativa", "", [procRel[i]], []);
+                }
+                // Tratamento do invariante: se é Suplemento De então cria-se um critério Legal com toda a legislação selecionada associada
+                else if(procRel[i].relacao == "eSuplementoDe"){
+                    this.adicionarCriterio(novaClasse.pca.justificacao, "CriterioJustificacaoLegal", "Critério Legal", "", [procRel[i]], this.classe.legislacao);
+                }
+                // Tratamento do invariante: se é Síntese De então cria-se um critério de Densidade Informacional
+                else if(procRel[i].relacao == "eSinteseDe"){
+                    this.adicionarCriterio(novaClasse.df.justificacao, "CriterioJustificacaoDensidadeInfo", "Critério de Densidade Informacional", "", [procRel[i]], []);
+                }
+                // Tratamento do invariante: se é Síntetizado Por então cria-se um critério de Densidade Informacional
+                else if(procRel[i].relacao == "eSintetizadoPor"){
+                    this.adicionarCriterio(novaClasse.df.justificacao, "CriterioJustificacaoDensidadeInfo", "Critério de Densidade Informacional", "", [procRel[i]], []);
+                }
+                // Tratamento do invariante: se é Complementar De então cria-se um critério de Complementaridade Informacional
+                else if(procRel[i].relacao == "eComplementarDe"){
+                    this.adicionarCriterio(novaClasse.df.justificacao, "CriterioJustificacaoComplementaridadeInfo", "Critério de Complementaridade Informacional", "", [procRel[i]], []);
+                }
+            }
+            novaClasse.df.valor = this.calcDF(this.classe.processosRelacionados);
+        },
+
+
+        validaTI: async function(ti, index, cindex) {
             try {
-                let response = await axios.get("/api/termosIndice?existe=" + ti.termo)
-                ti.existe = response.data
-                return response.data
+                // Vamos ver se já existe nesta classe
+                if(await this.findTI(this.classe.subclasses[cindex].termosInd, ti.termo, index)) {
+                    ti.existe = true
+                }  
+                else {
+                    let response = await axios.get("/api/termosIndice?existe=" + ti.termo)
+                    ti.existe = response.data
+                }
+                return ti.existe
             } 
             catch (error) {
                 return (error)
@@ -649,6 +749,7 @@ var newClass = new Vue({
 
         criarClasse: function () {
             alert("Neste momento, ainda não está pronta. A classe seria criada com a informação: " + JSON.stringify(this.classe))
+            alert("Subclasses: " + JSON.stringify(this.classe.subclasses))
         }
     }
 })
