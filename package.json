@@ -37,7 +37,7 @@
     "mongodb": "^2.2.33",
     "mongoose": "^4.13.2",
     "morgan": "^1.9.1",
-    "nanoid": "^2.0.0",
+    "nanoid": "^2.0.1",
     "npm": "^6.4.1",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",

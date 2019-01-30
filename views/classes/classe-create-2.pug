@@ -54,26 +54,7 @@ block corpo
                     )
 
             accordion.info-classe
-                .panel.panel-default
-                    .panel-heading
-                        h4 Descritivo da Classe
-                    .panel-body
-                        a(name="descricao")
-                        //- DESCRIÇÃO
-                        .form-group.row
-                            label.col-sm-2.col-form-label Descrição: 
-                            textarea(
-                                cols="72"
-                                lines="5"
-                                v-model="classe.descricao"
-                            ) 
-                            hr 
-
-            .panel.panel-default
-                .panel-heading
-                    h4 Descritivo da Classe
-                .panel-body
-                    a(name="descricao")
+                panel(header="Descritivo da Classe")
                     //- DESCRIÇÃO
                     .form-group.row
                         label.col-sm-2.col-form-label Descrição: 
@@ -82,9 +63,8 @@ block corpo
                             lines="5"
                             v-model="classe.descricao"
                         ) 
-                        hr  
+                    hr 
                     //- NOTAS DE APLICAçÃO                        
-                    a(name="notasA")
                     .form-group.row
                         label.col-sm-2.col-form-label Nota(s) de Aplicação: 
                         .form-group.row.col-sm-10
@@ -98,9 +78,8 @@ block corpo
                                 span.glyphicon.glyphicon-remove(@click="classe.notasAp.splice(index,1)")
                         .col-sm-10
                             button(@click="insereNovaNota(classe.notasAp, 'na')") Nova nota
-                        hr 
+                    hr 
                     //- EXEMPLOS DE NOTAS DE APLICAçÃO                        
-                    a(name="exemplos")
                     .form-group.row
                         label.col-sm-2.col-form-label Exemplo(s) de Nota(s) de Aplicação: 
                         .form-group.row.col-sm-10
@@ -114,9 +93,8 @@ block corpo
                                 span.glyphicon.glyphicon-remove.pl-5(@click="classe.exemplosNotasAp.splice(index,1)")
                         .col-sm-10
                             button(@click="insereNovaNota(classe.exemplosNotasAp, 'exna')") Novo exemplo
-                        hr
+                    hr
                     //- NOTAS DE EXCLUSÃO                        
-                    a(name="notasE")
                     .form-group.row
                         label.col-sm-2.col-form-label Nota(s) de Exclusão: 
                         .form-group.row.col-sm-10
@@ -130,9 +108,8 @@ block corpo
                                 span.glyphicon.glyphicon-remove.pl-5(@click="classe.notasEx.splice(index,1)")
                         .col-sm-10
                             button(@click="insereNovaNota(classe.notasEx, 'ne')") Nova nota
-                        hr
+                    hr
                     //- TERMOS DE ÍNDICE
-                    a(name="termosI")
                     .form-group.row(v-if="!classe.temSubclasses4Nivel")
                         label.col-sm-2.col-form-label Termos de Índice: 
                         .col-sm-10
@@ -149,12 +126,9 @@ block corpo
                             button(@click="insereNovoTI(classe.termosInd)") Novo termo
                     hr
       
-            .panel.panel-default(v-if="classe.nivel == 3")
-                .panel-heading
-                    h4 Contexto de Avaliação
-                .panel-body
+            accordion.info-classe(v-if="classe.nivel == 3")
+                panel(header="Contexto de Avaliação")
                     //- TIPO DE PROCESSO
-                    a(name="tipoTrans")
                     .form-group.row
                         label.col-sm-2.col-form-label Tipo de Processo: 
                         .col-sm-10
@@ -163,9 +137,7 @@ block corpo
                                 :options = "processoTipos"
                                 @value-change="classe.tipoProc = $event"
                             ) 
-
                     //- PROCESSO TRANVERSAL
-                    a(name="tipoTrans")
                     .form-group.row
                         label.col-sm-2.col-form-label Processo Transversal: 
                         .col-sm-10
@@ -174,11 +146,8 @@ block corpo
                                 :options = "simNao"
                                 @value-change="classe.procTrans = $event"
                             )
-
                     hr
-
                     //- DONOS
-                    a(name="donos")
                     .form-group.row
                         label.col-sm-2.col-form-label Donos do processo: 
                         .col-sm-10
@@ -212,9 +181,7 @@ block corpo
                             )
                             h4(v-else) A carregar...
                     hr
-
                     //- PARTICIPANTES
-                    a(name="participantes")
                     div(v-if="classe.nivel >= 3 && classe.procTrans == 'S'")
                         .form-group.row
                             label.col-sm-2.col-form-label Participantes e respetivas intervenções: 
@@ -247,11 +214,8 @@ block corpo
                                     @select-clicked="selecionarParticipante($event)"
                                 )
                                 h4(v-else) A carregar...
-
                     hr
-
                     //- PROCESSOS RELACIONADOS
-                    a(name="PNrel")
                     .form-group.row
                         label.col-sm-2.col-form-label Processos Relacionados: 
                         .col-sm-10
@@ -282,11 +246,8 @@ block corpo
                                 @proc-select-clicked="selecionarProcesso($event)"
                             )
                             h4(v-else) A carregar... 
-
                     hr
-
                     //- LEGISLAÇÃO
-                    a(name="legislacao")
                     .form-group.row
                         label.col-sm-2.col-form-label Legislação: diplomas jurídico-normativos 
                         .col-sm-10
@@ -316,10 +277,8 @@ block corpo
                             )
                             h4(v-else) A carregar...
 
-            .panel.panel-default(v-if="classe.nivel == 3")
-                .panel-heading
-                    h4 Subdivisão da classe em subclasses de 4º nível
-                .panel-body
+            accordion.info-classe(v-if="classe.nivel == 3")
+                panel(header="Subdivisão da classe em subclasses de 4º nível")
                     p A criação de subclasses de 4º nível justifica-se para diferenciar prazos de conservação
                         | e/ou destinos finais da informação produzida no âmbito de um processo de negócio (classe de 3º nível).
                     p Em caso de subdivisão, a zona "Decisões de avaliação" surgirá apenas nos 4ºs níveis, 
@@ -340,10 +299,8 @@ block corpo
                             input(type="checkbox" :value="true" v-model="classe.temSubclasses4NivelDF") 
                             | Destino final distinto
 
-            .panel.panel-default(v-if="(classe.nivel == 3) && !classe.temSubclasses4Nivel")
-                .panel-heading
-                    h4 Decisões de Avaliação
-                .panel-body
+            accordion.info-classe(v-if="(classe.nivel == 3) && !classe.temSubclasses4Nivel")
+                panel(header="Decisões de Avaliação")
                     .panel-group
                         .panel.panel-default
                             .panel-heading 
@@ -496,10 +453,8 @@ block corpo
                                 button(@click="adicionarCriterio(classe.df.justificacao, 'CriterioJustificacaoLegal', 'Critério Legal', '', [], classe.legislacao)") Adicionar Critério Legal
 
             //- SUBCLASSES DE NÍVEL 4  
-            .panel.panel-default(v-if="classe.temSubclasses4Nivel")
-                .panel-heading
-                    h4 Subclasses de nível 4
-                .panel-body
+            accordion.info-classe(v-if="classe.temSubclasses4Nivel")
+                panel(header="Subclasses de nível 4")
                     tabs
                         tab(v-bind:header="subClasse.codigo" v-for="(subClasse, cindex) in classe.subclasses")
                             .form-group.row
