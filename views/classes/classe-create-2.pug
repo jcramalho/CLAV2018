@@ -4,10 +4,10 @@ block lateral
         li(v-for="l in sideNav")
             a(:href="l.anchor") {{ l.label }}
 
-    .btn-group-vertical.mr-2(role="group")
-        button.btn.btn-secondary Guardar trabalho
+    .btn-group-vertical.info-classe.mr-2(role="group")
+        button.btn.btn-primary Guardar trabalho
         button.btn.btn-secondary Validar informação
-        button.btn.btn-secondary(@click="criarClasse") Submeter nova classe
+        button.btn.btn-primary(@click="criarClasse") Submeter nova classe
 
 block corpo
     #nova-classe-form.panel.panel-default.panel-custom
@@ -15,7 +15,7 @@ block corpo
             h1.page-header Nova Classe 
         .panel-body
             form
-                a(name="nivel")
+                a(name="inicio")
                 .form-group.row
                     label.col-sm-2.col-form-label Nível: 
                     select-value-from-list(
@@ -54,6 +54,7 @@ block corpo
                     )
 
             accordion.info-classe
+                a(name="descritivo")
                 panel(header="Descritivo da Classe")
                     //- DESCRIÇÃO
                     .form-group.row
@@ -127,6 +128,7 @@ block corpo
                     hr
       
             accordion.info-classe(v-if="classe.nivel == 3")
+                a(name="contexto")
                 panel(header="Contexto de Avaliação")
                     //- TIPO DE PROCESSO
                     .form-group.row
@@ -278,6 +280,7 @@ block corpo
                             h4(v-else) A carregar...
 
             accordion.info-classe(v-if="classe.nivel == 3")
+                a(name="subdivisao")
                 panel(header="Subdivisão da classe em subclasses de 4º nível")
                     p A criação de subclasses de 4º nível justifica-se para diferenciar prazos de conservação
                         | e/ou destinos finais da informação produzida no âmbito de um processo de negócio (classe de 3º nível).
@@ -300,6 +303,7 @@ block corpo
                             | Destino final distinto
 
             accordion.info-classe(v-if="(classe.nivel == 3) && !classe.temSubclasses4Nivel")
+                a(name="decisao")
                 panel(header="Decisões de Avaliação")
                     .panel-group
                         .panel.panel-default
