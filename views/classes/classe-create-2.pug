@@ -53,29 +53,21 @@ block corpo
                         v-model="classe.titulo"
                     )
 
-            .panel.panel-default(v-if="classe.nivel == 3")
-                .panel-heading
-                    h4 Subdivisão da classe em subclasses de 4º nível
-                .panel-body
-                    p A criação de subclasses de 4º nível justifica-se para diferenciar prazos de conservação
-                        | e/ou destinos finais da informação produzida no âmbito de um processo de negócio (classe de 3º nível).
-                    p Em caso de subdivisão, a zona "Decisões de avaliação" surgirá apenas nos 4ºs níveis, 
-                        | que herdam o contexto de avaliação do 3º nível.
-                    h4 Esta classe de 3º nível irá ter subclasses de 4º nível?
-                    label.radio-inline
-                        input(type="radio" :value="false" v-model="classe.temSubclasses4Nivel") 
-                        | Não
-                    label.radio-inline
-                        input(type="radio" :value="true" v-model="classe.temSubclasses4Nivel") 
-                        | Sim
-                    div(v-if="classe.temSubclasses4Nivel")
-                        h4 Selecione o(s) motivo(s) da subdivisão em 4ºs níveis: 
-                        label.checkbox-inline
-                            input(type="checkbox" :value="true" v-model="classe.temSubclasses4NivelPCA") 
-                            | Prazo de conservação administrativa distinto
-                        label.checkbox-inline
-                            input(type="checkbox" :value="true" v-model="classe.temSubclasses4NivelDF") 
-                            | Destino final distinto
+            accordion.info-classe
+                .panel.panel-default
+                    .panel-heading
+                        h4 Descritivo da Classe
+                    .panel-body
+                        a(name="descricao")
+                        //- DESCRIÇÃO
+                        .form-group.row
+                            label.col-sm-2.col-form-label Descrição: 
+                            textarea(
+                                cols="72"
+                                lines="5"
+                                v-model="classe.descricao"
+                            ) 
+                            hr 
 
             .panel.panel-default
                 .panel-heading
@@ -324,6 +316,30 @@ block corpo
                             )
                             h4(v-else) A carregar...
 
+            .panel.panel-default(v-if="classe.nivel == 3")
+                .panel-heading
+                    h4 Subdivisão da classe em subclasses de 4º nível
+                .panel-body
+                    p A criação de subclasses de 4º nível justifica-se para diferenciar prazos de conservação
+                        | e/ou destinos finais da informação produzida no âmbito de um processo de negócio (classe de 3º nível).
+                    p Em caso de subdivisão, a zona "Decisões de avaliação" surgirá apenas nos 4ºs níveis, 
+                        | que herdam o contexto de avaliação do 3º nível.
+                    h4 Esta classe de 3º nível irá ter subclasses de 4º nível?
+                    label.radio-inline
+                        input(type="radio" :value="false" v-model="classe.temSubclasses4Nivel") 
+                        | Não
+                    label.radio-inline
+                        input(type="radio" :value="true" v-model="classe.temSubclasses4Nivel") 
+                        | Sim
+                    div(v-if="classe.temSubclasses4Nivel")
+                        h4 Selecione o(s) motivo(s) da subdivisão em 4ºs níveis: 
+                        label.checkbox-inline
+                            input(type="checkbox" :value="true" v-model="classe.temSubclasses4NivelPCA") 
+                            | Prazo de conservação administrativa distinto
+                        label.checkbox-inline
+                            input(type="checkbox" :value="true" v-model="classe.temSubclasses4NivelDF") 
+                            | Destino final distinto
+
             .panel.panel-default(v-if="(classe.nivel == 3) && !classe.temSubclasses4Nivel")
                 .panel-heading
                     h4 Decisões de Avaliação
@@ -484,10 +500,12 @@ block corpo
                 .panel-heading
                     h4 Subclasses de nível 4
                 .panel-body
-                    .panel.panel-default(v-for="(subClasse, cindex) in classe.subclasses")
-                        .panel-heading
-                            h4 Subclasse {{ subClasse.codigo }}
-                        .panel-body
+                    tabs
+                        tab(v-bind:header="subClasse.codigo" v-for="(subClasse, cindex) in classe.subclasses")
+                            .form-group.row
+                                label.col-sm-2.col-form-label Código da classe: 
+                                .col-sm-10
+                                    p {{ subClasse.codigo }}
                             .form-group.row
                                 label.col-sm-2.col-form-label Código do pai: 
                                 .col-sm-10
@@ -501,8 +519,7 @@ block corpo
                                 label.col-sm-2.col-form-label Descrição:
                                 .col-sm-10
                                     p 
-                                        textarea(cols="72" lines="5" v-model="subClasse.descricao")    
-                                
+                                        textarea(cols="72" lines="5" v-model="subClasse.descricao")
                             .form-group.row
                                 label.col-sm-2.col-form-label Termos de Índice: 
                                 .col-sm-10
@@ -513,7 +530,7 @@ block corpo
                                         span.glyphicon.glyphicon-remove.pl-5(@click="subClasse.termosInd.splice(index,1)")
                                 .col-sm-10
                                     button(@click="insereNovoTI(subClasse.termosInd)") Novo termo
-                            
+            
                             .panel.panel-default
                                 .panel-heading
                                     h4 Contexto de Avaliação (herdado do 3º nível)
@@ -678,7 +695,6 @@ block corpo
                                                                     td 
                                                                         button.btn.btn-default(type="button")
                                                                             span.glyphicon.glyphicon-remove(@click="desselecionarLegislacao(critDF.legislacao, leg, index)")
-                                                    button(@click="removerCriterioLegal(subClasse.df.justificacao, indexDF)") Remover Critério Legal
                                                     hr
 
                                                 button(@click="adicionarCriterio(subClasse.df.justificacao, 'CriterioJustificacaoLegal', 'Critério Legal', '', [], classe.legislacao)") Adicionar Critério Legal
@@ -716,3 +732,4 @@ append scripts
     script(src="/javascripts/classes/classe-create.vue")
     script(src="/javascripts/component-sel-participantes-2.vue")
     script(src="/javascripts/component-sel-procRelacionados.vue")
+    script(src="/javascripts/classes/subclasses-create.vue")

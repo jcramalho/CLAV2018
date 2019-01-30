@@ -21,6 +21,8 @@ var newClass = new Vue({
                 4: /^[0-9]{3}\.[0-9]{2}\.[0-9]{3}\.[0-9]{3}$/,
         },
 
+        activeTab: 1,
+
     // Objeto que guarda uma classe
 
         classe: {
@@ -738,6 +740,10 @@ var newClass = new Vue({
                 }
             }
             return res;
+        },
+
+        tabClicked: function (event) {
+            this.activeTab = event;
         },
 
         showMsg(text) {
