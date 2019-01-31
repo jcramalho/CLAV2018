@@ -381,7 +381,7 @@ block corpo
                                 button(@click="adicionarCriterio(classe.pca.justificacao, 'CriterioJustificacaoGestionario', 'Critério Gestionário', '', [], [])") Adicionar Critério Gestionário
 
                     //- DESTINO FINAL
-                    .panel-group
+                    .panel-group(v-if="!classe.temSubclasses4Nivel")
                         .panel.panel-default
                             .panel-heading 
                                 b Destino Final
@@ -456,8 +456,8 @@ block corpo
                                 button(@click="adicionarCriterio(classe.df.justificacao, 'CriterioJustificacaoLegal', 'Critério Legal', '', [], classe.legislacao)") Adicionar Critério Legal
 
             //- SUBCLASSES DE NÍVEL 4  
-            accordion.info-classe(v-if="classe.temSubclasses4Nivel")
-                panel(header="Subclasses de nível 4")
+            accordion.info-classe(v-if="classe.temSubclasses4NivelPCA || classe.temSubclasses4NivelDF")
+                panel(is-open header="Subclasses de nível 4")
                     tabs
                         tab(v-bind:header="subClasse.codigo" v-for="(subClasse, cindex) in classe.subclasses")
                             .form-group.row
