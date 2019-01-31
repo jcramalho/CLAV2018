@@ -2,6 +2,7 @@ var Logging = require('../../controllers/logging');
 var Auth = require('../../controllers/auth.js');
 var Classes = require('../../controllers/api/classes.js');
 var State = require('../../controllers/state.js')
+var axios = require('axios');
 
 var express = require('express');
 var router = express.Router();
@@ -9,7 +10,15 @@ var router = express.Router();
 // Devolve a árvore de classes em arrays aninhados
 router.get('/', async (req, res) => { 
     try {
-        res.jsonp(await State.getAllClasses());  
+        if(req.query.formato == "arvore"){
+            res.jsonp(await State.getAllClasses());
+        }
+        else if(req.query.formato == "lista"){
+            res.jsonp(await State.getClassesFlatList());
+        }
+        else{
+            res.jsonp(await State.getAllClasses());
+        }
     } catch(err) {
         res.status(500).send(`Erro na listagem geral das classes: ${err}`)
     }
@@ -166,6 +175,106 @@ router.get('verifica/:codigo', (req, res) => {
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na verificação da existência do código ${req.params.codigo}: ${erro}`))
 })
+
+// ===================================================================================
+// Serialização das classes em JSON de acordo com o modelo definido para a sua criação
+/* var classe = {
+    // Metainformação e campos da área de Descrição
+
+    nivel: 1,
+    pai: "",
+    codigo: "",
+    titulo: "",
+    descricao: "",
+    notasAp: [],
+    exemplosNotasAp: [],
+    notasEx: [],
+    termosInd: [],
+
+    temSubclasses4Nivel: false,
+    temSubclasses4NivelPCA: false,
+    temSubclasses4NivelDF: false,
+
+    // Campos da área do Contexto de Avaliação
+    // Tipo de processo
+
+    tipoProc: "PC",
+    procTrans: "N",
+
+    // Donos do processo: lista de entidades
+
+    donos: [],
+
+    // Participantes no processo: lista de entidades
+
+    participantes: [],
+
+    // Processos Relacionados
+
+    processosRelacionados: [],
+
+    // Legislação Associada
+
+    legislacao: [],
+
+    // Bloco de decisão de avaliação: PCA e DF
+
+    pca: {
+        valor: null,
+        formaContagem: "",
+        subFormaContagem: "",
+        justificacao: []        // j = [criterio]
+    },                          // criterio = {tipo, notas, [proc], [leg]}
+
+    df: {
+        valor: "NE",
+        notas: null,
+        justificacao: []
+    },
+
+    // Bloco de subclasses de nível 4, caso haja desdobramento
+
+    subclasses: []
+} */
+
+function getMeta(id) {
+    return axios.get('http://clav-test.di.uminho.pt/api/classes/c' + id);
+}
+
+function getDescendencia(id) {
+    return axios.get('http://clav-test.di.uminho.pt/api/classes/c' + id + '/descendencia');
+}
+
+function getNotasAp(id) {
+    return axios.get('http://clav-test.di.uminho.pt/api/classes/c' + id + '/notasAp');
+}
+   
+function getExemplosNotasAp(id) {
+    return axios.get('http://clav-test.di.uminho.pt/api/classes/c' + id + '/exemplosNotasAp');
+}
+
+function getNotasEx(id) {
+    return axios.get('http://clav-test.di.uminho.pt/api/classes/c' + id + '/notasEx');
+}
+
+function getTermosInd(id) {
+    return axios.get('http://clav-test.di.uminho.pt/api/classes/c' + id + '/ti');
+}
+
+function classeSerializer(id){
+    axios.all([ getMeta(id), 
+                getDescendencia(id),
+                getNotasAp(id),
+                getExemplosNotasAp(id),
+                getNotasEx(id),
+                getTermosInd(id)])
+    .then(axios.spread(function (meta, desc, notasAp, exemplosNotasAp, notasEx, ti) {
+        console.log(JSON.stringify(meta))
+    })
+)}
+   
+  
+
 
 
 // ================================================================================

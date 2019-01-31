@@ -53,7 +53,7 @@ block corpo
                         v-model="classe.titulo"
                     )
 
-            accordion.info-classe
+            accordion
                 a(name="descritivo")
                 panel(header="Descritivo da Classe")
                     //- DESCRIÇÃO
@@ -279,33 +279,32 @@ block corpo
                             )
                             h4(v-else) A carregar...
 
+            //- DECISÕES DE AVALIAÇÃO
             accordion.info-classe(v-if="classe.nivel == 3")
-                a(name="subdivisao")
-                panel(header="Subdivisão da classe em subclasses de 4º nível")
-                    p A criação de subclasses de 4º nível justifica-se para diferenciar prazos de conservação
-                        | e/ou destinos finais da informação produzida no âmbito de um processo de negócio (classe de 3º nível).
-                    p Em caso de subdivisão, a zona "Decisões de avaliação" surgirá apenas nos 4ºs níveis, 
-                        | que herdam o contexto de avaliação do 3º nível.
-                    h4 Esta classe de 3º nível irá ter subclasses de 4º nível?
-                    label.radio-inline
-                        input(type="radio" :value="false" v-model="classe.temSubclasses4Nivel") 
-                        | Não
-                    label.radio-inline
-                        input(type="radio" :value="true" v-model="classe.temSubclasses4Nivel") 
-                        | Sim
-                    div(v-if="classe.temSubclasses4Nivel")
-                        h4 Selecione o(s) motivo(s) da subdivisão em 4ºs níveis: 
-                        label.checkbox-inline
-                            input(type="checkbox" :value="true" v-model="classe.temSubclasses4NivelPCA") 
-                            | Prazo de conservação administrativa distinto
-                        label.checkbox-inline
-                            input(type="checkbox" :value="true" v-model="classe.temSubclasses4NivelDF") 
-                            | Destino final distinto
-
-            accordion.info-classe(v-if="(classe.nivel == 3) && !classe.temSubclasses4Nivel")
                 a(name="decisao")
                 panel(header="Decisões de Avaliação")
                     .panel-group
+                        .panel-body
+                            p Os critérios justificativos das decisões de avaliação têm por base o contexto de avaliação.
+                            p Quando existe necessidade de diferenciar prazos de conservação e/ou destinos finais da 
+                                | informação produzida no âmbito de m processo de negócio (classe de 3º nível) devem ser
+                                | criadas classes de 4.º nível.
+                            h4 Esta classe de 3º nível irá ter subclasses de 4º nível?
+                            label.radio-inline
+                                input(type="radio" :value="false" v-model="classe.temSubclasses4Nivel") 
+                                | Não
+                            label.radio-inline
+                                input(type="radio" :value="true" v-model="classe.temSubclasses4Nivel") 
+                                | Sim
+                            div(v-if="classe.temSubclasses4Nivel")
+                                h4 Selecione o(s) motivo(s) da subdivisão em 4ºs níveis: 
+                                label.checkbox-inline
+                                    input(type="checkbox" :value="true" v-model="classe.temSubclasses4NivelPCA") 
+                                    | Prazo de conservação administrativa distinto
+                                label.checkbox-inline
+                                    input(type="checkbox" :value="true" v-model="classe.temSubclasses4NivelDF") 
+                                    | Destino final distinto
+                    .panel-group(v-if="!classe.temSubclasses4Nivel")
                         .panel.panel-default
                             .panel-heading 
                                 b Prazo de Conservação Administrativa
@@ -332,7 +331,7 @@ block corpo
                                         )
                         .panel.panel-default
                             .panel-heading 
-                                b Justificação
+                                b Justificação do Prazo de Consrvação Administrativa
                             .panel-body 
                                 .fieldset.form-group(v-for="(crit, cindex) in classe.pca.justificacao")
                                     .form-group.row(v-if="crit.tipo=='Indefinido'")
@@ -408,7 +407,7 @@ block corpo
                                         )   
                         .panel.panel-default
                             .panel-heading 
-                                b Justificação
+                                b Justificação do Destino Final
                             .panel-body 
                                 .fieldset.form-group(v-for="(critDF, indexDF) in classe.df.justificacao")
                                     .form-group.row(v-if="critDF.tipo=='Indefinido'")
@@ -451,7 +450,7 @@ block corpo
                                                     td 
                                                         button.btn.btn-default(type="button")
                                                             span.glyphicon.glyphicon-remove(@click="desselecionarLegislacao(critDF.legislacao, leg, index)")
-                                    button(@click="removerCriterioLegal(classe.df.justificacao, indexDF)") Remover Critério Legal
+                                    button(@click="removerCriterioTodo(classe.df.justificacao, indexDF)") Remover Critério
                                     hr
 
                                 button(@click="adicionarCriterio(classe.df.justificacao, 'CriterioJustificacaoLegal', 'Critério Legal', '', [], classe.legislacao)") Adicionar Critério Legal
@@ -492,7 +491,7 @@ block corpo
             
                             .panel.panel-default
                                 .panel-heading
-                                    h4 Contexto de Avaliação (herdado do 3º nível)
+                                    h4(data-toggle="tooltip" data-placement="top" title="Herdado do 3º nível") Contexto de Avaliação 
                                 .panel-body
                                     //- PROCESSOS RELACIONADOS
                                     .form-group.row
@@ -548,7 +547,7 @@ block corpo
                                                         )
                                         .panel.panel-default
                                             .panel-heading 
-                                                b Justificação
+                                                b Justificação do Prazo de Conservação Administrativa
                                             .panel-body 
                                                 .fieldset.form-group(v-for="(crit, cindex) in subClasse.pca.justificacao")
                                                     .form-group.row(v-if="crit.tipo=='Indefinido'")
@@ -614,7 +613,7 @@ block corpo
                                                         textarea.col-sm-10(cols="60" lines="5" v-model="subClasse.df.notas")   
                                         .panel.panel-default
                                             .panel-heading 
-                                                b Justificação
+                                                b Justificação do Destino Final
                                             .panel-body 
                                                 .fieldset.form-group(v-for="(critDF, indexDF) in subClasse.df.justificacao")
                                                     .form-group.row(v-if="critDF.tipo=='Indefinido'")
@@ -654,6 +653,7 @@ block corpo
                                                                     td 
                                                                         button.btn.btn-default(type="button")
                                                                             span.glyphicon.glyphicon-remove(@click="desselecionarLegislacao(critDF.legislacao, leg, index)")
+                                                    button(@click="removerCriterioTodo(subClasse.df.justificacao, indexDF)") Remover Critério
                                                     hr
 
                                                 button(@click="adicionarCriterio(subClasse.df.justificacao, 'CriterioJustificacaoLegal', 'Critério Legal', '', [], classe.legislacao)") Adicionar Critério Legal
