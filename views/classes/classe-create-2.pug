@@ -289,6 +289,7 @@ block corpo
                             p Quando existe necessidade de diferenciar prazos de conservação e/ou destinos finais da 
                                 | informação produzida no âmbito de m processo de negócio (classe de 3º nível) devem ser
                                 | criadas classes de 4.º nível.
+
                             h4 Esta classe de 3º nível irá ter subclasses de 4º nível?
                             label.radio-inline
                                 input(type="radio" :value="false" v-model="classe.temSubclasses4Nivel") 
@@ -296,6 +297,7 @@ block corpo
                             label.radio-inline
                                 input(type="radio" :value="true" v-model="classe.temSubclasses4Nivel") 
                                 | Sim
+
                             div(v-if="classe.temSubclasses4Nivel")
                                 h4 Selecione o(s) motivo(s) da subdivisão em 4ºs níveis: 
                                 label.checkbox-inline
@@ -304,6 +306,20 @@ block corpo
                                 label.checkbox-inline
                                     input(type="checkbox" :value="true" v-model="classe.temSubclasses4NivelDF") 
                                     | Destino final distinto
+
+                            div(v-if="classe.temSubclasses4NivelDF")
+                                p Quando a subdivisão é feita devido às subclasses terem destino final diferente é criada uma
+                                    | relação de síntese entre estas duas.
+                                h4 Selecione o sentido dessa relação de síntese:
+                                label.radio
+                                    input(type="radio" :value="true" v-model="classe.subdivisao4Nivel01Sintetiza02") 
+                                    | ...01 sintetiza ...02
+                                label.radio
+                                    input(type="radio" :value="false" v-model="classe.subdivisao4Nivel01Sintetiza02") 
+                                    | ...01 é sintetizada por ...02
+
+                    //- DECISÃO SEM SUBDIVISÃO
+                    //- PCA
                     .panel-group(v-if="!classe.temSubclasses4Nivel")
                         .panel.panel-default
                             .panel-heading 
@@ -691,4 +707,4 @@ append scripts
     script(src="/javascripts/classes/classe-create.vue")
     script(src="/javascripts/component-sel-participantes-2.vue")
     script(src="/javascripts/component-sel-procRelacionados.vue")
-    script(src="/javascripts/classes/subclasses-create.vue")
+    

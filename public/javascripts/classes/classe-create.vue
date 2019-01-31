@@ -41,6 +41,7 @@ var newClass = new Vue({
             temSubclasses4Nivel: false,
             temSubclasses4NivelPCA: false,
             temSubclasses4NivelDF: false,
+            subdivisao4Nivel01Sintetiza02: true,
 
             // Campos da área do Contexto de Avaliação
             // Tipo de processo
