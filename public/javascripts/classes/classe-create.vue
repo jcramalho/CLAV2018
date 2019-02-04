@@ -603,7 +603,7 @@ var newClass = new Vue({
 
                 // No fim, recalcula-se o DF para todas as subclasses
                 for(var i=0; i < this.classe.subclasses.length; i++){
-                    this.classe.subclasses[i].df.valor = this.calcDF(this.classe.processosRelacionados);
+                    this.classe.subclasses[i].df.valor = this.calcDF(this.classe.subclasses[i].processosRelacionados);
                 }
             }
         },
@@ -632,7 +632,7 @@ var newClass = new Vue({
             this.classe.df.valor = this.calcDF(this.classe.processosRelacionados);
             if(this.classe.temSubclasses4Nivel){
                 for(i=0; i < this.classe.subclasses.length; i++){
-                    this.classe.subclasses[i].df.valor = this.calcDF(this.classe.processosRelacionados);
+                    this.classe.subclasses[i].df.valor = this.calcDF(this.classe.subclasses[i].processosRelacionados);
                 }
             }
         },
