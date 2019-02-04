@@ -307,16 +307,16 @@ block corpo
                                     input(type="checkbox" :value="true" v-model="classe.temSubclasses4NivelDF") 
                                     | Destino final distinto
 
-                            div(v-if="classe.temSubclasses4NivelDF")
-                                p Quando a subdivisão é feita devido às subclasses terem destino final diferente é criada uma
-                                    | relação de síntese entre estas duas.
-                                h4 Selecione o sentido dessa relação de síntese:
+                            div(v-if="classe.temSubclasses4Nivel && classe.temSubclasses4NivelDF")
+                                p Quando  a subdivisão resulta da necessidade de criar destinos finais diferentes
+                                    | é gerada uma relação de síntese entre as classes de 4.º nível.
+                                h4 Seleccione o sentido dessa relação de síntese:
                                 label.radio
                                     input(type="radio" :value="true" v-model="classe.subdivisao4Nivel01Sintetiza02") 
-                                    | ...01 sintetiza ...02
+                                    | {{classe.codigo}}.01 sintetiza {{classe.codigo}}.02
                                 label.radio
                                     input(type="radio" :value="false" v-model="classe.subdivisao4Nivel01Sintetiza02") 
-                                    | ...01 é sintetizada por ...02
+                                    | {{classe.codigo}}.01 é sintetizada por {{classe.codigo}}.02
 
                     //- DECISÃO SEM SUBDIVISÃO
                     //- PCA

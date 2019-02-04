@@ -301,9 +301,22 @@ var newClass = new Vue({
             // Se passou a falso vamos eliminar as subclasses
 
             else{
-                this.classe.subclasses = [];
+                for(var j=0; j < this.classe.subclasses.length; j++){
+                    this.classe.subclasses[j].processosRelacionados.splice(0, this.classe.subclasses[j].processosRelacionados.length);
+                }
+                this.classe.subclasses.splice(0, this.classe.subclasses.length);
+                this.classe.temSubclasses4NivelPCA = false;
+                this.classe.temSubclasses4NivelDF = false;
             }  
         },
+        'classe.temSubclasses4NivelDF': function(){
+            if(this.classe.temSubclasses4NivelDF)
+                this.calcSinteseDF4Nivel();
+        },
+        'classe.subdivisao4Nivel01Sintetiza02': function(){
+            this.remSintese4Nivel(this.classe.subclasses);
+            this.calcSinteseDF4Nivel();
+        }
     },
     // Função principal que cria as estruturas necessárias com informação da BD....................
 
@@ -741,6 +754,56 @@ var newClass = new Vue({
                 }
             }
             return res;
+        },
+
+        calcSinteseDF4Nivel: function(){
+            if(this.classe.subdivisao4Nivel01Sintetiza02){
+                this.classe.subclasses[0].processosRelacionados.push(
+                    {
+                        codigo: this.classe.subclasses[1].codigo,
+                        titulo: this.classe.subclasses[1].titulo,
+                        relacao: 'eSinteseDe',
+                        relLabel: 'é Síntese de'
+                    }
+                );
+                this.classe.subclasses[1].processosRelacionados.push(
+                    {
+                        codigo: this.classe.subclasses[0].codigo,
+                        titulo: this.classe.subclasses[0].titulo,
+                        relacao: 'eSintetizadoPor',
+                        relLabel: 'é Sintetizado por'
+                    }
+                );
+            }
+            else{
+                this.classe.subclasses[0].processosRelacionados.push(
+                    {
+                        codigo: this.classe.subclasses[1].codigo,
+                        titulo: this.classe.subclasses[1].titulo,
+                        relacao: 'eSintetizadoPor',
+                        relLabel: 'é Sintetizado por'
+                    }
+                );
+                this.classe.subclasses[1].processosRelacionados.push(
+                    {
+                        codigo: this.classe.subclasses[0].codigo,
+                        titulo: this.classe.subclasses[0].titulo,
+                        relacao: 'eSinteseDe',
+                        relLabel: 'é Síntese de'
+                    }
+                );
+            }
+        },
+
+        remSintese4Nivel: function(subclasses){
+            var index = -1;
+            for(var i=0; i < subclasses.length; i++){
+                if(subclasses[i].processosRelacionados.length > 0){
+                    index = subclasses[i].processosRelacionados.findIndex(p => (p.relacao == 'eSintetizadoPor')||(p.relacao == 'eSinteseDe'));
+                    if(index != -1) 
+                        subclasses[i].processosRelacionados.splice(index,1);
+                }
+            }
         },
 
         tabClicked: function (event) {
