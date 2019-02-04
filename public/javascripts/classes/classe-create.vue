@@ -597,7 +597,7 @@ var newClass = new Vue({
                 // Tratamento do invariante: se é Complementar De então cria-se um critério de Complementaridade Informacional
                 else if(row.relacao == "eComplementarDe"){
                     for(var i=0; i < this.classe.subclasses.length; i++){
-                        this.adicionarCriterio(this.classe.subclasses[i].df.justificacao, "CriterioJustificacaoComplementaridadeInfo", "Critério de Complementaridade Informacional", "", [row], []);
+                        this.adicionarCriterio(this.classe.subclasses[i].df.justificacao, "CriterioJustificacaoComplementaridadeInfo", "Critério de Complementaridade Informacional", "", [JSON.parse(JSON.stringify(row))], []);
                     }
                 }
 
@@ -612,22 +612,53 @@ var newClass = new Vue({
             p.selected = false;
             if(p.relacao == "eSuplementoPara") {
                 this.removerCriterio(this.classe.pca.justificacao, "CriterioJustificacaoUtilidadeAdministrativa", p.id);
+                if(this.classe.temSubclasses4Nivel){
+                    for(var i=0; i < this.classe.subclasses.length; i++){
+                        this.removerCriterio(this.classe.subclasses[i].pca.justificacao, "CriterioJustificacaoUtilidadeAdministrativa", p.id);
+                    }
+                }
             }
             else if(p.relacao == "eSuplementoDe") {
                 this.removerCriterio(this.classe.pca.justificacao, "CriterioJustificacaoLegal", p.id);
+                if(this.classe.temSubclasses4Nivel){
+                    for(var i=0; i < this.classe.subclasses.length; i++){
+                        this.removerCriterio(this.classe.subclasses[i].pca.justificacao, "CriterioJustificacaoLegal", p.id);
+                    }
+                }
             }
             else if(p.relacao == "eSinteseDe"){
                 this.removerCriterio(this.classe.df.justificacao, "CriterioJustificacaoDensidadeInfo", p.id);
+                if(this.classe.temSubclasses4Nivel){
+                    for(var i=0; i < this.classe.subclasses.length; i++){
+                        this.removerCriterio(this.classe.subclasses[i].df.justificacao, "CriterioJustificacaoDensidadeInfo", p.id);
+                    }
+                }
             }
             else if(p.relacao == "eSintetizadoPor"){
                 this.removerCriterio(this.classe.df.justificacao, "CriterioJustificacaoDensidadeInfo", p.id);
+                if(this.classe.temSubclasses4Nivel){
+                    for(var i=0; i < this.classe.subclasses.length; i++){
+                        this.removerCriterio(this.classe.subclasses[i].df.justificacao, "CriterioJustificacaoDensidadeInfo", p.id);
+                    }
+                }
             }
             else if(p.relacao == "eComplementarDe"){
                 this.removerCriterio(this.classe.df.justificacao, "CriterioJustificacaoComplementaridadeInfo", p.id);
+                if(this.classe.temSubclasses4Nivel){
+                    for(var i=0; i < this.classe.subclasses.length; i++){
+                        this.removerCriterio(this.classe.subclasses[i].df.justificacao, "CriterioJustificacaoComplementaridadeInfo", p.id);
+                    }
+                }
             }
             p.relacao = "Indefinido";
             this.classe.processosRelacionados.splice(index,1);
-
+            if(this.classe.temSubclasses4Nivel){
+                for(var i=0; i < this.classe.subclasses.length; i++){
+                    var k = this.classe.subclasses[i].processosRelacionados.findIndex((proc => proc.codigo === p.codigo));
+                    if(k != -1) this.classe.subclasses[i].processosRelacionados.splice(k,1);
+                }
+            }
+            
             // No fim recalcula-se o valor do destino final
             this.classe.df.valor = this.calcDF(this.classe.processosRelacionados);
             if(this.classe.temSubclasses4Nivel){
