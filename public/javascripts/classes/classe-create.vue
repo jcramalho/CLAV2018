@@ -170,6 +170,10 @@ var newClass = new Vue({
             legislacaoTableWidth: ['20%', '15%', '50%', '15%']
         },
 
+        textoCriterioGestionario: "Prazo para imputação de responsabilidade pela gestão estratégica, decorrente de" +
+                                    " escrutínio público (eleições) ou da não recondução no mandato. Considerou-se para" +
+                                    " a definição do prazo o tempo do mandato de maior duração: 5 anos.",
+
     // Mensagens de validação
 
         mensValCodigo: "",
@@ -534,30 +538,71 @@ var newClass = new Vue({
 
         selecionarProcesso: function (row) {
             this.classe.processosRelacionados.push(row);
-            // Tratamento do invariante: se é Suplemento Para então cria-se um critério de Utilidade Administrativa
-            if(row.relacao == "eSuplementoPara"){
-                this.adicionarCriterio(this.classe.pca.justificacao, "CriterioJustificacaoUtilidadeAdministrativa", "Critério de Utilidade Administrativa", "", [row], []);
-            }
-            // Tratamento do invariante: se é Suplemento De então cria-se um critério Legal com toda a legislação selecionada associada
-            else if(row.relacao == "eSuplementoDe"){
-                this.adicionarCriterio(this.classe.pca.justificacao, "CriterioJustificacaoLegal", "Critério Legal", "", [row], this.classe.legislacao);
-            }
-            // Tratamento do invariante: se é Síntese De então cria-se um critério de Densidade Informacional
-            else if(row.relacao == "eSinteseDe"){
-                this.adicionarCriterio(this.classe.df.justificacao, "CriterioJustificacaoDensidadeInfo", "Critério de Densidade Informacional", "", [row], []);
-            }
-            // Tratamento do invariante: se é Síntetizado Por então cria-se um critério de Densidade Informacional
-            else if(row.relacao == "eSintetizadoPor"){
-                this.adicionarCriterio(this.classe.df.justificacao, "CriterioJustificacaoDensidadeInfo", "Critério de Densidade Informacional", "", [row], []);
-            }
-            // Tratamento do invariante: se é Complementar De então cria-se um critério de Complementaridade Informacional
-            else if(row.relacao == "eComplementarDe"){
-                this.adicionarCriterio(this.classe.df.justificacao, "CriterioJustificacaoComplementaridadeInfo", "Critério de Complementaridade Informacional", "", [row], []);
-            }
-
             this.classe.df.valor = this.calcDF(this.classe.processosRelacionados);
-            if(this.classe.temSubclasses4Nivel){
-                for(i=0; i < this.classe.subclasses.length; i++){
+            if(!this.classe.temSubclasses4Nivel){
+                // Tratamento do invariante: se é Suplemento Para então cria-se um critério de Utilidade Administrativa
+                if(row.relacao == "eSuplementoPara"){
+                    this.adicionarCriterio(this.classe.pca.justificacao, "CriterioJustificacaoUtilidadeAdministrativa", "Critério de Utilidade Administrativa", "", [row], []);
+                }
+                // Tratamento do invariante: se é Suplemento De então cria-se um critério Legal com toda a legislação selecionada associada
+                else if(row.relacao == "eSuplementoDe"){
+                    this.adicionarCriterio(this.classe.pca.justificacao, "CriterioJustificacaoLegal", "Critério Legal", "", [row], this.classe.legislacao);
+                }
+                // Tratamento do invariante: se é Síntese De então cria-se um critério de Densidade Informacional
+                else if(row.relacao == "eSinteseDe"){
+                    this.adicionarCriterio(this.classe.df.justificacao, "CriterioJustificacaoDensidadeInfo", "Critério de Densidade Informacional", "", [row], []);
+                }
+                // Tratamento do invariante: se é Síntetizado Por então cria-se um critério de Densidade Informacional
+                else if(row.relacao == "eSintetizadoPor"){
+                    this.adicionarCriterio(this.classe.df.justificacao, "CriterioJustificacaoDensidadeInfo", "Critério de Densidade Informacional", "", [row], []);
+                }
+                // Tratamento do invariante: se é Complementar De então cria-se um critério de Complementaridade Informacional
+                else if(row.relacao == "eComplementarDe"){
+                    this.adicionarCriterio(this.classe.df.justificacao, "CriterioJustificacaoComplementaridadeInfo", "Critério de Complementaridade Informacional", "", [row], []);
+                }
+            }
+            else{
+                // Tratamento do invariante: se é Suplemento Para 
+                // então cria-se um critério de Utilidade Administrativa para todas as subclasses
+                if(row.relacao == "eSuplementoPara"){
+                    for(var i=0; i < this.classe.subclasses.length; i++){
+                        this.adicionarCriterio(this.classe.subclasses[i].pca.justificacao, "CriterioJustificacaoUtilidadeAdministrativa", "Critério de Utilidade Administrativa", "", [row], []);
+                    }
+                }
+
+                // Tratamento do invariante: se é Suplemento De então 
+                // cria-se um critério Legal com toda a legislação selecionada associada para todas as subclasses
+                else if(row.relacao == "eSuplementoDe"){
+                    for(var i=0; i < this.classe.subclasses.length; i++){
+                        this.adicionarCriterio(this.classe.subclasses[i].pca.justificacao, "CriterioJustificacaoLegal", "Critério Legal", "", [row], this.classe.legislacao);
+                    }    
+                }
+
+                // Tratamento do invariante: se é Síntese De então 
+                // cria-se um critério de Densidade Informacional para todas as subclasses
+                else if(row.relacao == "eSinteseDe"){
+                    for(var i=0; i < this.classe.subclasses.length; i++){
+                        this.adicionarCriterio(this.classe.subclasses[i].df.justificacao, "CriterioJustificacaoDensidadeInfo", "Critério de Densidade Informacional", "", [row], []);
+                    } 
+                }
+
+                // Tratamento do invariante: se é Síntetizado Por então 
+                // cria-se um critério de Densidade Informacional
+                else if(row.relacao == "eSintetizadoPor"){
+                    for(var i=0; i < this.classe.subclasses.length; i++){
+                        this.adicionarCriterio(this.classe.subclasses[i].df.justificacao, "CriterioJustificacaoDensidadeInfo", "Critério de Densidade Informacional", "", [row], []);
+                    }
+                }
+
+                // Tratamento do invariante: se é Complementar De então cria-se um critério de Complementaridade Informacional
+                else if(row.relacao == "eComplementarDe"){
+                    for(var i=0; i < this.classe.subclasses.length; i++){
+                        this.adicionarCriterio(this.classe.subclasses[i].df.justificacao, "CriterioJustificacaoComplementaridadeInfo", "Critério de Complementaridade Informacional", "", [row], []);
+                    }
+                }
+
+                // No fim, recalcula-se o DF para todas as subclasses
+                for(var i=0; i < this.classe.subclasses.length; i++){
                     this.classe.subclasses[i].df.valor = this.calcDF(this.classe.processosRelacionados);
                 }
             }

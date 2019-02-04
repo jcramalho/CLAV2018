@@ -394,7 +394,7 @@ block corpo
                                     hr
                                     
                                 button(@click="adicionarCriterio(classe.pca.justificacao, 'CriterioJustificacaoLegal', 'Critério Legal', '', [], classe.legislacao)") Adicionar Critério Legal
-                                button(@click="adicionarCriterio(classe.pca.justificacao, 'CriterioJustificacaoGestionario', 'Critério Gestionário', '', [], [])") Adicionar Critério Gestionário
+                                button(@click="adicionarCriterio(classe.pca.justificacao, 'CriterioJustificacaoGestionario', 'Critério Gestionário', textoCriterioGestionario, [], [])") Adicionar Critério Gestionário
 
                     //- DESTINO FINAL
                     .panel-group(v-if="!classe.temSubclasses4Nivel")
@@ -505,12 +505,12 @@ block corpo
                                 .col-sm-10
                                     button(@click="insereNovoTI(subClasse.termosInd)") Novo termo
             
-                            .panel.panel-default
+                            .panel.panel-default(v-if="(subClasse.processosRelacionados.length > 0)||(subClasse.legislacao.length > 0)")
                                 .panel-heading
                                     h4(data-toggle="tooltip" data-placement="top" title="Herdado do 3º nível") Contexto de Avaliação 
                                 .panel-body
                                     //- PROCESSOS RELACIONADOS
-                                    .form-group.row
+                                    .form-group.row(v-if="subClasse.processosRelacionados.length > 0")
                                         label.col-sm-2.col-form-label Processos Relacionados: 
                                         .col-sm-10
                                             .row(v-if="subClasse.processosRelacionados.length > 0")
@@ -524,7 +524,7 @@ block corpo
                                             .row(v-else) Não tem processos relacionados.
 
                                     //- LEGISLAÇÃO
-                                    .form-group.row
+                                    .form-group.row(v-if="subClasse.legislacao.length > 0")
                                         label.col-sm-2.col-form-label Legislação: diplomas jurídico-normativos 
                                         .col-sm-10
                                             .row(v-if="subClasse.legislacao.length > 0")
@@ -606,7 +606,7 @@ block corpo
                                                     hr
                                     
                                                 button(@click="adicionarCriterio(subClasse.pca.justificacao, 'CriterioJustificacaoLegal', 'Critério Legal', '', [], classe.legislacao)") Adicionar Critério Legal
-                                                button(@click="adicionarCriterio(subClasse.pca.justificacao, 'CriterioJustificacaoGestionario', 'Critério Gestionário', '', [], [])") Adicionar Critério Gestionário
+                                                button(@click="adicionarCriterio(subClasse.pca.justificacao, 'CriterioJustificacaoGestionario', 'Critério Gestionário', textoCriterioGestionario, [], [])") Adicionar Critério Gestionário
 
                                     //- DESTINO FINAL
                                     .panel-group
