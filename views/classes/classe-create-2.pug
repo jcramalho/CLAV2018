@@ -127,6 +127,7 @@ block corpo
                             button(@click="insereNovoTI(classe.termosInd)") Novo termo
                     hr
       
+            //- CONTEXTO DE AVALIAÇÃO
             accordion.info-classe(v-if="classe.nivel == 3")
                 a(name="contexto")
                 panel(header="Contexto de Avaliação")
@@ -262,7 +263,7 @@ block corpo
                                         td(v-for="valor in p.data") {{ valor }}
                                         td 
                                             button.btn.btn-default(type="button")
-                                                span.glyphicon.glyphicon-remove(@click="desselecionarLegislacao(classe.legislacao, p, index)") 
+                                                span.glyphicon.glyphicon-remove(@click="desselecionarLegislacao3N(p, index)") 
                             .row(v-else) Não tem legislação selecionada.
                     .form-group.row
                         label.col-sm-2.col-form-label Selecionar diplomas jurídico-normativos: 
@@ -539,7 +540,7 @@ block corpo
                                 .panel-heading
                                     h4 Decisões de Avaliação 
                                 .panel-body
-                                    //- PRAZO DE CONSERVAÇÃO ADMINISTRATIVA
+                                    //- SUBCLASSES DE NÍVEL 4:: PRAZO DE CONSERVAÇÃO ADMINISTRATIVA
                                     .panel-group
                                         .panel.panel-default
                                             .panel-heading 
@@ -608,7 +609,7 @@ block corpo
                                                 button(@click="adicionarCriterio(subClasse.pca.justificacao, 'CriterioJustificacaoLegal', 'Critério Legal', '', [], classe.legislacao)") Adicionar Critério Legal
                                                 button(@click="adicionarCriterio(subClasse.pca.justificacao, 'CriterioJustificacaoGestionario', 'Critério Gestionário', textoCriterioGestionario, [], [])") Adicionar Critério Gestionário
 
-                                    //- DESTINO FINAL
+                                    //- SUBCLASSES DE NÍVEL 4:: DESTINO FINAL
                                     .panel-group
                                         .panel.panel-default
                                             .panel-heading 

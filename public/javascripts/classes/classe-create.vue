@@ -538,6 +538,9 @@ var newClass = new Vue({
 
         selecionarProcesso: function (row) {
             this.classe.processosRelacionados.push(row);
+            for(var i=0; i < this.classe.subclasses.length; i++){
+                this.classe.subclasses[i].processosRelacionados.push(row);
+            }
             this.classe.df.valor = this.calcDF(this.classe.processosRelacionados);
             if(!this.classe.temSubclasses4Nivel){
                 // Tratamento do invariante: se é Suplemento Para então cria-se um critério de Utilidade Administrativa
@@ -597,7 +600,7 @@ var newClass = new Vue({
                 // Tratamento do invariante: se é Complementar De então cria-se um critério de Complementaridade Informacional
                 else if(row.relacao == "eComplementarDe"){
                     for(var i=0; i < this.classe.subclasses.length; i++){
-                        this.adicionarCriterio(this.classe.subclasses[i].df.justificacao, "CriterioJustificacaoComplementaridadeInfo", "Critério de Complementaridade Informacional", "", [JSON.parse(JSON.stringify(row))], []);
+                        this.adicionarCriterio(this.classe.subclasses[i].df.justificacao, "CriterioJustificacaoComplementaridadeInfo", "Critério de Complementaridade Informacional", "", [row], []);
                     }
                 }
 
@@ -654,7 +657,7 @@ var newClass = new Vue({
             this.classe.processosRelacionados.splice(index,1);
             if(this.classe.temSubclasses4Nivel){
                 for(var i=0; i < this.classe.subclasses.length; i++){
-                    var k = this.classe.subclasses[i].processosRelacionados.findIndex((proc => proc.codigo === p.codigo));
+                    var k = this.classe.subclasses[i].processosRelacionados.findIndex((proc => proc.codigo == p.codigo));
                     if(k != -1) this.classe.subclasses[i].processosRelacionados.splice(k,1);
                 }
             }
@@ -672,12 +675,24 @@ var newClass = new Vue({
 
         selecionarLegislacao: function (row) {
             this.classe.legislacao.push(row);
+            for(var i=0; i < this.classe.subclasses.length; i++){
+                this.classe.subclasses[i].legislacao.push(row);
+            }
             row.selected = true;
         },
 
         desselecionarLegislacao: function (lista, row, index) {
             row.selected = false;
             lista.splice(index, 1);
+        },
+
+        desselecionarLegislacao3N: function (row, index) {
+            row.selected = false;
+            this.classe.legislacao.splice(index, 1);
+            for(var i=0; i < this.classe.subclasses.length; i++){
+                var k = this.classe.subclasses[i].legislacao.findIndex((leg => leg.id == row.id));
+                if(k != -1) this.classe.subclasses[i].legislacao.splice(k,1);
+            }
         },
 
         // Adiciona um critério à lista de critérios do PCA ou do DF....................
@@ -708,14 +723,16 @@ var newClass = new Vue({
 
         removerCriterio: function(justificacao, tipo, pid){
             var i = justificacao.findIndex(crit => crit.tipo === tipo);
-             
-            var j = justificacao[i].procRel.findIndex(p => p.id == pid);
-            if (j != -1) {
-                justificacao[i].procRel.splice(j, 1);
-            }
-            if(justificacao[i].procRel.length == 0){
-                justificacao.splice(i, 1)
-            }
+
+            if(i != -1){
+                var j = justificacao[i].procRel.findIndex(p => p.id == pid);
+                if (j != -1) {
+                    justificacao[i].procRel.splice(j, 1);
+                }
+                if(justificacao[i].procRel.length == 0){
+                    justificacao.splice(i, 1)
+                }
+            } 
         },
 
         // Remove um critério completo duma vez
@@ -764,7 +781,7 @@ var newClass = new Vue({
                     this.adicionarCriterio(novaClasse.df.justificacao, "CriterioJustificacaoComplementaridadeInfo", "Critério de Complementaridade Informacional", "", [procRel[i]], []);
                 }
             }
-            novaClasse.df.valor = this.calcDF(this.classe.processosRelacionados);
+            novaClasse.df.valor = this.calcDF(novaClasse.processosRelacionados);
         },
 
 
