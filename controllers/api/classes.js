@@ -245,6 +245,7 @@ Classes.children = function (id) {
         WHERE {
             ?Child clav:temPai clav:${id} ;
                     clav:codigo ?Code ;
+                    clav:classeStatus 'A';
                     clav:titulo ?Title .
             optional {
                 ?sub clav:temPai ?Child .
