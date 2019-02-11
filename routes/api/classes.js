@@ -7,6 +7,10 @@ var axios = require('axios');
 var express = require('express');
 var router = express.Router();
 
+router.get('/debugq', async (req, res) => {
+    res.jsonp(req.query)
+}) 
+
 // Devolve a árvore de classes em arrays aninhados
 router.get('/', async (req, res) => { 
     try {
@@ -15,6 +19,38 @@ router.get('/', async (req, res) => {
         }
         else if(req.query.formato == "lista"){
             res.jsonp(await State.getClassesFlatList());
+        }
+        else if(req.query.nivel){
+            switch(req.query.nivel){
+                case '1': try {
+                        res.jsonp(await State.getLevel1Classes());
+                        break  
+                    } catch(err) {
+                        res.status(500).send(`Erro na listagem geral das classes de nível 1: ${err}`)
+                        break
+                    }
+                case '2': try {
+                        res.jsonp(await State.getLevel2Classes());  
+                        break
+                    } catch(err) {
+                        res.status(500).send(`Erro na listagem geral das classes de nível 2: ${err}`)
+                        break
+                    }  
+                case '3': try {
+                        res.jsonp(await State.getLevel3Classes()); 
+                        break 
+                    } catch(err) {
+                        res.status(500).send(`Erro na listagem geral das classes de nível 3: ${err}`)
+                        break
+                    }
+                case '4': try {
+                        res.jsonp(await State.getLevel4Classes()); 
+                        break 
+                    } catch(err) {
+                        res.status(500).send(`Erro na listagem geral das classes de nível 4: ${err}`)
+                        break
+                    }
+            }
         }
         else{
             res.jsonp(await State.getAllClasses());
