@@ -76,6 +76,124 @@ router.get('/nivel/:n', async (req, res) => {
     }
 })
 
+// Devolve a toda a informação de uma classe
+async function retrieveClasse(id){
+    var classe = {
+        // Metainformação e campos da área de Descrição
+
+        nivel: 1,
+        pai: "",
+        codigo: "",
+        titulo: "",
+        descricao: "",
+        notasAp: [],
+        exemplosNotasAp: [],
+        notasEx: [],
+        termosInd: [],
+
+        temSubclasses4Nivel: false,
+        temSubclasses4NivelPCA: false,
+        temSubclasses4NivelDF: false,
+        subdivisao4Nivel01Sintetiza02: true,
+
+        // Campos da área do Contexto de Avaliação
+        // Tipo de processo
+
+        tipoProc: "PC",
+        procTrans: "N",
+
+        // Donos do processo: lista de entidades
+
+        donos: [],
+
+        // Participantes no processo: lista de entidades
+
+        participantes: [],
+
+        // Processos Relacionados
+
+        processosRelacionados: [],
+
+        // Legislação Associada
+
+        legislacao: [],
+
+        // Bloco de decisão de avaliação: PCA e DF
+
+        pca: {
+            valor: null,
+            formaContagem: "",
+            subFormaContagem: "",
+            justificacao: []        // j = [criterio]
+        },                          // criterio = {tipo, notas, [proc], [leg]}
+
+        df: {
+            valor: "NE",
+            notas: null,
+            justificacao: []
+        },
+
+        // Bloco de subclasses de nível 4, caso haja desdobramento
+
+        subclasses: []
+    };
+
+    let base = await axios.get("http://localhost:7778/api/classes/" + id);
+    classe.nivel = base.data[0].codigo.split('.').length
+    classe.codigo = base.data[0].codigo
+    classe.pai = base.data[0].codigoPai
+    classe.titulo = base.data[0].titulo
+    classe.descricao = base.data[0].desc
+    classe.tipoProc = base.data[0].procTipo
+    classe.procTrans = base.data[0].procTrans
+    
+    let notasAp = await axios.get("http://localhost:7778/api/classes/" + id + "/notasAp");
+    classe.notasAp = notasAp.data
+
+    let exemplosNotasAp = await axios.get("http://localhost:7778/api/classes/" + id + "/exemplosNotasAp");
+    classe.exemplosNotasAp = exemplosNotasAp.data
+
+    let notasEx = await axios.get("http://localhost:7778/api/classes/" + id + "/notasEx");
+    classe.notasEx = notasEx.data
+
+    let termosInd = await axios.get("http://localhost:7778/api/classes/" + id + "/ti");
+    classe.termosInd = termosInd.data
+
+    let donos = await axios.get("http://localhost:7778/api/classes/" + id + "/dono");
+    classe.donos = donos.data
+
+    let participantes = await axios.get("http://localhost:7778/api/classes/" + id + "/participante");
+    classe.participantes = participantes.data
+
+    let procRel = await axios.get("http://localhost:7778/api/classes/" + id + "/procRel");
+    classe.processosRelacionados = procRel.data 
+
+    let legislacao = await axios.get("http://localhost:7778/api/classes/" + id + "/legislacao");
+    classe.legislacao = legislacao.data
+
+    let pca = await axios.get("http://localhost:7778/api/classes/" + id + "/pca");
+    classe.pca = pca.data[0]
+    
+    if(classe.pca.idJust){
+        let just = await axios.get("http://localhost:7778/api/classes/justificacao/" + classe.pca.idJust);
+        classe.pca.justificacao = just.data
+    }
+
+    let mydf = await axios.get("http://localhost:7778/api/classes/" + id + "/df");
+    classe.df = mydf.data[0]
+    if(classe.df.idJust){
+        let just = await axios.get("http://localhost:7778/api/classes/justificacao/" + classe.df.idJust);
+        classe.df.justificacao = just.data
+    }
+
+    return classe
+}
+
+router.get('/teste/:id', async function (req, res) {
+    let c = await retrieveClasse(req.params.id)
+    res.jsonp(c)
+})
+
 // Devolve a metainformação de uma classe: codigo, titulo, status, desc, codigoPai?, tituloPai?, procTrans?, procTipo?
 router.get('/:id', function (req, res) {
     Classes.consultar(req.params.id)
@@ -175,106 +293,6 @@ router.get('verifica/:codigo', (req, res) => {
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na verificação da existência do código ${req.params.codigo}: ${erro}`))
 })
-
-// ===================================================================================
-// Serialização das classes em JSON de acordo com o modelo definido para a sua criação
-/* var classe = {
-    // Metainformação e campos da área de Descrição
-
-    nivel: 1,
-    pai: "",
-    codigo: "",
-    titulo: "",
-    descricao: "",
-    notasAp: [],
-    exemplosNotasAp: [],
-    notasEx: [],
-    termosInd: [],
-
-    temSubclasses4Nivel: false,
-    temSubclasses4NivelPCA: false,
-    temSubclasses4NivelDF: false,
-
-    // Campos da área do Contexto de Avaliação
-    // Tipo de processo
-
-    tipoProc: "PC",
-    procTrans: "N",
-
-    // Donos do processo: lista de entidades
-
-    donos: [],
-
-    // Participantes no processo: lista de entidades
-
-    participantes: [],
-
-    // Processos Relacionados
-
-    processosRelacionados: [],
-
-    // Legislação Associada
-
-    legislacao: [],
-
-    // Bloco de decisão de avaliação: PCA e DF
-
-    pca: {
-        valor: null,
-        formaContagem: "",
-        subFormaContagem: "",
-        justificacao: []        // j = [criterio]
-    },                          // criterio = {tipo, notas, [proc], [leg]}
-
-    df: {
-        valor: "NE",
-        notas: null,
-        justificacao: []
-    },
-
-    // Bloco de subclasses de nível 4, caso haja desdobramento
-
-    subclasses: []
-} */
-
-function getMeta(id) {
-    return axios.get('http://clav-test.di.uminho.pt/api/classes/c' + id);
-}
-
-function getDescendencia(id) {
-    return axios.get('http://clav-test.di.uminho.pt/api/classes/c' + id + '/descendencia');
-}
-
-function getNotasAp(id) {
-    return axios.get('http://clav-test.di.uminho.pt/api/classes/c' + id + '/notasAp');
-}
-   
-function getExemplosNotasAp(id) {
-    return axios.get('http://clav-test.di.uminho.pt/api/classes/c' + id + '/exemplosNotasAp');
-}
-
-function getNotasEx(id) {
-    return axios.get('http://clav-test.di.uminho.pt/api/classes/c' + id + '/notasEx');
-}
-
-function getTermosInd(id) {
-    return axios.get('http://clav-test.di.uminho.pt/api/classes/c' + id + '/ti');
-}
-
-function classeSerializer(id){
-    axios.all([ getMeta(id), 
-                getDescendencia(id),
-                getNotasAp(id),
-                getExemplosNotasAp(id),
-                getNotasEx(id),
-                getTermosInd(id)])
-    .then(axios.spread(function (meta, desc, notasAp, exemplosNotasAp, notasEx, ti) {
-        console.log(JSON.stringify(meta))
-    })
-)}
-   
-  
-
 
 
 // ================================================================================

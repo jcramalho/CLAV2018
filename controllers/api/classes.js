@@ -83,8 +83,9 @@ Classes.notasAp = id => {
 // Devolve a lista de exemplos de notas de aplicação de uma classe: [exemplo]
 Classes.exemplosNotasAp = id => {
     var query = `
-            SELECT ?exemplo WHERE { 
-                clav:${id} clav:exemploNA ?exemplo.
+            SELECT ?idExemplo ?exemplo WHERE { 
+                clav:${id} clav:exemploNA ?idExemplo.
+                ?idExemplo clav:conteudo ?exemplo.
             }`
     return client.query(query)
         .execute()
@@ -182,7 +183,7 @@ Classes.legislacao = id => {
         SELECT ?id ?tipo ?numero ?sumario WHERE { 
             clav:${id} clav:temLegislacao ?id.
             ?id clav:diplomaNumero ?numero;
-                clav:diplomaTitulo ?sumario;
+                clav:diplomaSumario ?sumario;
                 clav:diplomaTipo ?tipo.
         } order by ?tipo ?numero`
     return client.query(query)
@@ -190,14 +191,14 @@ Classes.legislacao = id => {
         .then(response => normalize(response))
 }
 
-// Devolve a informação base do PCA: idPCA, formaContagem, subFormaContagem, idJustificacao, valores, notas
+// Devolve a informação base do PCA: idPCA, formaContagem, subFormaContagem, idJust, valores, notas
 Classes.pca = id => {
     var query = `
         SELECT 
             ?idPCA
             ?formaContagem
             ?subFormaContagem
-            ?idJustificacao
+            ?idJust
             (GROUP_CONCAT(DISTINCT ?valor; SEPARATOR="###") AS ?valores)
             (GROUP_CONCAT(DISTINCT ?nota; SEPARATOR="###") AS ?notas)
         WHERE { 
@@ -218,8 +219,9 @@ Classes.pca = id => {
             }
             OPTIONAL {
                 ?idPCA clav:temJustificacao ?idJustificacao .
+                BIND (STRAFTER(STR(?idJustificacao), 'clav#') AS ?idJust).
             }    
-        }GROUP BY ?idPCA ?formaContagem ?subFormaContagem ?idJustificacao 
+        }GROUP BY ?idPCA ?formaContagem ?subFormaContagem ?idJust
     `
     return client.query(query)
         .execute()
@@ -227,7 +229,7 @@ Classes.pca = id => {
 }
 
 // Devolve uma justificação, PCA ou DF, que é composta por uma lista de critérios: criterio, tipoLabel, conteudo
-Classes.justificacao = id => {
+Classes.justificacao = async id => {
     var query = `
         SELECT
             ?criterio ?tipoLabel ?conteudo
@@ -238,16 +240,15 @@ Classes.justificacao = id => {
             ?tipo rdfs:subClassOf clav:CriterioJustificacao.
             ?tipo rdfs:label ?tipoLabel.
         }`
-    return client.query(query)
-        .execute()
-        .then(response => normalize(response))
+    let resultado = await client.query(query).execute();
+    return normalize(resultado);
 }
 
 // Devolve a informação base do DF: idDF, valor, idJustificacao
 Classes.df = function (id) {
     var query = `
         SELECT 
-            ?idDF ?valor ?idJustificacao
+            ?idDF ?valor ?idJust
         WHERE { 
             clav:${id} clav:temDF ?idDF .
             OPTIONAL {
@@ -258,6 +259,7 @@ Classes.df = function (id) {
             }
             OPTIONAL {
                 ?idDF clav:temJustificacao ?idJustificacao .
+                BIND (STRAFTER(STR(?idJustificacao), 'clav#') AS ?idJust).
             }    
         }`
     return client.query(query)
