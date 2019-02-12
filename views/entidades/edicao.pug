@@ -122,24 +122,26 @@ block corpo
                             .info-label Natureza de intervenção nos Processos de Negócio:
                         td(v-if="editDono" style="width:80%")
                             table
+                                .col-sm
+                                    label Como Dono:
+                                .col-sm
                                 tr
                                     td(width="1000px")
                                         v-select.custom-select(
-                                            v-model="newClass"
-                                            label="label"
-                                            :options="classList"
+                                            v-model="novaClasse"
+                                            :options="listaClasses"
                                         )
                                     td
                                         button(
-                                            @click="newDono.unshift(newClass)"
+                                            @click="novoDono.unshift(novaClasse)"
                                         ) +
-                                tr(v-if="newDono.length")
-                                    td(colspan="2")
+                                tr(v-if="novoDono.length")
+                                    td
                                         ul(style="padding-left:20px")
-                                            li(v-for="(c,index) in newDono")
-                                                | {{ c.label }} 
+                                            li(v-for="(c,index) in novoDono")
+                                                | {{ c.codigo }} - {{ c.titulo }}
                                                 button(
-                                                    @click= "newDono.splice(index,1)"
+                                                    @click= "novoDono.splice(index,1)"
                                                 ) x
                         td(v-else style="width:10%")
                             .col-sm
@@ -230,7 +232,7 @@ block corpo
                 input.btn.btn-xs.btn-default.col-sm-1(
                     type="button" 
                     @click="update" 
-                    value="Confirmar" 
+                    value="Submeter alteração" 
                     :disabled="!(editDes || editInternacional || editTipologia)"  
                 )
                 //-|| editInternational || editDono || editParts || editTipologia)
