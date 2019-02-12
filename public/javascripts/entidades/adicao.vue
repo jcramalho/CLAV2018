@@ -1,4 +1,4 @@
-var newOrg = new Vue({
+var newEnt = new Vue({
     el: '#nova-entidade-form',
     data: {
         tipologias: [],
@@ -69,16 +69,14 @@ var newOrg = new Vue({
             }
         },
         add: function () {
-            this.$refs.spinner.show();
-
-            this.message="";
-
             var numeroSIOE = new RegExp(/[0-9]+(\-\w)?/);
 
-            if(!numeroSIOE.test(this.sioe)){
-                this.message+= "<p>Campo SIOE está no formato errado</p>";
+            if(!numeroSIOE.test(this.sioe) && this.sioe!=""){
+                messageL.showMsg("Campo SIOE está no formato errado. Apenas são aceites caracteres numéricos.");
                 return false;
             }
+
+            this.$refs.spinner.show();
 
             var dataObj = {
                 designacao: this.designacao,
@@ -87,6 +85,8 @@ var newOrg = new Vue({
                 internacional: this.internacional,
                 tipologias: this.tipologiasSel
             }
+
+            console.log(dataObj);
 
             this.$http.post('/api/entidades/', dataObj, {
                 headers: {

@@ -4,8 +4,6 @@ var Entidade = require('../models/entidade');
 var Pedidos = module.exports
 
 var Logging = require('../controllers/logging');
-var Pedido = require('../models/pedido');
-var Entidade = require('../models/entidade');
 
 Pedidos.add = function(dataObj, req, res){
     var today = new Date();

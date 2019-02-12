@@ -1,4 +1,4 @@
-var newOrg = new Vue({
+var newTip = new Vue({
     el: '#nova-tipologia-form',
     data: {
         tipologia: {
