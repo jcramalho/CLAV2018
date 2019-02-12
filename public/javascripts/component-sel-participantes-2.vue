@@ -1,21 +1,11 @@
 Vue.component('tabela-selecao-participantes', {
     template: `
         <div style="padding-bottom:30px">
-            <div class="col-sm-4">
-                Mostrar
-                <select v-model="rowsPerPage">
-                    <option>5</option>
-                    <option>10</option>
-                    <option>20</option>
-                    <option>100</option>
-                </select>
-                entradas
-            </div>
-            <div class="col-sm-7">
-                <input v-if="!nosearch" class="form-control" v-model="filt" type="text" placeholder="Filtrar"/>
+            <div class="col-sm-12">
+                <input class="form-control" v-model="filtro" type="text" placeholder="Filtrar"/>
             </div>
 
-            <table :class="classTable">
+            <table class="table table-condensed">
                 <thead v-if="header">
                     <tr>
                         <th v-if="index=>0" v-for="(item,index) in header" @click="sort(index)" class="sorter" :style="{width: cwidth[index]}">
@@ -24,25 +14,19 @@ Vue.component('tabela-selecao-participantes', {
                     </tr>
                 </thead>
                 <tbody name="table">
-                    <tr v-if="completeRows.length>0" v-for="(row,index) in rowsShow" :key="row[0]" :id="'particip_' + index">
+                    <tr v-if="(completeRows.length>0) && (!row.selected)" v-for="(row,index) in rowsShow" :key="row.id" :id="'particip_' + index">
                         <td>
                             <select-value-from-list 
-                                :options = "[{label: 'Por selecionar', value: 'Indefinido'},
-                                            {label: 'Apreciar', value: 'Apreciador'},
-                                            {label: 'Assessorar', value: 'Assessor'},
-                                            {label: 'Comunicar', value: 'Comunicador'},
-                                            {label: 'Decidir', value: 'Decisor'},
-                                            {label: 'Executar', value: 'Executor'},
-                                            {label: 'Iniciar', value: 'Iniciador'}]"
+                                :initial-value = "row.intervencao"
+                                :options = "tiposIntervencao"
                                 @value-change="mudarIntervencao($event, index)"
                             />
                         </td>
-                        <td>{{ row.data[0] }}</td>
-                        <td>{{ row.data[1] }}</td>
-                        <td>{{ row.data[2] }}</td>
-                        
+                        <td>{{ row.sigla }}</td>
+                        <td>{{ row.designacao }}</td>
+                        <td>{{ row.tipo }}</td>
                     </tr>
-                    <tr v-else>
+                    <tr v-if="completeRows.length <= 0">
                         <td colspan=3>Lista vazia.</td>
                     </tr>
                 </tbody>
@@ -56,7 +40,6 @@ Vue.component('tabela-selecao-participantes', {
         </div>
     `,
     props: [
-        'classTable',
         'nosearch',
         'completeRows',
         'header',
@@ -67,17 +50,29 @@ Vue.component('tabela-selecao-participantes', {
         return {
             "rows": [],
             "rowsShow": [[]],
-            "filt": '',
+            "filtro": '',
             "order": 0,
             "activePage": 1,
             "pages": [0],
             "rowsPerPage": 10,
             "nPages": 1,
+
+            // Estruturas auxiliares
+
+            tiposIntervencao: [
+                {label: 'Por selecionar', value: 'Indefinido'},
+                {label: 'Apreciar', value: 'Apreciar'},
+                {label: 'Assessorar', value: 'Assessorar'},
+                {label: 'Comunicar', value: 'Comunicar'},
+                {label: 'Decidir', value: 'Decidir'},
+                {label: 'Executar', value: 'Executar'},
+                {label: 'Iniciar', value: 'Iniciar'}
+            ],
         };
     },
     watch: {
-        filt: function () {
-            this.completeFilter(this.filt);
+        filtro: function () {
+            this.filtraLinhas(this.filtro);
         },
         rows: function () {
             this.loadPages();
@@ -92,56 +87,31 @@ Vue.component('tabela-selecao-participantes', {
     },
     methods: {
         mudarIntervencao: function(nova, i){
-            if(nova=="Indefinido"){
-                this.rowsShow[i].selected = false;
-                document.getElementById("particip_"+i).style.backgroundColor = "#FFFFFF";
-            }
-            else{
-                this.rowsShow[i].selected = true;
-                document.getElementById("particip_"+i).style.backgroundColor = "#F0F8FF";
-            }
-            this.rowsShow[i].nova = nova;
+            this.rowsShow[i].selected = true;
+            this.rowsShow[i].intervencao = nova;
             this.$emit('select-clicked', this.rowsShow[i]);
         },
-        selectRow: function (index) {
-            this.$emit('select-clicked', this.rowsShow[index]);
-            this.rowsShow[index].selected = !this.rowsShow[index].selected;
-        },
-        selectClicked: function (index) { //emit event when a row is selected
-            this.$emit('select-clicked', this.rowsShow[index]);
-        },
-        completeFilter: function (filt) { //filter rows according to what is written in the input box
-            tempRows = this.completeRows;
+        
+        filtraLinhas: function (filtro) { //filter rows according to what is written in the input box
+            var tempRows = this.completeRows;
+            var filtros = filtro.split(" ");
 
-            filters = filt.split(" ");
-
-            for (i = 0; i < filters.length; i++) {
-                tempRows = this.filter(tempRows, filters[i]);
+            for (i = 0; i < filtros.length; i++) {
+                tempRows = this.filter(tempRows, filtros[i]);
             }
 
             this.rows = tempRows;
         },
-        filter: function (list, filt) {
-            var retList;
-
-            regex = new RegExp(filt, "gi");
+        filter: function (list, filtro) {
+            var retList = [];
+            var regex = new RegExp(filtro, "gi");
 
             retList = list.filter(function (item) {
-                if (item.selected) {
+                if ((item.selected)||(regex.test(item.id))||(regex.test(item.designacao)))
                     return true;
-                }
-
-                for (let cell of item.data) {
-                    if (regex.test(cell)) {
-                        return true;
-                    }
-                }
-                return false;
+                else
+                    return false;
             })
-            if (retList.length == 0) {
-                retList = [[]];
-            }
-
             return retList;
         },
         sort: function (index) { //sort rows by header[index]

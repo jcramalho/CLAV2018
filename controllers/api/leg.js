@@ -30,7 +30,7 @@ Leg.listar = (filtro) => {
              clav:diplomaData ?data;
              clav:diplomaNumero ?numero;
              clav:diplomaTipo ?tipo;
-             clav:diplomaTitulo ?sumario;
+             clav:diplomaSumario ?sumario;
              clav:diplomaEstado ?estado;
         OPTIONAL {
             ?uri clav:diplomaEntidade ?ent.
@@ -39,6 +39,36 @@ Leg.listar = (filtro) => {
         BIND(STRAFTER(STR(?uri), 'clav#') AS ?id).
     } ORDER BY DESC (?data)`;
     const campos = ["id", "data", "numero", "tipo", "sumario", "estado"];
+    const agrupar = ["entidades"];
+
+    return client.query(query)
+        .execute()
+        .then(response => {
+            let legs = projection(normalize(response), campos, agrupar);
+            
+            for (leg of legs) {
+                leg.entidades = leg.entidades.map(ent => ({ id: `ent_${ent}`, sigla: ent }));
+            }
+        
+            return legs;
+        });
+};
+
+Leg.listarAtivos = () => {
+    const query = `SELECT ?id ?data ?numero ?tipo ?sumario ?entidades WHERE {
+        ?uri rdf:type clav:Legislacao;
+             clav:diplomaData ?data;
+             clav:diplomaNumero ?numero;
+             clav:diplomaTipo ?tipo;
+             clav:diplomaSumario ?sumario;
+             clav:diplomaEstado 'Ativo';
+        OPTIONAL {
+            ?uri clav:diplomaEntidade ?ent.
+            ?ent clav:entSigla ?entidades;
+        }
+        BIND(STRAFTER(STR(?uri), 'clav#') AS ?id).
+    } ORDER BY DESC (?data)`;
+    const campos = ["id", "data", "numero", "tipo", "sumario"];
     const agrupar = ["entidades"];
 
     return client.query(query)
@@ -69,7 +99,7 @@ Leg.consultar = id => {
             clav:diplomaData ?data;
             clav:diplomaNumero ?numero;
             clav:diplomaTipo ?tipo;
-            clav:diplomaTitulo ?sumario;
+            clav:diplomaSumario ?sumario;
             clav:diplomaLink ?link;
             clav:diplomaEstado ?estado;
         OPTIONAL {

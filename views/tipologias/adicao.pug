@@ -6,14 +6,15 @@ block corpo
         .panel-body
             .form-group 
                 table
-                    //- Nome/designação
+                    //- Designação
                     tr
                         td(style="width:10%")
-                            label Nome: 
+                            label Designação: 
                         td(style="width:80%")
                             input(
                                 size="70"
                                 v-model="tipologia.designacao"
+                                maxlength="50"
                             )
                     //- Sigla        
                     tr
@@ -23,12 +24,13 @@ block corpo
                             input(
                                 size="70"
                                 v-model="tipologia.sigla"
+                                maxlength="10"
                             )
 
                     //- Entidades
                     tr(style="padding-bottom:30px")
                         td(style="width: 10%")
-                            label Elementos:
+                            label Entidades:
 
                         td
                             accordion
@@ -54,7 +56,7 @@ block corpo
             input.btn.btn-xs.btn-default.col-sm-2(
                 type="button" 
                 @click="add" 
-                value="Adicionar" 
+                value="Submeter" 
                 :disabled="!(tipologia.designacao && tipologia.sigla)"
             )
             p.col-sm-7 {{ message }}

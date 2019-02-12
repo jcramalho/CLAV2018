@@ -40,3 +40,10 @@ Pedidos.consultar = (codigo) => {
 Pedidos.criar = (pedido) => {
     return new Pedido(pedido).save();
 };
+
+/**
+ * Adiciona um estado novo de distribuição ao pedido
+ */
+Pedidos.adicionarDistribuicao = (codigo, distribuicao) => {
+    return Pedido.findOneAndUpdate({ codigo: codigo }, { $push: { distribuicao: distribuicao } });
+}

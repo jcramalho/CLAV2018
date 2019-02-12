@@ -7,7 +7,7 @@ block corpo
                 v-if="ready"
 
                 :header= '["Tipo", "Entidade(s)", "Número", "Sumário", "Data"]'
-                :display-order='["tipo","entidades","numero","titulo","data"]'
+                :display-order="['tipo','entidades','numero','sumario','data']"
                 :complete-rows="listaLegs"
                 :ready="ready"
                 :cwidth="['12%','10%', '10%', '54%', '14%']"
@@ -15,7 +15,6 @@ block corpo
                 class-table='table table-hover'
 
                 @row-clicked="rowClicked($event)"
-                @add-clicked="addLeg"
             )
             h4(
                 v-else

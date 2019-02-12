@@ -1,21 +1,11 @@
-Vue.component('tabela-selecao-participantes', {
+Vue.component('select-row-from-table', {
     template: `
         <div style="padding-bottom:30px">
-            <div class="col-sm-4">
-                Mostrar
-                <select v-model="rowsPerPage">
-                    <option>5</option>
-                    <option>10</option>
-                    <option>20</option>
-                    <option>100</option>
-                </select>
-                entradas
-            </div>
-            <div class="col-sm-7">
-                <input v-if="!nosearch" class="form-control" v-model="filt" type="text" placeholder="Filtrar"/>
+            <div class="col-sm-12">
+                <input class="form-control" v-model="filt" type="text" placeholder="Filtrar"/>
             </div>
 
-            <table :class="classTable">
+            <table class="table table-condensed table-hover">
                 <thead v-if="header">
                     <tr>
                         <th v-if="index=>0" v-for="(item,index) in header" @click="sort(index)" class="sorter" :style="{width: cwidth[index]}">
@@ -24,25 +14,20 @@ Vue.component('tabela-selecao-participantes', {
                     </tr>
                 </thead>
                 <tbody name="table">
-                    <tr v-if="completeRows.length>0" v-for="(row,index) in rowsShow" :key="row[0]" :id="'particip_' + index">
-                        <td>
-                            <select-value-from-list 
-                                :options = "[{label: 'Por selecionar', value: 'Indefinido'},
-                                            {label: 'Apreciar', value: 'Apreciador'},
-                                            {label: 'Assessorar', value: 'Assessor'},
-                                            {label: 'Comunicar', value: 'Comunicador'},
-                                            {label: 'Decidir', value: 'Decisor'},
-                                            {label: 'Executar', value: 'Executor'},
-                                            {label: 'Iniciar', value: 'Iniciador'}]"
-                                @value-change="mudarIntervencao($event, index)"
-                            />
+                    <tr v-if="(completeRows.length > 0) && (!row.selected)" v-for="(row,index) in rowsShow" :key="row[0]">
+                        <td 
+                            v-for="(item,idx) in row.data" 
+                            class="custom-table-cell-select"
+                            @click="selectRow(index)"
+                        >
+                            <div 
+                                class="custom-table-text" 
+                                v-html="item"
+                                :title="item"
+                            ></div>
                         </td>
-                        <td>{{ row.data[0] }}</td>
-                        <td>{{ row.data[1] }}</td>
-                        <td>{{ row.data[2] }}</td>
-                        
                     </tr>
-                    <tr v-else>
+                    <tr v-if="completeRows.length == 0">
                         <td colspan=3>Lista vazia.</td>
                     </tr>
                 </tbody>
@@ -56,8 +41,6 @@ Vue.component('tabela-selecao-participantes', {
         </div>
     `,
     props: [
-        'classTable',
-        'nosearch',
         'completeRows',
         'header',
         'ready',
@@ -91,25 +74,10 @@ Vue.component('tabela-selecao-participantes', {
         },
     },
     methods: {
-        mudarIntervencao: function(nova, i){
-            if(nova=="Indefinido"){
-                this.rowsShow[i].selected = false;
-                document.getElementById("particip_"+i).style.backgroundColor = "#FFFFFF";
-            }
-            else{
-                this.rowsShow[i].selected = true;
-                document.getElementById("particip_"+i).style.backgroundColor = "#F0F8FF";
-            }
-            this.rowsShow[i].nova = nova;
-            this.$emit('select-clicked', this.rowsShow[i]);
-        },
         selectRow: function (index) {
             this.$emit('select-clicked', this.rowsShow[index]);
-            this.rowsShow[index].selected = !this.rowsShow[index].selected;
         },
-        selectClicked: function (index) { //emit event when a row is selected
-            this.$emit('select-clicked', this.rowsShow[index]);
-        },
+        
         completeFilter: function (filt) { //filter rows according to what is written in the input box
             tempRows = this.completeRows;
 
@@ -227,5 +195,3 @@ Vue.component('tabela-selecao-participantes', {
         this.rows = this.completeRows;
     }
 })
-
-Vue.component('v-select', VueSelect.VueSelect);

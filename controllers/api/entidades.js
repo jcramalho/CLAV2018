@@ -40,8 +40,8 @@ Entidades.listar = (filtro) => {
         BIND(CONCAT('ent_', ?sigla) AS ?id).
 
         FILTER (${Object.entries(filtro)
-            .filter(([k,v]) => v !== undefined)
-            .map(([k,v]) => `?${k} = "${v}"`)
+            .filter(([k, v]) => v !== undefined)
+            .map(([k, v]) => `?${k} = "${v}"`)
             .concat(["True"])
             .join(' && ')})
     } ORDER BY ?sigla`;
@@ -137,23 +137,55 @@ Entidades.criar = (entidade, utilizador) => {
             clav:entDesignacao '${entidade.designacao}' ;
             clav:entSigla '${entidade.sigla}' ;
             clav:entInternacional '${entidade.internacional}' ;
+            clav:entSIOE '${entidade.sioe}';
 
-            ${entidade.tipologias.map(tipologia => `clav:pertenceTipologiaEnt clav:${tipologia} ;`).join('\n')}
+            ${entidade.tipologias.map(tipologia => `clav:pertenceTipologiaEnt clav:tip_${tipologia.sigla} ;`).join('\n')}
             clav:entEstado 'Harmonização' .
     }`;
+    const id = `clav:ent_${entidade.sigla}`;
     const pedido = {
         criadoPor: utilizador,
         objeto: {
             codigo: `ent_${entidade.sigla}`,
             tipo: 'Entidade',
             acao: 'Criação',
+            triplos: [
+                {
+                    nome: "Designação",
+                    sujeito: id,
+                    predicado: "clav:entDesignacao",
+                    objeto: entidade.designacao,
+                },
+                {
+                    nome: "Sigla",
+                    sujeito: id,
+                    predicado: "clav:entSigla",
+                    objeto: entidade.sigla,
+                },
+                {
+                    nome: "Internacional",
+                    sujeito: id,
+                    predicado: "clav:entInternacional",
+                    objeto: entidade.internacional,
+                },
+                {
+                    nome: "SIOE",
+                    sujeito: id,
+                    predicado: "clav:entSIOE",
+                    objeto: entidade.sioe,
+                }
+            ].concat(entidade.tipologias.map(tipologia => ({
+                nome: "Tipologias",
+                sujeito: id,
+                predicado: "clav:pertenceTipologiaEnt",
+                objeto: tipologia.sigla,
+            }))),
         },
-        triplos: [],
-        distribuicao: [{
-            estado: 'Submetido',
-        }]
+            distribuicao: [{
+                estado: 'Submetido',
+            }]
     };
-
+    console.log(pedido);
     return client.query(query)
         .execute()
         .then(() => Pedidos.criar(pedido));

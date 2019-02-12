@@ -87,20 +87,20 @@ block corpo
                                 td(style="width: 10%")
                                     .info-label Nota(s) de Aplicação:
                                 td
-                                    div(v-for="(nota, index) in classe.notasAP")
+                                    div(v-for="(nota, index) in classe.notasAp")
                                         textarea(
                                             cols="72"
                                             lines="5"
-                                            v-model="classe.notasAP[index].conteudo"
+                                            v-model="classe.notasAp[index].conteudo"
                                         )
                                         span.glyphicon.glyphicon-remove(
-                                            @click="classe.notasAP.splice(index,1)"
+                                            @click="classe.notasAp.splice(index,1)"
                                             style="padding-left: 5px; vertical-align:top"
                                         )
                                     
                                     button(
                                         style="margin-bottom:10px"
-                                        @click="classe.notasAP.push({id:'',conteudo:''})"
+                                        @click="classe.notasAp.push({id:'',conteudo:''})"
                                     )
                                         | Nova nota
                                 
@@ -162,6 +162,7 @@ block corpo
                                         input(
                                             size="70    "
                                             v-model="ti.termo"
+                                            @change="validaTI(ti.termo)"
                                         )
                                         span.glyphicon.glyphicon-remove(
                                             @click="classe.termosInd.splice(index,1)"
@@ -220,7 +221,6 @@ block corpo
                                                         v-model="classe.procTrans"
                                                     )
                                                     |  Não
-
                             
                             //- DONOS
                             a(name="donos")
@@ -241,9 +241,7 @@ block corpo
 
                                         @select-clicked="selecionarDono($event)"
                                     )
-                                    h4(
-                                        v-else
-                                    ) A carregar...
+                                    h4(v-else) A carregar...
 
 
                             //- PARTICIPANTES
@@ -266,10 +264,8 @@ block corpo
                                                 class-table='table table-condensed'
 
                                                 @select-clicked="selecionarParticipante($event)"
-                                                    )
-                                            h4(
-                                                v-else
-                                            ) A carregar...
+                                            )
+                                            h4(v-else) A carregar...
 
                             //- PROCESSOS RELACIONADOS
                             a(name="PNrel")
@@ -307,7 +303,7 @@ block corpo
 
                                 td
                                     custom-table-select(
-                                        v-if="legislacaoReady"
+                                        v-if="semaforos.legislacaoReady"
 
                                         :header="estilo.legislacaoTableHeader"
                                         :cwidth="estilo.legislacaoTableWidth"
@@ -321,7 +317,108 @@ block corpo
                                     h4(
                                         v-else
                                     ) A carregar...
-                                        
+
+                    panel(header="Decisões de Avaliação" v-if="classe.nivel >= 3" is-open)
+                        //- PRAZO DE CONSERVAÇÃO ADMINISTRATIVA
+                        a(name="PCA")
+                        .info-label(style="text-align:center")
+                            | Prazo de Conservação Administrativa
+                        table.consulta.noborder(width='100%' style="border-color: white; border-style:solid")
+                            //- PRAZO / FORMA DE CONTAGEM
+                            tr
+                                td(width='22%')
+                                    .info-label Prazo:
+                                td(width='75%')
+                                    input(
+                                        size="15"
+                                        v-model="classe.pca.valor"
+                                    )
+                            tr
+                                td(width='22%')
+                                    .info-label Forma de Contagem:
+                                td(v-if="semaforos.pcaFormasContagemReady" width='75%')
+                                    select-value-from-list(
+                                        :options = "pcaFormasContagem"
+                                        @value-change="mudarFormaContagem($event)"
+                                    )
+                                                       
+                            //- SUB-FORMA DE CONTAGEM
+                            tr(width="100%" v-if="semaforos.pcaSubFormasContagemReady && classe.pca.formaContagem=='vc_pcaFormaContagem_disposicaoLegal'")
+                                td(width='22%')
+                                    .info-label Sub-forma de contagem:
+                                td(width='75%')
+                                    select-value-from-list(
+                                        :options = "pcaSubFormasContagem"
+                                        @value-change="mudarSubFormaContagem($event)"
+                                    )
+
+                            //- JUSTIFICAÇÃO (CRITÉRIOS)
+                            tr
+                                td(width='22%')
+                                    .info-label Justificação:
+                                td(width='75%')
+                                    table.blackborder(v-for="(crit, index) in classe.pca.justificacao" style="width:100%")
+                                        tr
+                                            td
+                                                .info-label Tipo:
+                                            td(v-if="crit.tipo=='Indefinido'") 
+                                                select-value-from-list( 
+                                                    :options = "pcaTiposCriterio"
+                                                    @value-change="selCritPCA($event, crit)")
+                                            td(v-else) {{crit.tipo}}
+                                        tr
+                                            td
+                                                .info-label Notas:
+                                            td
+                                                textarea(
+                                                    cols="60"
+                                                    lines="5"
+                                                    v-model="crit.notas"
+                                                )  
+                                        tr(v-if="crit.procRel.length > 0")
+                                            td
+                                                .info-label Processos relacionados:
+                                            td
+                                                ul
+                                                    li(v-for="(proc, i) in crit.procRel") {{proc}}
+                                        tr(v-if="crit.legislacao.length > 0")
+                                            td
+                                                .info-label Legislação associada:
+                                            td
+                                                b {{crit.legislacao}}
+
+                                        tr
+                                            td
+                                                button(@click="classe.pca.justificacao.splice(index,1)") 
+                                                    | Remover 
+                                                
+                                    button(@click="adicionarCriterio(classe.pca.justificacao, 'Indefinido', '', [], [])") Adicionar Critério
+
+                        //- DESTINO FINAL
+                        a(name="DF")
+                        .info-label(style="text-align:center") Destino Final
+                        table.consulta.noborder(width='100%' style="border-color: white; border-style:solid")
+                            tr
+                                td
+                                    table.noborder
+                                        //- DESTINO
+                                        tr
+                                            td
+                                                .info-label Destino:
+                                            td(style="vertical-align:midle")
+                                                select-value-from-list(
+                                                    :options = "destinoFinalTipos"
+                                                    @value-change="classe.df.valor = $event"
+                                                )
+                                        tr
+                                            td
+                                                .info-label Notas:    
+                                            td           
+                                                textarea(
+                                                    cols="60"
+                                                    lines="5"
+                                                    v-model="classe.df.notas"
+                                                )
             
             spinner(ref="spinner" fixed size="lg" text="Por favor aguarde...")
 
@@ -339,7 +436,7 @@ block corpo
 
             input.btn.btn-xs.btn-default.col-sm-2(
                 type="button" 
-                @click="add" 
+                @click="criarClasse" 
                 value="Adicionar" 
                 :disabled=`!(
                     ((classe.nivel>1 && parent) || classe.nivel==1) && 

@@ -12,10 +12,9 @@ block corpo
                         td(style="width: 10%")
                             .info-label Tipo: 
                         td(style="width:80%")
-                            input(
-                                size="50"
-                                v-model="diploma.tipo"
-                            )
+                            select(v-model="diploma.tipo")
+                                option(v-for="t in tipoDiploma" :value="t") {{ t }}
+                          
                     
                     //- Número
                     tr
@@ -26,6 +25,8 @@ block corpo
                                 size="50"
                                 v-model="diploma.numero"
                                 pattern="[0-9]+(\-\w)?/[0-9]+"
+                                placeholder=" NNNNNN/AAAA"
+                                maxlength="11"
                             )
 
                     //- Entidades
@@ -66,11 +67,11 @@ block corpo
                     //- Sumário
                     tr
                         td(style="width: 10%")
-                            .info-label Título: 
+                            .info-label Sumario: 
                         td(style="width:80%")
                             input(
                                 size="50"
-                                v-model="diploma.titulo"
+                                v-model="diploma.sumario"
                             )
        
                     //- Link
@@ -87,7 +88,7 @@ block corpo
             input.btn.btn-xs.btn-default.col-sm-1(
                 type="button" 
                 @click="add" 
-                value="Confirmar" 
+                value="Submeter" 
                 :disabled="!readyToCreate()"
 
                 style="margin-right:10px"

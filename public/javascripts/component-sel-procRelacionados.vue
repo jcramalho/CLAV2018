@@ -1,56 +1,31 @@
 Vue.component('tabela-selecao-proc-relacionados', {
     template: `
         <div style="padding-bottom:30px">
-            <div class="col-sm-4">
-                Mostrar
-                <select v-model="rowsPerPage">
-                    <option>5</option>
-                    <option>10</option>
-                    <option>20</option>
-                    <option>100</option>
-                </select>
-                entradas
-            </div>
-            <div class="col-sm-7">
-                <input v-if="!nosearch" class="form-control" v-model="filt" type="text" placeholder="Filtrar"/>
+            <div class="col-sm-12">
+                <input class="form-control" v-model="filt" type="text" placeholder="Filtrar"/>
             </div>
 
-            <table :class="classTable">
+            <table class="table table-condensed">
                 <thead v-if="header">
                     <tr>
-                        <th style="width: 4%"></th>
                         <th v-if="index=>0" v-for="(item,index) in header" @click="sort(index)" class="sorter" :style="{width: cwidth[index]}">
                             {{ item }} <span class="caret"></span>
                         </th>
                     </tr>
                 </thead>
                 <tbody name="table">
-                    <tr v-if="completeRows.length>0" v-for="(row,index) in rowsShow" :key="row[0]">
-                        <td>
-                            <input
-                                type="checkbox"
-                                v-model="row.selected"
-                                @click="selectClicked(index)"
-                            />
+                    <tr v-if="(completeRows.length>0) && (!row.selected)" v-for="(row,index) in rowsShow" :key="row[0]" :id="'proc_' + index">
                         <td>
                             <select-value-from-list 
-                                :options = "[{label: 'Por selecionar', value: 'Indefinido'},
-                                             {label: 'Antecessor de', value: 'eAntecessorDe'},
-                                             {label: 'Sucessor de', value: 'eSucessorDe'},
-                                             {label: 'Complementar de', value: 'eComplementarDe'},
-                                             {label: 'Cruzado com', value: 'eCruzadoCom'},
-                                             {label: 'Sintese de', value: 'eSinteseDe'},
-                                             {label: 'Sintetizado por', value: 'eSintetizadoPor'},
-                                             {label: 'Suplemento de', value: 'eSuplementoDe'},
-                                             {label: 'Suplemento para', value: 'eSuplementoPara'}
-                                            ]"
-                                @value-change="mudarRelacao($event, row)"
+                                :initial-value = "row.relacao"
+                                :options = "tiposRelacao"
+                                @value-change="mudarRelacao($event, index)"
                             />
                         </td>
-                        <td>{{ row.data[1] }}</td>
-                        <td>{{ row.data[2] }}</td>
+                        <td>{{ row.codigo }}</td>
+                        <td>{{ row.titulo }}</td>
                     </tr>
-                    <tr v-else>
+                    <tr v-if="completeRows.length <= 0">
                         <td colspan=3>Lista vazia.</td>
                     </tr>
                 </tbody>
@@ -64,8 +39,6 @@ Vue.component('tabela-selecao-proc-relacionados', {
         </div>
     `,
     props: [
-        'classTable',
-        'nosearch',
         'completeRows',
         'header',
         'ready',
@@ -81,11 +54,25 @@ Vue.component('tabela-selecao-proc-relacionados', {
             "pages": [0],
             "rowsPerPage": 10,
             "nPages": 1,
+
+            // Estruturas auxiliares
+
+            tiposRelacao: [
+                {label: 'Por selecionar', value: 'Indefinido'},
+                {label: 'Antecessor de', value: 'eAntecessorDe'},
+                {label: 'Sucessor de', value: 'eSucessorDe'},
+                {label: 'Complementar de', value: 'eComplementarDe'},
+                {label: 'Cruzado com', value: 'eCruzadoCom'},
+                {label: 'Sintese de', value: 'eSinteseDe'},
+                {label: 'Sintetizado por', value: 'eSintetizadoPor'},
+                {label: 'Suplemento de', value: 'eSuplementoDe'},
+                {label: 'Suplemento para', value: 'eSuplementoPara'}
+            ]
         };
     },
     watch: {
         filt: function () {
-            this.completeFilter(this.filt);
+            this.filtraLinhas(this.filt);
         },
         rows: function () {
             this.loadPages();
@@ -99,48 +86,37 @@ Vue.component('tabela-selecao-proc-relacionados', {
         },
     },
     methods: {
-        mudarRelacao: function(nova, proc){
-            proc.data[0] = nova
-        },
-        selectRow: function (index) {
-            this.$emit('select-clicked', this.rowsShow[index]);
-            this.rowsShow[index].selected = !this.rowsShow[index].selected;
-        },
-        selectClicked: function (index) { //emit event when a row is selected
-            this.$emit('proc-select-clicked', this.rowsShow[index]);
-        },
-        completeFilter: function (filt) { //filter rows according to what is written in the input box
-            tempRows = this.completeRows;
+        mudarRelacao: function(nova, i){
 
-            filters = filt.split(" ");
+            let myrel = this.tiposRelacao.filter(function(item){
+                if(item.value == nova) return true;
+                else return false;
+            });
+            this.rowsShow[i].selected = true;
+            this.rowsShow[i].relacao = nova;
+            this.rowsShow[i].relLabel = myrel[0].label;
+            this.$emit('proc-select-clicked', this.rowsShow[i]);
+        },
+        filtraLinhas: function (filt) { //filter rows according to what is written in the input box
+            var tempRows = this.completeRows;
+            var filtros = filt.split(" ");
 
-            for (i = 0; i < filters.length; i++) {
-                tempRows = this.filter(tempRows, filters[i]);
+            for (i = 0; i < filtros.length; i++) {
+                tempRows = this.filter(tempRows, filtros[i]);
             }
 
             this.rows = tempRows;
         },
-        filter: function (list, filt) {
-            var retList;
-
-            regex = new RegExp(filt, "gi");
+        filter: function (list, filtro) {
+            var retList = [];
+            var regex = new RegExp(filtro, "gi");
 
             retList = list.filter(function (item) {
-                if (item.selected) {
+                if ((item.selected)||(regex.test(item.codigo))||(regex.test(item.titulo)))
                     return true;
-                }
-
-                for (let cell of item.data) {
-                    if (regex.test(cell)) {
-                        return true;
-                    }
-                }
-                return false;
+                else
+                    return false;
             })
-            if (retList.length == 0) {
-                retList = [[]];
-            }
-
             return retList;
         },
         sort: function (index) { //sort rows by header[index]

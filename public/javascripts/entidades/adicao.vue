@@ -1,4 +1,4 @@
-var newOrg = new Vue({
+var newEnt = new Vue({
     el: '#nova-entidade-form',
     data: {
         tipologias: [],
@@ -11,7 +11,7 @@ var newOrg = new Vue({
         message: "",
         tip: "",
         
-        tipologiasSel: []
+        tipologiasSel: [],        
     },
     created: function(){
         //dá a lista de tipologias, para o utilizador adicionar a que tipologias pertence
@@ -30,7 +30,7 @@ var newOrg = new Vue({
     components: {
         spinner: VueStrap.spinner,
         modal: VueStrap.modal,
-         panel: VueStrap.panel,
+        panel: VueStrap.panel,
     },
     methods: {
         dynamicSort: function(property) {
@@ -54,17 +54,39 @@ var newOrg = new Vue({
         },
         addTip: function(){
             var ind = this.findTip(this.tip)
+            var existe = 0;
+            for(var i=0; i<this.tipologiasSel.length; i++){
+                if(this.tip==this.tipologiasSel[i].id){
+                    existe = 1;
+                    break;
+                }
+            }
+            if(existe==0){
             this.tipologiasSel.push(this.tipologias[ind])
+            }
+            else{
+                messageL.showMsg("Já selecionou essa tipologia!");
+            }
         },
         add: function () {
+            var numeroSIOE = new RegExp(/[0-9]+(\-\w)?/);
+
+            if(!numeroSIOE.test(this.sioe) && this.sioe!=""){
+                messageL.showMsg("Campo SIOE está no formato errado. Apenas são aceites caracteres numéricos.");
+                return false;
+            }
+
             this.$refs.spinner.show();
 
             var dataObj = {
                 designacao: this.designacao,
                 sigla: this.sigla,
+                sioe: this.sioe,
                 internacional: this.internacional,
                 tipologias: this.tipologiasSel
             }
+
+            console.log(dataObj);
 
             this.$http.post('/api/entidades/', dataObj, {
                 headers: {

@@ -1,5 +1,6 @@
 var Auth = require('../../controllers/auth.js');
 var Leg = require('../../controllers/api/leg.js');
+var url = require('url');
 
 var express = require('express');
 var router = express.Router();
@@ -20,17 +21,26 @@ const estaDisponivel = (req, res, next) => {
         })
 };
 
-// Lista todos os doucmentos legislativos: id, data, numero, tipo, sumario, entidades
+// Lista todos os documentos legislativos: id, data, numero, tipo, sumario, entidades
 router.get('/', (req, res) => {
-    return Leg.listar()
+    var queryData = url.parse(req.url, true).query;
+    if (queryData.estado && (queryData.estado == 'A')){
+        return Leg.listarAtivos()
         .then(dados => res.jsonp(dados))
-        .catch(erro => res.status(500).send(`Erro na listagem das entidades: ${erro}`));
+        .catch(erro => res.status(500).send(`Erro na listagem da legislação ativa: ${erro}`));
+    }
+    else{
+        return Leg.listar()
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.status(500).send(`Erro na listagem dos diplomas legislativos: ${erro}`));
+    }
+    
 });
 
 // Criação de uma nova legislacao. Em caso de sucesso gera um novo pedido
 router.post('/', Auth.isLoggedIn, estaDisponivel, (req, res) => {
     const legislacao = {
-        titulo: req.body.titulo,
+        sumario: req.body.sumario,
         data: req.body.data,
         numero: req.body.numero,
         tipo: req.body.tipo,
