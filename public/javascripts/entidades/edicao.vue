@@ -35,7 +35,7 @@ var org = new Vue({
         partsReady: false,
         novoTipoPart: "",
         novaPart: "",
-       // newParticipations: [],
+        newParticipations: [],
 
         participacoes: {
             Apreciador: [],
@@ -75,6 +75,7 @@ var org = new Vue({
                     }
                 }
             )
+            
         }
     },
     components: {
@@ -138,6 +139,21 @@ var org = new Vue({
                     console.error(error);
                 });
         },
+        addTipo: function(){
+            var existeTip = 0;
+            for(var i=0; i<this.newListaTipologias.length; i++){
+                if(this.newTipologia.value.id==this.newListaTipologias[i].id){
+                    existeTip = 1;
+                    break
+                }
+            }
+            if(existeTip==0){
+                this.newListaTipologias.unshift(this.newTipologia.value)
+            }
+            else{
+                messageL.showMsg("Já selecionou essa tipologia de Entidade!");
+            }
+        },
         processosDono: function () {
             this.$http.get("/api/entidades/" + this.id + "/intervencao/dono")
                 .then(function (response) {
@@ -149,6 +165,21 @@ var org = new Vue({
                 .catch(function (error) {
                     console.error(error);
                 });
+        },
+        addDono: function (){
+            var existeDono = 0;
+            for(var i=0; i<this.novoDono.length; i++){
+                if(this.novaClasse.codigo==this.novoDono[i].codigo){
+                    existeDono = 1;
+                    break;
+                }
+            }
+            if(existeDono==0){
+                this.novoDono.unshift(this.novaClasse);
+            }
+            else{
+                messageL.showMsg("Já selecionou essa classe como Dono!");
+            }
         },
         loadParticipantes: function () {
             var participa = false;
@@ -163,19 +194,33 @@ var org = new Vue({
 
                         this.participacoes[tipoPar].push(
                                      { titulo: this.participantePNs[i].titulo,
-                                       codigo: this.participantePNs[i].codigo 
+                                       codigo: this.participantePNs[i].codigo ,
+                                       label: this.participantePNs[i].codigo + ' - ' + this.participantePNs[i].titulo
                                        })
-                                       console.log(this.participantePNs[i].codigo);
                         participa = true
                     }
                     this.newParticipations = JSON.parse(JSON.stringify(this.participacoes));
-                    console.log(this.participantePNs);
-                    console.log(this.newParticipations)
                     if(participa) this.partsReady = true;
                 })
                 .catch(function (error) {
                     console.error(error);
                 });
+        },
+        addPart: function(){
+            var existePart = 0;
+            for(var i=0; i<this.newParticipations[this.novoTipoPart.value].length; i++){
+                if(this.novaPart.codigo==this.newParticipations[this.novoTipoPart.value][i].codigo) {
+                    existePart = 1;
+                    break;
+                }
+            }
+            if(existePart==0){
+                this.newParticipations[this.novoTipoPart.value].unshift(this.novaPart)
+            }
+            else{
+                messageL.showMsg("Já selecionou essa classe como " + this.novoTipoPart.value + "!");
+            }
+            
         },
         loadClasses: function () {
             var classesToProcess = []
@@ -190,7 +235,6 @@ var org = new Vue({
                         var myClasse = {codigo: c.codigo, titulo: c.titulo, label: c.codigo + ' - ' + c.titulo }
                         this.listaClasses.push(myClasse)
                     }
-                    console.log(this.listaClasses)
                     this.classesReady = true;
                 })
                 .catch(function (error) {

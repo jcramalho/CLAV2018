@@ -88,9 +88,11 @@ block corpo
                                                 :options="tipoListaCompleta"
                                             )
                                         td
-                                            button(
-                                                @click="newListaTipologias.unshift(newTipologia.value)"
-                                            ) +
+                                            input(
+                                                type="button"
+                                                @click="addTipo"
+                                                value="+"
+                                            )
                                     tr(v-if="newListaTipologias.length")
                                         td
                                             ul(style="padding-left:20px")
@@ -132,9 +134,11 @@ block corpo
                                             :options="listaClasses"
                                         )
                                     td
-                                        button(
-                                            @click="novoDono.unshift(novaClasse)"
-                                        ) +
+                                        input(
+                                                type="button"
+                                                @click="addDono"
+                                                value="+"
+                                            )
                                 tr(v-if="novoDono.length")
                                     td
                                         ul(style="padding-left:20px")
@@ -175,28 +179,30 @@ block corpo
                             td(v-if="editParts" style="width:80%")
                                 table
                                     tr
-                                        td(width="200px")
+                                        td(width="300px")
                                             v-select.custom-select(
                                                 v-model="novoTipoPart"
                                                 :options="partOptions"
                                             )
-                                        td(width="800px")
+                                        td(width="700px")
                                             v-select.custom-select(
                                                 v-model="novaPart"
                                                 :options="listaClasses"
                                             )
                                         td
-                                            button(
-                                                @click="newParticipations[novoTipoPart.value].unshift(novaPart.codigo)"
-                                            ) +
+                                            input(
+                                                type="button"
+                                                @click="addPart"
+                                                value="+"
+                                            )
                                     tr
                                         td(colspan="3")
-                                            ul(style="padding-left:20px")
-                                                li(v-for="key in Object.keys(newParticipations)" v-if="newParticipations[key].length>0")
+                                            ul(v-if="partsReady" style="padding-left:20px")
+                                                li(v-for="key in Object.keys(newParticipations)" v-if="newParticipations[key].length")
                                                     b {{ participacoesDic[key] }}:
                                                     ul
                                                         li(v-for="(c, index) in newParticipations[key]")
-                                                            | {{ c.codigo }} - {{ c.titulo }}
+                                                            | {{ c.label }}
                                                             button(
                                                                 @click="newParticipations[key].splice(index,1)"
                                                             ) x
