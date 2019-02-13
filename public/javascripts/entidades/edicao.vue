@@ -33,7 +33,11 @@ var org = new Vue({
         classesReady: false,
 
         partsReady: false,
-        participations: {
+        novoTipoPart: "",
+        novaPart: "",
+       // newParticipations: [],
+
+        participacoes: {
             Apreciador: [],
             Assessor: [],
             Comunicador: [],
@@ -41,7 +45,7 @@ var org = new Vue({
             Executor: [],
             Iniciador: [],
         },
-        participationsDic: {
+        participacoesDic: {
             Apreciador: "Apreciar",
             Assessor: "Assessorar",
             Comunicador: "Comunicar",
@@ -60,7 +64,19 @@ var org = new Vue({
 
         editParts:false,
     },
-    //componentes necessários para o funcionamento do Vue
+    computed: {
+        partOptions: function(){
+            var dictionary = this.participacoesDic;
+            return Object.keys(this.participacoes).map(
+                function(a){
+                    return{
+                        label: dictionary[a],
+                        value: a
+                    }
+                }
+            )
+        }
+    },
     components: {
         spinner: VueStrap.spinner,
         modal: VueStrap.modal,
@@ -145,20 +161,22 @@ var org = new Vue({
                     for(var i=0; i < this.participantePNs.length; i++ ){
                         tipoPar = this.participantePNs[i].tipoPar.replace(/.*temParticipante(.*)/, '$1');
 
-                        this.participations[tipoPar].push(
+                        this.participacoes[tipoPar].push(
                                      { titulo: this.participantePNs[i].titulo,
                                        codigo: this.participantePNs[i].codigo 
                                        })
+                                       console.log(this.participantePNs[i].codigo);
                         participa = true
                     }
-                    this.newParticipations = JSON.parse(JSON.stringify(this.participations));
+                    this.newParticipations = JSON.parse(JSON.stringify(this.participacoes));
+                    console.log(this.participantePNs);
+                    console.log(this.newParticipations)
                     if(participa) this.partsReady = true;
                 })
                 .catch(function (error) {
                     console.error(error);
                 });
         },
-        // Falta backend das classes
         loadClasses: function () {
             var classesToProcess = []
 
@@ -172,6 +190,7 @@ var org = new Vue({
                         var myClasse = {codigo: c.codigo, titulo: c.titulo, label: c.codigo + ' - ' + c.titulo }
                         this.listaClasses.push(myClasse)
                     }
+                    console.log(this.listaClasses)
                     this.classesReady = true;
                 })
                 .catch(function (error) {
@@ -221,15 +240,15 @@ var org = new Vue({
                 dataObj.dominio = JSON.parse(JSON.stringify(temp));
             }
             if (this.editParts) {
-                for (const pType in this.participations) {
+                for (const pType in this.participacoes) {
 
                     var temp = {
                         add: null,
                         del: null,
                     };
 
-                    temp.add = this.subtractArray(this.newParticipations[pType], this.participations[pType]);
-                    temp.del = this.subtractArray(this.participations[pType], this.newParticipations[pType]);
+                    temp.add = this.subtractArray(this.newParticipations[pType], this.participacoes[pType]);
+                    temp.del = this.subtractArray(this.participacoes[pType], this.newParticipations[pType]);
 
                     dataObj.parts[pType] = JSON.parse(JSON.stringify(temp));
                 }
