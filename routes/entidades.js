@@ -3,7 +3,7 @@ var router = express.Router();
 
 var Auth = require('../controllers/auth.js');
 
-router.get('/', function(req, res) {
+router.get('/', Auth.isLoggedInAPI, function(req, res) {
 	res.render('entidades/listagem', {title: "Entidades"});
 });
 

@@ -1,0 +1,52 @@
+extends ../layout
+block corpo
+    #profile.panel.panel-default.panel-custom
+        .panel-heading
+            h1.page-header Informação chave API
+                if key.active==true
+                    a(href='../desativar/'+key.id style="float:right" margin-left: 80px)  
+                        span.glyphicon.glyphicon-lock(style="padding-right:15px" data-toggle="tooltip" title="Desativar chave API")
+                else 
+                    a(href='../ativar/'+key.id style="float:right" margin-left: 80px)  
+                        span.glyphicon.glyphicon-lock(style="padding-right:15px" data-toggle="tooltip" title="Reativar chave API")
+                a(href='../eliminar/'+key.id style="float:right" margin-left: 80px)  
+                    span.glyphicon.glyphicon-trash(style="padding-right:15px" data-toggle="tooltip" title="Eliminar chave API")
+        .panel-body
+            .form-group
+                table.consulta(width="100%")
+                    //-CHAVE
+                    tr
+                        td
+                            .info-label Chave: 
+                        td(style="width:80%")
+                            | #{key.key}
+                    //-ESTADO
+                    tr
+                        td
+                            .info-label Estado: 
+                        td(style="width:80%")
+                            if key.active==true
+                                | Ativa
+                            else
+                                | Desativada
+                    //-UTILIZACOES
+                    tr
+                        td
+                            .info-label Número utilizações: 
+                        td(style="width:80%")
+                            | #{key.nCalls}
+                    //-ULTIMA UTILIZACAO
+                    tr
+                        td
+                            .info-label Última utilização: 
+                        td(style="width:80%")
+                            if key.lastUsed!=null
+                                | #{key.lastUsed.toUTCString()}
+                            else
+                                | Nunca
+                    //-DATA CRIAÇÃO
+                    tr
+                        td
+                            .info-label Data criação: 
+                        td(style="width:80%")
+                            | #{key.created.toUTCString()}

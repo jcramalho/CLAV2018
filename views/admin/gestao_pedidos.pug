@@ -54,5 +54,22 @@ block corpo
                 :linhas="linhas"
             )
 
-append scripts    
+    if user.level>=6
+        .titlebox
+            | Gestão de chaves API
+
+        #nova_chave
+            hidden-table-v2(
+                titulo="Registo de nova chave API"
+                :linhas="linhas"
+            )
+
+        #listagem_chaves
+            hidden-table-v2(
+                titulo="Listagem de chaves API"
+                :linhas="linhas"
+            )
+
+
+append scripts
     script(src="/javascripts/admin/gestao_pedidos.vue")

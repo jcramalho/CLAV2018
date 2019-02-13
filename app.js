@@ -120,6 +120,7 @@ app.use('/api/vocabularios',require('./routes/api/vocabularios'));
 app.use('/api/pedidos',require('./routes/api/pedidos'));
 app.use('/api/trabalhos',require('./routes/api/trabalhos'));
 app.use('/api/users',require('./routes/api/users'));
+app.use('/api/chaves',require('./routes/api/chaves'));
 app.use('/auth',require('./routes/auth/user'));
 app.use('/api/utils', require('./routes/api/utils'))
 

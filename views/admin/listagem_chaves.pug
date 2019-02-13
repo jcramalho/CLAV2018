@@ -1,0 +1,27 @@
+extends ../layout
+block corpo
+    h1.page-header Listagem de chaves API
+
+    .row
+        #tabela-chaves.row.placeholders
+            tabela-generica(
+                v-if="ready"
+
+                :header='["Chave","Ativa?","Utilizações","Última utilização","Data expiração", "Data criação"]'
+                :display-order="['key','active','ncalls','lastused','expDate','created']"
+                :complete-rows="listaChaves"
+                :ready="ready"
+                :cwidth="['30%','7.5%','10%','17.5%','17.5%','17.5%']"
+                
+                class-table='table table-hover'
+
+                @row-clicked="rowClicked($event)"
+            )
+            h4(
+                v-else
+            ) A carregar...    
+    //-
+
+append scripts    
+    script(src="/javascripts/admin/listagem_chaves.vue")
+    script(src="/javascripts/component-tabela-generica.vue")

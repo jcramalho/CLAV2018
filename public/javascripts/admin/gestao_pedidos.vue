@@ -114,3 +114,21 @@ var editaruser = new Vue({
         ]
     },
 })
+
+var nova_chave = new Vue({
+    el: '#nova_chave',
+    data: {
+        linhas:[
+            ["De modo a proceder ao registo de uma nova chave API na plataforma CLAV, por favor clique no seguinte botão.   ",'<form method="get" action="/gestao/nova_chave"><button type="submit">Registo chave API</button></form>'],
+        ]
+    },
+})
+
+var listagem_chaves = new Vue({
+    el: '#listagem_chaves',
+    data: {
+        linhas:[
+            ["De modo a proceder à listagem de chaves API existentes na plataforma CLAV, por favor clique no seguinte botão.   ",'<form method="get" action="/gestao/listagem_chaves"><button type="submit">Listagem chaves API</button></form>'],
+        ]
+    },
+})

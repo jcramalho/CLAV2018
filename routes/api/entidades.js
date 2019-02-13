@@ -23,7 +23,7 @@ const estaDisponivel = (req, res, next) => {
 };
 
 // Lista todas as entidades: id, sigla, designacao, internacional
-router.get('/', async (req, res) => {
+router.get('/', Auth.isLoggedInAPI, async (req, res) => {
     return Entidades.listar(req.query)
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na listagem das entidades: ${erro}`));
