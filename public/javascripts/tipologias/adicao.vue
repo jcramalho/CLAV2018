@@ -67,7 +67,7 @@ var newTip = new Vue({
                     'content-type': 'application/json'
                 }
             })
-                .then(function (response) {    
+                .then(function () {    
                     this.$refs.spinner.hide();
 
                     window.location.href = '/pedidos/submissao';

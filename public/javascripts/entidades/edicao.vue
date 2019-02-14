@@ -17,6 +17,8 @@ var org = new Vue({
         listaTipologias: [],
         newListaTipologias: [],
 
+        dominio: [],
+
         editTipologia: false,
         tipoListaCompleta: [],
         newTipologia:"",
@@ -253,6 +255,36 @@ var org = new Vue({
                     add: null,
                     del: null,
                 },
+                parts: {
+                    Apreciador: {
+                        add: null,
+                        del: null,
+                    },
+                    Assessor: {
+                        add: null,
+                        del: null,
+                    },
+                    Comunicador: {
+                        add: null,
+                        del: null,
+                    },
+                    Decisor: {
+                        add: null,
+                        del: null,
+                    },
+                    Executor: {
+                        add: null,
+                        del: null,
+                    },
+                    Iniciador: {
+                        add: null,
+                        del: null,
+                    },
+                },
+                tipols: {
+                    add: null,
+                    del: null,
+                },
             }
             if(this.editDes) {
                 dataObj.des = this.newDes;
@@ -271,6 +303,8 @@ var org = new Vue({
 
                 temp.add = this.subtractArray(this.newListaTipologias, this.listaTipologias);
                 temp.del = this.subtractArray(this.listaTipologias, this.newListaTipologias);
+
+                dataObj.tipols = JSON.parse(JSON.stringify(temp));
             }
             if (this.editDono) {
                 var temp = {
@@ -285,7 +319,6 @@ var org = new Vue({
             }
             if (this.editParts) {
                 for (const pType in this.participacoes) {
-
                     var temp = {
                         add: null,
                         del: null,
@@ -294,27 +327,29 @@ var org = new Vue({
                     temp.add = this.subtractArray(this.newParticipations[pType], this.participacoes[pType]);
                     temp.del = this.subtractArray(this.participacoes[pType], this.newParticipations[pType]);
 
+                    console.log(this.newParticipations[pType])
+                    console.log(temp.del)
+
                     dataObj.parts[pType] = JSON.parse(JSON.stringify(temp));
                 }
             }
-            //Realiza um put apos update
+            console.log(dataObj);
             this.$http.put('/api/entidades/'+this.id, dataObj, {
                     headers: {
                         'content-type': 'application/json'
                     }
-                })
+            })
                 .then(function (response){
                     this.$refs.spinner.hide();
-                        
-                    var resp = response.body;
-                    if (resp != "Designação já existentente!") {
-                        window.location.href = '/entidades/' + this.id;
-                    } else {
-                        messageL.showMsg(resp);
-                    }
+
+                    window.location.href = '/pedidos/submissao';
+
                 })
-                .catch(function (error) {
-                    console.error(error);
+                .catch(error => {if (error.status === 409) {
+                    messageL.showMsg(error.body);
+                    this.$refs.spinner.hide();
+                } 
+                console.error(error);
                 });
         }
     },
