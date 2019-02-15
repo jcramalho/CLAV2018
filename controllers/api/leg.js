@@ -31,7 +31,7 @@ Leg.listar = (filtro) => {
              clav:diplomaNumero ?numero;
              clav:diplomaTipo ?tipo;
              clav:diplomaSumario ?sumario;
-             clav:diplomaEstado ?estado;
+             clav:diplomaEstado 'Ativo';
         OPTIONAL {
             ?uri clav:diplomaEntidade ?ent.
             ?ent clav:entSigla ?entidades;

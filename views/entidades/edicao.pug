@@ -82,15 +82,17 @@ block corpo
                         td(v-if="editTipologia" style="width:80%")
                                 table
                                     tr
-                                        td
+                                        td(width="1000px")
                                             v-select.custom-select( 
                                                 v-model="newTipologia"
                                                 :options="tipoListaCompleta"
                                             )
                                         td
-                                            button(
-                                                @click="newListaTipologias.unshift(newTipologia.value)"
-                                            ) +
+                                            input(
+                                                type="button"
+                                                @click="addTipo"
+                                                value="+"
+                                            )
                                     tr(v-if="newListaTipologias.length")
                                         td
                                             ul(style="padding-left:20px")
@@ -122,24 +124,28 @@ block corpo
                             .info-label Natureza de intervenção nos Processos de Negócio:
                         td(v-if="editDono" style="width:80%")
                             table
+                                .col-sm
+                                    label Como Dono:
+                                .col-sm
                                 tr
                                     td(width="1000px")
                                         v-select.custom-select(
-                                            v-model="newClass"
-                                            label="label"
-                                            :options="classList"
+                                            v-model="novaClasse"
+                                            :options="listaClasses"
                                         )
                                     td
-                                        button(
-                                            @click="newDono.unshift(newClass)"
-                                        ) +
-                                tr(v-if="newDono.length")
-                                    td(colspan="2")
+                                        input(
+                                                type="button"
+                                                @click="addDono"
+                                                value="+"
+                                            )
+                                tr(v-if="novoDono.length")
+                                    td
                                         ul(style="padding-left:20px")
-                                            li(v-for="(c,index) in newDono")
-                                                | {{ c.label }} 
+                                            li(v-for="(c,index) in novoDono")
+                                                | {{ c.codigo }} - {{ c.titulo }}
                                                 button(
-                                                    @click= "newDono.splice(index,1)"
+                                                    @click= "novoDono.splice(index,1)"
                                                 ) x
                         td(v-else style="width:10%")
                             .col-sm
@@ -147,7 +153,7 @@ block corpo
                             .col-sm
                                 ul(v-if="eDonoProcessos" style="padding-left:50px" :class="{'is-collapsed' : domainCollapsed }")
                                     li(v-for="p in donoProcessos")
-                                        a(:href="'/classes/consultar/c'+ p.codigo") {{ p.codigo }}
+                                        a(:href="'/classes/c'+ p.codigo") {{ p.codigo }}
                                         | - {{ p.titulo }}
                                 a(@click="domainCollapsed=!domainCollapsed" v-if="donoProcessos.length>6").maozinha
                                     span(v-if="domainCollapsed") Mostrar mais...
@@ -173,40 +179,42 @@ block corpo
                             td(v-if="editParts" style="width:80%")
                                 table
                                     tr
-                                        td(width="200px")
+                                        td(width="300px")
                                             v-select.custom-select(
-                                                v-model="newPartType"
+                                                v-model="novoTipoPart"
                                                 :options="partOptions"
                                             )
-                                        td(width="800px")
+                                        td(width="700px")
                                             v-select.custom-select(
-                                                v-model="newPart"
-                                                :options="classList"
+                                                v-model="novaPart"
+                                                :options="listaClasses"
                                             )
                                         td
-                                            button(
-                                                @click="newParticipations[newPartType.value].unshift(newPart.value)"
-                                            ) +
+                                            input(
+                                                type="button"
+                                                @click="addPart"
+                                                value="+"
+                                            )
                                     tr
                                         td(colspan="3")
                                             ul(v-if="partsReady" style="padding-left:20px")
-                                                li(v-for="key in Object.keys(newParticipations)" v-if="newParticipations[key].length>0")
-                                                    b {{ participationsDic[key] }}:
+                                                li(v-for="key in Object.keys(newParticipations)" v-if="newParticipations[key].length")
+                                                    b {{ participacoesDic[key] }}:
                                                     ul
-                                                        li(v-for="(p, index) in newParticipations[key]")
-                                                            | {{ p.Code }} - {{ p.Title }}
+                                                        li(v-for="(c, index) in newParticipations[key]")
+                                                            | {{ c.label }}
                                                             button(
                                                                 @click="newParticipations[key].splice(index,1)"
                                                             ) x
                             td(v-else style="width:80%")
                                 ul(v-if="partsReady" style="padding-left:20px")
-                                    li(v-for="key in Object.keys(participations)" v-if="participations[key].length>0")
-                                        b  {{ participationsDic[key] }}:
+                                    li(v-for="key in Object.keys(participacoes)" v-if="participacoes[key].length>0")
+                                        b  {{ participacoesDic[key] }}:
                                         ul(:class="{'is-collapsed' : partsCollapsed[key] }")
-                                            li(v-for="p in participations[key]")
-                                                a(:href="'/classes/consultar/'+p.id") {{ p.codigo }}
+                                            li(v-for="p in participacoes[key]")
+                                                a(:href="'/classes/'+p.id") {{ p.codigo }}
                                                 |  - {{ p.titulo }}
-                                        a(@click="partsCollapsed[key]=!partsCollapsed[key]" v-if="participations[key].length>6").maozinha
+                                        a(@click="partsCollapsed[key]=!partsCollapsed[key]" v-if="participacoes[key].length>6").maozinha
                                             span(v-if="partsCollapsed[key]") Mostrar mais...
                                             span(v-else) Mostrar menos...
                             if user
@@ -230,10 +238,9 @@ block corpo
                 input.btn.btn-xs.btn-default.col-sm-1(
                     type="button" 
                     @click="update" 
-                    value="Confirmar" 
-                    :disabled="!(editDes || editInternacional || editTipologia)"  
+                    value="Submeter alteração" 
+                    :disabled="!(editDes || editInternacional || editDono || editParts || editTipologia)"  
                 )
-                //-|| editInternational || editDono || editParts || editTipologia)
 
 append scripts    
     script(src="/javascripts/entidades/edicao.vue")

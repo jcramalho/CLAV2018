@@ -82,8 +82,9 @@ Tipologias.criar = (tipologia, utilizador) => {
         clav:tip_${tipologia.sigla} rdf:type owl:NamedIndividual , clav:TipologiaEntidade ;
             clav:tipDesignacao '${tipologia.designacao}' ;
             clav:tipSigla '${tipologia.sigla}' ;
-            clav:tipEstado "Harmonização" .
-        ${tipologia.entidades.map(entidade => `clav:${entidade} clav:pertenceTipologiaEnt clav:tip_${tipologia.sigla} .`).join('\n')}
+            
+        ${tipologia.entidades.map(entidade => `clav:contemEntidade clav:${entidade} ;`).join('\n')}
+        clav:tipEstado "Harmonização" .
     }`;
     const pedido = {
         criadoPor: utilizador,

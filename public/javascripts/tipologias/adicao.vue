@@ -1,4 +1,4 @@
-var newOrg = new Vue({
+var newTip = new Vue({
     el: '#nova-tipologia-form',
     data: {
         tipologia: {
@@ -67,7 +67,7 @@ var newOrg = new Vue({
                     'content-type': 'application/json'
                 }
             })
-                .then(function (response) {    
+                .then(function () {    
                     this.$refs.spinner.hide();
 
                     window.location.href = '/pedidos/submissao';

@@ -39,14 +39,13 @@ var newLeg = new Vue({
             this.message="";
 
             var formats= {
-                numero: new RegExp(/[0-9]\d{6}$\/[0-9]\d{4}$/),
+                numero: new RegExp(/[0-9]\d{5}\/[0-9]\d{3}$/),
                 data: new RegExp(/[0-9]+\/[0-9]+\/[0-9]+/)
             }
 
             for(let field in formats){
                 if(!formats[field].test(this.diploma[field])){
                     messageL.showMsg("O campo " + field + " está no formato errado!");
-                    //this.message+= "<p>Campo '"+field+"' está no formato errado</p>";
                     return false;
                 }
             }

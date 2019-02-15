@@ -9,7 +9,7 @@ block corpo
                     //- NOME
                     tr
                         td(style="width:10%")
-                            label Nome: 
+                            label Designação: 
                         td(v-if="editName" style="width:80%")
                             input(
                                 size="50"
@@ -145,7 +145,7 @@ block corpo
                     //- ELEMENTOS
                     tr
                         td(style="width:10%")
-                            label Elementos:
+                            label Entidades:
                         td(v-if="editElems" style="width:80%")
                             table
                                 tr
@@ -192,7 +192,7 @@ block corpo
                 input.btn.btn-xs.btn-default.col-sm-1(
                     type="button" 
                     @click="update" 
-                    value="Confirmar" 
+                    value="Submeter" 
                     :disabled="!((editName && newName) || editDomain || editParts || editElems)"
                 )
                 input.btn.btn-xs.btn-warning.col-sm-1(

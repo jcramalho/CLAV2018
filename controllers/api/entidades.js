@@ -137,8 +137,9 @@ Entidades.criar = (entidade, utilizador) => {
             clav:entDesignacao '${entidade.designacao}' ;
             clav:entSigla '${entidade.sigla}' ;
             clav:entInternacional '${entidade.internacional}' ;
+            clav:entSIOE '${entidade.sioe}';
 
-            ${entidade.tipologias.map(tipologia => `clav:pertenceTipologiaEnt clav:${tipologia} ;`).join('\n')}
+            ${entidade.tipologias.map(tipologia => `clav:pertenceTipologiaEnt clav:tip_${tipologia.sigla} ;`).join('\n')}
             clav:entEstado 'Harmonização' .
     }`;
     const id = `clav:ent_${entidade.sigla}`;
@@ -167,17 +168,24 @@ Entidades.criar = (entidade, utilizador) => {
                     predicado: "clav:entInternacional",
                     objeto: entidade.internacional,
                 },
+                {
+                    nome: "SIOE",
+                    sujeito: id,
+                    predicado: "clav:entSIOE",
+                    objeto: entidade.sioe,
+                }
             ].concat(entidade.tipologias.map(tipologia => ({
                 nome: "Tipologias",
                 sujeito: id,
                 predicado: "clav:pertenceTipologiaEnt",
-                objeto: tipologia
+                objeto: tipologia.sigla,
             }))),
+        },
             distribuicao: [{
                 estado: 'Submetido',
             }]
-        },
     };
+    console.log(pedido);
     return client.query(query)
         .execute()
         .then(() => Pedidos.criar(pedido));
