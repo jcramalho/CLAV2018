@@ -384,7 +384,7 @@ var newClass = new Vue({
         // Carrega os Processos da BD....................
 
         loadProcessos: function () {
-            this.$http.get("/api/classes/nivel/3")
+            this.$http.get("/api/classes?nivel=3")
                 .then(function (response) {
                     this.listaProcessos = response.body
                         .map(function (item) {
@@ -481,7 +481,7 @@ var newClass = new Vue({
 
         loadPais: function () {
             this.classesPai = [{label: 'Por selecionar', value: 'Indefinido'}];
-            this.$http.get("/api/classes/nivel/" + (this.classe.nivel - 1))
+            this.$http.get("/api/classes?nivel=" + (this.classe.nivel - 1))
                 .then(function (response) {
                     this.classesPai = this.classesPai.concat(response.body.map(function (item) {
                         return {
