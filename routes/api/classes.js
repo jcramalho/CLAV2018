@@ -7,7 +7,7 @@ var axios = require('axios');
 var express = require('express');
 var router = express.Router();
 
-// Devolve a árvore de classes em arrays aninhados
+// Devolve as classes em vários formatos podendo ser filtradas por nível 
 router.get('/', async (req, res) => { 
     try {
         if(req.query.formato == "arvore"){
@@ -56,15 +56,6 @@ router.get('/', async (req, res) => {
     }
 })
 
-// Devolve a lista de classes em num array simples
-/* router.get('/lista', async (req, res) => { 
-    try {
-        res.jsonp(await State.getClassesFlatList());  
-    } catch(err) {
-        res.status(500).send(`Erro na listagem das classes em formato "flat list": ${err}`)
-    }
-}) */
-
 // Verifica se um determinado código de classe já existe
 router.get('/verificar/:codigo', async (req, res) => {
     try {
@@ -73,40 +64,6 @@ router.get('/verificar/:codigo', async (req, res) => {
         res.status(500).send(`Erro na verificação de um código: ${err}`)
     }
 })
-
-// Devolve a lista de classes de nível n [1..4]: [id, codigo, titulo]
-/* router.get('/nivel/:n', async (req, res) => {
-    switch(req.params.n){
-        case '1': try {
-                res.jsonp(await State.getLevel1Classes());
-                break  
-            } catch(err) {
-                res.status(500).send(`Erro na listagem geral das classes de nível 1: ${err}`)
-                break
-            }
-        case '2': try {
-                res.jsonp(await State.getLevel2Classes());  
-                break
-            } catch(err) {
-                res.status(500).send(`Erro na listagem geral das classes de nível 2: ${err}`)
-                break
-            }  
-        case '3': try {
-                res.jsonp(await State.getLevel3Classes()); 
-                break 
-            } catch(err) {
-                res.status(500).send(`Erro na listagem geral das classes de nível 3: ${err}`)
-                break
-            }
-        case '4': try {
-                res.jsonp(await State.getLevel4Classes()); 
-                break 
-            } catch(err) {
-                res.status(500).send(`Erro na listagem geral das classes de nível 4: ${err}`)
-                break
-            }
-    }
-}) */
 
 router.get('/:id', async function (req, res) {
     try {

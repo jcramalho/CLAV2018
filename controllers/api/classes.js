@@ -30,67 +30,68 @@ Classes.listar = async nivel => {
 
 // Devolve toda a informação de uma classe
 Classes.retrieve = async id => {
-    var classe = {
-        // Metainformação e campos da área de Descrição
-
-        nivel: 1,
-        pai: {},
-        codigo: "",
-        titulo: "",
-        descricao: "",
-        filhos: [],
-        notasAp: [],
-        exemplosNotasAp: [],
-        notasEx: [],
-        termosInd: [],
-
-        temSubclasses4Nivel: false,
-        temSubclasses4NivelPCA: false,
-        temSubclasses4NivelDF: false,
-        subdivisao4Nivel01Sintetiza02: true,
-
-        // Campos da área do Contexto de Avaliação
-        // Tipo de processo
-
-        tipoProc: "PC",
-        procTrans: "N",
-
-        // Donos do processo: lista de entidades
-
-        donos: [],
-
-        // Participantes no processo: lista de entidades
-
-        participantes: [],
-
-        // Processos Relacionados
-
-        processosRelacionados: [],
-
-        // Legislação Associada
-
-        legislacao: [],
-
-        // Bloco de decisão de avaliação: PCA e DF
-
-        pca: {
-            valor: "",
-            formaContagem: "",
-            subFormaContagem: "",
-            justificacao: []        // j = [criterio]
-        },                          // criterio = {tipo, notas, [proc], [leg]}
-
-        df: {
-            valor: "NE",
-            notas: null,
-            justificacao: []
-        },
-
-        // Bloco de subclasses de nível 4, caso haja desdobramento
-
-        subclasses: []
-    };
     try{
+        var classe = {
+            // Metainformação e campos da área de Descrição
+    
+            nivel: 1,
+            pai: {},
+            codigo: "",
+            titulo: "",
+            descricao: "",
+            filhos: [],
+            notasAp: [],
+            exemplosNotasAp: [],
+            notasEx: [],
+            termosInd: [],
+    
+            temSubclasses4Nivel: false,
+            temSubclasses4NivelPCA: false,
+            temSubclasses4NivelDF: false,
+            subdivisao4Nivel01Sintetiza02: true,
+    
+            // Campos da área do Contexto de Avaliação
+            // Tipo de processo
+    
+            tipoProc: "PC",
+            procTrans: "N",
+    
+            // Donos do processo: lista de entidades
+    
+            donos: [],
+    
+            // Participantes no processo: lista de entidades
+    
+            participantes: [],
+    
+            // Processos Relacionados
+    
+            processosRelacionados: [],
+    
+            // Legislação Associada
+    
+            legislacao: [],
+    
+            // Bloco de decisão de avaliação: PCA e DF
+    
+            pca: {
+                valor: "",
+                formaContagem: "",
+                subFormaContagem: "",
+                justificacao: []        // j = [criterio]
+            },                          // criterio = {tipo, notas, [proc], [leg]}
+    
+            df: {
+                valor: "NE",
+                notas: null,
+                justificacao: []
+            },
+    
+            // Bloco de subclasses de nível 4, caso haja desdobramento
+    
+            subclasses: []
+        };
+        
         let base = await axios.get("http://localhost:7778/api/classes/" + id + "/meta");
         classe.nivel = base.data[0].codigo.split('.').length
         classe.codigo = base.data[0].codigo
