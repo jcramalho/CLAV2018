@@ -56,20 +56,21 @@ router.get('/', async (req, res) => {
     }
 })
 
+// Devolve a informação de uma classe
+router.get('/:id', async function (req, res) {
+    try {
+        res.jsonp(await Classes.retrieve(req.params.id)) 
+    } catch(err) {
+        res.status(500).send(`Erro na recuperação da classe ` + req.params.id + `: ${err}`)
+    }
+})
+
 // Verifica se um determinado código de classe já existe
 router.get('/verificar/:codigo', async (req, res) => {
     try {
         res.jsonp(await State.verificaCodigo(req.params.codigo)) 
     } catch(err) {
         res.status(500).send(`Erro na verificação de um código: ${err}`)
-    }
-})
-
-router.get('/:id', async function (req, res) {
-    try {
-        res.jsonp(await Classes.retrieve(req.params.id)) 
-    } catch(err) {
-        res.status(500).send(`Erro na recuperação da classe ` + req.params.id + `: ${err}`)
     }
 })
 
@@ -166,118 +167,11 @@ router.get('/:id/df', (req, res) => {
         //.catch(erro => res.jsonp({cod: "404", mensagem: "Erro na consulta do DF associado à classe "+req.params.id+": " + erro}))
 })
 
-// Falta testar e decidir o que devolver
+// Verifica se um código de classe existe
 router.get('verifica/:codigo', (req, res) => {
     Classes.verificaCodigo(req.params.codigo, req.params.codigo.split('.').length)
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na verificação da existência do código ${req.params.codigo}: ${erro}`))
-})
-
-
-// ================================================================================
-// Daqui para baixo ainda pode ser aproveitado...
-
-
-
-
-/* router.get('/', (req, res) => {
-    Classes.filterNone()
-        .then(list => res.send(list))
-        .catch(function (error) {
-            console.error(error);
-        });
-}) */
-
-
-router.get('/filtrar/comuns', function (req, res) {
-    Classes.filterCommon()
-        .then(list => res.send(list))
-        .catch(function (error) {
-            console.error(error);
-        });
-})
-
-router.get('/filtrar/restantes/(:tipols)?', function (req, res) {
-    if(req.params.tipols){
-        var orgs = req.params.tipols.split(',');
-    }
-
-    Classes.filterRest(orgs)
-        .then(list => res.send(list))
-        .catch(function (error) {
-            console.error(error);
-        });
-})
-
-router.get('/filtrar/:orgs', function (req, res) {
-    Classes.filterByOrgs(req.params.orgs.split(','))
-        .then(list => res.send(list))
-        .catch(function (error) {
-            console.error(error);
-        });
-})
-
-router.get('/:id/descendenciaIndex', function (req, res) {
-    Classes.childrenNew(req.params.id)
-        .then(list => res.send(list))
-        .catch(function (error) {
-            console.error(error);
-        });
-})
-
-router.put('/:id', Auth.isLoggedInAPI, function (req, res) {
-    var dataObj = req.body;
-    
-    Classes.updateClass(dataObj)
-        .then(function (response) {
-            Logging.logger.info('Update a classe \'' + req.params.id + '\' por utilizador \'' + req.user._id + '\'');
-
-            req.flash('success_msg', 'Info. de Classe actualizada');
-            res.send("Ok");
-        })
-        .catch(error => console.error(error));
-})
-
-router.post('/', Auth.isLoggedInAPI, function (req, res) {
-    var dataObj = req.body;
-
-    Classes.checkCodeAvailability(dataObj.Code, dataObj.Level)
-        .then(function (count) {
-            if (count > 0) {
-                res.send("Código já existente!");
-            }
-            else {
-                Classes.createClass(dataObj)
-                    .then(function () {
-                        Logging.logger.info('Submetida classe \'c' + dataObj.Code + '\' por utilizador \'' + req.user._id + '\'');
-                        
-                        let pedidoData = {
-                            type: "Novo PN",
-                            desc: "Novo processo de negócio",
-                            id: "c" + dataObj.Code,
-                            alt: null
-                        }
-
-                        Pedidos.add(pedidoData, req, res);
-                    })
-                    .catch(error => console.error(error));
-            }
-        })
-        .catch(error => console.error("Erro a checkar o codigo: " + error))
-
-})
-
-router.delete('/:id', Auth.isLoggedInAPI, function (req, res) {
-    Classes.deleteClass(req.params.id)
-        .then(function () {
-            Logging.logger.info('Desativada classe \'' + req.params.id + '\' por utilizador \'' + req.user._id + '\'');
-
-            req.flash('success_msg', 'Classe desativada');
-            res.send("Entrada apagada!");
-        })
-        .catch(function (error) {
-            console.error(error);
-        });
 })
 
 module.exports = router;

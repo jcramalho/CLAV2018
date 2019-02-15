@@ -3,6 +3,7 @@ const normalize = require('../../controllers/api/utils').normalize
 const Pedidos = require('../../controllers/api/pedidos')
 const axios = require('axios')
 const Classes = module.exports
+const myhost = require('../../config/database').host
 
 // Devolve a lista de classes de um determinado nível, por omissão do nível 1
 Classes.listar = async nivel => {
@@ -92,7 +93,7 @@ Classes.retrieve = async id => {
             subclasses: []
         };
         
-        let base = await axios.get("http://localhost:7778/api/classes/" + id + "/meta");
+        let base = await axios.get(myhost + "/api/classes/" + id + "/meta");
         classe.nivel = base.data[0].codigo.split('.').length
         classe.codigo = base.data[0].codigo
         classe.pai.codigo = base.data[0].codigoPai
@@ -102,48 +103,48 @@ Classes.retrieve = async id => {
         classe.tipoProc = base.data[0].procTipo
         classe.procTrans = base.data[0].procTrans
 
-        let filhos = await axios.get("http://localhost:7778/api/classes/" + id + "/descendencia");
+        let filhos = await axios.get(myhost + "/api/classes/" + id + "/descendencia");
         if(filhos.data.length > 0){
             classe.filhos = filhos.data
             if(classe.nivel == 3) classe.temSubclasses4Nivel = true
         }
     
-        let notasAp = await axios.get("http://localhost:7778/api/classes/" + id + "/notasAp");
+        let notasAp = await axios.get(myhost + "/api/classes/" + id + "/notasAp");
         classe.notasAp = notasAp.data
 
-        let exemplosNotasAp = await axios.get("http://localhost:7778/api/classes/" + id + "/exemplosNotasAp");
+        let exemplosNotasAp = await axios.get(myhost + "/api/classes/" + id + "/exemplosNotasAp");
         classe.exemplosNotasAp = exemplosNotasAp.data
 
-        let notasEx = await axios.get("http://localhost:7778/api/classes/" + id + "/notasEx");
+        let notasEx = await axios.get(myhost + "/api/classes/" + id + "/notasEx");
         classe.notasEx = notasEx.data
 
-        let termosInd = await axios.get("http://localhost:7778/api/classes/" + id + "/ti");
+        let termosInd = await axios.get(myhost + "/api/classes/" + id + "/ti");
         classe.termosInd = termosInd.data
 
-        let donos = await axios.get("http://localhost:7778/api/classes/" + id + "/dono");
+        let donos = await axios.get(myhost + "/api/classes/" + id + "/dono");
         classe.donos = donos.data
 
-        let participantes = await axios.get("http://localhost:7778/api/classes/" + id + "/participante");
+        let participantes = await axios.get(myhost + "/api/classes/" + id + "/participante");
         classe.participantes = participantes.data
 
-        let procRel = await axios.get("http://localhost:7778/api/classes/" + id + "/procRel");
+        let procRel = await axios.get(myhost + "/api/classes/" + id + "/procRel");
         classe.processosRelacionados = procRel.data 
 
-        let legislacao = await axios.get("http://localhost:7778/api/classes/" + id + "/legislacao");
+        let legislacao = await axios.get(myhost + "/api/classes/" + id + "/legislacao");
         classe.legislacao = legislacao.data
 
-        let pca = await axios.get("http://localhost:7778/api/classes/" + id + "/pca");
+        let pca = await axios.get(myhost + "/api/classes/" + id + "/pca");
         if(pca.data.length > 0) classe.pca = pca.data[0]
     
         if(classe.pca && classe.pca.idJust){
-            let just = await axios.get("http://localhost:7778/api/classes/justificacao/" + classe.pca.idJust);
+            let just = await axios.get(myhost + "/api/classes/justificacao/" + classe.pca.idJust);
             classe.pca.justificacao = just.data
         }
 
-        let df = await axios.get("http://localhost:7778/api/classes/" + id + "/df");
+        let df = await axios.get(myhost + "/api/classes/" + id + "/df");
         if(df.data.length > 0) classe.df = df.data[0]
         if(classe.df && classe.df.idJust){
-            let just = await axios.get("http://localhost:7778/api/classes/justificacao/" + classe.df.idJust);
+            let just = await axios.get(myhost + "/api/classes/justificacao/" + classe.df.idJust);
             classe.df.justificacao = just.data
         }
 
