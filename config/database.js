@@ -11,5 +11,7 @@ module.exports.onthology = new SparqlClient('http://localhost:7200/repositories/
     skos: 'http://www.w3.org/2004/02/skos/core#'
 });
 
+module.exports.host = 'http://localhost:7778'
+
 
 module.exports.userDB = 'mongodb://localhost/m51-clav'
