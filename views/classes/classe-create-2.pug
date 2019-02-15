@@ -31,7 +31,7 @@ block corpo
                     select-value-from-list(
                         :initial-value = "classesPai[0].value"
                         :options = "classesPai"
-                        @value-change="classe.pai = $event"
+                        @value-change="classe.pai.codigo = $event"
                     )
 
                 //- CÓDIGO
@@ -348,7 +348,7 @@ block corpo
                                         )
                         .panel.panel-default
                             .panel-heading 
-                                b Justificação do Prazo de Consrvação Administrativa
+                                b Justificação do Prazo de Conservação Administrativa
                             .panel-body 
                                 .fieldset.form-group(v-for="(crit, cindex) in classe.pca.justificacao")
                                     .form-group.row(v-if="crit.tipo=='Indefinido'")

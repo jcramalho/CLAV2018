@@ -1,6 +1,7 @@
 const client = require('../../config/database').onthology
 const normalize = require('../../controllers/api/utils').normalize
 const Pedidos = require('../../controllers/api/pedidos')
+const axios = require('axios')
 const Classes = module.exports
 
 // Devolve a lista de classes de um determinado nível, por omissão do nível 1
@@ -27,8 +28,133 @@ Classes.listar = async nivel => {
     catch(erro) { throw (erro);}
 }
 
+// Devolve toda a informação de uma classe
+Classes.retrieve = async id => {
+    var classe = {
+        // Metainformação e campos da área de Descrição
+
+        nivel: 1,
+        pai: {},
+        codigo: "",
+        titulo: "",
+        descricao: "",
+        filhos: [],
+        notasAp: [],
+        exemplosNotasAp: [],
+        notasEx: [],
+        termosInd: [],
+
+        temSubclasses4Nivel: false,
+        temSubclasses4NivelPCA: false,
+        temSubclasses4NivelDF: false,
+        subdivisao4Nivel01Sintetiza02: true,
+
+        // Campos da área do Contexto de Avaliação
+        // Tipo de processo
+
+        tipoProc: "PC",
+        procTrans: "N",
+
+        // Donos do processo: lista de entidades
+
+        donos: [],
+
+        // Participantes no processo: lista de entidades
+
+        participantes: [],
+
+        // Processos Relacionados
+
+        processosRelacionados: [],
+
+        // Legislação Associada
+
+        legislacao: [],
+
+        // Bloco de decisão de avaliação: PCA e DF
+
+        pca: {
+            valor: "",
+            formaContagem: "",
+            subFormaContagem: "",
+            justificacao: []        // j = [criterio]
+        },                          // criterio = {tipo, notas, [proc], [leg]}
+
+        df: {
+            valor: "NE",
+            notas: null,
+            justificacao: []
+        },
+
+        // Bloco de subclasses de nível 4, caso haja desdobramento
+
+        subclasses: []
+    };
+    try{
+        let base = await axios.get("http://localhost:7778/api/classes/" + id + "/meta");
+        classe.nivel = base.data[0].codigo.split('.').length
+        classe.codigo = base.data[0].codigo
+        classe.pai.codigo = base.data[0].codigoPai
+        classe.pai.titulo = base.data[0].tituloPai
+        classe.titulo = base.data[0].titulo
+        classe.descricao = base.data[0].desc
+        classe.tipoProc = base.data[0].procTipo
+        classe.procTrans = base.data[0].procTrans
+
+        let filhos = await axios.get("http://localhost:7778/api/classes/" + id + "/descendencia");
+        if(filhos.data.length > 0){
+            classe.filhos = filhos.data
+            if(classe.nivel == 3) classe.temSubclasses4Nivel = true
+        }
+    
+        let notasAp = await axios.get("http://localhost:7778/api/classes/" + id + "/notasAp");
+        classe.notasAp = notasAp.data
+
+        let exemplosNotasAp = await axios.get("http://localhost:7778/api/classes/" + id + "/exemplosNotasAp");
+        classe.exemplosNotasAp = exemplosNotasAp.data
+
+        let notasEx = await axios.get("http://localhost:7778/api/classes/" + id + "/notasEx");
+        classe.notasEx = notasEx.data
+
+        let termosInd = await axios.get("http://localhost:7778/api/classes/" + id + "/ti");
+        classe.termosInd = termosInd.data
+
+        let donos = await axios.get("http://localhost:7778/api/classes/" + id + "/dono");
+        classe.donos = donos.data
+
+        let participantes = await axios.get("http://localhost:7778/api/classes/" + id + "/participante");
+        classe.participantes = participantes.data
+
+        let procRel = await axios.get("http://localhost:7778/api/classes/" + id + "/procRel");
+        classe.processosRelacionados = procRel.data 
+
+        let legislacao = await axios.get("http://localhost:7778/api/classes/" + id + "/legislacao");
+        classe.legislacao = legislacao.data
+
+        let pca = await axios.get("http://localhost:7778/api/classes/" + id + "/pca");
+        if(pca.data.length > 0) classe.pca = pca.data[0]
+    
+        if(classe.pca && classe.pca.idJust){
+            let just = await axios.get("http://localhost:7778/api/classes/justificacao/" + classe.pca.idJust);
+            classe.pca.justificacao = just.data
+        }
+
+        let df = await axios.get("http://localhost:7778/api/classes/" + id + "/df");
+        if(df.data.length > 0) classe.df = df.data[0]
+        if(classe.df && classe.df.idJust){
+            let just = await axios.get("http://localhost:7778/api/classes/justificacao/" + classe.df.idJust);
+            classe.df.justificacao = just.data
+        }
+
+        return classe
+    }
+    catch(erro){
+        throw (erro);
+    }
+}
+
 // Devolve a metainformação de uma classe: codigo, titulo, status, desc, codigoPai?, tituloPai?, procTipo?
-Classes.consultar = id => {
+Classes.consultar = async id => {
     var query = `
             SELECT * WHERE { 
                 clav:${id} clav:titulo ?titulo;
@@ -48,24 +174,28 @@ Classes.consultar = id => {
                     ?pt skos:prefLabel ?procTipo.
                 }
             }`
-    return client.query(query)
-        .execute()
-        .then(response => normalize(response))
+    let resultado = await client.query(query).execute()
+    return normalize(resultado)
 }
 
 // Devolve a lista de filhos de uma classe: id, codigo, titulo, nFilhos
 Classes.descendencia = async id => {
-    var query = `
-        SELECT ?id ?codigo ?titulo
-        WHERE {
-            ?id clav:temPai clav:${id} ;
+    try{
+        var query = `
+            SELECT ?id ?codigo ?titulo
+            WHERE {
+                ?id clav:temPai clav:${id} ;
                     clav:classeStatus 'A';
                     clav:codigo ?codigo ;
                     clav:titulo ?titulo .
-        }
-    `
-    let resultado = await client.query(query).execute();
-    return normalize(resultado);
+            }
+            `
+        let resultado = await client.query(query).execute();
+        return normalize(resultado);
+    }
+    catch(erro){
+        throw (erro);
+    }
 }
 
 // Devolve a lista de notas de aplicação de uma classe: idNota, nota
@@ -230,7 +360,8 @@ Classes.pca = id => {
 
 // Devolve uma justificação, PCA ou DF, que é composta por uma lista de critérios: criterio, tipoLabel, conteudo
 Classes.justificacao = async id => {
-    var query = `
+    try {
+        var query = `
         SELECT
             ?criterio ?tipoLabel ?conteudo
         WHERE {
@@ -240,8 +371,10 @@ Classes.justificacao = async id => {
             ?tipo rdfs:subClassOf clav:CriterioJustificacao.
             ?tipo rdfs:label ?tipoLabel.
         }`
-    let resultado = await client.query(query).execute();
-    return normalize(resultado);
+        let result = await client.query(query).execute();
+        return normalize(result);
+    } 
+    catch(erro) { throw (erro);}
 }
 
 // Devolve a informação base do DF: idDF, valor, idJustificacao

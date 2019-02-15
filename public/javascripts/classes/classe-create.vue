@@ -191,10 +191,10 @@ var newClass = new Vue({
         helpWindow: null,
     },
     watch: {
-        'classe.pai': function () {
+        'classe.pai.codigo': function () {
             // O código da classe depende da classe pai
             this.classe.codigo = null;
-            if(this.classe.pai)
+            if(this.classe.pai.codigo)
                 this.classe.codigo = this.classe.pai.slice(1, this.classe.pai.length) + ".";
         },
         'classe.nivel': function () {
