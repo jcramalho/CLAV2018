@@ -12,11 +12,11 @@ block lateral
 block corpo
     #classe-get-form.panel.panel-default.panel-custom
         .panel-heading(v-if="dadosCarregados")
-            h1.page-header {{ classe.codigo }} - {{ classe.titulo }} 
+            h1.page-header.p-2 {{ classe.codigo }} - {{ classe.titulo }} 
         .panel-body(v-if="dadosCarregados")
             .mt-3.mb-3
                 accordion
-                    panel.p-3(header="Descritivo da Classe")
+                    panel.p-3(is-open header="Descritivo da Classe")
                         table.table-bordered.p-3
                             tr
                                 th.p-3 Nível:  
@@ -31,10 +31,9 @@ block corpo
                             tr(v-if="classe.nivel<4 && (classe.filhos.length > 0)")
                                 th.p-3 Descendência: 
                                 td.p-3
-                                    table.table
-                                        tr(v-for="f in classe.filhos" )
-                                            td
-                                                a(:href="'/classes/c'+f.codigo") {{ f.codigo }} - {{ f.titulo }}  
+                                    .list-group-flush
+                                        a.list-group-item.list-group-item-action(:href="'/classes/c'+f.codigo" v-for="f in classe.filhos") 
+                                            | {{ f.codigo }} - {{ f.titulo }}
                             //- DESCRIÇÃO
                             tr
                                 th.p-3(style="width: 10%" valign="top") Descrição: 
