@@ -15,8 +15,7 @@ var newLeg = new Vue({
         orgsTableWidth: ["15%", "85%"],
         message: "",
         
-        //Apenas para teste:
-        tipoDiploma: ["DL", "Portaria", "Lei"]
+        tipoDiploma: []
     },
     components: {
         spinner: VueStrap.spinner,
@@ -78,8 +77,6 @@ var newLeg = new Vue({
                 });
         },
         loadOrgs: function () {
-            var i = 0;
-
             this.$http.get("/api/entidades")
                 .then(function (response) {
                     this.orgs = response.body
@@ -110,8 +107,19 @@ var newLeg = new Vue({
                 }
             }
         },
+        loadTipoDiploma: function () {
+
+            this.$http.get("/api/vocabularios/vc_tipoDiplomaLegislativo")
+                .then(function (response) {
+                    this.tipoDiploma = response.body
+                })
+                .catch(function (error) {
+                    console.error(error);
+                }); 
+        }
     },
     created: function () {
         this.loadOrgs();
+        this.loadTipoDiploma();
     }
 })

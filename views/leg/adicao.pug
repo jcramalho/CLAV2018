@@ -13,7 +13,7 @@ block corpo
                             .info-label Tipo: 
                         td(style="width:80%")
                             select(v-model="diploma.tipo")
-                                option(v-for="t in tipoDiploma" :value="t") {{ t }}
+                               option(v-for="t in tipoDiploma" :value="t") {{ t.termo }}
                           
                     
                     //- Número
