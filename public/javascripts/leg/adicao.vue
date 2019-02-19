@@ -38,7 +38,7 @@ var newLeg = new Vue({
             this.message="";
 
             var formats= {
-                numero: new RegExp(/[0-9]\d{5}\/[0-9]\d{3}$/),
+                numero: new RegExp(/[0-9]+(\-\w)?\/[0-9]\d{3}$/),
                 data: new RegExp(/[0-9]+\/[0-9]+\/[0-9]+/)
             }
 
@@ -112,6 +112,13 @@ var newLeg = new Vue({
             this.$http.get("/api/vocabularios/vc_tipoDiplomaLegislativo")
                 .then(function (response) {
                     this.tipoDiploma = response.body
+                        .map(function (item) {
+                            return {
+                                termo: item.termo
+                            }
+                        }).sort(function (a, b) {
+                            return a.termo.localeCompare(b.termo);
+                        });
                 })
                 .catch(function (error) {
                     console.error(error);

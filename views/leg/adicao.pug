@@ -7,6 +7,16 @@ block corpo
             .form-group
                 table.consulta(style="border-color: white; border-style:solid; margin-bottom:20px")
                     
+                    //- Sumário
+                    tr
+                        td(style="width: 10%")
+                            .info-label Sumario: 
+                        td(style="width:80%")
+                            input(
+                                size="150"
+                                v-model="diploma.sumario"
+                            )
+                    
                     //- Tipo
                     tr
                         td(style="width: 10%")
@@ -62,16 +72,6 @@ block corpo
                                 @input="dataEscolhida($event)"
                                 format="yyyy/MM/dd"
                                 placeholder="AAAA/MM/DD"
-                            )
-                    
-                    //- Sumário
-                    tr
-                        td(style="width: 10%")
-                            .info-label Sumario: 
-                        td(style="width:80%")
-                            input(
-                                size="50"
-                                v-model="diploma.sumario"
                             )
        
                     //- Link
