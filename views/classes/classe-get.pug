@@ -25,14 +25,14 @@ block corpo
                             tr 
                                 th.p-3 Classe Pai: 
                                 td.p-3(v-if="classe.nivel == 1") Lista Consolidada
-                                td.p-3(v-else) 
+                                td.p-3.text-primary(v-else) 
                                     a(:href="'/classes/c'+classe.pai.codigo") {{ classe.pai.codigo }} - {{ classe.pai.titulo }}
                             //- CLASSES DESCENDENTES
                             tr(v-if="classe.nivel<4 && (classe.filhos.length > 0)")
                                 th.p-3 Descendência: 
                                 td.p-3
                                     .list-group-flush
-                                        a.list-group-item.list-group-item-action(:href="'/classes/c'+f.codigo" v-for="f in classe.filhos") 
+                                        a.list-group-item(:href="'/classes/c'+f.codigo" v-for="f in classe.filhos") 
                                             | {{ f.codigo }} - {{ f.titulo }}
                             //- DESCRIÇÃO
                             tr
@@ -82,14 +82,24 @@ block corpo
                                 td.p-3(style="width:80%")
                                     ul(style="padding-left:20px")
                                         li(v-for="d in classe.donos")
-                                            | {{ d.sigla }} - {{ d.designacao }}
+                                            a(v-if="d.idTipo == 'Entidade'" :href="'/entidades/' + d.idDono")
+                                                | {{ d.sigla }} 
+                                            | - {{ d.designacao }}
+                                            a(v-else :href="'/tipologias/' + d.idDono")
+                                                | {{ d.sigla }} 
+                                            | - {{ d.designacao }}
                             //- PARTICIPANTES
                             tr(v-if="classe.participantes.length > 0")
                                 th.p-3(style="width: 10%") Participantes:
                                 td.p-3(style="width:80%")
                                     ul(style="padding-left:20px")
                                         li(v-for="p in classe.participantes")
-                                            | {{ p.sigla }} - {{ p.designacao }} ({{ p.tipoParticip.split('temParticipante')[1] }})
+                                            a(v-if="p.idTipo == 'Entidade'" :href="'/entidades/' + p.idParticipante")
+                                                | {{ p.sigla }} 
+                                            | - {{ p.designacao }} ({{ p.participLabel }})
+                                            a(v-else :href="'/tipologias/' + p.idParticipante")
+                                                | {{ p.sigla }} 
+                                            | - {{ p.designacao }} ({{ p.participLabel }})
                             //- PROCESSOS RELACIONADOS
                             tr(v-if="classe.processosRelacionados.length > 0")
                                 th.p-3(style="width: 10%") Processos Relacionados:
@@ -97,14 +107,15 @@ block corpo
                                     ul(style="padding-left:20px")
                                         li(v-for="p in classe.processosRelacionados")
                                             a(:href="'/classes/c'+p.codigo")
-                                                | {{ p.codigo }} - {{ p.titulo }}
+                                                | {{ p.codigo }} 
+                                            | - {{ p.titulo }}
                             //- LEGISLAÇÃO
                             tr(v-if="classe.legislacao.length > 0")
                                 th.p-3(style="width: 10%") Legislação:
                                 td.p-3(style="width:80%")
                                     ul(style="padding-left:20px")
                                         li(v-for="l in classe.legislacao")
-                                            a(:href="'/'") {{ l.tipo }} {{ l.numero }} 
+                                            a(:href="'/legislacao/' + l.idLeg") {{ l.tipo }} {{ l.numero }} 
                                             | - {{ l.sumario }}
 
             .mt-3.mb-3

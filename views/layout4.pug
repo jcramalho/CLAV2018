@@ -139,14 +139,15 @@ block body
 							button(@click="modalMsgShow=false") Ok
 
 block footer
-	.row
-		.col-sm-4
-			a.ml-10(href="http://dglab.gov.pt/" target="_blank") DGLAB - Direção-Geral do Livro, dos Arquivos e das Bibliotecas
-		.col-sm-4
-			a(href="mailto:clav@dglab.gov.pt" data-toggle="tooltip" data-placement="top" title="clav@dglab.gov.pt") Contactos
-		.col-sm-4
-			.media
-				img.img-responsive(src="/images/feder.png" alt="logo do FEDER")
+	.container-fluid
+		.row.p-1
+			.col-sm-4
+				a(href="http://dglab.gov.pt/" target="_blank") DGLAB - Direção-Geral do Livro, dos Arquivos e das Bibliotecas
+			.col-sm-4
+				a(href="mailto:clav@dglab.gov.pt" data-toggle="tooltip" data-placement="top" title="clav@dglab.gov.pt") Contactos
+			.col-sm-4
+				.media
+					img.img-responsive(src="/images/feder.png" alt="logo do FEDER")
 
 
 append scripts

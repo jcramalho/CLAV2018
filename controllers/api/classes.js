@@ -252,16 +252,19 @@ Classes.ti = id => {
 // Devolve a(s) entidade(s) dona(s) do processo: id, tipo, sigla, designacao
 Classes.dono = id => {
     var query = `
-        SELECT ?id ?tipo ?sigla ?designacao WHERE { 
+        SELECT ?id ?idDono ?tipo ?idTipo ?sigla ?designacao WHERE { 
             clav:${id} clav:temDono ?id.
+            BIND (STRAFTER(STR(?id), 'clav#') AS ?idDono).
             {
                 ?id clav:entDesignacao ?designacao;
                     a ?tipo;
                     clav:entSigla ?sigla.
+                BIND (STRAFTER(STR(?tipo), 'clav#') AS ?idTipo).
             } UNION {
                 ?id clav:tipDesignacao ?designacao;
                 a ?tipo;
                 clav:tipSigla ?sigla .
+                BIND (STRAFTER(STR(?tipo), 'clav#') AS ?idTipo).
             }
         FILTER ( ?tipo NOT IN (owl:NamedIndividual) )
         }`  
@@ -273,17 +276,22 @@ Classes.dono = id => {
 // Devolve a(s) entidade(s) participante(s) no processo: id, sigla, designacao, tipoParticip
 Classes.participante = id => {
     var query = `
-        select ?id ?sigla ?designacao ?tipoParticip where { 
-            clav:${id} clav:temParticipante ?id ;
-                            ?tipoParticip ?id .
+        select ?id ?idParticipante ?sigla ?designacao ?idTipo ?tipoParticip ?participLabel where { 
+            ?particip rdfs:subPropertyOf clav:temParticipante . FILTER(?particip != clav:temParticipante)
+            clav:${id} ?particip ?id .
+            BIND (STRAFTER(STR(?particip), '#temParticipante') AS ?participLabel).  
+            BIND (STRAFTER(STR(?id), 'clav#') AS ?idParticipante).      
                 {
                     ?id clav:entDesignacao ?designacao;
-                        clav:entSigla ?sigla .
+                        a ?tipo;
+                        clav:entSigla ?sigla . FILTER(?tipo != owl:NamedIndividual).
+                        BIND (STRAFTER(STR(?tipo), 'clav#') AS ?idTipo).
                 } UNION {
                     ?id clav:tipDesignacao ?designacao;
-                        clav:tipSigla ?sigla .
+                        a ?tipo;
+                        clav:tipSigla ?sigla . FILTER(?tipo != owl:NamedIndividual).
+                        BIND (STRAFTER(STR(?tipo), 'clav#') AS ?idTipo).
                 }      
-        filter (?tipoParticip NOT IN (clav:temParticipante, clav:temDono))
         }`
     return client.query(query)
         .execute()
@@ -312,11 +320,12 @@ Classes.procRel = id => {
 // Devolve a legislação associada ao contexto de avaliação: id, tipo, numero, sumario
 Classes.legislacao = id => {
     var query = `
-        SELECT ?id ?tipo ?numero ?sumario WHERE { 
+        SELECT ?id ?idLeg ?tipo ?numero ?sumario WHERE { 
             clav:${id} clav:temLegislacao ?id.
             ?id clav:diplomaNumero ?numero;
                 clav:diplomaSumario ?sumario;
                 clav:diplomaTipo ?tipo.
+            BIND (STRAFTER(STR(?id), 'clav#') AS ?idLeg).
         } order by ?tipo ?numero`
     return client.query(query)
         .execute()
