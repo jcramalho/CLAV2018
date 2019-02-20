@@ -5,7 +5,7 @@ block corpo
             h1.page-header {{ tipNome }}  
         .panel-body
             .form-group
-                table.consulta
+                table.consulta(style="border-color: white; border-style:solid; margin-bottom:20px")
                     //- NOME
                     tr
                         td(style="width:10%")
@@ -15,6 +15,7 @@ block corpo
                                 size="50"
                                 v-model="newNome"
                                 :placeholder="tipNome"
+                                maxlength="50"
                             )
                         td(v-else style="width:80%")
                             | {{ tipNome }}  
@@ -41,6 +42,7 @@ block corpo
                                 size="50"
                                 v-model="newSigla"
                                 :placeholder="tipSigla"
+                                maxlength="10"
                             )  
                         td(v-else style="width:80%")
                             | {{ tipSigla }} 
@@ -218,7 +220,7 @@ block corpo
                 input.btn.btn-xs.btn-default.col-sm-1(
                     type="button" 
                     @click="update" 
-                    value="Submeter" 
+                    value="Submeter alteração" 
                     :disabled="!((editNome && newNome ||\
                         editSigla && newSigla ||\
                         editDominio || editParts || editEnts))"

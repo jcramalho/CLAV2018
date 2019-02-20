@@ -5,11 +5,11 @@ block corpo
             h1.page-header {{ legData.tipo.original }} {{ legData.numero.original }}
         .panel-body
             .form-group
-                table(v-if="ready").consulta
+                table(v-if="ready").consulta(style="border-color: white; border-style:solid; margin-bottom:20px")
 
                     //- TÍTULO
                     tr
-                        td(style="width:12%")
+                        td(style="width:10%")
                             .info-label {{ legData.sumario.label }}:
                         td(v-if="legData.sumario.edit" style="width:80%")
                             input(
@@ -21,7 +21,7 @@ block corpo
                             | {{ legData.sumario.original }}
 
                         if user
-                            td
+                            td(style="width:10%")
                                 label(
                                     for="legData.sumario.edit"
                                     :class="[legData.sumario.edit ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
@@ -46,7 +46,7 @@ block corpo
                             | {{ legData.tipo.original }}
 
                         if user
-                            td
+                            td(style="width:10%")
                                 label(
                                     for="legData.tipo.edit"
                                     :class="[legData.tipo.edit ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
@@ -74,7 +74,7 @@ block corpo
                             | {{ legData.numero.original }}
 
                         if user
-                            td
+                            td(style="width:10%")
                                 label(
                                     for="legData.numero.edit"
                                     :class="[legData.numero.edit ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
@@ -119,7 +119,7 @@ block corpo
                                     a(:href="'/entidades/ent_'+entidade") {{ entidade }}
 
                         if user
-                            td
+                            td(style="width:10%")
                                 label(
                                     for="legData.entidades.edit"
                                     :class="[legData.entidades.edit ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
@@ -146,7 +146,7 @@ block corpo
                             | {{ legData.data.original }}
 
                         if user
-                            td
+                            td(style="width:10%")
                                 label(
                                     for="legData.data.edit"
                                     :class="[legData.data.edit ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
@@ -172,7 +172,7 @@ block corpo
                             a(:href="legData.link.original" target="_blank") Ficheiro
 
                         if user
-                            td
+                            td(style="width:10%")
                                 label(
                                     for="legData.link.edit"
                                     :class="[legData.link.edit ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
@@ -219,7 +219,7 @@ block corpo
                             a(@click="processosCollapsed=!processosCollapsed" v-if="legData.processos.original.length>6").maozinha
                                 span(v-if="processosCollapsed") Mostrar mais...
                                 span(v-else) Mostrar menos...                   
-                        td
+                        td(style="width:10%")
                             label(
                                 for="legData.processos.edit"
                                 :class="[legData.processos.edit ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
@@ -238,7 +238,7 @@ block corpo
                 input.btn.btn-xs.btn-default.col-sm-1(
                     type="button"
                     @click="update"
-                    value="Submeter"
+                    value="Submeter alteração"
                     :disabled="!(\
                         legData.data.edit && legData.data.new ||\
                         legData.numero.edit && legData.numero.new ||\

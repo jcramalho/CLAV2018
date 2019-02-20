@@ -5,18 +5,30 @@ var newTI = new Vue({
         idClasse: "",
         tituloClasse: "",
         id: "",
+        message: "",
     },
     components: {
-        spinner: VueStrap.spinner
+        spinner: VueStrap.spinner,
+    },
+    idTermoIndice: function(){
+        axios.get("/api/utils/id")
+            .then(function(response){
+                this.id = {id: 'ti_' + response.data, termo: '', existe: false};
+                //-termos.push(n);
+            })
+            .catch(function (error) {
+                console.error(error);
+            });
     },
     methods: {
         add: function () {
             this.$refs.spinner.show();
+            console.log(this.termo);
 
             var dataObj = {
                 termo: this.termo,
-                idClasse: this.idClasse,
-                tituloClasse: this.tituloClasse,
+                //-idClasse: this.idClasse,
+                //-tituloClasse: this.tituloClasse,
                 id: this.id,
             }
 
@@ -25,18 +37,16 @@ var newTI = new Vue({
                     'content-type': 'application/json'
                 }
             })
-                .then(function (response) {    
-                    this.$refs.spinner.hide();
-                    
-                    if (response.body != "Termo já existente(s)!") {
-                        window.location.href = '/pedidos/submissao';
-                    }
-                    else {
-                        messageL.showMsg(response.body);
-                    }
-                })
-                .catch(function (error) {
-                    console.error(error);
+            .then(function (response) {    
+                this.$refs.spinner.hide();
+
+                window.location.href = '/pedidos/submissao';
+            })
+            .catch(error => {if (error.status === 409) {
+                messageL.showMsg(error.body);
+                this.$refs.spinner.hide();
+            } 
+            console.error(error);
                 });
         }
     }
