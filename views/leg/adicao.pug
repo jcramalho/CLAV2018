@@ -84,6 +84,33 @@ block corpo
                                 v-model="diploma.link"
                             )
 
+                    //- PROCESSOS
+                    tr
+                        td(style="width:10%")
+                            .info-label Processos Regulamentados:
+                        td(style="width:80%")
+                            table
+                                tr
+                                    td(width="1000px")
+                                        v-select.custom-select(
+                                            v-model="newProcesso"
+                                            :options="listaClasses"
+                                        )
+                                    td
+                                        input(
+                                            type="button"
+                                            @click="addProcesso"
+                                            value="+"
+                                        ) 
+                                tr(v-if="diploma.processos.length")
+                                    td
+                                        ul(style="padding-left:20px")
+                                            li(v-for="(c,index) in diploma.processos")
+                                                | {{ c.codigo }} - {{ c.titulo }}  
+                                                button(
+                                                    @click="diploma.processos.splice(index,1)"
+                                                ) x
+
             spinner(ref="spinner" size="lg" fixed text="Por favor aguarde...")
             input.btn.btn-xs.btn-default.col-sm-1(
                 type="button" 

@@ -188,39 +188,47 @@ block corpo
                     tr
                         td(style="width:10%")
                             .info-label Processos Regulamentados:
-                        td(style="width:80%")
-                            ul(v-if="processosReady" style="padding-left:20px" :class="{'is-collapsed' : processosCollapsed }")
-                                li(v-for="c in processos")
-                                    a(:href="'/classes/'+c.id") {{ c.codigo }}
-                                    |  - {{ c.titulo }}
-                            a(@click="processosCollapsed=!processosCollapsed" v-if="processos.length>6").maozinha
-                                span(v-if="processosCollapsed") Mostrar mais...
-                                span(v-else) Mostrar menos...
-                        //-td(v-if="editProcessos" style="width:80%")
+                        td(v-if="legData.processos.edit" style="width:80%")
                             table
                                 tr
-                                    td(width="60%")
+                                    td(width="1000px")
                                         v-select.custom-select(
-                                            v-model="newProcess"
+                                            v-if="processosReady"
+                                            v-model="newProcesso"
                                             :options="listaClasses"
                                         )
                                     td
-                                        button(
-                                            @click="newProcesses.unshift(newProcess.value)"
-                                        ) +
-                                tr(v-if="newProcesses.length")
-                                    td(colspan="2")
+                                        input(
+                                            type="button"
+                                            @click="addProcesso"
+                                            value="+"
+                                        ) 
+                                tr(v-if="legData.processos.new.length")
+                                    td
                                         ul(style="padding-left:20px")
-                                            li(v-for="(c,index) in newProcesses")
-                                                | {{ c.Code }} - {{ c.Title }}
+                                            li(v-for="(c,index) in legData.processos.new")
+                                                | {{ c.codigo }} - {{ c.titulo }}  
                                                 button(
-                                                    @click="newProcesses.splice(index,1)"
+                                                    @click="legData.processos.new.splice(index,1)"
                                                 ) x
-                        //-td(style="width:10%")
-                            label(style="padding-right:5px") Editar (NYI)
+                        td(v-else style="width:80%")
+                            ul(v-if="processosReady" style="padding-left:20px" :class="{'is-collapsed' : processosCollapsed }")
+                                li(v-for="c in legData.processos.original")
+                                    a(:href="'/classes/'+c.id") {{ c.codigo }}
+                                    |  - {{ c.titulo }}
+                            a(@click="processosCollapsed=!processosCollapsed" v-if="legData.processos.original.length>6").maozinha
+                                span(v-if="processosCollapsed") Mostrar mais...
+                                span(v-else) Mostrar menos...                   
+                        td
+                            label(
+                                for="legData.processos.edit"
+                                :class="[legData.processos.edit ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
+                            )
                             input(
+                                id="legData.processos.edit"
                                 type="checkbox"
-                                v-model="editProcessos"
+                                v-model="legData.processos.edit"
+                                class="drop-row"
                             )
                 h3(v-else) A carregar...
 
@@ -237,7 +245,8 @@ block corpo
                         legData.tipo.edit && legData.tipo.new ||\
                         legData.sumario.edit && legData.sumario.new ||\
                         legData.link.edit && legData.link.new ||\
-                        legData.entidades.edit\
+                        legData.entidades.edit ||\
+                        legData.processos.edit\
                     )"
                 )
                 input.btn.btn-xs.btn-warning.col-sm-1(
@@ -250,7 +259,8 @@ block corpo
                         legData.tipo.edit && legData.tipo.new ||\
                         legData.sumario.edit && legData.sumario.new ||\
                         legData.link.edit && legData.link.new ||\
-                        legData.entidades.edit\
+                        legData.entidades.edit ||\
+                        legData.processos.edit\
                     )"
                 )
                 p.col-sm-5

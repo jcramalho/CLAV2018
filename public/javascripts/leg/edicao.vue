@@ -38,6 +38,11 @@ var leg = new Vue({
                 original: [],
                 new: [],
                 edit: false
+            },
+            processos: {
+                original: [],
+                new: [],
+                edit: false
             }
         },
         ready: false, 
@@ -49,13 +54,13 @@ var leg = new Vue({
         newEntidade: "",
 
         processosReady: false,
-        processos:[],
-        newProcessos: [],
+        //processos:[],
+        //newProcessos: [],
         processosCollapsed: true,
-        editProcessos:false,
+        //editProcessos:false,
         newProcesso: "",
         
-        //listaClasses:[],
+        listaClasses:[],
 
         delConfirm:false,
     },
@@ -117,7 +122,6 @@ var leg = new Vue({
                         }).sort(function (a, b) {
                             return a.label.localeCompare(b.label);
                         });
-                    console.log(this.entidades)
                     this.entidadesReady = true;
                 })
                 .catch(function (error) {
@@ -147,39 +151,53 @@ var leg = new Vue({
                     processosToParse = response.body;
                 })
                 .then(function () {
-                    this.processos = JSON.parse(JSON.stringify(processosToParse));
-                    this.newProcessos = JSON.parse(JSON.stringify(processosToParse));
-                    console.log(this.processos)
+                    this.legData.processos.original = JSON.parse(JSON.stringify(processosToParse));
+                    this.legData.processos.new = JSON.parse(JSON.stringify(processosToParse));
                     this.processosReady = true;
                 })
                 .catch(function (error) {
                     console.error(error);
                 });
         },
-        /*loadClasses: function () {
+        loadClasses: function () {
             var classesToParse = [];
-            var keys = ["id", "Codigo", "Titulo"];
 
-            this.$http.get("/api/classes/nivel=3")
+            this.$http.get("/api/classes?nivel=3")
                 .then(function (response) {
                     classesToParse = response.body;
                 })
                 .then(function () {
-                    this.listaClasses = this.parseList(classesToParse, keys).map(function(item){
-                        return {
-                            label: item.Codigo+" - "+item.Titulo,
-                            value: item,
-                        }
-                    }).sort(function (a, b) {
-                        return a.label.localeCompare(b.label);
-                    });
-                    
+                    this.listaClasses = classesToParse
+                        .map(function(item){
+                            return {
+                                label: item.codigo +" - "+ item.titulo,
+                                value: item,
+                            }
+                        }).sort(function (a, b) {
+                            return a.label.localeCompare(b.label);
+                        });
+                        
                     this.classesReady = true;
                 })
                 .catch(function (error) {
                     console.error(error);
                 });
-        },*/
+        },
+        addProcesso: function(){
+            var existeProcesso = 0;
+            for(var i=0; i<this.legData.processos.new.length; i++){
+                if(this.newProcesso.value.codigo==this.legData.processos.new[i].codigo){
+                    existeProcesso = 1;
+                    break
+                }
+            }
+            if(existeProcesso==0){
+                this.legData.processos.new.unshift(this.newProcesso.value)
+            }
+            else{
+                messageL.showMsg("Esse processo já se encontra selecionado!");
+            }
+        },
         update: function(){
             this.$refs.spinner.show();
 
@@ -207,12 +225,12 @@ var leg = new Vue({
             
             var dataObj = {
                 id: this.id,
-                date: null,
-                number: null,
-                type: null,
-                title: null,
+                data: null,
+                numero: null,
+                tipo: null,
+                titulo: null,
                 link: null,
-                org: null,
+                entidades: null,
             };
 
             keys=Object.keys(this.legData);
@@ -272,7 +290,7 @@ var leg = new Vue({
             this.loadTipoDiploma();
             this.loadEntidades();
             this.loadProcessos();
-            //this.loadClasses();
+            this.loadClasses();
         })
         .catch( function(error) { 
             console.error(error); 

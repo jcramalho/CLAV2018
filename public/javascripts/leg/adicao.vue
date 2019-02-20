@@ -8,6 +8,7 @@ var newLeg = new Vue({
             data: "",
             link: "",
             entidades: [],
+            processos: [],
         },
         orgs: [],
         orgsReady: false,
@@ -15,7 +16,11 @@ var newLeg = new Vue({
         orgsTableWidth: ["15%", "85%"],
         message: "",
         
-        tipoDiploma: []
+        tipoDiploma: [],
+
+        newProcesso: "",
+        listaClasses: [],
+        //newProcessos: [],
     },
     components: {
         spinner: VueStrap.spinner,
@@ -123,10 +128,50 @@ var newLeg = new Vue({
                 .catch(function (error) {
                     console.error(error);
                 }); 
-        }
+        },
+        loadClasses: function () {
+            var classesToParse = [];
+
+            this.$http.get("/api/classes?nivel=3")
+                .then(function (response) {
+                    classesToParse = response.body;
+                })
+                .then(function () {
+                    this.listaClasses = classesToParse
+                        .map(function(item){
+                            return {
+                                label: item.codigo +" - "+ item.titulo,
+                                value: item,
+                            }
+                        }).sort(function (a, b) {
+                            return a.label.localeCompare(b.label);
+                        });
+                        
+                    this.classesReady = true;
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        },
+        addProcesso: function(){
+            var existeProcesso = 0;
+            for(var i=0; i<this.diploma.processos.length; i++){
+                if(this.newProcesso.value.codigo==this.diploma.processos[i].codigo){
+                    existeProcesso = 1;
+                    break
+                }
+            }
+            if(existeProcesso==0){
+                this.diploma.processos.unshift(this.newProcesso.value)
+            }
+            else{
+                messageL.showMsg("Esse processo já se encontra selecionado!");
+            }
+        },
     },
     created: function () {
         this.loadOrgs();
         this.loadTipoDiploma();
+        this.loadClasses();
     }
 })
