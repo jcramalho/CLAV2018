@@ -9,10 +9,17 @@ var org = new Vue({
         newDes: "",
         entDes: "",
 
+        editSigla: false,
+        newSigla: "",
+
         editInternacional: false,
         newInternacional: "",
 
+        editSIOE: false,
+        newSIOE: "",
+
         editEstado: false,
+        newEstado: "",
 
         listaTipologias: [],
         newListaTipologias: [],
@@ -65,6 +72,8 @@ var org = new Vue({
         },
 
         editParts:false,
+
+        delConfirm: false,
     },
     computed: {
         partOptions: function(){
@@ -227,7 +236,7 @@ var org = new Vue({
         loadClasses: function () {
             var classesToProcess = []
 
-            this.$http.get("/api/classes/nivel/3")
+            this.$http.get("/api/classes?nivel=3")
                 .then(function (response) {
                     classesToProcess = response.body;
 
@@ -243,13 +252,37 @@ var org = new Vue({
                     console.error(error);
                 });
         },
+        deleteEntidade: function () {
+            this.$refs.spinner.show();
+            
+            this.$http.delete('/api/entidades/'+this.id)
+                .then( function(response) { 
+                    this.$refs.spinner.hide();
+                    
+                    window.location.href = '/pedidos/submissao';
+                })
+                .catch(error => {if (error.status === 409) {
+                    messageL.showMsg(error.body);
+                    this.$refs.spinner.hide();
+                } 
+                console.error(error);
+                });
+        },
         //funcao de update
         update: function() {
+            var numeroSIOE = new RegExp(/[0-9]+(\-\w)?/);
+
+            if(!numeroSIOE.test(this.newSIOE) && this.newSIOE!=""){
+                messageL.showMsg("Campo SIOE está no formato errado. Apenas são aceites caracteres numéricos.");
+                return false;
+            }
             this.$refs.spinner.show(); 
 
             var dataObj = {
                 des: null,
+                sigla: null,
                 internacional: null,
+                sioe: null,
                 estado: null,
                 dominio: {
                     add: null,
@@ -289,8 +322,14 @@ var org = new Vue({
             if(this.editDes) {
                 dataObj.des = this.newDes;
             }
+            if (this.editSigla) {
+                dataObj.sigla = this.newSigla;
+            }
             if(this.editInternacional){
                 dataObj.internacional = this.newInternacional;
+            }
+            if(this.editSIOE){
+                dataObj.sioe = this.newSIOE;
             }
             if(this.editEstado){
                 dataObj.estado = this.newEstado;

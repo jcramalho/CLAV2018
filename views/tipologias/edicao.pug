@@ -1,131 +1,157 @@
 extends ../layout
 block corpo
-    #organizacao-form.panel.panel-default.panel-custom
+    #editTipologia-form.panel.panel-default.panel-custom
         .panel-heading
-            h1.page-header {{ tipName }}  
+            h1.page-header {{ tipNome }}  
         .panel-body
             .form-group
-                table.consulta
+                table.consulta(style="border-color: white; border-style:solid; margin-bottom:20px")
                     //- NOME
                     tr
                         td(style="width:10%")
-                            label Designação: 
-                        td(v-if="editName" style="width:80%")
+                            .info-label Designação: 
+                        td(v-if="editNome" style="width:80%")
                             input(
                                 size="50"
-                                v-model="newName"
-                                :placeholder="tipName"
+                                v-model="newNome"
+                                :placeholder="tipNome"
+                                maxlength="50"
                             )
                         td(v-else style="width:80%")
-                            | {{ tipName }}  
+                            | {{ tipNome }}  
+
                         if user
                             td(style="width:10%")
                                 label(
-                                    for="editName"
-                                    :class="[editName ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']" 
+                                    for="editNome"
+                                    :class="[editNome ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']" 
                                 ) 
                                 input(
-                                    id="editName"
+                                    id="editNome"
                                     type="checkbox"
-                                    v-model="editName"
+                                    v-model="editNome"
                                     class="drop-row"
                                 )
                     
                     //- SIGLA
                     tr
-                        td
-                            label Sigla: 
-                        td
-                            | {{ tipInitials }} 
+                        td(style="width:10%")
+                            .info-label Sigla:
+                        td(v-if="editSigla" style="width:80%")
+                            input(
+                                size="50"
+                                v-model="newSigla"
+                                :placeholder="tipSigla"
+                                maxlength="10"
+                            )  
+                        td(v-else style="width:80%")
+                            | {{ tipSigla }} 
+
+                        if user
+                            td(style="width:10%")
+                                label(
+                                    for="editSigla"
+                                    :class="[editSigla ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']" 
+                                ) 
+                                input(
+                                    id="editSigla"
+                                    type="checkbox"
+                                    v-model="editSigla"
+                                    class="drop-row"
+                                )
 
                     //- DOMINIO
                     tr
                         td(style="width:10%")
-                            label Dono de:
+                            .info-label Dono de:
                         //- edição
-                        td(v-if="editDomain" style="width:80%")
+                        td(v-if="editDominio" style="width:80%")
                             table
                                 tr
                                     td(width="1000px")
                                         v-select.custom-select(
-                                            v-model="newClass"
-                                            :options="classList"
+                                            v-model="newClasse"
+                                            :options="listaClasses"
                                         )
                                     td
-                                        button(
-                                            @click="newDomain.unshift(newClass.value)"
-                                        ) +
-                                tr(v-if="newDomain.length")
+                                        input(
+                                            type="button"
+                                            @click="addClasse"
+                                            value="+"
+                                        )
+                                tr(v-if="newDominio.length")
                                     td(colspan="2")
                                         ul(style="padding-left:20px")
-                                            li(v-for="(c,index) in newDomain")
-                                                | {{ c.Code }} - {{ c.Title }}
+                                            li(v-for="(c,index) in newDominio")
+                                                | {{ c.codigo }} - {{ c.titulo }}
                                                 button(
-                                                    @click="newDomain.splice(index,1)"
+                                                    @click="newDominio.splice(index,1)"
                                                 ) x
                         td(v-else style="width:80%")
-                            ul(v-if="domainReady" style="padding-left:20px" :class="{'is-collapsed' : domainCollapsed }")
-                                li(v-for="c in domain")
-                                    a(:href="'/classes/consultar/'+c.id") {{ c.Code }}
-                                    |  - {{ c.Title }}
-                            a(@click="domainCollapsed=!domainCollapsed" v-if="domain.length>6").maozinha
+                            ul(v-if="dominioReady" style="padding-left:20px" :class="{'is-collapsed' : domainCollapsed }")
+                                li(v-for="c in dominio")
+                                    a(:href="'/classes/'+c.id") {{ c.codigo }}
+                                    |  - {{ c.titulo }}
+                            a(@click="domainCollapsed=!domainCollapsed" v-if="dominio.length>6").maozinha
                                 span(v-if="domainCollapsed") Mostrar mais...
                                 span(v-else) Mostrar menos...
                         if user
                             td(style="width:10%")
                                 label(
-                                    for="editDomain"
-                                    :class="[editDomain ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
+                                    for="editDominio"
+                                    :class="[editDominio ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
                                 )
                                 input(
-                                    id="editDomain"
+                                    id="editDominio"
                                     type="checkbox"
-                                    v-model="editDomain"
+                                    v-model="editDominio"
                                     class="drop-row"
                                 )
 
                     //- PARTICIPAÇÕES
                     tr
                         td(style="width:10%")
-                            label Tipo de Participação:    
+                            .info-label Tipo de Participação:    
                         //- edição
                         td(v-if="editParts" style="width:80%")
                             table
                                 tr
-                                    td(width="200px")
+                                    td(width="300px")
                                         v-select.custom-select(
-                                            v-model="newPartType"
+                                            v-model="newTipoPart"
                                             :options="partOptions"
                                         )
-                                    td(width="800px")
+                                    td(width="700px")
                                         v-select.custom-select(
                                             v-model="newPart"
-                                            :options="classList"
+                                            :options="listaClasses"
                                         )
                                     td
-                                        button(
-                                            @click="newParticipations[newPartType.value].unshift(newPart.value)"
-                                        ) +
+                                        input(
+                                            type="button"
+                                            @click="addPart"
+                                            value= "+"
+                                        ) 
                                 tr
                                     td(colspan="3")
                                         ul(v-if="partsReady" style="padding-left:20px")
-                                            li(v-for="key in Object.keys(newParticipations)" v-if="newParticipations[key].length>0")
-                                                b {{ participationsDic[key] }}:
+                                            li(v-for="key in Object.keys(newParticipacoes)" v-if="newParticipacoes[key].length>0")
+                                                b {{ participacoesDic[key] }}:
                                                 ul
-                                                    li(v-for="(p, index) in newParticipations[key]")
-                                                        | {{ p.Code }} - {{ p.Title }}
+                                                    li(v-for="(p, index) in newParticipacoes[key]")
+                                                        | {{ p.codigo }} - {{ p.titulo }}
                                                         button(
-                                                            @click="newParticipations[key].splice(index,1)"
+                                                            @click="newParticipacoes[key].splice(index,1)"
                                                         ) x
                         td(v-else style="width:80%")
                             ul(v-if="partsReady" style="padding-left:20px")
-                                li(v-for="key in Object.keys(participations)" v-if="participations[key].length>0")
-                                    b  {{ participationsDic[key] }}:
+                                li(v-for="key in Object.keys(participacoes)" v-if="participacoes[key].length>0")
+                                    b  {{ participacoesDic[key] }}:
                                     ul(:class="{'is-collapsed' : partsCollapsed[key] }")
-                                        li(v-for="p in participations[key]")
-                                            a(:href="'/classes/consultar/'+p.id") {{ p.Code }}
-                                            |  - {{ p.Title }}
-                                    a(@click="partsCollapsed[key]=!partsCollapsed[key]" v-if="participations[key].length>6").maozinha
+                                        li(v-for="p in participacoes[key]")
+                                            a(:href="'/classes/'+p.id") {{ p.codigo }}
+                                            |  - {{ p.titulo }}
+                                    a(@click="partsCollapsed[key]=!partsCollapsed[key]" v-if="participacoes[key].length>6").maozinha
                                         span(v-if="partsCollapsed[key]") Mostrar mais...
                                         span(v-else) Mostrar menos...
                         if user
@@ -145,8 +171,8 @@ block corpo
                     //- ELEMENTOS
                     tr
                         td(style="width:10%")
-                            label Entidades:
-                        td(v-if="editElems" style="width:80%")
+                            .info-label Entidades:
+                        td(v-if="editEnts" style="width:80%")
                             table
                                 tr
                                     td
@@ -155,32 +181,34 @@ block corpo
                                             :options="entList"
                                         )
                                     td
-                                        button(
-                                            @click="newElemList.unshift(newElem.value)"
-                                        ) +
-                                tr(v-if="newElemList.length")
+                                        input(
+                                            type="button"
+                                            @click="addEntidade"
+                                            value="+"
+                                        )
+                                tr(v-if="newEntsList.length")
                                     td(colspan="2")
                                         ul(style="padding-left:20px")
-                                            li(v-for="(o,index) in newElemList")
-                                                | {{ o.Sigla }} - {{ o.Designacao }}
+                                            li(v-for="(o,index) in newEntsList")
+                                                | {{ o.sigla }} - {{ o.designacao }}   
                                                 button(
-                                                    @click="newElemList.splice(index,1)"
+                                                    @click="newEntsList.splice(index,1)"
                                                 ) x
                         td(v-else style="width:80%")
                             ul(style="padding-left:20px")
-                                li(v-for="o in elemList")
-                                    a(:href="'/entidades/consultar/'+o.id") {{ o.Sigla }} 
-                                    | - {{ o.Designacao }}
+                                li(v-for="o in listaEntidades")
+                                    a(:href="'/entidades/'+o.id") {{ o.sigla }} 
+                                    | - {{ o.designacao }}
                         if user
                             td(style="width:10%")
                                 label(
-                                    for="editElems"
-                                    :class="[editElems ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
+                                    for="editEnts"
+                                    :class="[editEnts ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
                                 )
                                 input(
-                                    id="editElems"
+                                    id="editEnts"
                                     type="checkbox"
-                                    v-model="editElems"
+                                    v-model="editEnts"
                                     class="drop-row"
                                 )
 
@@ -192,16 +220,18 @@ block corpo
                 input.btn.btn-xs.btn-default.col-sm-1(
                     type="button" 
                     @click="update" 
-                    value="Submeter" 
-                    :disabled="!((editName && newName) || editDomain || editParts || editElems)"
+                    value="Submeter alteração" 
+                    :disabled="!((editNome && newNome ||\
+                        editSigla && newSigla ||\
+                        editDominio || editParts || editEnts))"
                 )
                 input.btn.btn-xs.btn-warning.col-sm-1(
                     type="button" 
                     @click="delConfirm=true" 
                     value="Apagar" 
-                    :disabled="(editName || editDomain || editParts || editElems)"
+                    :disabled="(editNome || editDominio || editParts || editEnts)"
                 )
-                p.col-sm-5 {{ message }}
+                p.col-sm-5 
 
                 modal(
                     title="Confirmar" 
@@ -213,7 +243,7 @@ block corpo
                     .modal-body(slot="modal-body")
                         center Tem a certeza que deseja apagar?
                     .modal-footer(slot="modal-footer")
-                        button(@click="deleteOrg" style="margin-right:7px") Ok
+                        button(@click="deleteTipologia" style="margin-right:7px") Ok
                         button(@click="delConfirm=false") Cancelar
 
     //-

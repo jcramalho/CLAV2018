@@ -20,10 +20,11 @@ var TermosIndice = module.exports
  */
 TermosIndice.listar = () => {
     let query = `
-        SELECT ?id ?termo ?idClasse ?tituloClasse 
+        SELECT ?id ?termo ?idClasse ?tituloClasse ?estado
         WHERE { 
             ?idTI rdf:type clav:TermoIndice ;
                 clav:termo ?termo ;
+                clav:estado ?estado;
                 clav:estaAssocClasse ?idC .
             ?idC clav:titulo ?tituloClasse ;
                 clav:codigo ?codigoClasse.
@@ -107,10 +108,10 @@ TermosIndice.contar = function() {
  * @return {Promise<Pedido | Error>} promessa que quando cumprida possui o
  * pedido gerado para a criação de novo termo de indice
  */
-/*TermosIndice.criar = (termoIndice, utilizador) => {
+TermosIndice.criar = (termoIndice, utilizador) => {
     const query = `INSERT DATA {
-        clav:ent_${termoIndice.id} rdf:type owl:NamedIndividual , clav:TermoIndice;
-
+        clav:ti_${termoIndice.id} rdf:type owl:NamedIndividual , clav:TermoIndice;
+            clav:estado 'Harmonização' .
     }`;
 
     return client.query(query)
@@ -126,4 +127,4 @@ TermosIndice.contar = function() {
                 estado: "Submetido",
             }]
         }));
-};*/
+};

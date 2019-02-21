@@ -8,6 +8,7 @@ var newLeg = new Vue({
             data: "",
             link: "",
             entidades: [],
+            processos: [],
         },
         orgs: [],
         orgsReady: false,
@@ -15,8 +16,11 @@ var newLeg = new Vue({
         orgsTableWidth: ["15%", "85%"],
         message: "",
         
-        //Apenas para teste:
-        tipoDiploma: ["DL", "Portaria", "Lei"]
+        tipoDiploma: [],
+
+        newProcesso: "",
+        listaClasses: [],
+        //newProcessos: [],
     },
     components: {
         spinner: VueStrap.spinner,
@@ -39,7 +43,7 @@ var newLeg = new Vue({
             this.message="";
 
             var formats= {
-                numero: new RegExp(/[0-9]\d{5}\/[0-9]\d{3}$/),
+                numero: new RegExp(/[0-9]+(\-\w)?\/[0-9]\d{3}$/),
                 data: new RegExp(/[0-9]+\/[0-9]+\/[0-9]+/)
             }
 
@@ -78,8 +82,6 @@ var newLeg = new Vue({
                 });
         },
         loadOrgs: function () {
-            var i = 0;
-
             this.$http.get("/api/entidades")
                 .then(function (response) {
                     this.orgs = response.body
@@ -110,8 +112,66 @@ var newLeg = new Vue({
                 }
             }
         },
+        loadTipoDiploma: function () {
+
+            this.$http.get("/api/vocabularios/vc_tipoDiplomaLegislativo")
+                .then(function (response) {
+                    this.tipoDiploma = response.body
+                        .map(function (item) {
+                            return {
+                                termo: item.termo
+                            }
+                        }).sort(function (a, b) {
+                            return a.termo.localeCompare(b.termo);
+                        });
+                })
+                .catch(function (error) {
+                    console.error(error);
+                }); 
+        },
+        loadClasses: function () {
+            var classesToParse = [];
+
+            this.$http.get("/api/classes?nivel=3")
+                .then(function (response) {
+                    classesToParse = response.body;
+                })
+                .then(function () {
+                    this.listaClasses = classesToParse
+                        .map(function(item){
+                            return {
+                                label: item.codigo +" - "+ item.titulo,
+                                value: item,
+                            }
+                        }).sort(function (a, b) {
+                            return a.label.localeCompare(b.label);
+                        });
+                        
+                    this.classesReady = true;
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        },
+        addProcesso: function(){
+            var existeProcesso = 0;
+            for(var i=0; i<this.diploma.processos.length; i++){
+                if(this.newProcesso.value.codigo==this.diploma.processos[i].codigo){
+                    existeProcesso = 1;
+                    break
+                }
+            }
+            if(existeProcesso==0){
+                this.diploma.processos.unshift(this.newProcesso.value)
+            }
+            else{
+                messageL.showMsg("Esse processo já se encontra selecionado!");
+            }
+        },
     },
     created: function () {
         this.loadOrgs();
+        this.loadTipoDiploma();
+        this.loadClasses();
     }
 })

@@ -5,10 +5,10 @@ block corpo
             h1.page-header Novo Termo de Índice
         .panel-body
             .form-group
-                table
+                table.consulta(style="border-color: white; border-style:solid; margin-bottom:20px")
                     tr
                         td(style="width:10%")
-                            label Termo: 
+                            .info-label Termo: 
                         td(style="width:80%")
                             input(
                                 size="70"
@@ -20,10 +20,10 @@ block corpo
             input.btn.btn-xs.btn-default.col-sm-2(
                 type="button" 
                 @click="add" 
-                value="Adicionar" 
+                value="Submeter novo Termo de Índice" 
                 :disabled="!(termo)"
             )
-            p.col-sm-7 {{ message }}
+            div(v-html="message")
 
 append scripts    
     script(src="/javascripts/tipologias/adicao.vue")

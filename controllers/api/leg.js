@@ -210,7 +210,7 @@ Leg.regula = id => {
     var query = `
         SELECT DISTINCT ?id ?codigo ?titulo WHERE { 
             {
-                ?id clav:temLegislacao clav:${id};
+                ?uri clav:temLegislacao clav:${id};
             } 
             UNION {
                 ?crit clav:temLegislacao clav:${id} .
@@ -218,15 +218,17 @@ Leg.regula = id => {
                 ?aval clav:temJustificacao ?just .
 
                 {
-                    ?id clav:temPCA ?aval ;
+                    ?uri clav:temPCA ?aval ;
                 } 
                 UNION {
-                    ?id clav:temDF ?aval ;
+                    ?uri clav:temDF ?aval ;
                 }
             }
-            ?id clav:codigo ?codigo;
+            ?uri clav:codigo ?codigo;
                 clav:titulo ?titulo;
                 clav:classeStatus 'A'.
+
+            BIND(STRAFTER(STR(?uri), 'clav#') AS ?id)
                 
         } ORDER BY ?codigo
     `

@@ -5,24 +5,24 @@ block corpo
             h1.page-header Nova Tipologia
         .panel-body
             .form-group 
-                table
+                table.consulta(style="border-color: white; border-style:solid; margin-bottom:20px")
                     //- Designação
                     tr
                         td(style="width:10%")
-                            label Designação: 
+                            .info-label Designação:    
                         td(style="width:80%")
                             input(
-                                size="70"
+                                size="50"
                                 v-model="tipologia.designacao"
                                 maxlength="50"
                             )
                     //- Sigla        
                     tr
-                        td(style="padding-top:10px")
-                            label Sigla: 
-                        td
+                        td(style="width:10%")
+                            .info-label Sigla:    
+                        td(style="width:80%")
                             input(
-                                size="70"
+                                size="50"
                                 v-model="tipologia.sigla"
                                 maxlength="10"
                             )
@@ -30,7 +30,7 @@ block corpo
                     //- Entidades
                     tr(style="padding-bottom:30px")
                         td(style="width: 10%")
-                            label Entidades:
+                            .info-label Entidades:
 
                         td
                             accordion
@@ -56,10 +56,10 @@ block corpo
             input.btn.btn-xs.btn-default.col-sm-2(
                 type="button" 
                 @click="add" 
-                value="Submeter" 
+                value="Submeter nova Tipologia" 
                 :disabled="!(tipologia.designacao && tipologia.sigla)"
             )
-            p.col-sm-7 {{ message }}
+            div(v-html="message")
     //-
 
     
