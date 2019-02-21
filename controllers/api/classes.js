@@ -292,7 +292,8 @@ Classes.participante = id => {
                         clav:tipSigla ?sigla . FILTER(?tipo != owl:NamedIndividual).
                         BIND (STRAFTER(STR(?tipo), 'clav#') AS ?idTipo).
                 }      
-        }`
+        }
+        order by ?participLabel ?idParticipante`
     return client.query(query)
         .execute()
         .then(response => normalize(response))
