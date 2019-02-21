@@ -179,6 +179,23 @@ Leg.existe = (legislacao) => {
 };
 
 /**
+ * Verifica se uma determinada legislação tem PNs associados.
+ * 
+ * @param {Legislacao} legislacao
+ * @return {Promise<boolean | Error>}
+ */
+Leg.temPNs = (legislacao) => {
+    const query = `ASK {
+        ?e clav:temLegislacao clav:'${legislacao.id}'
+        }`;
+
+    return client.query(query)
+        .execute()
+        .then(response => response.boolean);
+};
+
+
+/**
  * Gera um pedido de remoção da legislação.
  * Nenhuma alteração será feita à legislação., só quando o pedido for
  * validado

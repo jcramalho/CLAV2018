@@ -6,6 +6,8 @@ block corpo
         .panel-body
             .form-group
                 table.consulta(style="border-color: white; border-style:solid; margin-bottom:20px")
+                    
+                    //- Termo
                     tr
                         td(style="width:10%")
                             .info-label Termo: 
@@ -15,6 +17,34 @@ block corpo
                                 v-model="termo"
                             )
 
+                    //- Classes associadas
+                    tr
+                        td(style="width:10%")
+                            .info-label Classes relacionadas:
+                        td(style="width:80%")
+                            table
+                                tr
+                                    td(width="1000px")
+                                        v-select.custom-select(
+                                            v-model="newClasse"
+                                            :options="listaClasses"
+                                        )
+                                    td
+                                        input(
+                                            type="button"
+                                            @click="addclasse"
+                                            value="+"
+                                        )
+                                tr(v-if="newDominio.length")
+                                    td
+                                        ul(style="padding-left:20px")
+                                            li(v-for="(c,index) in newDominio")
+                                                | {{ c.codigo }} - {{ c.titulo }}
+                                                button(
+                                                    @click="newDominio.splice(index,1)"
+                                                ) x
+
+
             spinner(ref="spinner" fixed size="lg" text="Por favor aguarde...")
 
             input.btn.btn-xs.btn-default.col-sm-2(
@@ -23,7 +53,6 @@ block corpo
                 value="Submeter novo Termo de Índice" 
                 :disabled="!(termo)"
             )
-            div(v-html="message")
 
 append scripts    
-    script(src="/javascripts/tipologias/adicao.vue")
+    script(src="/javascripts/termosIndice/adicao.vue")

@@ -27,8 +27,7 @@ TermosIndice.listar = () => {
                 clav:estado ?estado;
                 clav:estaAssocClasse ?idC .
             ?idC clav:titulo ?tituloClasse ;
-                clav:codigo ?codigoClasse.
-            BIND(CONCAT('c', ?codigoClasse) AS ?idClasse).
+                clav:codigo ?idClasse.
             BIND(STRAFTER(STR(?idTI), "clav#") AS ?id)
         }
         ORDER BY ?termo`;
