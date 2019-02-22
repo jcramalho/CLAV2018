@@ -49,7 +49,7 @@ block corpo
                                         li(v-for="nota in classe.notasEx")
                                             span(v-html="nota.nota")  
                             //- TERMOS DE ÍNDICE
-                            tr(v-if="(classe.nivel==3) && (classe.termosInd.length > 0)")
+                            tr(v-if="(classe.nivel==3) && !classe.temSubclasses4Nivel && (classe.termosInd.length > 0)")
                                 th.p-3(style="width: 10%") Termos de Índice:
                                 td.p-3(style="width:80%")
                                     ul(style="padding-left:20px")
@@ -81,11 +81,7 @@ block corpo
                             tr(v-if="classe.processosRelacionados.length > 0")
                                 th.p-3(style="width: 10%") Processos Relacionados:
                                 td.p-3(style="width:80%")
-                                    ul(style="padding-left:20px")
-                                        li(v-for="p in classe.processosRelacionados")
-                                            a(:href="'/classes/c'+p.codigo")
-                                                | {{ p.codigo }} 
-                                            | - {{ p.titulo }}
+                                    classe-proc-rel(:processos="classe.processosRelacionados")
                             //- LEGISLAÇÃO
                             tr(v-if="classe.legislacao.length > 0")
                                 th.p-3(style="width: 10%") Legislação:
@@ -106,7 +102,7 @@ block corpo
                                 table.table
                                     tr
                                         th.p-3(style="width: 10%") Prazo:   
-                                        td.p-3(style="width:80%") {{ classe.pca.valores }}
+                                        td.p-3(style="width:80%") {{ classe.pca.valores }} anos
                                     tr
                                         th.p-3(style="width: 10%") Forma de contagem:   
                                         td.p-3(style="width:80%") {{ classe.pca.formaContagem }}
@@ -162,4 +158,5 @@ append scripts
     script(src="/javascripts/v-components/classe-descendencia.vue")
     script(src="/javascripts/v-components/classe-donos.vue")
     script(src="/javascripts/v-components/classe-participantes.vue")
+    script(src="/javascripts/v-components/classe-proc-rel.vue")
     script(src="/javascripts/classes/classe-get.vue")

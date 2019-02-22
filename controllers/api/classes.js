@@ -302,7 +302,7 @@ Classes.participante = id => {
 // Devolve o(s) processo(s) relacionado(s): id, codigo, titulo, tipoRel
 Classes.procRel = id => {
     var query = `
-        select ?id ?codigo ?titulo ?tipoRel {
+        select ?id ?codigo ?titulo ?tipoRel ?idRel {
             clav:${id} clav:temRelProc ?id;
                         ?tipoRel ?id.
         
@@ -310,8 +310,9 @@ Classes.procRel = id => {
                 clav:titulo ?titulo;
                 clav:classeStatus 'A'.
         
-        filter (?tipoRel!=clav:temRelProc)
-        } Order by ?tipoRel ?codigo
+        filter (?tipoRel!=clav:temRelProc) .
+        BIND (STRAFTER(STR(?tipoRel), 'clav#') AS ?idRel).
+        } Order by ?idRel ?codigo
         `
     return client.query(query)
         .execute()
