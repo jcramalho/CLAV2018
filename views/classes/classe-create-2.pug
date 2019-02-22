@@ -25,17 +25,15 @@ block corpo
                     ) 
 
                 //- CLASSE PAI
-                a(name="pai")
                 .form-group.row(v-if="classe.nivel>1")
                     label.col-sm-2.col-form-label Classe Pai: 
                     select-value-from-list(
                         :initial-value = "classesPai[0].value"
                         :options = "classesPai"
-                        @value-change="classe.pai.codigo = $event"
+                        @value-change="atualizaCodigo($event)"
                     )
 
                 //- CÓDIGO
-                a(name="codigo")
                 .form-group.row
                     label.col-sm-2.col-form-label Código: 
                     input(
@@ -45,7 +43,6 @@ block corpo
                     span(style="color: red") {{ mensValCodigo }}
                             
                 //- TÍTULO
-                a(name="titulo")
                 .form-group.row
                     label.col-sm-2.col-form-label Título: 
                     input(

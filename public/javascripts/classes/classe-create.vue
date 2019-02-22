@@ -29,7 +29,10 @@ var newClass = new Vue({
             // Metainformação e campos da área de Descrição
 
             nivel: 1,
-            pai: "",
+            pai: {
+                codigo: "",
+                titulo: ""
+            },
             codigo: "",
             titulo: "",
             descricao: "",
@@ -195,11 +198,11 @@ var newClass = new Vue({
             // O código da classe depende da classe pai
             this.classe.codigo = null;
             if(this.classe.pai.codigo)
-                this.classe.codigo = this.classe.pai.slice(1, this.classe.pai.length) + ".";
+                this.classe.codigo = this.classe.pai.codigo + ".";
         },
         'classe.nivel': function () {
             // A classe pai depende do nível 
-            this.classe.pai = null;
+            this.classe.pai.codigo = null;
             
             if (this.classe.nivel > 1) {
                 this.loadPais();
@@ -217,15 +220,6 @@ var newClass = new Vue({
             // O código das notasAp, dos termos de índice depende do código da classe
             this.classe.notasAp = [];
             this.classe.termosInd = [];
-
-            if (this.classe.nivel > 1) {
-                if (this.classe.codigo.indexOf(this.classe.pai.slice(1, this.classe.pai.length)) != 0) {
-                    this.classe.codigo = this.classe.pai.slice(1, this.classe.pai.length) + ".";
-                }
-                if (this.classe.codigo[this.classe.pai.length - 1] != '.') {
-                    this.classe.codigo = this.classe.pai.slice(1, this.classe.pai.length) + ".";
-                }
-            }
 
             if (!this.codeFormats[this.classe.nivel].test(this.classe.codigo)) {
                 this.mensValCodigo = "Formato inválido";
@@ -330,6 +324,12 @@ var newClass = new Vue({
         this.loadLegislacao();
     },
     methods: {
+        // Quando novo código para o pai é selecionado
+        atualizaCodigo: function(novo){
+            this.classe.pai.codigo = novo.substring(1);
+            this.classe.codigo = this.classe.pai.codigo + '.';
+        },
+
         // Carrega as entidades da BD....................
 
         loadEntidades: function () {
