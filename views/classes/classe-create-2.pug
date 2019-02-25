@@ -391,8 +391,14 @@ block corpo
                                     button(@click="removerCriterioTodo(classe.pca.justificacao, cindex)") Remover Critério
                                     hr
                                     
-                                button(@click="adicionarCriterio(classe.pca.justificacao, 'CriterioJustificacaoLegal', 'Critério Legal', '', [], classe.legislacao)") Adicionar Critério Legal
-                                button(@click="adicionarCriterio(classe.pca.justificacao, 'CriterioJustificacaoGestionario', 'Critério Gestionário', textoCriterioGestionario, [], [])") Adicionar Critério Gestionário
+                                button(
+                                    @click="adicionarCriterioLegalPCA(classe.pca.justificacao, 'CriterioJustificacaoLegal', 'Critério Legal', '', [], classe.legislacao)"
+                                    v-if="!critLegalAdicionadoPCA"
+                                    ) Adicionar Critério Legal
+                                button(
+                                    @click="adicionarCriterioGestionario(classe.pca.justificacao, 'CriterioJustificacaoGestionario', 'Critério Gestionário', textoCriterioGestionario, [], [])"
+                                    v-if="!critGestionarioAdicionado"
+                                    ) Adicionar Critério Gestionário
 
                     //- DESTINO FINAL
                     .panel-group(v-if="!classe.temSubclasses4Nivel")
@@ -467,7 +473,10 @@ block corpo
                                     button(@click="removerCriterioTodo(classe.df.justificacao, indexDF)") Remover Critério
                                     hr
 
-                                button(@click="adicionarCriterio(classe.df.justificacao, 'CriterioJustificacaoLegal', 'Critério Legal', '', [], classe.legislacao)") Adicionar Critério Legal
+                                button(
+                                    @click="adicionarCriterioLegalDF(classe.df.justificacao, 'CriterioJustificacaoLegal', 'Critério Legal', '', [], classe.legislacao)"
+                                    v-if="!critLegalAdicionadoDF"
+                                    ) Adicionar Critério Legal
 
             //- SUBCLASSES DE NÍVEL 4  
             accordion.info-classe(v-if="classe.temSubclasses4NivelPCA || classe.temSubclasses4NivelDF")
@@ -671,7 +680,7 @@ block corpo
                                                     hr
 
                                                 button(@click="adicionarCriterio(subClasse.df.justificacao, 'CriterioJustificacaoLegal', 'Critério Legal', '', [], classe.legislacao)") Adicionar Critério Legal
-             
+                        tab(header="+ Adicionar subclasse")
 
             spinner(ref="spinner" fixed size="lg" text="Por favor aguarde...")
 
