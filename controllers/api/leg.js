@@ -179,6 +179,23 @@ Leg.existe = (legislacao) => {
 };
 
 /**
+ * Verifica se uma determinada legislação tem PNs associados.
+ * 
+ * @param {Legislacao} legislacao
+ * @return {Promise<boolean | Error>}
+ */
+Leg.temPNs = (legislacao) => {
+    const query = `ASK {
+        ?e clav:temLegislacao clav:'${legislacao.id}'
+        }`;
+
+    return client.query(query)
+        .execute()
+        .then(response => response.boolean);
+};
+
+
+/**
  * Gera um pedido de remoção da legislação.
  * Nenhuma alteração será feita à legislação., só quando o pedido for
  * validado
@@ -210,7 +227,7 @@ Leg.regula = id => {
     var query = `
         SELECT DISTINCT ?id ?codigo ?titulo WHERE { 
             {
-                ?id clav:temLegislacao clav:${id};
+                ?uri clav:temLegislacao clav:${id};
             } 
             UNION {
                 ?crit clav:temLegislacao clav:${id} .
@@ -218,15 +235,17 @@ Leg.regula = id => {
                 ?aval clav:temJustificacao ?just .
 
                 {
-                    ?id clav:temPCA ?aval ;
+                    ?uri clav:temPCA ?aval ;
                 } 
                 UNION {
-                    ?id clav:temDF ?aval ;
+                    ?uri clav:temDF ?aval ;
                 }
             }
-            ?id clav:codigo ?codigo;
+            ?uri clav:codigo ?codigo;
                 clav:titulo ?titulo;
                 clav:classeStatus 'A'.
+
+            BIND(STRAFTER(STR(?uri), 'clav#') AS ?id)
                 
         } ORDER BY ?codigo
     `

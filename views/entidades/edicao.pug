@@ -5,16 +5,17 @@ block corpo
             h1.page-header {{ myEntidade.designacao }}
         .panel-body
             .form-group
-                table.consulta
+                table.consulta(style="border-color: white; border-style:solid; margin-bottom:20px")
                     //- NOME
                     tr 
                         td(style="width:10%")
                             .info-label Nome:
-                        td(v-if="editDes" style="width:80")
+                        td(v-if="editDes" style="width:80%")
                             input(
                                 size="50"
                                 v-model="newDes"
-                                :placeholder="entDes"
+                                :placeholder="myEntidade.designacao"
+                                maxlength="50"
                             )
                         td(v-else style="width:80%")
                             | {{ myEntidade.designacao }}
@@ -35,15 +36,55 @@ block corpo
                     tr
                         td
                             .info-label Sigla: 
-                        td(style="width:90%")
+                        td(v-if="editSigla" style="width:80%")
+                            input(
+                                size="50"
+                                v-model="newSigla"
+                                :placeholder="myEntidade.sigla"
+                                maxlength="10"
+                            )  
+                        td(v-else style="width:80%")
                             | {{ myEntidade.sigla }} 
+
+                        if user
+                            td(style="width:10%")
+                                label(
+                                    for="editSigla"
+                                    :class="[editSigla ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']" 
+                                ) 
+                                input(
+                                    id="editSigla"
+                                    type="checkbox"
+                                    v-model="editSigla"
+                                    class="drop-row"
+                                )
+                            
 
                     //- Estado
                     tr
                         td
-                            .info-label Estado: 
-                        td(style="width:90%")
+                            .info-label Estado:
+                        td(v-if="editEstado" style="width:80%")
+                            input(
+                                size="50"
+                                v-model="newEstado"
+                                :placeholder= "myEntidade.estado"
+                            ) 
+                        td(v-else style="width:80%")
                             | {{ myEntidade.estado }}
+
+                        if user
+                            td(style="width:10%")
+                                label(
+                                    for="editEstado"
+                                    :class="[editEstado ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']" 
+                                ) 
+                                input(
+                                    id="editEstado"
+                                    type="checkbox"
+                                    v-model="editEstado"
+                                    class="drop-row"
+                                )
 
                     //- Internacional
                     tr
@@ -75,6 +116,33 @@ block corpo
                                     class="drop-row"
                                 )
 
+                    //-SIOE
+                    tr
+                        td(style="width:10%")
+                            .info-label SIOE: 
+                        td(v-if="editSIOE" style="width:80%")
+                            input(
+                                    size="50"
+                                    v-model="newSIOE"
+                                    :placeholder= "myEntidade.sioe"
+                                    maxlength="12"
+                                ) 
+                            td(v-else style="width:80%")
+                                | {{ myEntidade.sioe }}
+
+                        if user
+                            td(style="width:10%")
+                                label(
+                                    for="editSIOE"
+                                    :class="[editSIOE ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']" 
+                                ) 
+                                input(
+                                    id="editSIOE"
+                                    type="checkbox"
+                                    v-model="editSIOE"
+                                    class="drop-row"
+                                )
+
                     //- Tipologias
                     tr
                         td(style="width:10%")
@@ -101,10 +169,10 @@ block corpo
                                                     button(
                                                         @click="newListaTipologias.splice(index,1)"
                                                     ) x
-                        td(v-else style="width:90%")
+                        td(v-else style="width:80%")
                             ul(style="padding-left:20px")
                                 li(v-for="o in listaTipologias")
-                                    a(:href="'/tipologias/consultar/'+o.id") {{ o.sigla }} 
+                                    a(:href="'/tipologias/'+o.id") {{ o.sigla }} 
                                     | - {{ o.designacao }}
                         if user
                             td(style="width:10%")
@@ -212,7 +280,7 @@ block corpo
                                         b  {{ participacoesDic[key] }}:
                                         ul(:class="{'is-collapsed' : partsCollapsed[key] }")
                                             li(v-for="p in participacoes[key]")
-                                                a(:href="'/classes/'+p.id") {{ p.codigo }}
+                                                a(:href="'/classes/c'+p.codigo") {{ p.codigo }}
                                                 |  - {{ p.titulo }}
                                         a(@click="partsCollapsed[key]=!partsCollapsed[key]" v-if="participacoes[key].length>6").maozinha
                                             span(v-if="partsCollapsed[key]") Mostrar mais...
@@ -239,8 +307,28 @@ block corpo
                     type="button" 
                     @click="update" 
                     value="Submeter alteração" 
-                    :disabled="!(editDes || editInternacional || editDono || editParts || editTipologia)"  
+                    :disabled="!(editDes || editEstado || editSigla || editSIOE || editInternacional || editDono || editParts || editTipologia)"  
                 )
+                input.btn.btn-xs.btn-warning.col-sm-1(
+                    type="button" 
+                    @click="delConfirm=true" 
+                    value="Apagar" 
+                    :disabled="(editDes || editEstado || editSigla || editInternacional || editSIOE || editDono || editParts || editTipologia)"
+                )
+                p.col-sm-5 
+
+                modal(
+                    title="Confirmar" 
+                    :value="delConfirm"
+                    @closed="delConfirm=false"
+
+                    small
+                ) 
+                    .modal-body(slot="modal-body")
+                        center Tem a certeza que deseja apagar?
+                    .modal-footer(slot="modal-footer")
+                        button(@click="deleteEntidade" style="margin-right:7px") Ok
+                        button(@click="delConfirm=false") Cancelar
 
 append scripts    
     script(src="/javascripts/entidades/edicao.vue")

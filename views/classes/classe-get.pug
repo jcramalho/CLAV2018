@@ -1,22 +1,13 @@
 extends ../layout4
-block lateral
-    #sidebar-tabela-classes
-        tree(
-            class="tree--small"
-            :data="treeData"
-            :options="treeOptions"
-
-            @node:selected="onNodeSelected"
-        )
-        
 block corpo
     #classe-get-form.panel.panel-default.panel-custom
+        top-menu-bar
         .panel-heading(v-if="dadosCarregados")
-            h1.page-header {{ classe.codigo }} - {{ classe.titulo }} 
+            h1.page-header.p-2.mt-5 {{ classe.codigo }} - {{ classe.titulo }} 
         .panel-body(v-if="dadosCarregados")
             .mt-3.mb-3
                 accordion
-                    panel.p-3(header="Descritivo da Classe")
+                    panel.p-3(is-open header="Descritivo da Classe")
                         table.table-bordered.p-3
                             tr
                                 th.p-3 Nível:  
@@ -25,16 +16,15 @@ block corpo
                             tr 
                                 th.p-3 Classe Pai: 
                                 td.p-3(v-if="classe.nivel == 1") Lista Consolidada
-                                td.p-3(v-else) 
-                                    a(:href="'/classes/c'+classe.pai.codigo") {{ classe.pai.codigo }} - {{ classe.pai.titulo }}
+                                td.p-3.text-primary(v-else) 
+                                    a(:href="'/classes/c'+classe.pai.codigo") 
+                                        | {{ classe.pai.codigo }} 
+                                    | - {{ classe.pai.titulo }}
                             //- CLASSES DESCENDENTES
                             tr(v-if="classe.nivel<4 && (classe.filhos.length > 0)")
                                 th.p-3 Descendência: 
                                 td.p-3
-                                    table.table
-                                        tr(v-for="f in classe.filhos" )
-                                            td
-                                                a(:href="'/classes/c'+f.codigo") {{ f.codigo }} - {{ f.titulo }}  
+                                    classe-descendencia(:filhos="classe.filhos")
                             //- DESCRIÇÃO
                             tr
                                 th.p-3(style="width: 10%" valign="top") Descrição: 
@@ -59,7 +49,7 @@ block corpo
                                         li(v-for="nota in classe.notasEx")
                                             span(v-html="nota.nota")  
                             //- TERMOS DE ÍNDICE
-                            tr(v-if="(classe.nivel==3) && (classe.termosInd.length > 0)")
+                            tr(v-if="(classe.nivel==3) && !classe.temSubclasses4Nivel && (classe.termosInd.length > 0)")
                                 th.p-3(style="width: 10%") Termos de Índice:
                                 td.p-3(style="width:80%")
                                     ul(style="padding-left:20px")
@@ -81,31 +71,24 @@ block corpo
                             tr(v-if="classe.donos.length > 0")
                                 th.p-3(style="width: 10%") Donos:
                                 td.p-3(style="width:80%")
-                                    ul(style="padding-left:20px")
-                                        li(v-for="d in classe.donos")
-                                            | {{ d.sigla }} - {{ d.designacao }}
+                                    classe-donos(:donos="classe.donos")
                             //- PARTICIPANTES
                             tr(v-if="classe.participantes.length > 0")
                                 th.p-3(style="width: 10%") Participantes:
                                 td.p-3(style="width:80%")
-                                    ul(style="padding-left:20px")
-                                        li(v-for="p in classe.participantes")
-                                            | {{ p.sigla }} - {{ p.designacao }} ({{ p.tipoParticip.split('temParticipante')[1] }})
+                                    classe-participantes(:participantes="classe.participantes")
                             //- PROCESSOS RELACIONADOS
                             tr(v-if="classe.processosRelacionados.length > 0")
                                 th.p-3(style="width: 10%") Processos Relacionados:
                                 td.p-3(style="width:80%")
-                                    ul(style="padding-left:20px")
-                                        li(v-for="p in classe.processosRelacionados")
-                                            a(:href="'/classes/c'+p.codigo")
-                                                | {{ p.codigo }} - {{ p.titulo }}
+                                    classe-proc-rel(:processos="classe.processosRelacionados")
                             //- LEGISLAÇÃO
                             tr(v-if="classe.legislacao.length > 0")
                                 th.p-3(style="width: 10%") Legislação:
                                 td.p-3(style="width:80%")
                                     ul(style="padding-left:20px")
                                         li(v-for="l in classe.legislacao")
-                                            a(:href="'/'") {{ l.tipo }} {{ l.numero }} 
+                                            a(:href="'/legislacao/' + l.idLeg") {{ l.tipo }} {{ l.numero }} 
                                             | - {{ l.sumario }}
 
             .mt-3.mb-3
@@ -119,7 +102,7 @@ block corpo
                                 table.table
                                     tr
                                         th.p-3(style="width: 10%") Prazo:   
-                                        td.p-3(style="width:80%") {{ classe.pca.valores }}
+                                        td.p-3(style="width:80%") {{ classe.pca.valores }} anos
                                     tr
                                         th.p-3(style="width: 10%") Forma de contagem:   
                                         td.p-3(style="width:80%") {{ classe.pca.formaContagem }}
@@ -171,6 +154,9 @@ block corpo
             spinner(ref="spinner" size="lg" fixed text="Por favor aguarde...")
 
 append scripts    
+    script(src="/javascripts/v-components/top-menu-bar.vue")
+    script(src="/javascripts/v-components/classe-descendencia.vue")
+    script(src="/javascripts/v-components/classe-donos.vue")
+    script(src="/javascripts/v-components/classe-participantes.vue")
+    script(src="/javascripts/v-components/classe-proc-rel.vue")
     script(src="/javascripts/classes/classe-get.vue")
-    script(src="/javascripts/classes/consulta-sidebar-v2.vue")
-    script(src="/javascripts/v-components/liquor-tree.umd.js")

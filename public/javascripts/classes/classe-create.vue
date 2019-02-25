@@ -29,7 +29,10 @@ var newClass = new Vue({
             // Metainformação e campos da área de Descrição
 
             nivel: 1,
-            pai: "",
+            pai: {
+                codigo: "",
+                titulo: ""
+            },
             codigo: "",
             titulo: "",
             descricao: "",
@@ -174,6 +177,12 @@ var newClass = new Vue({
                                     " escrutínio público (eleições) ou da não recondução no mandato. Considerou-se para" +
                                     " a definição do prazo o tempo do mandato de maior duração: 5 anos.",
 
+    // Flags de controlo
+
+        critLegalAdicionadoPCA: false,
+        critLegalAdicionadoDF: false,
+        critGestionarioAdicionado: false,
+    
     // Mensagens de validação
 
         mensValCodigo: "",
@@ -195,11 +204,11 @@ var newClass = new Vue({
             // O código da classe depende da classe pai
             this.classe.codigo = null;
             if(this.classe.pai.codigo)
-                this.classe.codigo = this.classe.pai.slice(1, this.classe.pai.length) + ".";
+                this.classe.codigo = this.classe.pai.codigo + ".";
         },
         'classe.nivel': function () {
             // A classe pai depende do nível 
-            this.classe.pai = null;
+            this.classe.pai.codigo = null;
             
             if (this.classe.nivel > 1) {
                 this.loadPais();
@@ -217,15 +226,6 @@ var newClass = new Vue({
             // O código das notasAp, dos termos de índice depende do código da classe
             this.classe.notasAp = [];
             this.classe.termosInd = [];
-
-            if (this.classe.nivel > 1) {
-                if (this.classe.codigo.indexOf(this.classe.pai.slice(1, this.classe.pai.length)) != 0) {
-                    this.classe.codigo = this.classe.pai.slice(1, this.classe.pai.length) + ".";
-                }
-                if (this.classe.codigo[this.classe.pai.length - 1] != '.') {
-                    this.classe.codigo = this.classe.pai.slice(1, this.classe.pai.length) + ".";
-                }
-            }
 
             if (!this.codeFormats[this.classe.nivel].test(this.classe.codigo)) {
                 this.mensValCodigo = "Formato inválido";
@@ -330,6 +330,12 @@ var newClass = new Vue({
         this.loadLegislacao();
     },
     methods: {
+        // Quando novo código para o pai é selecionado
+        atualizaCodigo: function(novo){
+            this.classe.pai.codigo = novo.substring(1);
+            this.classe.codigo = this.classe.pai.codigo + '.';
+        },
+
         // Carrega as entidades da BD....................
 
         loadEntidades: function () {
@@ -550,6 +556,7 @@ var newClass = new Vue({
                 // Tratamento do invariante: se é Suplemento De então cria-se um critério Legal com toda a legislação selecionada associada
                 else if(row.relacao == "eSuplementoDe"){
                     this.adicionarCriterio(this.classe.pca.justificacao, "CriterioJustificacaoLegal", "Critério Legal", "", [row], this.classe.legislacao);
+                    this.critLegalAdicionadoPCA = true;
                 }
                 // Tratamento do invariante: se é Síntese De então cria-se um critério de Densidade Informacional
                 else if(row.relacao == "eSinteseDe"){
@@ -578,6 +585,7 @@ var newClass = new Vue({
                 else if(row.relacao == "eSuplementoDe"){
                     for(var i=0; i < this.classe.subclasses.length; i++){
                         this.adicionarCriterio(this.classe.subclasses[i].pca.justificacao, "CriterioJustificacaoLegal", "Critério Legal", "", [row], this.classe.legislacao);
+                        this.critLegalAdicionadoPCA = true;
                     }    
                 }
 
@@ -623,9 +631,11 @@ var newClass = new Vue({
             }
             else if(p.relacao == "eSuplementoDe") {
                 this.removerCriterio(this.classe.pca.justificacao, "CriterioJustificacaoLegal", p.id);
+                this.critLegalAdicionadoPCA = false;
                 if(this.classe.temSubclasses4Nivel){
                     for(var i=0; i < this.classe.subclasses.length; i++){
                         this.removerCriterio(this.classe.subclasses[i].pca.justificacao, "CriterioJustificacaoLegal", p.id);
+                        this.critLegalAdicionadoPCA = false;
                     }
                 }
             }
@@ -718,6 +728,22 @@ var newClass = new Vue({
             
         },
 
+        adicionarCriterioLegalDF: function (justificacao, tipo, label, notas, procRel, legislacao) {
+            this.adicionarCriterio(justificacao, tipo, label, notas, procRel, legislacao);
+            this.critLegalAdicionadoDF = true;
+        },    
+
+        adicionarCriterioLegalPCA: function (justificacao, tipo, label, notas, procRel, legislacao) {
+            this.adicionarCriterio(justificacao, tipo, label, notas, procRel, legislacao);
+            this.critLegalAdicionadoPCA = true;
+        },
+
+        adicionarCriterioGestionario: function (justificacao, tipo, label, notas, procRel, legislacao) {
+            this.adicionarCriterio(justificacao, tipo, label, notas, procRel, legislacao);
+            this.critGestionarioAdicionado = true;
+        },
+
+
         // Remove um PN dum critério e se este ficar sem PNs, remove o critério também:
         // criterio = {tipo: String, notas: [String], procRel: [proc], legislacao: [leg]}
 
@@ -767,6 +793,7 @@ var newClass = new Vue({
                 // Tratamento do invariante: se é Suplemento De então cria-se um critério Legal com toda a legislação selecionada associada
                 else if(procRel[i].relacao == "eSuplementoDe"){
                     this.adicionarCriterio(novaClasse.pca.justificacao, "CriterioJustificacaoLegal", "Critério Legal", "", [procRel[i]], this.classe.legislacao);
+                    this.critLegalAdicionadoPCA = true;
                 }
                 // Tratamento do invariante: se é Síntese De então cria-se um critério de Densidade Informacional
                 else if(procRel[i].relacao == "eSinteseDe"){
@@ -900,6 +927,7 @@ var newClass = new Vue({
         },
 
         tabClicked: function (event) {
+            alert(event);
             this.activeTab = event;
         },
 

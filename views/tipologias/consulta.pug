@@ -13,21 +13,21 @@ block corpo
                     //- NOME
                     tr
                         td(style="width:10%")
-                            label Designação: 
+                            .info-label Designação: 
                         td(style="width:80%")
                             | {{ tipologia.designacao }}  
                     
                     //- SIGLA
                     tr
                         td(style="width:10%")
-                            label Sigla: 
+                            .info-label Sigla: 
                         td(style="width:80%")
                             | {{ tipologia.sigla }} 
                     
                     //- DOMINIO
                     tr
                         td(style="width:10%")
-                            label Dono de:
+                            .info-label Dono de:
                         td(style="width:80%")
                             ul(v-if="eDonoProcessos" style="padding-left:20px" :class="{'is-collapsed' : domainCollapsed }")
                                 li(v-for="c in donoProcessos")
@@ -40,7 +40,7 @@ block corpo
                     //- PARTICIPAÇÕES
                     tr
                         td(style="width:10%")
-                            label Tipo de Participação:    
+                            .info-label Tipo de Participação:    
                         td(style="width:80%")
                             ul(v-if="partsReady" style="padding-left:20px")
                                 li(v-for="key in Object.keys(participations)" v-if="participations[key].length>0")
@@ -56,7 +56,7 @@ block corpo
                     //- ELEMENTOS
                     tr
                         td(style="width:10%")
-                            label Entidades:
+                            .info-label Entidades:
                         td(style="width:80%")
                             ul(style="padding-left:20px")
                                 li(v-for="e in elementos")

@@ -8,7 +8,7 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/adicionar', Auth.isLoggedIn, function(req, res) {
-    res.render('termosIndice/adicao');
+    res.render('termosIndice/adicao', {title: "Novo termo de indice"});
 });
 /*
 router.get('/consultar/:id', function(req, res) {
