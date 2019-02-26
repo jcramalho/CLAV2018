@@ -23,7 +23,7 @@ block corpo
                             .info-label Tipo: 
                         td(style="width:80%")
                             select(v-model="diploma.tipo")
-                               option(v-for="t in tipoDiploma" :value="t") {{ t.termo }}
+                               option(v-for="t in tipoDiploma" :value="t.termo") {{ t.termo }}
                           
                     
                     //- Número
@@ -102,13 +102,13 @@ block corpo
                                             @click="addProcesso"
                                             value="+"
                                         ) 
-                                tr(v-if="diploma.processos.length")
+                                tr(v-if="processos.length")
                                     td
                                         ul(style="padding-left:20px")
-                                            li(v-for="(c,index) in diploma.processos")
+                                            li(v-for="(c,index) in processos")
                                                 | {{ c.codigo }} - {{ c.titulo }}  
                                                 button(
-                                                    @click="diploma.processos.splice(index,1)"
+                                                    @click="processos.splice(index,1)"
                                                 ) x
 
             spinner(ref="spinner" size="lg" fixed text="Por favor aguarde...")

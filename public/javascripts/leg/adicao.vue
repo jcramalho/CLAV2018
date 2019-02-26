@@ -8,8 +8,10 @@ var newLeg = new Vue({
             data: "",
             link: "",
             entidades: [],
-            processos: [],
+            
         },
+        processos: [],
+        
         orgs: [],
         orgsReady: false,
         orgsTableHeader: ["Sigla", "Nome"],
@@ -21,6 +23,7 @@ var newLeg = new Vue({
         newProcesso: "",
         listaClasses: [],
         //newProcessos: [],
+
     },
     components: {
         spinner: VueStrap.spinner,
@@ -54,6 +57,33 @@ var newLeg = new Vue({
                 }
             }
 
+            var parseAno = this.diploma.numero.split("/");
+            var anoDiploma = parseInt(parseAno[1]);
+
+            var date = new Date();
+
+            var ano = parseInt(this.diploma.data.slice(0, 4));
+            var mes = parseInt(this.diploma.data.slice(5, 7));
+            var dia = parseInt(this.diploma.data.slice(8, 10));
+
+            if( anoDiploma > parseInt(date.getFullYear()) ){
+                messageL.showMsg("Ano de Diploma errado!")
+                return false
+            }
+            if( ano > parseInt(date.getFullYear()) ){
+                messageL.showMsg("Data errada! Por favor selecione uma data anterior à atual");
+                return false
+            }
+            else if( mes > parseInt(date.getMonth() + 1) ){
+                messageL.showMsg("Data errada! Por favor selecione uma data anterior à atual");
+                return false
+            }
+            else if( dia > parseInt(date.getDate()) ){
+                messageL.showMsg("Data errada! Por favor selecione uma data anterior à atual");
+                return false
+            }
+
+
             let Link = new RegExp(/https?:\/\/.+/);
 
             if(!Link.test(this.diploma.link) && this.diploma.link!=""){
@@ -62,6 +92,8 @@ var newLeg = new Vue({
 
             this.$refs.spinner.show();
             var dataObj = JSON.parse(JSON.stringify(this.diploma));  
+
+            console.log(dataObj)
 
             this.$http.post('/api/legislacao/', dataObj,{
                 headers: {
@@ -155,15 +187,15 @@ var newLeg = new Vue({
         },
         addProcesso: function(){
             var existeProcesso = 0;
-            for(var i=0; i<this.diploma.processos.length; i++){
-                if(this.newProcesso.value.codigo==this.diploma.processos[i].codigo){
+            for(var i=0; i<this.processos.length; i++){
+                if(this.newProcesso.value.codigo==this.processos[i].codigo){
                     existeProcesso = 1;
                     break
                 }
             }
             if(existeProcesso==0){
-                this.diploma.processos.unshift(this.newProcesso.value)
-            }
+                this.processos.unshift(this.newProcesso.value)
+            }   
             else{
                 messageL.showMsg("Esse processo já se encontra selecionado!");
             }
@@ -171,7 +203,7 @@ var newLeg = new Vue({
     },
     created: function () {
         this.loadOrgs();
-        this.loadTipoDiploma();
+        this.loadTipoDiploma(); 
         this.loadClasses();
     }
 })

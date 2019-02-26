@@ -2,8 +2,8 @@ var newTI = new Vue({
     el: '#novo-termo-indice',
     data: {
         termo: "",
-        //idClasse: "",
-        //tituloClasse: "",
+        idClasse: "",
+        tituloClasse: "",
         id: "",
         
 
@@ -16,17 +16,20 @@ var newTI = new Vue({
         spinner: VueStrap.spinner,
     },
     methods: {
-        idTermoIndice: function(){
+        /*idTermoIndice: function(){
+            var n = '';
+
             axios.get("/api/utils/id")
                 .then(function(response){
-                    //this.id = {id: 'ti_' + response.data, termo: '', existe: false};
-                    this.id= 'ti_' + response.data
-                    //termos.push(n);
+                    n = 'ti_' + response.data
+                    console.log(n)
                 })
                 .catch(function (error) {
                     console.error(error);
                 });
-        },
+            this.id= n; 
+            console.log(this.id)
+        },*/
         loadClasses: function () {
             var classes = [];
 
@@ -51,31 +54,39 @@ var newTI = new Vue({
                 });
         },
         addclasse: function(){
-            var existeClasse = 0;
-            console.log(this.newClasse)
-            console.log(this.newDominio)
-            for(var i=0; i<this.newDominio.length; i++){
-                if("c" + this.newClasse.value.codigo== "c" + this.newDominio[i].codigo){
-                    existeClasse = 1;
-                    break
-                }
+            if(this.addClasse===false){
+                console.log(this.newClasse)
+                this.idClasse = this.newClasse.value.codigo
+                this.tituloClasse = this.newClasse.value.titulo
+                this.addClasse=true;
             }
-            if(existeClasse==0){
-                this.newDominio.unshift(this.newClasse.value)
+            else {
+                messageL.showMsg("Apenas pode selecionar uma classe!");
             }
-            else{
-                messageL.showMsg("Essa Classe já se encontra selecionada!");
-            }
-            console.log(this.newDominio)
+        },
+        deleteClasse: function(){
+            this.idClasse = "";
+            this.tituloClasse = "";
+            this.addClasse = false;
         },
         add: function () {
             this.$refs.spinner.show();
 
+            axios.get("/api/utils/id")
+                    .then(function(response){
+                        var n = 'ti_' + response.data
+                        console.log(n)
+                    })
+                    .catch(function (error) {
+                        console.error(error);
+                    });
+                
+
             var dataObj = {
                 termo: this.termo,
-                //-idClasse: this.idClasse,
-                //-tituloClasse: this.tituloClasse,
-                id: this.id,
+                idClasse: this.idClasse,
+                tituloClasse: this.tituloClasse,
+                id: n,
             }
 
             console.log(dataObj)
@@ -99,7 +110,7 @@ var newTI = new Vue({
         }
     },
     created: function() {
-        this.idTermoIndice();
+        //this.idTermoIndice();
         this.loadClasses();   
     }
 })
