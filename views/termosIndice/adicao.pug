@@ -17,10 +17,10 @@ block corpo
                                 v-model="termo"
                             )
 
-                    //- Classes associadas
+                    //- Classe associada
                     tr
                         td(style="width:10%")
-                            .info-label Classes relacionadas:
+                            .info-label Classe associada:
                         td(style="width:80%")
                             table
                                 tr
@@ -35,14 +35,13 @@ block corpo
                                             @click="addclasse"
                                             value="+"
                                         )
-                                tr(v-if="newDominio.length")
-                                    td
-                                        ul(style="padding-left:20px")
-                                            li(v-for="(c,index) in newDominio")
-                                                | {{ c.codigo }} - {{ c.titulo }}
-                                                button(
-                                                    @click="newDominio.splice(index,1)"
-                                                ) x
+                                tr(v-if="addClasse")
+                                    td {{ idClasse }} - {{ tituloClasse }}       
+                                                input(
+                                                    type= "button"
+                                                    @click= "deleteClasse"
+                                                    value= "x"
+                                                ) 
 
 
             spinner(ref="spinner" fixed size="lg" text="Por favor aguarde...")
