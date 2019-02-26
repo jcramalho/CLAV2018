@@ -66,6 +66,20 @@ var newLeg = new Vue({
             var mes = parseInt(this.diploma.data.slice(5, 7));
             var dia = parseInt(this.diploma.data.slice(8, 10));
 
+            dias = [31,28,31,30,31,30,31,31,30,31,30,31]
+
+            if( mes>12 ){
+                messageL.showMsg("Mês inválido!")
+                return false
+            }
+            if( dia > dias[mes-1]){
+                if( ano % 4 == 0 && mes == 2 && dia == 29){}
+                else{ 
+                messageL.showMsg("Dia do mês inválido!")
+                return false
+                }
+            }
+
             if( anoDiploma > parseInt(date.getFullYear()) ){
                 messageL.showMsg("Ano de Diploma errado!")
                 return false
@@ -74,11 +88,11 @@ var newLeg = new Vue({
                 messageL.showMsg("Data errada! Por favor selecione uma data anterior à atual");
                 return false
             }
-            else if( mes > parseInt(date.getMonth() + 1) ){
+            if( ano == parseInt(date.getFullYear()) && mes > parseInt(date.getMonth() + 1) ){
                 messageL.showMsg("Data errada! Por favor selecione uma data anterior à atual");
                 return false
             }
-            else if( dia > parseInt(date.getDate()) ){
+            if( ano == parseInt(date.getFullYear()) && mes == parseInt(date.getMonth() + 1) && dia > parseInt(date.getDate()) ){
                 messageL.showMsg("Data errada! Por favor selecione uma data anterior à atual");
                 return false
             }
