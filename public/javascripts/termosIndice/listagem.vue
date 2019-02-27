@@ -6,7 +6,7 @@ var termos = new Vue({
     },
     methods: {
         rowClicked: function(idClasse){
-            window.location.href = '/classes/consultar/c' + idClasse;
+            window.location.href = '/classes/c' + idClasse;
         },
         addTermo: function(row){
             window.location.href = '/termosIndice/adicionar';

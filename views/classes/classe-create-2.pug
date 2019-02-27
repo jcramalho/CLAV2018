@@ -481,7 +481,8 @@ block corpo
             //- SUBCLASSES DE NÍVEL 4  
             accordion.info-classe(v-if="classe.temSubclasses4NivelPCA || classe.temSubclasses4NivelDF")
                 panel(is-open header="Subclasses de nível 4")
-                    tabs
+                    tabs(@input="tabClicked($event)" v-model="selectedSubclasse")
+                        tab(header="+ Adicionar subclasse")
                         tab(v-bind:header="subClasse.codigo" v-for="(subClasse, cindex) in classe.subclasses")
                             .form-group.row
                                 label.col-sm-2.col-form-label Código da classe: 
@@ -512,6 +513,7 @@ block corpo
                                 .col-sm-10
                                     button(@click="insereNovoTI(subClasse.termosInd)") Novo termo
             
+                            //- CONTEXTO DE AVALIAÇÂO
                             .panel.panel-default(v-if="(subClasse.processosRelacionados.length > 0)||(subClasse.legislacao.length > 0)")
                                 .panel-heading
                                     h4(data-toggle="tooltip" data-placement="top" title="Herdado do 3º nível") Contexto de Avaliação 
@@ -542,6 +544,7 @@ block corpo
                                                         td(v-for="valor in p.data") {{ valor }} 
                                             .row(v-else) Não tem legislação selecionada.
 
+                            //- DECISÔES DE AVALIAÇÂO
                             .panel.panel-default
                                 .panel-heading
                                     h4 Decisões de Avaliação 
@@ -680,7 +683,8 @@ block corpo
                                                     hr
 
                                                 button(@click="adicionarCriterio(subClasse.df.justificacao, 'CriterioJustificacaoLegal', 'Critério Legal', '', [], classe.legislacao)") Adicionar Critério Legal
-                        tab(header="+ Adicionar subclasse")
+                        
+                        
 
             spinner(ref="spinner" fixed size="lg" text="Por favor aguarde...")
 

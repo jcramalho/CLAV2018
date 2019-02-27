@@ -6,6 +6,22 @@ var url = require('url');
 var express = require('express');
 var router = express.Router();
 
+// Middleware de verificação de disponibilidade de uma entidade
+const estaDisponivel = (req, res, next) => {
+    const termoIndice = {
+        termo: req.body.termo,
+    };
+
+    TermosIndice.existe(termoIndice)
+        .then(function(existe) {
+            if (existe) {
+                res.status(409).send(`Já existe um Termo de Índice com o termo '${termoIndice.termo}'.`);
+            } else {
+                next();
+            }
+        })
+};
+
 // Devolve a lista dos termos de índice ou processa uma query
 router.get('/', function (req, res) {
     var queryData = url.parse(req.url, true).query;
@@ -29,7 +45,7 @@ router.get('/quantos', function (req, res) {
 })
 
 // Criação de um novo termo de indice. Em caso de sucesso gera um novo pedido
-router.post('/', Auth.isLoggedIn, (req, res) => {
+router.post('/', Auth.isLoggedIn, estaDisponivel, (req, res) => {
     return TermosIndice.criar(termoIndice, req.user.email)
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na criação do termo de índice: ${erro}`));

@@ -21,7 +21,7 @@ var newClass = new Vue({
                 4: /^[0-9]{3}\.[0-9]{2}\.[0-9]{3}\.[0-9]{3}$/,
         },
 
-        activeTab: 1,
+        selectedSubclasse: 1,
 
     // Objeto que guarda uma classe
 
@@ -854,22 +854,24 @@ var newClass = new Vue({
         calcDF: function(listaProc){
             var res = "NE";
 
-            var complementar = listaProc.findIndex(p => p.relacao == 'eComplementarDe');
-            if(complementar != -1){
-                res = "C";
-            }
-            else{
-                var sinteseDe = listaProc.findIndex(p => p.relacao == 'eSinteseDe');
-                if(sinteseDe != -1){
+            if(!this.classe.temSubclasses4NivelDF){
+                var complementar = listaProc.findIndex(p => p.relacao == 'eComplementarDe');
+                if(complementar != -1){
                     res = "C";
                 }
                 else{
-                    var sintetizado = listaProc.findIndex(p => p.relacao == 'eSintetizadoPor');
-                    if(sintetizado != -1){
-                        res = "E";
+                    var sinteseDe = listaProc.findIndex(p => p.relacao == 'eSinteseDe');
+                    if(sinteseDe != -1){
+                        res = "C";
                     }
                     else{
-                        res = "NE";
+                        var sintetizado = listaProc.findIndex(p => p.relacao == 'eSintetizadoPor');
+                        if(sintetizado != -1){
+                            es = "E";
+                        }
+                        else{
+                            res = "NE";
+                        }
                     }
                 }
             }
@@ -878,6 +880,7 @@ var newClass = new Vue({
 
         calcSinteseDF4Nivel: function(){
             if(this.classe.subdivisao4Nivel01Sintetiza02){
+                this.classe.subclasses[0].df.valor = 'C';
                 this.classe.subclasses[0].processosRelacionados.push(
                     {
                         codigo: this.classe.subclasses[1].codigo,
@@ -886,6 +889,7 @@ var newClass = new Vue({
                         relLabel: 'é Síntese de'
                     }
                 );
+                this.classe.subclasses[1].df.valor = 'E';
                 this.classe.subclasses[1].processosRelacionados.push(
                     {
                         codigo: this.classe.subclasses[0].codigo,
@@ -896,6 +900,7 @@ var newClass = new Vue({
                 );
             }
             else{
+                this.classe.subclasses[0].df.valor = 'E';
                 this.classe.subclasses[0].processosRelacionados.push(
                     {
                         codigo: this.classe.subclasses[1].codigo,
@@ -904,6 +909,7 @@ var newClass = new Vue({
                         relLabel: 'é Sintetizado por'
                     }
                 );
+                this.classe.subclasses[1].df.valor = 'C';
                 this.classe.subclasses[1].processosRelacionados.push(
                     {
                         codigo: this.classe.subclasses[0].codigo,
@@ -926,9 +932,44 @@ var newClass = new Vue({
             }
         },
 
-        tabClicked: function (event) {
-            alert(event);
-            this.activeTab = event;
+        // Sempre que uma tab é clicada, vou ver se é para adicionar...
+        tabClicked: function (tab) {
+            if(tab == 0){
+                var nsubs = this.classe.subclasses.length;
+                var codigo = (nsubs+1).toString();
+                var novaSubclasse = {
+                    nivel: 4,
+                    pai: this.classe.codigo,
+                    codigo: this.classe.codigo + '.' + codigo.padStart(nsubs, '0'),
+                    titulo: this.classe.titulo + ': ',
+                    descricao: null,
+                    termosInd: JSON.parse(JSON.stringify(this.classe.termosInd)),
+
+                    // Bloco de contexto de avaliação
+
+                    processosRelacionados: JSON.parse(JSON.stringify(this.classe.processosRelacionados)),
+                    legislacao: JSON.parse(JSON.stringify(this.classe.legislacao)),
+
+                    // Bloco de decisão de avaliação: PCA e DF
+
+                    pca: {
+                        valor: null,
+                        formaContagem: "",
+                        subFormaContagem: "",
+                        justificacao: []        // j = [criterio]
+                    },                          // criterio = {tipo, notas, [proc], [leg]}
+
+                    df: {
+                        valor: "NE",
+                        notas: null,
+                        justificacao: []
+                    }
+                };
+                this.procHeranca(this.classe.processosRelacionados, novaSubclasse);
+
+                this.classe.subclasses.splice(nsubs, 0, novaSubclasse);
+                this.selectedSubclasse = nsubs + 1;
+            }
         },
 
         showMsg(text) {

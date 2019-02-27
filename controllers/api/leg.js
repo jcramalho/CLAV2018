@@ -128,23 +128,21 @@ Leg.consultar = id => {
  * pedido gerado para a criação da nova tipologia
  */
 Leg.criar = async (legislacao, utilizador) => {
-    const contaQuery = `SELECT (count(distinct ?uri) as ?count) {
-        ?uri rdf:type owl:NamedIndividual , clav:Legislacao.
-    }`;
-    const id = await client.query(contaQuery)
-        .execute()
-        .then(response => `leg_${normalize(response)[0].count + 1}`);
+    const nanoid = require('nanoid')
+    const id = "leg_" + nanoid();
     const query = `INSERT DATA {
         clav:${id} rdf:type owl:NamedIndividual , clav:Legislacao ;
             clav:diplomaData '${legislacao.data}' ;
             clav:diplomaNumero '${legislacao.numero}' ;
             clav:diplomaTipo '${legislacao.tipo}' ;
             clav:diplomaSumario '${legislacao.sumario}' ;
-            clav:diplomaEstado 'Harmonização' ;
-            clav:diplomaLink '${legislacao.link}' .
+            clav:diplomaLink '${legislacao.link}' ;
+            clav:diplomaEstado 'Harmonização' .
         
         ${legislacao.entidades.map(entidade => `clav:${id} clav:diplomaEntidade clav:${entidade}.`).join('\n')}
+        
     }`;
+    console.log(query)
     const pedido = {
         criadoPor: utilizador,
         objeto: {
