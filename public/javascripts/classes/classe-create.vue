@@ -770,7 +770,16 @@ var newClass = new Vue({
 
         // Remove um critério completo duma vez
 
-        removerCriterioTodo: function(justificacao, i){
+        removerCriterioTodo: function(justificacao, i, PCAouDF){
+            if(justificacao[i].tipo == "CriterioJustificacaoLegal"){
+                if(PCAouDF == 'PCA')
+                    this.critLegalAdicionadoPCA = false;
+                else
+                    this.critLegalAdicionadoDF = false;
+            }
+            else if(justificacao[i].tipo == "CriterioJustificacaoGestionario"){
+                this.critGestionarioAdicionado = false;
+            }
             justificacao.splice(i, 1)
         },
 
