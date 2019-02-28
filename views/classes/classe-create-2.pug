@@ -1,13 +1,6 @@
 extends ../layout
 block lateral
-    ul#sideNav
-        li(v-for="l in sideNav")
-            a(:href="l.anchor") {{ l.label }}
-
-    .btn-group-vertical.info-classe.mr-2(role="group")
-        button.btn.btn-primary Guardar trabalho
-        button.btn.btn-secondary Validar informação
-        button.btn.btn-primary(@click="criarClasse") Submeter nova classe
+    
 
 block corpo
     #nova-classe-form.panel.panel-default.panel-custom
@@ -49,7 +42,7 @@ block corpo
                         size="70"
                         v-model="classe.titulo"
                     )
-                    
+
             //- DESCRITIVO
             accordion
                 a(name="descritivo")
@@ -698,17 +691,23 @@ block corpo
                 .modal-footer(slot="modal-footer")
                     button(@click="modalMsgShow=false") Ok
 
-            input.btn.btn-xs.btn-default.col-sm-2(
-                type="button" 
-                @click="criarClasse" 
-                value="Submeter nova classe" 
-                :disabled=`!(
-                    ((classe.nivel>1 && parent) || classe.nivel==1) && 
-                    classe.codigo
-                )`
-             )
-            p.col-sm-7 {{ message }}
-
+            .panel
+                .panel-body
+                    button.btn.btn-primary(:disabled="true") Guardar trabalho
+                    button.btn.btn-primary(:disabled="true") Validar informação
+                    button.btn.btn-primary(
+                        @click="classeConfirm = true"
+                        :disabled=`!(((classe.nivel>1 && parent) || classe.nivel==1) && classe.codigo)`
+                        ) Adicionar nova classe
+                    
+                    modal(v-model="classeConfirm" effect="fade")
+                        .modal-header(slot="modal-header")
+                            h4.modal-title Criação de nova Classe
+                        //- classe-show(:myClasse="classe")
+                        .modal-footer(slot="modal-footer")
+                            button.btn.btn-primary(type="button" @click="classeConfirm = false") Cancelar
+                            button.btn.btn-success(type="button" @click="classeConfirm = false") Submeter
+    
 append scripts    
     script(src="/javascripts/component-select-value-from-list.vue")
     script(src="/javascripts/component-select-row-from-table.vue")
@@ -716,4 +715,5 @@ append scripts
     script(src="/javascripts/classes/classe-create.vue")
     script(src="/javascripts/component-sel-participantes-2.vue")
     script(src="/javascripts/component-sel-procRelacionados.vue")
+    script(src="/javascripts/v-components/classe-show.vue")
     
