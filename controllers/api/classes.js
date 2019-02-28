@@ -216,7 +216,7 @@ Classes.notasAp = id => {
 Classes.exemplosNotasAp = id => {
     var query = `
             SELECT ?idExemplo ?exemplo WHERE { 
-                clav:${id} clav:exemploNA ?idExemplo.
+                clav:${id} clav:temExemploNA ?idExemplo.
                 ?idExemplo clav:conteudo ?exemplo.
             }`
     return client.query(query)
@@ -483,7 +483,7 @@ Classes.filterNone = function () {
                     ?ti clav:estaAssocClasse ?PN ;
                         clav:termo ?TermoI .
                 } UNION {
-                    ?PN clav:exemploNA ?TermoI .
+                    ?PN clav:temExemploNA ?TermoI .
                 } UNION {
                     ?PN clav:temNotaAplicacao ?pNA.
                     ?pNA clav:conteudo ?TermoI .
@@ -648,7 +648,7 @@ Classes.createClass = function (data) {
 
     if (data.ExAppNotes && data.ExAppNotes.length) {
         for (var i = 0; i < data.ExAppNotes.length; i++) {
-            createQuery += 'clav:' + id + ' clav:exemploNA "' + data.ExAppNotes[i].replace(/\n/g, '\\n').replace(/\"/g, "\\\"") + '" .\n';
+            createQuery += 'clav:' + id + ' clav:temExemploNA "' + data.ExAppNotes[i].replace(/\n/g, '\\n').replace(/\"/g, "\\\"") + '" .\n';
         }
     }
 
@@ -813,7 +813,7 @@ Classes.updateClass = function (dataObj) {
 
         if (dataObj.ExAppNotes && dataObj.ExAppNotes.length) {
             deletePart += `
-                clav:${dataObj.id} clav:exemploNA ?exNA .
+                clav:${dataObj.id} clav:temExemploNA ?exNA .
             `;
         }
         if (dataObj.AppNotes) {
@@ -994,7 +994,7 @@ Classes.updateClass = function (dataObj) {
         if (dataObj.ExAppNotes && dataObj.ExAppNotes.length) {
             for (var i = 0; i < dataObj.ExAppNotes.length; i++) {
                 if (dataObj.ExAppNotes[i].Exemplo) {
-                    insertPart += `\tclav:${dataObj.id} clav:exemploNA "${dataObj.ExAppNotes[i].Exemplo.replace(/\n/g, '\\n').replace(/\"/g, "\\\"")}" .\n`;
+                    insertPart += `\tclav:${dataObj.id} clav:temExemploNA "${dataObj.ExAppNotes[i].Exemplo.replace(/\n/g, '\\n').replace(/\"/g, "\\\"")}" .\n`;
                 }
             }
         }
@@ -1171,7 +1171,7 @@ Classes.updateClass = function (dataObj) {
         if (dataObj.ExAppNotes && dataObj.ExAppNotes.length) {
             retWhere += `
                 optional{
-                    clav:${dataObj.id} clav:exemploNA ?exNA .
+                    clav:${dataObj.id} clav:temExemploNA ?exNA .
                 }
             `;
         }

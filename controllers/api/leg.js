@@ -33,7 +33,7 @@ Leg.listar = (filtro) => {
              clav:diplomaSumario ?sumario;
              clav:diplomaEstado 'Ativo';
         OPTIONAL {
-            ?uri clav:diplomaEntidade ?ent.
+            ?uri clav:temEntidadeResponsavel ?ent.
             ?ent clav:entSigla ?entidades;
         }
         BIND(STRAFTER(STR(?uri), 'clav#') AS ?id).
@@ -63,7 +63,7 @@ Leg.listarAtivos = () => {
              clav:diplomaSumario ?sumario;
              clav:diplomaEstado 'Ativo';
         OPTIONAL {
-            ?uri clav:diplomaEntidade ?ent.
+            ?uri clav:temEntidadeResponsavel ?ent.
             ?ent clav:entSigla ?entidades;
         }
         BIND(STRAFTER(STR(?uri), 'clav#') AS ?id).
@@ -103,7 +103,7 @@ Leg.consultar = id => {
             clav:diplomaLink ?link;
             clav:diplomaEstado ?estado;
         OPTIONAL {
-            clav:${id} clav:diplomaEntidade ?ent.
+            clav:${id} clav:temEntidadeResponsavel ?ent.
             ?ent clav:entSigla ?entidades;
         }
      }`;
@@ -139,7 +139,7 @@ Leg.criar = async (legislacao, utilizador) => {
             clav:diplomaLink '${legislacao.link}' ;
             clav:diplomaEstado 'Harmonização' .
         
-        ${legislacao.entidades.map(entidade => `clav:${id} clav:diplomaEntidade clav:${entidade}.`).join('\n')}
+        ${legislacao.entidades.map(entidade => `clav:${id} clav:temEntidadeResponsavel clav:${entidade}.`).join('\n')}
         
     }`;
     console.log(query)
@@ -285,10 +285,10 @@ Leg.updateDoc = function (dataObj) {
     }
 
     if (dataObj.org && dataObj.org.length) {
-        del += `clav:${dataObj.id} clav:diplomaEntidade ?org .\n`;
+        del += `clav:${dataObj.id} clav:temEntidadeResponsavel ?org .\n`;
 
         for(let ent of dataObj.org){
-            ins += `clav:${dataObj.id} clav:diplomaEntidade clav:${ent}.\n`;    
+            ins += `clav:${dataObj.id} clav:temEntidadeResponsavel clav:${ent}.\n`;    
         }        
     }
 
