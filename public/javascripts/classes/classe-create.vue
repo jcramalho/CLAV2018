@@ -223,9 +223,6 @@ var newClass = new Vue({
         },
         'classe.codigo': function () {
             this.mensValCodigo = "";
-            // O código das notasAp, dos termos de índice depende do código da classe
-            this.classe.notasAp = [];
-            this.classe.termosInd = [];
 
             if (!this.codeFormats[this.classe.nivel].test(this.classe.codigo)) {
                 this.mensValCodigo = "Formato inválido";
