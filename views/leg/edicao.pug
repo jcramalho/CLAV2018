@@ -91,31 +91,41 @@ block corpo
                         td(style="width:12%")
                             .info-label Entidade(s):
                         td(v-if="legData.entidades.edit" style="width:80%")
-                            table
-                                tr
-                                    td(width="1000px")
-                                        v-select.custom-select(
+                            .col-sm-10
+                                .row(v-if="entidadesSelecionadas.length > 0")
+                                    table.table.table-condensed.table-hover
+                                        tr
+                                            th Sigla 
+                                            th Designação
+                                            th Ação
+                                        tr(v-for="(p, index) in entidadesSelecionadas")
+                                            td {{p.data[0]}}
+                                            td {{p.data[1]}}
+                                            td 
+                                                button.btn.btn-default(type="button")
+                                                    span.glyphicon.glyphicon-remove(@click="desselecionarEntidade(p, index)") 
+                            
+                                accordion
+                                    panel(type="white" header="Selecionar Entidades")
+                                        select-row-from-table(
                                             v-if="entidadesReady"
-                                            v-model="newEntidade"
-                                            :options= "entidades"
+
+                                            :header="orgsTableHeader"
+                                            :complete-rows="entidades"
+                                            :ready="entidadesReady"
+                                            :cwidth="orgsTableWidth"
+                                            
+                                            class-table='table table-condensed'
+
+                                            @select-clicked="selecionarEntidade($event)"
                                         )
-                                    td
-                                        input(
-                                            type="button"
-                                            @click="addEntidade"
-                                            value="+"
-                                        )
-                                tr(v-if="legData.entidades.new.length")
-                                    td
-                                        ul(style="padding-left:20px")
-                                            li(v-for="(sigla,index)  in legData.entidades.new")
-                                                | {{ sigla }}       
-                                                button(
-                                                    @click="legData.entidades.new.splice(index,1)"
-                                                ) x
+                                        h4(
+                                            v-else
+                                        ) A carregar...
+                                        
                         td(v-else style="width:80%")
                             ul
-                                li(v-for="entidade in legData.entidades.original")
+                                li(v-for="entidade in leg.entidades")
                                     a(:href="'/entidades/ent_'+entidade") {{ entidade }}
 
                         if user
@@ -234,64 +244,69 @@ block corpo
 
             spinner(ref="spinner" fixed size="lg" text="Por favor aguarde...")
 
-            if user
-                input.btn.btn-xs.btn-default.col-sm-1(
-                    type="button"
-                    @click="update"
-                    value="Submeter alteração"
-                    :disabled="!(\
-                        legData.data.edit && legData.data.new ||\
-                        legData.numero.edit && legData.numero.new ||\
-                        legData.tipo.edit && legData.tipo.new ||\
-                        legData.sumario.edit && legData.sumario.new ||\
-                        legData.link.edit && legData.link.new ||\
-                        legData.entidades.edit ||\
-                        legData.processos.edit\
-                    )"
-                )
-                input.btn.btn-xs.btn-warning.col-sm-1(
-                    type="button"
-                    @click="delConfirm=true"
-                    value="Apagar"
-                    :disabled="(\
-                        legData.data.edit && legData.data.new ||\
-                        legData.numero.edit && legData.numero.new ||\
-                        legData.tipo.edit && legData.tipo.new ||\
-                        legData.sumario.edit && legData.sumario.new ||\
-                        legData.link.edit && legData.link.new ||\
-                        legData.entidades.edit ||\
-                        legData.processos.edit\
-                    )"
-                )
-                p.col-sm-5
+            table
+                if user
+                    tr
+                        td(width="300px")
+                            input.btn.btn-xs.btn-default.col-sm-7(
+                                type="button"
+                                @click="update"
+                                value="Submeter alteração"
+                                :disabled="!(\
+                                    legData.data.edit && legData.data.new ||\
+                                    legData.numero.edit && legData.numero.new ||\
+                                    legData.tipo.edit && legData.tipo.new ||\
+                                    legData.sumario.edit && legData.sumario.new ||\
+                                    legData.link.edit && legData.link.new ||\
+                                    legData.entidades.edit ||\
+                                    legData.processos.edit\
+                                )"
+                            )
+                        td(width="250px")
+                            input.btn.btn-xs.btn-warning.col-sm-7(
+                                type="button"
+                                @click="delConfirm=true"
+                                value="Apagar"
+                                :disabled="(\
+                                    legData.data.edit && legData.data.new ||\
+                                    legData.numero.edit && legData.numero.new ||\
+                                    legData.tipo.edit && legData.tipo.new ||\
+                                    legData.sumario.edit && legData.sumario.new ||\
+                                    legData.link.edit && legData.link.new ||\
+                                    legData.entidades.edit ||\
+                                    legData.processos.edit\
+                                )"
+                            )
+                            p.col-sm-5
 
-                modal(
-                    title="Confirmar" 
-                    :value="delConfirm"
-                    @closed="delConfirm=false"
+                            modal(
+                                title="Confirmar" 
+                                :value="delConfirm"
+                                @closed="delConfirm=false"
 
-                    small
-                ) 
-                    .modal-body(slot="modal-body")
-                        center Tem a certeza que deseja apagar?
-                    .modal-footer(slot="modal-footer")
-                        button(@click="apagarLeg" style="margin-right:7px") Ok
-                        button(@click="delConfirm=false") Cancelar
+                                small
+                            ) 
+                                .modal-body(slot="modal-body")
+                                    center Tem a certeza que deseja apagar?
+                                .modal-footer(slot="modal-footer")
+                                    button(@click="apagarLeg" style="margin-right:7px") Ok
+                                    button(@click="delConfirm=false") Cancelar
 
-            //-«    input.btn.btn-xs.btn-danger(
-                    v-if="delConfirm"
-                    type="button"
-                    @click="deleteLeg"
-                    value="OK"
-                )
-                input.btn.btn-xs.btn-info(
-                    v-if="delConfirm"
-                    type="button"
-                    @click="delNotReady"
-                    value="<-"
-                )
+                        //-«    input.btn.btn-xs.btn-danger(
+                                v-if="delConfirm"
+                                type="button"
+                                @click="deleteLeg"
+                                value="OK"
+                            )
+                            input.btn.btn-xs.btn-info(
+                                v-if="delConfirm"
+                                type="button"
+                                @click="delNotReady"
+                                value="<-"
+                            )
 
 
 
 append scripts
     script(src="/javascripts/leg/edicao.vue")
+    script(src="/javascripts/component-select-row-from-table.vue")
