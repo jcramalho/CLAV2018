@@ -125,7 +125,7 @@ Leg.consultar = id => {
  * @param {Legislacao} legislacao legislação que se pretende criar
  * @param {string} utilizador email do utilizador que criou a legislação
  * @return {Promise<Pedido | Error>} promessa que quando cumprida possui o
- * pedido gerado para a criação da nova tipologia
+ * pedido gerado para a criação da nova legislação
  */
 Leg.criar = async (legislacao, utilizador) => {
     const nanoid = require('nanoid')

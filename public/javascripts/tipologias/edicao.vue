@@ -49,6 +49,11 @@ var tip = new Vue({
         entList: [],
         newElem: "",
 
+        entidadesSelecionadas: [],
+        entidadesReady: false,
+        orgsTableHeader: ["Sigla", "Designação"],
+        orgsTableWidth: ["15%", "85%"],
+
         delConfirm: false,
     },
     components: {
@@ -222,9 +227,6 @@ var tip = new Vue({
                 .then(function (response) {
                     this.listaEntidades = response.body;
                 })
-                .then(function () {
-                    this.newEntsList = JSON.parse(JSON.stringify(this.listaEntidades));
-                })
                 .catch(function (error) {
                     console.error(error);
                 });
@@ -241,34 +243,34 @@ var tip = new Vue({
 
                     this.entList = completeList.map(function (item) {
                         return {
-                            label: item.sigla +"-"+ item.designacao,
-                            value: item,
+                            data: [item.sigla, item.designacao],
+                            selected: false,
+                            id: item.id
                         }
                     }).sort(function (a, b) {
-                        return a.label.localeCompare(b.label);
+                        return a.data[1].localeCompare(b.data[1]);
                     });
-
-
-                    //this.elemsReady = true;
+                for(var i = 0; i<this.listaEntidades.length; i++){
+                    for(var j = 0; j<this.entList.length; j++){
+                        if(this.listaEntidades[i].sigla === this.entList[j].data[0]){
+                            this.entList[j].selected = true;
+                            this.entidadesSelecionadas[i] = this.entList[j];
+                        }
+                    }
+                }
+                this.entidadesReady = true;
                 })
                 .catch(function (error) {
                     console.error(error);
                 });
         },
-        addEntidade: function (){
-            var existeEnt = 0;
-            for(var i=0; i<this.newEntsList.length; i++){
-                if(this.newElem.value.id==this.newEntsList[i].id) {
-                    existeEnt = 1;
-                    break;
-                }
-            }
-            if(existeEnt==0){
-                this.newEntsList.unshift(this.newElem.value)
-            }
-            else{
-                messageL.showMsg("Já selecionou essa Entidade!");
-            }
+        selecionarEntidade: function (row) {
+            this.entidadesSelecionadas.push(row);
+            row.selected = true;
+        },
+        desselecionarEntidade: function (row, index) {
+            row.selected = false;
+            this.entidadesSelecionadas.splice(index, 1);
         },
         update: function () {
             this.$refs.spinner.show(); 
@@ -346,9 +348,13 @@ var tip = new Vue({
                 }
             }
             if (this.editEnts) {
+                for(var i = 0; i< this.entidadesSelecionadas.length; i++){
+                    this.newEntsList[i] = this.entidadesSelecionadas[i]
+                }
+
                 var temp = {
                     add: null,
-                    delete: null,
+                    del: null,
                 };
 
                 temp.add = this.subtractArray(this.newEntsList, this.listaEntidades);

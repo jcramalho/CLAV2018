@@ -168,12 +168,45 @@ block corpo
                                 )
 
 
-                    //- ELEMENTOS
+                    //- ENTIDADES
                     tr
                         td(style="width:10%")
                             .info-label Entidades:
                         td(v-if="editEnts" style="width:80%")
-                            table
+                            .col-sm-10
+                                .row(v-if="entidadesSelecionadas.length > 0")
+                                    table.table.table-condensed.table-hover
+                                        tr
+                                            th Sigla 
+                                            th Designação
+                                            th Ação
+                                        tr(v-for="(p, index) in entidadesSelecionadas")
+                                            td {{p.data[0]}}
+                                            td {{p.data[1]}}
+                                            td 
+                                                button.btn.btn-default(type="button")
+                                                    span.glyphicon.glyphicon-remove(@click="desselecionarEntidade(p, index)") 
+                            
+                                accordion
+                                    panel(type="white" header="Selecionar Entidades")
+                                        select-row-from-table(
+                                            v-if="entidadesReady"
+
+                                            :header="orgsTableHeader"
+                                            :complete-rows="entList"
+                                            :ready="entidadesReady"
+                                            :cwidth="orgsTableWidth"
+                                            
+                                            class-table='table table-condensed'
+
+                                            @select-clicked="selecionarEntidade($event)"
+                                        )
+                                        h4(
+                                            v-else
+                                        ) A carregar...
+
+
+                            //-table
                                 tr
                                     td
                                         v-select.custom-select( 
@@ -216,37 +249,42 @@ block corpo
 
             spinner(ref="spinner" fixed size="lg" text="Por favor aguarde...")            
 
-            if user
-                input.btn.btn-xs.btn-default.col-sm-1(
-                    type="button" 
-                    @click="update" 
-                    value="Submeter alteração" 
-                    :disabled="!((editNome && newNome ||\
-                        editSigla && newSigla ||\
-                        editDominio || editParts || editEnts))"
-                )
-                input.btn.btn-xs.btn-warning.col-sm-1(
-                    type="button" 
-                    @click="delConfirm=true" 
-                    value="Apagar" 
-                    :disabled="(editNome || editDominio || editParts || editEnts)"
-                )
-                p.col-sm-5 
+            table
+                if user
+                    tr
+                        td(width="300px")
+                            input.btn.btn-xs.btn-default.col-sm-7(
+                                type="button" 
+                                @click="update" 
+                                value="Submeter alteração" 
+                                :disabled="!((editNome && newNome ||\
+                                    editSigla && newSigla ||\
+                                    editDominio || editParts || editEnts))"
+                            )
+                        td(width="250px")
+                            input.btn.btn-xs.btn-warning.col-sm-7(
+                                type="button" 
+                                @click="delConfirm=true" 
+                                value="Apagar" 
+                                :disabled="(editNome || editDominio || editParts || editEnts)"
+                            )
+                            p.col-sm-5 
 
-                modal(
-                    title="Confirmar" 
-                    :value="delConfirm"
-                    @closed="delConfirm=false"
+                            modal(
+                                title="Confirmar" 
+                                :value="delConfirm"
+                                @closed="delConfirm=false"
 
-                    small
-                ) 
-                    .modal-body(slot="modal-body")
-                        center Tem a certeza que deseja apagar?
-                    .modal-footer(slot="modal-footer")
-                        button(@click="deleteTipologia" style="margin-right:7px") Ok
-                        button(@click="delConfirm=false") Cancelar
+                                small
+                            ) 
+                                .modal-body(slot="modal-body")
+                                    center Tem a certeza que deseja apagar?
+                                .modal-footer(slot="modal-footer")
+                                    button(@click="deleteTipologia" style="margin-right:7px") Ok
+                                    button(@click="delConfirm=false") Cancelar
 
     //-
 
 append scripts    
     script(src="/javascripts/tipologias/edicao.vue")
+    script(src="/javascripts/component-select-row-from-table.vue")

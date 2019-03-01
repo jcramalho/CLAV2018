@@ -302,33 +302,37 @@ block corpo
                 
             spinner(ref="spinner" fixed size="lg" text="Por favor aguarde...")
 
-            if user
-                input.btn.btn-xs.btn-default.col-sm-1(
-                    type="button" 
-                    @click="update" 
-                    value="Submeter alteração" 
-                    :disabled="!(editDes || editEstado || editSigla || editSIOE || editInternacional || editDono || editParts || editTipologia)"  
-                )
-                input.btn.btn-xs.btn-warning.col-sm-1(
-                    type="button" 
-                    @click="delConfirm=true" 
-                    value="Apagar" 
-                    :disabled="(editDes || editEstado || editSigla || editInternacional || editSIOE || editDono || editParts || editTipologia)"
-                )
-                p.col-sm-5 
+            table
+                if user
+                    tr
+                        td(width="300px")           
+                            input.btn.btn-xs.btn-default.col-sm-7(
+                                type="button" 
+                                @click="update" 
+                                value="Submeter alteração" 
+                                :disabled="!(editDes || editEstado || editSigla || editSIOE || editInternacional || editDono || editParts || editTipologia)"  
+                            )
+                        td(width="250px") 
+                            input.btn.btn-xs.btn-warning.col-sm-7(
+                                type="button" 
+                                @click="delConfirm=true" 
+                                value="Apagar" 
+                                :disabled="(editDes || editEstado || editSigla || editInternacional || editSIOE || editDono || editParts || editTipologia)"
+                            )
+                            p.col-sm-5 
 
-                modal(
-                    title="Confirmar" 
-                    :value="delConfirm"
-                    @closed="delConfirm=false"
+                            modal(
+                                title="Confirmar" 
+                                :value="delConfirm"
+                                @closed="delConfirm=false"
 
-                    small
-                ) 
-                    .modal-body(slot="modal-body")
-                        center Tem a certeza que deseja apagar?
-                    .modal-footer(slot="modal-footer")
-                        button(@click="deleteEntidade" style="margin-right:7px") Ok
-                        button(@click="delConfirm=false") Cancelar
+                                small
+                            ) 
+                                .modal-body(slot="modal-body")
+                                    center Tem a certeza que deseja apagar?
+                                .modal-footer(slot="modal-footer")
+                                    button(@click="deleteEntidade" style="margin-right:7px") Ok
+                                    button(@click="delConfirm=false") Cancelar
 
 append scripts    
     script(src="/javascripts/entidades/edicao.vue")

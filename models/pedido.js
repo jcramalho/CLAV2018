@@ -67,6 +67,7 @@ PedidoSchema.methods.sparqlQuery = function() {
     const rdf_types = {
         "Entidade": "clav:Entidade",
         "Legislação": "clav:Legislacao",
+        "Termo de Indice": "clav:TermoIndice",
         "Tipologia": "clav:TipologiaEntidade",
     };
     const rdf_type = rdf_types[this.objeto.tipo];
