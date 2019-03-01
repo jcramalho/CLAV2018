@@ -16,20 +16,6 @@ var newTI = new Vue({
         spinner: VueStrap.spinner,
     },
     methods: {
-        /*idTermoIndice: function(){
-            var n = '';
-
-            axios.get("/api/utils/id")
-                .then(function(response){
-                    n = 'ti_' + response.data
-                    console.log(n)
-                })
-                .catch(function (error) {
-                    console.error(error);
-                });
-            this.id= n; 
-            console.log(this.id)
-        },*/
         loadClasses: function () {
             var classes = [];
 
@@ -55,7 +41,6 @@ var newTI = new Vue({
         },
         addclasse: function(){
             if(this.addClasse===false){
-                console.log(this.newClasse)
                 this.idClasse = this.newClasse.value.codigo
                 this.tituloClasse = this.newClasse.value.titulo
                 this.addClasse=true;
@@ -70,23 +55,13 @@ var newTI = new Vue({
             this.addClasse = false;
         },
         add: function () {
-            this.$refs.spinner.show();
-
-            axios.get("/api/utils/id")
-                    .then(function(response){
-                        var n = 'ti_' + response.data
-                        console.log(n)
-                    })
-                    .catch(function (error) {
-                        console.error(error);
-                    });
-                
+            this.$refs.spinner.show();                
 
             var dataObj = {
                 termo: this.termo,
                 idClasse: this.idClasse,
                 tituloClasse: this.tituloClasse,
-                id: n,
+                //id: this.id,
             }
 
             console.log(dataObj)
@@ -110,7 +85,13 @@ var newTI = new Vue({
         }
     },
     created: function() {
-        //this.idTermoIndice();
+        /*axios.get("/api/utils/id")
+            .then((response) => {
+                this.id = 'ti_' + response.data;
+            })
+            .catch(function (error) {
+                console.error(error);
+            });*/
         this.loadClasses();   
     }
 })

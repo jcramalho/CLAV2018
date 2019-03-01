@@ -38,12 +38,13 @@ TermosIndice.listar = () => {
 }
 
 // Testa a existência de um determinado TI
-TermosIndice.existe = t => {
-    let query = `
+TermosIndice.existe = (termoIndice) => {
+    const query = `
         ASK { 
             ?s rdf:type clav:TermoIndice.
-            ?s clav:termo "${t}"
+            ?s clav:termo "${termoIndice.termo}"
         }`;
+        console.log(query)
     return client.query(query)
         .execute()
         .then(response => {return (response.boolean)});
@@ -107,23 +108,29 @@ TermosIndice.contar = function() {
  * @return {Promise<Pedido | Error>} promessa que quando cumprida possui o
  * pedido gerado para a criação de novo termo de indice
  */
-TermosIndice.criar = (termoIndice, utilizador) => {
+TermosIndice.criar = async (termoIndice, utilizador) => {
+    const nanoid = require('nanoid')
+    const id = "ti_" + nanoid();
     const query = `INSERT DATA {
-        clav:ti_${termoIndice.id} rdf:type owl:NamedIndividual , clav:TermoIndice;
-            clav:estado 'Harmonização' .
+        clav:${id} rdf:type owl:NamedIndividual , clav:TermoIndice;
+            clav:termo '${termoIndice.termo}';
+            clav:estado 'Harmonização' ;
+            clav:estaAssocClasse '${termoIndice.idClasse}' .
     }`;
+    console.log(query)
+    const pedido = {
+        criadoPor: utilizador,
+        objeto: {
+            codigo: `${id}`,
+            tipo: `Termo de Indice`,
+            acao: `Criação`,
+        },
+        distribuicao: [{
+            estado: "Submetido",
+        }]
+    };
 
     return client.query(query)
         .execute()
-        .then(() => Pedidos.criar({
-            criadoPor: utilizador,
-            objeto: {
-                codigo: `ti_${termoIndice.id}`,
-                tipo: 'Termo de indice',
-                acao: 'Criação',
-            },
-            distribuicao: [{
-                estado: "Submetido",
-            }]
-        }));
+        .then(() => Pedidos.criar(pedido));
 };

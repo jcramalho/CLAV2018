@@ -349,16 +349,12 @@ var tip = new Vue({
             }
             if (this.editEnts) {
                 for(var i = 0; i< this.entidadesSelecionadas.length; i++){
-                    this.newEntsList[i] = this.entidadesSelecionadas[i].data[0]
+                    this.newEntsList[i] = this.entidadesSelecionadas[i]
                 }
-                //Falta adicionar, passar para o objeto de edicao, de maneira correta
-                /*for(var i = 0; i< this.listaEntidades.length; i++){
-                    this.newEntsList[i] = this.entidadesSelecionadas[i].data[0]
-                }*/
 
                 var temp = {
                     add: null,
-                    delete: null,
+                    del: null,
                 };
 
                 temp.add = this.subtractArray(this.newEntsList, this.listaEntidades);
