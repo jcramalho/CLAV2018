@@ -1,0 +1,156 @@
+extends ../layout4
+block corpo
+    .panel.panel-default.panel-custom
+        top-menu-bar
+        .panel-heading
+            h1.page-header.p-2.mt-5 {{ classe.codigo }} - {{ classe.titulo }} 
+        .panel-body
+            .mt-3.mb-3
+                accordion
+                    panel.p-3(is-open header="Descritivo da Classe")
+                        table.table-bordered.p-3
+                            tr
+                                th.p-3 Nível:  
+                                td.p-3 {{ classe.nivel }}
+                            //- CLASSE PAI
+                            tr 
+                                th.p-3 Classe Pai: 
+                                td.p-3(v-if="classe.nivel == 1") Lista Consolidada
+                                td.p-3.text-primary(v-else) 
+                                    a(:href="'/classes/c'+classe.pai.codigo") 
+                                        | {{ classe.pai.codigo }} 
+                                    | - {{ classe.pai.titulo }}
+                            //- DESCRIÇÃO
+                            tr(v-if="classe.descricao != ''")
+                                th.p-3(style="width: 10%" valign="top") Descrição: 
+                                td.p-3(style="width:80%") {{ classe.descricao }}  
+                            //- NOTAS DE APLICAçÃO                        
+                            tr(v-if="classe.notasAp.length > 0")
+                                th.p-3(style="width: 10%") Nota(s) de Aplicação:
+                                td.p-3(style="width:80%")
+                                    ul(style="padding-left:20px")
+                                        li(v-for="nota in classe.notasAp") {{nota.nota}}    
+                            //- EXEMPLOS DE NOTAS DE APLICAçÃO                        
+                            tr(v-if="classe.exemplosNotasAp.length > 0")
+                                th.p-3(style="width: 10%") Exemplo(s) de Nota(s) de Aplicação:
+                                td.p-3(style="width:80%")
+                                    ul(style="padding-left:20px")
+                                        li(v-for="exemplo in classe.exemplosNotasAp") {{exemplo.exemplo}}
+                            //- NOTAS DE EXCLUSÃO                        
+                            tr(v-if="classe.notasEx.length > 0")
+                                th.p-3(style="width: 10%") Nota(s) de Exclusão:
+                                td.p-3(style="width:80%")
+                                    ul(style="padding-left:20px")
+                                        li(v-for="nota in classe.notasEx")
+                                            span(v-html="nota.nota")  
+                            //- TERMOS DE ÍNDICE
+                            tr(v-if="(classe.nivel==3) && !classe.temSubclasses4Nivel && (classe.termosInd.length > 0)")
+                                th.p-3(style="width: 10%") Termos de Índice:
+                                td.p-3(style="width:80%")
+                                    ul(style="padding-left:20px")
+                                        li(v-for="termo in classe.termosInd") {{ termo.termo }}          
+
+            .mt-3.mb-3
+                accordion(v-if="classe.nivel==3")
+                    panel.p-3(header="Contexto de Avaliação")
+                        table.table-bordered.p-3
+                            //- TIPO DE PROCESSO
+                            tr
+                                th.p-3(style="width: 10%") Tipo de Processo:   
+                                td.p-3(style="width:80%") {{ classe.tipoProc }}
+                            //- PROCESSO TRANSVERSAL
+                            tr
+                                th.p-3(style="width: 10%") Processo Transversal: 
+                                td.p-3(style="width:80%") {{ classe.procTrans=="S" ? "Sim" : "Não" }}  
+                            //- DONOS
+                            tr(v-if="classe.donos.length > 0")
+                                th.p-3(style="width: 10%") Donos:
+                                td.p-3(style="width:80%")
+                                    classe-donos(:donos="classe.donos")
+                            //- PARTICIPANTES
+                            tr(v-if="classe.participantes.length > 0")
+                                th.p-3(style="width: 10%") Participantes:
+                                td.p-3(style="width:80%")
+                                    classe-participantes(:participantes="classe.participantes")
+                            //- PROCESSOS RELACIONADOS
+                            tr(v-if="classe.processosRelacionados.length > 0")
+                                th.p-3(style="width: 10%") Processos Relacionados:
+                                td.p-3(style="width:80%")
+                                    classe-proc-rel(:processos="classe.processosRelacionados")
+                            //- LEGISLAÇÃO
+                            tr(v-if="classe.legislacao.length > 0")
+                                th.p-3(style="width: 10%") Legislação:
+                                td.p-3(style="width:80%")
+                                    ul(style="padding-left:20px")
+                                        li(v-for="l in classe.legislacao")
+                                            a(:href="'/legislacao/' + l.idLeg") {{ l.tipo }} {{ l.numero }} 
+                                            | - {{ l.sumario }}
+
+            .mt-3.mb-3
+                accordion(v-if="((classe.nivel == 3) && !classe.temSubclasses4Nivel)")
+                    panel.p-3(header="Decisões de Avaliação")
+                        //- PRAZO DE CONSERVAÇÃO ADMINISTRATIVA
+                        .card.mt-1.mb-1
+                            .card-header 
+                                h5 Prazo de Conservação Administrativa
+                            .card-body
+                                table.table
+                                    tr
+                                        th.p-3(style="width: 10%") Prazo:   
+                                        td.p-3(style="width:80%") {{ classe.pca.valores }} anos
+                                    tr
+                                        th.p-3(style="width: 10%") Forma de contagem:   
+                                        td.p-3(style="width:80%") {{ classe.pca.formaContagem }}
+                                    tr(v-if="classe.pca.subFormaContagem")
+                                        th.p-3(style="width: 10%") Subforma de contagem:   
+                                        td.p-3(style="width:80%") {{ classe.pca.subFormaContagem }}
+                                    tr(v-if="classe.pca.notas")
+                                        th.p-3(style="width: 10%") Notas:   
+                                        td.p-3(style="width:80%") {{ classe.pca.notas }}
+                                    tr(v-if="classe.pca.justificacao && (classe.pca.justificacao.length > 0)")
+                                        th.p-3(style="width: 10%") Justificação:   
+                                        td.p-3(style="width:80%") 
+                                            .card(v-for="crit in classe.pca.justificacao")
+                                                .card-header
+                                                    b {{ crit.tipoLabel }}
+                                                .card-body
+                                                    p {{ crit.conteudo }}
+
+                        //- DESTINO FINAL
+                        .card.mt-3.mb-1
+                            .card-header 
+                                h5 Destino Final
+                            .card-body
+                                table.table
+                                    tr
+                                        th.p-3(style="width: 10%") Destino:   
+                                        td.p-3(style="width:80%") {{ classe.df.valor }}
+
+                                    tr(v-if="classe.df.justificacao.length > 0")
+                                        th.p-3(style="width: 10%") Justificação:   
+                                        td.p-3(style="width:80%") 
+                                            .card(v-for="crit in classe.df.justificacao")
+                                                .card-header
+                                                    b {{ crit.tipoLabel }}
+                                                .card-body
+                                                    p {{ crit.conteudo }}
+
+                accordion(v-if="(classe.nivel == 3) && classe.temSubclasses4Nivel")
+                    panel.p-3(header="Decisões de Avaliação")
+                        p Houve subdivisão em subclasses de 4º nível.
+                        p As decisões de avaliação podem ser consultadas em cada uma delas:
+                        .card
+                            .card-header Subclasses de 4º nível
+                                ul.list-group.list-group-flush
+                                    li.list-group-item(v-for="f in classe.filhos")
+                                        a(:href="'/classes/c'+f.codigo") {{ f.codigo }} - {{ f.titulo }}  
+
+            //- Buttons
+            spinner(ref="spinner" size="lg" fixed text="Por favor aguarde...")
+
+append scripts    
+    script(src="/javascripts/v-components/top-menu-bar.vue")
+    script(src="/javascripts/v-components/classe-descendencia.vue")
+    script(src="/javascripts/v-components/classe-donos.vue")
+    script(src="/javascripts/v-components/classe-participantes.vue")
+    script(src="/javascripts/v-components/classe-proc-rel.vue")

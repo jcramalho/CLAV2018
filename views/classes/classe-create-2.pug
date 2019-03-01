@@ -696,18 +696,10 @@ block corpo
                     button.btn.btn-primary(:disabled="true") Guardar trabalho
                     button.btn.btn-primary(:disabled="true") Validar informação
                     button.btn.btn-primary(
-                        @click="classeConfirm = true"
+                        @click="criarClasse"
                         :disabled=`!(((classe.nivel>1 && parent) || classe.nivel==1) && classe.codigo)`
                         ) Adicionar nova classe
-                    
-                    modal(v-model="classeConfirm" effect="fade")
-                        .modal-header(slot="modal-header")
-                            h4.modal-title Criação de nova Classe
-                        //- classe-show(:myClasse="classe")
-                        .modal-footer(slot="modal-footer")
-                            button.btn.btn-primary(type="button" @click="classeConfirm = false") Cancelar
-                            button.btn.btn-success(type="button" @click="classeConfirm = false") Submeter
-    
+
 append scripts    
     script(src="/javascripts/component-select-value-from-list.vue")
     script(src="/javascripts/component-select-row-from-table.vue")

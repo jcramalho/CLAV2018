@@ -2,7 +2,6 @@ var Logging = require('../../controllers/logging');
 var Auth = require('../../controllers/auth.js');
 var Classes = require('../../controllers/api/classes.js');
 var State = require('../../controllers/state.js')
-var axios = require('axios');
 
 var express = require('express');
 var router = express.Router();
@@ -172,6 +171,15 @@ router.get('verifica/:codigo', (req, res) => {
     Classes.verificaCodigo(req.params.codigo, req.params.codigo.split('.').length)
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na verificação da existência do código ${req.params.codigo}: ${erro}`))
+})
+
+router.post('/', Auth.isLoggedIn, (req, res) => {
+    console.log('Recebi um post de classe...')
+    console.log(JSON.stringify(req.body))
+    
+    return Classes.criar(req.body, req.user.email)
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.status(500).send(`Erro na criação da classe: ${erro}`));
 })
 
 module.exports = router;

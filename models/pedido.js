@@ -16,9 +16,12 @@ const PedidoSchema = new mongoose.Schema({
             type: String,
             required: true,
         },
+        dados: {
+            type: Object
+        },
         tipo: {
             type: String,
-            enum: ["Processo de negócio", "Tabela de seleção", "Entidade", "Tipologia", "Legislação"],
+            enum: ["Classe", "Tabela de seleção", "Entidade", "Tipologia", "Legislação"],
             required: true,
         },
         acao: {

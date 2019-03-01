@@ -183,8 +183,9 @@ var newClass = new Vue({
         critLegalAdicionadoDF: false,
         critGestionarioAdicionado: false,
 
-    // Controlo dos 'modals': paineis de confirmação
-        classeConfirm: false,
+    // Flags de controlo dos modais
+
+    classeConfirm: false,
     
     // Mensagens de validação
 
@@ -337,8 +338,16 @@ var newClass = new Vue({
     methods: {
         // Quando novo código para o pai é selecionado
         atualizaCodigo: function(novo){
-            this.classe.pai.codigo = novo.substring(1);
-            this.classe.codigo = this.classe.pai.codigo + '.';
+            this.$http.get('/api/classes/' + novo + '/meta')
+                .then(response => {
+                    this.classe.pai.codigo = response.body[0].codigo;
+                    this.classe.pai.titulo = response.body[0].titulo;
+                    this.classe.codigo = this.classe.pai.codigo + '.';
+                })
+                .catch(function(erro){
+                    console.error(erro);
+                    return(erro);
+                });
         },
 
         // Carrega as entidades da BD....................
@@ -629,44 +638,44 @@ var newClass = new Vue({
         desselecionarProcesso: function(p, index) {
             p.selected = false;
             if(p.relacao == "eSuplementoPara") {
-                this.removerCriterio(this.classe.pca.justificacao, "CriterioJustificacaoUtilidadeAdministrativa", p.id);
+                this.removerCriterio(this.classe.pca.justificacao, "CriterioJustificacaoUtilidadeAdministrativa", p.id, 'PCA');
                 if(this.classe.temSubclasses4Nivel){
                     for(var i=0; i < this.classe.subclasses.length; i++){
-                        this.removerCriterio(this.classe.subclasses[i].pca.justificacao, "CriterioJustificacaoUtilidadeAdministrativa", p.id);
+                        this.removerCriterio(this.classe.subclasses[i].pca.justificacao, "CriterioJustificacaoUtilidadeAdministrativa", p.id, 'PCA');
                     }
                 }
             }
             else if(p.relacao == "eSuplementoDe") {
-                this.removerCriterio(this.classe.pca.justificacao, "CriterioJustificacaoLegal", p.id);
+                this.removerCriterio(this.classe.pca.justificacao, "CriterioJustificacaoLegal", p.id, 'PCA');
                 this.critLegalAdicionadoPCA = false;
                 if(this.classe.temSubclasses4Nivel){
                     for(var i=0; i < this.classe.subclasses.length; i++){
-                        this.removerCriterio(this.classe.subclasses[i].pca.justificacao, "CriterioJustificacaoLegal", p.id);
+                        this.removerCriterio(this.classe.subclasses[i].pca.justificacao, "CriterioJustificacaoLegal", p.id, 'PCA');
                         this.critLegalAdicionadoPCA = false;
                     }
                 }
             }
             else if(p.relacao == "eSinteseDe"){
-                this.removerCriterio(this.classe.df.justificacao, "CriterioJustificacaoDensidadeInfo", p.id);
+                this.removerCriterio(this.classe.df.justificacao, "CriterioJustificacaoDensidadeInfo", p.id, 'DF');
                 if(this.classe.temSubclasses4Nivel){
                     for(var i=0; i < this.classe.subclasses.length; i++){
-                        this.removerCriterio(this.classe.subclasses[i].df.justificacao, "CriterioJustificacaoDensidadeInfo", p.id);
+                        this.removerCriterio(this.classe.subclasses[i].df.justificacao, "CriterioJustificacaoDensidadeInfo", p.id, 'DF');
                     }
                 }
             }
             else if(p.relacao == "eSintetizadoPor"){
-                this.removerCriterio(this.classe.df.justificacao, "CriterioJustificacaoDensidadeInfo", p.id);
+                this.removerCriterio(this.classe.df.justificacao, "CriterioJustificacaoDensidadeInfo", p.id, 'DF');
                 if(this.classe.temSubclasses4Nivel){
                     for(var i=0; i < this.classe.subclasses.length; i++){
-                        this.removerCriterio(this.classe.subclasses[i].df.justificacao, "CriterioJustificacaoDensidadeInfo", p.id);
+                        this.removerCriterio(this.classe.subclasses[i].df.justificacao, "CriterioJustificacaoDensidadeInfo", p.id, 'DF');
                     }
                 }
             }
             else if(p.relacao == "eComplementarDe"){
-                this.removerCriterio(this.classe.df.justificacao, "CriterioJustificacaoComplementaridadeInfo", p.id);
+                this.removerCriterio(this.classe.df.justificacao, "CriterioJustificacaoComplementaridadeInfo", p.id, 'DF');
                 if(this.classe.temSubclasses4Nivel){
                     for(var i=0; i < this.classe.subclasses.length; i++){
-                        this.removerCriterio(this.classe.subclasses[i].df.justificacao, "CriterioJustificacaoComplementaridadeInfo", p.id);
+                        this.removerCriterio(this.classe.subclasses[i].df.justificacao, "CriterioJustificacaoComplementaridadeInfo", p.id, 'DF');
                     }
                 }
             }
@@ -754,7 +763,7 @@ var newClass = new Vue({
         // Remove um PN dum critério e se este ficar sem PNs, remove o critério também:
         // criterio = {tipo: String, notas: [String], procRel: [proc], legislacao: [leg]}
 
-        removerCriterio: function(justificacao, tipo, pid){
+        removerCriterio: function(justificacao, tipo, pid, PCAouDF){
             var i = justificacao.findIndex(crit => crit.tipo === tipo);
 
             if(i != -1){
@@ -763,6 +772,7 @@ var newClass = new Vue({
                     justificacao[i].procRel.splice(j, 1);
                 }
                 if(justificacao[i].procRel.length == 0){
+                    this.atualizaFlagsCriterios(justificacao[i].tipo, PCAouDF);
                     justificacao.splice(i, 1)
                 }
             } 
@@ -771,16 +781,22 @@ var newClass = new Vue({
         // Remove um critério completo duma vez
 
         removerCriterioTodo: function(justificacao, i, PCAouDF){
-            if(justificacao[i].tipo == "CriterioJustificacaoLegal"){
+            this.atualizaFlagsCriterios(justificacao[i].tipo, PCAouDF);
+            justificacao.splice(i, 1);
+        },
+
+        // Atualiza as flags que controlam os botões de adicionar e remover critérios
+
+        atualizaFlagsCriterios(tipo, PCAouDF){
+            if(tipo == "CriterioJustificacaoLegal"){
                 if(PCAouDF == 'PCA')
                     this.critLegalAdicionadoPCA = false;
                 else
                     this.critLegalAdicionadoDF = false;
             }
-            else if(justificacao[i].tipo == "CriterioJustificacaoGestionario"){
+            else if(tipo == "CriterioJustificacaoGestionario"){
                 this.critGestionarioAdicionado = false;
             }
-            justificacao.splice(i, 1)
         },
 
         // Verifica se um TI já existe na BD
@@ -998,8 +1014,18 @@ var newClass = new Vue({
         // Vai adicionar a nova classe/processo à lista de pedidos
 
         criarClasse: function () {
-            alert("Neste momento, ainda não está pronta. A classe seria criada com a informação: " + JSON.stringify(this.classe))
-            alert("Subclasses: " + JSON.stringify(this.classe.subclasses))
+            this.$http.post('/api/classes', this.classe,{
+                headers: {
+                    'content-type' : 'application/json'
+                }
+            })
+            .then( function(response) { 
+                console.log(JSON.stringify(response));
+                window.location.href = '/';
+            })
+            .catch( error => {
+                console.error(error); 
+            });
         }
     }
 })
