@@ -142,7 +142,6 @@ Leg.criar = async (legislacao, utilizador) => {
         ${legislacao.entidades.map(entidade => `clav:${id} clav:temEntidadeResponsavel clav:${entidade}.`).join('\n')}
         
     }`;
-    console.log(query)
     const pedido = {
         criadoPor: utilizador,
         objeto: {

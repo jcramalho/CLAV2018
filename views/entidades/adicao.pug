@@ -38,21 +38,41 @@ block corpo
 
                     tr
                         td(style="width:10%")
-                            .info-label Tipologias: 
+                            .info-label Pertence às tipologias de entidade: 
+
                         td
-                            select.col-sm-10(v-model="tip")
-                                option(disabled selected value) Se pretender adicionar tipologias selecione uma de cada vez
-                                option(v-for="t in tipologias" :value="t.id") {{t.sigla}} - {{t.designacao}}
-                            input.btn.btn-xs.btn-default.col-sm-2(
-                                type="button" 
-                                @click="addTip" 
-                                value="Adicionar" 
-                            )
-                            ul(v-if="tipologiasSel.length")
-                                li(v-for="(t,index) in tipologiasSel") {{ t.sigla }} - {{ t.designacao }}
-                                    button(
-                                            @click="tipologiasSel.splice(index,1)"
-                                            ) x
+                            .col-sm-10
+                                .row(v-if="tipologiasSelecionadas.length > 0")
+                                    table.table.table-condensed.table-hover
+                                        tr
+                                            th Sigla 
+                                            th Designação
+                                            th Ação
+                                        tr(v-for="(p, index) in tipologiasSelecionadas")
+                                            td {{p.data[0]}}
+                                            td {{p.data[1]}}
+                                            td 
+                                                button.btn.btn-default(type="button")
+                                                    span.glyphicon.glyphicon-remove(@click="desselecionarTipologia(p, index)") 
+
+
+                                accordion
+                                    panel(type="white" header="Selecionar Tipologias")
+                                        select-row-from-table(
+                                            v-if="ready"
+
+                                            :header="tipTableHeader"
+                                            :complete-rows="tipologias"
+                                            :ready="ready"
+                                            :cwidth="tipTableWidth"
+                                            
+                                            class-table='table table-condensed'
+
+                                            @select-clicked="selecionarTipologia($event)"
+                                        )
+                                        h4(
+                                            v-else
+                                        ) A carregar...
 
             spinner(ref="spinner" fixed size="lg" text="Por favor aguarde...")
 
@@ -69,3 +89,4 @@ block corpo
 
 append scripts    
     script(src="/javascripts/entidades/adicao.vue")
+    script(src="/javascripts/component-select-row-from-table.vue")

@@ -57,10 +57,7 @@ var leg = new Vue({
         orgsTableWidth: ["15%", "85%"],
 
         processosReady: false,
-        //processos:[],
-        //newProcessos: [],
         processosCollapsed: true,
-        //editProcessos:false,
         newProcesso: "",
         
         listaClasses:[],
