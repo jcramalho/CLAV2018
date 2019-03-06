@@ -31,9 +31,9 @@ Leg.listar = (filtro) => {
              clav:diplomaNumero ?numero;
              clav:diplomaTipo ?tipo;
              clav:diplomaSumario ?sumario;
-             clav:diplomaEstado ?estado;
+             clav:diplomaEstado 'Ativo';
         OPTIONAL {
-            ?uri clav:diplomaEntidade ?ent.
+            ?uri clav:temEntidadeResponsavel ?ent.
             ?ent clav:entSigla ?entidades;
         }
         BIND(STRAFTER(STR(?uri), 'clav#') AS ?id).
@@ -63,7 +63,7 @@ Leg.listarAtivos = () => {
              clav:diplomaSumario ?sumario;
              clav:diplomaEstado 'Ativo';
         OPTIONAL {
-            ?uri clav:diplomaEntidade ?ent.
+            ?uri clav:temEntidadeResponsavel ?ent.
             ?ent clav:entSigla ?entidades;
         }
         BIND(STRAFTER(STR(?uri), 'clav#') AS ?id).
@@ -103,7 +103,7 @@ Leg.consultar = id => {
             clav:diplomaLink ?link;
             clav:diplomaEstado ?estado;
         OPTIONAL {
-            clav:${id} clav:diplomaEntidade ?ent.
+            clav:${id} clav:temEntidadeResponsavel ?ent.
             ?ent clav:entSigla ?entidades;
         }
      }`;
@@ -125,26 +125,24 @@ Leg.consultar = id => {
  * @param {Legislacao} legislacao legislação que se pretende criar
  * @param {string} utilizador email do utilizador que criou a legislação
  * @return {Promise<Pedido | Error>} promessa que quando cumprida possui o
- * pedido gerado para a criação da nova tipologia
+ * pedido gerado para a criação da nova legislação
  */
 Leg.criar = async (legislacao, utilizador) => {
-    const contaQuery = `SELECT (count(distinct ?uri) as ?count) {
-        ?uri rdf:type owl:NamedIndividual , clav:Legislacao.
-    }`;
-    const id = await client.query(contaQuery)
-        .execute()
-        .then(response => `leg_${normalize(response)[0].count + 1}`);
+    const nanoid = require('nanoid')
+    const id = "leg_" + nanoid();
     const query = `INSERT DATA {
         clav:${id} rdf:type owl:NamedIndividual , clav:Legislacao ;
             clav:diplomaData '${legislacao.data}' ;
             clav:diplomaNumero '${legislacao.numero}' ;
             clav:diplomaTipo '${legislacao.tipo}' ;
             clav:diplomaSumario '${legislacao.sumario}' ;
-            clav:diplomaEstado 'Harmonização' ;
-            clav:diplomaLink '${legislacao.link}' .
+            clav:diplomaLink '${legislacao.link}' ;
+            clav:diplomaEstado 'Harmonização' .
         
-        ${legislacao.entidades.map(entidade => `clav:${id} clav:diplomaEntidade clav:${entidade}.`).join('\n')}
+        ${legislacao.entidades.map(entidade => `clav:${id} clav:temEntidadeResponsavel clav:${entidade}.`).join('\n')}
+        
     }`;
+    console.log(query)
     const pedido = {
         criadoPor: utilizador,
         objeto: {
@@ -179,6 +177,23 @@ Leg.existe = (legislacao) => {
 };
 
 /**
+ * Verifica se uma determinada legislação tem PNs associados.
+ * 
+ * @param {Legislacao} legislacao
+ * @return {Promise<boolean | Error>}
+ */
+Leg.temPNs = (legislacao) => {
+    const query = `ASK {
+        ?e clav:temLegislacao clav:'${legislacao.id}'
+        }`;
+
+    return client.query(query)
+        .execute()
+        .then(response => response.boolean);
+};
+
+
+/**
  * Gera um pedido de remoção da legislação.
  * Nenhuma alteração será feita à legislação., só quando o pedido for
  * validado
@@ -210,7 +225,7 @@ Leg.regula = id => {
     var query = `
         SELECT DISTINCT ?id ?codigo ?titulo WHERE { 
             {
-                ?id clav:temLegislacao clav:${id};
+                ?uri clav:temLegislacao clav:${id};
             } 
             UNION {
                 ?crit clav:temLegislacao clav:${id} .
@@ -218,15 +233,17 @@ Leg.regula = id => {
                 ?aval clav:temJustificacao ?just .
 
                 {
-                    ?id clav:temPCA ?aval ;
+                    ?uri clav:temPCA ?aval ;
                 } 
                 UNION {
-                    ?id clav:temDF ?aval ;
+                    ?uri clav:temDF ?aval ;
                 }
             }
-            ?id clav:codigo ?codigo;
+            ?uri clav:codigo ?codigo;
                 clav:titulo ?titulo;
                 clav:classeStatus 'A'.
+
+            BIND(STRAFTER(STR(?uri), 'clav#') AS ?id)
                 
         } ORDER BY ?codigo
     `
@@ -268,10 +285,10 @@ Leg.updateDoc = function (dataObj) {
     }
 
     if (dataObj.org && dataObj.org.length) {
-        del += `clav:${dataObj.id} clav:diplomaEntidade ?org .\n`;
+        del += `clav:${dataObj.id} clav:temEntidadeResponsavel ?org .\n`;
 
         for(let ent of dataObj.org){
-            ins += `clav:${dataObj.id} clav:diplomaEntidade clav:${ent}.\n`;    
+            ins += `clav:${dataObj.id} clav:temEntidadeResponsavel clav:${ent}.\n`;    
         }        
     }
 

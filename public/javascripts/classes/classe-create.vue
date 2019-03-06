@@ -21,7 +21,7 @@ var newClass = new Vue({
                 4: /^[0-9]{3}\.[0-9]{2}\.[0-9]{3}\.[0-9]{3}$/,
         },
 
-        activeTab: 1,
+        selectedSubclasse: 1,
 
     // Objeto que guarda uma classe
 
@@ -29,7 +29,10 @@ var newClass = new Vue({
             // Metainformação e campos da área de Descrição
 
             nivel: 1,
-            pai: "",
+            pai: {
+                codigo: "",
+                titulo: ""
+            },
             codigo: "",
             titulo: "",
             descricao: "",
@@ -174,6 +177,16 @@ var newClass = new Vue({
                                     " escrutínio público (eleições) ou da não recondução no mandato. Considerou-se para" +
                                     " a definição do prazo o tempo do mandato de maior duração: 5 anos.",
 
+    // Flags de controlo
+
+        critLegalAdicionadoPCA: false,
+        critLegalAdicionadoDF: false,
+        critGestionarioAdicionado: false,
+
+    // Flags de controlo dos modais
+
+    classeConfirm: false,
+    
     // Mensagens de validação
 
         mensValCodigo: "",
@@ -191,15 +204,15 @@ var newClass = new Vue({
         helpWindow: null,
     },
     watch: {
-        'classe.pai': function () {
+        'classe.pai.codigo': function () {
             // O código da classe depende da classe pai
             this.classe.codigo = null;
-            if(this.classe.pai)
-                this.classe.codigo = this.classe.pai.slice(1, this.classe.pai.length) + ".";
+            if(this.classe.pai.codigo)
+                this.classe.codigo = this.classe.pai.codigo + ".";
         },
         'classe.nivel': function () {
             // A classe pai depende do nível 
-            this.classe.pai = null;
+            this.classe.pai.codigo = null;
             
             if (this.classe.nivel > 1) {
                 this.loadPais();
@@ -214,21 +227,12 @@ var newClass = new Vue({
         },
         'classe.codigo': function () {
             this.mensValCodigo = "";
-            // O código das notasAp, dos termos de índice depende do código da classe
-            this.classe.notasAp = [];
-            this.classe.termosInd = [];
-
-            if (this.classe.nivel > 1) {
-                if (this.classe.codigo.indexOf(this.classe.pai.slice(1, this.classe.pai.length)) != 0) {
-                    this.classe.codigo = this.classe.pai.slice(1, this.classe.pai.length) + ".";
-                }
-                if (this.classe.codigo[this.classe.pai.length - 1] != '.') {
-                    this.classe.codigo = this.classe.pai.slice(1, this.classe.pai.length) + ".";
-                }
-            }
 
             if (!this.codeFormats[this.classe.nivel].test(this.classe.codigo)) {
                 this.mensValCodigo = "Formato inválido";
+            }
+            else if(!this.classe.codigo.includes(this.classe.pai.codigo)){
+                this.mensValCodigo = "Não pode alterar o código do pai selecionado em cima...";
             }
             else {
                 this.verificaExistenciaCodigo(this.classe.codigo);
@@ -311,6 +315,8 @@ var newClass = new Vue({
                 this.classe.subclasses.splice(0, this.classe.subclasses.length);
                 this.classe.temSubclasses4NivelPCA = false;
                 this.classe.temSubclasses4NivelDF = false;
+                // E recalculamos o DF do nível 3
+                this.classe.df.valor = this.calcDF(this.classe.processosRelacionados);
             }  
         },
         'classe.temSubclasses4NivelDF': function(){
@@ -330,6 +336,20 @@ var newClass = new Vue({
         this.loadLegislacao();
     },
     methods: {
+        // Quando novo código para o pai é selecionado
+        atualizaCodigo: function(novo){
+            this.$http.get('/api/classes/' + novo + '/meta')
+                .then(response => {
+                    this.classe.pai.codigo = response.body[0].codigo;
+                    this.classe.pai.titulo = response.body[0].titulo;
+                    this.classe.codigo = this.classe.pai.codigo + '.';
+                })
+                .catch(function(erro){
+                    console.error(erro);
+                    return(erro);
+                });
+        },
+
         // Carrega as entidades da BD....................
 
         loadEntidades: function () {
@@ -384,7 +404,7 @@ var newClass = new Vue({
         // Carrega os Processos da BD....................
 
         loadProcessos: function () {
-            this.$http.get("/api/classes/nivel/3")
+            this.$http.get("/api/classes?nivel=3")
                 .then(function (response) {
                     this.listaProcessos = response.body
                         .map(function (item) {
@@ -481,7 +501,7 @@ var newClass = new Vue({
 
         loadPais: function () {
             this.classesPai = [{label: 'Por selecionar', value: 'Indefinido'}];
-            this.$http.get("/api/classes/nivel/" + (this.classe.nivel - 1))
+            this.$http.get("/api/classes?nivel=" + (this.classe.nivel - 1))
                 .then(function (response) {
                     this.classesPai = this.classesPai.concat(response.body.map(function (item) {
                         return {
@@ -550,6 +570,7 @@ var newClass = new Vue({
                 // Tratamento do invariante: se é Suplemento De então cria-se um critério Legal com toda a legislação selecionada associada
                 else if(row.relacao == "eSuplementoDe"){
                     this.adicionarCriterio(this.classe.pca.justificacao, "CriterioJustificacaoLegal", "Critério Legal", "", [row], this.classe.legislacao);
+                    this.critLegalAdicionadoPCA = true;
                 }
                 // Tratamento do invariante: se é Síntese De então cria-se um critério de Densidade Informacional
                 else if(row.relacao == "eSinteseDe"){
@@ -578,6 +599,7 @@ var newClass = new Vue({
                 else if(row.relacao == "eSuplementoDe"){
                     for(var i=0; i < this.classe.subclasses.length; i++){
                         this.adicionarCriterio(this.classe.subclasses[i].pca.justificacao, "CriterioJustificacaoLegal", "Critério Legal", "", [row], this.classe.legislacao);
+                        this.critLegalAdicionadoPCA = true;
                     }    
                 }
 
@@ -604,52 +626,56 @@ var newClass = new Vue({
                     }
                 }
 
-                // No fim, recalcula-se o DF para todas as subclasses
-                for(var i=0; i < this.classe.subclasses.length; i++){
-                    this.classe.subclasses[i].df.valor = this.calcDF(this.classe.subclasses[i].processosRelacionados);
-                }
+                // No fim, recalcula-se o DF para todas as subclasses se a sbdivisão não for DF distinto
+                if(!this.classe.temSubclasses4NivelDF){
+                    for(var i=0; i < this.classe.subclasses.length; i++){
+                        this.classe.subclasses[i].df.valor = this.calcDF(this.classe.subclasses[i].processosRelacionados);
+                    }
+                } 
             }
         },
 
         desselecionarProcesso: function(p, index) {
             p.selected = false;
             if(p.relacao == "eSuplementoPara") {
-                this.removerCriterio(this.classe.pca.justificacao, "CriterioJustificacaoUtilidadeAdministrativa", p.id);
+                this.removerCriterio(this.classe.pca.justificacao, "CriterioJustificacaoUtilidadeAdministrativa", p.id, 'PCA');
                 if(this.classe.temSubclasses4Nivel){
                     for(var i=0; i < this.classe.subclasses.length; i++){
-                        this.removerCriterio(this.classe.subclasses[i].pca.justificacao, "CriterioJustificacaoUtilidadeAdministrativa", p.id);
+                        this.removerCriterio(this.classe.subclasses[i].pca.justificacao, "CriterioJustificacaoUtilidadeAdministrativa", p.id, 'PCA');
                     }
                 }
             }
             else if(p.relacao == "eSuplementoDe") {
-                this.removerCriterio(this.classe.pca.justificacao, "CriterioJustificacaoLegal", p.id);
+                this.removerCriterio(this.classe.pca.justificacao, "CriterioJustificacaoLegal", p.id, 'PCA');
+                this.critLegalAdicionadoPCA = false;
                 if(this.classe.temSubclasses4Nivel){
                     for(var i=0; i < this.classe.subclasses.length; i++){
-                        this.removerCriterio(this.classe.subclasses[i].pca.justificacao, "CriterioJustificacaoLegal", p.id);
+                        this.removerCriterio(this.classe.subclasses[i].pca.justificacao, "CriterioJustificacaoLegal", p.id, 'PCA');
+                        this.critLegalAdicionadoPCA = false;
                     }
                 }
             }
             else if(p.relacao == "eSinteseDe"){
-                this.removerCriterio(this.classe.df.justificacao, "CriterioJustificacaoDensidadeInfo", p.id);
+                this.removerCriterio(this.classe.df.justificacao, "CriterioJustificacaoDensidadeInfo", p.id, 'DF');
                 if(this.classe.temSubclasses4Nivel){
                     for(var i=0; i < this.classe.subclasses.length; i++){
-                        this.removerCriterio(this.classe.subclasses[i].df.justificacao, "CriterioJustificacaoDensidadeInfo", p.id);
+                        this.removerCriterio(this.classe.subclasses[i].df.justificacao, "CriterioJustificacaoDensidadeInfo", p.id, 'DF');
                     }
                 }
             }
             else if(p.relacao == "eSintetizadoPor"){
-                this.removerCriterio(this.classe.df.justificacao, "CriterioJustificacaoDensidadeInfo", p.id);
+                this.removerCriterio(this.classe.df.justificacao, "CriterioJustificacaoDensidadeInfo", p.id, 'DF');
                 if(this.classe.temSubclasses4Nivel){
                     for(var i=0; i < this.classe.subclasses.length; i++){
-                        this.removerCriterio(this.classe.subclasses[i].df.justificacao, "CriterioJustificacaoDensidadeInfo", p.id);
+                        this.removerCriterio(this.classe.subclasses[i].df.justificacao, "CriterioJustificacaoDensidadeInfo", p.id, 'DF');
                     }
                 }
             }
             else if(p.relacao == "eComplementarDe"){
-                this.removerCriterio(this.classe.df.justificacao, "CriterioJustificacaoComplementaridadeInfo", p.id);
+                this.removerCriterio(this.classe.df.justificacao, "CriterioJustificacaoComplementaridadeInfo", p.id, 'DF');
                 if(this.classe.temSubclasses4Nivel){
                     for(var i=0; i < this.classe.subclasses.length; i++){
-                        this.removerCriterio(this.classe.subclasses[i].df.justificacao, "CriterioJustificacaoComplementaridadeInfo", p.id);
+                        this.removerCriterio(this.classe.subclasses[i].df.justificacao, "CriterioJustificacaoComplementaridadeInfo", p.id, 'DF');
                     }
                 }
             }
@@ -664,7 +690,7 @@ var newClass = new Vue({
             
             // No fim recalcula-se o valor do destino final
             this.classe.df.valor = this.calcDF(this.classe.processosRelacionados);
-            if(this.classe.temSubclasses4Nivel){
+            if(this.classe.temSubclasses4Nivel && !this.classe.temSubclasses4NivelDF){
                 for(i=0; i < this.classe.subclasses.length; i++){
                     this.classe.subclasses[i].df.valor = this.calcDF(this.classe.subclasses[i].processosRelacionados);
                 }
@@ -718,10 +744,26 @@ var newClass = new Vue({
             
         },
 
+        adicionarCriterioLegalDF: function (justificacao, tipo, label, notas, procRel, legislacao) {
+            this.adicionarCriterio(justificacao, tipo, label, notas, procRel, legislacao);
+            this.critLegalAdicionadoDF = true;
+        },    
+
+        adicionarCriterioLegalPCA: function (justificacao, tipo, label, notas, procRel, legislacao) {
+            this.adicionarCriterio(justificacao, tipo, label, notas, procRel, legislacao);
+            this.critLegalAdicionadoPCA = true;
+        },
+
+        adicionarCriterioGestionario: function (justificacao, tipo, label, notas, procRel, legislacao) {
+            this.adicionarCriterio(justificacao, tipo, label, notas, procRel, legislacao);
+            this.critGestionarioAdicionado = true;
+        },
+
+
         // Remove um PN dum critério e se este ficar sem PNs, remove o critério também:
         // criterio = {tipo: String, notas: [String], procRel: [proc], legislacao: [leg]}
 
-        removerCriterio: function(justificacao, tipo, pid){
+        removerCriterio: function(justificacao, tipo, pid, PCAouDF){
             var i = justificacao.findIndex(crit => crit.tipo === tipo);
 
             if(i != -1){
@@ -730,6 +772,7 @@ var newClass = new Vue({
                     justificacao[i].procRel.splice(j, 1);
                 }
                 if(justificacao[i].procRel.length == 0){
+                    this.atualizaFlagsCriterios(justificacao[i].tipo, PCAouDF);
                     justificacao.splice(i, 1)
                 }
             } 
@@ -737,8 +780,23 @@ var newClass = new Vue({
 
         // Remove um critério completo duma vez
 
-        removerCriterioTodo: function(justificacao, i){
-            justificacao.splice(i, 1)
+        removerCriterioTodo: function(justificacao, i, PCAouDF){
+            this.atualizaFlagsCriterios(justificacao[i].tipo, PCAouDF);
+            justificacao.splice(i, 1);
+        },
+
+        // Atualiza as flags que controlam os botões de adicionar e remover critérios
+
+        atualizaFlagsCriterios(tipo, PCAouDF){
+            if(tipo == "CriterioJustificacaoLegal"){
+                if(PCAouDF == 'PCA')
+                    this.critLegalAdicionadoPCA = false;
+                else
+                    this.critLegalAdicionadoDF = false;
+            }
+            else if(tipo == "CriterioJustificacaoGestionario"){
+                this.critGestionarioAdicionado = false;
+            }
         },
 
         // Verifica se um TI já existe na BD
@@ -767,6 +825,7 @@ var newClass = new Vue({
                 // Tratamento do invariante: se é Suplemento De então cria-se um critério Legal com toda a legislação selecionada associada
                 else if(procRel[i].relacao == "eSuplementoDe"){
                     this.adicionarCriterio(novaClasse.pca.justificacao, "CriterioJustificacaoLegal", "Critério Legal", "", [procRel[i]], this.classe.legislacao);
+                    this.critLegalAdicionadoPCA = true;
                 }
                 // Tratamento do invariante: se é Síntese De então cria-se um critério de Densidade Informacional
                 else if(procRel[i].relacao == "eSinteseDe"){
@@ -781,7 +840,9 @@ var newClass = new Vue({
                     this.adicionarCriterio(novaClasse.df.justificacao, "CriterioJustificacaoComplementaridadeInfo", "Critério de Complementaridade Informacional", "", [procRel[i]], []);
                 }
             }
-            novaClasse.df.valor = this.calcDF(novaClasse.processosRelacionados);
+            if(!this.classe.temSubclasses4NivelDF){
+                novaClasse.df.valor = this.calcDF(novaClasse.processosRelacionados);
+            } 
         },
 
 
@@ -827,22 +888,24 @@ var newClass = new Vue({
         calcDF: function(listaProc){
             var res = "NE";
 
-            var complementar = listaProc.findIndex(p => p.relacao == 'eComplementarDe');
-            if(complementar != -1){
-                res = "C";
-            }
-            else{
-                var sinteseDe = listaProc.findIndex(p => p.relacao == 'eSinteseDe');
-                if(sinteseDe != -1){
+            if(!this.classe.temSubclasses4NivelDF){
+                var complementar = listaProc.findIndex(p => p.relacao == 'eComplementarDe');
+                if(complementar != -1){
                     res = "C";
                 }
                 else{
-                    var sintetizado = listaProc.findIndex(p => p.relacao == 'eSintetizadoPor');
-                    if(sintetizado != -1){
-                        res = "E";
+                    var sinteseDe = listaProc.findIndex(p => p.relacao == 'eSinteseDe');
+                    if(sinteseDe != -1){
+                        res = "C";
                     }
                     else{
-                        res = "NE";
+                        var sintetizado = listaProc.findIndex(p => p.relacao == 'eSintetizadoPor');
+                        if(sintetizado != -1){
+                            es = "E";
+                        }
+                        else{
+                            res = "NE";
+                        }
                     }
                 }
             }
@@ -851,6 +914,7 @@ var newClass = new Vue({
 
         calcSinteseDF4Nivel: function(){
             if(this.classe.subdivisao4Nivel01Sintetiza02){
+                this.classe.subclasses[0].df.valor = 'C';
                 this.classe.subclasses[0].processosRelacionados.push(
                     {
                         codigo: this.classe.subclasses[1].codigo,
@@ -859,6 +923,7 @@ var newClass = new Vue({
                         relLabel: 'é Síntese de'
                     }
                 );
+                this.classe.subclasses[1].df.valor = 'E';
                 this.classe.subclasses[1].processosRelacionados.push(
                     {
                         codigo: this.classe.subclasses[0].codigo,
@@ -869,6 +934,7 @@ var newClass = new Vue({
                 );
             }
             else{
+                this.classe.subclasses[0].df.valor = 'E';
                 this.classe.subclasses[0].processosRelacionados.push(
                     {
                         codigo: this.classe.subclasses[1].codigo,
@@ -877,6 +943,7 @@ var newClass = new Vue({
                         relLabel: 'é Sintetizado por'
                     }
                 );
+                this.classe.subclasses[1].df.valor = 'C';
                 this.classe.subclasses[1].processosRelacionados.push(
                     {
                         codigo: this.classe.subclasses[0].codigo,
@@ -899,8 +966,44 @@ var newClass = new Vue({
             }
         },
 
-        tabClicked: function (event) {
-            this.activeTab = event;
+        // Sempre que uma tab é clicada, vou ver se é para adicionar...
+        tabClicked: function (tab) {
+            if(tab == 0){
+                var nsubs = this.classe.subclasses.length;
+                var codigo = (nsubs+1).toString();
+                var novaSubclasse = {
+                    nivel: 4,
+                    pai: this.classe.codigo,
+                    codigo: this.classe.codigo + '.' + codigo.padStart(nsubs, '0'),
+                    titulo: this.classe.titulo + ': ',
+                    descricao: null,
+                    termosInd: JSON.parse(JSON.stringify(this.classe.termosInd)),
+
+                    // Bloco de contexto de avaliação
+
+                    processosRelacionados: JSON.parse(JSON.stringify(this.classe.processosRelacionados)),
+                    legislacao: JSON.parse(JSON.stringify(this.classe.legislacao)),
+
+                    // Bloco de decisão de avaliação: PCA e DF
+
+                    pca: {
+                        valor: null,
+                        formaContagem: "",
+                        subFormaContagem: "",
+                        justificacao: []        // j = [criterio]
+                    },                          // criterio = {tipo, notas, [proc], [leg]}
+
+                    df: {
+                        valor: "NE",
+                        notas: null,
+                        justificacao: []
+                    }
+                };
+                this.procHeranca(this.classe.processosRelacionados, novaSubclasse);
+
+                this.classe.subclasses.splice(nsubs, 0, novaSubclasse);
+                this.selectedSubclasse = nsubs + 1;
+            }
         },
 
         showMsg(text) {
@@ -911,8 +1014,18 @@ var newClass = new Vue({
         // Vai adicionar a nova classe/processo à lista de pedidos
 
         criarClasse: function () {
-            alert("Neste momento, ainda não está pronta. A classe seria criada com a informação: " + JSON.stringify(this.classe))
-            alert("Subclasses: " + JSON.stringify(this.classe.subclasses))
+            this.$http.post('/api/classes', this.classe,{
+                headers: {
+                    'content-type' : 'application/json'
+                }
+            })
+            .then( function(response) { 
+                console.log(JSON.stringify(response));
+                window.location.href = '/';
+            })
+            .catch( error => {
+                console.error(error); 
+            });
         }
     }
 })

@@ -15,7 +15,7 @@ var orgs = new Vue({
         parse: function(dataObj){
             let link="#";
             if(dataObj.tipo=="Novo PN" && dataObj.obj){
-                link=`/classes/consultar/${dataObj.obj}`;
+                link=`/classes/${dataObj.obj}`;
             }
             else if(dataObj.tipo=="Criação de TS" && dataObj.obj){
                 link=`/tabelasSelecao/consultar/${dataObj.obj}`;

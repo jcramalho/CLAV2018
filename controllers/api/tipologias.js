@@ -83,7 +83,7 @@ Tipologias.criar = (tipologia, utilizador) => {
             clav:tipDesignacao '${tipologia.designacao}' ;
             clav:tipSigla '${tipologia.sigla}' ;
             
-        ${tipologia.entidades.map(entidade => `clav:${entidade} clav:pertenceTipologiaEnt clav:tip_${tipologia.sigla} ;`).join('\n')}
+        ${tipologia.entidades.map(entidade => `clav:contemEntidade clav:${entidade} ;`).join('\n')}
         clav:tipEstado "Harmonização" .
     }`;
     const pedido = {
@@ -281,8 +281,8 @@ Tipologias.updateTipologia = function (dataObj) {
             }
         }
 
-        if (dataObj.elems.del && dataObj.elems.del.length) {
-            for (let elem of dataObj.elems.del) {
+        if (dataObj.ents.del && dataObj.ents.del.length) {
+            for (let elem of dataObj.ents.del) {
                 ret += `\tclav:${elem.id} clav:pertenceTipologiaEnt clav:${dataObj.id} .\n`;
             }
         }
@@ -317,8 +317,8 @@ Tipologias.updateTipologia = function (dataObj) {
             }
         }
 
-        if (dataObj.elems.add && dataObj.elems.add.length) {
-            for (let elem of dataObj.elems.add) {
+        if (dataObj.ents.add && dataObj.ents.add.length) {
+            for (let elem of dataObj.ents.add) {
                 ret += `\tclav:${elem.id} clav:pertenceTipologiaEnt clav:${dataObj.id} .\n`;
             }
         }

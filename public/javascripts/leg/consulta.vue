@@ -37,9 +37,9 @@ var leg = new Vue({
 
             if(ent.length>0){
                 for(var i=0; i< ent.length; i++){
-                    this.entidades = this.entidades + " " + ent[i].entSigla;
+                    this.entidades = this.entidades + " " + ent[i];
                 }
-            }      
+            }    
             this.ready=true;
         }
     },

@@ -8,15 +8,23 @@ var newLeg = new Vue({
             data: "",
             link: "",
             entidades: [],
+            
         },
+        processos: [],
+        
         orgs: [],
-        orgsReady: false,
-        orgsTableHeader: ["Sigla", "Nome"],
+        entidades: [],
+        entidadesReady: false,
+        orgsTableHeader: ["Sigla", "Designação"],
         orgsTableWidth: ["15%", "85%"],
         message: "",
         
-        //Apenas para teste:
-        tipoDiploma: ["DL", "Portaria", "Lei"]
+        tipoDiploma: [],
+
+        newProcesso: "",
+        listaClasses: [],
+        //newProcessos: [],
+
     },
     components: {
         spinner: VueStrap.spinner,
@@ -38,18 +46,70 @@ var newLeg = new Vue({
         add: function(){
             this.message="";
 
+            for(var i = 0; i< this.entidades.length; i++){
+                this.diploma.entidades[i] = this.entidades[i].id
+            }
+
             var formats= {
-                numero: new RegExp(/[0-9]\d{6}$\/[0-9]\d{4}$/),
+                numero: new RegExp(/[0-9]+(\-\w)?\/[0-9]\d{3}$/),
                 data: new RegExp(/[0-9]+\/[0-9]+\/[0-9]+/)
+            }
+
+            var parseAno = this.diploma.numero.split("/");
+            var anoDiploma = parseInt(parseAno[1]);
+
+            if( anoDiploma<2000 ){
+                formats.numero= new RegExp(/[0-9]+(\-\w)?\/[0-9]\d{1}$/)
             }
 
             for(let field in formats){
                 if(!formats[field].test(this.diploma[field])){
+                    if( anoDiploma<2000 ){
+                        messageL.showMsg("Anos de diploma anteriores a 2000 devem ter apenas os dois últimos dígitos!");
+                        return false;
+                    }
                     messageL.showMsg("O campo " + field + " está no formato errado!");
-                    //this.message+= "<p>Campo '"+field+"' está no formato errado</p>";
                     return false;
                 }
             }
+
+            var date = new Date();
+
+            var ano = parseInt(this.diploma.data.slice(0, 4));
+            var mes = parseInt(this.diploma.data.slice(5, 7));
+            var dia = parseInt(this.diploma.data.slice(8, 10));
+
+            dias = [31,28,31,30,31,30,31,31,30,31,30,31]
+
+            if( mes>12 ){
+                messageL.showMsg("Mês inválido!")
+                return false
+            }
+            if( dia > dias[mes-1]){
+                if( ano % 4 == 0 && mes == 2 && dia == 29){}
+                else{ 
+                messageL.showMsg("Dia do mês inválido!")
+                return false
+                }
+            }
+
+            if( anoDiploma > parseInt(date.getFullYear()) ){
+                messageL.showMsg("Ano de Diploma inválido!")
+                return false
+            }
+            if( ano > parseInt(date.getFullYear()) ){
+                messageL.showMsg("Ano inválido! Por favor selecione uma data anterior à atual");
+                return false
+            }
+            if( ano == parseInt(date.getFullYear()) && mes > parseInt(date.getMonth() + 1) ){
+                messageL.showMsg("Mês inválido! Por favor selecione uma data anterior à atual");
+                return false
+            }
+            if( ano == parseInt(date.getFullYear()) && mes == parseInt(date.getMonth() + 1) && dia > parseInt(date.getDate()) ){
+                messageL.showMsg("Dia inválido! Por favor selecione uma data anterior à atual");
+                return false
+            }
+
 
             let Link = new RegExp(/https?:\/\/.+/);
 
@@ -59,6 +119,8 @@ var newLeg = new Vue({
 
             this.$refs.spinner.show();
             var dataObj = JSON.parse(JSON.stringify(this.diploma));  
+
+            console.log(dataObj)
 
             this.$http.post('/api/legislacao/', dataObj,{
                 headers: {
@@ -78,9 +140,7 @@ var newLeg = new Vue({
                     console.error(error); 
                 });
         },
-        loadOrgs: function () {
-            var i = 0;
-
+        loadEntidades: function () {
             this.$http.get("/api/entidades")
                 .then(function (response) {
                     this.orgs = response.body
@@ -94,25 +154,80 @@ var newLeg = new Vue({
                             return a.data[1].localeCompare(b.data[1]);
                         });
 
-                    this.orgsReady = true;
+                    this.entidadesReady = true;
                 })
                 .catch(function (error) {
                     console.error(error);
                 });       
         },
-        orgSelected: function (row, list, partType) {
-            if (!row.selected) {
-                list.push(row.id);
-            }
-            else {
-                let index = list.indexOf(row.id);
-                if (index != -1) {
-                    list.splice(index, 1);
+        selecionarEntidade: function (row) {
+            this.entidades.push(row);
+            row.selected = true;
+        },
+        desselecionarEntidade: function (row, index) {
+            row.selected = false;
+            this.entidades.splice(index, 1);
+        },
+        loadTipoDiploma: function () {
+
+            this.$http.get("/api/vocabularios/vc_tipoDiplomaLegislativo")
+                .then(function (response) {
+                    this.tipoDiploma = response.body
+                        .map(function (item) {
+                            return {
+                                termo: item.termo
+                            }
+                        }).sort(function (a, b) {
+                            return a.termo.localeCompare(b.termo);
+                        });
+                })
+                .catch(function (error) {
+                    console.error(error);
+                }); 
+        },
+        loadClasses: function () {
+            var classesToParse = [];
+
+            this.$http.get("/api/classes?nivel=3")
+                .then(function (response) {
+                    classesToParse = response.body;
+                })
+                .then(function () {
+                    this.listaClasses = classesToParse
+                        .map(function(item){
+                            return {
+                                label: item.codigo +" - "+ item.titulo,
+                                value: item,
+                            }
+                        }).sort(function (a, b) {
+                            return a.label.localeCompare(b.label);
+                        });
+                        
+                    this.classesReady = true;
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        },
+        addProcesso: function(){
+            var existeProcesso = 0;
+            for(var i=0; i<this.processos.length; i++){
+                if(this.newProcesso.value.codigo==this.processos[i].codigo){
+                    existeProcesso = 1;
+                    break
                 }
+            }
+            if(existeProcesso==0){
+                this.processos.unshift(this.newProcesso.value)
+            }   
+            else{
+                messageL.showMsg("Esse processo já se encontra selecionado!");
             }
         },
     },
     created: function () {
-        this.loadOrgs();
+        this.loadEntidades();
+        this.loadTipoDiploma(); 
+        this.loadClasses();
     }
 })

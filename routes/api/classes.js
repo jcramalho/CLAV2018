@@ -2,16 +2,11 @@ var Logging = require('../../controllers/logging');
 var Auth = require('../../controllers/auth.js');
 var Classes = require('../../controllers/api/classes.js');
 var State = require('../../controllers/state.js')
-var axios = require('axios');
 
 var express = require('express');
 var router = express.Router();
 
-router.get('/debugq', async (req, res) => {
-    res.jsonp(req.query)
-}) 
-
-// Devolve a árvore de classes em arrays aninhados
+// Devolve as classes em vários formatos podendo ser filtradas por nível 
 router.get('/', async (req, res) => { 
     try {
         if(req.query.formato == "arvore"){
@@ -60,12 +55,12 @@ router.get('/', async (req, res) => {
     }
 })
 
-// Devolve a lista de classes em num array simples
-router.get('/lista', async (req, res) => { 
+// Devolve a informação de uma classe
+router.get('/:id', async function (req, res) {
     try {
-        res.jsonp(await State.getClassesFlatList());  
+        res.jsonp(await Classes.retrieve(req.params.id)) 
     } catch(err) {
-        res.status(500).send(`Erro na listagem das classes em formato "flat list": ${err}`)
+        res.status(500).send(`Erro na recuperação da classe ` + req.params.id + `: ${err}`)
     }
 })
 
@@ -78,160 +73,8 @@ router.get('/verificar/:codigo', async (req, res) => {
     }
 })
 
-// Devolve a lista de classes de nível n [1..4]: [id, codigo, titulo]
-router.get('/nivel/:n', async (req, res) => {
-    switch(req.params.n){
-        case '1': try {
-                res.jsonp(await State.getLevel1Classes());
-                break  
-            } catch(err) {
-                res.status(500).send(`Erro na listagem geral das classes de nível 1: ${err}`)
-                break
-            }
-        case '2': try {
-                res.jsonp(await State.getLevel2Classes());  
-                break
-            } catch(err) {
-                res.status(500).send(`Erro na listagem geral das classes de nível 2: ${err}`)
-                break
-            }  
-        case '3': try {
-                res.jsonp(await State.getLevel3Classes()); 
-                break 
-            } catch(err) {
-                res.status(500).send(`Erro na listagem geral das classes de nível 3: ${err}`)
-                break
-            }
-        case '4': try {
-                res.jsonp(await State.getLevel4Classes()); 
-                break 
-            } catch(err) {
-                res.status(500).send(`Erro na listagem geral das classes de nível 4: ${err}`)
-                break
-            }
-    }
-})
-
-// Devolve a toda a informação de uma classe
-async function retrieveClasse(id){
-    var classe = {
-        // Metainformação e campos da área de Descrição
-
-        nivel: 1,
-        pai: "",
-        codigo: "",
-        titulo: "",
-        descricao: "",
-        notasAp: [],
-        exemplosNotasAp: [],
-        notasEx: [],
-        termosInd: [],
-
-        temSubclasses4Nivel: false,
-        temSubclasses4NivelPCA: false,
-        temSubclasses4NivelDF: false,
-        subdivisao4Nivel01Sintetiza02: true,
-
-        // Campos da área do Contexto de Avaliação
-        // Tipo de processo
-
-        tipoProc: "PC",
-        procTrans: "N",
-
-        // Donos do processo: lista de entidades
-
-        donos: [],
-
-        // Participantes no processo: lista de entidades
-
-        participantes: [],
-
-        // Processos Relacionados
-
-        processosRelacionados: [],
-
-        // Legislação Associada
-
-        legislacao: [],
-
-        // Bloco de decisão de avaliação: PCA e DF
-
-        pca: {
-            valor: null,
-            formaContagem: "",
-            subFormaContagem: "",
-            justificacao: []        // j = [criterio]
-        },                          // criterio = {tipo, notas, [proc], [leg]}
-
-        df: {
-            valor: "NE",
-            notas: null,
-            justificacao: []
-        },
-
-        // Bloco de subclasses de nível 4, caso haja desdobramento
-
-        subclasses: []
-    };
-
-    let base = await axios.get("http://localhost:7778/api/classes/" + id);
-    classe.nivel = base.data[0].codigo.split('.').length
-    classe.codigo = base.data[0].codigo
-    classe.pai = base.data[0].codigoPai
-    classe.titulo = base.data[0].titulo
-    classe.descricao = base.data[0].desc
-    classe.tipoProc = base.data[0].procTipo
-    classe.procTrans = base.data[0].procTrans
-    
-    let notasAp = await axios.get("http://localhost:7778/api/classes/" + id + "/notasAp");
-    classe.notasAp = notasAp.data
-
-    let exemplosNotasAp = await axios.get("http://localhost:7778/api/classes/" + id + "/exemplosNotasAp");
-    classe.exemplosNotasAp = exemplosNotasAp.data
-
-    let notasEx = await axios.get("http://localhost:7778/api/classes/" + id + "/notasEx");
-    classe.notasEx = notasEx.data
-
-    let termosInd = await axios.get("http://localhost:7778/api/classes/" + id + "/ti");
-    classe.termosInd = termosInd.data
-
-    let donos = await axios.get("http://localhost:7778/api/classes/" + id + "/dono");
-    classe.donos = donos.data
-
-    let participantes = await axios.get("http://localhost:7778/api/classes/" + id + "/participante");
-    classe.participantes = participantes.data
-
-    let procRel = await axios.get("http://localhost:7778/api/classes/" + id + "/procRel");
-    classe.processosRelacionados = procRel.data 
-
-    let legislacao = await axios.get("http://localhost:7778/api/classes/" + id + "/legislacao");
-    classe.legislacao = legislacao.data
-
-    let pca = await axios.get("http://localhost:7778/api/classes/" + id + "/pca");
-    classe.pca = pca.data[0]
-    
-    if(classe.pca.idJust){
-        let just = await axios.get("http://localhost:7778/api/classes/justificacao/" + classe.pca.idJust);
-        classe.pca.justificacao = just.data
-    }
-
-    let mydf = await axios.get("http://localhost:7778/api/classes/" + id + "/df");
-    classe.df = mydf.data[0]
-    if(classe.df.idJust){
-        let just = await axios.get("http://localhost:7778/api/classes/justificacao/" + classe.df.idJust);
-        classe.df.justificacao = just.data
-    }
-
-    return classe
-}
-
-router.get('/teste/:id', async function (req, res) {
-    let c = await retrieveClasse(req.params.id)
-    res.jsonp(c)
-})
-
 // Devolve a metainformação de uma classe: codigo, titulo, status, desc, codigoPai?, tituloPai?, procTrans?, procTipo?
-router.get('/:id', function (req, res) {
+router.get('/:id/meta', function (req, res) {
     Classes.consultar(req.params.id)
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na consulta da classe ${req.params.id}: ${erro}`))
@@ -323,118 +166,20 @@ router.get('/:id/df', (req, res) => {
         //.catch(erro => res.jsonp({cod: "404", mensagem: "Erro na consulta do DF associado à classe "+req.params.id+": " + erro}))
 })
 
-// Falta testar e decidir o que devolver
+// Verifica se um código de classe existe
 router.get('verifica/:codigo', (req, res) => {
     Classes.verificaCodigo(req.params.codigo, req.params.codigo.split('.').length)
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na verificação da existência do código ${req.params.codigo}: ${erro}`))
 })
 
-
-// ================================================================================
-// Daqui para baixo ainda pode ser aproveitado...
-
-
-
-
-router.get('/', (req, res) => {
-    Classes.filterNone()
-        .then(list => res.send(list))
-        .catch(function (error) {
-            console.error(error);
-        });
-})
-
-
-router.get('/filtrar/comuns', function (req, res) {
-    Classes.filterCommon()
-        .then(list => res.send(list))
-        .catch(function (error) {
-            console.error(error);
-        });
-})
-
-router.get('/filtrar/restantes/(:tipols)?', function (req, res) {
-    if(req.params.tipols){
-        var orgs = req.params.tipols.split(',');
-    }
-
-    Classes.filterRest(orgs)
-        .then(list => res.send(list))
-        .catch(function (error) {
-            console.error(error);
-        });
-})
-
-router.get('/filtrar/:orgs', function (req, res) {
-    Classes.filterByOrgs(req.params.orgs.split(','))
-        .then(list => res.send(list))
-        .catch(function (error) {
-            console.error(error);
-        });
-})
-
-router.get('/:id/descendenciaIndex', function (req, res) {
-    Classes.childrenNew(req.params.id)
-        .then(list => res.send(list))
-        .catch(function (error) {
-            console.error(error);
-        });
-})
-
-router.put('/:id', Auth.isLoggedInAPI, function (req, res) {
-    var dataObj = req.body;
+router.post('/', Auth.isLoggedIn, (req, res) => {
+    console.log('Recebi um post de classe...')
+    console.log(JSON.stringify(req.body))
     
-    Classes.updateClass(dataObj)
-        .then(function (response) {
-            Logging.logger.info('Update a classe \'' + req.params.id + '\' por utilizador \'' + req.user._id + '\'');
-
-            req.flash('success_msg', 'Info. de Classe actualizada');
-            res.send("Ok");
-        })
-        .catch(error => console.error(error));
-})
-
-router.post('/', Auth.isLoggedInAPI, function (req, res) {
-    var dataObj = req.body;
-
-    Classes.checkCodeAvailability(dataObj.Code, dataObj.Level)
-        .then(function (count) {
-            if (count > 0) {
-                res.send("Código já existente!");
-            }
-            else {
-                Classes.createClass(dataObj)
-                    .then(function () {
-                        Logging.logger.info('Submetida classe \'c' + dataObj.Code + '\' por utilizador \'' + req.user._id + '\'');
-                        
-                        let pedidoData = {
-                            type: "Novo PN",
-                            desc: "Novo processo de negócio",
-                            id: "c" + dataObj.Code,
-                            alt: null
-                        }
-
-                        Pedidos.add(pedidoData, req, res);
-                    })
-                    .catch(error => console.error(error));
-            }
-        })
-        .catch(error => console.error("Erro a checkar o codigo: " + error))
-
-})
-
-router.delete('/:id', Auth.isLoggedInAPI, function (req, res) {
-    Classes.deleteClass(req.params.id)
-        .then(function () {
-            Logging.logger.info('Desativada classe \'' + req.params.id + '\' por utilizador \'' + req.user._id + '\'');
-
-            req.flash('success_msg', 'Classe desativada');
-            res.send("Entrada apagada!");
-        })
-        .catch(function (error) {
-            console.error(error);
-        });
+    return Classes.criar(req.body, req.user.email)
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.status(500).send(`Erro na criação da classe: ${erro}`));
 })
 
 module.exports = router;

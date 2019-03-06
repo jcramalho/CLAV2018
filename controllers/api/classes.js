@@ -1,7 +1,9 @@
 const client = require('../../config/database').onthology
 const normalize = require('../../controllers/api/utils').normalize
-const Pedidos = require('../../controllers/api/pedidos')
+const Pedidos = require('../../controllers/pedidos')
+const axios = require('axios')
 const Classes = module.exports
+const myhost = require('../../config/database').host
 
 // Devolve a lista de classes de um determinado nível, por omissão do nível 1
 Classes.listar = async nivel => {
@@ -27,8 +29,134 @@ Classes.listar = async nivel => {
     catch(erro) { throw (erro);}
 }
 
+// Devolve toda a informação de uma classe
+Classes.retrieve = async id => {
+    try{
+        var classe = {
+            // Metainformação e campos da área de Descrição
+    
+            nivel: 1,
+            pai: {},
+            codigo: "",
+            titulo: "",
+            descricao: "",
+            filhos: [],
+            notasAp: [],
+            exemplosNotasAp: [],
+            notasEx: [],
+            termosInd: [],
+    
+            temSubclasses4Nivel: false,
+            temSubclasses4NivelPCA: false,
+            temSubclasses4NivelDF: false,
+            subdivisao4Nivel01Sintetiza02: true,
+    
+            // Campos da área do Contexto de Avaliação
+            // Tipo de processo
+    
+            tipoProc: "PC",
+            procTrans: "N",
+    
+            // Donos do processo: lista de entidades
+    
+            donos: [],
+    
+            // Participantes no processo: lista de entidades
+    
+            participantes: [],
+    
+            // Processos Relacionados
+    
+            processosRelacionados: [],
+    
+            // Legislação Associada
+    
+            legislacao: [],
+    
+            // Bloco de decisão de avaliação: PCA e DF
+    
+            pca: {
+                valor: "",
+                formaContagem: "",
+                subFormaContagem: "",
+                justificacao: []        // j = [criterio]
+            },                          // criterio = {tipo, notas, [proc], [leg]}
+    
+            df: {
+                valor: "NE",
+                notas: null,
+                justificacao: []
+            },
+    
+            // Bloco de subclasses de nível 4, caso haja desdobramento
+    
+            subclasses: []
+        };
+        
+        let base = await axios.get(myhost + "/api/classes/" + id + "/meta");
+        classe.nivel = base.data[0].codigo.split('.').length
+        classe.codigo = base.data[0].codigo
+        classe.pai.codigo = base.data[0].codigoPai
+        classe.pai.titulo = base.data[0].tituloPai
+        classe.titulo = base.data[0].titulo
+        classe.descricao = base.data[0].desc
+        classe.tipoProc = base.data[0].procTipo
+        classe.procTrans = base.data[0].procTrans
+
+        let filhos = await axios.get(myhost + "/api/classes/" + id + "/descendencia");
+        if(filhos.data.length > 0){
+            classe.filhos = filhos.data
+            if(classe.nivel == 3) classe.temSubclasses4Nivel = true
+        }
+    
+        let notasAp = await axios.get(myhost + "/api/classes/" + id + "/notasAp");
+        classe.notasAp = notasAp.data
+
+        let exemplosNotasAp = await axios.get(myhost + "/api/classes/" + id + "/exemplosNotasAp");
+        classe.exemplosNotasAp = exemplosNotasAp.data
+
+        let notasEx = await axios.get(myhost + "/api/classes/" + id + "/notasEx");
+        classe.notasEx = notasEx.data
+
+        let termosInd = await axios.get(myhost + "/api/classes/" + id + "/ti");
+        classe.termosInd = termosInd.data
+
+        let donos = await axios.get(myhost + "/api/classes/" + id + "/dono");
+        classe.donos = donos.data
+
+        let participantes = await axios.get(myhost + "/api/classes/" + id + "/participante");
+        classe.participantes = participantes.data
+
+        let procRel = await axios.get(myhost + "/api/classes/" + id + "/procRel");
+        classe.processosRelacionados = procRel.data 
+
+        let legislacao = await axios.get(myhost + "/api/classes/" + id + "/legislacao");
+        classe.legislacao = legislacao.data
+
+        let pca = await axios.get(myhost + "/api/classes/" + id + "/pca");
+        if(pca.data.length > 0) classe.pca = pca.data[0]
+    
+        if(classe.pca && classe.pca.idJust){
+            let just = await axios.get(myhost + "/api/classes/justificacao/" + classe.pca.idJust);
+            classe.pca.justificacao = just.data
+        }
+
+        let df = await axios.get(myhost + "/api/classes/" + id + "/df");
+        if(df.data.length > 0) classe.df = df.data[0]
+        if(classe.df && classe.df.idJust){
+            let just = await axios.get(myhost + "/api/classes/justificacao/" + classe.df.idJust);
+            classe.df.justificacao = just.data
+        }
+
+        return classe
+    }
+    catch(erro){
+        throw (erro);
+    }
+}
+
 // Devolve a metainformação de uma classe: codigo, titulo, status, desc, codigoPai?, tituloPai?, procTipo?
-Classes.consultar = id => {
+Classes.consultar = async id => {
     var query = `
             SELECT * WHERE { 
                 clav:${id} clav:titulo ?titulo;
@@ -48,24 +176,28 @@ Classes.consultar = id => {
                     ?pt skos:prefLabel ?procTipo.
                 }
             }`
-    return client.query(query)
-        .execute()
-        .then(response => normalize(response))
+    let resultado = await client.query(query).execute()
+    return normalize(resultado)
 }
 
 // Devolve a lista de filhos de uma classe: id, codigo, titulo, nFilhos
 Classes.descendencia = async id => {
-    var query = `
-        SELECT ?id ?codigo ?titulo
-        WHERE {
-            ?id clav:temPai clav:${id} ;
+    try{
+        var query = `
+            SELECT ?id ?codigo ?titulo
+            WHERE {
+                ?id clav:temPai clav:${id} ;
                     clav:classeStatus 'A';
                     clav:codigo ?codigo ;
                     clav:titulo ?titulo .
-        }
-    `
-    let resultado = await client.query(query).execute();
-    return normalize(resultado);
+            }
+            `
+        let resultado = await client.query(query).execute();
+        return normalize(resultado);
+    }
+    catch(erro){
+        throw (erro);
+    }
 }
 
 // Devolve a lista de notas de aplicação de uma classe: idNota, nota
@@ -84,7 +216,7 @@ Classes.notasAp = id => {
 Classes.exemplosNotasAp = id => {
     var query = `
             SELECT ?idExemplo ?exemplo WHERE { 
-                clav:${id} clav:exemploNA ?idExemplo.
+                clav:${id} clav:temExemploNA ?idExemplo.
                 ?idExemplo clav:conteudo ?exemplo.
             }`
     return client.query(query)
@@ -120,16 +252,19 @@ Classes.ti = id => {
 // Devolve a(s) entidade(s) dona(s) do processo: id, tipo, sigla, designacao
 Classes.dono = id => {
     var query = `
-        SELECT ?id ?tipo ?sigla ?designacao WHERE { 
+        SELECT ?id ?idDono ?tipo ?idTipo ?sigla ?designacao WHERE { 
             clav:${id} clav:temDono ?id.
+            BIND (STRAFTER(STR(?id), 'clav#') AS ?idDono).
             {
                 ?id clav:entDesignacao ?designacao;
                     a ?tipo;
                     clav:entSigla ?sigla.
+                BIND (STRAFTER(STR(?tipo), 'clav#') AS ?idTipo).
             } UNION {
                 ?id clav:tipDesignacao ?designacao;
                 a ?tipo;
                 clav:tipSigla ?sigla .
+                BIND (STRAFTER(STR(?tipo), 'clav#') AS ?idTipo).
             }
         FILTER ( ?tipo NOT IN (owl:NamedIndividual) )
         }`  
@@ -141,18 +276,24 @@ Classes.dono = id => {
 // Devolve a(s) entidade(s) participante(s) no processo: id, sigla, designacao, tipoParticip
 Classes.participante = id => {
     var query = `
-        select ?id ?sigla ?designacao ?tipoParticip where { 
-            clav:${id} clav:temParticipante ?id ;
-                            ?tipoParticip ?id .
+        select ?id ?idParticipante ?sigla ?designacao ?idTipo ?tipoParticip ?participLabel where { 
+            ?particip rdfs:subPropertyOf clav:temParticipante . FILTER(?particip != clav:temParticipante)
+            clav:${id} ?particip ?id .
+            BIND (STRAFTER(STR(?particip), '#temParticipante') AS ?participLabel).  
+            BIND (STRAFTER(STR(?id), 'clav#') AS ?idParticipante).      
                 {
                     ?id clav:entDesignacao ?designacao;
-                        clav:entSigla ?sigla .
+                        a ?tipo;
+                        clav:entSigla ?sigla . FILTER(?tipo != owl:NamedIndividual).
+                        BIND (STRAFTER(STR(?tipo), 'clav#') AS ?idTipo).
                 } UNION {
                     ?id clav:tipDesignacao ?designacao;
-                        clav:tipSigla ?sigla .
+                        a ?tipo;
+                        clav:tipSigla ?sigla . FILTER(?tipo != owl:NamedIndividual).
+                        BIND (STRAFTER(STR(?tipo), 'clav#') AS ?idTipo).
                 }      
-        filter (?tipoParticip NOT IN (clav:temParticipante, clav:temDono))
-        }`
+        }
+        order by ?participLabel ?idParticipante`
     return client.query(query)
         .execute()
         .then(response => normalize(response))
@@ -161,7 +302,7 @@ Classes.participante = id => {
 // Devolve o(s) processo(s) relacionado(s): id, codigo, titulo, tipoRel
 Classes.procRel = id => {
     var query = `
-        select ?id ?codigo ?titulo ?tipoRel {
+        select ?id ?codigo ?titulo ?tipoRel ?idRel {
             clav:${id} clav:temRelProc ?id;
                         ?tipoRel ?id.
         
@@ -169,8 +310,9 @@ Classes.procRel = id => {
                 clav:titulo ?titulo;
                 clav:classeStatus 'A'.
         
-        filter (?tipoRel!=clav:temRelProc)
-        } Order by ?tipoRel ?codigo
+        filter (?tipoRel!=clav:temRelProc) .
+        BIND (STRAFTER(STR(?tipoRel), 'clav#') AS ?idRel).
+        } Order by ?idRel ?codigo
         `
     return client.query(query)
         .execute()
@@ -180,11 +322,12 @@ Classes.procRel = id => {
 // Devolve a legislação associada ao contexto de avaliação: id, tipo, numero, sumario
 Classes.legislacao = id => {
     var query = `
-        SELECT ?id ?tipo ?numero ?sumario WHERE { 
+        SELECT ?id ?idLeg ?tipo ?numero ?sumario WHERE { 
             clav:${id} clav:temLegislacao ?id.
             ?id clav:diplomaNumero ?numero;
                 clav:diplomaSumario ?sumario;
                 clav:diplomaTipo ?tipo.
+            BIND (STRAFTER(STR(?id), 'clav#') AS ?idLeg).
         } order by ?tipo ?numero`
     return client.query(query)
         .execute()
@@ -230,7 +373,8 @@ Classes.pca = id => {
 
 // Devolve uma justificação, PCA ou DF, que é composta por uma lista de critérios: criterio, tipoLabel, conteudo
 Classes.justificacao = async id => {
-    var query = `
+    try {
+        var query = `
         SELECT
             ?criterio ?tipoLabel ?conteudo
         WHERE {
@@ -240,8 +384,10 @@ Classes.justificacao = async id => {
             ?tipo rdfs:subClassOf clav:CriterioJustificacao.
             ?tipo rdfs:label ?tipoLabel.
         }`
-    let resultado = await client.query(query).execute();
-    return normalize(resultado);
+        let result = await client.query(query).execute();
+        return normalize(result);
+    } 
+    catch(erro) { throw (erro);}
 }
 
 // Devolve a informação base do DF: idDF, valor, idJustificacao
@@ -270,92 +416,20 @@ Classes.df = function (id) {
 
 // ============================================================================
 
-Classes.checkCodeAvailability = function (code, level) {
-    var checkQuery = `
-            SELECT (count(*) AS ?Count) WHERE {
-                ?c rdf:type clav:Classe_N${level} ;
-                    clav:codigo '${code}' ;
-                    clav:pertenceLC clav:lc1
-            }
-        `;
-
-    return client.query(checkQuery).execute()
-        //Getting the content we want
-        .then(response => Promise.resolve(response.results.bindings[0].Count.value))
-        .catch(function (error) {
-            console.error("Error in check:\n" + error);
-        });
-}
-
-
-
-
-
-Classes.filterNone = function () {
-    var fetchQuery = `
-        SELECT DISTINCT
-            ?Avo ?AvoCodigo ?AvoTitulo 
-            ?Pai ?PaiCodigo ?PaiTitulo 
-            ?PN ?PNCodigo ?PNTitulo   
-            (GROUP_CONCAT(DISTINCT(CONCAT(STR(?Filho),":::",?FilhoCodigo, ":::",?FilhoTitulo)); SEPARATOR="###") AS ?Filhos)
-			(GROUP_CONCAT(CONCAT(STR(?FilhoCodigo),":::",?FilhoTi);Separator="###") AS ?TIsFilhos)
-            (GROUP_CONCAT(?TermoI; SEPARATOR="###") AS ?TermosPesquisa)
-        WHERE {  
-            
-            ?PN rdf:type clav:Classe_N3
-
-            MINUS { 
-                ?PN clav:pertenceLC ?lc
-                filter( ?lc != clav:lc1 )
-            }
-            ?PN clav:classeStatus 'A'.
-            
-            ?PN clav:temPai ?Pai.
-            ?Pai clav:temPai ?Avo.
-            
-            ?PN clav:codigo ?PNCodigo;
-                clav:titulo ?PNTitulo.
-            
-            ?Pai clav:codigo ?PaiCodigo;
-                clav:titulo ?PaiTitulo.
-            
-            ?Avo clav:codigo ?AvoCodigo;
-                clav:titulo ?AvoTitulo.
-            
-            OPTIONAL {
-                ?Filho clav:temPai ?PN;
-                   clav:codigo ?FilhoCodigo;
-                   clav:titulo ?FilhoTitulo
-
-                OPTIONAL {
-                    ?fTI clav:estaAssocClasse ?Filho;
-                         clav:termo ?FilhoTi
-                }
-            }
-            OPTIONAL {
-                {
-                    ?ti clav:estaAssocClasse ?PN ;
-                        clav:termo ?TermoI .
-                } UNION {
-                    ?PN clav:exemploNA ?TermoI .
-                } UNION {
-                    ?PN clav:temNotaAplicacao ?pNA.
-                    ?pNA clav:conteudo ?TermoI .
-                }
-            }
-        }
-        Group By ?PN ?PNCodigo ?PNTitulo ?Pai ?PaiCodigo ?PaiTitulo ?Avo ?AvoCodigo ?AvoTitulo 
-        Order By ?PN
-    `;
-
-    return client.query(fetchQuery).execute()
-        //Getting the content we want
-        .then(response => Promise.resolve(response.results.bindings))
-        .catch(function (error) {
-            console.error("Error in check:\n" + error);
-        });
-}
-
+/**
+ * Insere uma nova classe no sistema, gerando um pedido apropriado.
+ * A classe criada encontrar-se-á no estado "Harmonização".
+ * 
+ * @see pedidos
+ *
+ * @param {Classe} classe que se pretende criar
+ * @param {string} utilizador identificação do utilizador que criou a classe
+ * @return {Promise<Pedido | Error>} promessa que quando cumprida possui o
+ * pedido gerado para a criação da nova classe
+ */
+Classes.criar = async (classe, utilizador) => {
+    Pedidos.criar('Criação', 'Classe', classe, utilizador)
+};
 Classes.filterCommon = function () {
     var fetchQuery = `
         SELECT DISTINCT
@@ -502,7 +576,7 @@ Classes.createClass = function (data) {
 
     if (data.ExAppNotes && data.ExAppNotes.length) {
         for (var i = 0; i < data.ExAppNotes.length; i++) {
-            createQuery += 'clav:' + id + ' clav:exemploNA "' + data.ExAppNotes[i].replace(/\n/g, '\\n').replace(/\"/g, "\\\"") + '" .\n';
+            createQuery += 'clav:' + id + ' clav:temExemploNA "' + data.ExAppNotes[i].replace(/\n/g, '\\n').replace(/\"/g, "\\\"") + '" .\n';
         }
     }
 
@@ -667,7 +741,7 @@ Classes.updateClass = function (dataObj) {
 
         if (dataObj.ExAppNotes && dataObj.ExAppNotes.length) {
             deletePart += `
-                clav:${dataObj.id} clav:exemploNA ?exNA .
+                clav:${dataObj.id} clav:temExemploNA ?exNA .
             `;
         }
         if (dataObj.AppNotes) {
@@ -848,7 +922,7 @@ Classes.updateClass = function (dataObj) {
         if (dataObj.ExAppNotes && dataObj.ExAppNotes.length) {
             for (var i = 0; i < dataObj.ExAppNotes.length; i++) {
                 if (dataObj.ExAppNotes[i].Exemplo) {
-                    insertPart += `\tclav:${dataObj.id} clav:exemploNA "${dataObj.ExAppNotes[i].Exemplo.replace(/\n/g, '\\n').replace(/\"/g, "\\\"")}" .\n`;
+                    insertPart += `\tclav:${dataObj.id} clav:temExemploNA "${dataObj.ExAppNotes[i].Exemplo.replace(/\n/g, '\\n').replace(/\"/g, "\\\"")}" .\n`;
                 }
             }
         }
@@ -1025,7 +1099,7 @@ Classes.updateClass = function (dataObj) {
         if (dataObj.ExAppNotes && dataObj.ExAppNotes.length) {
             retWhere += `
                 optional{
-                    clav:${dataObj.id} clav:exemploNA ?exNA .
+                    clav:${dataObj.id} clav:temExemploNA ?exNA .
                 }
             `;
         }

@@ -20,14 +20,14 @@ var TermosIndice = module.exports
  */
 TermosIndice.listar = () => {
     let query = `
-        SELECT ?id ?termo ?idClasse ?tituloClasse 
+        SELECT ?id ?termo ?idClasse ?tituloClasse ?estado
         WHERE { 
             ?idTI rdf:type clav:TermoIndice ;
                 clav:termo ?termo ;
+                clav:estado ?estado;
                 clav:estaAssocClasse ?idC .
             ?idC clav:titulo ?tituloClasse ;
-                clav:codigo ?codigoClasse.
-            BIND(CONCAT('c', ?codigoClasse) AS ?idClasse).
+                clav:codigo ?idClasse.
             BIND(STRAFTER(STR(?idTI), "clav#") AS ?id)
         }
         ORDER BY ?termo`;
@@ -38,12 +38,13 @@ TermosIndice.listar = () => {
 }
 
 // Testa a existência de um determinado TI
-TermosIndice.existe = t => {
-    let query = `
+TermosIndice.existe = (termoIndice) => {
+    const query = `
         ASK { 
             ?s rdf:type clav:TermoIndice.
-            ?s clav:termo "${t}"
+            ?s clav:termo "${termoIndice.termo}"
         }`;
+        console.log(query)
     return client.query(query)
         .execute()
         .then(response => {return (response.boolean)});
@@ -107,23 +108,29 @@ TermosIndice.contar = function() {
  * @return {Promise<Pedido | Error>} promessa que quando cumprida possui o
  * pedido gerado para a criação de novo termo de indice
  */
-/*TermosIndice.criar = (termoIndice, utilizador) => {
+TermosIndice.criar = async (termoIndice, utilizador) => {
+    const nanoid = require('nanoid')
+    const id = "ti_" + nanoid();
     const query = `INSERT DATA {
-        clav:ent_${termoIndice.id} rdf:type owl:NamedIndividual , clav:TermoIndice;
-
+        clav:${id} rdf:type owl:NamedIndividual , clav:TermoIndice;
+            clav:termo '${termoIndice.termo}';
+            clav:estado 'Harmonização' ;
+            clav:estaAssocClasse '${termoIndice.idClasse}' .
     }`;
+    console.log(query)
+    const pedido = {
+        criadoPor: utilizador,
+        objeto: {
+            codigo: `${id}`,
+            tipo: `Termo de Indice`,
+            acao: `Criação`,
+        },
+        distribuicao: [{
+            estado: "Submetido",
+        }]
+    };
 
     return client.query(query)
         .execute()
-        .then(() => Pedidos.criar({
-            criadoPor: utilizador,
-            objeto: {
-                codigo: `ti_${termoIndice.id}`,
-                tipo: 'Termo de indice',
-                acao: 'Criação',
-            },
-            distribuicao: [{
-                estado: "Submetido",
-            }]
-        }));
-};*/
+        .then(() => Pedidos.criar(pedido));
+};

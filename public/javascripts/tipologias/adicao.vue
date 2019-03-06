@@ -9,9 +9,9 @@ var newTip = new Vue({
         message: "",
         ent: [],
         entReady: false,
-        entTableHeader: ["Sigla", "Nome"],
+        entTableHeader: ["Sigla", "Designação"],
         entTableWidth: ["15%", "85%"],
-        list: [],
+        entidades: [],
     },
     components: {
         spinner: VueStrap.spinner,
@@ -42,24 +42,25 @@ var newTip = new Vue({
                     console.error(error);
                 });       
         },
-        entSelected: function (row) {
-            if (!row.selected) {
-                this.list.push(row.id);
-            }
-            else {
-                let index = this.list.indexOf(row.id);
-                if (index != -1) {
-                    this.list.splice(index, 1);
-                }
-            }
+        selecionarEntidade: function (row) {
+            this.entidades.push(row);
+            row.selected = true;
+        },
+        desselecionarEntidade: function (row, index) {
+            row.selected = false;
+            this.entidades.splice(index, 1);
         },
         add: function () {
             this.$refs.spinner.show();
 
+            for(var i = 0; i< this.entidades.length; i++){
+                this.tipologia.entidades[i] = this.entidades[i].id
+            }
+
             var dataObj = {
                 designacao: this.tipologia.designacao,
                 sigla: this.tipologia.sigla,
-                entidades: this.list,
+                entidades: this.tipologia.entidades,
             }
 
             this.$http.post('/api/tipologias/', dataObj, {
@@ -67,7 +68,7 @@ var newTip = new Vue({
                     'content-type': 'application/json'
                 }
             })
-                .then(function (response) {    
+                .then(function () {    
                     this.$refs.spinner.hide();
 
                     window.location.href = '/pedidos/submissao';

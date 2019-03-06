@@ -1,33 +1,39 @@
-var org = new Vue({
-    el: '#organizacao-form',
+var tip = new Vue({
+    el: '#editTipologia-form',
     data: {
         id: "",
-        type: "",
 
-        tipName: "",
-        newName: "",
-        editName: false,
+        tipNome: "",
+        newNome: "",
+        tipSigla: "",
 
-        tipInitials: "",
-        content: [],
-        message: "",
-        delConfirm: false,
+        editNome: false,
 
-        domain: [],
-        newClass: "",
-        newDomain: [],
-        domainReady: false,
-        editDomain: false,
+        editSigla: false,
+        newSigla: "",
 
-        participations: [],
-        newPartType: "",
-        newPart: "",
-        newParticipations: [],
-        partsReady: false,
+        editDominio: false,
+        newDominio: [],
+        dominio: [],
+        newClasse: "",
+        listaClasses: [],
+        dominioReady: false,
+        domainCollapsed: true,
+
         editParts: false,
-
-        classList: [],
-
+        participacoes: [],
+        newParticipacoes: [],
+        participacoesDic: {
+            Apreciador: "Apreciar",
+            Assessor: "Assessorar",
+            Comunicador: "Comunicar",
+            Decisor: "Decidir",
+            Executor: "Executar",
+            Iniciador: "Iniciar"
+        },
+        newTipoPart: "",
+        newPart: "",
+        partsReady: false,
         partsCollapsed: {
             Apreciador: true,
             Assessor: true,
@@ -36,28 +42,28 @@ var org = new Vue({
             Executor: true,
             Iniciador: true,
         },
-        domainCollapsed: true,
 
-        editElems: false,
-        newElem: "",
+        editEnts: false,
+        newEntsList: [],
+        listaEntidades: [],
         entList: [],
-        elemList: [],
-        newElemList: [],
+        newElem: "",
 
-        participationsDic: {
-            Apreciador: "Apreciar",
-            Assessor: "Assessorar",
-            Comunicador: "Comunicar",
-            Decisor: "Decidir",
-            Executor: "Executar",
-            Iniciador: "Iniciar"
-        }
+        entidadesSelecionadas: [],
+        entidadesReady: false,
+        orgsTableHeader: ["Sigla", "Designação"],
+        orgsTableWidth: ["15%", "85%"],
 
+        delConfirm: false,
+    },
+    components: {
+        spinner: VueStrap.spinner,
+        modal: VueStrap.modal,
     },
     computed: {
         partOptions: function(){
-            var dictionary = this.participationsDic;
-            return Object.keys(this.participations).map(
+            var dictionary = this.participacoesDic;
+            return Object.keys(this.participacoes).map(
                 function(a){
                     return{
                         label: dictionary[a],
@@ -66,10 +72,6 @@ var org = new Vue({
                 }
             )
         }
-    },
-    components: {
-        spinner: VueStrap.spinner,
-        modal: VueStrap.modal,
     },
     methods: {
         subtractArray: function (from, minus) {
@@ -90,143 +92,83 @@ var org = new Vue({
                             break;
                         }
                     }
-
                     return r;
                 });
             }
-
             return ret;
         },
-        /*loadClasses: function () {
-            var classesToParse = [];
-            var keys = ["id", "Code", "Title"];
+        loadDominio: function () {
+            var classes = [];
 
-            this.$http.get("/api/classes/nivel=3")
+            this.$http.get("/api/tipologias/" + this.id+"/intervencao/dono")
                 .then(function (response) {
-                    classesToParse = response.body;
+                    classes = response.body;
                 })
                 .then(function () {
-                    this.classList = this.parseList(classesToParse, keys).map(function (item) {
+                    this.dominio = JSON.parse(JSON.stringify(classes));
+                    this.newDominio = JSON.parse(JSON.stringify(classes));
+
+                    this.dominioReady = true;
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        },
+        loadClasses: function () {
+            var classes = [];
+
+            this.$http.get("/api/classes?nivel=3")
+                .then(function (response) {
+                    classes = response.body;
+                })
+                .then(function () {
+                    this.listaClasses = classes
+                        .map(function (item) {
                         return {
-                            label: item.Codigo + " - " + item.Titulo,
+                            label: item.codigo + " - " + item.titulo,
                             value: item,
                         }
                     }).sort(function (a, b) {
                         return a.label.localeCompare(b.label);
                     });
-
                     this.classesReady = true;
                 })
                 .catch(function (error) {
                     console.error(error);
                 });
-        },*/
-        loadEntList: function () {
-            var dataToParse = [];
-            var keys = ["id", "Designacao", "Sigla"];
-
-            this.$http.get("/api/entidades")
-                .then(function (response) {
-                    dataToParse = response.body;
-                })
-                .then(function () {
-                    var completeList = this.parseList(dataToParse, keys);
-
-                    this.entList = completeList.map(function (item) {
-                        return {
-                            label: item.Sigla +"-"+ item.Designacao,
-                            value: item,
-                        }
-                    }).sort(function (a, b) {
-                        return a.label.localeCompare(b.label);
-                    });
-
-
-                    this.elemsReady = true;
-                })
-                .catch(function (error) {
-                    console.error(error);
-                });
         },
-        loadDomain: function () {
-            var classesToParse = [];
-            var keys = ["id", "Code", "Title"];
-
-            this.$http.get("/api/tipologias/" + this.id+"/intervencao/dono")
-                .then(function (response) {
-                    classesToParse = response.body;
-                })
-                .then(function () {
-                    this.domain = JSON.parse(JSON.stringify(this.parseList(classesToParse, keys)));
-                    this.newDomain = JSON.parse(JSON.stringify(this.parseList(classesToParse, keys)));
-
-                    this.domainReady = true;
-                })
-                .catch(function (error) {
-                    console.error(error);
-                });
+        addClasse: function(){
+            var existeClasse = 0;
+            for(var i=0; i<this.newDominio.length; i++){
+                if("c" + this.newClasse.value.codigo== "c" + this.newDominio[i].codigo){
+                    existeClasse = 1;
+                    break
+                }
+            }
+            if(existeClasse==0){
+                this.newDominio.unshift(this.newClasse.value)
+            }
+            else{
+                messageL.showMsg("Essa Classe já se encontra selecionada!");
+            }
         },
-        loadParticipations: function () {
+        loadParticipacoes: function () {
             var partsToParse = [];
-            var keys = ['id', 'Title', 'Code'];
+            var keys = ['id', 'titulo', 'codigo'];
 
             this.$http.get("/api/tipologias/" + this.id + "/intervencao/participante")
                 .then(function (response) {
                     partsToParse = response.body;
-                    console.log(partsToParse);
                 })
                 .then(function () {
-                    this.participations = this.parseParticipants(partsToParse, keys);
-                    this.newParticipations = JSON.parse(JSON.stringify(this.participations));
+                    this.participacoes = this.parseParticipants(partsToParse, keys);
+                    this.newParticipacoes = JSON.parse(JSON.stringify(this.participacoes));
 
                     this.partsReady = true;
                 })
                 .catch(function (error) {
                     console.error(error);
                 });
-        },
-        loadElems: function () {
-            var dataToParse = [];
-            var keys = ["id", "Designacao", "Sigla"];
-
-            this.$http.get("/api/tipologias/" + this.id + "/elementos")
-                .then(function (response) {
-                    dataToParse = response.body;
-                })
-                .then(function () {
-                    this.elemList = this.parseList(dataToParse, keys);
-                    this.newElemList = JSON.parse(JSON.stringify(this.elemList));
-
-                    this.elemsReady = true;
-                })
-                .catch(function (error) {
-                    console.error(error);
-                });
-        },
-        parse: function (content) {
-            this.tipName = content.designacao;
-            this.newName = content.designacao;
-            this.tipInitials = content.sigla;
-        },
-        parseList: function (content, keys) {
-            var dest = [];
-            var temp = {};
-            // parsing the JSON
-            for (var i = 0; i < content.length; i++) {
-                for (var j = 0; j < keys.length; j++) {
-                    temp[keys[j]] = content[i][keys[j]];
-
-                    if (keys[j] == "id") {
-                        temp.id = temp.id.replace(/[^#]+#(.*)/, '$1');
-                    }
-                }
-
-                dest[i] = JSON.parse(JSON.stringify(temp));
-            }
-
-            return dest.sort(function (a, b) {
-                return a.id.localeCompare(b.id);
-            });
         },
         parseParticipants: function (content, keys) {
             var dest = {
@@ -264,13 +206,80 @@ var org = new Vue({
 
             return dest;
         },
+        addPart: function(){
+            var existePart = 0;
+            for(var i=0; i<this.newParticipacoes[this.newTipoPart.value].length; i++){
+                if(this.newPart.value.codigo==this.newParticipacoes[this.newTipoPart.value][i].codigo) {
+                    existePart = 1;
+                    break;
+                }
+            }
+            if(existePart==0){
+                this.newParticipacoes[this.newTipoPart.value].unshift(this.newPart.value)
+            }
+            else{
+                messageL.showMsg("Já selecionou essa classe como " + this.newTipoPart.value + "!");
+            }
+        },
+        loadEnts: function () {
+
+            this.$http.get("/api/tipologias/" + this.id + "/elementos")
+                .then(function (response) {
+                    this.listaEntidades = response.body;
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        },
+        loadEntList: function () {
+            var dataToParse = [];
+
+            this.$http.get("/api/entidades")
+                .then(function (response) {
+                    dataToParse = response.body;
+                })
+                .then(function () {
+                    var completeList = dataToParse;
+
+                    this.entList = completeList.map(function (item) {
+                        return {
+                            data: [item.sigla, item.designacao],
+                            selected: false,
+                            id: item.id
+                        }
+                    }).sort(function (a, b) {
+                        return a.data[1].localeCompare(b.data[1]);
+                    });
+                for(var i = 0; i<this.listaEntidades.length; i++){
+                    for(var j = 0; j<this.entList.length; j++){
+                        if(this.listaEntidades[i].sigla === this.entList[j].data[0]){
+                            this.entList[j].selected = true;
+                            this.entidadesSelecionadas[i] = this.entList[j];
+                        }
+                    }
+                }
+                this.entidadesReady = true;
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        },
+        selecionarEntidade: function (row) {
+            this.entidadesSelecionadas.push(row);
+            row.selected = true;
+        },
+        desselecionarEntidade: function (row, index) {
+            row.selected = false;
+            this.entidadesSelecionadas.splice(index, 1);
+        },
         update: function () {
-            this.$refs.spinner.show();            
+            this.$refs.spinner.show(); 
 
             var dataObj = {
                 id: this.id,
-                name: null,
-                domain: {
+                nome: null,
+                sigla:null,
+                dominio: {
                     add: null,
                     del: null,
                 },
@@ -300,86 +309,95 @@ var org = new Vue({
                         del: null,
                     },
                 },
-                elems: {
+                ents: {
                     add: null,
                     del: null,
                 },
             }
 
-            if (this.editName) {
-                dataObj.name = this.newName;
+            if (this.editNome) {
+                dataObj.nome = this.newNome;
             }
-
-            if (this.editDomain) {
+            if (this.editSigla) {
+                dataObj.sigla = this.newSigla;
+            }
+            if (this.editDominio) {
 
                 var temp = {
                     add: null,
                     delete: null,
                 };
 
-                temp.add = this.subtractArray(this.newDomain, this.domain);
-                temp.del = this.subtractArray(this.domain, this.newDomain);
+                temp.add = this.subtractArray(this.newDominio, this.dominio);
+                temp.del = this.subtractArray(this.dominio, this.newDominio);
 
-                dataObj.domain = JSON.parse(JSON.stringify(temp));
+                dataObj.dominio = JSON.parse(JSON.stringify(temp));
             }
-
             if (this.editParts) {
-                for (const pType in this.participations) {
+                for (const pType in this.participacoes) {
 
                     var temp = {
                         add: null,
                         del: null,
                     };
 
-                    temp.add = this.subtractArray(this.newParticipations[pType], this.participations[pType]);
-                    temp.del = this.subtractArray(this.participations[pType], this.newParticipations[pType]);
+                    temp.add = this.subtractArray(this.newParticipacoes[pType], this.participacoes[pType]);
+                    temp.del = this.subtractArray(this.participacoes[pType], this.newParticipacoes[pType]);
 
                     dataObj.parts[pType] = JSON.parse(JSON.stringify(temp));
                 }
             }
-            if (this.editElems) {
+            if (this.editEnts) {
+                for(var i = 0; i< this.entidadesSelecionadas.length; i++){
+                    this.newEntsList[i] = this.entidadesSelecionadas[i]
+                }
+
                 var temp = {
                     add: null,
-                    delete: null,
+                    del: null,
                 };
 
-                temp.add = this.subtractArray(this.newElemList, this.elemList);
-                temp.del = this.subtractArray(this.elemList, this.newElemList);
+                temp.add = this.subtractArray(this.newEntsList, this.listaEntidades);
+                temp.del = this.subtractArray(this.listaEntidades, this.newEntsList);
 
-                dataObj.elems = JSON.parse(JSON.stringify(temp));
+                dataObj.ents = JSON.parse(JSON.stringify(temp));
             }
+
+            console.log(dataObj)
 
             this.$http.put('/api/tipologias/'+this.id, dataObj, {
                 headers: {
                     'content-type': 'application/json'
                 }
             })
-                .then(function (response) {
+                .then(function (response){
                     this.$refs.spinner.hide();
-                    
-                    var resp = response.body;
-                    if (resp != "Designação já existentente!") {
-                        window.location.href = '/tipologias/consultar/' + this.id;
-                    } else {
-                        messageL.showMsg(resp);
-                    }
+
+                    window.location.href = '/pedidos/submissao';
+
                 })
-                .catch(function (error) {
-                    console.error(error);
+                .catch(error => {if (error.status === 409) {
+                    messageL.showMsg(error.body);
+                    this.$refs.spinner.hide();
+                } 
+                console.error(error);
                 });
+
         },
-        deleteOrg: function () {
+        deleteTipologia: function () {
             this.$refs.spinner.show();
             
             this.$http.delete('/api/tipologias/'+this.id)
-                .then(function (response) {
+                .then( function(response) { 
                     this.$refs.spinner.hide();
-
-                    messageL.showMsg(response.body);
-                    window.location.href = '/tipologias';
+                    
+                    window.location.href = '/pedidos/submissao';
                 })
-                .catch(function (error) {
-                    console.error(error);
+                .catch(error => {if (error.status === 409) {
+                    messageL.showMsg(error.body);
+                    this.$refs.spinner.hide();
+                } 
+                console.error(error);
                 });
         }
     },
@@ -388,13 +406,14 @@ var org = new Vue({
         
         this.$http.get("/api/tipologias/" + this.id)
             .then(function (response) {
-                this.parse(response.body);
+                this.tipNome = response.body.designacao;
+                this.tipSigla = response.body.sigla;
             })
             .then(function () {
-                this.loadDomain();
-                this.loadParticipations();
-                //-this.loadClasses();
-                this.loadElems();
+                this.loadDominio();
+                this.loadClasses();
+                this.loadParticipacoes();
+                this.loadEnts();
                 this.loadEntList();
             })
             .catch(function (error) {

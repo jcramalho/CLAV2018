@@ -3,7 +3,7 @@ var parsePedidos = function(content){
     ret=content.map(function(a){
         let link="#";
         if(a.tipo=="Novo PN" && a.objetoID){
-            link=`/classes/consultar/${a.objetoID}`;
+            link=`/classes/${a.objetoID}`;
         }
         else if(a.tipo=="Criação de TS" && a.objetoID){
             link=`/tabelasSelecao/consultar/${a.objetoID}`;

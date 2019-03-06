@@ -1,13 +1,6 @@
 extends ../layout
 block lateral
-    ul#sideNav
-        li(v-for="l in sideNav")
-            a(:href="l.anchor") {{ l.label }}
-
-    .btn-group-vertical.info-classe.mr-2(role="group")
-        button.btn.btn-primary Guardar trabalho
-        button.btn.btn-secondary Validar informação
-        button.btn.btn-primary(@click="criarClasse") Submeter nova classe
+    
 
 block corpo
     #nova-classe-form.panel.panel-default.panel-custom
@@ -25,17 +18,15 @@ block corpo
                     ) 
 
                 //- CLASSE PAI
-                a(name="pai")
                 .form-group.row(v-if="classe.nivel>1")
                     label.col-sm-2.col-form-label Classe Pai: 
                     select-value-from-list(
                         :initial-value = "classesPai[0].value"
                         :options = "classesPai"
-                        @value-change="classe.pai = $event"
+                        @value-change="atualizaCodigo($event)"
                     )
 
                 //- CÓDIGO
-                a(name="codigo")
                 .form-group.row
                     label.col-sm-2.col-form-label Código: 
                     input(
@@ -45,7 +36,6 @@ block corpo
                     span(style="color: red") {{ mensValCodigo }}
                             
                 //- TÍTULO
-                a(name="titulo")
                 .form-group.row
                     label.col-sm-2.col-form-label Título: 
                     input(
@@ -53,6 +43,7 @@ block corpo
                         v-model="classe.titulo"
                     )
 
+            //- DESCRITIVO
             accordion
                 a(name="descritivo")
                 panel(header="Descritivo da Classe")
@@ -70,7 +61,6 @@ block corpo
                         label.col-sm-2.col-form-label Nota(s) de Aplicação: 
                         .form-group.row.col-sm-10
                             .form-group.row(v-for="(nota, index) in classe.notasAp")
-                                //- div Identificador gerado: {{nota.id}}
                                 textarea(
                                     cols="72"
                                     lines="5"
@@ -85,7 +75,6 @@ block corpo
                         label.col-sm-2.col-form-label Exemplo(s) de Nota(s) de Aplicação: 
                         .form-group.row.col-sm-10
                             .form-group.row(v-for="(exemplo, index) in classe.exemplosNotasAp")
-                                //- div Identificador gerado: {{exemplo.id}}
                                 textarea(
                                     cols="72"
                                     lines="5"
@@ -100,7 +89,6 @@ block corpo
                         label.col-sm-2.col-form-label Nota(s) de Exclusão: 
                         .form-group.row.col-sm-10
                             .form-group.row(v-for="(nota, index) in classe.notasEx")
-                                //- div Identificador gerado: {{nota.id}}
                                 textarea(
                                     cols="72"
                                     lines="5"
@@ -348,7 +336,7 @@ block corpo
                                         )
                         .panel.panel-default
                             .panel-heading 
-                                b Justificação do Prazo de Consrvação Administrativa
+                                b Justificação do Prazo de Conservação Administrativa
                             .panel-body 
                                 .fieldset.form-group(v-for="(crit, cindex) in classe.pca.justificacao")
                                     .form-group.row(v-if="crit.tipo=='Indefinido'")
@@ -391,11 +379,17 @@ block corpo
                                                     td 
                                                         button.btn.btn-default(type="button")
                                                             span.glyphicon.glyphicon-remove(@click="desselecionarLegislacao(crit.legislacao, leg, index)")
-                                    button(@click="removerCriterioTodo(classe.pca.justificacao, cindex)") Remover Critério
+                                    button(@click="removerCriterioTodo(classe.pca.justificacao, cindex, 'PCA')") Remover Critério
                                     hr
                                     
-                                button(@click="adicionarCriterio(classe.pca.justificacao, 'CriterioJustificacaoLegal', 'Critério Legal', '', [], classe.legislacao)") Adicionar Critério Legal
-                                button(@click="adicionarCriterio(classe.pca.justificacao, 'CriterioJustificacaoGestionario', 'Critério Gestionário', textoCriterioGestionario, [], [])") Adicionar Critério Gestionário
+                                button(
+                                    @click="adicionarCriterioLegalPCA(classe.pca.justificacao, 'CriterioJustificacaoLegal', 'Critério Legal', '', [], classe.legislacao)"
+                                    v-if="!critLegalAdicionadoPCA"
+                                    ) Adicionar Critério Legal
+                                button(
+                                    @click="adicionarCriterioGestionario(classe.pca.justificacao, 'CriterioJustificacaoGestionario', 'Critério Gestionário', textoCriterioGestionario, [], [])"
+                                    v-if="!critGestionarioAdicionado"
+                                    ) Adicionar Critério Gestionário
 
                     //- DESTINO FINAL
                     .panel-group(v-if="!classe.temSubclasses4Nivel")
@@ -467,15 +461,19 @@ block corpo
                                                     td 
                                                         button.btn.btn-default(type="button")
                                                             span.glyphicon.glyphicon-remove(@click="desselecionarLegislacao(critDF.legislacao, leg, index)")
-                                    button(@click="removerCriterioTodo(classe.df.justificacao, indexDF)") Remover Critério
+                                    button(@click="removerCriterioTodo(classe.df.justificacao, indexDF, 'DF')") Remover Critério
                                     hr
 
-                                button(@click="adicionarCriterio(classe.df.justificacao, 'CriterioJustificacaoLegal', 'Critério Legal', '', [], classe.legislacao)") Adicionar Critério Legal
+                                button(
+                                    @click="adicionarCriterioLegalDF(classe.df.justificacao, 'CriterioJustificacaoLegal', 'Critério Legal', '', [], classe.legislacao)"
+                                    v-if="!critLegalAdicionadoDF"
+                                    ) Adicionar Critério Legal
 
             //- SUBCLASSES DE NÍVEL 4  
             accordion.info-classe(v-if="classe.temSubclasses4NivelPCA || classe.temSubclasses4NivelDF")
                 panel(is-open header="Subclasses de nível 4")
-                    tabs
+                    tabs(@input="tabClicked($event)" v-model="selectedSubclasse")
+                        tab(header="+ Adicionar subclasse")
                         tab(v-bind:header="subClasse.codigo" v-for="(subClasse, cindex) in classe.subclasses")
                             .form-group.row
                                 label.col-sm-2.col-form-label Código da classe: 
@@ -506,6 +504,7 @@ block corpo
                                 .col-sm-10
                                     button(@click="insereNovoTI(subClasse.termosInd)") Novo termo
             
+                            //- CONTEXTO DE AVALIAÇÂO
                             .panel.panel-default(v-if="(subClasse.processosRelacionados.length > 0)||(subClasse.legislacao.length > 0)")
                                 .panel-heading
                                     h4(data-toggle="tooltip" data-placement="top" title="Herdado do 3º nível") Contexto de Avaliação 
@@ -536,6 +535,7 @@ block corpo
                                                         td(v-for="valor in p.data") {{ valor }} 
                                             .row(v-else) Não tem legislação selecionada.
 
+                            //- DECISÔES DE AVALIAÇÂO
                             .panel.panel-default
                                 .panel-heading
                                     h4 Decisões de Avaliação 
@@ -674,7 +674,8 @@ block corpo
                                                     hr
 
                                                 button(@click="adicionarCriterio(subClasse.df.justificacao, 'CriterioJustificacaoLegal', 'Critério Legal', '', [], classe.legislacao)") Adicionar Critério Legal
-             
+                        
+                        
 
             spinner(ref="spinner" fixed size="lg" text="Por favor aguarde...")
 
@@ -690,16 +691,14 @@ block corpo
                 .modal-footer(slot="modal-footer")
                     button(@click="modalMsgShow=false") Ok
 
-            input.btn.btn-xs.btn-default.col-sm-2(
-                type="button" 
-                @click="criarClasse" 
-                value="Submeter nova classe" 
-                :disabled=`!(
-                    ((classe.nivel>1 && parent) || classe.nivel==1) && 
-                    classe.codigo
-                )`
-             )
-            p.col-sm-7 {{ message }}
+            .panel
+                .panel-body
+                    button.btn.btn-primary(:disabled="true") Guardar trabalho
+                    button.btn.btn-primary(:disabled="true") Validar informação
+                    button.btn.btn-primary(
+                        @click="criarClasse"
+                        :disabled=`!(((classe.nivel>1 && parent) || classe.nivel==1) && classe.codigo)`
+                        ) Adicionar nova classe
 
 append scripts    
     script(src="/javascripts/component-select-value-from-list.vue")
@@ -708,4 +707,5 @@ append scripts
     script(src="/javascripts/classes/classe-create.vue")
     script(src="/javascripts/component-sel-participantes-2.vue")
     script(src="/javascripts/component-sel-procRelacionados.vue")
+    script(src="/javascripts/v-components/classe-show.vue")
     

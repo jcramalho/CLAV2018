@@ -4,7 +4,8 @@
   "description": "Arquivo Digital: Plataforma Modular para a Classificação e a Avaliação da Informação Pública",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "dev": "watchify -vd -p browserify-hmr -t vueify -e public/javascripts/main.js -o public/javascripts/bundle.js & node ./bin/www"
   },
   "repository": {
     "type": "git",
@@ -27,6 +28,7 @@
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.2",
     "bootstrap-vue": "^1.4.1",
+    "browserify-hmr": "^0.3.7",
     "connect-flash": "^0.1.1",
     "connect-mongo": "^2.0.3",
     "cookie-parser": "^1.4.3",
@@ -44,11 +46,13 @@
     "passport-local": "^1.0.0",
     "pug": "^2.0.0-rc.4",
     "sparql-client-2": "^0.6.2",
-    "vue": "^2.4.4",
+    "vue": "^2.6.6",
     "vue-strap": "github:wffranco/vue-strap",
     "vue-tabs-component": "^1.5.0",
     "vue-uuid": "^1.1.1",
+    "vueify": "^9.4.1",
     "vuelidate": "^0.7.4",
+    "watchify": "^3.11.1",
     "winston": "^2.4.0",
     "winston-daily-rotate-file": "^2.0.0-beta"
   }

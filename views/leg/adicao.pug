@@ -2,10 +2,20 @@ extends ../layout
 block corpo
     #nova-legislacao-form.panel.panel-default.panel-custom
         .panel-heading
-            h3.page-header Novo Diploma
+            h1.page-header Novo Diploma
         .panel-body
             .form-group
                 table.consulta(style="border-color: white; border-style:solid; margin-bottom:20px")
+                    
+                    //- Sumário
+                    tr
+                        td(style="width: 10%")
+                            .info-label Sumario: 
+                        td(style="width:80%")
+                            input(
+                                size="150"
+                                v-model="diploma.sumario"
+                            )
                     
                     //- Tipo
                     tr
@@ -13,7 +23,7 @@ block corpo
                             .info-label Tipo: 
                         td(style="width:80%")
                             select(v-model="diploma.tipo")
-                                option(v-for="t in tipoDiploma" :value="t") {{ t }}
+                               option(v-for="t in tipoDiploma" :value="t.termo") {{ t.termo }}
                           
                     
                     //- Número
@@ -35,23 +45,37 @@ block corpo
                             .info-label Entidades:
 
                         td
-                            accordion
-                                panel(type="white" header="Selecionar Entidades")
-                                    custom-table-select(
-                                        v-if="orgsReady"
+                            .col-sm-10
+                                .row(v-if="entidades.length > 0")
+                                    table.table.table-condensed.table-hover
+                                        tr
+                                            th Sigla 
+                                            th Designação
+                                            th Ação
+                                        tr(v-for="(p, index) in entidades")
+                                            td {{p.data[0]}}
+                                            td {{p.data[1]}}
+                                            td 
+                                                button.btn.btn-default(type="button")
+                                                    span.glyphicon.glyphicon-remove(@click="desselecionarEntidade(p, index)") 
 
-                                        :header="orgsTableHeader"
-                                        :complete-rows="orgs"
-                                        :ready="orgsReady"
-                                        :cwidth="orgsTableWidth"
-                                        
-                                        class-table='table table-condensed'
+                                accordion
+                                    panel(type="white" header="Selecionar Entidades")
+                                        select-row-from-table(
+                                            v-if="entidadesReady"
 
-                                        @select-clicked="orgSelected($event,diploma.entidades)"
-                                    )
-                                    h4(
-                                        v-else
-                                    ) A carregar...
+                                            :header="orgsTableHeader"
+                                            :complete-rows="orgs"
+                                            :ready="entidadesReady"
+                                            :cwidth="orgsTableWidth"
+                                            
+                                            class-table='table table-condensed'
+
+                                            @select-clicked="selecionarEntidade($event)"
+                                        )
+                                        h4(
+                                            v-else
+                                        ) A carregar...
                     //- Data
                     tr
                         td(style="width: 10%")
@@ -62,16 +86,6 @@ block corpo
                                 @input="dataEscolhida($event)"
                                 format="yyyy/MM/dd"
                                 placeholder="AAAA/MM/DD"
-                            )
-                    
-                    //- Sumário
-                    tr
-                        td(style="width: 10%")
-                            .info-label Sumario: 
-                        td(style="width:80%")
-                            input(
-                                size="50"
-                                v-model="diploma.sumario"
                             )
        
                     //- Link
@@ -84,11 +98,39 @@ block corpo
                                 v-model="diploma.link"
                             )
 
+                    //- PROCESSOS
+                    tr
+                        td(style="width:10%")
+                            .info-label Processos Regulamentados:
+                        td(style="width:80%")
+                            table
+                                tr
+                                    td(width="1000px")
+                                        v-select.custom-select(
+                                            v-model="newProcesso"
+                                            :options="listaClasses"
+                                        )
+                                    td
+                                        input(
+                                            type="button"
+                                            @click="addProcesso"
+                                            value="+"
+                                        ) 
+                                tr(v-if="processos.length")
+                                    td
+                                        ul(style="padding-left:20px")
+                                            li(v-for="(c,index) in processos")
+                                                | {{ c.codigo }} - {{ c.titulo }}  
+                                                button(
+                                                    @click="processos.splice(index,1)"
+                                                ) x
+
             spinner(ref="spinner" size="lg" fixed text="Por favor aguarde...")
-            input.btn.btn-xs.btn-default.col-sm-1(
+
+            input.btn.btn-xs.btn-default.col-sm-2(
                 type="button" 
                 @click="add" 
-                value="Submeter" 
+                value="Submeter nova Legislação" 
                 :disabled="!readyToCreate()"
 
                 style="margin-right:10px"
@@ -100,3 +142,4 @@ block corpo
 
 append scripts    
     script(src="/javascripts/leg/adicao.vue")
+    script(src="/javascripts/component-select-row-from-table.vue")
