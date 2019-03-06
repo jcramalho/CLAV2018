@@ -6,26 +6,15 @@ block corpo
         .panel-body
             .form-group
                 table.consulta(style="border-color: white; border-style:solid; margin-bottom:20px")
-                    
-                    //- Sumário
-                    tr
-                        td(style="width: 10%")
-                            .info-label Sumario: 
-                        td(style="width:80%")
-                            input(
-                                size="150"
-                                v-model="diploma.sumario"
-                            )
-                    
+
                     //- Tipo
                     tr
                         td(style="width: 10%")
-                            .info-label Tipo: 
+                            .info-label Tipo de diploma: 
                         td(style="width:80%")
                             select(v-model="diploma.tipo")
                                option(v-for="t in tipoDiploma" :value="t.termo") {{ t.termo }}
-                          
-                    
+
                     //- Número
                     tr
                         td(style="width: 10%")
@@ -38,11 +27,24 @@ block corpo
                                 placeholder=" NNNNNN/AAAA"
                                 maxlength="11"
                             )
+                        
+                    //- Data
+                    tr
+                        td(style="width: 10%")
+                            .info-label Data: 
+                        td(style="width:80%")
+                            datepicker(
+                                value=""
+                                @input="dataEscolhida($event)"
+                                format="yyyy/MM/dd"
+                                placeholder="AAAA/MM/DD"
+                            )
+                        
 
                     //- Entidades
                     tr(style="padding-bottom:30px")
                         td(style="width: 10%")
-                            .info-label Entidades:
+                            .info-label Entidade responsável pela publicação:
 
                         td
                             .col-sm-10
@@ -76,16 +78,15 @@ block corpo
                                         h4(
                                             v-else
                                         ) A carregar...
-                    //- Data
+
+                    //- Sumário
                     tr
                         td(style="width: 10%")
-                            .info-label Data: 
+                            .info-label Sumario: 
                         td(style="width:80%")
-                            datepicker(
-                                value=""
-                                @input="dataEscolhida($event)"
-                                format="yyyy/MM/dd"
-                                placeholder="AAAA/MM/DD"
+                            input(
+                                size="150"
+                                v-model="diploma.sumario"
                             )
        
                     //- Link
@@ -101,7 +102,7 @@ block corpo
                     //- PROCESSOS
                     tr
                         td(style="width:10%")
-                            .info-label Processos Regulamentados:
+                            .info-label Regula os Processos de Negócio:
                         td(style="width:80%")
                             table
                                 tr

@@ -17,7 +17,7 @@ var leg = new Vue({
                 edit: false
             },
             tipo: {
-                label: "Tipo",
+                label: "Tipo de diploma",
                 original: "",
                 new: "",
                 edit: false
