@@ -23,7 +23,8 @@ var newLeg = new Vue({
 
         newProcesso: "",
         listaClasses: [],
-        //newProcessos: [],
+        classesReady: false,
+        newProcessos: [],
 
     },
     components: {
@@ -48,6 +49,9 @@ var newLeg = new Vue({
 
             for(var i = 0; i< this.entidades.length; i++){
                 this.diploma.entidades[i] = this.entidades[i].id
+            }
+            for(var i = 0; i< this.newProcessos.length; i++){
+                this.processos[i] = this.newProcessos[i].id
             }
 
             var formats= {
@@ -196,20 +200,28 @@ var newLeg = new Vue({
                     this.listaClasses = classesToParse
                         .map(function(item){
                             return {
-                                label: item.codigo +" - "+ item.titulo,
-                                value: item,
+                                data: [item.codigo +" - "+ item.titulo],
+                                selected: false,
+                                id: item.codigo
                             }
                         }).sort(function (a, b) {
-                            return a.label.localeCompare(b.label);
+                            return a.data[0].localeCompare(b.data[0]);
                         });
-                        
                     this.classesReady = true;
                 })
                 .catch(function (error) {
                     console.error(error);
                 });
         },
-        addProcesso: function(){
+        selecionarProcesso: function (row) {
+            this.newProcessos.push(row);
+            row.selected = true;
+        },
+        desselecionarProcesso: function (row, index) {
+            row.selected = false;
+            this.newProcessos.splice(index, 1);
+        },
+        /*addProcesso: function(){
             var existeProcesso = 0;
             for(var i=0; i<this.processos.length; i++){
                 if(this.newProcesso.value.codigo==this.processos[i].codigo){
@@ -223,7 +235,7 @@ var newLeg = new Vue({
             else{
                 messageL.showMsg("Esse processo já se encontra selecionado!");
             }
-        },
+        },*/
     },
     created: function () {
         this.loadEntidades();

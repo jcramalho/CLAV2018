@@ -199,7 +199,38 @@ block corpo
                         td(style="width:10%")
                             .info-label Regula os Processos de Negócio:
                         td(v-if="legData.processos.edit" style="width:80%")
-                            table
+                            .col-sm-10
+                                .row(v-if="processosSelecionados.length > 0")
+                                    table.table.table-condensed.table-hover
+                                        tr
+                                            th Processo
+                                            th Ação
+                                        tr(v-for="(p, index) in processosSelecionados")
+                                            td {{p.data[0]}}
+                                            td 
+                                                button.btn.btn-default(type="button")
+                                                    span.glyphicon.glyphicon-remove(@click="desselecionarProcesso(p, index)") 
+
+                                accordion
+                                    panel(type="white" header="Selecionar Processos de Negócio")
+                                        select-row-from-table(
+                                            v-if="classesReady"
+
+                                            :header=["Processo"]
+                                            :complete-rows="listaClasses"
+                                            :ready="classesReady"
+                                            :cwidth=["100%"]
+                                            
+                                            class-table='table table-condensed'
+
+                                            @select-clicked="selecionarProcesso($event)"
+                                        )
+                                        h4(
+                                            v-else
+                                        ) A carregar...
+
+
+                            //-table
                                 tr
                                     td(width="1000px")
                                         v-select.custom-select(
@@ -221,25 +252,26 @@ block corpo
                                                 button(
                                                     @click="legData.processos.new.splice(index,1)"
                                                 ) x
-                        td(v-else style="width:80%")
-                            ul(v-if="processosReady" style="padding-left:20px" :class="{'is-collapsed' : processosCollapsed }")
-                                li(v-for="c in legData.processos.original")
-                                    a(:href="'/classes/'+c.id") {{ c.codigo }}
-                                    |  - {{ c.titulo }}
-                            a(@click="processosCollapsed=!processosCollapsed" v-if="legData.processos.original.length>6").maozinha
-                                span(v-if="processosCollapsed") Mostrar mais...
-                                span(v-else) Mostrar menos...                   
-                        td(style="width:10%")
-                            label(
-                                for="legData.processos.edit"
-                                :class="[legData.processos.edit ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
-                            )
-                            input(
-                                id="legData.processos.edit"
-                                type="checkbox"
-                                v-model="legData.processos.edit"
-                                class="drop-row"
-                            )
+                            td(v-else style="width:80%")
+                                ul(v-if="processosReady" style="padding-left:20px" :class="{'is-collapsed' : processosCollapsed }")
+                                    li(v-for="c in legData.processos.original")
+                                        a(:href="'/classes/'+c.id") {{ c.codigo }}
+                                        |  - {{ c.titulo }}
+                                a(@click="processosCollapsed=!processosCollapsed" v-if="legData.processos.original.length>6").maozinha
+                                    span(v-if="processosCollapsed") Mostrar mais...
+                                    span(v-else) Mostrar menos...
+                        if user                   
+                            td(style="width:10%")
+                                label(
+                                    for="legData.processos.edit"
+                                    :class="[legData.processos.edit ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
+                                )
+                                input(
+                                    id="legData.processos.edit"
+                                    type="checkbox"
+                                    v-model="legData.processos.edit"
+                                    class="drop-row"
+                                )
                 h3(v-else) A carregar...
 
             spinner(ref="spinner" fixed size="lg" text="Por favor aguarde...")
