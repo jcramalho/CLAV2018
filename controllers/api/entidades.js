@@ -45,6 +45,65 @@ Entidades.listar = (filtro) => {
             .concat(["True"])
             .join(' && ')})
     } ORDER BY ?sigla`;
+    console.log(query)
+
+    return client.query(query)
+        .execute()
+        .then(response => normalize(response));
+};
+
+// Lista todas as entidades com PNs associados (como Dono ou como Participante)
+Entidades.listarComPNs = () => {
+    const query = `SELECT ?id ?sigla ?designacao ?internacional ?sioe ?estado 
+    WHERE { 
+            ?uri rdf:type clav:Entidade ;
+                clav:entEstado ?estado;
+                clav:entDesignacao ?designacao ;
+                clav:entSigla ?sigla ;
+                clav:entInternacional ?internacional .
+            OPTIONAL {
+                ?uri clav:entSIOE ?sioe.
+            } 
+            {
+        FILTER EXISTS { ?pn clav:temDono ?uri. }
+        FILTER EXISTS { ?pn clav:temParticipante ?uri. }
+            
+        } UNION {
+            {
+        FILTER NOT EXISTS { ?pn clav:temDono ?uri. }
+        FILTER EXISTS { ?pn clav:temParticipante ?uri. }
+            }
+        } UNION {
+            {
+        FILTER EXISTS { ?pn clav:temDono ?uri. }
+        FILTER NOT EXISTS { ?pn clav:temParticipante ?uri. }
+            }
+        } BIND(CONCAT('ent_', ?sigla) AS ?id).
+    } ORDER BY ?sigla`;
+    console.log(query)
+
+    return client.query(query)
+        .execute()
+        .then(response => normalize(response));
+};
+
+// Lista todas as entidades sem PNs associados (como Dono ou como Participante)
+Entidades.listarSemPNs = () => {
+    const query = `SELECT ?id ?sigla ?designacao ?internacional ?sioe ?estado {
+            ?uri rdf:type clav:Entidade ;
+                clav:entEstado ?estado;
+                clav:entDesignacao ?designacao ;
+                clav:entSigla ?sigla ;
+                clav:entInternacional ?internacional .
+            OPTIONAL {
+                ?uri clav:entSIOE ?sioe.
+            }
+        FILTER NOT EXISTS {?pn clav:temDono ?uri.}
+        FILTER NOT EXISTS {?pn clav:temParticipante ?uri.}
+            BIND(CONCAT('ent_', ?sigla) AS ?id).
+
+        } ORDER BY ?sigla`;
+    console.log(query)
 
     return client.query(query)
         .execute()

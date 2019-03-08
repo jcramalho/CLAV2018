@@ -54,6 +54,7 @@ Leg.listar = () => {
         });
 };
 
+//Lista todas as legislações com o estado "Ativo"
 Leg.listarAtivos = () => {
     const query = `SELECT ?id ?data ?numero ?tipo ?sumario ?entidades WHERE {
         ?uri rdf:type clav:Legislacao;
