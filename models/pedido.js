@@ -7,6 +7,15 @@ const PedidoSchema = new mongoose.Schema({
         match: /\d{1,}-\d{4,}/,
         required: true,
     },
+    estado: {
+        type: String,           // Email do utilizador que criou o pedido
+        required: true
+    },
+    data: {
+        type: Date,
+        default: Date.now,
+        required: true,
+    },
     criadoPor: {
         type: String,           // Email do utilizador que criou o pedido
         required: true
