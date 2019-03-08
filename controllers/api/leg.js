@@ -24,7 +24,7 @@ const Leg = module.exports;
  * @return {Promise<[Legislacao] | Error>} promessa que quando cumprida contém a
  * lista das legislacoes existentes que respeitam o filtro dado
  */
-Leg.listar = (filtro) => {
+Leg.listar = () => {
     const query = `SELECT ?id ?data ?numero ?tipo ?sumario ?estado ?entidades WHERE {
         ?uri rdf:type clav:Legislacao;
              clav:diplomaData ?data;

@@ -3,6 +3,12 @@ var legs = new Vue({
     data: {
         listaLegs: [],
         ready: false,
+        opcao: "",
+    },
+    watch: {
+        opcao: function () {
+            this.loadLista(this.opcao);
+        },
     },
     methods: {
         parseEntidades: function () {
@@ -31,18 +37,40 @@ var legs = new Vue({
         addLeg: function (row) {
             window.location.href = '/legislacao/adicionar';
         },
+        loadLista: function(opcao){
+            this.$http.get("/api/legislacao" + opcao)
+                    .then(function (response) {
+                        this.listaLegs = response.body;
+                    })
+                    .then(function () {
+                        this.parseEntidades(this.listaLegs);
+                        this.ready = true;
+                    })
+                    .catch(function (error) {
+                        console.error(error);
+                    });
+        },
+        filter: function(PNs){
+            //filtrar com e sem PNs associados
+            if( PNs === "Sem PNs Associados" ) {
+                this.ready = false;
+                this.opcao= "?processos=sem";
+                }
+            else if( PNs === "Com PNs Associados" ) {
+                this.ready = false;
+                this.opcao= "?processos=com";
+                }
+            else if( PNs === "Todos" ) {
+                this.ready = false;
+                this.opcao= "";
+                
+                }
+            else {
+                this.opcao= "?estado=A";
+                }
+        }
     },
     created: function () {
-        this.$http.get("/api/legislacao")
-            .then(function (response) {
-                this.listaLegs = response.body;
-            })
-            .then(function () {
-                this.parseEntidades();
-                this.ready = true;
-            })
-            .catch(function (error) {
-                console.error(error);
-            });
-    }
+        this.filter();
+}
 })

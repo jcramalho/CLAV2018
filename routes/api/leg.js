@@ -42,9 +42,8 @@ router.get('/', (req, res) => {
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na listagem da legislação sem PNs associados: ${erro}`));
     }
-    else{
+    else {
         return Leg.listar()
-        console.log("Todos")
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na listagem dos diplomas legislativos: ${erro}`));
     }
