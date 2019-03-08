@@ -1,6 +1,7 @@
 var Logging = require('../../controllers/logging');
 var Auth = require('../../controllers/auth.js');
 var Entidades = require('../../controllers/api/entidades.js');
+var url = require('url');
 
 var express = require('express');
 var router = express.Router();
@@ -23,10 +24,26 @@ const estaDisponivel = (req, res, next) => {
 };
 
 // Lista todas as entidades: id, sigla, designacao, internacional
-router.get('/', async (req, res) => {
-    return Entidades.listar(req.query)
+router.get('/', (req, res) => {
+    var queryData = url.parse(req.url, true).query;
+    // api/legislacao?processos=com
+    if (queryData.processos && (queryData.processos == 'com')){
+        return Entidades.listarComPNs()
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.status(500).send(`Erro na listagem das entidades com PNs associados: ${erro}`));
+    }
+    // api/legislacao?processos=sem
+    if (queryData.processos && (queryData.processos == 'sem')){
+        return Entidades.listarSemPNs()
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.status(500).send(`Erro na listagem das entidades sem PNs associados: ${erro}`));
+    }
+    else {
+        return Entidades.listar(req.query)
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na listagem das entidades: ${erro}`));
+    }
+        
 });
 
 // Criação de uma nova entidade. Em caso de sucesso gera um novo pedido

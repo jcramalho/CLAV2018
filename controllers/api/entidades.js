@@ -45,7 +45,6 @@ Entidades.listar = (filtro) => {
             .concat(["True"])
             .join(' && ')})
     } ORDER BY ?sigla`;
-    console.log(query)
 
     return client.query(query)
         .execute()
@@ -80,8 +79,7 @@ Entidades.listarComPNs = () => {
             }
         } BIND(CONCAT('ent_', ?sigla) AS ?id).
     } ORDER BY ?sigla`;
-    console.log(query)
-
+    
     return client.query(query)
         .execute()
         .then(response => normalize(response));
