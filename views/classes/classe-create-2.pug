@@ -1,13 +1,6 @@
 extends ../layout
 block lateral
-    ul#sideNav
-        li(v-for="l in sideNav")
-            a(:href="l.anchor") {{ l.label }}
-
-    .btn-group-vertical.info-classe.mr-2(role="group")
-        button.btn.btn-primary Guardar trabalho
-        button.btn.btn-secondary Validar informação
-        button.btn.btn-primary(@click="criarClasse") Submeter nova classe
+    
 
 block corpo
     #nova-classe-form.panel.panel-default.panel-custom
@@ -49,7 +42,7 @@ block corpo
                         size="70"
                         v-model="classe.titulo"
                     )
-                    
+
             //- DESCRITIVO
             accordion
                 a(name="descritivo")
@@ -386,7 +379,7 @@ block corpo
                                                     td 
                                                         button.btn.btn-default(type="button")
                                                             span.glyphicon.glyphicon-remove(@click="desselecionarLegislacao(crit.legislacao, leg, index)")
-                                    button(@click="removerCriterioTodo(classe.pca.justificacao, cindex)") Remover Critério
+                                    button(@click="removerCriterioTodo(classe.pca.justificacao, cindex, 'PCA')") Remover Critério
                                     hr
                                     
                                 button(
@@ -468,7 +461,7 @@ block corpo
                                                     td 
                                                         button.btn.btn-default(type="button")
                                                             span.glyphicon.glyphicon-remove(@click="desselecionarLegislacao(critDF.legislacao, leg, index)")
-                                    button(@click="removerCriterioTodo(classe.df.justificacao, indexDF)") Remover Critério
+                                    button(@click="removerCriterioTodo(classe.df.justificacao, indexDF, 'DF')") Remover Critério
                                     hr
 
                                 button(
@@ -698,16 +691,14 @@ block corpo
                 .modal-footer(slot="modal-footer")
                     button(@click="modalMsgShow=false") Ok
 
-            input.btn.btn-xs.btn-default.col-sm-2(
-                type="button" 
-                @click="criarClasse" 
-                value="Submeter nova classe" 
-                :disabled=`!(
-                    ((classe.nivel>1 && parent) || classe.nivel==1) && 
-                    classe.codigo
-                )`
-             )
-            p.col-sm-7 {{ message }}
+            .panel
+                .panel-body
+                    button.btn.btn-primary(:disabled="true") Guardar trabalho
+                    button.btn.btn-primary(:disabled="true") Validar informação
+                    button.btn.btn-primary(
+                        @click="criarClasse"
+                        :disabled=`!(((classe.nivel>1 && parent) || classe.nivel==1) && classe.codigo)`
+                        ) Adicionar nova classe
 
 append scripts    
     script(src="/javascripts/component-select-value-from-list.vue")
@@ -716,4 +707,5 @@ append scripts
     script(src="/javascripts/classes/classe-create.vue")
     script(src="/javascripts/component-sel-participantes-2.vue")
     script(src="/javascripts/component-sel-procRelacionados.vue")
+    script(src="/javascripts/v-components/classe-show.vue")
     

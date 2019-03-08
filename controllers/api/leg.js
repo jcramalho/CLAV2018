@@ -84,6 +84,73 @@ Leg.listarAtivos = () => {
         });
 };
 
+// Lista todas as legislações com PNs associados
+Leg.listarComPNs = () => {
+    const query = `SELECT ?id ?data ?numero ?tipo ?sumario ?estado ?entidades WHERE {
+        ?uri rdf:type clav:Legislacao;
+             clav:diplomaData ?data;
+             clav:diplomaNumero ?numero;
+             clav:diplomaTipo ?tipo;
+             clav:diplomaSumario ?sumario;
+             clav:diplomaEstado 'Ativo';
+             
+        OPTIONAL {
+            ?uri clav:temEntidadeResponsavel ?ent.
+            ?ent clav:entSigla ?entidades;
+        }
+    	FILTER EXISTS {?uri clav:estaAssoc ?pn.}
+        BIND(STRAFTER(STR(?uri), 'clav#') AS ?id).
+    } ORDER BY DESC (?data)`;
+    const campos = ["id", "data", "numero", "tipo", "sumario"];
+    const agrupar = ["entidades"];
+
+    return client.query(query)
+        .execute()
+        .then(response => {
+            let legs = projection(normalize(response), campos, agrupar);
+            
+            for (leg of legs) {
+                leg.entidades = leg.entidades.map(ent => ({ id: `ent_${ent}`, sigla: ent }));
+            }
+        
+            return legs;
+        });
+};
+
+// Lista todas as legislações sem PNs associados
+Leg.listarSemPNs = () => {
+    const query = `SELECT ?id ?data ?numero ?tipo ?sumario ?estado ?entidades WHERE {
+        ?uri rdf:type clav:Legislacao;
+             clav:diplomaData ?data;
+             clav:diplomaNumero ?numero;
+             clav:diplomaTipo ?tipo;
+             clav:diplomaSumario ?sumario;
+             clav:diplomaEstado 'Ativo';
+             
+        OPTIONAL {
+            ?uri clav:temEntidadeResponsavel ?ent.
+            ?ent clav:entSigla ?entidades;
+        }
+    	FILTER NOT EXISTS {?uri clav:estaAssoc ?pn.}
+        BIND(STRAFTER(STR(?uri), 'clav#') AS ?id).
+    } ORDER BY DESC (?data)`;
+    const campos = ["id", "data", "numero", "tipo", "sumario"];
+    const agrupar = ["entidades"];
+
+    return client.query(query)
+        .execute()
+        .then(response => {
+            let legs = projection(normalize(response), campos, agrupar);
+            
+            for (leg of legs) {
+                leg.entidades = leg.entidades.map(ent => ({ id: `ent_${ent}`, sigla: ent }));
+            }
+        
+            return legs;
+        });
+};
+
+
 /**
  * Consulta a meta informação relativa a uma legislação
  * (tipo, data, número, título, link e entidades).
@@ -125,7 +192,7 @@ Leg.consultar = id => {
  * @param {Legislacao} legislacao legislação que se pretende criar
  * @param {string} utilizador email do utilizador que criou a legislação
  * @return {Promise<Pedido | Error>} promessa que quando cumprida possui o
- * pedido gerado para a criação da nova tipologia
+ * pedido gerado para a criação da nova legislação
  */
 Leg.criar = async (legislacao, utilizador) => {
     const nanoid = require('nanoid')
@@ -142,7 +209,6 @@ Leg.criar = async (legislacao, utilizador) => {
         ${legislacao.entidades.map(entidade => `clav:${id} clav:temEntidadeResponsavel clav:${entidade}.`).join('\n')}
         
     }`;
-    console.log(query)
     const pedido = {
         criadoPor: utilizador,
         objeto: {

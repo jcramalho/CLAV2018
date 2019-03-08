@@ -46,6 +46,10 @@ router.get('/quantos', function (req, res) {
 
 // Criação de um novo termo de indice. Em caso de sucesso gera um novo pedido
 router.post('/', Auth.isLoggedIn, estaDisponivel, (req, res) => {
+    const termoIndice = {
+        termo: req.body.termo,
+        idClasse: req.body.idClasse,
+    };
     return TermosIndice.criar(termoIndice, req.user.email)
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na criação do termo de índice: ${erro}`));

@@ -1,6 +1,6 @@
 const client = require('../../config/database').onthology
 const normalize = require('../../controllers/api/utils').normalize
-const Pedidos = require('../../controllers/api/pedidos')
+const Pedidos = require('../../controllers/pedidos')
 const axios = require('axios')
 const Classes = module.exports
 const myhost = require('../../config/database').host
@@ -416,92 +416,20 @@ Classes.df = function (id) {
 
 // ============================================================================
 
-Classes.checkCodeAvailability = function (code, level) {
-    var checkQuery = `
-            SELECT (count(*) AS ?Count) WHERE {
-                ?c rdf:type clav:Classe_N${level} ;
-                    clav:codigo '${code}' ;
-                    clav:pertenceLC clav:lc1
-            }
-        `;
-
-    return client.query(checkQuery).execute()
-        //Getting the content we want
-        .then(response => Promise.resolve(response.results.bindings[0].Count.value))
-        .catch(function (error) {
-            console.error("Error in check:\n" + error);
-        });
-}
-
-
-
-
-
-Classes.filterNone = function () {
-    var fetchQuery = `
-        SELECT DISTINCT
-            ?Avo ?AvoCodigo ?AvoTitulo 
-            ?Pai ?PaiCodigo ?PaiTitulo 
-            ?PN ?PNCodigo ?PNTitulo   
-            (GROUP_CONCAT(DISTINCT(CONCAT(STR(?Filho),":::",?FilhoCodigo, ":::",?FilhoTitulo)); SEPARATOR="###") AS ?Filhos)
-			(GROUP_CONCAT(CONCAT(STR(?FilhoCodigo),":::",?FilhoTi);Separator="###") AS ?TIsFilhos)
-            (GROUP_CONCAT(?TermoI; SEPARATOR="###") AS ?TermosPesquisa)
-        WHERE {  
-            
-            ?PN rdf:type clav:Classe_N3
-
-            MINUS { 
-                ?PN clav:pertenceLC ?lc
-                filter( ?lc != clav:lc1 )
-            }
-            ?PN clav:classeStatus 'A'.
-            
-            ?PN clav:temPai ?Pai.
-            ?Pai clav:temPai ?Avo.
-            
-            ?PN clav:codigo ?PNCodigo;
-                clav:titulo ?PNTitulo.
-            
-            ?Pai clav:codigo ?PaiCodigo;
-                clav:titulo ?PaiTitulo.
-            
-            ?Avo clav:codigo ?AvoCodigo;
-                clav:titulo ?AvoTitulo.
-            
-            OPTIONAL {
-                ?Filho clav:temPai ?PN;
-                   clav:codigo ?FilhoCodigo;
-                   clav:titulo ?FilhoTitulo
-
-                OPTIONAL {
-                    ?fTI clav:estaAssocClasse ?Filho;
-                         clav:termo ?FilhoTi
-                }
-            }
-            OPTIONAL {
-                {
-                    ?ti clav:estaAssocClasse ?PN ;
-                        clav:termo ?TermoI .
-                } UNION {
-                    ?PN clav:temExemploNA ?TermoI .
-                } UNION {
-                    ?PN clav:temNotaAplicacao ?pNA.
-                    ?pNA clav:conteudo ?TermoI .
-                }
-            }
-        }
-        Group By ?PN ?PNCodigo ?PNTitulo ?Pai ?PaiCodigo ?PaiTitulo ?Avo ?AvoCodigo ?AvoTitulo 
-        Order By ?PN
-    `;
-
-    return client.query(fetchQuery).execute()
-        //Getting the content we want
-        .then(response => Promise.resolve(response.results.bindings))
-        .catch(function (error) {
-            console.error("Error in check:\n" + error);
-        });
-}
-
+/**
+ * Insere uma nova classe no sistema, gerando um pedido apropriado.
+ * A classe criada encontrar-se-á no estado "Harmonização".
+ * 
+ * @see pedidos
+ *
+ * @param {Classe} classe que se pretende criar
+ * @param {string} utilizador identificação do utilizador que criou a classe
+ * @return {Promise<Pedido | Error>} promessa que quando cumprida possui o
+ * pedido gerado para a criação da nova classe
+ */
+Classes.criar = async (classe, utilizador) => {
+    Pedidos.criar('Criação', 'Classe', classe, utilizador)
+};
 Classes.filterCommon = function () {
     var fetchQuery = `
         SELECT DISTINCT

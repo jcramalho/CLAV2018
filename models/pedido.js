@@ -16,9 +16,12 @@ const PedidoSchema = new mongoose.Schema({
             type: String,
             required: true,
         },
+        dados: {
+            type: Object
+        },
         tipo: {
             type: String,
-            enum: ["Processo de negócio", "Tabela de seleção", "Entidade", "Tipologia", "Legislação"],
+            enum: ["Classe", "Tabela de seleção", "Entidade", "Tipologia", "Legislação", "Termo de Indice"],
             required: true,
         },
         acao: {
@@ -64,6 +67,7 @@ PedidoSchema.methods.sparqlQuery = function() {
     const rdf_types = {
         "Entidade": "clav:Entidade",
         "Legislação": "clav:Legislacao",
+        "Termo de Indice": "clav:TermoIndice",
         "Tipologia": "clav:TipologiaEntidade",
     };
     const rdf_type = rdf_types[this.objeto.tipo];

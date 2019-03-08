@@ -17,13 +17,13 @@ var leg = new Vue({
                 edit: false
             },
             tipo: {
-                label: "Tipo",
+                label: "Tipo de diploma",
                 original: "",
                 new: "",
                 edit: false
             },
             sumario: {
-                label: "Sumario",
+                label: "Sumário",
                 original: "",
                 new: "",
                 edit: false
@@ -46,19 +46,21 @@ var leg = new Vue({
             }
         },
         ready: false, 
+        classesReady: false,
 
         tipoDiploma: [],
 
         entidadesReady: false,
         entidades: [],
         newEntidade: "",
+        entidadesSelecionadas: [],
+        orgsTableHeader: ["Sigla", "Designação"],
+        orgsTableWidth: ["15%", "85%"],
 
         processosReady: false,
-        //processos:[],
-        //newProcessos: [],
         processosCollapsed: true,
-        //editProcessos:false,
         newProcesso: "",
+        processosSelecionados: [],
         
         listaClasses:[],
 
@@ -68,6 +70,7 @@ var leg = new Vue({
         datepicker: VueStrap.datepicker,
         spinner: VueStrap.spinner,
         modal: VueStrap.modal,
+        accordion: VueStrap.accordion,
     },
     methods: {
         parse: function(){
@@ -116,32 +119,34 @@ var leg = new Vue({
                     this.entidades = entidadesToParse
                         .map(function (item) {
                             return {
-                                label: item.sigla + " - " + item.designacao,
-                                value:item,
+                                data: [item.sigla, item.designacao],
+                                selected: false,
+                                id: item.id
                             }
                         }).sort(function (a, b) {
-                            return a.label.localeCompare(b.label);
+                            return a.data[1].localeCompare(b.data[1]);
                         });
+                    for(let i = 0; i<this.legData.entidades.original.length; i++){
+                        for(let j = 0; j<this.entidades.length; j++){
+                            if(this.legData.entidades.original[i] === this.entidades[j].data[0]){
+                                this.entidades[j].selected = true;
+                                this.entidadesSelecionadas[i] = this.entidades[j];
+                            }
+                        }
+                    }
                     this.entidadesReady = true;
                 })
                 .catch(function (error) {
                     console.error(error);
                 });
         },
-        addEntidade: function(){
-            var existeEntidade = 0;
-            for(var i=0; i<this.legData.entidades.new.length; i++){
-                if(this.newEntidade.value.id=="ent_" + this.legData.entidades.new[i]){
-                    existeEntidade = 1;
-                    break
-                }
-            }
-            if(existeEntidade==0){
-                this.legData.entidades.new.unshift(this.newEntidade.value.sigla)
-            }
-            else{
-                messageL.showMsg("Essa Entidade já se encontra selecionada!");
-            }
+        selecionarEntidade: function (row) {
+            this.entidadesSelecionadas.push(row);
+            row.selected = true;
+        },
+        desselecionarEntidade: function (row, index) {
+            row.selected = false;
+            this.entidadesSelecionadas.splice(index, 1);
         },
         loadProcessos: function () {
             var processosToParse = [];
@@ -170,50 +175,112 @@ var leg = new Vue({
                     this.listaClasses = classesToParse
                         .map(function(item){
                             return {
-                                label: item.codigo +" - "+ item.titulo,
-                                value: item,
+                                data: [item.codigo +" - "+ item.titulo],
+                                selected: false,
+                                id: item.codigo
                             }
                         }).sort(function (a, b) {
-                            return a.label.localeCompare(b.label);
+                            return a.data[0].localeCompare(b.data[0]);
                         });
-                        
+                        for(let i = 0; i<this.legData.processos.original.length; i++){
+                            for(let j = 0; j<this.listaClasses.length; j++){
+                                if(this.legData.processos.original[i].id === "c" + this.listaClasses[j].id){
+                                    console.log(this.listaClasses[j])
+                                    this.listaClasses[j].selected = true;
+                                    this.processosSelecionados[i] = this.listaClasses[j];
+                                }
+                            }
+                        }
                     this.classesReady = true;
                 })
                 .catch(function (error) {
                     console.error(error);
                 });
         },
-        addProcesso: function(){
-            var existeProcesso = 0;
-            for(var i=0; i<this.legData.processos.new.length; i++){
-                if(this.newProcesso.value.codigo==this.legData.processos.new[i].codigo){
-                    existeProcesso = 1;
-                    break
-                }
-            }
-            if(existeProcesso==0){
-                this.legData.processos.new.unshift(this.newProcesso.value)
-            }
-            else{
-                messageL.showMsg("Esse processo já se encontra selecionado!");
-            }
+        selecionarProcesso: function (row) {
+            this.processosSelecionados.push(row);
+            row.selected = true;
+        },
+        desselecionarProcesso: function (row, index) {
+            row.selected = false;
+            this.processosSelecionados.splice(index, 1);
         },
         update: function(){
-            this.$refs.spinner.show();
+
+            for(let i = 0; i< this.entidadesSelecionadas.length; i++){
+                this.legData.entidades.new[i] = this.entidadesSelecionadas[i].id
+            }
+            for(let i = 0; i< this.processosSelecionados.length; i++){
+                this.legData.processos.new[i] = this.processosSelecionados[i].id
+            }
 
             var formats= {
                 numero: new RegExp(/[0-9]+(\-\w)?\/[0-9]\d{3}$/),
                 data: new RegExp(/[0-9]+\/[0-9]+\/[0-9]+/)
             }
 
-            if(!formats.numero.test(this.legData.numero.new) && this.legData.numero.new!=""){
-                messageL.showMsg("O campo número está no formato errado!");
-                return false;
+            var date = new Date();
+
+            if( this.legData.numero.new!=""){
+                var parseAno = this.legData.numero.new.split("/");
+                var anoDiploma = parseInt(parseAno[1]);
+
+                if( anoDiploma<2000 ){
+                    formats.numero = new RegExp(/[0-9]+(\-\w)?\/[0-9]\d{1}$/)
+                }
+                if(!formats.numero.test(this.legData.numero.new)){
+                    if( anoDiploma<2000 ){
+                        messageL.showMsg("Anos de diploma anteriores a 2000 devem ter apenas os dois últimos dígitos!");
+                        return false;
+                    }
+                    if( anoDiploma > parseInt(date.getFullYear()) ){
+                        messageL.showMsg("Ano de Diploma inválido!")
+                        return false
+                    }
+                    messageL.showMsg("O campo número está no formato errado!");
+                    return false;
+                }
             }
-            if(!formats.data.test(this.legData.data.new) && this.legData.data.new!=""){
-                messageL.showMsg("O campo data está no formato errado!");
-                return false;
+
+            if( this.legData.data.new!="" ){
+                if(!formats.data.test(this.legData.data.new)){
+                    messageL.showMsg("O campo data está no formato errado!");
+                    return false;
+                }
+
+                var ano = parseInt(this.legData.data.new.slice(0, 4));
+                var mes = parseInt(this.legData.data.new.slice(5, 7));
+                var dia = parseInt(this.legData.data.new.slice(8, 10));
+                dias = [31,28,31,30,31,30,31,31,30,31,30,31]
+
+                if( mes>12 ){
+                    messageL.showMsg("Mês inválido!")
+                    return false
+                }
+                if( dia > dias[mes-1]){
+                    if( ano % 4 == 0 && mes == 2 && dia == 29){}
+                    else{ 
+                    messageL.showMsg("Dia do mês inválido!")
+                    return false
+                    }
+                }
+                if( ano > parseInt(date.getFullYear()) ){
+                    messageL.showMsg("Ano inválido! Por favor selecione uma data anterior à atual");
+                    return false
+                }
+                if( ano == parseInt(date.getFullYear()) && mes > parseInt(date.getMonth() + 1) ){
+                    messageL.showMsg("Mês inválido! Por favor selecione uma data anterior à atual");
+                    return false
+                }
+                if( ano == parseInt(date.getFullYear()) && mes == parseInt(date.getMonth() + 1) && dia > parseInt(date.getDate()) ){
+                    messageL.showMsg("Dia inválido! Por favor selecione uma data anterior à atual");
+                    return false
+                }
+
             }
+            
+            
+            this.$refs.spinner.show();
 
             let Link = new RegExp(/https?:\/\/.+/);
 

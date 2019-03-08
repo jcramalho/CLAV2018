@@ -38,7 +38,9 @@ var org = new Vue({
             Executor: true,
             Iniciador: true,
         },
-        domainCollapsed: true
+        domainCollapsed: true,
+
+        eInternacional: false,
     },
     methods: {
         loadTipologias: function () {
@@ -101,6 +103,9 @@ var org = new Vue({
                 this.loadTipologias();
                 this.processosDono();
                 this.loadParticipantes();
+                if( this.myEntidade.internacional === "Sim"){
+                    this.eInternacional = true;
+                }
             })
             .catch(function (error) {
                 console.error(error);

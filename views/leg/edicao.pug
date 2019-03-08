@@ -7,6 +7,33 @@ block corpo
             .form-group
                 table(v-if="ready").consulta(style="border-color: white; border-style:solid; margin-bottom:20px")
 
+                    //- Data
+                    tr
+                        td(style="width:12%")
+                            .info-label {{ legData.data.label }}:
+                        td(v-if="legData.data.edit" style="width:80%") 
+                            datepicker(
+                                value=""
+                                @input="dataEscolhida($event)"
+                                format="dd/MM/yyyy"
+                                :placeholder="legData.data.original"
+                            )
+                        td(v-else style="width:80%")
+                            | {{ legData.data.original }}
+
+                        if user
+                            td(style="width:10%")
+                                label(
+                                    for="legData.data.edit"
+                                    :class="[legData.data.edit ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
+                                )
+                                input(
+                                    id="legData.data.edit"
+                                    type="checkbox"
+                                    v-model="legData.data.edit"
+                                    class="drop-row"
+                                )
+
                     //- TÍTULO
                     tr
                         td(style="width:10%")
@@ -30,6 +57,32 @@ block corpo
                                     id="legData.sumario.edit"
                                     type="checkbox"
                                     v-model="legData.sumario.edit"
+                                    class="drop-row"
+                                )
+
+                    //- Link
+                    tr
+                        td(style="width:12%")
+                            .info-label {{ legData.link.label }}:
+                        td(v-if="legData.link.edit" style="width:80%")
+                            input(
+                                size="50"
+                                v-model="legData.link.new"
+                                :placeholder="legData.link.original"
+                            )
+                        td(v-else style="width:80%")
+                            a(:href="legData.link.original" target="_blank") Ficheiro
+
+                        if user
+                            td(style="width:10%")
+                                label(
+                                    for="legData.link.edit"
+                                    :class="[legData.link.edit ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
+                                )
+                                input(
+                                    id="legData.link.edit"
+                                    type="checkbox"
+                                    v-model="legData.link.edit"
                                     class="drop-row"
                                 )
 
@@ -89,33 +142,43 @@ block corpo
                     //- Entidades
                     tr
                         td(style="width:12%")
-                            .info-label Entidade(s):
+                            .info-label Entidade responsável pela publicação:
                         td(v-if="legData.entidades.edit" style="width:80%")
-                            table
-                                tr
-                                    td(width="1000px")
-                                        v-select.custom-select(
+                            .col-sm-10
+                                .row(v-if="entidadesSelecionadas.length > 0")
+                                    table.table.table-condensed.table-hover
+                                        tr
+                                            th Sigla 
+                                            th Designação
+                                            th Ação
+                                        tr(v-for="(p, index) in entidadesSelecionadas")
+                                            td {{p.data[0]}}
+                                            td {{p.data[1]}}
+                                            td 
+                                                button.btn.btn-default(type="button")
+                                                    span.glyphicon.glyphicon-remove(@click="desselecionarEntidade(p, index)") 
+                            
+                                accordion
+                                    panel(type="white" header="Selecionar Entidades")
+                                        select-row-from-table(
                                             v-if="entidadesReady"
-                                            v-model="newEntidade"
-                                            :options= "entidades"
+
+                                            :header="orgsTableHeader"
+                                            :complete-rows="entidades"
+                                            :ready="entidadesReady"
+                                            :cwidth="orgsTableWidth"
+                                            
+                                            class-table='table table-condensed'
+
+                                            @select-clicked="selecionarEntidade($event)"
                                         )
-                                    td
-                                        input(
-                                            type="button"
-                                            @click="addEntidade"
-                                            value="+"
-                                        )
-                                tr(v-if="legData.entidades.new.length")
-                                    td
-                                        ul(style="padding-left:20px")
-                                            li(v-for="(sigla,index)  in legData.entidades.new")
-                                                | {{ sigla }}       
-                                                button(
-                                                    @click="legData.entidades.new.splice(index,1)"
-                                                ) x
+                                        h4(
+                                            v-else
+                                        ) A carregar...
+                                        
                         td(v-else style="width:80%")
                             ul
-                                li(v-for="entidade in legData.entidades.original")
+                                li(v-for="entidade in leg.entidades")
                                     a(:href="'/entidades/ent_'+entidade") {{ entidade }}
 
                         if user
@@ -131,65 +194,43 @@ block corpo
                                     class="drop-row"
                                 )
 
-                    //- Data
-                    tr
-                        td(style="width:12%")
-                            .info-label {{ legData.data.label }}:
-                        td(v-if="legData.data.edit" style="width:80%") 
-                            datepicker(
-                                value=""
-                                @input="dataEscolhida($event)"
-                                format="dd/MM/yyyy"
-                                :placeholder="legData.data.original"
-                            )
-                        td(v-else style="width:80%")
-                            | {{ legData.data.original }}
-
-                        if user
-                            td(style="width:10%")
-                                label(
-                                    for="legData.data.edit"
-                                    :class="[legData.data.edit ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
-                                )
-                                input(
-                                    id="legData.data.edit"
-                                    type="checkbox"
-                                    v-model="legData.data.edit"
-                                    class="drop-row"
-                                )
-
-                    //- Link
-                    tr
-                        td(style="width:12%")
-                            .info-label {{ legData.link.label }}:
-                        td(v-if="legData.link.edit" style="width:80%")
-                            input(
-                                size="50"
-                                v-model="legData.link.new"
-                                :placeholder="legData.link.original"
-                            )
-                        td(v-else style="width:80%")
-                            a(:href="legData.link.original" target="_blank") Ficheiro
-
-                        if user
-                            td(style="width:10%")
-                                label(
-                                    for="legData.link.edit"
-                                    :class="[legData.link.edit ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
-                                )
-                                input(
-                                    id="legData.link.edit"
-                                    type="checkbox"
-                                    v-model="legData.link.edit"
-                                    class="drop-row"
-                                )
-
                     //- PROCESSOS
                     tr
                         td(style="width:10%")
-                            .info-label Processos Regulamentados:
+                            .info-label Regula os Processos de Negócio:
                         td(v-if="legData.processos.edit" style="width:80%")
-                            table
+                            .col-sm-10
+                                .row(v-if="processosSelecionados.length > 0")
+                                    table.table.table-condensed.table-hover
+                                        tr
+                                            th Processo
+                                            th Ação
+                                        tr(v-for="(p, index) in processosSelecionados")
+                                            td {{p.data[0]}}
+                                            td 
+                                                button.btn.btn-default(type="button")
+                                                    span.glyphicon.glyphicon-remove(@click="desselecionarProcesso(p, index)") 
+
+                                accordion
+                                    panel(type="white" header="Selecionar Processos de Negócio")
+                                        select-row-from-table(
+                                            v-if="classesReady"
+
+                                            :header=["Processo"]
+                                            :complete-rows="listaClasses"
+                                            :ready="classesReady"
+                                            :cwidth=["100%"]
+                                            
+                                            class-table='table table-condensed'
+
+                                            @select-clicked="selecionarProcesso($event)"
+                                        )
+                                        h4(
+                                            v-else
+                                        ) A carregar...
+
+
+                            //-table
                                 tr
                                     td(width="1000px")
                                         v-select.custom-select(
@@ -211,87 +252,93 @@ block corpo
                                                 button(
                                                     @click="legData.processos.new.splice(index,1)"
                                                 ) x
-                        td(v-else style="width:80%")
-                            ul(v-if="processosReady" style="padding-left:20px" :class="{'is-collapsed' : processosCollapsed }")
-                                li(v-for="c in legData.processos.original")
-                                    a(:href="'/classes/'+c.id") {{ c.codigo }}
-                                    |  - {{ c.titulo }}
-                            a(@click="processosCollapsed=!processosCollapsed" v-if="legData.processos.original.length>6").maozinha
-                                span(v-if="processosCollapsed") Mostrar mais...
-                                span(v-else) Mostrar menos...                   
-                        td(style="width:10%")
-                            label(
-                                for="legData.processos.edit"
-                                :class="[legData.processos.edit ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
-                            )
-                            input(
-                                id="legData.processos.edit"
-                                type="checkbox"
-                                v-model="legData.processos.edit"
-                                class="drop-row"
-                            )
+                            td(v-else style="width:80%")
+                                ul(v-if="processosReady" style="padding-left:20px" :class="{'is-collapsed' : processosCollapsed }")
+                                    li(v-for="c in legData.processos.original")
+                                        a(:href="'/classes/'+c.id") {{ c.codigo }}
+                                        |  - {{ c.titulo }}
+                                a(@click="processosCollapsed=!processosCollapsed" v-if="legData.processos.original.length>6").maozinha
+                                    span(v-if="processosCollapsed") Mostrar mais...
+                                    span(v-else) Mostrar menos...
+                        if user                   
+                            td(style="width:10%")
+                                label(
+                                    for="legData.processos.edit"
+                                    :class="[legData.processos.edit ? 'glyphicon glyphicon-remove' : 'glyphicon glyphicon-edit']"
+                                )
+                                input(
+                                    id="legData.processos.edit"
+                                    type="checkbox"
+                                    v-model="legData.processos.edit"
+                                    class="drop-row"
+                                )
                 h3(v-else) A carregar...
 
             spinner(ref="spinner" fixed size="lg" text="Por favor aguarde...")
 
-            if user
-                input.btn.btn-xs.btn-default.col-sm-1(
-                    type="button"
-                    @click="update"
-                    value="Submeter alteração"
-                    :disabled="!(\
-                        legData.data.edit && legData.data.new ||\
-                        legData.numero.edit && legData.numero.new ||\
-                        legData.tipo.edit && legData.tipo.new ||\
-                        legData.sumario.edit && legData.sumario.new ||\
-                        legData.link.edit && legData.link.new ||\
-                        legData.entidades.edit ||\
-                        legData.processos.edit\
-                    )"
-                )
-                input.btn.btn-xs.btn-warning.col-sm-1(
-                    type="button"
-                    @click="delConfirm=true"
-                    value="Apagar"
-                    :disabled="(\
-                        legData.data.edit && legData.data.new ||\
-                        legData.numero.edit && legData.numero.new ||\
-                        legData.tipo.edit && legData.tipo.new ||\
-                        legData.sumario.edit && legData.sumario.new ||\
-                        legData.link.edit && legData.link.new ||\
-                        legData.entidades.edit ||\
-                        legData.processos.edit\
-                    )"
-                )
-                p.col-sm-5
+            table
+                if user
+                    tr
+                        td(width="300px")
+                            input.btn.btn-xs.btn-default.col-sm-7(
+                                type="button"
+                                @click="update"
+                                value="Submeter alteração"
+                                :disabled="!(\
+                                    legData.data.edit && legData.data.new ||\
+                                    legData.numero.edit && legData.numero.new ||\
+                                    legData.tipo.edit && legData.tipo.new ||\
+                                    legData.sumario.edit && legData.sumario.new ||\
+                                    legData.link.edit && legData.link.new ||\
+                                    legData.entidades.edit ||\
+                                    legData.processos.edit\
+                                )"
+                            )
+                        td(width="250px")
+                            input.btn.btn-xs.btn-warning.col-sm-7(
+                                type="button"
+                                @click="delConfirm=true"
+                                value="Apagar"
+                                :disabled="(\
+                                    legData.data.edit && legData.data.new ||\
+                                    legData.numero.edit && legData.numero.new ||\
+                                    legData.tipo.edit && legData.tipo.new ||\
+                                    legData.sumario.edit && legData.sumario.new ||\
+                                    legData.link.edit && legData.link.new ||\
+                                    legData.entidades.edit ||\
+                                    legData.processos.edit\
+                                )"
+                            )
+                            p.col-sm-5
 
-                modal(
-                    title="Confirmar" 
-                    :value="delConfirm"
-                    @closed="delConfirm=false"
+                            modal(
+                                title="Confirmar" 
+                                :value="delConfirm"
+                                @closed="delConfirm=false"
 
-                    small
-                ) 
-                    .modal-body(slot="modal-body")
-                        center Tem a certeza que deseja apagar?
-                    .modal-footer(slot="modal-footer")
-                        button(@click="apagarLeg" style="margin-right:7px") Ok
-                        button(@click="delConfirm=false") Cancelar
+                                small
+                            ) 
+                                .modal-body(slot="modal-body")
+                                    center Tem a certeza que deseja apagar?
+                                .modal-footer(slot="modal-footer")
+                                    button(@click="apagarLeg" style="margin-right:7px") Ok
+                                    button(@click="delConfirm=false") Cancelar
 
-            //-«    input.btn.btn-xs.btn-danger(
-                    v-if="delConfirm"
-                    type="button"
-                    @click="deleteLeg"
-                    value="OK"
-                )
-                input.btn.btn-xs.btn-info(
-                    v-if="delConfirm"
-                    type="button"
-                    @click="delNotReady"
-                    value="<-"
-                )
+                        //-«    input.btn.btn-xs.btn-danger(
+                                v-if="delConfirm"
+                                type="button"
+                                @click="deleteLeg"
+                                value="OK"
+                            )
+                            input.btn.btn-xs.btn-info(
+                                v-if="delConfirm"
+                                type="button"
+                                @click="delNotReady"
+                                value="<-"
+                            )
 
 
 
 append scripts
     script(src="/javascripts/leg/edicao.vue")
+    script(src="/javascripts/component-select-row-from-table.vue")

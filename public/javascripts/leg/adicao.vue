@@ -13,8 +13,9 @@ var newLeg = new Vue({
         processos: [],
         
         orgs: [],
-        orgsReady: false,
-        orgsTableHeader: ["Sigla", "Nome"],
+        entidades: [],
+        entidadesReady: false,
+        orgsTableHeader: ["Sigla", "Designação"],
         orgsTableWidth: ["15%", "85%"],
         message: "",
         
@@ -22,7 +23,8 @@ var newLeg = new Vue({
 
         newProcesso: "",
         listaClasses: [],
-        //newProcessos: [],
+        classesReady: false,
+        newProcessos: [],
 
     },
     components: {
@@ -45,20 +47,35 @@ var newLeg = new Vue({
         add: function(){
             this.message="";
 
+            for(var i = 0; i< this.entidades.length; i++){
+                this.diploma.entidades[i] = this.entidades[i].id
+            }
+            for(var i = 0; i< this.newProcessos.length; i++){
+                this.processos[i] = this.newProcessos[i].id
+            }
+
             var formats= {
                 numero: new RegExp(/[0-9]+(\-\w)?\/[0-9]\d{3}$/),
                 data: new RegExp(/[0-9]+\/[0-9]+\/[0-9]+/)
             }
 
+            var parseAno = this.diploma.numero.split("/");
+            var anoDiploma = parseInt(parseAno[1]);
+
+            if( anoDiploma<2000 ){
+                formats.numero= new RegExp(/[0-9]+(\-\w)?\/[0-9]\d{1}$/)
+            }
+
             for(let field in formats){
                 if(!formats[field].test(this.diploma[field])){
+                    if( anoDiploma<2000 ){
+                        messageL.showMsg("Anos de diploma anteriores a 2000 devem ter apenas os dois últimos dígitos!");
+                        return false;
+                    }
                     messageL.showMsg("O campo " + field + " está no formato errado!");
                     return false;
                 }
             }
-
-            var parseAno = this.diploma.numero.split("/");
-            var anoDiploma = parseInt(parseAno[1]);
 
             var date = new Date();
 
@@ -81,19 +98,19 @@ var newLeg = new Vue({
             }
 
             if( anoDiploma > parseInt(date.getFullYear()) ){
-                messageL.showMsg("Ano de Diploma errado!")
+                messageL.showMsg("Ano de Diploma inválido!")
                 return false
             }
             if( ano > parseInt(date.getFullYear()) ){
-                messageL.showMsg("Data errada! Por favor selecione uma data anterior à atual");
+                messageL.showMsg("Ano inválido! Por favor selecione uma data anterior à atual");
                 return false
             }
             if( ano == parseInt(date.getFullYear()) && mes > parseInt(date.getMonth() + 1) ){
-                messageL.showMsg("Data errada! Por favor selecione uma data anterior à atual");
+                messageL.showMsg("Mês inválido! Por favor selecione uma data anterior à atual");
                 return false
             }
             if( ano == parseInt(date.getFullYear()) && mes == parseInt(date.getMonth() + 1) && dia > parseInt(date.getDate()) ){
-                messageL.showMsg("Data errada! Por favor selecione uma data anterior à atual");
+                messageL.showMsg("Dia inválido! Por favor selecione uma data anterior à atual");
                 return false
             }
 
@@ -127,7 +144,7 @@ var newLeg = new Vue({
                     console.error(error); 
                 });
         },
-        loadOrgs: function () {
+        loadEntidades: function () {
             this.$http.get("/api/entidades")
                 .then(function (response) {
                     this.orgs = response.body
@@ -141,22 +158,19 @@ var newLeg = new Vue({
                             return a.data[1].localeCompare(b.data[1]);
                         });
 
-                    this.orgsReady = true;
+                    this.entidadesReady = true;
                 })
                 .catch(function (error) {
                     console.error(error);
                 });       
         },
-        orgSelected: function (row, list, partType) {
-            if (!row.selected) {
-                list.push(row.id);
-            }
-            else {
-                let index = list.indexOf(row.id);
-                if (index != -1) {
-                    list.splice(index, 1);
-                }
-            }
+        selecionarEntidade: function (row) {
+            this.entidades.push(row);
+            row.selected = true;
+        },
+        desselecionarEntidade: function (row, index) {
+            row.selected = false;
+            this.entidades.splice(index, 1);
         },
         loadTipoDiploma: function () {
 
@@ -186,20 +200,28 @@ var newLeg = new Vue({
                     this.listaClasses = classesToParse
                         .map(function(item){
                             return {
-                                label: item.codigo +" - "+ item.titulo,
-                                value: item,
+                                data: [item.codigo +" - "+ item.titulo],
+                                selected: false,
+                                id: item.codigo
                             }
                         }).sort(function (a, b) {
-                            return a.label.localeCompare(b.label);
+                            return a.data[0].localeCompare(b.data[0]);
                         });
-                        
                     this.classesReady = true;
                 })
                 .catch(function (error) {
                     console.error(error);
                 });
         },
-        addProcesso: function(){
+        selecionarProcesso: function (row) {
+            this.newProcessos.push(row);
+            row.selected = true;
+        },
+        desselecionarProcesso: function (row, index) {
+            row.selected = false;
+            this.newProcessos.splice(index, 1);
+        },
+        /*addProcesso: function(){
             var existeProcesso = 0;
             for(var i=0; i<this.processos.length; i++){
                 if(this.newProcesso.value.codigo==this.processos[i].codigo){
@@ -213,10 +235,10 @@ var newLeg = new Vue({
             else{
                 messageL.showMsg("Esse processo já se encontra selecionado!");
             }
-        },
+        },*/
     },
     created: function () {
-        this.loadOrgs();
+        this.loadEntidades();
         this.loadTipoDiploma(); 
         this.loadClasses();
     }
