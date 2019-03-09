@@ -1,6 +1,6 @@
 const client = require('../../config/database').onthology;
 const normalize = require('../../controllers/api/utils').normalize;
-const Pedidos = require('../../controllers/api/pedidos');
+const Pedidos = require('../../controllers/pedidos');
 const Entidades = module.exports;
 
 /**
@@ -187,18 +187,8 @@ Entidades.existe = (entidade) => {
  * @return {Promise<Pedido | Error>} promessa que quando cumprida possui o
  * pedido gerado para a criação da nova entidade
  */
-Entidades.criar = (entidade, utilizador) => {
-    const query = `INSERT DATA {
-        clav:ent_${entidade.sigla} rdf:type owl:NamedIndividual , clav:Entidade ;
-            clav:entDesignacao '${entidade.designacao}' ;
-            clav:entSigla '${entidade.sigla}' ;
-            clav:entInternacional '${entidade.internacional}' ;
-            clav:entSIOE '${entidade.sioe}';
-
-            ${entidade.tipologias.map(tipologia => `clav:pertenceTipologiaEnt clav:${tipologia} ;`).join('\n')}
-            clav:entEstado 'Harmonização' .
-    }`;
-    const id = `clav:ent_${entidade.sigla}`;
+Entidades.criar = async (entidade, utilizador) => {
+    /*const id = `clav:ent_${entidade.sigla}`;
     const pedido = {
         criadoPor: utilizador,
         objeto: {
@@ -240,11 +230,21 @@ Entidades.criar = (entidade, utilizador) => {
             distribuicao: [{
                 estado: 'Submetido',
             }]
-    };
-    return client.query(query)
-        .execute()
-        .then(() => Pedidos.criar(pedido));
+    };*/
+     Pedidos.criar('Criação', 'Entidade', entidade, utilizador);
 };
+
+//Criar controller para inserir na base de dados, depois do pedido aprovado!!
+/*const query = `INSERT DATA {
+        clav:ent_${entidade.sigla} rdf:type owl:NamedIndividual , clav:Entidade ;
+            clav:entDesignacao '${entidade.designacao}' ;
+            clav:entSigla '${entidade.sigla}' ;
+            clav:entInternacional '${entidade.internacional}' ;
+            clav:entSIOE '${entidade.sioe}';
+
+            ${entidade.tipologias.map(tipologia => `clav:pertenceTipologiaEnt clav:${tipologia} ;`).join('\n')}
+            clav:entEstado 'Harmonização' .
+    }`;*/
 
 /**
  * Gera um pedido de remoção da entidade.

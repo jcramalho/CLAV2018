@@ -1,7 +1,7 @@
 const client = require('../../config/database').onthology;
 const normalize = require('../../controllers/api/utils').normalize;
 const projection = require('../../controllers/api/utils').projection;
-const Pedidos = require('../../controllers/api/pedidos');
+const Pedidos = require('../../controllers/pedidos');
 const Leg = module.exports;
 
 /**
@@ -198,7 +198,14 @@ Leg.consultar = id => {
 Leg.criar = async (legislacao, utilizador) => {
     const nanoid = require('nanoid')
     const id = "leg_" + nanoid();
-    const query = `INSERT DATA {
+
+    legislacao.codigo= id;
+
+    Pedidos.criar('Criação', 'Legislação', legislacao, utilizador);
+};
+
+//Criar controller para inserir na base de dados, depois do pedido aprovado!!
+/*const query = `INSERT DATA {
         clav:${id} rdf:type owl:NamedIndividual , clav:Legislacao ;
             clav:diplomaData '${legislacao.data}' ;
             clav:diplomaNumero '${legislacao.numero}' ;
@@ -210,22 +217,9 @@ Leg.criar = async (legislacao, utilizador) => {
         ${legislacao.entidades.map(entidade => `clav:${id} clav:temEntidadeResponsavel clav:${entidade}.`).join('\n')}
         
     }`;
-    const pedido = {
-        criadoPor: utilizador,
-        objeto: {
-            codigo: `${id}`,
-            tipo: `Legislação`,
-            acao: `Criação`,
-        },
-        distribuicao: [{
-            estado: "Submetido",
-        }]
-    };
-
     return client.query(query)
         .execute()
-        .then(() => Pedidos.criar(pedido));
-};
+        .then(() => Pedidos.criar(pedido));*/
 
 /**
  * Verifica se um determinado numero de legislação existe no sistema.
