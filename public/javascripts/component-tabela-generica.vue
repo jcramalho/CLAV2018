@@ -1,7 +1,7 @@
 Vue.component('tabela-generica', {
     template: `
         <div>
-            <div class="col-sm-4">
+            <div class="col-sm-3">
                 Mostrar
                 <select v-model="rowsPerPage">
                     <option>5</option>
@@ -14,6 +14,7 @@ Vue.component('tabela-generica', {
             <div class="col-sm-6">
                 <input class="form-control" v-model="filt" type="text" placeholder="Filtrar"/>
             </div>
+            <label v-if="nrResults" > Resultados: {{ nrResults }} </label>
             <div class="col-sm-2"  v-if="add" style="float:right" @click="filtClick()">
                     <select v-model="PNsAssociados">
                         <option>Com PNs Associados</option>
@@ -71,6 +72,7 @@ Vue.component('tabela-generica', {
             "rowsPerPage": 10,
             "PNsAssociados": "",
             "nPages": 1,
+            "nrResults": "",
         };
     },
     watch: {
@@ -110,6 +112,7 @@ Vue.component('tabela-generica', {
                 })
                 return match
             })
+            this.nrResults = retList.length;
             return retList;
         },
         sort: function (index) { //ordena as linhas por displayOrder[index]
