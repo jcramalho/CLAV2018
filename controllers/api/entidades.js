@@ -101,7 +101,6 @@ Entidades.listarSemPNs = () => {
             BIND(CONCAT('ent_', ?sigla) AS ?id).
 
         } ORDER BY ?sigla`;
-    console.log(query)
 
     return client.query(query)
         .execute()

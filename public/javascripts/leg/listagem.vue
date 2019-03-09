@@ -54,23 +54,41 @@ var legs = new Vue({
             //filtrar com e sem PNs associados
             if( PNs === "Sem PNs Associados" ) {
                 this.ready = false;
-                this.opcao= "?processos=sem";
+                if( this.opcao === "?processos=sem" ) {
+                    this.loadLista(this.opcao);
+                }
+                else this.opcao= "?processos=sem";
                 }
             else if( PNs === "Com PNs Associados" ) {
                 this.ready = false;
-                this.opcao= "?processos=com";
+                if( this.opcao === "?processos=com" ){
+                    this.loadLista(this.opcao);
+                }
+                else this.opcao= "?processos=com";
                 }
             else if( PNs === "Todos" ) {
                 this.ready = false;
+                if( this.opcao === "" ) {
+                    this.loadLista(this.opcao);
+                }
                 this.opcao= "";
-                
                 }
             else {
-                this.opcao= "?estado=A";
-                }
+                this.opcao = "";
+            }
         }
     },
     created: function () {
-        this.filter();
-}
+        this.$http.get("/api/legislacao")
+            .then(function (response) {
+                this.listaLegs = response.body;
+            })
+            .then(function () {
+                this.parseEntidades(this.listaLegs);
+                this.ready = true;
+            })
+            .catch(function (error) {
+                console.error(error);
+            });
+    }
 })

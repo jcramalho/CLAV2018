@@ -19,8 +19,6 @@ var orgs = new Vue({
             this.$http.get("/api/entidades" + opcao)
                     .then(function (response) {
                         this.listaEntidades = response.body;
-                    })
-                    .then(function () {
                         this.ready = true;
                     })
                     .catch(function (error) {
@@ -31,30 +29,39 @@ var orgs = new Vue({
             //filtrar com e sem PNs associados
             if( PNs === "Sem PNs Associados" ) {
                 this.ready = false;
-                this.opcao= "?processos=sem";
+                if( this.opcao === "?processos=sem" ) {
+                    this.loadLista(this.opcao);
+                }
+                else this.opcao= "?processos=sem";
                 }
             else if( PNs === "Com PNs Associados" ) {
                 this.ready = false;
-                this.opcao= "?processos=com";
+                if( this.opcao === "?processos=com" ){
+                    this.loadLista(this.opcao);
+                }
+                else this.opcao= "?processos=com";
                 }
             else if( PNs === "Todos" ) {
                 this.ready = false;
-                this.opcao= "";
-                
+                if( this.opcao === "" ) {
+                    this.loadLista(this.opcao);
                 }
+                this.opcao= "";
+                }
+            else {
+                this.opcao = "";
+            }
         }
     },
  
     created: function(){
         this.$http.get("/api/entidades")
-                    .then(function (response) {
-                        this.listaEntidades = response.body;
-                    })
-                    .then(function () {
-                        this.ready = true;
-                    })
-                    .catch(function (error) {
-                        console.error(error);
-                    });
+            .then(function (response) {
+                this.listaEntidades = response.body;
+                this.ready = true;
+            })
+            .catch(function (error) {
+                console.error(error);
+            });
     }
 })
