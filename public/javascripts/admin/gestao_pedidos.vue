@@ -1,12 +1,56 @@
 var gped = new Vue({
     el: '#pedidos-gestao',
     data: {
-        pedidosNovos: []
+        pedidos: [],
+        pedidosCarregados: false,
+        pedidosNovos: [],
+        pedidosNovosCarregados: false,
+        pedidosEmApreciacao: [],
+        pedidosEmApreciacaoCarregados: false,
+        pedidosEmValidacao: [],
+        pedidosEmValidacaoCarregados: false
     },
     created: function (){
+
+        // Vai bscar todos os pedidos
+
+        this.$http.get("/api/pedidos")
+            .then(function (response) {
+                this.pedidos = response.body;
+                this.pedidosCarregados = true;
+            })
+            .catch(function (error) {
+                console.error(error);
+            });
+
+        // Vai buscar os pedidos novos: tipo="Submetido"
+
         this.$http.get("/api/pedidos?tipo=Submetido")
             .then(function (response) {
                 this.pedidosNovos = response.body;
+                this.pedidosNovosCarregados = true;
+            })
+            .catch(function (error) {
+                console.error(error);
+            });
+
+        // Vai buscar os pedidos novos: tipo="EmApreciacao"
+
+        this.$http.get("/api/pedidos?tipo=EmApreciacao")
+            .then(function (response) {
+                this.pedidosEmApreciacao = response.body;
+                this.pedidosEmApreciacaoCarregados = true;
+            })
+            .catch(function (error) {
+                console.error(error);
+            });
+
+        // Vai buscar os pedidos novos: tipo="EmValidacao"
+
+        this.$http.get("/api/pedidos?tipo=EmValidacao")
+            .then(function (response) {
+                this.pedidosEmValidacao = response.body;
+                this.pedidosEmValidacaoCarregados = true;
             })
             .catch(function (error) {
                 console.error(error);
