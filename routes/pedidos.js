@@ -12,7 +12,7 @@ router.get('/submissao', Auth.isLoggedIn, function(req, res){
 })
 
 router.get('/:codigo', Auth.isLoggedIn, function(req,res){
-    res.render('pedidos/consulta', {pedID: req.params.id, title: "Consulta de pedido"});
+    res.render('pedidos/consulta', {pedID: req.params.codigo, title: "Consulta de pedido"});
 })
 
 module.exports = router;
