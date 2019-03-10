@@ -1,6 +1,6 @@
 const client = require('../../config/database').onthology
 const normalize = require('../../controllers/api/utils').normalize;
-const Pedidos = require('../../controllers/api/pedidos');
+const Pedidos = require('../../controllers/pedidos');
 var TermosIndice = module.exports
 
 /**
@@ -111,26 +111,21 @@ TermosIndice.contar = function() {
 TermosIndice.criar = async (termoIndice, utilizador) => {
     const nanoid = require('nanoid')
     const id = "ti_" + nanoid();
-    const query = `INSERT DATA {
-        clav:${id} rdf:type owl:NamedIndividual , clav:TermoIndice;
-            clav:termo '${termoIndice.termo}';
-            clav:estado 'Harmonização' ;
-            clav:estaAssocClasse '${termoIndice.idClasse}' .
-    }`;
-    console.log(query)
-    const pedido = {
-        criadoPor: utilizador,
-        objeto: {
-            codigo: `${id}`,
-            tipo: `Termo de Indice`,
-            acao: `Criação`,
-        },
-        distribuicao: [{
-            estado: "Submetido",
-        }]
-    };
 
-    return client.query(query)
-        .execute()
-        .then(() => Pedidos.criar(pedido));
+    termoIndice.codigo = id;
+
+    Pedidos.criar('Criação', 'Termo de Indice', termoIndice, utilizador);
 };
+
+//Criar controller para inserir na base de dados, depois do pedido aprovado!!
+/*
+const query = `INSERT DATA {
+    clav:${id} rdf:type owl:NamedIndividual , clav:TermoIndice;
+        clav:termo '${termoIndice.termo}';
+        clav:estado 'Harmonização' ;
+        clav:estaAssocClasse '${termoIndice.idClasse}' .
+}`;
+
+return client.query(query)
+    .execute()
+    .then(() => Pedidos.criar(pedido));*/

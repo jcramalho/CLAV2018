@@ -11,8 +11,14 @@ router.get('/submissao', Auth.isLoggedIn, function(req, res){
     res.render('pedidos/submissao', {title: "Submissao de pedido"});
 })
 
+router.get('/:codigo/objeto', Auth.isLoggedIn, function(req,res){
+    res.render('pedidos/showObjeto', {pedID: req.params.id, title: "Consulta do objeto do pedido"});
+})
+
 router.get('/:codigo', Auth.isLoggedIn, function(req,res){
     res.render('pedidos/consulta', {pedID: req.params.codigo, title: "Consulta de pedido"});
 })
+
+
 
 module.exports = router;

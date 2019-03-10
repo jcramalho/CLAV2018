@@ -13,8 +13,11 @@ block corpo
                 :cwidth="['12%','10%', '10%', '54%', '14%']"
                 
                 class-table='table table-hover'
+                add="true"
 
                 @row-clicked="rowClicked($event)"
+                @filt-clicked="filter($event)"
+
             )
             h4(
                 v-else

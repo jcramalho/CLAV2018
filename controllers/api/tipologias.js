@@ -1,6 +1,6 @@
 const client = require('../../config/database').onthology;
 const normalize = require('../../controllers/api/utils').normalize;
-const Pedidos = require('../../controllers/api/pedidos');
+const Pedidos = require('../../controllers/pedidos');
 const Tipologias = module.exports;
 
 /**
@@ -77,31 +77,19 @@ Tipologias.consultar = (id) => {
  * @return {Promise<Pedido | Error>} promessa que quando cumprida possui o
  * pedido gerado para a criação da nova tipologia
  */
-Tipologias.criar = (tipologia, utilizador) => {
-    const query = `INSERT DATA {
+Tipologias.criar = async (tipologia, utilizador) => {
+    Pedidos.criar('Criação', 'Tipologia', tipologia, utilizador)
+};
+
+//Criar controller para inserir na base de dados, depois do pedido aprovado!!
+/*const query = `INSERT DATA {
         clav:tip_${tipologia.sigla} rdf:type owl:NamedIndividual , clav:TipologiaEntidade ;
             clav:tipDesignacao '${tipologia.designacao}' ;
             clav:tipSigla '${tipologia.sigla}' ;
             
         ${tipologia.entidades.map(entidade => `clav:contemEntidade clav:${entidade} ;`).join('\n')}
         clav:tipEstado "Harmonização" .
-    }`;
-    const pedido = {
-        criadoPor: utilizador,
-        objeto: {
-            codigo: `tip_${tipologia.sigla}`,
-            tipo: 'Tipologia',
-            acao: 'Criação',
-        },
-        distribuicao: [{
-            estado: "Submetido",
-        }]
-    };
-
-    return client.query(query)
-        .execute()
-        .then(() => Pedidos.criar(pedido));
-};
+    }`;*/
 
 /**
  * Verifica se uma determinada tipologia existe no sistema.

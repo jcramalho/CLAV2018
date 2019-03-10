@@ -89,7 +89,8 @@ var newEnt = new Vue({
                 sigla: this.sigla,
                 sioe: this.sioe,
                 internacional: this.internacional,
-                tipologias: this.tipologiasSel
+                tipologias: this.tipologiasSel,
+                codigo: "ent_" + this.sigla
             }
 
             console.log(dataObj);
@@ -101,7 +102,6 @@ var newEnt = new Vue({
             })
                 .then(function () {
                     this.$refs.spinner.hide();
-                    
                     window.location.href = '/pedidos/submissao';
                 })
                 .catch(error => {if (error.status === 409) {

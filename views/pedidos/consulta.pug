@@ -35,7 +35,7 @@ block corpo
                         td(style="width:10%")
                             .info-label Link para o objeto: 
                         td(style="width:80%")
-                            a(:href="'/' + tipoObj +'/' + pedido.objeto.codigo") {{ pedido.objeto.codigo }}
+                            a(:href="'/pedidos/' + pedido.codigo + '/objeto'") {{ pedido.objeto.codigo }}
 
 
                     //-normal-table()
