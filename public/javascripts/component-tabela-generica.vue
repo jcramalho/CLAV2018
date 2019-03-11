@@ -1,7 +1,7 @@
 Vue.component('tabela-generica', {
     template: `
         <div>
-            <div class="col-sm-4">
+            <div class="col-sm-3">
                 Mostrar
                 <select v-model="rowsPerPage">
                     <option>5</option>
@@ -11,13 +11,16 @@ Vue.component('tabela-generica', {
                 </select>
                 entradas
             </div>
-            <div class="col-sm-7">
+            <div class="col-sm-6">
                 <input class="form-control" v-model="filt" type="text" placeholder="Filtrar"/>
             </div>
-            <div class="col-sm-1"  v-if="add" style="float:right">
-                <button type="button" class="btn btn-default btn-circle" @click="addClick">
-                    <span class="glyphicon glyphicon-plus"/>
-                </button>
+            <label v-if="nrResults" > Resultados: {{ nrResults }} </label>
+            <div class="col-sm-2"  v-if="add" style="float:right" @click="filtClick()">
+                    <select v-model="PNsAssociados">
+                        <option>Com PNs Associados</option>
+                        <option>Sem PNs Associados</option>
+                        <option>Todos</option>
+                    <select/>
             </div>
 
             <table :class="classTable">
@@ -67,7 +70,9 @@ Vue.component('tabela-generica', {
             "activePage": 1,
             "pages": [0],
             "rowsPerPage": 10,
+            "PNsAssociados": "",
             "nPages": 1,
+            "nrResults": "",
         };
     },
     watch: {
@@ -107,6 +112,7 @@ Vue.component('tabela-generica', {
                 })
                 return match
             })
+            this.nrResults = retList.length;
             return retList;
         },
         sort: function (index) { //ordena as linhas por displayOrder[index]
@@ -122,8 +128,8 @@ Vue.component('tabela-generica', {
         rowClick: function (index) { //emit event when a row is clicked
             this.$emit('row-clicked', this.rowsShow[index].id || this.rowsShow[index].codigo );
         },
-        addClick: function (index) { //emit event when the '+' button is clicked
-            this.$emit('add-clicked');
+        filtClick: function () { //filter rows according to what is written in the input box
+            this.$emit('filt-clicked', this.PNsAssociados);
         },
         loadPages: function () { //process page numbers
             var page = this.activePage;

@@ -1,59 +1,61 @@
-extends ../layout
+extends ../layout4
 block corpo
     #pedido-form.panel.panel-default.panel-custom
+        top-menu-bar
         .panel-heading
-            h1.page-header
-                div Consulta do pedido {{ pedido.codigo }}
-
+            h1.page-header.p-2.mt-5 Consulta do pedido {{ pedido.codigo }}
         .panel-body
-            .form-group
-                table.consulta(v-if="pedidoReady")
-
-                    //- Codigo
-                    tr
-                        td(style="width:10%")
-                            .info-label Número do pedido: 
-                        td(style="width:80%")
-                            | {{ pedido.codigo }}
-
-                    //- Tipo do pedido
-                    tr
-                        td(style="width:10%")
-                            .info-label Tipo: 
-                        td(style="width:80%")
-                            | {{ pedido.objeto.acao + " de " +pedido.objeto.tipo }}  
-
-                    //- Data de submissão
-                    tr
-                        td(style="width:10%")
-                            .info-label Data de submissão: 
-                        td(style="width:80%")
-                            | {{ dist[0].data }}
-
-                    //- Link
-                    tr
-                        td(style="width:10%")
-                            .info-label Link para o objeto: 
-                        td(style="width:80%")
-                            a(:href="'/' + tipoObj +'/' + pedido.objeto.codigo") {{ pedido.objeto.codigo }}
-
-
-                    //-normal-table()
-
-                    //-Estados anteriores
-                    tr
-                        td(style="width:10%")
-
-                        td(style="width:80%")
-                            hidden-table(
-                                v-if="pedidoReady"
-
-                                titulo="Estados do pedido"
-                                :cabecalho='["Data","Estado"]'
-                                :linhas="estados"
-                                
-                                open
-                            )
+            .mt-3.mb-3
+                panel.p-3(is-open v-if="pedidoReady")
+                    table.table-bordered.p-3
+                        //- Codigo
+                        tr
+                            td(style="width:10%")
+                                .info-label Número do pedido: 
+                            td(style="width:80%")
+                                | {{ pedido.codigo }}
                     
+                        //- Estado atual
+                        tr(v-if="pedido.estado")
+                            td(style="width:10%")
+                                .info-label Estado atual do pedido: 
+                            td(style="width:80%") {{ pedido.estado }}
+
+                        //- Tipo do pedido
+                        tr
+                            td(style="width:10%")
+                                .info-label Tipo: 
+                            td(style="width:80%") {{ pedido.objeto.acao + " de " +pedido.objeto.tipo }}  
+
+                        //- Data da submissão inicial
+                        tr(v-if="pedido.data")
+                            td(style="width:10%")
+                                .info-label Data de submissão: 
+                            td(style="width:80%") {{ pedido.data }}
+
+                        //- Link
+                        tr
+                            td(style="width:10%")
+                                .info-label Link para o objeto: 
+                            td(style="width:80%")
+                                a(:href="'/pedidos/' + pedido.codigo + '/objeto'") {{ pedido.objeto.tipo }}
+                        //- Distribuição
+                        tr(v-if="pedido.distribuicao.length > 0") 
+                            td(style="width:10%")
+                                .info-label Distribuição:
+                            td(style="width:80%")
+                                table.table
+                                    tr  
+                                        th Data
+                                        th Estado
+                                        th Responsável
+                                        th Despacho
+                                    tr(v-for="d in pedido.distribuicao")
+                                        td {{ d.data }}
+                                        td {{ d.estado }}
+                                        td {{ d.responsavel }}
+                                        td {{ d.despacho }}
+
 append scripts
+    script(src="/javascripts/v-components/top-menu-bar.vue")
     script(src="/javascripts/pedidos/consulta.vue")

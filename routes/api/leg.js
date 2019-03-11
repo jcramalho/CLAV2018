@@ -28,23 +28,22 @@ router.get('/', (req, res) => {
     if (queryData.estado && (queryData.estado == 'A')){
         return Leg.listarAtivos()
         .then(dados => res.jsonp(dados))
-        .catch(erro => res.status(500).send(`Erro na listagem da legislação ativa: ${erro}`));
+        .catch(erro => res.status(500).send(`Erro na listagem dos diplomas ativos: ${erro}`));
     }
     // api/legislacao?processos=com
     if (queryData.processos && (queryData.processos == 'com')){
         return Leg.listarComPNs()
         .then(dados => res.jsonp(dados))
-        .catch(erro => res.status(500).send(`Erro na listagem da legislação com PNs associados: ${erro}`));
+        .catch(erro => res.status(500).send(`Erro na listagem dos diplomas com PNs associados: ${erro}`));
     }
     // api/legislacao?processos=sem
     if (queryData.processos && (queryData.processos == 'sem')){
         return Leg.listarSemPNs()
         .then(dados => res.jsonp(dados))
-        .catch(erro => res.status(500).send(`Erro na listagem da legislação sem PNs associados: ${erro}`));
+        .catch(erro => res.status(500).send(`Erro na listagem dos diplomas sem PNs associados: ${erro}`));
     }
-    else{
+    else {
         return Leg.listar()
-        console.log("Todos")
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na listagem dos diplomas legislativos: ${erro}`));
     }

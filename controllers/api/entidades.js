@@ -1,6 +1,6 @@
 const client = require('../../config/database').onthology;
 const normalize = require('../../controllers/api/utils').normalize;
-const Pedidos = require('../../controllers/api/pedidos');
+const Pedidos = require('../../controllers/pedidos');
 const Entidades = module.exports;
 
 /**
@@ -45,6 +45,62 @@ Entidades.listar = (filtro) => {
             .concat(["True"])
             .join(' && ')})
     } ORDER BY ?sigla`;
+
+    return client.query(query)
+        .execute()
+        .then(response => normalize(response));
+};
+
+// Lista todas as entidades com PNs associados (como Dono ou como Participante)
+Entidades.listarComPNs = () => {
+    const query = `SELECT ?id ?sigla ?designacao ?internacional ?sioe ?estado 
+    WHERE { 
+            ?uri rdf:type clav:Entidade ;
+                clav:entEstado ?estado;
+                clav:entDesignacao ?designacao ;
+                clav:entSigla ?sigla ;
+                clav:entInternacional ?internacional .
+            OPTIONAL {
+                ?uri clav:entSIOE ?sioe.
+            } 
+            {
+        FILTER EXISTS { ?pn clav:temDono ?uri. }
+        FILTER EXISTS { ?pn clav:temParticipante ?uri. }
+            
+        } UNION {
+            {
+        FILTER NOT EXISTS { ?pn clav:temDono ?uri. }
+        FILTER EXISTS { ?pn clav:temParticipante ?uri. }
+            }
+        } UNION {
+            {
+        FILTER EXISTS { ?pn clav:temDono ?uri. }
+        FILTER NOT EXISTS { ?pn clav:temParticipante ?uri. }
+            }
+        } BIND(CONCAT('ent_', ?sigla) AS ?id).
+    } ORDER BY ?sigla`;
+    
+    return client.query(query)
+        .execute()
+        .then(response => normalize(response));
+};
+
+// Lista todas as entidades sem PNs associados (como Dono ou como Participante)
+Entidades.listarSemPNs = () => {
+    const query = `SELECT ?id ?sigla ?designacao ?internacional ?sioe ?estado {
+            ?uri rdf:type clav:Entidade ;
+                clav:entEstado ?estado;
+                clav:entDesignacao ?designacao ;
+                clav:entSigla ?sigla ;
+                clav:entInternacional ?internacional .
+            OPTIONAL {
+                ?uri clav:entSIOE ?sioe.
+            }
+        FILTER NOT EXISTS {?pn clav:temDono ?uri.}
+        FILTER NOT EXISTS {?pn clav:temParticipante ?uri.}
+            BIND(CONCAT('ent_', ?sigla) AS ?id).
+
+        } ORDER BY ?sigla`;
 
     return client.query(query)
         .execute()
@@ -131,18 +187,8 @@ Entidades.existe = (entidade) => {
  * @return {Promise<Pedido | Error>} promessa que quando cumprida possui o
  * pedido gerado para a criação da nova entidade
  */
-Entidades.criar = (entidade, utilizador) => {
-    const query = `INSERT DATA {
-        clav:ent_${entidade.sigla} rdf:type owl:NamedIndividual , clav:Entidade ;
-            clav:entDesignacao '${entidade.designacao}' ;
-            clav:entSigla '${entidade.sigla}' ;
-            clav:entInternacional '${entidade.internacional}' ;
-            clav:entSIOE '${entidade.sioe}';
-
-            ${entidade.tipologias.map(tipologia => `clav:pertenceTipologiaEnt clav:${tipologia} ;`).join('\n')}
-            clav:entEstado 'Harmonização' .
-    }`;
-    const id = `clav:ent_${entidade.sigla}`;
+Entidades.criar = async (entidade, utilizador) => {
+    /*const id = `clav:ent_${entidade.sigla}`;
     const pedido = {
         criadoPor: utilizador,
         objeto: {
@@ -184,11 +230,21 @@ Entidades.criar = (entidade, utilizador) => {
             distribuicao: [{
                 estado: 'Submetido',
             }]
-    };
-    return client.query(query)
-        .execute()
-        .then(() => Pedidos.criar(pedido));
+    };*/
+     Pedidos.criar('Criação', 'Entidade', entidade, utilizador);
 };
+
+//Criar controller para inserir na base de dados, depois do pedido aprovado!!
+/*const query = `INSERT DATA {
+        clav:ent_${entidade.sigla} rdf:type owl:NamedIndividual , clav:Entidade ;
+            clav:entDesignacao '${entidade.designacao}' ;
+            clav:entSigla '${entidade.sigla}' ;
+            clav:entInternacional '${entidade.internacional}' ;
+            clav:entSIOE '${entidade.sioe}';
+
+            ${entidade.tipologias.map(tipologia => `clav:pertenceTipologiaEnt clav:${tipologia} ;`).join('\n')}
+            clav:entEstado 'Harmonização' .
+    }`;*/
 
 /**
  * Gera um pedido de remoção da entidade.

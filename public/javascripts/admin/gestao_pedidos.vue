@@ -1,100 +1,61 @@
-var parsePedidos = function(content){
-    let ret;
-    ret=content.map(function(a){
-        let link="#";
-        if(a.tipo=="Novo PN" && a.objetoID){
-            link=`/classes/${a.objetoID}`;
-        }
-        else if(a.tipo=="Criação de TS" && a.objetoID){
-            link=`/tabelasSelecao/consultar/${a.objetoID}`;
-        }
-
-        return [
-            a.numero,
-            a.tipo,
-            a.descricao,
-            a.entidade.nome,
-            a.data,
-            a.prazo,
-            `<div class='button-darker'><a href='${link}'>Ver Pedido</a></div>`
-        ]
-    });
-    return ret;
-}
-
-var novos = new Vue({
-    el: '#novos',
+var gped = new Vue({
+    el: '#pedidos-gestao',
     data: {
-        cabecalho:["Nº", "Tipo", "Entidade", "Submissão", "Prazo resposta", ""],
-        linhas:[[]],
-        pedidosReady: false,
-        listaPedidos: [],
+        pedidos: [],
+        pedidosCarregados: false,
+        pedidosNovos: [],
+        pedidosNovosCarregados: false,
+        pedidosEmApreciacao: [],
+        pedidosEmApreciacaoCarregados: false,
+        pedidosEmValidacao: [],
+        pedidosEmValidacaoCarregados: false
     },
-    methods: {
-        parse: function () {
-            for( var i = 0; i<this.listaPedidos.length; i++){
-                if(this.listaPedidos[i].distribuicao[0].estado == "Submetido"){
-                    let pedido = [];
+    created: function (){
 
-                    let date = new Date(this.listaPedidos[i].distribuicao[0].data);
-                    let data = date.getDate() + "-" + (parseInt(date.getMonth()) + 1) + "-" + date.getFullYear();
+        // Vai bscar todos os pedidos
 
-                    pedido[0] = this.listaPedidos[i].codigo;
-                    pedido[1] = this.listaPedidos[i].objeto.acao + " " + this.listaPedidos[i].objeto.tipo;
-                    pedido[2] = this.listaPedidos[i].criadoPor;
-                    pedido[3] = data;
-                    pedido[4] = "20 dias"
-                    pedido[5] = "<button><a href='/pedidos/" + this.listaPedidos[i].codigo + "'>Ver Pedido</a></button>"
-                    this.linhas.push(pedido)
-                }
-            }
-        }
-    },
-    created: function(){
-        var content = [];
-
-        this.$http.get("/api/pedidos/")
-            .then( function(response) { 
-                this.listaPedidos = response.body;
+        this.$http.get("/api/pedidos")
+            .then(function (response) {
+                this.pedidos = response.body;
+                this.pedidosCarregados = true;
             })
-            .then( function() {
-                this.parse();
-                this.pedidosReady=true;
+            .catch(function (error) {
+                console.error(error);
+            });
+
+        // Vai buscar os pedidos novos: tipo="Submetido"
+
+        this.$http.get("/api/pedidos?tipo=Submetido")
+            .then(function (response) {
+                this.pedidosNovos = response.body;
+                this.pedidosNovosCarregados = true;
             })
-            .catch( function(error) { 
-                console.error(error); 
+            .catch(function (error) {
+                console.error(error);
+            });
+
+        // Vai buscar os pedidos novos: tipo="EmApreciacao"
+
+        this.$http.get("/api/pedidos?tipo=EmApreciacao")
+            .then(function (response) {
+                this.pedidosEmApreciacao = response.body;
+                this.pedidosEmApreciacaoCarregados = true;
+            })
+            .catch(function (error) {
+                console.error(error);
+            });
+
+        // Vai buscar os pedidos novos: tipo="EmValidacao"
+
+        this.$http.get("/api/pedidos?tipo=EmValidacao")
+            .then(function (response) {
+                this.pedidosEmValidacao = response.body;
+                this.pedidosEmValidacaoCarregados = true;
+            })
+            .catch(function (error) {
+                console.error(error);
             });
     }
-})
-
-var apreciacao = new Vue({
-    el: '#apreciacao',
-    data: {
-        cabecalho:["Nº", "Tipo", "Entidade", "Submissão", "Prazo resposta", ""],
-        linhas:[
-            ["1","Tipo","DGLAB","1/1/2000","1/1/3000","<button>Ver Pedido</button>"],
-        ]
-    },
-})
-
-var validacao = new Vue({
-    el: '#validacao',
-    data: {
-        cabecalho:["Nº", "Tipo", "Entidade", "Submissão", "Prazo resposta", ""],
-        linhas:[
-            ["1","Tipo","DGLAB","1/1/2000","1/1/3000","<button>Ver Pedido</button>"],
-        ]
-    },
-})
-
-var autorizados = new Vue({
-    el: '#autorizados',
-    data: {
-        cabecalho:["Nº", "Tipo", "Entidade", "Submissão", "Prazo resposta", ""],
-        linhas:[
-            ["1","Tipo","DGLAB","1/1/2000","1/1/3000","<button>Ver Pedido</button>"],
-        ]
-    },
 })
 
 var novouser = new Vue({

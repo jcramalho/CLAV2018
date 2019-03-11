@@ -8,6 +8,7 @@ var pedidos = new Vue({
     },
     methods: {
         rowClicked: function(pid){
+            alert(JSON.stringify(pid));
             window.location.href = '/pedidos/'+pid;
         },
         parse: function () {
@@ -29,6 +30,7 @@ var pedidos = new Vue({
     created: function (){
         this.$http.get("/api/pedidos/")
             .then(function (response){
+                alert(JSON.stringify(response.body));
                 this.listaPedidos = response.body;
             })
             .then(function (){

@@ -20,6 +20,15 @@ Pedidos.listar = (filtro) => {
     return Pedido.find(filtro);
 };
 
+// Recupera a lista de pedidos de determinado tipo
+
+Pedidos.getByTipo = function(tipo){
+    return Pedido
+        .find({estado: tipo})
+        .sort({codigo: -1})
+        .exec()
+}
+
 /**
  * Consulta a informação relativa a um pedido.
  * 
