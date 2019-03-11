@@ -73,9 +73,16 @@ router.get('/:id', (req, res) => {
         .catch(erro => res.status(500).send(`Erro na consulta da leg ${req.params.id}: ${erro}`));
 });
 
+// Alteração de Legislação
+router.put('/:id', Auth.isLoggedIn, (req, res) => {
+    return Leg.alterar(req.params.id, req.body, req.user.email)
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.status(500).send(`Erro na alteração da legislação '${req.params.id}': ${erro}`));
+})
+
 // Apaga uma legislação identificada por um identificador. Em caso de sucesso gera um novo pedido
 router.delete('/:id', (req, res) => {
-    return Leg.apagar(req.params.id, req.user.email)
+    return Leg.apagar(req.params.id, req.body, req.user.email)
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na remoção da legislação '${req.params.id}': ${erro}`));
 });

@@ -50,7 +50,7 @@ router.get('/:id', (req, res) => {
 
 // Apaga uma tipologia identificada por uma sigla. Em caso de sucesso gera um novo pedido
 router.delete('/:id', Auth.isLoggedIn, (req, res) => {
-    return Tipologias.apagar(req.params.id, req.user.email)
+    return Tipologias.apagar(req.params.id, req.body, req.user.email)
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na remoção da tipologia '${req.params.id}': ${erro}`));
 })
@@ -76,8 +76,13 @@ router.get('/:id/intervencao/participante', (req, res) => {
         .catch(erro => res.status(500).send(`Erro na query sobre as participações da entidade '${req.params.id}': ${erro}`));
 });
 
+router.put('/:id', Auth.isLoggedIn, (req, res) => {
+    return Tipologias.alterar(req.params.id, req.body, req.user.email)
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.status(500).send(`Erro na alteração da Tipologia '${req.params.id}': ${erro}`));
+})
 
-router.put('/:id', Auth.isLoggedInAPI, function (req, res) {
+/*router.put('/:id', Auth.isLoggedIn, function (req, res) {
     var dataObj = req.body;
 
     //Executing queries
@@ -99,6 +104,6 @@ router.put('/:id', Auth.isLoggedInAPI, function (req, res) {
         })
         .catch(error => console.error("Name error:\n" + error));
 
-})
+})*/
 
 module.exports = router;

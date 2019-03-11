@@ -256,22 +256,10 @@ Entidades.criar = async (entidade, utilizador) => {
  * @param {string} id código identificador da entidade (p.e, "ent_CEE")
  * @param {string} utilizador email do utilizador que apagou a entidade
  * @return {Promise<Pedido | Error>} promessa que quando cumprida possui o
- * pedido gerado para a remoção da entidade
+ * pedido gerado para a remoção da entidade 
  */
-Entidades.apagar = (id, utilizador) => {
-    const pedido = {
-        criadoPor: utilizador,
-        objeto: {
-            codigo: id,
-            tipo: 'Entidade',
-            acao: 'Remoção',
-        },
-        distribuicao: [{
-            estado: 'Submetido',
-        }]
-    };
-
-    return Pedidos.criar(pedido);
+Entidades.apagar = async (id, entidade, utilizador) => {
+    return Pedidos.criar('Remoção', 'Entidade', entidade, utilizador);
 };
 
 /**
@@ -290,32 +278,8 @@ Entidades.apagar = (id, utilizador) => {
  * @param {[string]} alteracoes.tipologias lista de identificadores das tipologias
  * @param {string} utilizador email do utilizador que alterou a entidade
  */
-Entidades.alterar = (id, alteracoes, utilizador) => {
-    const pedido = {
-        criadoPor: utilizador,
-        objeto: {
-            codigo: id,
-            tipo: 'Entidade',
-            acao: 'Alteração',
-            triplos: [
-                {
-                    nome: 'designacao',
-                    sujeito: id,
-                    predicado: 'clav:entDesignacao',
-                    objeto: alteracoes.designacao,
-                },
-            ],
-        },
-        distribuicao: [{
-            estado: 'Submetido',
-        }]
-    };
-
-    // Remover triplos vazios
-    pedido.objeto.triplos = pedido.objeto.triplos
-        .filter(triplo => triplo.objeto !== undefined);
-
-    return Pedidos.criar(pedido);
+Entidades.alterar = async (id, alteracoes, utilizador) => {
+    return Pedidos.criar('Alteração', 'Entidade', alteracoes, utilizador);
 }
 
 /**
