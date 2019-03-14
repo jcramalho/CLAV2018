@@ -4,12 +4,12 @@ block corpo
     .row
         #tabela-pedidos.row.placeholders
             tabela-generica(
-                v-if="tabelaReady"
+                v-if="pedidosCarregados"
 
                 :header='["Codigo","Criado Por","Data de submissão","Estado","Ação","Objecto"]'
                 :display-order="['codigo','criadoPor','data','estado','acao','objeto']"
                 :complete-rows="listaPedidos"
-                :ready="tabelaReady"
+                :ready="pedidosCarregados"
                 :cwidth="['15%','35%','15%','15%','10%', '10%']"
 
                 class-table='table table-hover'
