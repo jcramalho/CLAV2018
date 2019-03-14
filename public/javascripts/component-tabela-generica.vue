@@ -193,6 +193,7 @@ Vue.component('tabela-generica', {
             this.pages = ret;
 
             this.rowsShow = this.completeRows.slice(0, this.rowsPerPage);
+            this.nrResults = this.completeRows.length;
         },
     },
     beforeMount: function () {
