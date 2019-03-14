@@ -57,8 +57,9 @@ block corpo
                                             td {{ d.estado }}
                                             td {{ d.responsavel }}
                                             td {{ d.despacho }}
-            a(:href="'/pedidos").btn.btn-xs.btn-default.col-sm-1
-                    | Voltar                                
+                        tr
+                            td
+                                a.btn.btn-xs.btn-primary(href="/pedidos") Voltar 
 
 append scripts
     script(src="/javascripts/v-components/top-menu-bar.vue")

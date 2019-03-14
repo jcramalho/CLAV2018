@@ -16,7 +16,8 @@ router.get('/:codigo/objeto', Auth.isLoggedIn, function(req,res){
 })
 
 router.get('/:codigo', Auth.isLoggedIn, function(req,res){
-    res.render('pedidos/consulta', {pedID: req.params.codigo, title: "Consulta de pedido"});
+    console.log('Consulta do pedido: ' + req.params.codigo);
+    res.render('pedidos/consulta');
 })
 
 
