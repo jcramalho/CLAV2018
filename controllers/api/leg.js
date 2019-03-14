@@ -204,6 +204,21 @@ Leg.criar = async (legislacao, utilizador) => {
     Pedidos.criar('Criação', 'Legislação', legislacao, utilizador);
 };
 
+/**
+ * Gera um pedido de alteração de uma Legislação.
+ * Nenhuma alteração será feita à legislação, só quando o pedido for
+ * validado.
+ * 
+ * @see pedidos
+ * 
+ * @param {string} id código identificador da legislação (p.e, "leg_CEE")
+ * @param {Object} alteracoes
+ * @param {string} utilizador email do utilizador que alterou a entidade
+ */
+Leg.alterar = async (id, alteracoes, utilizador) => {
+    return Pedidos.criar('Alteração', 'Legislação', alteracoes, utilizador);
+}
+
 //Criar controller para inserir na base de dados, depois do pedido aprovado!!
 /*const query = `INSERT DATA {
         clav:${id} rdf:type owl:NamedIndividual , clav:Legislacao ;
@@ -266,18 +281,8 @@ Leg.temPNs = (legislacao) => {
  * @return {Promise<Pedido | Error>} promessa que quando cumprida possui o
  * pedido gerado para a remoção da legislação
  */
-Leg.apagar = (id, utilizador) => {
-    return Pedidos.criar({
-        criadoPor: utilizador,
-        objeto: {
-            codigo: id,
-            tipo: 'Legislação',
-            acao: 'Remoção',
-        },
-        distribuicao: [{
-            estado: "Submetido",
-        }]
-    });
+Leg.apagar = (id, legislacao, utilizador) => {
+    return Pedidos.criar('Remoção', 'Legislação', legislacao, utilizador);
 };
 
 

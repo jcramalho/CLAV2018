@@ -255,22 +255,6 @@ var org = new Vue({
                     console.error(error);
                 });
         },
-        deleteEntidade: function () {
-            this.$refs.spinner.show();
-            
-            this.$http.delete('/api/entidades/'+this.id)
-                .then( function(response) { 
-                    this.$refs.spinner.hide();
-                    
-                    window.location.href = '/pedidos/submissao';
-                })
-                .catch(error => {if (error.status === 409) {
-                    messageL.showMsg(error.body);
-                    this.$refs.spinner.hide();
-                } 
-                console.error(error);
-                });
-        },
         //funcao de update
         update: function() {
             var numeroSIOE = new RegExp(/[0-9]+(\-\w)?/);
@@ -292,6 +276,7 @@ var org = new Vue({
                 internacional: null,
                 sioe: null,
                 estado: null,
+                codigo: "ent_" + this.myEntidade.sigla,
                 dominio: {
                     add: null,
                     del: null,
@@ -332,6 +317,7 @@ var org = new Vue({
             }
             if (this.editSigla) {
                 dataObj.sigla = this.newSigla;
+                dataObj.codigo = "ent_" + dataObj.sigla;
             }
             if(this.editInternacional){
                 dataObj.internacional = this.newInternacional;
@@ -380,13 +366,15 @@ var org = new Vue({
                     dataObj.parts[pType] = JSON.parse(JSON.stringify(temp));
                 }
             }
+
+            
             console.log(dataObj);
             this.$http.put('/api/entidades/'+this.id, dataObj, {
                     headers: {
                         'content-type': 'application/json'
                     }
             })
-                .then(function (response){
+                .then(function (){
                     this.$refs.spinner.hide();
 
                     window.location.href = '/pedidos/submissao';
@@ -398,7 +386,23 @@ var org = new Vue({
                 } 
                 console.error(error);
                 });
-        }
+        },
+        deleteEntidade: function () {
+            this.$refs.spinner.show();
+
+            this.$http.delete('/api/entidades/'+this.id)
+                .then( function(response) { 
+                    this.$refs.spinner.hide();
+                    
+                    window.location.href = '/pedidos/submissao';
+                })
+                .catch(error => {if (error.status === 409) {
+                    messageL.showMsg(error.body);
+                    this.$refs.spinner.hide();
+                } 
+                console.error(error);
+                });
+        },
     },
     created: function() {
         this.id = window.location.pathname.split('/')[3];
