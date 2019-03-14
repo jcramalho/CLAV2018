@@ -23,7 +23,7 @@ const PedidoSchema = new mongoose.Schema({
     objeto: {
         codigo: {
             type: String,
-            required: true,
+            required: false,
         },
         dados: {
             type: Object
