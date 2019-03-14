@@ -68,7 +68,7 @@ router.put('/:id', Auth.isLoggedIn, (req, res) => {
 
 // Apaga uma entidade identificada por uma sigla. Em caso de sucesso gera um novo pedido
 router.delete('/:id', Auth.isLoggedIn, (req, res) => {
-    return Entidades.apagar(req.params.id, req.user.email)
+    return Entidades.apagar(req.params.id, req.body, req.user.email)
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na remoção da entidade '${req.params.id}': ${erro}`));
 });

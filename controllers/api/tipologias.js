@@ -81,6 +81,20 @@ Tipologias.criar = async (tipologia, utilizador) => {
     Pedidos.criar('Criação', 'Tipologia', tipologia, utilizador)
 };
 
+/**
+ * Gera um pedido de alteração de uma tipologia.
+ * Nenhuma alteração será feita à tipologia, só quando o pedido for
+ * validado.
+ * 
+ * @see pedidos
+ * 
+ * @param {string} id código identificador da tipologia (p.e, "tip_CEE")
+ * @param {Object} alteracoes
+ */
+Tipologias.alterar = async (id, alteracoes, utilizador) => {
+    return Pedidos.criar('Alteração', 'Tipologia', alteracoes, utilizador);
+}
+
 //Criar controller para inserir na base de dados, depois do pedido aprovado!!
 /*const query = `INSERT DATA {
         clav:tip_${tipologia.sigla} rdf:type owl:NamedIndividual , clav:TipologiaEntidade ;
@@ -121,18 +135,8 @@ Tipologias.existe = (tipologia) => {
  * @return {Promise<Pedido | Error>} promessa que quando cumprida possui o
  * pedido gerado para a remoção da tipologia
  */
-Tipologias.apagar = (id, utilizador) => {
-    return Pedidos.criar({
-        criadoPor: utilizador,
-        objeto: {
-            codigo: id,
-            tipo: 'Tipologia',
-            acao: 'Remoção',
-        },
-        distribuicao: [{
-            estado: "Submetido",
-        }]
-    });
+Tipologias.apagar = async (id, tipologia, utilizador) => {
+    return Pedidos.criar('Remoção', 'Tipologia', tipologia, utilizador);
 };
 
 /**
