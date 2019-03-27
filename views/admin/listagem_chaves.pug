@@ -7,11 +7,11 @@ block corpo
             tabela-generica(
                 v-if="ready"
 
-                :header='["Chave","Ativa?","Utilizações","Última utilização","Data expiração", "Data criação"]'
-                :display-order="['key','active','ncalls','lastused','expDate','created']"
+                :header='["Chave","Contacto","Ativa?","Utilizações","Última utilização","Data expiração", "Data criação"]'
+                :display-order="['key','contactInfo','active','ncalls','lastused','expDate','created']"
                 :complete-rows="listaChaves"
                 :ready="ready"
-                :cwidth="['30%','7.5%','10%','17.5%','17.5%','17.5%']"
+                :cwidth="['22.5%','7.5%','7.5%','10%','17.5%','17.5%','17.5%']"
                 
                 class-table='table table-hover'
 

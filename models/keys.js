@@ -1,16 +1,19 @@
-var mongo = require('mongodb');
 var mongoose = require('mongoose');
 var dataBases = require('../config/database');
+var secretKey = require('./../config/app');
+var jwt = require('jsonwebtoken');
 
 mongoose.Promise = require('bluebird');
 mongoose.connect(dataBases.userDB, {
 	useMongoClient: true,
 });
 
-var db = mongoose.connection;
 
 // User Schema
 var KeySchema = mongoose.Schema({
+    _id: {
+        
+    },
 	key: {
 		type: String
 	},
@@ -27,20 +30,43 @@ var KeySchema = mongoose.Schema({
         type: Boolean,
         default: true,
         required: true
+    },
+    contactInfo: {
+        type: String
     }
 });
 
 var Key = module.exports = mongoose.model('Key', KeySchema);
 
-// module.exports.getKeys = function (callback) {
-// 	Key.find({}, callback);
-// }
+module.exports.generateServerKey = function () {
+	var token = jwt.sign({}, secretKey.key);
+    var newKey = new Key({
+        _id: 'serverKey',
+        key: token,
+		nCalls: 0,
+		lastUsed: null,
+		created: Date.now()
+    });
 
-// module.exports.getKeyById = function (id, callback) {
-// 	Key.findById(id, callback);
-// }
-
-// module.exports.getKeyInfo = function (key, callback) {
-// 	var query = { key: key };
-// 	Key.findOne(query, callback);
-// }
+    Key.findById('serverKey',function(err, serverKey){
+        if(err || serverKey==null){
+            Key.collection.insert(newKey, function(err) {
+                if (err) {
+                    throw err;
+                } else {
+                    console.log("Criada chave servidor!")
+                }
+            });
+        }else{
+            serverKey.key = token;
+            serverKey.created = Date.now();
+            serverKey.save(function(err) {
+                if (err) {
+                    throw err;
+                } else {
+                    console.log("Atualizada chave servidor!")
+                }
+            });
+        }
+    })
+}

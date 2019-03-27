@@ -31,13 +31,14 @@ router.get('/listagem_chaves/:id', Auth.isLoggedIn, function(req, res) {
 router.post('/criarChave', Auth.isLoggedIn, function (req, res) {
     var token = jwt.sign({}, secretKey.key, {
         expiresIn: '30d'
-    });
+	});
 
     var newKey = new Key({
         key: token,
 		nCalls: 0,
 		lastUsed: null,
-		created: Date.now()
+		created: Date.now(),
+		contactInfo: req.body.contactInfo
     });
 
 	Key.collection.insert(newKey, function(err, docs) {
@@ -45,7 +46,7 @@ router.post('/criarChave', Auth.isLoggedIn, function (req, res) {
 			req.flash('error_msg', 'Ocorreu um erro ao criar a chave API.');
 		    res.redirect('admin/chave_api', {title: "Registo nova chave API"});
 		} else {
-			res.render('admin/chave_api', {title: "Registo nova chave API", flag:true, key:token});
+			res.render('admin/chave_api', {title: "Registo nova chave API", flag:true, contactInfo:req.body.contactInfo, key:token});
 		}
 	});
 });

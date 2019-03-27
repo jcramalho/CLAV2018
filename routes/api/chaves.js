@@ -20,6 +20,7 @@ router.get('/listagem', Auth.isLoggedIn, Auth.checkLevel6, (req, res) => {
                 item["key"] = keys[i].key;
                 item["ncalls"] = keys[i].nCalls;
                 item["created"] = keys[i].created.toUTCString();
+                item["contactInfo"] = keys[i].contactInfo;
                 if(keys[i].lastUsed!=null)
                     item["lastused"] = keys[i].lastUsed.toUTCString();
                 else
