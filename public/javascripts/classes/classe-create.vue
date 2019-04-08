@@ -901,7 +901,7 @@ var newClass = new Vue({
                     else{
                         var sintetizado = listaProc.findIndex(p => p.relacao == 'eSintetizadoPor');
                         if(sintetizado != -1){
-                            es = "E";
+                            res = "E";
                         }
                         else{
                             res = "NE";

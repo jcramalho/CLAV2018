@@ -7,7 +7,7 @@ router.get('/', function(req, res, next) {
 	res.render('classes/classesTree', {title: "Lista Consolidada"});
 });
 
-router.get('/adicionar', Auth.isLoggedIn, function(req, res) {
+router.get('/adicionar', function(req, res) {
     res.render('classes/classe-create-2', {title: "Nova classe", sidebar: true});
 });
 
