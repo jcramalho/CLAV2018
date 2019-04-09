@@ -325,7 +325,7 @@ var tip = new Vue({
 
                 var temp = {
                     add: null,
-                    delete: null,
+                    del: null,
                 };
 
                 temp.add = this.subtractArray(this.newDominio, this.dominio);

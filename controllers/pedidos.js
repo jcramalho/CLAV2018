@@ -5,6 +5,15 @@ var Pedidos = module.exports
 
 var Logging = require('../controllers/logging');
 
+// Recupera a lista de pedidos de determinado tipo
+
+Pedidos.getByTipo = function(tipo){
+    return Pedido
+        .find({estado: tipo})
+        .sort({codigo: -1})
+        .exec()
+}
+
 Pedidos.add = function(dataObj, req, res){
     var today = new Date();
     var dd = today.getDate();
@@ -101,6 +110,7 @@ Pedidos.criar = function(tipoPedido, tipoObjeto, novoObj, utilizador){
  
             var newPedido = new Pedido({
                 codigo: num,
+                estado: "Submetido",
                 criadoPor: utilizador,
                 objeto: {
                     codigo: novoObj.codigo,
@@ -109,7 +119,9 @@ Pedidos.criar = function(tipoPedido, tipoObjeto, novoObj, utilizador){
                     acao: tipoPedido
                 },
                 distribuicao: [{
-                    estado: "Submetido"
+                    estado: "Submetido",
+                    responsavel: utilizador,
+                    despacho: "Submissão inicial"
                 }]
             });
 
@@ -119,8 +131,7 @@ Pedidos.criar = function(tipoPedido, tipoObjeto, novoObj, utilizador){
                     return ('Ocorreu um erro a submeter o pedido! Tente novamente mais tarde');
                 }
                 else{
-                    Logging.logger.info('Novo pedido ' + newPedido.objeto.acao + ' de ' + newPedido.objeto.tipo + ': '+newPedido.codigo
-                        +' submetido por '+ newPedido.criadoPor);
+                    Logging.logger.info('Novo pedido: ' + JSON.stringify(newPedido));
                     return(newPedido.codigo);
                 }
             });

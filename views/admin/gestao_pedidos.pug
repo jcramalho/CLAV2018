@@ -1,42 +1,20 @@
-extends ../layout
+extends ../layout4
 block corpo
-    .titlebox
-        | Gestão de Pedidos
+    #pedidos-gestao.panel.panel-default.panel-custom
+        top-menu-bar
+        .panel-heading
+            h1.page-header.p-2.mt-5 Gestão de Pedidos  
+        .panel-body
+            .mt-3.mb-3
+                tabela-pedidos-por-tipo(v-if="pedidosCarregados" titulo="Todos" :pedidos="pedidos")
 
-    #novos
-        hidden-table(
-            titulo="Novos Pedidos"
-            :cabecalho="cabecalho"
-            :linhas="linhas"
-        )
+                tabela-pedidos-por-tipo(v-if="pedidosNovosCarregados" titulo="Pedidos Novos" :pedidos="pedidosNovos")
 
-    #apreciacao
-        hidden-table(
-            titulo="Pedidos em Apreciação Técnica"
-            :cabecalho="cabecalho"
-            :linhas="linhas"
-        )
+                tabela-pedidos-por-tipo(v-if="pedidosEmApreciacaoCarregados" titulo="Pedidos em Apreciação Técnica" :pedidos="pedidosEmApreciacao")
 
-    #validacao
-        hidden-table(
-            titulo="Pedidos com validação técnica"
-            :cabecalho="cabecalho"
-            :linhas="linhas"
-        )
+                tabela-pedidos-por-tipo(v-if="pedidosEmValidacaoCarregados" titulo="Pedidos em Validação Técnica" :pedidos="pedidosEmValidacao")
 
-    #autorizados
-        hidden-table(
-            titulo="Pedidos autorizados"
-            :cabecalho="cabecalho"
-            :linhas="linhas"
-        )
-
-    //-table.table.tabela-navegacao
-        tr
-            td(style="padding-left:50px ")
-                a(href="/pedidos")
-                    .linkbox(style="margin-bottom:0px")
-                        |Ver lista de todos os pedidos
+                tabela-pedidos-por-tipo(titulo="Pedidos Autorizados" :pedidos="[]")
 
     if user.level>=6
         .titlebox
@@ -70,6 +48,7 @@ block corpo
                 :linhas="linhas"
             )
 
-
-append scripts
+append scripts    
+    script(src="/javascripts/v-components/top-menu-bar.vue")
     script(src="/javascripts/admin/gestao_pedidos.vue")
+    script(src="/javascripts/v-components/pedidos/pedidos-tabela-tipo.vue")

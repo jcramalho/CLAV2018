@@ -28,7 +28,6 @@ var org = new Vue({
 
         editTipologia: false,
         tipoListaCompleta: [],
-        newTipologia:"",
 
         editDono: false,
         novoDono: [],
@@ -74,6 +73,10 @@ var org = new Vue({
         editParts:false,
 
         delConfirm: false,
+
+        tipologiasSelecionadas: [],
+        tipsTableHeader: ["Sigla", "Designação"],
+        tipsTableWidth: ["15%", "85%"],
     },
     computed: {
         partOptions: function(){
@@ -101,7 +104,7 @@ var org = new Vue({
                     this.listaTipologias = response.body;
                 })
                 .then(function () {
-                    this.newListaTipologias = JSON.parse(JSON.stringify(this.listaTipologias));
+                    //this.newListaTipologias = JSON.parse(JSON.stringify(this.listaTipologias));
                     this.tipolsReady = true;
                 })
                 .catch(function (error) {
@@ -138,32 +141,34 @@ var org = new Vue({
                 .then(function () {
                     this.tipoListaCompleta = listaCompleta.map(function (item) {
                         return {
-                            label: item.sigla +" - "+ item.designacao,
-                            value: item,
+                            data: [item.sigla, item.designacao],
+                            selected: false,
+                            id: item.id
                         }
                     }).sort(function (a, b) {
-                        return a.label.localeCompare(b.label);
+                        return a.data[1].localeCompare(b.data[1]);
                     });
+                    for(var i = 0; i<this.listaTipologias.length; i++){
+                        for(var j = 0; j<this.tipoListaCompleta.length; j++){
+                            if(this.listaTipologias[i].sigla === this.tipoListaCompleta[j].data[0]){
+                                this.tipoListaCompleta[j].selected = true;
+                                this.tipologiasSelecionadas[i] = this.tipoListaCompleta[j];
+                            }
+                        }
+                    }
                     this.tipolsReady = true;
                 })
                 .catch(function (error) {
                     console.error(error);
                 });
         },
-        addTipo: function(){
-            var existeTip = 0;
-            for(var i=0; i<this.newListaTipologias.length; i++){
-                if(this.newTipologia.value.id==this.newListaTipologias[i].id){
-                    existeTip = 1;
-                    break
-                }
-            }
-            if(existeTip==0){
-                this.newListaTipologias.unshift(this.newTipologia.value)
-            }
-            else{
-                messageL.showMsg("Já selecionou essa tipologia de Entidade!");
-            }
+        selecionarTipologia: function (row) {
+            this.tipologiasSelecionadas.push(row);
+            row.selected = true;
+        },
+        desselecionarTipologia: function (row, index) {
+            row.selected = false;
+            this.tipologiasSelecionadas.splice(index, 1);
         },
         processosDono: function () {
             this.$http.get("/api/entidades/" + this.id + "/intervencao/dono")
@@ -193,7 +198,6 @@ var org = new Vue({
             }
         },
         loadParticipantes: function () {
-            var participa = false;
             var tipoPar = "";
 
             this.$http.get("/api/entidades/" + this.id + "/intervencao/participante")
@@ -208,10 +212,9 @@ var org = new Vue({
                                        codigo: this.participantePNs[i].codigo ,
                                        label: this.participantePNs[i].codigo + ' - ' + this.participantePNs[i].titulo
                                        })
-                        participa = true
                     }
                     this.newParticipations = JSON.parse(JSON.stringify(this.participacoes));
-                    if(participa) this.partsReady = true;
+                    this.partsReady = true;
                 })
                 .catch(function (error) {
                     console.error(error);
@@ -252,22 +255,6 @@ var org = new Vue({
                     console.error(error);
                 });
         },
-        deleteEntidade: function () {
-            this.$refs.spinner.show();
-            
-            this.$http.delete('/api/entidades/'+this.id)
-                .then( function(response) { 
-                    this.$refs.spinner.hide();
-                    
-                    window.location.href = '/pedidos/submissao';
-                })
-                .catch(error => {if (error.status === 409) {
-                    messageL.showMsg(error.body);
-                    this.$refs.spinner.hide();
-                } 
-                console.error(error);
-                });
-        },
         //funcao de update
         update: function() {
             var numeroSIOE = new RegExp(/[0-9]+(\-\w)?/);
@@ -276,6 +263,11 @@ var org = new Vue({
                 messageL.showMsg("Campo SIOE está no formato errado. Apenas são aceites caracteres numéricos.");
                 return false;
             }
+
+            for(var i = 0; i< this.tipologiasSelecionadas.length; i++){
+                this.newListaTipologias[i] = this.tipologiasSelecionadas[i].id
+            }
+
             this.$refs.spinner.show(); 
 
             var dataObj = {
@@ -284,6 +276,7 @@ var org = new Vue({
                 internacional: null,
                 sioe: null,
                 estado: null,
+                codigo: "ent_" + this.myEntidade.sigla,
                 dominio: {
                     add: null,
                     del: null,
@@ -324,6 +317,7 @@ var org = new Vue({
             }
             if (this.editSigla) {
                 dataObj.sigla = this.newSigla;
+                dataObj.codigo = "ent_" + dataObj.sigla;
             }
             if(this.editInternacional){
                 dataObj.internacional = this.newInternacional;
@@ -372,13 +366,15 @@ var org = new Vue({
                     dataObj.parts[pType] = JSON.parse(JSON.stringify(temp));
                 }
             }
+
+            
             console.log(dataObj);
             this.$http.put('/api/entidades/'+this.id, dataObj, {
                     headers: {
                         'content-type': 'application/json'
                     }
             })
-                .then(function (response){
+                .then(function (){
                     this.$refs.spinner.hide();
 
                     window.location.href = '/pedidos/submissao';
@@ -390,7 +386,23 @@ var org = new Vue({
                 } 
                 console.error(error);
                 });
-        }
+        },
+        deleteEntidade: function () {
+            this.$refs.spinner.show();
+
+            this.$http.delete('/api/entidades/'+this.id)
+                .then( function(response) { 
+                    this.$refs.spinner.hide();
+                    
+                    window.location.href = '/pedidos/submissao';
+                })
+                .catch(error => {if (error.status === 409) {
+                    messageL.showMsg(error.body);
+                    this.$refs.spinner.hide();
+                } 
+                console.error(error);
+                });
+        },
     },
     created: function() {
         this.id = window.location.pathname.split('/')[3];

@@ -5,6 +5,13 @@ var express = require('express'),
 // Logging na consola do admin
 var logger = require('morgan')
 
+// Para permitir pedidos à API vindos de outros serviços internos
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
+
 //body parser for post requests
 var bodyParser = require('body-parser')
 app.use(bodyParser.json());         // to support JSON-encoded bodies

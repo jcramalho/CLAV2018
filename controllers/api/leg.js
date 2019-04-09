@@ -1,7 +1,7 @@
 const client = require('../../config/database').onthology;
 const normalize = require('../../controllers/api/utils').normalize;
 const projection = require('../../controllers/api/utils').projection;
-const Pedidos = require('../../controllers/api/pedidos');
+const Pedidos = require('../../controllers/pedidos');
 const Leg = module.exports;
 
 /**
@@ -24,7 +24,7 @@ const Leg = module.exports;
  * @return {Promise<[Legislacao] | Error>} promessa que quando cumprida contém a
  * lista das legislacoes existentes que respeitam o filtro dado
  */
-Leg.listar = (filtro) => {
+Leg.listar = () => {
     const query = `SELECT ?id ?data ?numero ?tipo ?sumario ?estado ?entidades WHERE {
         ?uri rdf:type clav:Legislacao;
              clav:diplomaData ?data;
@@ -54,6 +54,7 @@ Leg.listar = (filtro) => {
         });
 };
 
+//Lista todas as legislações com o estado "Ativo"
 Leg.listarAtivos = () => {
     const query = `SELECT ?id ?data ?numero ?tipo ?sumario ?entidades WHERE {
         ?uri rdf:type clav:Legislacao;
@@ -83,6 +84,73 @@ Leg.listarAtivos = () => {
             return legs;
         });
 };
+
+// Lista todas as legislações com PNs associados
+Leg.listarComPNs = () => {
+    const query = `SELECT ?id ?data ?numero ?tipo ?sumario ?estado ?entidades WHERE {
+        ?uri rdf:type clav:Legislacao;
+             clav:diplomaData ?data;
+             clav:diplomaNumero ?numero;
+             clav:diplomaTipo ?tipo;
+             clav:diplomaSumario ?sumario;
+             clav:diplomaEstado 'Ativo';
+             
+        OPTIONAL {
+            ?uri clav:temEntidadeResponsavel ?ent.
+            ?ent clav:entSigla ?entidades;
+        }
+    	FILTER EXISTS {?uri clav:estaAssoc ?pn.}
+        BIND(STRAFTER(STR(?uri), 'clav#') AS ?id).
+    } ORDER BY DESC (?data)`;
+    const campos = ["id", "data", "numero", "tipo", "sumario"];
+    const agrupar = ["entidades"];
+
+    return client.query(query)
+        .execute()
+        .then(response => {
+            let legs = projection(normalize(response), campos, agrupar);
+            
+            for (leg of legs) {
+                leg.entidades = leg.entidades.map(ent => ({ id: `ent_${ent}`, sigla: ent }));
+            }
+        
+            return legs;
+        });
+};
+
+// Lista todas as legislações sem PNs associados
+Leg.listarSemPNs = () => {
+    const query = `SELECT ?id ?data ?numero ?tipo ?sumario ?estado ?entidades WHERE {
+        ?uri rdf:type clav:Legislacao;
+             clav:diplomaData ?data;
+             clav:diplomaNumero ?numero;
+             clav:diplomaTipo ?tipo;
+             clav:diplomaSumario ?sumario;
+             clav:diplomaEstado 'Ativo';
+             
+        OPTIONAL {
+            ?uri clav:temEntidadeResponsavel ?ent.
+            ?ent clav:entSigla ?entidades;
+        }
+    	FILTER NOT EXISTS {?uri clav:estaAssoc ?pn.}
+        BIND(STRAFTER(STR(?uri), 'clav#') AS ?id).
+    } ORDER BY DESC (?data)`;
+    const campos = ["id", "data", "numero", "tipo", "sumario"];
+    const agrupar = ["entidades"];
+
+    return client.query(query)
+        .execute()
+        .then(response => {
+            let legs = projection(normalize(response), campos, agrupar);
+            
+            for (leg of legs) {
+                leg.entidades = leg.entidades.map(ent => ({ id: `ent_${ent}`, sigla: ent }));
+            }
+        
+            return legs;
+        });
+};
+
 
 /**
  * Consulta a meta informação relativa a uma legislação
@@ -130,7 +198,29 @@ Leg.consultar = id => {
 Leg.criar = async (legislacao, utilizador) => {
     const nanoid = require('nanoid')
     const id = "leg_" + nanoid();
-    const query = `INSERT DATA {
+
+    legislacao.codigo= id;
+
+    Pedidos.criar('Criação', 'Legislação', legislacao, utilizador);
+};
+
+/**
+ * Gera um pedido de alteração de uma Legislação.
+ * Nenhuma alteração será feita à legislação, só quando o pedido for
+ * validado.
+ * 
+ * @see pedidos
+ * 
+ * @param {string} id código identificador da legislação (p.e, "leg_CEE")
+ * @param {Object} alteracoes
+ * @param {string} utilizador email do utilizador que alterou a entidade
+ */
+Leg.alterar = async (id, alteracoes, utilizador) => {
+    return Pedidos.criar('Alteração', 'Legislação', alteracoes, utilizador);
+}
+
+//Criar controller para inserir na base de dados, depois do pedido aprovado!!
+/*const query = `INSERT DATA {
         clav:${id} rdf:type owl:NamedIndividual , clav:Legislacao ;
             clav:diplomaData '${legislacao.data}' ;
             clav:diplomaNumero '${legislacao.numero}' ;
@@ -142,23 +232,9 @@ Leg.criar = async (legislacao, utilizador) => {
         ${legislacao.entidades.map(entidade => `clav:${id} clav:temEntidadeResponsavel clav:${entidade}.`).join('\n')}
         
     }`;
-    console.log(query)
-    const pedido = {
-        criadoPor: utilizador,
-        objeto: {
-            codigo: `${id}`,
-            tipo: `Legislação`,
-            acao: `Criação`,
-        },
-        distribuicao: [{
-            estado: "Submetido",
-        }]
-    };
-
     return client.query(query)
         .execute()
-        .then(() => Pedidos.criar(pedido));
-};
+        .then(() => Pedidos.criar(pedido));*/
 
 /**
  * Verifica se um determinado numero de legislação existe no sistema.
@@ -205,18 +281,8 @@ Leg.temPNs = (legislacao) => {
  * @return {Promise<Pedido | Error>} promessa que quando cumprida possui o
  * pedido gerado para a remoção da legislação
  */
-Leg.apagar = (id, utilizador) => {
-    return Pedidos.criar({
-        criadoPor: utilizador,
-        objeto: {
-            codigo: id,
-            tipo: 'Legislação',
-            acao: 'Remoção',
-        },
-        distribuicao: [{
-            estado: "Submetido",
-        }]
-    });
+Leg.apagar = (id, legislacao, utilizador) => {
+    return Pedidos.criar('Remoção', 'Legislação', legislacao, utilizador);
 };
 
 

@@ -24,12 +24,25 @@ const estaDisponivel = (req, res, next) => {
 // Lista todos os documentos legislativos: id, data, numero, tipo, sumario, entidades
 router.get('/', (req, res) => {
     var queryData = url.parse(req.url, true).query;
+    // api/legislacao?estado=A
     if (queryData.estado && (queryData.estado == 'A')){
         return Leg.listarAtivos()
         .then(dados => res.jsonp(dados))
-        .catch(erro => res.status(500).send(`Erro na listagem da legislação ativa: ${erro}`));
+        .catch(erro => res.status(500).send(`Erro na listagem dos diplomas ativos: ${erro}`));
     }
-    else{
+    // api/legislacao?processos=com
+    if (queryData.processos && (queryData.processos == 'com')){
+        return Leg.listarComPNs()
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.status(500).send(`Erro na listagem dos diplomas com PNs associados: ${erro}`));
+    }
+    // api/legislacao?processos=sem
+    if (queryData.processos && (queryData.processos == 'sem')){
+        return Leg.listarSemPNs()
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.status(500).send(`Erro na listagem dos diplomas sem PNs associados: ${erro}`));
+    }
+    else {
         return Leg.listar()
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na listagem dos diplomas legislativos: ${erro}`));
@@ -60,9 +73,16 @@ router.get('/:id', (req, res) => {
         .catch(erro => res.status(500).send(`Erro na consulta da leg ${req.params.id}: ${erro}`));
 });
 
+// Alteração de Legislação
+router.put('/:id', Auth.isLoggedIn, (req, res) => {
+    return Leg.alterar(req.params.id, req.body, req.user.email)
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.status(500).send(`Erro na alteração da legislação '${req.params.id}': ${erro}`));
+})
+
 // Apaga uma legislação identificada por um identificador. Em caso de sucesso gera um novo pedido
 router.delete('/:id', (req, res) => {
-    return Leg.apagar(req.params.id, req.user.email)
+    return Leg.apagar(req.params.id, req.body, req.user.email)
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na remoção da legislação '${req.params.id}': ${erro}`));
 });

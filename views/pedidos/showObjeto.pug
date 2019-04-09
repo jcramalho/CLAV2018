@@ -1,0 +1,17 @@
+extends ../layout
+block corpo
+    #objeto-pedido.panel.panel-default.panel-custom
+        .panel-heading
+            h1.page-header
+                div Objeto do pedido 
+
+        .panel-body
+            .form-group
+                pre(id="json") 
+            
+            a(:href="'/pedidos/'+id").btn.btn-xs.btn-default.col-sm-1
+                    | Voltar
+
+                    
+append scripts
+    script(src="/javascripts/pedidos/showObjeto.vue")

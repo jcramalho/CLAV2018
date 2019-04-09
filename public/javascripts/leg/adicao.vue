@@ -23,7 +23,8 @@ var newLeg = new Vue({
 
         newProcesso: "",
         listaClasses: [],
-        //newProcessos: [],
+        classesReady: false,
+        newProcessos: [],
 
     },
     components: {
@@ -43,11 +44,91 @@ var newLeg = new Vue({
             }
             return true;
         },
+        loadEntidades: function () {
+            this.$http.get("/api/entidades")
+                .then(function (response) {
+                    this.orgs = response.body
+                        .map(function (item) {
+                            return {
+                                data: [item.sigla, item.designacao],
+                                selected: false,
+                                id: item.id
+                            }
+                        }).sort(function (a, b) {
+                            return a.data[1].localeCompare(b.data[1]);
+                        });
+
+                    this.entidadesReady = true;
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });       
+        },
+        selecionarEntidade: function (row) {
+            this.entidades.push(row);
+            row.selected = true;
+        },
+        desselecionarEntidade: function (row, index) {
+            row.selected = false;
+            this.entidades.splice(index, 1);
+        },
+        loadTipoDiploma: function () {
+
+            this.$http.get("/api/vocabularios/vc_tipoDiplomaLegislativo")
+                .then(function (response) {
+                    this.tipoDiploma = response.body
+                        .map(function (item) {
+                            return {
+                                termo: item.termo
+                            }
+                        }).sort(function (a, b) {
+                            return a.termo.localeCompare(b.termo);
+                        });
+                })
+                .catch(function (error) {
+                    console.error(error);
+                }); 
+        },
+        loadClasses: function () {
+            var classesToParse = [];
+
+            this.$http.get("/api/classes?nivel=3")
+                .then(function (response) {
+                    classesToParse = response.body;
+                })
+                .then(function () {
+                    this.listaClasses = classesToParse
+                        .map(function(item){
+                            return {
+                                data: [item.codigo +" - "+ item.titulo],
+                                selected: false,
+                                id: item.codigo
+                            }
+                        }).sort(function (a, b) {
+                            return a.data[0].localeCompare(b.data[0]);
+                        });
+                    this.classesReady = true;
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        },
+        selecionarProcesso: function (row) {
+            this.newProcessos.push(row);
+            row.selected = true;
+        },
+        desselecionarProcesso: function (row, index) {
+            row.selected = false;
+            this.newProcessos.splice(index, 1);
+        },
         add: function(){
             this.message="";
 
             for(var i = 0; i< this.entidades.length; i++){
                 this.diploma.entidades[i] = this.entidades[i].id
+            }
+            for(var i = 0; i< this.newProcessos.length; i++){
+                this.processos[i] = this.newProcessos[i].id
             }
 
             var formats= {
@@ -127,7 +208,7 @@ var newLeg = new Vue({
                     'content-type' : 'application/json'
                 }
             })
-                .then( function(response) { 
+                .then( function() { 
                     this.$refs.spinner.hide();
 
                     window.location.href = '/pedidos/submissao';
@@ -139,90 +220,6 @@ var newLeg = new Vue({
                 }  
                     console.error(error); 
                 });
-        },
-        loadEntidades: function () {
-            this.$http.get("/api/entidades")
-                .then(function (response) {
-                    this.orgs = response.body
-                        .map(function (item) {
-                            return {
-                                data: [item.sigla, item.designacao],
-                                selected: false,
-                                id: item.id
-                            }
-                        }).sort(function (a, b) {
-                            return a.data[1].localeCompare(b.data[1]);
-                        });
-
-                    this.entidadesReady = true;
-                })
-                .catch(function (error) {
-                    console.error(error);
-                });       
-        },
-        selecionarEntidade: function (row) {
-            this.entidades.push(row);
-            row.selected = true;
-        },
-        desselecionarEntidade: function (row, index) {
-            row.selected = false;
-            this.entidades.splice(index, 1);
-        },
-        loadTipoDiploma: function () {
-
-            this.$http.get("/api/vocabularios/vc_tipoDiplomaLegislativo")
-                .then(function (response) {
-                    this.tipoDiploma = response.body
-                        .map(function (item) {
-                            return {
-                                termo: item.termo
-                            }
-                        }).sort(function (a, b) {
-                            return a.termo.localeCompare(b.termo);
-                        });
-                })
-                .catch(function (error) {
-                    console.error(error);
-                }); 
-        },
-        loadClasses: function () {
-            var classesToParse = [];
-
-            this.$http.get("/api/classes?nivel=3")
-                .then(function (response) {
-                    classesToParse = response.body;
-                })
-                .then(function () {
-                    this.listaClasses = classesToParse
-                        .map(function(item){
-                            return {
-                                label: item.codigo +" - "+ item.titulo,
-                                value: item,
-                            }
-                        }).sort(function (a, b) {
-                            return a.label.localeCompare(b.label);
-                        });
-                        
-                    this.classesReady = true;
-                })
-                .catch(function (error) {
-                    console.error(error);
-                });
-        },
-        addProcesso: function(){
-            var existeProcesso = 0;
-            for(var i=0; i<this.processos.length; i++){
-                if(this.newProcesso.value.codigo==this.processos[i].codigo){
-                    existeProcesso = 1;
-                    break
-                }
-            }
-            if(existeProcesso==0){
-                this.processos.unshift(this.newProcesso.value)
-            }   
-            else{
-                messageL.showMsg("Esse processo já se encontra selecionado!");
-            }
         },
     },
     created: function () {

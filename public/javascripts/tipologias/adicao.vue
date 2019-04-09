@@ -61,6 +61,7 @@ var newTip = new Vue({
                 designacao: this.tipologia.designacao,
                 sigla: this.tipologia.sigla,
                 entidades: this.tipologia.entidades,
+                codigo: "tip_" + this.tipologia.sigla
             }
 
             this.$http.post('/api/tipologias/', dataObj, {
@@ -68,16 +69,15 @@ var newTip = new Vue({
                     'content-type': 'application/json'
                 }
             })
-                .then(function () {    
+                .then(function () {
                     this.$refs.spinner.hide();
-
                     window.location.href = '/pedidos/submissao';
                 })
                 .catch(error => {if (error.status === 409) {
                     messageL.showMsg(error.body);
                     this.$refs.spinner.hide();
-                } 
-                console.error(error);
+                    } 
+                    console.error(error);
             });
         }
     },

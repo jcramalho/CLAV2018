@@ -17,7 +17,7 @@ var leg = new Vue({
                 edit: false
             },
             tipo: {
-                label: "Tipo",
+                label: "Tipo de diploma",
                 original: "",
                 new: "",
                 edit: false
@@ -46,6 +46,7 @@ var leg = new Vue({
             }
         },
         ready: false, 
+        classesReady: false,
 
         tipoDiploma: [],
 
@@ -57,11 +58,9 @@ var leg = new Vue({
         orgsTableWidth: ["15%", "85%"],
 
         processosReady: false,
-        //processos:[],
-        //newProcessos: [],
         processosCollapsed: true,
-        //editProcessos:false,
         newProcesso: "",
+        processosSelecionados: [],
         
         listaClasses:[],
 
@@ -127,8 +126,8 @@ var leg = new Vue({
                         }).sort(function (a, b) {
                             return a.data[1].localeCompare(b.data[1]);
                         });
-                    for(var i = 0; i<this.legData.entidades.original.length; i++){
-                        for(var j = 0; j<this.entidades.length; j++){
+                    for(let i = 0; i<this.legData.entidades.original.length; i++){
+                        for(let j = 0; j<this.entidades.length; j++){
                             if(this.legData.entidades.original[i] === this.entidades[j].data[0]){
                                 this.entidades[j].selected = true;
                                 this.entidadesSelecionadas[i] = this.entidades[j];
@@ -140,6 +139,14 @@ var leg = new Vue({
                 .catch(function (error) {
                     console.error(error);
                 });
+        },
+        selecionarEntidade: function (row) {
+            this.entidadesSelecionadas.push(row);
+            row.selected = true;
+        },
+        desselecionarEntidade: function (row, index) {
+            row.selected = false;
+            this.entidadesSelecionadas.splice(index, 1);
         },
         loadProcessos: function () {
             var processosToParse = [];
@@ -168,46 +175,43 @@ var leg = new Vue({
                     this.listaClasses = classesToParse
                         .map(function(item){
                             return {
-                                label: item.codigo +" - "+ item.titulo,
-                                value: item,
+                                data: [item.codigo +" - "+ item.titulo],
+                                selected: false,
+                                id: item.codigo
                             }
                         }).sort(function (a, b) {
-                            return a.label.localeCompare(b.label);
+                            return a.data[0].localeCompare(b.data[0]);
                         });
-                        
+                        for(let i = 0; i<this.legData.processos.original.length; i++){
+                            for(let j = 0; j<this.listaClasses.length; j++){
+                                if(this.legData.processos.original[i].id === "c" + this.listaClasses[j].id){
+                                    console.log(this.listaClasses[j])
+                                    this.listaClasses[j].selected = true;
+                                    this.processosSelecionados[i] = this.listaClasses[j];
+                                }
+                            }
+                        }
                     this.classesReady = true;
                 })
                 .catch(function (error) {
                     console.error(error);
                 });
         },
-        addProcesso: function(){
-            var existeProcesso = 0;
-            for(var i=0; i<this.legData.processos.new.length; i++){
-                if(this.newProcesso.value.codigo==this.legData.processos.new[i].codigo){
-                    existeProcesso = 1;
-                    break
-                }
-            }
-            if(existeProcesso==0){
-                this.legData.processos.new.unshift(this.newProcesso.value)
-            }
-            else{
-                messageL.showMsg("Esse processo já se encontra selecionado!");
-            }
-        },
-        selecionarEntidade: function (row) {
-            this.entidadesSelecionadas.push(row);
+        selecionarProcesso: function (row) {
+            this.processosSelecionados.push(row);
             row.selected = true;
         },
-        desselecionarEntidade: function (row, index) {
+        desselecionarProcesso: function (row, index) {
             row.selected = false;
-            this.entidadesSelecionadas.splice(index, 1);
+            this.processosSelecionados.splice(index, 1);
         },
         update: function(){
 
-            for(var i = 0; i< this.entidadesSelecionadas.length; i++){
+            for(let i = 0; i< this.entidadesSelecionadas.length; i++){
                 this.legData.entidades.new[i] = this.entidadesSelecionadas[i].id
+            }
+            for(let i = 0; i< this.processosSelecionados.length; i++){
+                this.legData.processos.new[i] = this.processosSelecionados[i].id
             }
 
             var formats= {
