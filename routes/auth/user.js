@@ -4,8 +4,9 @@ var passport = require('passport');
 var express = require('express');
 var router = express.Router();
 
-var User = require('../../models/user');
 var Entidade = require('../../models/entidade');
+var User = require('../../models/user');
+var Users = require('./../../controllers/api/users');
 
 // Local user registration
 router.post('/registar', function (req, res) {
@@ -41,10 +42,10 @@ router.post('/registar', function (req, res) {
             }
         });
 
-        User.getUserByEmail(email, function (err, user) {
+        Users.getUserByEmail(email, function (err, user) {
             if (err) throw err;
             if (!user) {
-                User.createUser(newUser, function (err, user) {
+                Users.createUser(newUser, function (err, user) {
                     Logging.logger.info('Utilizador ' + user._id + ' registado.');
 
                     if (err) throw err;

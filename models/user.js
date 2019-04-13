@@ -1,14 +1,10 @@
-var mongo = require('mongodb');
 var mongoose = require('mongoose');
-var bcrypt = require('bcryptjs');
 var dataBases = require('../config/database');
 
 mongoose.Promise = require('bluebird');
 mongoose.connect(dataBases.userDB, {
 	useMongoClient: true,
 });
-
-var db = mongoose.connection;
 
 // User Schema
 var UserSchema = mongoose.Schema({
@@ -68,43 +64,4 @@ var UserSchema = mongoose.Schema({
 	}
 });
 
-var User = module.exports = mongoose.model('User', UserSchema);
-
-module.exports.createUser = function (newUser, callback) {
-	bcrypt.genSalt(14, function (err, salt) {
-		bcrypt.hash(newUser.local.password, salt, function (err, hash) {
-			newUser.local.password = hash;
-			newUser.save(callback);
-		});
-	});
-}
-
-module.exports.getUserByEmail = function (email, callback) {
-	var query = { email: email };
-	User.findOne(query, callback);
-}
-
-module.exports.getUserByCC = function (cc, callback) {
-	var query = { cc: cc };
-	User.findOne(query, callback);
-}
-
-module.exports.getUserById = function (id, callback) {
-	User.findById(id, callback);
-}
-
-module.exports.comparePassword = function (candidatePassword, hash, callback) {
-	bcrypt.compare(candidatePassword, hash, function (err, isMatch) {
-		if (err) throw err;
-		callback(null, isMatch);
-	});
-}
-
-module.exports.updatePassword = function (user, password, callback) {
-	bcrypt.genSalt(10, function (err, salt) {
-		bcrypt.hash(password, salt, function (err, hash) {
-			user.local.password = hash;
-			user.save(callback);
-		});
-	});
-}
+module.exports = mongoose.model('User', UserSchema);

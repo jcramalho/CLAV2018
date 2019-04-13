@@ -52,7 +52,7 @@ var perfil = new Vue({
                 Password: this.newPassword,
             }
 
-            this.$http.post('/users/updatePassword', dataObj, {
+            this.$http.post('/users/atualizarPassword', dataObj, {
                 headers: {
                     'content-type': 'application/json'
                 }

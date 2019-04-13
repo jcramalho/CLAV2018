@@ -118,7 +118,7 @@ app.use('/classes',require('./routes/classes'));
 app.use('/tabelasSelecao',require('./routes/tabsSel'));
 app.use('/termosIndice',require('./routes/termosIndice'));
 app.use('/gestao',require('./routes/admin'));
-app.use('/pedidos',require('./routes/pedidos'))
+app.use('/pedidos',require('./routes/pedidos'));
 
 //app.use('/api/organizacoes',require('./routes/api/orgs'));
 app.use('/api/entidades',require('./routes/api/entidades'));
@@ -132,8 +132,8 @@ app.use('/api/pedidos',require('./routes/api/pedidos'));
 app.use('/api/trabalhos',require('./routes/api/trabalhos'));
 app.use('/api/users',require('./routes/api/users'));
 app.use('/api/chaves',require('./routes/api/chaves'));
-app.use('/auth',require('./routes/auth/user'));
 app.use('/api/utils', require('./routes/api/utils'))
+app.use('/auth',require('./routes/auth/user'));
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
