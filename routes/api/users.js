@@ -13,16 +13,6 @@ router.get('/', (req, res) => {
     });
 });
 
-router.get('/normalizado', (req, res) => {
-    Users.listarNormalizado(function(err, result){
-        if(err){
-            throw err;
-        }else{
-            return res.json(result);
-        }
-    });
-});
-
 router.get('/:id', (req, res) => {
     console.log(req.params.id)
     Users.listarPorId(req.params.id,function(err, result){
