@@ -36,6 +36,9 @@ var UserSchema = mongoose.Schema({
 	name: {
 		type: String
 	},
+	entidade: {
+		type: String
+	},
 	local: {
 		password: {
 			type: String

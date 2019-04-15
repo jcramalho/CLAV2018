@@ -32,12 +32,35 @@ Users.comparePassword = function (candidatePassword, hash, callback) {
 	});
 }
 
-Users.listar = function(callback) {
+Users.listar = function(req, callback){
+    var filtro = {}
+    if(req.query.entidade!=undefined) filtro = {entidade: req.query.entidade};
+    User.find(filtro, function(err,users){
+        if(err){
+            callback(err, null)
+        }else{
+            callback(null, users);
+        }
+    })
+}
+
+Users.listarPorId = function(id, callback){
+    User.findById(id, function(err, user){
+        if(err){
+            console.log(err)
+            callback(err, null);
+        }else{
+            callback(null, user);
+        }
+    })
+}
+
+Users.listarNormalizado = function(callback) {
     User.find({}, function(err, users){
         if (err) {
-            throw err;
-        }else {
-            jsonObj = [];
+            callback(err, null);
+        }else{
+            listaNormalizada = [];
             for(var i = 0; i < users.length; i++) {
                 item = {}
                 item["name"] = users[i].name;
@@ -69,10 +92,10 @@ Users.listar = function(callback) {
                 }
                 item["email"] = users[i].email;
                 item["id"] = users[i]._id;
-                jsonObj.push(item);
+                listaNormalizada.push(item);
             }
+            callback(null, listaNormalizada);
         }
-        return callback(jsonObj);
     });
 }
 

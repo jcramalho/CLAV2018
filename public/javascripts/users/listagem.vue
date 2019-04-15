@@ -10,9 +10,9 @@ var orgs = new Vue({
             window.location.href = '/users/'+uid;
         },
     },
-    // Obtem a listagem normalizada a "/api/users"
+    // Obtem a listagem normalizada a "/api/users/normalizado"
     created: function(){
-        this.$http.get("/api/users/")
+        this.$http.get("/api/users/normalizado")
         .then( function(response) { 
             this.listaUsers = response.body;
             this.ready=true;
