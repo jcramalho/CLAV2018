@@ -136,6 +136,13 @@ router.get('/:id/procRel', (req, res) => {
         .catch(erro => res.status(500).send(`Erro na consulta dos processos relacionados com a classe ${req.params.id}: ${erro}`))
 })
 
+// Devolve o(s) processo(s) relacionado(s) por uma relação específica: id, codigo, titulo
+router.get('/:id/procRel/:idRel', (req, res) => {
+    Classes.procRelEspecifico(req.params.id, req.params.idRel)
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.status(500).send(`Erro na consulta dos processos relacionados com a classe ${req.params.id}: ${erro}`))
+})
+
 // Devolve a legislação associada ao contexto de avaliação: id, tipo, numero, sumario
 router.get('/:id/legislacao', (req, res) => {
     Classes.legislacao(req.params.id)

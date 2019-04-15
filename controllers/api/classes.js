@@ -319,6 +319,20 @@ Classes.procRel = id => {
         .then(response => normalize(response))
 }
 
+// Devolve o(s) processo(s) relacionado(s): id, codigo, titulo, tipoRel
+Classes.procRelEspecifico = (id, rel) => {
+    var query = `
+        select ?id ?codigo ?titulo {
+            clav:${id} clav:temRelProc ?id;
+                        clav:${rel} ?id.
+            ?id clav:codigo ?codigo;
+                clav:titulo ?titulo.
+        }`
+    return client.query(query)
+        .execute()
+        .then(response => normalize(response))
+}
+
 // Devolve a legislação associada ao contexto de avaliação: id, tipo, numero, sumario
 Classes.legislacao = id => {
     var query = `
