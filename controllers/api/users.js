@@ -46,6 +46,7 @@ Users.listar = function(req, callback){
                 for(var i = 0; i < users.length; i++) {
                     item = {}
                     item["name"] = users[i].name;
+                    item["entidade"] = users[i].entidade;
                     switch(users[i].level) {
                         case 7:
                             item["level"] = 'Administrador de Perfil Tecnológico (Nível 7)';

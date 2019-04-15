@@ -6,11 +6,11 @@ block corpo
             tabela-generica(
                 v-if="ready"
 
-                :header='["Nome","Email","Nível de utilizador"]'
-                :display-order="['name','email','level']"
+                :header='["Nome","Entidade", "Email","Nível de utilizador"]'
+                :display-order="['name','entidade','email','level']"
                 :complete-rows="listaUsers"
                 :ready="ready"
-                :cwidth="['40%','20%','40%']"
+                :cwidth="['30%','20%','20%','30%']"
                 
                 class-table='table table-hover'
 
