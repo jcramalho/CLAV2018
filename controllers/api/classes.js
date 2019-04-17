@@ -29,6 +29,26 @@ Classes.listar = async nivel => {
     catch(erro) { throw (erro);}
 }
 
+// Devolve a lista de classes de nível 3 que são consideradas processos comuns
+Classes.listarPNsComuns = () => {
+    var query = `
+    Select
+			?id
+            ?codigo 
+            ?titulo 
+        Where {
+            ?id clav:processoTipoVC clav:vc_processoTipo_pc  .
+            ?id clav:codigo ?codigo .
+            ?id clav:titulo ?titulo .
+        } 
+    `
+    console.log(query)
+
+    return client.query(query)
+        .execute()
+        .then(response => normalize(response))
+}
+
 // Devolve toda a informação de uma classe
 Classes.retrieve = async id => {
     try{
@@ -314,6 +334,20 @@ Classes.procRel = id => {
         BIND (STRAFTER(STR(?tipoRel), 'clav#') AS ?idRel).
         } Order by ?idRel ?codigo
         `
+    return client.query(query)
+        .execute()
+        .then(response => normalize(response))
+}
+
+// Devolve o(s) processo(s) relacionado(s): id, codigo, titulo, tipoRel
+Classes.procRelEspecifico = (id, rel) => {
+    var query = `
+        select ?id ?codigo ?titulo {
+            clav:${id} clav:temRelProc ?id;
+                        clav:${rel} ?id.
+            ?id clav:codigo ?codigo;
+                clav:titulo ?titulo.
+        }`
     return client.query(query)
         .execute()
         .then(response => normalize(response))

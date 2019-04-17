@@ -47,6 +47,13 @@ exports.verificaCodigo = async (cod) => {
     return r
 }
 
+//Devolve a lista dos processos de negócio comuns, ou seja, aqueles com :processoTipoVC :vc_processoTipo_pc
+exports.getProcessosComuns = async () => {
+    console.log("Processos Comuns");
+    let PC = await Classes.listarPNsComuns();
+    return PC;
+}
+
 async function loadClasses() {
         try {
             let classes = await Classes.listar(null);

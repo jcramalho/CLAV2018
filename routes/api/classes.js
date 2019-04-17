@@ -15,6 +15,10 @@ router.get('/', async (req, res) => {
         else if(req.query.formato == "lista"){
             res.jsonp(await State.getClassesFlatList());
         }
+        // Devolve a lista dos processos comuns
+        if(req.query.tipo == "comum"){
+            res.json(await State.getProcessosComuns());
+        }
         else if(req.query.nivel){
             switch(req.query.nivel){
                 case '1': try {
@@ -132,6 +136,13 @@ router.get('/:id/participante', (req, res) => {
 // Devolve o(s) processo(s) relacionado(s): id, codigo, titulo, tipoRel
 router.get('/:id/procRel', (req, res) => {
     Classes.procRel(req.params.id)
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.status(500).send(`Erro na consulta dos processos relacionados com a classe ${req.params.id}: ${erro}`))
+})
+
+// Devolve o(s) processo(s) relacionado(s) por uma relação específica: id, codigo, titulo
+router.get('/:id/procRel/:idRel', (req, res) => {
+    Classes.procRelEspecifico(req.params.id, req.params.idRel)
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na consulta dos processos relacionados com a classe ${req.params.id}: ${erro}`))
 })
