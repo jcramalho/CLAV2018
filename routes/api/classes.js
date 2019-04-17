@@ -16,7 +16,7 @@ router.get('/', async (req, res) => {
             res.jsonp(await State.getClassesFlatList());
         }
         // Devolve a lista dos processos comuns
-        if(req.query.tipo == "comum"){
+        else if(req.query.tipo == "comum"){
             res.json(await State.getProcessosComuns());
         }
         else if(req.query.nivel){
