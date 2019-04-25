@@ -1,6 +1,8 @@
 var express = require('express');
+var Logging = require('../../controllers/logging');
 var router = express.Router();
-var passport = require('passport')
+var passport = require('passport');
+var User = require('../../models/user');
 var Users = require('../../controllers/api/users');
 
 router.get('/', (req, res) => {
@@ -30,6 +32,36 @@ router.get('/listarEmail/:id', function(req, res) {
             throw err;
         }else{
             return res.json(email);
+        }
+    });
+});
+
+router.post('/registar', function (req, res) {
+    console.log(JSON.stringify(req.body))
+    var internal = (req.body.type > 1);
+    var newUser = new User({
+        name: req.body.name,
+        email: req.body.email,
+        entidade: 'ent_'+req.body.entidade,
+        internal: internal,
+        level: req.body.type,
+        local: {
+            password: req.body.password
+        }
+    });
+    
+    Users.getUserByEmail(req.body.email, function (err, user) {
+        if (err) 
+            throw err;
+        if (!user) {
+            Users.createUser(newUser, function (err, user) {
+                Logging.logger.info('Utilizador ' + user._id + ' registado.');
+                if (err) throw err;
+            });
+            res.send('Utilizador registado com sucesso!');
+        }
+        else {
+            res.send('Email já em uso!');
         }
     });
 });

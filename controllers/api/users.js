@@ -151,7 +151,7 @@ Users.desativar = function(id, callback){
 }
 
 Users.listarEmail = function(id, callback){
-    User.findById(id, function(err, email){
+    User.findById(id, function(err, user){
         if (err) {
             callback(err, null);
         }else{
