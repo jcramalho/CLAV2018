@@ -23,7 +23,7 @@ router.post('/registar', function (req, res) {
     req.checkBody('entidade', 'Entidade é obrigatório').notEmpty();
     req.checkBody('email', 'Email inválido').isEmail();
     req.checkBody('password', 'Password é obrigatória').notEmpty();
-    req.checkBody('password2', 'Passwords têm de ser iguais').equals(req.body.password);
+    // req.checkBody('password2', 'Passwords têm de ser iguais').equals(req.body.password);
     var errors = req.validationErrors();
 
     if (errors) {
