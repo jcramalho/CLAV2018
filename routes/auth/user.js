@@ -4,25 +4,26 @@ var passport = require('passport');
 var express = require('express');
 var router = express.Router();
 
-var User = require('../../models/user');
 var Entidade = require('../../models/entidade');
+var User = require('../../models/user');
+var Users = require('./../../controllers/api/users');
 
 // Local user registration
 router.post('/registar', function (req, res) {
     var name = req.body.name;
     var email = req.body.email;
+    var entidade = req.body.entidade;
     var type = req.body.type;
     var internal = (type > 1);
     var password = req.body.password;
-    var password2 = req.body.password2;
 
     // Validation
     req.checkBody('name', 'Nome é obrigatório').notEmpty();
     req.checkBody('email', 'Email é obrigatório').notEmpty();
+    req.checkBody('entidade', 'Entidade é obrigatório').notEmpty();
     req.checkBody('email', 'Email inválido').isEmail();
     req.checkBody('password', 'Password é obrigatória').notEmpty();
-    req.checkBody('password2', 'Passwords têm de ser iguais').equals(req.body.password);
-
+    // req.checkBody('password2', 'Passwords têm de ser iguais').equals(req.body.password);
     var errors = req.validationErrors();
 
     if (errors) {
@@ -36,20 +37,20 @@ router.post('/registar', function (req, res) {
             internal: internal,
             level: type,
             email: email,
+            entidade: entidade,
             local: {
                 password: password
             }
         });
 
-        User.getUserByEmail(email, function (err, user) {
+        Users.getUserByEmail(email, function (err, user) {
             if (err) throw err;
             if (!user) {
-                User.createUser(newUser, function (err, user) {
+                Users.createUser(newUser, function (err, user) {
                     Logging.logger.info('Utilizador ' + user._id + ' registado.');
 
                     if (err) throw err;
                 });
-
                 req.flash('success_msg', 'A sua conta foi criada, pode agora fazer login');
                 res.redirect('/');
             }
@@ -63,7 +64,7 @@ router.post('/registar', function (req, res) {
 });
 
 /// Local authentication
-    router.post('/login',
+router.post('/login',
     passport.authenticate('local', { failureRedirect: '/users/login', failureFlash: true }),
     function (req, res) {
         res.redirect('/');

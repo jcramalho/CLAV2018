@@ -1,4 +1,8 @@
 var Auth = module.exports
+var jwt = require('jsonwebtoken');
+var Key = require('./../models/keys')
+var ApiKey = require('./../config/api');
+var secretKey = require('./../config/app');
 
 Auth.isLoggedIn = function (req, res, next) {
     if (req.isAuthenticated()) {
@@ -50,9 +54,54 @@ Auth.isLevel = function (clearance, req, res, next) {
     }
 }
 
-Auth.isLoggedInAPI = function (req, res, next) {
-    if (req.isAuthenticated()) {
-        return next();
-    }
-    res.send('Login necessário para esta operação');
+// Auth.isLoggedInAPI = function (req, res, next) {
+//     if (req.isAuthenticated()) {
+//         return next();
+//     }
+//     res.send('Login necessário para esta operação');
+// }
+
+
+Auth.isLoggedInAPI = async function (req, res, next) {
+    await Key.find({key: ApiKey.key}, async function(err, resp){
+        if(err){
+            throw err;
+        }else if(resp.length==0){
+            req.flash('error_msg', 'A sua chave API não se encontra na base de dados.');
+            res.redirect('/');
+        }else{
+            await jwt.verify(ApiKey.key, secretKey.key, async function(err, decoded){
+                if(err){
+                    req.flash('error_msg', 'A sua chave API é inválida ou expirou.');
+                    res.redirect('/');
+                }else{
+                    await Key.find({}, async function(err, keys){
+                        for(var i = 0; i < keys.length; i++) {
+                            if(keys[i].key==ApiKey.key){
+                                await Key.findById(keys[i]._id, async function(err, key){
+                                    if(err){
+                                        throw err;
+                                    }else{
+                                        if(key.active==true){
+                                            await Key.update({_id: key._id}, {nCalls: key.nCalls+1, lastUsed: Date.now()}, function(err, affected, resp) {
+                                                if(err){
+                                                    req.flash('error_msg', 'Ocorreu um erro ao atualizar chave API.');
+                                                    res.redirect('/');
+                                                }else{
+                                                    return next();
+                                                }
+                                            })
+                                        }else{
+                                            req.flash('error_msg', 'A sua chave API foi desativada, por favor contacte os administradores do sistema.');
+                                            res.redirect('/');
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+            });
+        }
+    })
 }

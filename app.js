@@ -9,6 +9,9 @@ var logger = require('morgan')
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
     next();
 });
 
@@ -18,6 +21,10 @@ app.use(bodyParser.json());         // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
     extended: true
 }));
+
+//Server JWT gen
+var serverKey = require('./models/keys')
+serverKey.generateServerKey();
 
 //authentication dependencies
 var cookieParser = require('cookie-parser');
@@ -114,7 +121,7 @@ app.use('/classes',require('./routes/classes'));
 app.use('/tabelasSelecao',require('./routes/tabsSel'));
 app.use('/termosIndice',require('./routes/termosIndice'));
 app.use('/gestao',require('./routes/admin'));
-app.use('/pedidos',require('./routes/pedidos'))
+app.use('/pedidos',require('./routes/pedidos'));
 
 //app.use('/api/organizacoes',require('./routes/api/orgs'));
 app.use('/api/entidades',require('./routes/api/entidades'));
@@ -127,8 +134,9 @@ app.use('/api/vocabularios',require('./routes/api/vocabularios'));
 app.use('/api/pedidos',require('./routes/api/pedidos'));
 app.use('/api/trabalhos',require('./routes/api/trabalhos'));
 app.use('/api/users',require('./routes/api/users'));
-app.use('/auth',require('./routes/auth/user'));
+app.use('/api/chaves',require('./routes/api/chaves'));
 app.use('/api/utils', require('./routes/api/utils'))
+app.use('/auth',require('./routes/auth/user'));
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

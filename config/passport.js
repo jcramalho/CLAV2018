@@ -1,16 +1,16 @@
 var LocalStrategy = require('passport-local').Strategy;
-var User = require('../models/user');
+var Users = require('../controllers/api/users');
 
 module.exports = function(passport) {
     passport.use(new LocalStrategy(
         function (email, password, done) {
-            User.getUserByEmail(email, function (err, user) {
+            Users.getUserByEmail(email, function (err, user) {
                 if (err) throw err;
                 if (!user) {
                     return done(null, false, { message: 'Email não reconhecido' });
                 }
 
-                User.comparePassword(password, user.local.password, function (err, isMatch) {
+                Users.comparePassword(password, user.local.password, function (err, isMatch) {
                     if (err) throw err;
                     if (isMatch) {
                         if(user.level==-1){
@@ -31,7 +31,7 @@ module.exports = function(passport) {
     });
 
     passport.deserializeUser(function (id, done) {
-        User.getUserById(id, function (err, user) {
+        Users.getUserById(id, function (err, user) {
             done(err, user);
         });
     });
