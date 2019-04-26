@@ -3,9 +3,9 @@ block corpo
     #profile.panel.panel-default.panel-custom
         .panel-heading
             h1.page-header Utilizador
-                a(href='../desativar/'+utilizador.id style="float:right" margin-left: 80px)  
+                a(href='/users/desativar/'+utilizador.id style="float:right" margin-left: 80px)  
                     span.glyphicon.glyphicon-lock(style="padding-right:15px" data-toggle="tooltip" title="Desativar utilizador")
-                a(href='../editar/'+utilizador.id style="float:right" margin-left: 80px)  
+                a(href='/users/editar/'+utilizador.id style="float:right" margin-left: 80px)  
                     span.glyphicon.glyphicon-edit(style="padding-right:15px" data-toggle="tooltip" title="Editar nível utilizador")
         .panel-body
             .form-group
@@ -22,6 +22,12 @@ block corpo
                             .info-label Email: 
                         td(style="width:80%")
                             | #{utilizador.email}
+                    //-EMAIL
+                    tr
+                        td
+                            .info-label Entidade: 
+                        td(style="width:80%")
+                            | #{utilizador.entidade}
                     //-NIVEL
                     tr
                         td

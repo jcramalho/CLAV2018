@@ -41,7 +41,7 @@ var perfil = new Vue({
                     id: window.location.pathname.split('/')[3],
                 }
     
-                this.$http.post('/users/updateLevel', dataObj, {
+                this.$http.post('/users/atualizarNivel', dataObj, {
                     headers: {
                         'content-type': 'application/json'
                     }

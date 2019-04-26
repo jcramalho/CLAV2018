@@ -1,61 +1,82 @@
 var express = require('express');
+var Logging = require('../../controllers/logging');
 var router = express.Router();
-
+var passport = require('passport');
 var User = require('../../models/user');
+var Users = require('../../controllers/api/users');
 
-router.get('/listagem', (req, res) => {
-    User.find({}, function(err, users){
-        if (err) {
+router.get('/', (req, res) => {
+    Users.listar(req,function(err, result){
+        if(err){
             throw err;
-        }else {
-            jsonObj = [];
-            for(var i = 0; i < users.length; i++) {
-                item = {}
-                item["name"] = users[i].name;
-                switch(users[i].level) {
-                    case 7:
-                        item["level"] = 'Administrador de Perfil Tecnológico (Nível 7)';
-                        break;
-                    case 6:
-                        item["level"] = 'Administrador de Perfil Funcional (Nível 6)';
-                        break;
-                    case 5:
-                        item["level"] = 'Utilizador Validador (Nível 5)';
-                        break;
-                    case 4:
-                        item["level"] = 'Utilizador Avançado (Nível 4)';
-                        break;
-                    case 3:
-                        item["level"] = 'Utilizador Decisor (Nível 3)';
-                        break;
-                    case 2:
-                        item["level"] = 'Utilizador Simples (Nível 2)';
-                        break;
-                    case 1:
-                        item["level"] = 'Representante Entidade (Nível 1)'
-                        break;
-                    case -1:
-                        item["level"] = 'Utilizador desativado (Nível -1)'
-                        break;
-                }
-                item["email"] = users[i].email;
-                item["id"] = users[i]._id;
-                jsonObj.push(item);
-            }
+        }else{
+            return res.json(result);
         }
-        return res.send(jsonObj);
     });
 });
 
-
-router.get('/getEmail/:id', function(req, res) {
-    User.findOne({_id: req.params.id}, function(err, user){
-		if (err) {	
-			throw err;
-		} else {
-            return res.send(user)
+router.get('/:id', (req, res) => {
+    console.log(req.params.id)
+    Users.listarPorId(req.params.id,function(err, result){
+        if(err){
+            throw err;
+        }else{
+            return res.json(result);
         }
-	});
+    });
+});
+
+router.get('/listarEmail/:id', function(req, res) {
+    Users.listarEmail(req.params.id,function(err, email){
+        if(err){
+            throw err;
+        }else{
+            return res.json(email);
+        }
+    });
+});
+
+router.post('/registar', function (req, res) {
+    console.log(JSON.stringify(req.body))
+    var internal = (req.body.type > 1);
+    var newUser = new User({
+        name: req.body.name,
+        email: req.body.email,
+        entidade: 'ent_'+req.body.entidade,
+        internal: internal,
+        level: req.body.type,
+        local: {
+            password: req.body.password
+        }
+    });
+    
+    Users.getUserByEmail(req.body.email, function (err, user) {
+        if (err) 
+            throw err;
+        if (!user) {
+            Users.createUser(newUser, function (err, user) {
+                Logging.logger.info('Utilizador ' + user._id + ' registado.');
+                if (err) throw err;
+            });
+            res.send('Utilizador registado com sucesso!');
+        }
+        else {
+            res.send('Email já em uso!');
+        }
+    });
+});
+
+router.post("/login", (req, res, next) => {
+    passport.authenticate('local', (err, user, info) => {
+        if (err)
+            return next(err);
+        if (!user) {
+            return res.status(400).send([user, "Cannot log in", info])
+        }
+        req.login(user, (err) => {
+            res.send(user)
+        })
+    })(req, res, next);
 });
 
 module.exports = router;

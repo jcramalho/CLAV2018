@@ -1,0 +1,24 @@
+extends ../layout
+block corpo
+    if flag
+        .alert.alert-success <b>Chave API criada com sucesso.</b>
+    h1.page-header Registo de nova chave API
+    .panel-body
+        p De modo a proceder ao registo de uma nova chave API na plataforma CLAV, por favor clique no botão disponível no fim desta página.
+        p Após o clique no mesmo, será gerada uma chave API com a duração de 30 dias, sendo esta necessária para qualquer pedido à API de dados da plataforma CLAV.
+
+        form#registo.form-signin(method='POST' action='/gestao/criarChave')
+            label Nome/Email da entidade para contacto
+            input#name.form-control(name='contactInfo' type='text', placeholder='Nome/Email', required, autofocus='')
+
+            button.btn.btn-block.btn-default(type='submit') Gerar chave API
+    
+        if flag
+            br
+            br
+            h2.page-header Chave API gerada
+            .panel-body
+                label Entidade
+                <input class="form-control" type="text" value=#{contactInfo} readonly>
+                label Chave API
+                <input class="form-control" type="text" value=#{key} readonly>
