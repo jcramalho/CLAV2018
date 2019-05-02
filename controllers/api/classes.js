@@ -200,7 +200,7 @@ Classes.consultar = async id => {
     return normalize(resultado)
 }
 
-// Devolve a lista de filhos de uma classe: id, codigo, titulo, nFilhos
+// Devolve a lista de filhos de uma classe: id, codigo, titulo
 Classes.descendencia = async id => {
     try{
         var query = `
@@ -211,6 +211,7 @@ Classes.descendencia = async id => {
                     clav:codigo ?codigo ;
                     clav:titulo ?titulo .
             }
+            ORDER BY ?codigo
             `
         let resultado = await client.query(query).execute();
         return normalize(resultado);
