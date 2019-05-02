@@ -73,7 +73,7 @@ router.post("/login", (req, res, next) => {
         if (!user)
             res.send('Credenciais inválidas')
         else
-            req.login(user, (err) => {res.send(user)})
+            req.login(user, () => {res.send(user)})
     })(req, res, next);
 });
 
