@@ -172,10 +172,10 @@ Tipologias.elementos = (id) => {
  */
 Tipologias.dono = (id) => {
     const query = `SELECT ?id ?codigo ?titulo WHERE {
-        ?uri clav:temDono clav:tip_AP ;
+        ?uri clav:temDono clav:${id} ;
             clav:codigo ?codigo ;
             clav:titulo ?titulo ;
-            clav:pertenceLC clav:lc1 ;
+            clav:pertenceLC clav:lc1;
             clav:classeStatus "A" .
         BIND(STRAFTER(STR(?uri), 'clav#') AS ?id)
     }`;
