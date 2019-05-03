@@ -51,17 +51,8 @@ router.get('/', (req, res) => {
 });
 
 // Criação de uma nova legislacao. Em caso de sucesso gera um novo pedido
-router.post('/', Auth.isLoggedIn, estaDisponivel, (req, res) => {
-    const legislacao = {
-        sumario: req.body.sumario,
-        data: req.body.data,
-        numero: req.body.numero,
-        tipo: req.body.tipo,
-        link: req.body.link,
-        entidades: req.body.entidades,
-    };
-
-    return Leg.criar(legislacao, req.user.email)
+router.post('/', estaDisponivel, (req, res) => {
+    return Leg.criar(req.body, req.body.user)
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na criação da legislação: ${erro}`));
 });

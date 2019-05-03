@@ -47,8 +47,8 @@ router.get('/', (req, res) => {
 });
 
 // Criação de uma nova entidade. Em caso de sucesso gera um novo pedido
-router.post('/', Auth.isLoggedIn, estaDisponivel, (req, res) => {
-    return Entidades.criar(req.body, req.user.email)
+router.post('/', estaDisponivel, (req, res) => {
+    return Entidades.criar(req.body, req.body.user)
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na criação da entidade: ${erro}`));
 });
