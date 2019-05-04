@@ -188,49 +188,6 @@ Entidades.existe = (entidade) => {
  * pedido gerado para a criação da nova entidade
  */
 Entidades.criar = async (entidade, utilizador) => {
-    /*const id = `clav:ent_${entidade.sigla}`;
-    const pedido = {
-        criadoPor: utilizador,
-        objeto: {
-            codigo: `ent_${entidade.sigla}`,
-            tipo: 'Entidade',
-            acao: 'Criação',
-            triplos: [
-                {
-                    nome: "Designação",
-                    sujeito: id,
-                    predicado: "clav:entDesignacao",
-                    objeto: entidade.designacao,
-                },
-                {
-                    nome: "Sigla",
-                    sujeito: id,
-                    predicado: "clav:entSigla",
-                    objeto: entidade.sigla,
-                },
-                {
-                    nome: "Internacional",
-                    sujeito: id,
-                    predicado: "clav:entInternacional",
-                    objeto: entidade.internacional,
-                },
-                {
-                    nome: "SIOE",
-                    sujeito: id,
-                    predicado: "clav:entSIOE",
-                    objeto: entidade.sioe,
-                }
-            ].concat(entidade.tipologias.map(tipologia => ({
-                nome: "Tipologias",
-                sujeito: id,
-                predicado: "clav:pertenceTipologiaEnt",
-                objeto: tipologia,
-            }))),
-        },
-            distribuicao: [{
-                estado: 'Submetido',
-            }]
-    };*/
      Pedidos.criar('Criação', 'Entidade', entidade, utilizador);
 };
 
