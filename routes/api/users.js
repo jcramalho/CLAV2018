@@ -38,6 +38,20 @@ router.get('/listarEmail/:id', function(req, res) {
     });
 });
 
+router.get('/listarToken/:id', async function(req,res){
+    await jwt.verify(req.params.id, secretKey.key, async function(err, decoded){
+        if(!err){
+            await Users.listarPorId(decoded.id,function(err, result){
+                if(err){
+                    throw err;
+                }else{
+                    res.send(result);
+                }
+            });
+        }
+    });
+});
+
 router.post('/registar', function (req, res) {
     console.log(JSON.stringify(req.body))
     var internal = (req.body.type > 1);
