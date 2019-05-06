@@ -4,6 +4,8 @@ var router = express.Router();
 var passport = require('passport');
 var User = require('../../models/user');
 var Users = require('../../controllers/api/users');
+var jwt = require('jsonwebtoken')
+var secretKey = require('./../../config/app');
 
 router.get('/', (req, res) => {
     Users.listar(req,function(err, result){
@@ -32,6 +34,20 @@ router.get('/listarEmail/:id', function(req, res) {
             throw err;
         }else{
             return res.json(email);
+        }
+    });
+});
+
+router.get('/listarToken/:id', async function(req,res){
+    await jwt.verify(req.params.id, secretKey.key, async function(err, decoded){
+        if(!err){
+            await Users.listarPorId(decoded.id,function(err, result){
+                if(err){
+                    throw err;
+                }else{
+                    res.send(result);
+                }
+            });
         }
     });
 });
@@ -72,8 +88,16 @@ router.post("/login", (req, res, next) => {
             res.send(err)
         if (!user)
             res.send('Credenciais inválidas')
-        else
-            req.login(user, () => {res.send(user)})
+        else{
+            req.login(user, () => {
+                var token = jwt.sign({id: user._id}, secretKey.key, {expiresIn: '12h'});
+                res.send({
+                    token: token, 
+                    name : user.name, 
+                    entidade: user.entidade
+                })
+            })
+        }
     })(req, res, next);
 });
 
