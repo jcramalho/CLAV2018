@@ -115,7 +115,7 @@ Auth.isLoggedInNEW = async function (req, res, next) {
                 console.log("TOKEN VALIDO: " + decoded.id)
                 let user = await axios.get(myhost + "/api/users/" + decoded.id);
 
-                if(user._id!=undefined){
+                if(user.data._id!=undefined){
                     return next();
                 }
             }
