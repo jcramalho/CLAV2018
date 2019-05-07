@@ -2,6 +2,8 @@ const client = require('../../config/database').onthology;
 const normalize = require('../../controllers/api/utils').normalize;
 const projection = require('../../controllers/api/utils').projection;
 const Pedidos = require('../../controllers/pedidos');
+const axios = require('axios');
+const myhost = require('./../../config/database').host
 const Leg = module.exports;
 
 /**
@@ -196,12 +198,14 @@ Leg.consultar = id => {
  * pedido gerado para a criação da nova legislação
  */
 Leg.criar = async (legislacao, utilizador) => {
+    let user = await axios.get(myhost + "/api/users/listarToken/" + utilizador);
+
     const nanoid = require('nanoid')
     const id = "leg_" + nanoid();
 
     legislacao.codigo= id;
 
-    Pedidos.criar('Criação', 'Legislação', legislacao, utilizador);
+    Pedidos.criar('Criação', 'Legislação', legislacao, user.data.email);
 };
 
 /**

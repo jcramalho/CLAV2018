@@ -1,8 +1,10 @@
 var Auth = module.exports
 var jwt = require('jsonwebtoken');
-var Key = require('./../models/keys')
+var Key = require('./../models/keys');
 var ApiKey = require('./../config/api');
 var secretKey = require('./../config/app');
+const axios = require('axios');
+const myhost = require('./../config/database').host
 
 Auth.isLoggedIn = function (req, res, next) {
     if (req.isAuthenticated()) {
@@ -104,4 +106,19 @@ Auth.isLoggedInAPI = async function (req, res, next) {
             });
         }
     })
+}
+
+Auth.isLoggedInNEW = async function (req, res, next) {
+    if(req.body.user.token!=undefined){
+        await jwt.verify(req.body.user.token, secretKey.key, async function(err, decoded){
+            if(!err){
+                console.log("TOKEN VALIDO: " + decoded.id)
+                let user = await axios.get(myhost + "/api/users/" + decoded.id);
+
+                if(user.data._id!=undefined){
+                    return next();
+                }
+            }
+        });
+    }
 }

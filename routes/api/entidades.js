@@ -6,6 +6,9 @@ var url = require('url');
 var express = require('express');
 var router = express.Router();
 
+const axios = require('axios');
+const myhost = require('./../../config/database').host
+
 // Middleware de verificação de disponibilidade de uma entidade
 const estaDisponivel = (req, res, next) => {
     const entidade = {
@@ -47,8 +50,8 @@ router.get('/', (req, res) => {
 });
 
 // Criação de uma nova entidade. Em caso de sucesso gera um novo pedido
-router.post('/', estaDisponivel, (req, res) => {
-    return Entidades.criar(req.body, req.body.user)
+router.post('/', Auth.isLoggedInNEW, estaDisponivel, (req, res) => {
+    return Entidades.criar(req.body, req.body.user.token)
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na criação da entidade: ${erro}`));
 });
