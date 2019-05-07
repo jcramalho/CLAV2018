@@ -1,6 +1,8 @@
 const client = require('../../config/database').onthology;
 const normalize = require('../../controllers/api/utils').normalize;
 const Pedidos = require('../../controllers/pedidos');
+const axios = require('axios');
+const myhost = require('./../../config/database').host
 const Tipologias = module.exports;
 
 /**
@@ -78,7 +80,9 @@ Tipologias.consultar = (id) => {
  * pedido gerado para a criação da nova tipologia
  */
 Tipologias.criar = async (tipologia, utilizador) => {
-    Pedidos.criar('Criação', 'Tipologia', tipologia, utilizador)
+    let user = await axios.get(myhost + "/api/users/listarToken/" + utilizador);
+
+    Pedidos.criar('Criação', 'Tipologia', tipologia, user.data.email)
 };
 
 /**

@@ -1,6 +1,8 @@
 const client = require('../../config/database').onthology;
 const normalize = require('../../controllers/api/utils').normalize;
 const Pedidos = require('../../controllers/pedidos');
+const axios = require('axios');
+const myhost = require('./../../config/database').host
 const Entidades = module.exports;
 
 /**
@@ -188,7 +190,9 @@ Entidades.existe = (entidade) => {
  * pedido gerado para a criação da nova entidade
  */
 Entidades.criar = async (entidade, utilizador) => {
-     Pedidos.criar('Criação', 'Entidade', entidade, utilizador);
+    let user = await axios.get(myhost + "/api/users/listarToken/" + utilizador);
+
+    Pedidos.criar('Criação', 'Entidade', entidade, user.data.email);
 };
 
 //Criar controller para inserir na base de dados, depois do pedido aprovado!!
