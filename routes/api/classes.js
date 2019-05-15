@@ -19,6 +19,13 @@ router.get('/', async (req, res) => {
         else if(req.query.tipo == "comum"){
             res.json(await State.getProcessosComuns());
         }
+        // Devolve a lista dos processos especificos
+        else if(req.query.tipo == "especifico"){
+            if( req.query.tips ) {
+                var tips = req.query.tips.split(',');
+            }
+            res.json(await State.getProcessosEspecificos(req.query.ent, tips));
+        }
         else if(req.query.nivel){
             switch(req.query.nivel){
                 case '1': try {

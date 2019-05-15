@@ -49,6 +49,49 @@ Classes.listarPNsComuns = () => {
         .then(response => normalize(response))
 }
 
+// Devolve a lista de classes de nível 3 que são consideradas processos específicos de uma dada entidade e de diferentes tipologias
+Classes.listarPNsEspecificos = async (idEntidade, tipologias) => {
+    var query =`
+    Select
+            ?id
+            ?codigo
+            ?titulo
+        Where {
+            ?id clav:processoTipoVC clav:vc_processoTipo_pe .
+        `
+    if(idEntidade) {
+        query += `
+        { ?id clav:temDono clav:${idEntidade} } 
+        Union { ?id clav:temParticipante clav:${idEntidade} }
+        `
+    }
+
+    if(tipologias) {
+        for( var i = 0; i < tipologias.length; i++){
+            query += `
+                Union { ?id clav:temDono clav:${tipologias[i]}}
+                Union { ?id clav:temParticipante clav:${tipologias[i]}}
+        `
+        }
+    }
+
+    query += `
+        ?id clav:codigo ?codigo .
+        ?id clav:titulo ?titulo .
+        }
+        Group by ?codigo ?titulo ?id
+        Order by ?codigo
+    `
+
+    console.log(query);
+
+    return client.query(query)
+        .execute()
+        .then(response => normalize(response))
+}
+
+
+
 // Devolve toda a informação de uma classe
 Classes.retrieve = async id => {
     try{
