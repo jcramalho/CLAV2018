@@ -46,7 +46,7 @@ Pedidos.consultar = (codigo) => {
  * @param pedido novo pedido a inserir no sistema.
  * @return {Pedido} pedido criado.
  */
-Pedidos.criar = (pedido) => {
+Pedidos.criar = async (pedido) => {
     return new Pedido(pedido).save();
 };
 
