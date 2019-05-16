@@ -191,11 +191,8 @@ router.get('verifica/:codigo', (req, res) => {
         .catch(erro => res.status(500).send(`Erro na verificação da existência do código ${req.params.codigo}: ${erro}`))
 })
 
-router.post('/', Auth.isLoggedIn, (req, res) => {
-    console.log('Recebi um post de classe...')
-    console.log(JSON.stringify(req.body))
-    
-    return Classes.criar(req.body, req.user.email)
+router.post('/', Auth.isLoggedInNEW, (req, res) => {
+    return Classes.criar(req.body, req.body.user.token)
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na criação da classe: ${erro}`));
 })

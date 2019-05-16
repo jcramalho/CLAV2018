@@ -506,8 +506,11 @@ Classes.df = function (id) {
  * pedido gerado para a criação da nova classe
  */
 Classes.criar = async (classe, utilizador) => {
-    Pedidos.criar('Criação', 'Classe', classe, utilizador)
+    let user = await axios.get(myhost + "/api/users/listarToken/" + utilizador);
+    Pedidos.criar('Criação', 'Classe', classe, user.data.email)
 };
+
+
 Classes.filterCommon = function () {
     var fetchQuery = `
         SELECT DISTINCT
