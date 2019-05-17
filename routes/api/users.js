@@ -102,7 +102,7 @@ router.post("/login", (req, res, next) => {
             res.send('Credenciais inválidas')
         else{
             req.login(user, () => {
-                var token = jwt.sign({id: user._id}, secretKey.key, {expiresIn: '10s'});
+                var token = jwt.sign({id: user._id}, secretKey.key, {expiresIn: '8h'});
                 res.send({
                     token: token, 
                     name : user.name, 
