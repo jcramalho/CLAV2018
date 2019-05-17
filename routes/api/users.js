@@ -43,11 +43,23 @@ router.get('/listarToken/:id', async function(req,res){
         if(!err){
             await Users.listarPorId(decoded.id,function(err, result){
                 if(err){
-                    throw err;
+                    res.send(err);
                 }else{
                     res.send(result);
                 }
             });
+        }else{
+            res.send(err);
+        }
+    });
+});
+
+router.get('/verificaToken/:id', async function(req,res){
+    await jwt.verify(req.params.id, secretKey.key, async function(err, decoded){
+        if(!err){
+            res.send(decoded);
+        }else{
+            res.send(err);
         }
     });
 });
@@ -90,7 +102,7 @@ router.post("/login", (req, res, next) => {
             res.send('Credenciais inválidas')
         else{
             req.login(user, () => {
-                var token = jwt.sign({id: user._id}, secretKey.key, {expiresIn: '12h'});
+                var token = jwt.sign({id: user._id}, secretKey.key, {expiresIn: '10s'});
                 res.send({
                     token: token, 
                     name : user.name, 
