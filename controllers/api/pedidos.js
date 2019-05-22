@@ -46,9 +46,34 @@ Pedidos.consultar = (codigo) => {
  * @param pedido novo pedido a inserir no sistema.
  * @return {Pedido} pedido criado.
  */
-Pedidos.criar = async (pedido) => {
-    return new Pedido(pedido).save();
-};
+Pedidos.criar = function(pedidoParams){
+    var newPedido = new Pedido({
+        estado: "Submetido",
+        criadoPor: pedidoParams.utilizador,
+        objeto: {
+            codigo: pedidoParams.novoObjeto.codigo,
+            dados: pedidoParams.novoObjeto,
+            tipo: pedidoParams.tipoObjeto,
+            acao: pedidoParams.tipoPedido
+        },
+        distribuicao: [{
+            estado: "Submetido",
+            responsavel: pedidoParams.utilizador,
+            despacho: "Submissão inicial"
+        }]
+    });
+
+    newPedido.save(function (err) {
+        if (err) {
+            console.log(err);
+            return ('Ocorreu um erro a submeter o pedido! Tente novamente mais tarde');
+        }
+        else{
+            Logging.logger.info('Novo pedido: ' + JSON.stringify(newPedido));
+            return(newPedido.codigo);
+        }
+    });
+}
 
 /**
  * Adiciona um estado novo de distribuição ao pedido
