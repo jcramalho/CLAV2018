@@ -48,10 +48,9 @@ Pedidos.consultar = (codigo) => {
  * @return {Pedido} pedido criado.
  */
 Pedidos.criar = function(pedidoParams){
-    Logging.logger.info('Debug do pedido: ' + JSON.stringify(pedidoParams));
     var newPedido = new Pedido({
         estado: "Submetido",
-        criadoPor: pedidoParams.utilizador,
+        criadoPor: pedidoParams.user.email,
         objeto: {
             codigo: pedidoParams.novoObjeto.codigo,
             dados: pedidoParams.novoObjeto,
@@ -65,13 +64,12 @@ Pedidos.criar = function(pedidoParams){
         }]
     });
 
-    newPedido.save(function (err) {
+    return newPedido.save(function (err) {
         if (err) {
             console.log(err);
             return ('Ocorreu um erro a submeter o pedido! Tente novamente mais tarde');
         }
         else{
-            Logging.logger.info('Novo pedido: ' + JSON.stringify(newPedido));
             return(newPedido.codigo);
         }
     });
