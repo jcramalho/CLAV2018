@@ -1,5 +1,6 @@
 const Pedido = require('../../models/pedido');
 const Pedidos = module.exports;
+var Logging = require('../controllers/logging');
 
 /**
  * Lista as informações de todas os pedidos no sistema, de acordo
@@ -47,6 +48,7 @@ Pedidos.consultar = (codigo) => {
  * @return {Pedido} pedido criado.
  */
 Pedidos.criar = function(pedidoParams){
+    Logging.logger.info('Debug do pedido: ' + JSON.stringify(pedidoParams));
     var newPedido = new Pedido({
         estado: "Submetido",
         criadoPor: pedidoParams.utilizador,
