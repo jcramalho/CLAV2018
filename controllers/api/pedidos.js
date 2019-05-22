@@ -1,6 +1,6 @@
 const Pedido = require('../../models/pedido');
 const Pedidos = module.exports;
-var Logging = require('../controllers/logging');
+var Logging = require('../logging');
 
 /**
  * Lista as informações de todas os pedidos no sistema, de acordo
