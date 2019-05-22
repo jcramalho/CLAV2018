@@ -1,3 +1,4 @@
+var Auth = require('../../controllers/auth.js');
 var Pedidos = require('../../controllers/api/pedidos');
 var express = require('express');
 var router = express.Router();
@@ -31,8 +32,10 @@ router.get('/:codigo', (req, res) => {
 });
 
 // Criação de um pedido
-router.post('/', (req, res) => {
+router.post('/', Auth.isLoggedInNEW, (req, res) => {
     Pedidos.criar(req.body)
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.status(500).send(`Erro na criação do pedido: ${erro}`));
 })
 
 // Adição de distribuição 
