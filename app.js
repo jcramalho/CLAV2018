@@ -130,6 +130,7 @@ app.use('/api/tabelasSelecao',require('./routes/api/tabsSel'));
 app.use('/api/termosIndice',require('./routes/api/termosIndice'));
 app.use('/api/vocabularios',require('./routes/api/vocabularios'));
 app.use('/api/pedidos',require('./routes/api/pedidos'));
+app.use('/api/pendentes',require('./routes/api/pendentes'));
 app.use('/api/trabalhos',require('./routes/api/trabalhos'));
 app.use('/api/users',require('./routes/api/users'));
 app.use('/api/chaves',require('./routes/api/chaves'));

@@ -3,7 +3,7 @@ const Pendentes = module.exports;
 var Logging = require('../logging');
 
 /**
- * Lista as informações de todas os trabakhos pendentes no sistema, de acordo
+ * Lista as informações de todas os trabalhos pendentes no sistema, de acordo
  * com o filtro especificado.
  * 
  * @param {Object} filtro objeto com os campos para filtrar. Se o valor de um
@@ -18,6 +18,10 @@ Pendentes.listar = (filtro) => {
     // Remover campos vazios do filtro
     Object.keys(filtro).forEach((key) => (filtro[key] === undefined) && delete filtro[key]);
     return Pendente.find(filtro);
+};
+
+Pendentes.listarTodos = () => {
+    return Pendente.find().sort({data: -1});
 };
 
 // Recupera a lista de trabalhos pendentes de determinado tipo
