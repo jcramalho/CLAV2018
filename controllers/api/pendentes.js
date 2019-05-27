@@ -36,12 +36,12 @@ Pendentes.getByTipo = function(tipo){
 /**
  * Consulta a informação relativa a um trabalho pendente.
  * 
- * @param codigo código do pendente proveniente do campo _id do mongo
+ * @param id identificador do pendente proveniente do campo _id do mongo
  * @return {Promise<Pedido | Error>} promessa que quando cumprida possui o
  * pendente com o código especificado, ou `undefined` se o pendente não existe.
  */
-Pendentes.consultar = (codigo) => {
-    return Pendente.findOne({ codigo: codigo });
+Pendentes.consultar = (id) => {
+    return Pendente.findOne({ _id: id });
 };
 
 /**
