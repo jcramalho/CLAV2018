@@ -9,6 +9,12 @@ router.get('/', (req, res) => {
         .catch(erro => res.status(500).send(`Erro na listagem de pendentes: ${erro}`));
 });
 
+router.get('/:id', (req, res) => {
+    Pendentes.consultar(req.params.id)
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.status(500).send(`Erro ao recuperar trabalho pendente: ${erro}`));
+})
+
 // Guardar um trabalho pendente
 router.post('/', Auth.isLoggedInNEW, (req, res) => {
     Pendentes.criar(req.body)
