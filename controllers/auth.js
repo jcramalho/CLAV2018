@@ -119,6 +119,9 @@ Auth.isLoggedInNEW = async function (req, res, next) {
                     return next();
                 }
             }
+            else{
+                console.log("TOKEN INVALIDO: " + err)
+            }
         });
     }
 }

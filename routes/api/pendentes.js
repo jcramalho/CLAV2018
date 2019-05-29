@@ -22,4 +22,14 @@ router.post('/', Auth.isLoggedInNEW, (req, res) => {
         .catch(erro => res.status(500).send(`Erro ao guardar trabalho pendente: ${erro}`));
 })
 
+// Atualizar um trabalho previamente guardado como pendente: UPDATE
+router.put('/', (req, res) => {
+    Pendentes.atualizar(req.body)
+        .then(dados => {
+            res.jsonp(dados)})
+        .catch(erro => {
+            console.log('\n\nERRO: ' + JSON.stringify(erro))
+            res.status(500).send(`Erro ao atualizar trabalho pendente: ${erro}`)});
+})
+
 module.exports = router;

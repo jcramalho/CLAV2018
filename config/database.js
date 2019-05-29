@@ -1,7 +1,7 @@
 const { SparqlClient, SPARQL } = require('sparql-client-2');
 
-module.exports.onthology = new SparqlClient('http://localhost:7200/repositories/CLAV', {
-    updateEndpoint: 'http://localhost:7200/repositories/CLAV/statements'
+module.exports.onthology = new SparqlClient('http://192.168.85.197:7200/repositories/CLAV', {
+    updateEndpoint: 'http://192.168.85.197:7200/repositories/CLAV/statements'
 }).register({
     rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
     clav: 'http://jcr.di.uminho.pt/m51-clav#',
@@ -11,7 +11,7 @@ module.exports.onthology = new SparqlClient('http://localhost:7200/repositories/
     skos: 'http://www.w3.org/2004/02/skos/core#'
 });
 
-// module.exports.host = 'http://192.168.85.197:7779'
-module.exports.host = 'http://localhost:7779'
+module.exports.host = 'http://192.168.85.197:7779'
+//module.exports.host = 'http://localhost:7779'
 
 module.exports.userDB = 'mongodb://localhost/m51-clav'
