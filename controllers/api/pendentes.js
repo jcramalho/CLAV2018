@@ -63,3 +63,32 @@ Pendentes.criar = function(pendente){
         }
     });
 }
+
+
+/**
+ * Atualiza um pendente no sistema.
+ * 
+ * @param pendente a atualizar no sistema.
+ * @return {Pendente} pendente atualizado.
+ */
+Pendentes.atualizar = async function(pendente){
+    try{
+        var oldPendente = await Pendente.findOne({_id: pendente._id})
+        oldPendente.objeto = pendente.objeto
+        oldPendente.numInterv = pendente.numInterv
+        oldPendente.dataAtualizacao = pendente.dataAtualizacao
+
+        return oldPendente.save(function (err, updatedPendente) {
+            if (err) {
+                console.log(err);
+                return err
+            }
+            else{
+                return(updatedPendente);
+            }
+        })
+    }
+    catch(err){
+        return err
+    }
+}

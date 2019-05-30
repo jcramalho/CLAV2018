@@ -12,6 +12,6 @@ module.exports.onthology = new SparqlClient('http://192.168.85.197:7200/reposito
 });
 
 module.exports.host = 'http://192.168.85.197:7779'
-// module.exports.host = 'http://localhost:7779'
+//module.exports.host = 'http://localhost:7779'
 
 module.exports.userDB = 'mongodb://localhost/m51-clav'

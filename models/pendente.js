@@ -1,9 +1,18 @@
 const mongoose = require('mongoose');
 
 const PendenteSchema = new mongoose.Schema({
-    data: {
+    dataCriacao: {
         type: Date,
         default: Date.now,
+        required: true,
+    },
+    dataAtualizacao: {
+        type: Date,
+        default: Date.now,
+        required: true,
+    },
+    numInterv: {
+        type: Number,
         required: true,
     },
     criadoPor: {
