@@ -5,23 +5,17 @@ var router = express.Router();
 
 // Lista todos os pedidos que statisfazem uma condição
 router.get('/', (req, res) => {
-    if(req.query.tipo){
-        Pedidos.getByTipo(req.query.tipo)
-            .then(dados => res.jsonp(dados))
-            .catch(erro => res.status(500).send(`Erro na listagem de pedidos por tipo: ${erro}`));
-    }
-    else{
-        const filtro = {
-            criadoPor: req.query.criadoPor,
-            'objeto.codigo': req.query.objeto,
-            'objeto.tipo': req.query.tipo,
-            'objeto.acao': req.query.acao,
-        };
+    const filtro = {
+        criadoPor: req.query.criadoPor,
+        codigo: req.query.codigo,
+        tipo: req.query.tipo,
+        acao: req.query.acao,
+        estado: req.query.estado
+    };
     
-        Pedidos.listar(filtro)
-            .then(dados => res.jsonp(dados))
-            .catch(erro => res.status(500).send(`Erro na listagem de pedidos: ${erro}`));
-    }
+    Pedidos.listar(filtro)
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.status(500).send(`Erro na listagem de pedidos: ${erro}`));
 });
 
 // Consulta de um pedido

@@ -25,7 +25,7 @@ Pedidos.listar = (filtro) => {
 
 Pedidos.getByTipo = function(tipo){
     return Pedido
-        .find({estado: tipo})
+        .find({tipo: tipo})
         .sort({codigo: -1})
         .exec()
 }
