@@ -6,6 +6,7 @@ var User = require('../../models/user');
 var Users = require('../../controllers/api/users');
 var jwt = require('jsonwebtoken')
 var secretKey = require('./../../config/app');
+var Mailer = require('../../controllers/api/mailer')
 
 router.get('/', (req, res) => {
     Users.listar(req,function(err, result){
@@ -65,7 +66,6 @@ router.get('/verificaToken/:id', async function(req,res){
 });
 
 router.post('/registar', function (req, res) {
-    console.log(JSON.stringify(req.body))
     var internal = (req.body.type > 1);
     var newUser = new User({
         name: req.body.name,
@@ -90,6 +90,30 @@ router.post('/registar', function (req, res) {
         }
         else {
             res.send('Email já em uso!');
+        }
+    });
+});
+
+router.post('/recuperar', function (req, res) {
+    Users.getUserByEmail(req.body.email, function (err, user) {
+        if (err) 
+            throw err;
+        if (!user)
+            res.send('Não existe utilizador com esse email!');
+        else {
+            var token = jwt.sign({id: user._id}, secretKey.key, {expiresIn: '30m'});
+            Mailer.sendEmail(req.body.email, req.body.url.split('/recuperacao')[0]+'/alteracaoPassword?jwt='+token, user._id);
+            res.send('Email enviado com sucesso!')
+        }
+    });
+});
+
+router.post('/alterarPassword', function (req, res) {
+    Users.atualizarPassword(req.body.id, req.body.password, function (err, cb) {
+        if (err) 
+            throw err;
+        else {
+            res.send('Password atualizada com sucesso!')
         }
     });
 });
