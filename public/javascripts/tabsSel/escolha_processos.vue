@@ -34,9 +34,7 @@ var escolha = new Vue({
         createConfirm: false, 
     },
     watch: {
-        activeTab: function(){
-            this.saveInfo();
-        }
+        
     },
     components: {
         tabs: VueStrap.tabs,
@@ -385,26 +383,6 @@ var escolha = new Vue({
             }
             
         },
-        saveInfo: function () {
-            let selected = {
-                tipologias: this.myTipolList,
-                comuns: this.getSelected(this.commonProcs, 1),
-                especificos: this.getSelected(this.specificProcs, 1),
-                restantes: this.getSelected(this.restProcs, 1),
-            };
-
-            this.$http.put('/users/save/escolhaProcessos', selected, {
-                headers: {
-                    'content-type': 'application/json'
-                }
-            })
-                .then(function (response) {
-                    var resp = response.body;
-                })
-                .catch(function (error) {
-                    console.error(error);
-                });
-        },
         loadNome: function() {
             this.$http.get("/users/load/tsNome")
                 .then(function (response) {
@@ -445,8 +423,7 @@ var escolha = new Vue({
                 });
         },
         createSelTab: function (force) {
-            this.saveInfo();
-
+            
             let ok=force;
 
             if(!ok){

@@ -43,27 +43,6 @@ var UserSchema = mongoose.Schema({
 		password: {
 			type: String
 		}
-	},
-	savedStates: {
-		escolhaProcessos: {
-			tipologias: {
-				type: Array
-			},
-			comuns: {
-				type: Array
-			},
-			especificos: {
-				type: Array
-			},
-			restantes: {
-				type: Array
-			},
-		},
-		tsNome: {
-			nome:{
-				type: String
-			}
-		}
 	}
 });
 

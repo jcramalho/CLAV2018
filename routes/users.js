@@ -106,27 +106,6 @@ router.get('/entidade', Auth.isLoggedInAPI, function (req, res) {
     });
 });
 
-// Guardar trabalho
-router.put('/save/:type', Auth.isLoggedInAPI, function (req, res) {
-    Users.getUserById(req.user._id, function(err, user){
-		if (err) {	
-			throw err;
-		}
-		else if (!user) {
-			return done(null, false, { message: 'Ocorreu um erro ao guardar a informação' });
-		}
-		else {
-            user.savedStates[req.params.type]=req.body;
-
-            user.save(function(err,updatedUser){
-                if(err) {	
-                    throw err;
-                }
-                res.send(updatedUser.savedStates[req.params.type]);
-            });
-        }
-	});
-});
 
 // Novo pedido
 router.post('/pedido', Auth.isLoggedInAPI, function (req, res) {
@@ -224,10 +203,4 @@ router.get('/pedido/:num', function (req, res) {
         }
     });
 });
-
-// Carregar trabalho
-router.get('/load/:type', Auth.isLoggedInAPI, function (req, res) {
-    res.send(req.user.savedStates[req.params.type]);
-});
-
 module.exports = router;
