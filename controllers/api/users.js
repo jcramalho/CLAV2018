@@ -49,28 +49,28 @@ Users.listar = function(req, callback){
                     item["entidade"] = users[i].entidade;
                     switch(users[i].level) {
                         case 7:
-                            item["level"] = 'Administrador de Perfil Tecnológico (Nível 7)';
+                            item["level"] = 'Administrador de Perfil Tecnológico';
                             break;
                         case 6:
-                            item["level"] = 'Administrador de Perfil Funcional (Nível 6)';
+                            item["level"] = 'Administrador de Perfil Funcional';
                             break;
                         case 5:
-                            item["level"] = 'Utilizador Validador (Nível 5)';
+                            item["level"] = 'Utilizador Validador';
                             break;
                         case 4:
-                            item["level"] = 'Utilizador Avançado (Nível 4)';
+                            item["level"] = 'Utilizador Avançado';
                             break;
                         case 3:
-                            item["level"] = 'Utilizador Decisor (Nível 3)';
+                            item["level"] = 'Utilizador Decisor';
                             break;
                         case 2:
-                            item["level"] = 'Utilizador Simples (Nível 2)';
+                            item["level"] = 'Utilizador Simples';
                             break;
                         case 1:
-                            item["level"] = 'Representante Entidade (Nível 1)'
+                            item["level"] = 'Representante Entidade';
                             break;
                         case -1:
-                            item["level"] = 'Utilizador desativado (Nível -1)'
+                            item["level"] = 'Utilizador desativado';
                             break;
                     }
                     item["email"] = users[i].email;
