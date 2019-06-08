@@ -112,6 +112,61 @@ Users.atualizarNivel = function(id, level, callback){
     });
 }
 
+Users.atualizarNome = function(id, name, callback){
+    User.findById(id, function(err, user){
+		if (err) {	
+            callback(err, null);
+		} else {
+            user.name = name;
+            user.save(function(err) {
+                if (err) {
+		            callback(err, null);
+                }else{
+		            callback(null, user);
+                }
+            });
+        }
+    });
+}
+
+Users.atualizarEmail = function(id, email, callback){
+    User.findById(id, function(err, user){
+		if (err) {	
+            callback(err, null);
+		} else {
+            user.email = email;
+            user.save(function(err) {
+                if (err) {
+		            callback(err, null);
+                }else{
+		            callback(null, user);
+                }
+            });
+        }
+    });
+}
+
+Users.atualizarMultiplosCampos = function(id, nome, email, level, callback){
+    console.log("ID: "+ id + " NOME: " + nome + " EMAIL: " + email + " LEVEL: " + level )
+    User.findById(id, function(err, user){
+		if (err) {	
+            callback(err, null);
+		} else {
+            console.log(user)
+            user.name = nome;
+            user.email = email;
+            user.level = level;
+            user.save(function(err) {
+                if (err) {
+		            callback(err, null);
+                }else{
+		            callback(null, user);
+                }
+            });
+        }
+    });
+}
+
 Users.atualizarPassword = function(id, password, callback){
     User.findById(id, function(err, user){
 		if (err) {

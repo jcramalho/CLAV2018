@@ -49,47 +49,6 @@ router.get('/editar/:id', Auth.isLoggedIn, Auth.checkLevel6, function(req, res) 
 	});
 });
 
-router.get('/desativar/:id', Auth.isLoggedIn, Auth.checkLevel6, function(req, res) {
-    if(req.user.id != req.params.id){
-        Users.desativar(req.params.id, function(err, user){
-            if(err){
-                throw err;
-            }else{
-                req.flash('success_msg', 'Utilizador desativado com sucesso.');
-                res.redirect('/users');
-            }
-        })
-    }else{
-        req.flash('warn_msg', 'Não pode desativar o seu próprio utilizador.');
-        res.redirect('back');
-    }
-});
-
-//Atualizar nivel de utilizador
-router.post('/atualizarNivel/', Auth.isLoggedIn, Auth.checkLevel6, function(req, res) { //mudar pra lvl7
-    Users.atualizarNivel(req.body.id, req.body.Level, function(err, user){
-		if (err) {	
-			throw err;
-		} else {
-            req.flash('success_msg', 'Nível de utilizador modificado com sucesso!');
-            res.redirect('/users');
-        }
-	});
-});
-
-//Atualizar password de utilizador
-router.post('/atualizarPassword/', Auth.isLoggedIn, function(req, res) {
-    Users.atualizarPassword(req.user.id, req.body.Password, function(err, user){
-        if (err){
-            throw err;
-        }else{
-            req.logout();
-            req.flash('success_msg', 'Password modificada com sucesso! Por favor faça login novamente.');
-            res.redirect('/');
-        }
-    });
-});
-
 // Entidade do utilizador autenticado
 router.get('/entidade', Auth.isLoggedInAPI, function (req, res) {
     Entidade.getEntidadeByRepresentante(req.user.email, function(err, entity){
@@ -105,7 +64,6 @@ router.get('/entidade', Auth.isLoggedInAPI, function (req, res) {
         }
     });
 });
-
 
 // Novo pedido
 router.post('/pedido', Auth.isLoggedInAPI, function (req, res) {

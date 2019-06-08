@@ -94,30 +94,6 @@ router.post('/registar', function (req, res) {
     });
 });
 
-router.post('/recuperar', function (req, res) {
-    Users.getUserByEmail(req.body.email, function (err, user) {
-        if (err) 
-            throw err;
-        if (!user)
-            res.send('Não existe utilizador com esse email!');
-        else {
-            var token = jwt.sign({id: user._id}, secretKey.key, {expiresIn: '30m'});
-            Mailer.sendEmail(req.body.email, req.body.url.split('/recuperacao')[0]+'/alteracaoPassword?jwt='+token);
-            res.send('Email enviado com sucesso!')
-        }
-    });
-});
-
-router.post('/alterarPassword', function (req, res) {
-    Users.atualizarPassword(req.body.id, req.body.password, function (err, cb) {
-        if (err) 
-            throw err;
-        else {
-            res.send('Password atualizada com sucesso!')
-        }
-    });
-});
-
 router.post("/login", (req, res, next) => {
     passport.authenticate('local', (err, user, info) => {
         if (err)
@@ -135,6 +111,87 @@ router.post("/login", (req, res, next) => {
             })
         }
     })(req, res, next);
+});
+
+router.post('/recuperar', function (req, res) {
+    Users.getUserByEmail(req.body.email, function (err, user) {
+        if (err) 
+            throw err;
+        if (!user)
+            res.send('Não existe utilizador com esse email!');
+        else {
+            var token = jwt.sign({id: user._id}, secretKey.key, {expiresIn: '30m'});
+            Mailer.sendEmail(req.body.email, req.body.url.split('/recuperacao')[0]+'/alteracaoPassword?jwt='+token);
+            res.send('Email enviado com sucesso!')
+        }
+    });
+});
+
+router.post('/desativar', async function(req, res) {
+    await jwt.verify(req.body.token, secretKey.key, async function(err, decoded){
+        if(decoded.id != req.body.id){
+            Users.desativar(req.body.id, function(err, user){
+                if(err){
+                    throw err;
+                }else{
+                    res.send('Utilizador desativado com sucesso!');
+                }
+            })
+        }else{
+            res.send('Não pode desativar o seu próprio utilizador!');
+        }
+    });
+});
+
+//Funcoes de alteracao de utilizador
+router.post('/alterarNivel', function (req, res) {
+    Users.atualizarNivel(req.body.id, req.body.level, function (err, cb) {
+        if (err) 
+            throw err;
+        else {
+            res.send('Nivel atualizado com sucesso!')
+        }
+    });
+});
+
+router.post('/alterarNome', function (req, res) {
+    Users.atualizarNome(req.body.id, req.body.nome, function (err, cb) {
+        if (err) 
+            throw err;
+        else {
+            res.send('Nome atualizado com sucesso!')
+        }
+    });
+});
+
+router.post('/alterarEmail', function (req, res) {
+    Users.atualizarEmail(req.body.id, req.body.email, function (err, cb) {
+        if (err) 
+            throw err;
+        else {
+            res.send('Email atualizado com sucesso!')
+        }
+    });
+});
+
+router.post('/alterarPassword', function (req, res) {
+    Users.atualizarPassword(req.body.id, req.body.password, function (err, cb) {
+        if (err) 
+            throw err;
+        else {
+            res.send('Password atualizada com sucesso!')
+        }
+    });
+});
+
+router.post('/atualizarMultiplos', function (req, res) {
+    Users.atualizarMultiplosCampos(req.body.id, req.body.nome, req.body.email, req.body.level, function (err, cb) {
+        if (err) 
+            throw err;
+        else {
+            res.send('Utilizador atualizado com sucesso!')
+        }
+    });
 });
 
 module.exports = router;
