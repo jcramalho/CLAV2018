@@ -143,6 +143,22 @@ router.post('/desativar', async function(req, res) {
     });
 });
 
+router.post('/eliminar', async function(req, res) {
+    await jwt.verify(req.body.token, secretKey.key, async function(err, decoded){
+        if(decoded.id != req.body.id){
+            Users.eliminar(req.body.id, function(err, user){
+                if(err){
+                    throw err;
+                }else{
+                    res.send('Utilizador eliminado com sucesso!');
+                }
+            })
+        }else{
+            res.send('Não pode eliminar o seu próprio utilizador!');
+        }
+    });
+});
+
 //Funcoes de alteracao de utilizador
 router.post('/alterarNivel', function (req, res) {
     Users.atualizarNivel(req.body.id, req.body.level, function (err, cb) {

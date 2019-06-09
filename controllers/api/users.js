@@ -205,6 +205,16 @@ Users.desativar = function(id, callback){
     });
 }
 
+Users.eliminar = function(id, callback){
+    User.findByIdAndRemove(id, function(err, user){
+        if (err) {	
+            callback(err, null)
+        } else {
+		    callback(null, user);
+        }
+    });
+}
+
 Users.listarEmail = function(id, callback){
     User.findById(id, function(err, user){
         if (err) {
