@@ -224,3 +224,34 @@ Users.listarEmail = function(id, callback){
         };
     })
 }
+
+Users.adicionarChamadaApi = function(id, callback){
+    User.findById(id, function(err, user){
+        if (err) {	
+            callback(err,null)
+        } else {
+            user.nCalls+=1;
+            user.save(function(err) {
+                if (err) {
+		            callback(err, null);
+                }else{
+		            callback(null, user);
+                }
+            });
+        }
+    });
+}
+
+Users.contarChamadasApi = function(callback){
+    User.find({}, function(err, users){
+        if(!err){
+            var calls = 0;
+            for(var i = 0; i < users.length; i++) {
+                calls += users[i].nCalls;
+            }
+            callback(null, calls);
+        }else{
+            callback(err, null);
+        }
+    });
+}

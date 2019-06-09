@@ -18,16 +18,16 @@ router.get('/', (req, res) => {
     });
 });
 
-router.get('/:id', (req, res) => {
-    console.log(req.params.id)
-    Users.listarPorId(req.params.id,function(err, result){
-        if(err){
-            throw err;
-        }else{
-            return res.json(result);
-        }
-    });
-});
+// router.get('/:id', (req, res) => {
+//     console.log(req.params.id)
+//     Users.listarPorId(req.params.id,function(err, result){
+//         if(err){
+//             throw err;
+//         }else{
+//             return res.json(result);
+//         }
+//     });
+// });
 
 router.get('/listarEmail/:id', function(req, res) {
     Users.listarEmail(req.params.id,function(err, email){
@@ -209,5 +209,22 @@ router.post('/atualizarMultiplos', function (req, res) {
         }
     });
 });
+
+//API calls
+router.get('/contarChamadasApi', async function (req, res) {
+    await Users.contarChamadasApi(function(err, count){
+        if(err){
+            throw err;
+        }else{
+            return res.json(count);
+        }
+    });
+});
+
+// router.post('/adicionarChamadaApi/:id', function (req, res) {
+//     Users.adicionarChamadaApi(req.params.id, function (err, cb) {
+//         if (err) throw err;
+//     });
+// });
 
 module.exports = router;

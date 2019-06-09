@@ -39,6 +39,10 @@ var UserSchema = mongoose.Schema({
 	entidade: {
 		type: String
 	},
+	nCalls: {
+		type: Number,
+		default: 0
+    },
 	local: {
 		password: {
 			type: String
