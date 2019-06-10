@@ -112,6 +112,61 @@ Users.atualizarNivel = function(id, level, callback){
     });
 }
 
+Users.atualizarNome = function(id, name, callback){
+    User.findById(id, function(err, user){
+		if (err) {	
+            callback(err, null);
+		} else {
+            user.name = name;
+            user.save(function(err) {
+                if (err) {
+		            callback(err, null);
+                }else{
+		            callback(null, user);
+                }
+            });
+        }
+    });
+}
+
+Users.atualizarEmail = function(id, email, callback){
+    User.findById(id, function(err, user){
+		if (err) {	
+            callback(err, null);
+		} else {
+            user.email = email;
+            user.save(function(err) {
+                if (err) {
+		            callback(err, null);
+                }else{
+		            callback(null, user);
+                }
+            });
+        }
+    });
+}
+
+Users.atualizarMultiplosCampos = function(id, nome, email, level, callback){
+    console.log("ID: "+ id + " NOME: " + nome + " EMAIL: " + email + " LEVEL: " + level )
+    User.findById(id, function(err, user){
+		if (err) {	
+            callback(err, null);
+		} else {
+            console.log(user)
+            user.name = nome;
+            user.email = email;
+            user.level = level;
+            user.save(function(err) {
+                if (err) {
+		            callback(err, null);
+                }else{
+		            callback(null, user);
+                }
+            });
+        }
+    });
+}
+
 Users.atualizarPassword = function(id, password, callback){
     User.findById(id, function(err, user){
 		if (err) {
@@ -150,6 +205,16 @@ Users.desativar = function(id, callback){
     });
 }
 
+Users.eliminar = function(id, callback){
+    User.findByIdAndRemove(id, function(err, user){
+        if (err) {	
+            callback(err, null)
+        } else {
+		    callback(null, user);
+        }
+    });
+}
+
 Users.listarEmail = function(id, callback){
     User.findById(id, function(err, user){
         if (err) {
@@ -158,4 +223,35 @@ Users.listarEmail = function(id, callback){
             callback(null, user.email);
         };
     })
+}
+
+Users.adicionarChamadaApi = function(id, callback){
+    User.findById(id, function(err, user){
+        if (err) {	
+            callback(err,null)
+        } else {
+            user.nCalls+=1;
+            user.save(function(err) {
+                if (err) {
+		            callback(err, null);
+                }else{
+		            callback(null, user);
+                }
+            });
+        }
+    });
+}
+
+Users.contarChamadasApi = function(callback){
+    User.find({}, function(err, users){
+        if(!err){
+            var calls = 0;
+            for(var i = 0; i < users.length; i++) {
+                calls += users[i].nCalls;
+            }
+            callback(null, calls);
+        }else{
+            callback(err, null);
+        }
+    });
 }
