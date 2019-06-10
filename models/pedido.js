@@ -37,13 +37,7 @@ const PedidoSchema = new mongoose.Schema({
             type: String,
             enum: ["Criação", "Alteração", "Remoção"],
             required: true,
-        },
-        triplos: [{
-            nome: String,
-            sujeito: String,
-            predicado: String,
-            objeto: String,
-        }],
+        }
     },
     distribuicao: [{
         estado: {
