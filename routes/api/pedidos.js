@@ -3,15 +3,26 @@ var Pedidos = require('../../controllers/api/pedidos');
 var express = require('express');
 var router = express.Router();
 
+function isEmpty(obj) {
+    return Object.keys(obj).length === 0;
+}
+
 // Lista todos os pedidos que statisfazem uma condição
 router.get('/', (req, res) => {
-    const filtro = {
+    const filtro = {}
+    if(!isEmpty(req.query)){
+        const entries = Object.entries(req.query)
+        for (const [key, value] of entries) {
+            filtro.key = value
+        }
+    }
+    /*const filtro = {
         criadoPor: req.query.criadoPor,
         codigo: req.query.codigo,
         tipo: req.query.tipo,
         acao: req.query.acao,
         estado: req.query.estado
-    };
+    };*/
     
     Pedidos.listar(filtro)
         .then(dados => res.jsonp(dados))

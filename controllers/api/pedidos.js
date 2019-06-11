@@ -17,7 +17,7 @@ var Logging = require('../logging');
  */
 Pedidos.listar = (filtro) => {
     // Remover campos vazios do filtro
-    Object.keys(filtro).forEach((key) => (filtro[key] === undefined) && delete filtro[key]);
+    //Object.keys(filtro).forEach((key) => (filtro[key] === undefined) && delete filtro[key]);
     return Pedido.find(filtro);
 };
 
