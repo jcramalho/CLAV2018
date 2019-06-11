@@ -16,8 +16,6 @@ var Logging = require('../logging');
  * lista dos pedidos que satisfazem as condições do filtro
  */
 Pedidos.listar = (filtro) => {
-    // Remover campos vazios do filtro
-    //Object.keys(filtro).forEach((key) => (filtro[key] === undefined) && delete filtro[key]);
     return Pedido.find(filtro);
 };
 

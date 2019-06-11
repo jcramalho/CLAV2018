@@ -16,13 +16,6 @@ router.get('/', (req, res) => {
             filtro[key] = value
         }
     }
-    /*const filtro = {
-        criadoPor: req.query.criadoPor,
-        codigo: req.query.codigo,
-        tipo: req.query.tipo,
-        acao: req.query.acao,
-        estado: req.query.estado
-    };*/
     
     Pedidos.listar(filtro)
         .then(dados => res.jsonp(dados))
