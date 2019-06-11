@@ -13,7 +13,7 @@ router.get('/', (req, res) => {
     if(!isEmpty(req.query)){
         const entries = Object.entries(req.query)
         for (const [key, value] of entries) {
-            filtro.key = value
+            filtro[key] = value
         }
     }
     /*const filtro = {
