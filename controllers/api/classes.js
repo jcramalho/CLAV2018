@@ -36,10 +36,12 @@ Classes.listarPNsComuns = () => {
 			?id
             ?codigo 
             ?titulo 
+            ?transversal
         Where {
             ?id clav:processoTipoVC clav:vc_processoTipo_pc  .
             ?id clav:codigo ?codigo .
             ?id clav:titulo ?titulo .
+            ?id clav:processoTransversal ?transversal.
         } 
     `
     console.log(query)
@@ -56,6 +58,7 @@ Classes.listarPNsEspecificos = async (idEntidade, tipologias) => {
             ?id
             ?codigo
             ?titulo
+            ?transversal
         Where {
             ?id clav:processoTipoVC clav:vc_processoTipo_pe .
         `
@@ -78,8 +81,9 @@ Classes.listarPNsEspecificos = async (idEntidade, tipologias) => {
     query += `
         ?id clav:codigo ?codigo .
         ?id clav:titulo ?titulo .
+        ?id clav:processoTransversal ?transversal.
         }
-        Group by ?codigo ?titulo ?id
+        Group by ?codigo ?titulo ?id ?transversal
         Order by ?codigo
     `
 
