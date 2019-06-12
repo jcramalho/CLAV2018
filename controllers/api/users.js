@@ -87,7 +87,6 @@ Users.listar = function(req, callback){
 Users.listarPorId = function(id, callback){
     User.findById(id, function(err, user){
         if(err){
-            console.log(err)
             callback(err, null);
         }else{
             callback(null, user);

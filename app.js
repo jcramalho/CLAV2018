@@ -5,6 +5,24 @@ var express = require('express'),
 // Logging na consola do admin
 var logger = require('morgan')
 
+//Funcao auxiliar para contar numero de GET e POST
+var apiStats = require('./models/api')
+function getRoute(req){
+    const route = req.route ? req.route.path : '' // check if the handler exist
+    const baseUrl = req.baseUrl ? req.baseUrl : '' // adding the base url if the handler is a child of another handler
+ 
+    // return route ? `${baseUrl === '/' ? '' : baseUrl}${route}` : 'unknown route'
+    return route ? `${baseUrl === '/' ? '' : baseUrl}` : 'unknown route'
+}
+
+app.use((req, res, next) => {
+    res.on('finish', () => {
+        //console.log('_DEBUG_:' + `${req.method} ${getRoute(req)} ${res.statusCode}`) 
+        apiStats.addUsage(req.method, getRoute(req));
+    });
+    next();
+});
+
 // Para permitir pedidos à API vindos de outros serviços internos
 app.use(function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
@@ -134,7 +152,8 @@ app.use('/api/pendentes',require('./routes/api/pendentes'));
 app.use('/api/trabalhos',require('./routes/api/trabalhos'));
 app.use('/api/users',require('./routes/api/users'));
 app.use('/api/chaves',require('./routes/api/chaves'));
-app.use('/api/utils', require('./routes/api/utils'))
+app.use('/api/utils', require('./routes/api/utils'));
+app.use('/api/stats', require('./routes/api/stats'))
 app.use('/auth',require('./routes/auth/user'));
 
 // catch 404 and forward to error handler
