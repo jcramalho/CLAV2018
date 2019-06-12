@@ -117,8 +117,12 @@ Auth.isLoggedInNEW = async function (req, res, next) {
                 let user = await axios.get(myhost + "/api/users/" + decoded.id);
                 if(user.data._id!=undefined){
                     // await axios.get(myhost + 'api/users/adicionarChamadaApi/' + decoded.id)
-                    await Users.adicionarChamadaApi(decoded.id)
-                    return next();
+                    await Users.adicionarChamadaApi(decoded.id,function (err, cb) {
+                        if (err) 
+                            throw err;
+                        else 
+                            return next();
+                    });
                 }
             }
             else{

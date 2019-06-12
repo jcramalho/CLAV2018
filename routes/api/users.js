@@ -18,17 +18,6 @@ router.get('/', (req, res) => {
     });
 });
 
-// router.get('/:id', (req, res) => {
-//     console.log(req.params.id)
-//     Users.listarPorId(req.params.id,function(err, result){
-//         if(err){
-//             throw err;
-//         }else{
-//             return res.json(result);
-//         }
-//     });
-// });
-
 router.get('/listarEmail/:id', function(req, res) {
     Users.listarEmail(req.params.id,function(err, email){
         if(err){
@@ -226,5 +215,16 @@ router.get('/contarChamadasApi', async function (req, res) {
 //         if (err) throw err;
 //     });
 // });
+
+router.get('/:id', (req, res) => {
+    console.log(req.params.id)
+    Users.listarPorId(req.params.id,function(err, result){
+        if(err){
+            throw err;
+        }else{
+            return res.json(result);
+        }
+    });
+});
 
 module.exports = router;
