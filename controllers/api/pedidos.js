@@ -6,8 +6,7 @@ var Logging = require('../logging');
  * Lista as informações de todas os pedidos no sistema, de acordo
  * com o filtro especificado.
  * 
- * @param {Object} filtro objeto com os campos para filtrar. Se o valor de um
- * campo for `undefined` esse campo é ignorado.
+ * @param {Object} filtro objeto com os campos para filtrar. 
  * @param {string} filtro.criadoPor
  * @param {string} filtro.objeto.codigo
  * @param {string} filtro.objeto.tipo
@@ -31,7 +30,7 @@ Pedidos.getByTipo = function(tipo){
 /**
  * Consulta a informação relativa a um pedido.
  * 
- * @param codigo código do pedido no formato "nr-yyyy" (ex: 321-2019)
+ * @param codigo código do pedido no formato "yyyy-nr" (ex: 2019-321)
  * @return {Promise<Pedido | Error>} promessa que quando cumprida possui o
  * pedido com o código especificado, ou `undefined` se o pedido não existe.
  */
@@ -71,6 +70,16 @@ Pedidos.criar = function(pedidoParams){
             return(newPedido.codigo);
         }
     });
+}
+
+/**
+ * Atualiza um pedido.
+ * 
+ * @param pedidoParams novos dados para atualizar o pedido.
+ * @return {Pedido} pedido criado.
+ */
+Pedidos.atualizar = function(id, pedidoParams){
+    return Pedido.findByIdAndUpdate(id, pedidoParams);
 }
 
 /**
