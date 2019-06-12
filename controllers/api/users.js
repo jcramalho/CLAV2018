@@ -241,16 +241,16 @@ Users.adicionarChamadaApi = function(id, callback){
     });
 }
 
-Users.contarChamadasApi = function(callback){
-    User.find({}, function(err, users){
-        if(!err){
-            var calls = 0;
-            for(var i = 0; i < users.length; i++) {
-                calls += users[i].nCalls;
-            }
-            callback(null, calls);
-        }else{
-            callback(err, null);
-        }
-    });
-}
+// Users.contarChamadasApi = function(callback){
+//     User.find({}, function(err, users){
+//         if(!err){
+//             var calls = 0;
+//             for(var i = 0; i < users.length; i++) {
+//                 calls += users[i].nCalls;
+//             }
+//             callback(null, calls);
+//         }else{
+//             callback(err, null);
+//         }
+//     });
+// }

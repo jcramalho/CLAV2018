@@ -12,4 +12,15 @@ router.get('/', (req, res) => {
     });
 });
 
+router.get('/total', (req, res) => {
+    ApiStats.getCallCount(function(err, result){
+        if(err){
+            return res.status(500).send(`Erro: ${err}`);
+        }else{
+            return res.json(result);
+        }
+    });
+});
+
+
 module.exports = router;
