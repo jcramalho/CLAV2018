@@ -4,11 +4,11 @@ const PedidoSchema = new mongoose.Schema({
     codigo: {
         type: String,
         index: true,
-        match: /\d{1,}-\d{4,}/,
+        match: /\d{4}-\d{1,}/,
         required: true,
     },
     estado: {
-        type: String,           // Email do utilizador que criou o pedido
+        type: String,           
         required: true
     },
     data: {
@@ -17,7 +17,7 @@ const PedidoSchema = new mongoose.Schema({
         required: true,
     },
     criadoPor: {
-        type: String,           // Email do utilizador que criou o pedido
+        type: String,           
         required: true
     },
     objeto: {

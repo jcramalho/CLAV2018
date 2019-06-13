@@ -18,7 +18,9 @@ function getRoute(req){
 app.use((req, res, next) => {
     res.on('finish', () => {
         //console.log('_DEBUG_:' + `${req.method} ${getRoute(req)} ${res.statusCode}`) 
-        apiStats.addUsage(req.method, getRoute(req));
+        if(getRoute(req).includes('/api/')){
+            apiStats.addUsage(req.method, getRoute(req));
+        }
     });
     next();
 });

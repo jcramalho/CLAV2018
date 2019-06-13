@@ -36,6 +36,15 @@ router.post('/', Auth.isLoggedInNEW, (req, res) => {
         .catch(erro => res.status(500).send(`Erro na criação do pedido: ${erro}`));
 })
 
+// Atualização de um pedido: mais uma etapa na distribuição
+
+router.put('/', /*Auth.isLoggedInNEW,*/ (req, res) => {
+    console.log('PUT :: ' + JSON.stringify(req.body))
+    Pedidos.atualizar(req.body._id, req.body)
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.status(500).send(`Erro na atualização do pedido: ${erro}`));
+})
+
 // Adição de distribuição 
 router.post('/:codigo/distribuicao', (req, res) => {
     Pedidos.adicionarDistribuicao(req.params.codigo, req.body)
