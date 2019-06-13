@@ -42,7 +42,7 @@ const PedidoSchema = new mongoose.Schema({
     distribuicao: [{
         estado: {
             type: String,
-            enum: ["Em trabalho", "Submetido", "Em apreciação", "Em validação"],
+            enum: ["Submetido", "Distribuído", "Apreciado", "Validado"],
             required: true,
         },
         responsavel: {
@@ -61,7 +61,7 @@ const PedidoSchema = new mongoose.Schema({
 
 PedidoSchema.pre('validate', async function(next) {
     let count = await mongoose.model('Pedido').count();
-    this.codigo = `${count}-${new Date().getFullYear()}`;
+    this.codigo = `${new Date().getFullYear()}-${count}`;
     next();
 });
 
