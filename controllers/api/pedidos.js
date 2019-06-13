@@ -78,8 +78,32 @@ Pedidos.criar = function(pedidoParams){
  * @param pedidoParams novos dados para atualizar o pedido.
  * @return {Pedido} pedido criado.
  */
-Pedidos.atualizar = function(id, pedidoParams){
-    return Pedido.findByIdAndUpdate(id, pedidoParams);
+Pedidos.atualizar = async function(id, pedidoParams){
+    try{
+        Pedido.findByIdAndRemove(id, function(error){
+            if(error){
+                return error
+            }
+            else{
+                var novoPedido = new Pedido(pedidoParams.pedido)
+                novoPedido.distribuicao.push(pedidoParams.distribuicao)
+
+                return novoPedido.save(function (err) {
+                    if (err) {
+                        console.log(err);
+                        return 'Ocorreu um erro a atualizar o pedido!'
+                    }
+                    else{
+                        return novoPedido
+                   
+                    }
+                })
+            }
+        })
+    }
+    catch(error){
+        return error
+    }
 }
 
 /**
