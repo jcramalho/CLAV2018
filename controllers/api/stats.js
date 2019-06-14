@@ -17,7 +17,7 @@ ApiStats.getCallCount = function(callback){
             var calls = 0;
             for(var i = 0; i < res.length; i++) {
                 if(res[i]._id!= '' && res[i]._id!= 'unknown route')
-                    calls += res[i].nCallsGet + res[i].nCallsPost;
+                    calls += res[i].nCallsGet + res[i].nCallsPost + res[i].nCallsPut;
             }
             callback(null, calls);
         }else{

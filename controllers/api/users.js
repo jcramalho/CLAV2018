@@ -145,16 +145,17 @@ Users.atualizarEmail = function(id, email, callback){
     });
 }
 
-Users.atualizarMultiplosCampos = function(id, nome, email, level, callback){
+Users.atualizarMultiplosCampos = function(id, nome, email, entidade, level, callback){
     console.log("ID: "+ id + " NOME: " + nome + " EMAIL: " + email + " LEVEL: " + level )
     User.findById(id, function(err, user){
 		if (err) {	
             callback(err, null);
 		} else {
-            console.log(user)
+            // console.log(user)
             user.name = nome;
             user.email = email;
             user.level = level;
+            user.entidade = entidade;
             user.save(function(err) {
                 if (err) {
 		            callback(err, null);
