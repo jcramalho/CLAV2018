@@ -190,7 +190,7 @@ router.post('/alterarPassword', function (req, res) {
 });
 
 router.post('/atualizarMultiplos', function (req, res) {
-    Users.atualizarMultiplosCampos(req.body.id, req.body.nome, req.body.email, req.body.level, function (err, cb) {
+    Users.atualizarMultiplosCampos(req.body.id, req.body.nome, req.body.email, req.body.entidade, req.body.level, function (err, cb) {
         if (err) 
             return res.status(500).send(`Erro: ${err}`);
         else {

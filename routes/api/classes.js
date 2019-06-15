@@ -192,7 +192,7 @@ router.get('verifica/:codigo', (req, res) => {
 })
 
 router.post('/', Auth.isLoggedInNEW, (req, res) => {
-    return Classes.criar(req.body, req.body.user.token)
+    return Classes.criar(req.body, req.body.token)
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na criação da classe: ${erro}`));
 })
