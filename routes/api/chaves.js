@@ -1,38 +1,72 @@
 var express = require('express');
 var router = express.Router();
-var jwt =  require('jsonwebtoken');
-var Auth = require('./../../controllers/auth')
-var Key = require('./../../models/keys');
-var secretKey = require('./../../config/app');
+var Chaves = require('../../controllers/api/chaves');
 
-router.get('/listagem', Auth.isLoggedIn, Auth.checkLevel6, (req, res) => {
-    Key.find({}, function(err, keys){
-        if (err) {
-            throw err;
-        }else {
-            jsonObj = [];
-            for(var i = 0; i < keys.length; i++) {
-                item = {}
-                jwt.verify(keys[i].key, secretKey.key, function(err, decoded){
-                    item["expDate"] = new Date(decoded.exp*1000).toUTCString();
-                });
-                item["id"] = keys[i]._id;
-                item["key"] = keys[i].key;
-                item["ncalls"] = keys[i].nCalls;
-                item["created"] = keys[i].created.toUTCString();
-                item["contactInfo"] = keys[i].contactInfo;
-                if(keys[i].lastUsed!=null)
-                    item["lastused"] = keys[i].lastUsed.toUTCString();
-                else
-                    item["lastused"] = 'Nunca';
-                if(keys[i].active==true)
-                    item["active"] = 'Sim'
-                else
-                    item["active"] = 'Não';
-                jsonObj.push(item);
-            }
+router.get('/listagem', (req, res) => {
+    Chaves.listar(function(err, result){
+        if(err){
+            return res.status(500).send(`Erro: ${err}`);
+        }else{
+            return res.send(result);
         }
-        return res.send(jsonObj);
+    });
+});
+
+router.post('/registar', (req, res) => {
+    Chaves.listarPorEmail(req.body.email, function (err, chave) {
+        if (err) 
+            return res.status(500).send(`Erro: ${err}`);
+        if (!chave) {
+            Chaves.criarChave(req.body.name, req.body.email, req.body.entidade, function(err, cb){
+                if(err){
+                    return res.status(500).send(`Erro: ${err}`);
+                }else{
+                    res.send('Chave API registada com sucesso!');
+                }
+            });
+        }else{
+            res.send('Email já em uso!');
+        }
+    });
+});
+
+router.post('/desativar', function(req, res) {
+    Chaves.desativar(req.body.id, function(err, cb){
+        if(err){
+            return res.status(500).send(`Erro: ${err}`);
+        }else{
+            res.send('Chave API desativada com sucesso!');
+        }
+    });
+});
+
+router.post('/ativar', function(req, res) {
+    Chaves.ativar(req.body.id, function(err, cb){
+        if(err){
+            return res.status(500).send(`Erro: ${err}`);
+        }else{
+            res.send('Chave API ativada com sucesso!');
+        }
+    });
+});
+
+router.post('/eliminar', function(req, res) {
+    Chaves.eliminar(req.body.id, function(err, cb){
+        if(err){
+            return res.status(500).send(`Erro: ${err}`);
+        }else{
+            res.send('Chave API eliminada com sucesso!');
+        }
+    });
+});
+
+router.post('/atualizarMultiplos', function (req, res) {
+    Chaves.atualizarMultiplosCampos(req.body.id, req.body.name, req.body.contactInfo, req.body.entity, function (err, cb) {
+        if (err) 
+            return res.status(500).send(`Erro: ${err}`);
+        else {
+            res.send('Chave API atualizada com sucesso!')
+        }
     });
 });
 
