@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var Chaves = require('../../controllers/api/chaves');
+var Mailer = require('../../controllers/api/mailer');
 
 router.get('/listagem', (req, res) => {
     Chaves.listar(function(err, result){
@@ -17,10 +18,11 @@ router.post('/registar', (req, res) => {
         if (err) 
             return res.status(500).send(`Erro: ${err}`);
         if (!chave) {
-            Chaves.criarChave(req.body.name, req.body.email, req.body.entidade, function(err, cb){
+            Chaves.criarChave(req.body.name, req.body.email, req.body.entidade, function(err, result){
                 if(err){
                     return res.status(500).send(`Erro: ${err}`);
                 }else{
+                    Mailer.sendEmailRegistoAPI(req.body.email, result.ops[0].key);
                     res.send('Chave API registada com sucesso!');
                 }
             });

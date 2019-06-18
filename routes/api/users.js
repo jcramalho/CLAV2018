@@ -6,7 +6,7 @@ var User = require('../../models/user');
 var Users = require('../../controllers/api/users');
 var jwt = require('jsonwebtoken')
 var secretKey = require('./../../config/app');
-var Mailer = require('../../controllers/api/mailer')
+var Mailer = require('../../controllers/api/mailer');
 
 router.get('/', (req, res) => {
     Users.listar(req,function(err, result){
@@ -110,7 +110,7 @@ router.post('/recuperar', function (req, res) {
             res.send('Não existe utilizador com esse email!');
         else {
             var token = jwt.sign({id: user._id}, secretKey.key, {expiresIn: '30m'});
-            Mailer.sendEmail(req.body.email, req.body.url.split('/recuperacao')[0]+'/alteracaoPassword?jwt='+token);
+            Mailer.sendEmailRecuperacao(req.body.email, req.body.url.split('/recuperacao')[0]+'/alteracaoPassword?jwt='+token);
             res.send('Email enviado com sucesso!')
         }
     });
