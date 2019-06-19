@@ -1,6 +1,6 @@
 var Auth = module.exports
 var jwt = require('jsonwebtoken');
-var Key = require('./../models/keys');
+var Key = require('../models/chave');
 var ApiKey = require('./../config/api');
 var secretKey = require('./../config/app');
 var Users = require('../controllers/api/users');

@@ -41,8 +41,8 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 }));
 
 //Server JWT gen
-var serverKey = require('./models/keys')
-serverKey.generateServerKey();
+// var serverKey = require('./models/chave')
+// serverKey.generateServerKey();
 
 //authentication dependencies
 var cookieParser = require('cookie-parser');
