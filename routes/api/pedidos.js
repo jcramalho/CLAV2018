@@ -30,7 +30,7 @@ router.get('/:codigo', (req, res) => {
 });
 
 // Criação de um pedido
-router.post('/', Auth.isLoggedInNEW, (req, res) => {
+router.post('/', /*Auth.isLoggedInNEW,*/ (req, res) => {
     Pedidos.criar(req.body)
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na criação do pedido: ${erro}`));
@@ -38,7 +38,7 @@ router.post('/', Auth.isLoggedInNEW, (req, res) => {
 
 // Atualização de um pedido: mais uma etapa na distribuição
 
-router.put('/', /*Auth.isLoggedInNEW,*/ (req, res) => {
+router.put('/', Auth.isLoggedInNEW, (req, res) => {
     Pedidos.atualizar(req.body.pedido._id, req.body)
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na atualização do pedido: ${erro}`));
