@@ -112,25 +112,27 @@ Chaves.eliminar = function(id, callback){
 	});
 };
 
-// Chaves.renovar = function(id, callback){
-// 	Chave.findById(id, function(err, key){
-// 		if(err){
-// 			callback(err, null);
-// 		}else{
-// 			//TODO
-//  			key.save(function(err) {
-// 				if (err) {
-// 					callback(err, null);
-// 				} else {
-// 					callback(null, key);
-// 				}
-// 			});
-// 		}
-// 	});
-// };
+Chaves.renovar = function(id, callback){
+	Chave.findById(id, function(err, key){
+		if(err || !key){
+			callback(err, null);
+		}else{
+            key.key = jwt.sign({}, secretKey.key, {expiresIn: '30d'});
+            key.created = Date.now();
+            key.nCalls = 0;
+            key.lastUsed = null;
+ 			key.save(function(err) {
+				if (err) {
+					callback(err, null);
+				} else {
+					callback(null, key);
+				}
+			});
+		}
+	});
+};
 
 Chaves.atualizarMultiplosCampos = function(id, name, email, entidade, callback){
-    // console.log("ID: "+ id + " NOME: " + nome + " EMAIL: " + email + " LEVEL: " + level )
     Chave.findById(id, function(err, chave){
 		if (err) {	
             callback(err, null);
@@ -147,4 +149,4 @@ Chaves.atualizarMultiplosCampos = function(id, name, email, entidade, callback){
             });
         }
     });
-}
+};
