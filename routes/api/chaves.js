@@ -62,7 +62,7 @@ router.post('/eliminar', function(req, res) {
     });
 });
 
-router.post('/atualizarMultiplos', function (req, res) {
+router.put('/atualizarMultiplos', function (req, res) {
     Chaves.atualizarMultiplosCampos(req.body.id, req.body.name, req.body.contactInfo, req.body.entity, function (err, cb) {
         if (err) 
             return res.status(500).send(`Erro: ${err}`);

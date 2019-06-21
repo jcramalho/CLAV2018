@@ -149,7 +149,7 @@ router.post('/eliminar', async function(req, res) {
 });
 
 //Funcoes de alteracao de utilizador
-router.post('/alterarNivel', function (req, res) {
+router.put('/alterarNivel', function (req, res) {
     Users.atualizarNivel(req.body.id, req.body.level, function (err, cb) {
         if (err) 
             return res.status(500).send(`Erro: ${err}`);
@@ -159,7 +159,7 @@ router.post('/alterarNivel', function (req, res) {
     });
 });
 
-router.post('/alterarNome', function (req, res) {
+router.put('/alterarNome', function (req, res) {
     Users.atualizarNome(req.body.id, req.body.nome, function (err, cb) {
         if (err) 
             return res.status(500).send(`Erro: ${err}`);
@@ -169,7 +169,7 @@ router.post('/alterarNome', function (req, res) {
     });
 });
 
-router.post('/alterarEmail', function (req, res) {
+router.put('/alterarEmail', function (req, res) {
     Users.atualizarEmail(req.body.id, req.body.email, function (err, cb) {
         if (err) 
             return res.status(500).send(`Erro: ${err}`);
@@ -179,7 +179,7 @@ router.post('/alterarEmail', function (req, res) {
     });
 });
 
-router.post('/alterarPassword', function (req, res) {
+router.put('/alterarPassword', function (req, res) {
     Users.atualizarPassword(req.body.id, req.body.password, function (err, cb) {
         if (err) 
             return res.status(500).send(`Erro: ${err}`);
@@ -189,7 +189,7 @@ router.post('/alterarPassword', function (req, res) {
     });
 });
 
-router.post('/atualizarMultiplos', function (req, res) {
+router.put('/atualizarMultiplos', function (req, res) {
     Users.atualizarMultiplosCampos(req.body.id, req.body.nome, req.body.email, req.body.entidade, req.body.level, function (err, cb) {
         if (err) 
             return res.status(500).send(`Erro: ${err}`);
