@@ -88,14 +88,13 @@ Pedidos.atualizar = async function(id, pedidoParams){
                 var novoPedido = new Pedido(pedidoParams.pedido)
                 novoPedido.distribuicao.push(pedidoParams.distribuicao)
 
-                return novoPedido.save(function (err) {
+                return novoPedido.save(function (err, pedidoGravado) {
                     if (err) {
                         console.log(err);
-                        return 'Ocorreu um erro a atualizar o pedido!'
+                        return err
                     }
                     else{
-                        return novoPedido
-                   
+                        return pedidoGravado
                     }
                 })
             }

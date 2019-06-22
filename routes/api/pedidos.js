@@ -38,7 +38,7 @@ router.post('/', /*Auth.isLoggedInNEW,*/ (req, res) => {
 
 // Atualização de um pedido: mais uma etapa na distribuição
 
-router.put('/', Auth.isLoggedInNEW, (req, res) => {
+router.put('/', /*Auth.isLoggedInNEW,*/ (req, res) => {
     Pedidos.atualizar(req.body.pedido._id, req.body)
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na atualização do pedido: ${erro}`));

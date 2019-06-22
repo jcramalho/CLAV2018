@@ -110,7 +110,7 @@ Auth.isLoggedInAPI = async function (req, res, next) {
 }
 
 Auth.isLoggedInNEW = async function (req, res, next) {
-    if(req.body.token!=undefined){
+    if(req.body.token){
         await jwt.verify(req.body.token, secretKey.key, async function(err, decoded){
             if(!err){
                 console.log("TOKEN VALIDO: " + decoded.id)
@@ -129,5 +129,8 @@ Auth.isLoggedInNEW = async function (req, res, next) {
                 console.log("TOKEN INVALIDO: " + err)
             }
         });
+    }
+    else{
+        console.log("TOKEN INEXISTENTE!")
     }
 }
