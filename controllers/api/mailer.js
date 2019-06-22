@@ -4,8 +4,7 @@ var Mailer = module.exports
 
 mailer.setApiKey(SG_ApiKey);
 
-Mailer.sendEmail = function(destination, link){
-    console.log("DESTINO: "+ destination + " LINK: " + link)
+Mailer.sendEmailRecuperacao = function(destination, link){
     const msg = {
         from: 'recuperacao@clav.dglab.gov.pt',
         to: destination,
@@ -15,4 +14,28 @@ Mailer.sendEmail = function(destination, link){
         }
     };
     mailer.send(msg);
+}
+
+Mailer.sendEmailRegistoAPI = function(destination, jwt){
+  const msg = {
+      from: 'api@clav.dglab.gov.pt',
+      to: destination,
+      templateId: 'd-113714263ec4430194429f0ff92617b7',
+      dynamic_template_data: {
+        key: jwt,
+      }
+  };
+  mailer.send(msg);
+}
+
+Mailer.sendEmailRenovacaoAPI = function(destination, link){
+  const msg = {
+      from: 'api@clav.dglab.gov.pt',
+      to: destination,
+      templateId: 'd-0f179960befa48e4925a31a565d053bc',
+      dynamic_template_data: {
+        url: link,
+      }
+  };
+  mailer.send(msg);
 }

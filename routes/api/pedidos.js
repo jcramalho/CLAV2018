@@ -30,7 +30,7 @@ router.get('/:codigo', (req, res) => {
 });
 
 // Criação de um pedido
-router.post('/', Auth.isLoggedInNEW, (req, res) => {
+router.post('/', /*Auth.isLoggedInNEW,*/ (req, res) => {
     Pedidos.criar(req.body)
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na criação do pedido: ${erro}`));

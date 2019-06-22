@@ -60,8 +60,10 @@ const PedidoSchema = new mongoose.Schema({
 });
 
 PedidoSchema.pre('validate', async function(next) {
-    let count = await mongoose.model('Pedido').count();
-    this.codigo = `${new Date().getFullYear()}-${count}`;
+    if(!this.codigo){
+        let count = await mongoose.model('Pedido').count();
+        this.codigo = `${new Date().getFullYear()}-${count}`;
+    }
     next();
 });
 

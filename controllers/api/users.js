@@ -146,7 +146,7 @@ Users.atualizarEmail = function(id, email, callback){
 }
 
 Users.atualizarMultiplosCampos = function(id, nome, email, entidade, level, callback){
-    console.log("ID: "+ id + " NOME: " + nome + " EMAIL: " + email + " LEVEL: " + level )
+    // console.log("ID: "+ id + " NOME: " + nome + " EMAIL: " + email + " LEVEL: " + level )
     User.findById(id, function(err, user){
 		if (err) {	
             callback(err, null);
