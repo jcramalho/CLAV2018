@@ -1,5 +1,7 @@
 var express = require('express');
 var router = express.Router();
+var jwt = require('jsonwebtoken')
+var secretKey = require('./../../config/app');
 var Chaves = require('../../controllers/api/chaves');
 var Mailer = require('../../controllers/api/mailer');
 
@@ -9,6 +11,22 @@ router.get('/listagem', (req, res) => {
             return res.status(500).send(`Erro: ${err}`);
         }else{
             return res.send(result);
+        }
+    });
+});
+
+router.get('/listarToken/:id', async function(req,res){
+    await jwt.verify(req.params.id, secretKey.key, async function(err, decoded){
+        if(!err){
+            await Chaves.listarPorId(decoded.id,function(err, result){
+                if(err){
+                    res.send(err);
+                }else{
+                    res.send(result);
+                }
+            });
+        }else{
+            res.send(err);
         }
     });
 });
@@ -62,7 +80,30 @@ router.post('/eliminar', function(req, res) {
     });
 });
 
-router.post('/atualizarMultiplos', function (req, res) {
+router.post('/renovar', function(req, res) {
+    Chaves.listarPorEmail(req.body.email, function(err, chave){
+        if(err || !chave){
+            res.send("Não existe nenhuma chave API associada neste email!");
+        }else{
+            var token = jwt.sign({id: chave._id}, secretKey.key, {expiresIn: '30m'});
+            Mailer.sendEmailRenovacaoAPI(chave.contactInfo, req.body.url.split('/renovar')[0]+'/alteracaoChaveApi?jwt='+token);
+            res.send('Email enviado com sucesso!');
+        }
+    });
+});
+
+router.post('/atualizarChave', function(req, res) {
+    Chaves.renovar(req.body.id, function(err, chave){
+        if(err){
+            return res.status(500).send(`Erro: ${err}`);
+        }else{
+            Mailer.sendEmailRegistoAPI(chave.contactInfo, chave.key);
+            res.send('Chave API renovada com sucesso!');
+        }
+    });
+});
+
+router.put('/atualizarMultiplos', function (req, res) {
     Chaves.atualizarMultiplosCampos(req.body.id, req.body.name, req.body.contactInfo, req.body.entity, function (err, cb) {
         if (err) 
             return res.status(500).send(`Erro: ${err}`);

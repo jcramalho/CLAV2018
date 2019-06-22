@@ -8,9 +8,7 @@ mongoose.connect(dataBases.userDB, {
 
 // User Schema
 var ApiStatsSchema = mongoose.Schema({
-	_id: {
-
-	},
+	_id: {},
 	nCallsGet: {
         type: Number,
         default: 0
@@ -41,7 +39,7 @@ module.exports.addUsage = function (method, route) {
                 newStats.nCallsGet=1;
             else if(method=='POST')
                 newStats.nCallsPost=1;
-            else if(method=='OPTIONS' || method=='PUT')
+            else if(method=='PUT')
                 newStats.nCallsPut=1;
 
             ApiStats.collection.insert(newStats, function(err) {
@@ -53,19 +51,19 @@ module.exports.addUsage = function (method, route) {
             });
         }else{
             if(method=='GET') 
-                newStats.nCallsGet+=1;
+                stats.nCallsGet+=1;
             else if(method=='POST')
-                newStats.nCallsPost+=1;
-            else if(method=='OPTIONS' || method=='PUT')
-                newStats.nCallsPut+=1;
+                stats.nCallsPost+=1;
+            else if(method=='PUT')
+                stats.nCallsPut+=1;
 
             stats.save(function(err) {
                 if (err) {
                     throw err;
                 } 
-                // else {
-                //     console.log("Atualizada chave servidor!")
-                // }
+                else {
+                    console.log("Incrementei " + method +" da rota " + route);
+                }
             });
         }
     })
