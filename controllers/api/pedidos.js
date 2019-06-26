@@ -56,7 +56,7 @@ Pedidos.criar = function(pedidoParams){
         },
         distribuicao: [{
             estado: "Submetido",
-            responsavel: pedidoParams.utilizador,
+            responsavel: pedidoParams.user.email,
             despacho: "Submissão inicial"
         }]
     });
