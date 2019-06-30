@@ -84,6 +84,24 @@ router.get('/verificar/:codigo', async (req, res) => {
     }
 })
 
+// Verifica se um determinado título de classe já existe
+router.post('/verificarTitulo', async (req, res) => {
+    try {
+        res.jsonp(await State.verificaTitulo(req.body.titulo))
+    } catch(err) {
+        res.status(500).send(`Erro na verificação de um título: ${err}`)
+    }
+})
+
+// Verifica se uma determinada notaAplicação já existe
+router.post('/verificarNA', async (req, res) => {
+    try {
+        res.jsonp(await State.verificaNA(req.body.na))
+    } catch(err) {
+        res.status(500).send(`Erro na verificação de um título: ${err}`)
+    }
+})
+
 // Devolve a metainformação de uma classe: codigo, titulo, status, desc, codigoPai?, tituloPai?, procTrans?, procTipo?
 router.get('/:id/meta', function (req, res) {
     Classes.consultar(req.params.id)
