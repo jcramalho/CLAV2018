@@ -11,6 +11,8 @@ var level2Classes = []
 var level3Classes = []
 var level4Classes = []
 
+var notasAplicacao = []
+
 exports.reset = async () => { 
     try {
         console.debug("Loading classes from DB")
@@ -47,6 +49,20 @@ exports.verificaCodigo = async (cod) => {
     return r
 }
 
+// Verifica a existência do título de uma classe: true == existe, false == não existe
+exports.verificaTitulo = async (titulo) => {
+    var r = false
+    r = await classList.filter(c => c.titulo == titulo).length != 0
+    return r
+}
+
+// Verifica a existência duma nota de aplicação: true == existe, false == não existe
+exports.verificaNA = async (na) => {
+    var r = false
+    r = await notasAplicacao.filter(n => n == na).length != 0
+    return r
+}
+
 //Devolve a lista dos processos de negócio comuns, ou seja, aqueles com :processoTipoVC :vc_processoTipo_pc
 exports.getProcessosComuns = async () => {
     console.log("Processos Comuns");
@@ -71,16 +87,28 @@ async function loadClasses() {
                 let cid = classes[i].id.split('#')[1]
                 let desc = await Classes.descendencia(cid)
                 level2Classes = level2Classes.concat(JSON.parse(JSON.stringify(desc)))
+
+                let na = await Classes.notasAp(cid)
+                notasAplicacao = notasAplicacao.concat(JSON.parse(JSON.stringify(na.map(n => n.nota))))
+
                 for(var j=0; j < desc.length; j++){
                     let cid2 = desc[j].id.split('#')[1]
                     desc[j].drop = false
                     let desc2 = await Classes.descendencia(cid2)
                     level3Classes = level3Classes.concat(JSON.parse(JSON.stringify(desc2)))
+
+                    let na = await Classes.notasAp(cid2)
+                    notasAplicacao = notasAplicacao.concat(JSON.parse(JSON.stringify(na.map(n => n.nota))))
+
                     for(var k=0; k < desc2.length; k++){
                         desc2[k].drop = false
                         let cid3 = desc2[k].id.split('#')[1]
                         let desc3 = await Classes.descendencia(cid3)
                         level4Classes = level4Classes.concat(JSON.parse(JSON.stringify(desc3)))
+
+                        let na = await Classes.notasAp(cid3)
+                        notasAplicacao = notasAplicacao.concat(JSON.parse(JSON.stringify(na.map(n => n.nota))))
+
                         desc2[k].filhos = desc3
                     }
                     desc[j].filhos = desc2

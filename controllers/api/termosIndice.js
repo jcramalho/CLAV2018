@@ -44,7 +44,6 @@ TermosIndice.existe = (termoIndice) => {
             ?s rdf:type clav:TermoIndice.
             ?s clav:termo "${termoIndice.termo}"
         }`;
-        console.log(query)
     return client.query(query)
         .execute()
         .then(response => {return (response.boolean)});
