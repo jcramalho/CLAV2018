@@ -12,6 +12,7 @@ var level3Classes = []
 var level4Classes = []
 
 var notasAplicacao = []
+var exemplosNotasAplicacao = []
 
 exports.reset = async () => { 
     try {
@@ -63,6 +64,13 @@ exports.verificaNA = async (na) => {
     return r
 }
 
+// Verifica a existência dum exemplo de nota de aplicação: true == existe, false == não existe
+exports.verificaExemploNA = async (exemplo) => {
+    var r = false
+    r = await exemplosNotasAplicacao.filter(e => e == exemplo).length != 0
+    return r
+}
+
 //Devolve a lista dos processos de negócio comuns, ou seja, aqueles com :processoTipoVC :vc_processoTipo_pc
 exports.getProcessosComuns = async () => {
     console.log("Processos Comuns");
@@ -90,6 +98,8 @@ async function loadClasses() {
 
                 let na = await Classes.notasAp(cid)
                 notasAplicacao = notasAplicacao.concat(JSON.parse(JSON.stringify(na.map(n => n.nota))))
+                let ex = await Classes.exemplosNotasAp(cid)
+                exemplosNotasAplicacao = exemplosNotasAplicacao.concat(JSON.parse(JSON.stringify(ex.map(e => e.exemplo))))
 
                 for(var j=0; j < desc.length; j++){
                     let cid2 = desc[j].id.split('#')[1]
@@ -99,6 +109,8 @@ async function loadClasses() {
 
                     let na = await Classes.notasAp(cid2)
                     notasAplicacao = notasAplicacao.concat(JSON.parse(JSON.stringify(na.map(n => n.nota))))
+                    let ex = await Classes.exemplosNotasAp(cid2)
+                    exemplosNotasAplicacao = exemplosNotasAplicacao.concat(JSON.parse(JSON.stringify(ex.map(e => e.exemplo))))
 
                     for(var k=0; k < desc2.length; k++){
                         desc2[k].drop = false
@@ -108,6 +120,8 @@ async function loadClasses() {
 
                         let na = await Classes.notasAp(cid3)
                         notasAplicacao = notasAplicacao.concat(JSON.parse(JSON.stringify(na.map(n => n.nota))))
+                        let ex = await Classes.exemplosNotasAp(cid3)
+                        exemplosNotasAplicacao = exemplosNotasAplicacao.concat(JSON.parse(JSON.stringify(ex.map(e => e.exemplo))))
 
                         desc2[k].filhos = desc3
                     }

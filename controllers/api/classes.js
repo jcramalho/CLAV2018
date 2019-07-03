@@ -458,13 +458,14 @@ Classes.justificacao = async id => {
     try {
         var query = `
         SELECT
-            ?criterio ?tipoLabel ?conteudo
+            ?criterio ?tipoId ?tipoLabel ?conteudo
         WHERE {
             clav:${id} clav:temCriterio ?criterio . 
             ?criterio clav:conteudo ?conteudo.
             ?criterio a ?tipo.
             ?tipo rdfs:subClassOf clav:CriterioJustificacao.
             ?tipo rdfs:label ?tipoLabel.
+            BIND (STRAFTER(STR(?tipo), 'clav#') AS ?tipoId).
         }`
         let result = await client.query(query).execute();
         return normalize(result);

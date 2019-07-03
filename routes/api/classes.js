@@ -84,24 +84,6 @@ router.get('/verificar/:codigo', async (req, res) => {
     }
 })
 
-// Verifica se um determinado título de classe já existe
-router.post('/verificarTitulo', async (req, res) => {
-    try {
-        res.jsonp(await State.verificaTitulo(req.body.titulo))
-    } catch(err) {
-        res.status(500).send(`Erro na verificação de um título: ${err}`)
-    }
-})
-
-// Verifica se uma determinada notaAplicação já existe
-router.post('/verificarNA', async (req, res) => {
-    try {
-        res.jsonp(await State.verificaNA(req.body.na))
-    } catch(err) {
-        res.status(500).send(`Erro na verificação de um título: ${err}`)
-    }
-})
-
 // Devolve a metainformação de uma classe: codigo, titulo, status, desc, codigoPai?, tituloPai?, procTrans?, procTipo?
 router.get('/:id/meta', function (req, res) {
     Classes.consultar(req.params.id)
@@ -213,6 +195,33 @@ router.post('/', Auth.isLoggedInNEW, (req, res) => {
     return Classes.criar(req.body, req.body.token)
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na criação da classe: ${erro}`));
+})
+
+// Verifica se um determinado título de classe já existe
+router.post('/verificarTitulo', async (req, res) => {
+    try {
+        res.jsonp(await State.verificaTitulo(req.body.titulo))
+    } catch(err) {
+        res.status(500).send(`Erro na verificação de um título: ${err}`)
+    }
+})
+
+// Verifica se uma determinada notaAplicação já existe
+router.post('/verificarNA', async (req, res) => {
+    try {
+        res.jsonp(await State.verificaNA(req.body.na))
+    } catch(err) {
+        res.status(500).send(`Erro na verificação de uma nota de aplicação: ${err}`)
+    }
+})
+
+// Verifica se um determinado exemplo de nota de aplicação já existe
+router.post('/verificarExemploNA', async (req, res) => {
+    try {
+        res.jsonp(await State.verificaExemploNA(req.body.exemplo))
+    } catch(err) {
+        res.status(500).send(`Erro na verificação de um exemplo de nota de aplicação: ${err}`)
+    }
 })
 
 module.exports = router;
