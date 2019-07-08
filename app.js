@@ -141,7 +141,6 @@ app.use('/termosIndice',require('./routes/termosIndice'));
 app.use('/gestao',require('./routes/admin'));
 app.use('/pedidos',require('./routes/pedidos'));
 
-//app.use('/api/organizacoes',require('./routes/api/orgs'));
 app.use('/api/entidades',require('./routes/api/entidades'));
 app.use('/api/tipologias',require('./routes/api/tipologias'));
 app.use('/api/legislacao',require('./routes/api/leg'));
