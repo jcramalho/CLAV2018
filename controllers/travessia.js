@@ -3,6 +3,7 @@
  */
 var Trav = [];
 var travessias = [];
+const fs = require('fs')
 
 exports.reset = async () => {
     try {
@@ -22,6 +23,18 @@ exports.travProc = async (id) => {
         return travessias[id]
     } catch (err) {
         throw err
+    }
+}
+
+exports.novaTravessia = async (newTrav) => {
+    try {
+        fs.writeFileSync("./public/travessia/travessia.json", JSON.stringify(newTrav), function(err){
+            if(err) {
+                return console.log("ERRO")
+            }
+        })
+    } catch (error) {
+        console.log(error)
     }
 }
 

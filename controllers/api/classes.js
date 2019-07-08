@@ -44,7 +44,6 @@ Classes.listarPNsComuns = () => {
             ?id clav:processoTransversal ?transversal.
         } 
     `
-    console.log(query)
 
     return client.query(query)
         .execute()
@@ -86,8 +85,6 @@ Classes.listarPNsEspecificos = async (idEntidade, tipologias) => {
         Group by ?codigo ?titulo ?id ?transversal
         Order by ?codigo
     `
-
-    console.log(query);
 
     return client.query(query)
         .execute()
