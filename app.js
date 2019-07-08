@@ -128,6 +128,10 @@ app.use(function (req, res, next) {
 var State = require('./controllers/state.js')
 State.reset()
 
+//loads APP travessia
+var travessia = require('./controllers/travessia.js')
+travessia.reset()
+
 //routes and API
 app.use('/',require('./routes/index'));
 app.use('/users',require('./routes/users'));
@@ -156,6 +160,7 @@ app.use('/api/chaves',require('./routes/api/chaves'));
 app.use('/api/utils', require('./routes/api/utils'));
 app.use('/api/stats', require('./routes/api/stats'))
 app.use('/auth',require('./routes/auth/user'));
+app.use('/api/travessia',require('./routes/api/travessia'));
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

@@ -73,7 +73,6 @@ exports.verificaExemploNA = async (exemplo) => {
 
 //Devolve a lista dos processos de negócio comuns, ou seja, aqueles com :processoTipoVC :vc_processoTipo_pc
 exports.getProcessosComuns = async () => {
-    console.log("Processos Comuns");
     let PC = await Classes.listarPNsComuns();
     return PC;
 }
@@ -81,7 +80,6 @@ exports.getProcessosComuns = async () => {
 //Devolve a lista dos processos de negócio especificos, ou seja, aqueles com :processoTipoVC :vc_processoTipo_pc
 // especificos da entidade em causa e das tipologias a que este pertence
 exports.getProcessosEspecificos = async (idEntidade, tipologias) => {
-    console.log("Processos Especificos");
     let PE = await Classes.listarPNsEspecificos(idEntidade, tipologias);
     return PE;
 }

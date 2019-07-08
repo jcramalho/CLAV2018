@@ -19,4 +19,13 @@ router.get('/:id', async function(req,res){
     }
 })
 
+// Post de uma nova travessia (enviada pela aplicação de travessias )
+router.post('/', async (req, res) => {
+    try {
+        res.jsonp(await Trav.novaTravessia(req.body))
+    } catch (err) {
+        res.status(500).send(`Erro na criação de uma nova travessia: ${err}`)
+    }
+})
+
 module.exports = router;
