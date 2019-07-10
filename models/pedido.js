@@ -30,7 +30,7 @@ const PedidoSchema = new mongoose.Schema({
         },
         tipo: {
             type: String,
-            enum: ["Classe", "Tabela de seleção", "Entidade", "Tipologia", "Legislação", "Termo de Indice"],
+            enum: ["Classe", "TS Organizacional", "TS Pluriorganizacional", "Entidade", "Tipologia", "Legislação", "Termo de Indice"],
             required: true,
         },
         acao: {

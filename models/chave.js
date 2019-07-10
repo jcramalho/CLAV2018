@@ -11,6 +11,10 @@ var ChaveSchema = mongoose.Schema({
 	key: {
 		type: String
     },
+    level: {
+        type: Number,
+        default: 0
+    },
     name: {
         type: String
     },
