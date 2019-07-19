@@ -79,8 +79,8 @@ exports.getProcessosComuns = async () => {
 
 //Devolve a lista dos processos de negócio especificos, ou seja, aqueles com :processoTipoVC :vc_processoTipo_pc
 // especificos da entidade em causa e das tipologias a que este pertence
-exports.getProcessosEspecificos = async (idEntidade, tipologias) => {
-    let PE = await Classes.listarPNsEspecificos(idEntidade, tipologias);
+exports.getProcessosEspecificos = async (entidades, tipologias) => {
+    let PE = await Classes.listarPNsEspecificos(entidades, tipologias);
     return PE;
 }
 
