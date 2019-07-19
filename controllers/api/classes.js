@@ -51,7 +51,7 @@ Classes.listarPNsComuns = () => {
 }
 
 // Devolve a lista de classes de nível 3 que são consideradas processos específicos de uma dada entidade e de diferentes tipologias
-Classes.listarPNsEspecificos = async (idEntidade, tipologias) => {
+Classes.listarPNsEspecificos = async (entidades, tipologias) => {
     var query =`
     Select
             ?id
@@ -61,11 +61,20 @@ Classes.listarPNsEspecificos = async (idEntidade, tipologias) => {
         Where {
             ?id clav:processoTipoVC clav:vc_processoTipo_pe .
         `
-    if(idEntidade) {
+    if( entidades ){
         query += `
-        { ?id clav:temDono clav:${idEntidade} } 
-        Union { ?id clav:temParticipante clav:${idEntidade} }
-        `
+            { ?id clav:temDono clav:${entidades[0]} } 
+            Union { ?id clav:temParticipante clav:${entidades[0]} }
+            `
+        if(entidades.length > 1){
+            for( var i = 1; i < entidades.length; i++){
+                query += `
+                    Union { ?id clav:temDono clav:${entidades[i]} } 
+                    Union { ?id clav:temParticipante clav:${entidades[i]} }
+                    `
+            }
+        }
+        
     }
 
     if(tipologias) {

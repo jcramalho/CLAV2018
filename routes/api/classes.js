@@ -21,10 +21,13 @@ router.get('/', async (req, res) => {
         }
         // Devolve a lista dos processos especificos
         else if(req.query.tipo == "especifico"){
+            if( req.query.ents ){
+                var ents = req.query.ents.split(',');
+            }
             if( req.query.tips ) {
                 var tips = req.query.tips.split(',');
             }
-            res.json(await State.getProcessosEspecificos(req.query.ent, tips));
+            res.json(await State.getProcessosEspecificos(ents, tips));
         }
         else if(req.query.nivel){
             switch(req.query.nivel){
