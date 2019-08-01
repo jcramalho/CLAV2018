@@ -161,6 +161,7 @@ app.use('/api/utils', require('./routes/api/utils'));
 app.use('/api/stats', require('./routes/api/stats'))
 app.use('/auth',require('./routes/auth/user'));
 app.use('/api/travessia',require('./routes/api/travessia'));
+app.use('/api/invariantes',require('./routes/api/invariantes'));
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
