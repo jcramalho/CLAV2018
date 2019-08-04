@@ -4,9 +4,10 @@ var router = express.Router();
 var passport = require('passport');
 var User = require('../../models/user');
 var Users = require('../../controllers/api/users');
-var jwt = require('jsonwebtoken')
+var jwt = require('jsonwebtoken');
 var secretKey = require('./../../config/app');
 var Mailer = require('../../controllers/api/mailer');
+var xml2js = require('xml2js');
 
 router.get('/', (req, res) => {
     Users.listar(req,function(err, result){
@@ -222,6 +223,51 @@ router.get('/:id', (req, res) => {
             return res.status(500).send(`Erro: ${err}`);
         }else{
             return res.json(result);
+        }
+    });
+});
+
+//callback cc
+router.post('/callback', function(req,res){
+    var parser = new xml2js.Parser();
+    parser.parseString(new Buffer.from(req.body.SAMLResponse, 'base64').toString('utf8'), function (err, result) {
+        var statusMessage = result.Response.Status[0].StatusMessage;
+        var isSucessfull = result.Response.Status[0].StatusCode[0].$.Value == 'urn:oasis:names:tc:SAML:2.0:status:Success';
+        switch(statusMessage){
+            case 'urn:oasis:names:tc:SAML:2.0:status:AuthnFailed (User has canceled the process of obtaining attributes).':
+                res.writeHead(301,{
+                    Location: 'http://localhost:8080/users/registoCC'
+                });
+                res.end();
+                break;
+            case 'urn:oasis:names:tc:SAML:2.0:status:AuthnFailed (An internal error has ocurred).':
+                res.writeHead(301,{
+                    Location: 'http://localhost:8080/users/registoCC'
+                });
+                res.end();
+                break;
+            case 'urn:oasis:names:tc:SAML:2.0:status:AuthnFailed (Session expired).':
+                res.writeHead(301,{
+                    Location: 'http://localhost:8080/users/registoCC'
+                });
+                res.end();
+                break;
+            case undefined:
+                if(isSucessfull){
+                    var NIC = Buffer.from(result.Response.Assertion[0].AttributeStatement[0].Attribute[0].AttributeValue[0]._).toString('base64');
+                    var NomeCompleto = Buffer.from(result.Response.Assertion[0].AttributeStatement[0].Attribute[1].AttributeValue[0]._).toString('base64');
+                    console.log(NIC + ' ' + NomeCompleto)
+                    // var token = jwt.sign({
+                    //     NIC: result.Response.Assertion[0].AttributeStatement[0].Attribute[0].AttributeValue[0]._,
+                    //     NomeCompleto: result.Response.Assertion[0].AttributeStatement[0].Attribute[1].AttributeValue[0]._
+                    // }, secretKey.key, {expiresIn: '1m'});
+
+                    res.writeHead(301,{
+                        Location: 'http://localhost:8080/users/registoCC?NIC='+NIC+'&Nome='+NomeCompleto
+                    });
+                    res.end();
+                }
+                break;
         }
     });
 });
