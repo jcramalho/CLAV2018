@@ -7,7 +7,6 @@ var Users = require('../../controllers/api/users');
 var jwt = require('jsonwebtoken');
 var secretKey = require('./../../config/app');
 var Mailer = require('../../controllers/api/mailer');
-var xml2js = require('xml2js');
 
 router.get('/', (req, res) => {
     Users.listar(req,function(err, result){
@@ -227,47 +226,60 @@ router.get('/:id', (req, res) => {
     });
 });
 
-//callback cc
-router.post('/callback', function(req,res){
-    var parser = new xml2js.Parser();
-    parser.parseString(new Buffer.from(req.body.SAMLResponse, 'base64').toString('utf8'), function (err, result) {
-        var statusMessage = result.Response.Status[0].StatusMessage;
-        var isSucessfull = result.Response.Status[0].StatusCode[0].$.Value == 'urn:oasis:names:tc:SAML:2.0:status:Success';
-        switch(statusMessage){
-            case 'urn:oasis:names:tc:SAML:2.0:status:AuthnFailed (User has canceled the process of obtaining attributes).':
-                res.writeHead(301,{
-                    Location: 'http://localhost:8080/users/registoCC'
-                });
-                res.end();
-                break;
-            case 'urn:oasis:names:tc:SAML:2.0:status:AuthnFailed (An internal error has ocurred).':
-                res.writeHead(301,{
-                    Location: 'http://localhost:8080/users/registoCC'
-                });
-                res.end();
-                break;
-            case 'urn:oasis:names:tc:SAML:2.0:status:AuthnFailed (Session expired).':
-                res.writeHead(301,{
-                    Location: 'http://localhost:8080/users/registoCC'
-                });
-                res.end();
-                break;
-            case undefined:
-                if(isSucessfull){
-                    var NIC = Buffer.from(result.Response.Assertion[0].AttributeStatement[0].Attribute[0].AttributeValue[0]._).toString('base64');
-                    var NomeCompleto = Buffer.from(result.Response.Assertion[0].AttributeStatement[0].Attribute[1].AttributeValue[0]._).toString('base64');
-                    console.log(NIC + ' ' + NomeCompleto)
-                    // var token = jwt.sign({
-                    //     NIC: result.Response.Assertion[0].AttributeStatement[0].Attribute[0].AttributeValue[0]._,
-                    //     NomeCompleto: result.Response.Assertion[0].AttributeStatement[0].Attribute[1].AttributeValue[0]._
-                    // }, secretKey.key, {expiresIn: '1m'});
-
+//Callback Autenticação.Gov
+router.post('/callback', async function(req, res){
+    await Users.parseSAMLResponse(req.body.SAMLResponse, function(err, result){
+        if(!err && result!=undefined){
+            var NIC = Buffer.from(result.NIC, 'base64').toString('utf8');
+            Users.getUserById(NIC, function (err, user) {
+                if(!user){ //Este cartao cidadao nao tem user associado
                     res.writeHead(301,{
-                        Location: 'http://localhost:8080/users/registoCC?NIC='+NIC+'&Nome='+NomeCompleto
+                        Location: 'http://localhost:8080/users/HandlerCC?NIC='+result.NIC+'&Nome='+result.NomeCompleto
+                    });
+                    res.end();
+                }else{ //ja existe user com este cartao cidadao
+                    var token = jwt.sign({id: user._id}, secretKey.key, {expiresIn: '8h'});
+                    var name = Buffer.from(user.name).toString('base64');
+                    var entidade = Buffer.from(user.entidade).toString('base64');
+                    res.writeHead(301,{
+                        Location: 'http://localhost:8080/users/HandlerCC?Token='+token+'&Nome='+name+'&Entidade='+entidade
                     });
                     res.end();
                 }
-                break;
+            })
+        }else{
+            res.writeHead(301,{
+                Location: 'http://localhost:8080/users/HandlerCC'
+            });
+            res.end();
+        }
+    })
+});
+
+//Registo via CC
+router.post('/registarCC', function (req, res) {
+    var internal = (req.body.type > 1);
+    var newUser = new User({
+        _id: req.body.nic,
+        name: req.body.name,
+        email: req.body.email,
+        entidade: 'ent_'+req.body.entidade,
+        internal: internal,
+        level: req.body.type
+    });
+    
+    Users.getUserById(req.body.nic, function (err, user) {
+        if (err) 
+            return res.status(500).send(`Erro: ${err}`);
+        if (!user) {
+            Users.createUser(newUser, function (err, user) {
+                Logging.logger.info('Utilizador ' + user._id + ' registado.');
+                if (err) return res.status(500).send(`Erro: ${err}`);
+            });
+            res.send('Utilizador registado com sucesso!');
+        }
+        else {
+            res.send('Utilizador já registado!');
         }
     });
 });
