@@ -8,7 +8,7 @@ var jwt = require('jsonwebtoken');
 var secretKey = require('./../../config/app');
 var Mailer = require('../../controllers/api/mailer');
 var mongoose = require('mongoose');
-var lhost = require('./../../config/global')
+var lhost = require('./../../config/global').host
 
 router.get('/', (req, res) => {
     Users.listar(req,function(err, result){
