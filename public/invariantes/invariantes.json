@@ -2,28 +2,137 @@
     "invariantes": [
         {
             "idRel": "rel_1",
-            "desc": "Relação Suplementar: implicações no PCA",
+            "desc": "Classes de 1º Nível",
             "invs": [
                 {
                     "idInv": "inv_1",
-                    "desc": "Quando o PN em causa é <b>suplemento para</b> outro, <b>deve ser acrescentado um critério de utilidade administrativa</b> na justificação do respetivo PCA",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?s where {\n    ?s clav:eSuplementoPara ?o .\n\n    minus {{?s clav:temPCA ?pca.\n           ?pca clav:temJustificacao ?pcajust.\n            ?pcajust :temCriterio ?crit.\n            ?crit rdf:type :CriterioJustificacaoUtilidadeAdministrativa}\n         UNION\n            {?s clav:temFilho ?f}}\n}"
+                    "desc": "Se uma Classe de 1º nível pertence a uma Lista Consolidada/Tabela de Seleção, consequentemente os seus filhos, netos, etc.. tambem têm de pertencer.",
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51−clav#>\nselect * where {\n    ?c1 rdf:type :Classe_N1 .\n    ?c1 :pertenceLC ?lc1 .\n\n    ?c2 rdf:type :Classe_N2 .\n    ?c2 :temPai ?c1 .\n    ?c2 :pertenceLC ?lc2 .\n    \n    ?c3 rdf:type :Classe_N3 .\n    ?c3 :temPai ?c2 .\n    ?c3 :pertenceLC ?lc3 .\n    \n    ?c4 rdf:type :Classe_N4 .\n    ?c4 :temPai ?c3 .\n    ?c4 :pertenceLC ?lc4 .\n    \n    FILTER (\n        ?c1 != ?c2\n        && ?c2 != ?c3\n        && ?c3 != ?c4\n        && (?lc1 != ?lc2\n            || ?lc2 != ?lc3\n            || ?lc3 != ?lc4)\n    )\n}"                
                 },
                 {
                     "idInv": "inv_2",
-                    "desc": "No <b>critério de utilidade administrativa devem aparecer todos os processos</b> com os quais existe uma relação de <b>suplemento para</b>",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?s ?o where { \n?s rdf:type :Classe_N3.\n?o rdf:type :Classe_N3.\n?s clav:eSuplementoPara ?o .\n    \nminus {\n?s clav:temPCA ?pca.\n        ?pca clav:temJustificacao ?pcajust.\n        ?pcajust :temCriterio ?crit.\n      ?crit rdf:type :CriterioJustificacaoUtilidadeAdministrativa.\n        ?crit :temProcessoRelacionado ?o}\n}"
-                },
-                {
-                    "idInv": "inv_3",
-                    "desc": "Quando o PN em causa é <b>suplemento de</b> outro, o <b>critério</b> a acrescentar na justificação do PCA é <b>livre</b>, normalmente é o <b>critério legal</b>. Todos os processos relacionados pela <b>relação suplemento de</b> devem figurar neste critério",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?s ?o where { \n    ?s rdf:type :Classe_N3.\n    ?o rdf:type :Classe_N3.\n    ?s clav:eSuplementoDe ?o .\n    \nminus {?s clav:temPCA ?pca.\n                ?pca clav:temJustificacao ?pcajust.\n             ?pcajust :temCriterio ?crit.\n             ?crit :temProcessoRelacionado ?o}\n}"
+                    "desc": "Se uma Classe de 1º nível não pertence a uma Lista Consolidada/Tabela de Seleção, consequentemente os seus filhos, netos, etc.. também não pertencem.",
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51−clav#>\nselect * where {\n    ?c1 rdf:type :Classe_N1 .\n    \n    minus {\n        ?c1 :pertenceLC ?lc1 .\n    }\n\n    ?c2 rdf:type :Classe_N2 .\n    ?c2 :temPai ?c1 .\n\n    ?c3 rdf:type :Classe_N3 .\n    ?c3 :temPai ?c2 .\n    \n    ?c4 rdf:type :Classe_N4.\n    ?c4 :temPai ?c3 .\n\n    FILTER (\n        ?c1 != ?c2\n        && ?c2 != ?c3\n        && ?c3 != ?c4 &&\n        (EXISTS { ?c2 :pertenceLC ?lc2 . }\n        || EXISTS { ?c3 :pertenceLC ?lc3 . }\n        || EXISTS { ?c4 :pertenceLC ?lc4 . })\n    )\n}"
                 }
             ]
         },
         {
             "idRel": "rel_2",
-            "desc": "Relação Síntese: implicações no DF",
+            "desc": "Classes",
+            "invs": [
+                {
+                    "idInv": "inv_1",
+                    "desc": "2 Classes (nível 1, 2 ou 3) não podem ter a mesma instância NotaAplicacao",
+                    "query":"PREFIX : <http://jcr.di.uminho.pt/m51−clav#>\nselect * where {\n    ?c1 :temNotaAplicacao ?o .\n    ?c2 :temNotaAplicacao ?o .\n    FILTER (\n        ?c1 != ?c2\n    )\n}"
+                },
+                {
+                    "idInv": "inv_2",
+                    "desc": "2 Classes (nível 1, 2 ou 3) não podem ter a mesma instância NotaExclusao",
+                    "query":"PREFIX : <http://jcr.di.uminho.pt/m51−clav#>\nselect * where {\n    ?c1 :temNotaExclusao ?o .\n    ?c2 :temNotaExclusao ?o .\n    FILTER (\n        ?c1 != ?c2\n    )\n}"
+                },
+                {
+                    "idInv": "inv_3",
+                    "desc": "2 Classes (nível 1, 2 ou 3) não podem ter a mesma instância ExemploNotaAplicacao",
+                    "query":"PREFIX : <http://jcr.di.uminho.pt/m51−clav#>\nselect * where {\n    ?c1 :temExemploNA ?o .\n    ?c2 :temExemploNA ?o .\n    FILTER (\n        ?c1 != ?c2\n    )\n}"
+                }
+            ]
+        },
+        {
+            "idRel": "rel_3",
+            "desc": "Classes de 3º Nível com desdobramento",
+            "invs": [
+                {
+                    "idInv": "inv_1",
+                    "desc": "Só existe desdobramento caso o PCA ou DF sejam distintos",
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51−clav#>\nselect * where {\n    ?c rdf:type :Classe_N3 .\n    ?c :temFilho ?cf1 .\n    ?c :temFilho ?cf2 .\n\n    ?cf1 :temDF ?df1 .\n    ?cf2 :temDF ?df2 .\n    ?df1 :dfValor ?dfv1 .\n    ?df2 :dfValor ?dfv2 .\n\n    ?cf1 :temPCA ?pca1 .\n    ?cf2 :temPCA ?pca2 .\n    ?pca1 :pcaValor ?pcav1 .\n    ?pca2 :pcaValor ?pcav2 .\n\n    FILTER (\n        ?cf1 != ?cf2\n        && ?dfv1 = ?dfv2\n        && ?pcav1 = ?pcav2\n    )\n}"                
+                },
+                {
+                    "idInv": "inv_2",
+                    "desc": "PCA distinto: O DF é avaliado tendo em conta o contexto de 3º nivel, em que:<ul><li>Se for distinto tem que haver uma relação de sintese entre as classes 4 filhas.</li><li>Se for igual não interessa</li></ul>",
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51−clav#>\nselect * where {\n    ?c rdf:type :Classe_N3 .\n    ?c :temFilho ?cf1 .\n    ?c :temFilho ?cf2 .\n\n    ?cf1 :temPCA ?pca1 .\n    ?cf2 :temPCA ?pca2 .\n    ?pca1 :pcaValor ?pcav1 .\n    ?pca2 :pcaValor ?pcav2 .\n\n    ?cf1 :temDF ?df1 .\n    ?cf2 :temDF ?df2 .\n    ?df1 :dfValor ?dfv1 .\n    ?df2 :dfValor ?dfv2 .\n\n    FILTER(\n        ?cf1 != ?cf2\n        && ?pcav1 != ?pcav2\n        && ?dfv1 != ?dfv2\n        && NOT EXISTS { ?cf1 :eSinteseDe ?cf2 . }\n    )\n}"
+                },
+                {
+                    "idInv": "inv_3",
+                    "desc": "DF distinto:<ul><li>Deve haver uma relação de sintese (de ou por) entre as classes 4 filhas</li><li>O PCA é igual</li></ul>",
+                    "query":"PREFIX : <http://jcr.di.uminho.pt/m51−clav#>\nselect * where {\n    ?c rdf:type :Classe_N3 .\n    ?c :temFilho ?cf1 .\n    ?c :temFilho ?cf2 .\n\n    ?cf1 :temPCA ?pca1 .\n    ?cf2 :temPCA ?pca2 .\n    ?pca1 :pcaValor ?pcav1 .\n    ?pca2 :pcaValor ?pcav2 .\n\n    ?cf1 :temDF ?df1 .\n    ?cf2 :temDF ?df2 .\n    ?df1 :dfValor ?dfv1 .\n    ?df2 :dfValor ?dfv2 .\n\n    FILTER (\n        ?cf1 != ?cf2\n        && ?dfv1 != ?dfv2\n        &&(\n        NOT EXISTS { ?cf1 :eSinteseDe ?cf2 . }\n        || ?pcav1 != ?pcav2)\n    )\n}"
+                },
+                {
+                    "idInv": "inv_4",
+                    "desc": "Os termos de indice vão para os 4ºs niveis (repetidos)",
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51−clav#>\nselect * where{\n    ?c rdf:type :Classe_N3 .\n    ?c :temFilho ?cf .\n    ?c :temTI ?ti .\n\n    FILTER (\n        NOT EXISTS { ?cf :temTI ?ti . }\n    )\n}"
+                },
+                {
+                    "idInv": "inv_5",
+                    "desc": "As relações temDF e temPCA, não existem numa classe 3 se esta tiver filhos",
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51−clav#>\nselect * where{\n    ?c rdf:type :Classe_N3 .\n    ?c :temFilho ?cf .\n\n    FILTER (\n        EXISTS { ?c :temDF ?df . } ||\n        EXISTS { ?c :temPCA ?pca . }\n    )\n}" 
+                },
+                {
+                    "idInv": "inv_6",
+                    "desc": "As relações temDF e temPCA, existem numa classe 3 se esta <b>não</b> tiver filhos",
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51−clav#>\nselect * where {\n    ?c rdf:type :Classe_N3 .\n\n    FILTER (\n        NOT EXISTS { ?c :temFilho ?cf . } &&\n        (NOT EXISTS { ?c :temDF ?df . } ||\n        NOT EXISTS { ?c :temPCA ?pca . })\n    )\n}" 
+                },
+                {
+                    "idInv": "inv_7",
+                    "desc": "Se um PN (Classe 3) for complementar de outro que se desdobra ao 4º nível, é necessário, com base no critério de complementaridade informacional, a relação manter-se ao 3º nível. Pelo menos um dos 4ºs níveis deve ser de conservação.",
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51−clav#>\nselect * where {\n    ?c1 rdf:type :Classe_N3 .\n    ?c2 rdf:type :Classe_N3 .\n\n    ?c1 :eComplementarDe ?c2 .\n    ?c2 :temFilho ?c2f .\n\n    ?c2f :temDF ?df .\n    ?df :dfValor ?dfv .\n\n    FILTER (\n        ?c1 != ?c2\n        && ?dfv != \"C\"\n    )\n}"
+                },
+                {
+                    "idInv": "inv_8",
+                    "desc": "Um processo só tem participantes se for <b>transversal</b> (Se o campo 'transversal' tiver o valor sim).",
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51−clav#>\nselect * where{\n    ?c rdf:type :Classe_N3 .\n    ?c :processoTransversal \"N\" .\n\n    FILTER (\n        EXISTS { ?c :temParticipanteComunicador ?ca . }\n        ||\n        EXISTS { ?c :temParticipanteIniciador ?ca . }\n        ||\n        EXISTS { ?c :temParticipanteApreciador ?ca . }\n        ||\n        EXISTS { ?c :temParticipanteDecisor ?ca . }\n        ||\n        EXISTS { ?c :temParticipanteAssessor ?ca . }\n        ||\n        EXISTS { ?c :temParticipanteExecutor ?ca . }\n    )\n}"
+                }
+            ]
+        },
+        {
+            "idRel": "rel_4",
+            "desc": "Invariantes sobre os PNs (Classe 3)",
+            "invs": [
+                {
+                    "idInv": "inv_1",
+                    "desc": "As relações eComplementarDe e eCruzadoCom são simétricas",
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51−clav#>\nselect * where {\n    ?c1 :eComplementarDe ?c2 .\n    ?c3 :eCruzadoCom ?c4 .\n\n    FILTER (\n        ?c1 != ?c2\n        && ?c3 != ?c4\n        && NOT EXISTS { ?c2 :eComplementarDe ?c1 . }\n        && NOT EXISTS { ?c4 :eCruzadoCom ?c3 . }\n    )\n}"
+                },
+                {
+                    "idInv": "inv_2",
+                    "desc": "As relações eSinteseDe, eSucessorDe, eSuplementoDe e eSuplementoPara são antisimétricas.",
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51−clav#>\nselect * where {\n    ?c1 :eSinteseDe ?c2 .\n    ?c2 :eSinteseDe ?c1 .\n\n    ?c3 :eSintetizadoPor ?c4 .\n    ?c4 :eSintetizadoPor ?c3 .\n\n    ?c5 :eSucessorDe ?c6 .\n    ?c6 :eSucessorDe ?c5 .\n\n    ?c7 :eSuplementoDe ?c8 .\n    ?c8 :eSuplementoDe ?c7 .\n\n    ?c9 :eSuplementoPara ?c10 .\n    ?c10 :eSuplementoDe ?c9 .\n\n    FILTER (\n        ?c1 != ?c2\n        && ?c3 != ?c4\n        && ?c5 != ?c6\n        && ?c7 != ?c8\n        && ?c9 != ?c10\n    )\n}" 
+                },
+                {
+                    "idInv": "inv_3",
+                    "desc": "Na relação temRelProc um PN não se relaciona com ele próprio.",
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51−clav#>\nselect * where {\n    ?c1 rdf:type :Classe_N3 .\n    ?c2 rdf:type :Classe_N4 .\n\n    FILTER (\n        EXISTS { ?c1 :eAntecessorDe ?c1 . }\n        ||\n        EXISTS { ?c1 :eComplementarDe ?c1. }\n        ||\n        EXISTS { ?c1 :eCruzadoCom ?c1. }\n        ||\n        EXISTS { ?c1 :eSinteseDe ?c1 . }\n        ||\n        EXISTS { ?c1 :eSintetizadoPor ?c1 . }\n        ||\n        EXISTS { ?c2 :eSinteseDe ?c2 . }\n        ||\n        EXISTS { ?c2 :eSintetizadoPor ?c2 . }\n        ||\n        EXISTS { ?c1 :eSucessorDe ?c1. }\n        ||\n        EXISTS { ?c1 :eSuplementoDe ?c1. }\n        ||\n        EXISTS { ?c1 :eSuplementoPara ?c1. }\n    )\n}"
+                },
+                {
+                    "idInv": "inv_4",
+                    "desc": "Um PN só pode ter uma relação com outro PN (Um PN não pode ter relações (do tipo Classe nível 4 para Classe nível 3) distintas com o mesmo processo)",
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51−clav#>\nselect * where {\n    ?c1 rdf:type :Classe_N3 .\n    ?c2 rdf:type :Classe_N3 .\n    ?c1 :eAntecessorDe ?c2 .\n\n    FILTER (\n        ?c1 != ?c2\n        &&\n        (\n        EXISTS { ?c1 :eComplementarDe ?c2 . }\n        ||\n        EXISTS { ?c1 :eCruzadoCom ?c2 . }\n        ||\n        EXISTS { ?c1 :eSinteseDe ?c2 . }\n        ||\n        EXISTS { ?c1 :eSintetizadoPor ?c2 . }\n        ||\n        EXISTS { ?c1 :eSucessorDe ?c2 . }\n        ||\n        EXISTS { ?c1 :eSuplementoDe ?c2 . }\n        ||\n        EXISTS { ?c1 :eSuplementoPara ?c2 . }\n        )\n    )\n}"
+                },
+                {
+                    "idInv": "inv_5",
+                    "desc": "Se um PN se desdobra em 4ºs niveis os Termos de Indice passam para os filhos.",
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51−clav#>\nselect * where {\n    ?c rdf:type :Classe_N3 .\n    ?c :temFilho ?cf .\n\n    FILTER(\n        EXISTS { ?c :temTI ?ti . }\n    )\n}" 
+                },
+                {
+                    "idInv": "inv_6",
+                    "desc": "Os termos de indice de um PN não existem em mais nenhuma classe 3",
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51−clav#>\nselect * where {\n    ?c1 rdf:type :Classe_N3 .\n    ?c2 rdf:type :Classe_N3 .\n    \n    ?c1 :temTI ?ti .\n\n    FILTER (\n        ?c1 != ?c2\n        && EXISTS { ?c2 :temTI ?ti . }\n    )\n}" 
+                }
+            ]
+        },
+        {
+            "idRel": "rel_5",
+            "desc": "Invariantes sobre a relação Suplementar: implicações no PCA",
+            "invs": [
+                {
+                    "idInv": "inv_2",
+                    "desc": "No critério de utilidade administrativa devem aparecer todos os processos com os quais existe uma relação de <b>suplemento para</b>",
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?s ?o where { \n?s rdf:type :Classe_N3.\n?o rdf:type :Classe_N3.\n?s clav:eSuplementoPara ?o .\n    \nminus {\n?s clav:temPCA ?pca.\n        ?pca clav:temJustificacao ?pcajust.\n        ?pcajust :temCriterio ?crit.\n      ?crit rdf:type :CriterioJustificacaoUtilidadeAdministrativa.\n        ?crit :temProcessoRelacionado ?o}\n}"
+                }
+            ]
+        },
+        {
+            "idRel": "rel_6",
+            "desc": "Invariantes sobre a relação Síntese: implicações no DF",
             "invs": [
                 {
                     "idInv": "inv_1",
@@ -34,48 +143,54 @@
                     "idInv": "inv_2",
                     "desc": "Quando o PN em causa é <b>síntetizado por</b> outro, o DF deve ter o valor de \"Eliminação\"",
                     "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?s where { \n    ?s :eSintetizadoPor ?o .\n    \n    minus { ?s :temDF ?df.\n            ?df :dfValor \"E\" }\n}"
-                },
-                {
-                    "idInv": "inv_3",
-                    "desc": "Se um PN tem uma <b>relação de síntese</b>, o seu DF deverá ter uma justificação onde consta um <b>critério de densidade informacional</b>",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect distinct ?s where { \n    {{?s clav:eSinteseDe ?o .}\n    union\n        {?s clav:eSintetizadoPor ?o .}}\n    minus\n    {{    ?s :temDF ?df.\n        ?df :temJustificacao ?dfjust.\n         ?dfjust :temCriterio ?crit.\n        ?crit rdf:type :CriterioJustificacaoDensidadeInfo}\n     UNION\n        {?s clav:temFilho ?f}}\n}"
-                },
-                {
-                    "idInv": "inv_4",
-                    "desc": "Todos os processos relacionados por uma <b>relação de síntese</b> deverão estar relacionados com o <b>critério de densidade informacional da respetiva justificação</b>",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?s ?o where { \n    {{?s clav:eSinteseDe ?o .}\n    union\n        {?s clav:eSintetizadoPor ?o .}}\n    minus\n    {    ?s :temDF ?df.\n        ?df :temJustificacao ?dfjust.\n         ?dfjust :temCriterio ?crit.\n      ?crit rdf:type :CriterioJustificacaoDensidadeInfo.\n        ?crit :temProcessoRelacionado ?o}\n}"
                 }
             ]
         },
         {
-            "idRel": "rel_3",
-            "desc": "Relação Complementar: implicações no DF",
+            "idRel": "rel_7",
+            "desc": "Invariantes sobre a relação Complementar: implicações no DF",
             "invs": [
                 {
                     "idInv": "inv_1",
                     "desc": "Uma relação de complementaridade implica a conservação dos PN que mantêm essa relação",
                     "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect distinct ?s where { \n?s rdf:type :Classe_N3 .\n?s :eComplementarDe ?o .\n    \n    minus { ?s :temDF ?df.\n            ?df :dfValor \"C\" }\n}"
-                },
-                {
-                    "idInv": "inv_2",
-                    "desc": "Quando o PN em causa é <b>complementar de</b> outro, a justificação do DF deverá conter o <b>critério de complementaridade informacional</b>",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?s ?o where { \n    {?s rdf:type :Classe_N3.\n     ?o rdf:type :Classe_N3.\n     ?s clav:eComplementarDe ?o .}\n    minus\n    {    ?s :temDF ?df.\n        ?df :temJustificacao ?dfjust.\n         ?dfjust :temCriterio ?crit.\n        ?crit rdf:type :CriterioJustificacaoComplementaridadeInfo}\n}"
-                },
-                {
-                    "idInv": "inv_3",
-                    "desc": "Todos os processos relacionados pela <b>relação é complementar de</b>, devem <b>estar relacionados</b> com o <b>critério de complementaridade informacional</b> da respetiva justificação",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?s ?o where { \n    {?s rdf:type :Classe_N3.\n     ?o rdf:type :Classe_N3.\n     ?s clav:eComplementarDe ?o .}\n    minus\n    {    ?s :temDF ?df.\n        ?df :temJustificacao ?dfjust.\n         ?dfjust :temCriterio ?crit.\n        ?crit rdf:type :CriterioJustificacaoComplementaridadeInfo.\n        ?crit :temProcessoRelacionado ?o }\n}"
                 }
             ]
         },
         {
-            "idRel": "rel_4",
-            "desc": "Destino Final (DF)",
+            "idRel": "rel_8",
+            "desc": "Invariantes sobre o Destino Final (DF)",
             "invs": [
                 {
                     "idInv": "inv_1",
                     "desc": "Um DF, na sua justificação, deverá conter apenas critérios de densidade informacional, complementaridade informacional e legal",
                     "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?s where { \n    ?s :temDF ?d.\n    ?d :temJustificacao ?dfjust.\n    minus {\n        {?dfjust :temCriterio ?crit.\n           ?crit rdf:type :CriterioJustificacaoDensidadeInfo.}\n        union {\n            ?dfjust :temCriterio ?crit.\n            ?crit rdf:type :CriterioJustificacaoLegal.\n        }\n        union{\n            ?dfjust :temCriterio ?crit.\n            ?crit rdf:type :CriterioJustificacaoComplementaridadeInfo\n        }\n    }\n}"
+                }
+            ]
+        },
+        {
+            "idRel": "rel_9",
+            "desc": "Invariantes das relações temRelProc. Só se aplica ao 3º nível. (por ordem de prioridade)",
+            "invs": [
+                {
+                    "idInv": "inv_1",
+                    "desc": "Se um PN é eComplementarDe -> DF é de conservação",
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51−clav#>\nselect * where{\n    ?c rdf:type :Classe_N3 .\n    ?c :eComplementarDe ?o .\n    ?c :temDF ?df .\n    ?df :dfValor ?dfv .\n\n    minus {\n        ?c :temFilho ?f .\n    }\n\n    FILTER ( ?dfv != \"C\" )\n}" 
+                },
+                {
+                    "idInv": "inv_2",
+                    "desc": "Se um PN é eSinteseDe -> DF é de conservação",
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51−clav#>\nselect * where {\n    ?c rdf:type :Classe_N3 .\n    ?c :eSinteseDe ?ca .\n    ?c :temDF ?df .\n    ?df :dfValor ?dfv .\n\n    minus {\n        ?c :temFilho ?cf .\n        ?c :eComplementarDe ?cb .\n    }\n\n    FILTER ( ?dfv != \"C\" )\n}" 
+                },
+                {
+                    "idInv": "inv_3",
+                    "desc": "Se um PN é eSintetizadoPor -> DF é de eliminação",
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51−clav#>\nselect * where{\n    ?c rdf:type :Classe_N3 .\n    ?c :eSintetizadoPor ?ca .\n    ?c :temDF ?df .\n    ?df :dfValor ?dfv .\n\n    minus {\n        ?c :temFilho ?f .\n        ?c :eComplementarDe ?cb .\n        ?c :eSinteseDe ?cc .\n    }\n\n    FILTER ( ?dfv != \"E\" )\n}" 
+                },
+                {
+                    "idInv": "inv_4",
+                    "desc": "Se um PN é nenhuma das acima -> DF é NE (Não especificado)",
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51−clav#>\nselect * where{\n    ?c rdf:type :Classe_N3 .\n    ?c :temDF ?df .\n    ?df :dfValor ?dfv .\n\n    minus {\n        ?c :temFilho ?cf .\n        ?c :eComplementarDe ?ca .\n        ?c :eSintetizadoPor ?cb .\n        ?c :eSinteseDe ?cc .\n    }\n\n    FILTER ( ?dfv != \"NE\" )\n}" 
                 }
             ]
         }
