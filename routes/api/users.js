@@ -8,6 +8,7 @@ var jwt = require('jsonwebtoken');
 var secretKey = require('./../../config/app');
 var Mailer = require('../../controllers/api/mailer');
 var mongoose = require('mongoose');
+var lhost = require('./../../config/global')
 
 router.get('/', (req, res) => {
     Users.listar(req,function(err, result){
@@ -240,7 +241,7 @@ router.post('/callback', async function(req, res){
             Users.getUserById(NIC, function (err, user) {
                 if(!user){ //Este cartao cidadao nao tem user associado
                     res.writeHead(301,{
-                        Location: 'http://localhost:8080/users/HandlerCC?NIC='+result.NIC+'&Nome='+result.NomeCompleto //TODO depois temos de mudar de localhost para o URL final
+                        Location: lhost+'/users/HandlerCC?NIC='+result.NIC+'&Nome='+result.NomeCompleto //TODO depois temos de mudar de localhost para o URL final
                     });
                     res.end();
                 }else{ //ja existe user com este cartao cidadao
@@ -248,14 +249,14 @@ router.post('/callback', async function(req, res){
                     var name = Buffer.from(user.name).toString('base64');
                     var entidade = Buffer.from(user.entidade).toString('base64');
                     res.writeHead(301,{
-                        Location: 'http://localhost:8080/users/HandlerCC?Token='+token+'&Nome='+name+'&Entidade='+entidade
+                        Location: lhost+'/users/HandlerCC?Token='+token+'&Nome='+name+'&Entidade='+entidade
                     });
                     res.end();
                 }
             })
         }else{
             res.writeHead(301,{
-                Location: 'http://localhost:8080/users/HandlerCC'
+                Location: lhost+'/users/HandlerCC'
             });
             res.end();
         }
