@@ -1,5 +1,7 @@
 var User = require('../../models/user');
 var bcrypt = require('bcryptjs');
+var xml2js = require('xml2js');
+
 var Users = module.exports
 
 Users.createUser = function (newUser, callback) {
@@ -16,8 +18,8 @@ Users.getUserByEmail = function (email, callback) {
 	User.findOne(query, callback);
 }
 
-Users.getUserByCC = function (cc, callback) {
-	var query = { cc: cc };
+Users.getUserByCC = function (nic, callback) {
+	var query = { _id:  nic};
 	User.findOne(query, callback);
 }
 
@@ -255,3 +257,25 @@ Users.adicionarChamadaApi = function(id, callback){
 //         }
 //     });
 // }
+
+Users.parseSAMLResponse = function(SAMLResponse, callback){
+    var parser = new xml2js.Parser();
+    parser.parseString(new Buffer.from(SAMLResponse, 'base64').toString('utf8'), function (err, result) {
+        var statusMessage = result.Response.Status[0].StatusMessage;
+        var isSucessfull = result.Response.Status[0].StatusCode[0].$.Value == 'urn:oasis:names:tc:SAML:2.0:status:Success';
+        switch(statusMessage){
+            case undefined:
+                if(isSucessfull){
+                    var NIC = Buffer.from(result.Response.Assertion[0].AttributeStatement[0].Attribute[0].AttributeValue[0]._).toString('base64');
+                    var NomeCompleto = Buffer.from(result.Response.Assertion[0].AttributeStatement[0].Attribute[1].AttributeValue[0]._).toString('base64');
+                    callback(null, {NIC: NIC, NomeCompleto: NomeCompleto});
+                }else{
+                    callback(err, null);
+                }
+                break;
+            default:
+                callback(err, null);
+                break;
+        }
+    });
+}
