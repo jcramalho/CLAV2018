@@ -124,9 +124,18 @@
             "desc": "Invariantes sobre a relação Suplementar: implicações no PCA",
             "invs": [
                 {
+                    "idInv": "inv_1",
+                    "desc": "Quando o PN em causa é <b>suplemento para</b> outro, <b>deve ser acrescentado um critério de utilidade administrativa</b> na justificação do respetivo PCA",
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?s where {\n    ?s clav:eSuplementoPara ?o .\n\n    minus {{?s clav:temPCA ?pca.\n           ?pca clav:temJustificacao ?pcajust.\n            ?pcajust :temCriterio ?crit.\n            ?crit rdf:type :CriterioJustificacaoUtilidadeAdministrativa}\n         UNION\n            {?s clav:temFilho ?f}}\n}"
+                },
+                {
                     "idInv": "inv_2",
                     "desc": "No critério de utilidade administrativa devem aparecer todos os processos com os quais existe uma relação de <b>suplemento para</b>",
                     "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?s ?o where { \n?s rdf:type :Classe_N3.\n?o rdf:type :Classe_N3.\n?s clav:eSuplementoPara ?o .\n    \nminus {\n?s clav:temPCA ?pca.\n        ?pca clav:temJustificacao ?pcajust.\n        ?pcajust :temCriterio ?crit.\n      ?crit rdf:type :CriterioJustificacaoUtilidadeAdministrativa.\n        ?crit :temProcessoRelacionado ?o}\n}"
+                },{
+                    "idInv": "inv_3",
+                    "desc": "Quando o PN em causa é <b>suplemento de</b> outro, o <b>critério</b> a acrescentar na justificação do PCA é <b>livre</b>, normalmente é o <b>critério legal</b>. Todos os processos relacionados pela <b>relação suplemento de</b> devem figurar neste critério",
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?s ?o where { \n    ?s rdf:type :Classe_N3.\n    ?o rdf:type :Classe_N3.\n    ?s clav:eSuplementoDe ?o .\n    \nminus {?s clav:temPCA ?pca.\n                ?pca clav:temJustificacao ?pcajust.\n             ?pcajust :temCriterio ?crit.\n             ?crit :temProcessoRelacionado ?o}\n}"
                 }
             ]
         },
@@ -143,6 +152,16 @@
                     "idInv": "inv_2",
                     "desc": "Quando o PN em causa é <b>síntetizado por</b> outro, o DF deve ter o valor de \"Eliminação\"",
                     "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?s where { \n    ?s :eSintetizadoPor ?o .\n    \n    minus { ?s :temDF ?df.\n            ?df :dfValor \"E\" }\n}"
+                },
+                {
+                    "idInv": "inv_3",
+                    "desc": "Se um PN tem uma <b>relação de síntese</b>, o seu DF deverá ter uma justificação onde consta um <b>critério de densidade informacional</b>",
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect distinct ?s where { \n    {{?s clav:eSinteseDe ?o .}\n    union\n        {?s clav:eSintetizadoPor ?o .}}\n    minus\n    {{    ?s :temDF ?df.\n        ?df :temJustificacao ?dfjust.\n         ?dfjust :temCriterio ?crit.\n        ?crit rdf:type :CriterioJustificacaoDensidadeInfo}\n     UNION\n        {?s clav:temFilho ?f}}\n}"
+                },
+                {
+                    "idInv": "inv_4",
+                    "desc": "Todos os processos relacionados por uma <b>relação de síntese</b> deverão estar relacionados com o <b>critério de densidade informacional da respetiva justificação</b>",
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?s ?o where { \n    {{?s clav:eSinteseDe ?o .}\n    union\n        {?s clav:eSintetizadoPor ?o .}}\n    minus\n    {    ?s :temDF ?df.\n        ?df :temJustificacao ?dfjust.\n         ?dfjust :temCriterio ?crit.\n      ?crit rdf:type :CriterioJustificacaoDensidadeInfo.\n        ?crit :temProcessoRelacionado ?o}\n}"
                 }
             ]
         },
@@ -154,6 +173,16 @@
                     "idInv": "inv_1",
                     "desc": "Uma relação de complementaridade implica a conservação dos PN que mantêm essa relação",
                     "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect distinct ?s where { \n?s rdf:type :Classe_N3 .\n?s :eComplementarDe ?o .\n    \n    minus { ?s :temDF ?df.\n            ?df :dfValor \"C\" }\n}"
+                },
+                {
+                    "idInv": "inv_2",
+                    "desc": "Quando o PN em causa é <b>complementar de</b> outro, a justificação do DF deverá conter o <b>critério de complementaridade informacional</b>",
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?s ?o where { \n    {?s rdf:type :Classe_N3.\n     ?o rdf:type :Classe_N3.\n     ?s clav:eComplementarDe ?o .}\n    minus\n    {    ?s :temDF ?df.\n        ?df :temJustificacao ?dfjust.\n         ?dfjust :temCriterio ?crit.\n        ?crit rdf:type :CriterioJustificacaoComplementaridadeInfo}\n}"
+                },
+                {
+                    "idInv": "inv_3",
+                    "desc": "Todos os processos relacionados pela <b>relação é complementar de</b>, devem <b>estar relacionados</b> com o <b>critério de complementaridade informacional</b> da respetiva justificação",
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?s ?o where { \n    {?s rdf:type :Classe_N3.\n     ?o rdf:type :Classe_N3.\n     ?s clav:eComplementarDe ?o .}\n    minus\n    {    ?s :temDF ?df.\n        ?df :temJustificacao ?dfjust.\n         ?dfjust :temCriterio ?crit.\n        ?crit rdf:type :CriterioJustificacaoComplementaridadeInfo.\n        ?crit :temProcessoRelacionado ?o }\n}"
                 }
             ]
         },
