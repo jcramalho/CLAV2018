@@ -1,5 +1,5 @@
 const client = require('../../config/database').onthology
-const normalize = require('../../controllers/api/utils').normalize
+const normalizeOrdered = require('../../controllers/api/utils').normalizeOrdered
 const Invariantes = module.exports
 const fs = require('fs')
 const invsFile = fs.readFileSync('public/invariantes/invariantes.json')
@@ -32,7 +32,7 @@ Invariantes.getErros = async (idRel,idInv) => {
                 res.descRel = rel.desc
                 res.descInv = inv.desc
                 var results = await client.query(inv.query).execute()
-                res.results = normalize(results)
+                res.results = normalizeOrdered(results)
                 return res    
             }catch(erro) { throw (erro) }
         }else{
