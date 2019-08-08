@@ -46,13 +46,5 @@ Invariantes.getErros = async (idRel,idInv) => {
 
 // Lista todos os invariantes disponíveis
 Invariantes.listar = () => {
-    //clone
-    var res = JSON.parse(JSON.stringify(invs.invariantes))
-    //remove queries (não é necessário para a listagem)
-    for(var i=0; i<res.length; i++){
-        for(var j=0; j<res[i].invs.length; j++){
-            delete res[i].invs[j].query
-        }
-    }
-    return res
+    return invs.invariantes
 }
