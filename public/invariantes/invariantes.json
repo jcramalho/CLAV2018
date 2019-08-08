@@ -23,17 +23,17 @@
                 {
                     "idInv": "inv_1",
                     "desc": "2 Classes (nível 1, 2 ou 3) não podem ter a mesma instância NotaAplicacao",
-                    "query":"PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect * where {\n    ?c1 :temNotaAplicacao ?o .\n    ?c1 :titulo ?c1_titulo .\n\n    ?c2 :temNotaAplicacao ?o .\n    ?c2 :titulo ?c2_titulo .\n\n    FILTER (\n        ?c1 != ?c2\n    )\n}"
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c1 ?c1_titulo ?c2 ?c2_titulo ?o where {\n    ?c1 :temNotaAplicacao ?o .\n    ?c1 :titulo ?c1_titulo .\n\n    ?c2 :temNotaAplicacao ?o .\n    ?c2 :titulo ?c2_titulo .\n\n    FILTER (\n        ?c1 != ?c2\n    )\n}"
                 },
                 {
                     "idInv": "inv_2",
                     "desc": "2 Classes (nível 1, 2 ou 3) não podem ter a mesma instância NotaExclusao",
-                    "query":"PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect * where {\n    ?c1 :temNotaExclusao ?o .\n    ?c1 :titulo ?c1_titulo .\n\n    ?c2 :temNotaExclusao ?o .\n    ?c2 :titulo ?c2_titulo .\n\n    FILTER (\n        ?c1 != ?c2\n    )\n}"
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c1 ?c1_titulo ?c2 ?c2_titulo ?o where {\n    ?c1 :temNotaExclusao ?o .\n    ?c1 :titulo ?c1_titulo .\n\n    ?c2 :temNotaExclusao ?o .\n    ?c2 :titulo ?c2_titulo .\n\n    FILTER (\n        ?c1 != ?c2\n    )\n}"
                 },
                 {
                     "idInv": "inv_3",
                     "desc": "2 Classes (nível 1, 2 ou 3) não podem ter a mesma instância ExemploNotaAplicacao",
-                    "query":"PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect * where {\n    ?c1 :temExemploNA ?o .\n    ?c1 :titulo ?c1_titulo .\n\n    ?c2 :temExemploNA ?o .\n    ?c2 :titulo ?c2_titulo .\n\n    FILTER (\n        ?c1 != ?c2\n    )\n}"
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c1 ?c1_titulo ?c2 ?c2_titulo ?o where {\n    ?c1 :temExemploNA ?o .\n    ?c1 :titulo ?c1_titulo .\n\n    ?c2 :temExemploNA ?o .\n    ?c2 :titulo ?c2_titulo .\n\n    FILTER (\n        ?c1 != ?c2\n    )\n}"
                 }
             ]
         },
@@ -44,27 +44,27 @@
                 {
                     "idInv": "inv_1",
                     "desc": "Só existe desdobramento caso o PCA ou DF sejam distintos",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect * where {\n    ?c rdf:type :Classe_N3 .\n    ?c :temFilho ?cf1 .\n    ?c :temFilho ?cf2 .\n    ?c :titulo ?c_titulo .\n    ?cf1 :titulo ?cf1_titulo .\n    ?cf2 :titulo ?cf2_titulo .\n\n    ?cf1 :temDF ?df1 .\n    ?cf2 :temDF ?df2 .\n    ?df1 :dfValor ?dfv1 .\n    ?df2 :dfValor ?dfv2 .\n\n    ?cf1 :temPCA ?pca1 .\n    ?cf2 :temPCA ?pca2 .\n    ?pca1 :pcaValor ?pcav1 .\n    ?pca2 :pcaValor ?pcav2 .\n\n    FILTER (\n        ?cf1 != ?cf2\n        && ?dfv1 = ?dfv2\n        && ?pcav1 = ?pcav2\n    )\n}"                
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c ?c_titulo ?cf1 ?cf1_titulo ?df1 ?dfv1 ?pca1 ?pcav1 ?cf2 ?cf2_titulo ?df2 ?dfv2 ?pca2 ?pcav2 where {\n    ?c rdf:type :Classe_N3 .\n    ?c :temFilho ?cf1 .\n    ?c :temFilho ?cf2 .\n    ?c :titulo ?c_titulo .\n    ?cf1 :titulo ?cf1_titulo .\n    ?cf2 :titulo ?cf2_titulo .\n\n    ?cf1 :temDF ?df1 .\n    ?cf2 :temDF ?df2 .\n    ?df1 :dfValor ?dfv1 .\n    ?df2 :dfValor ?dfv2 .\n\n    ?cf1 :temPCA ?pca1 .\n    ?cf2 :temPCA ?pca2 .\n    ?pca1 :pcaValor ?pcav1 .\n    ?pca2 :pcaValor ?pcav2 .\n\n    FILTER (\n        ?cf1 != ?cf2\n        && ?dfv1 = ?dfv2\n        && ?pcav1 = ?pcav2\n    )\n}"                
                 },
                 {
                     "idInv": "inv_2",
                     "desc": "PCA distinto: O DF é avaliado tendo em conta o contexto de 3º nivel, em que:<ul><li>Se for distinto tem que haver uma relação de sintese entre as classes 4 filhas.</li><li>Se for igual não interessa</li></ul>",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect * where {\n    ?c rdf:type :Classe_N3 .\n    ?c :temFilho ?cf1 .\n    ?c :temFilho ?cf2 .\n    ?c :titulo ?c_titulo .\n    ?cf1 :titulo ?cf1_titulo .\n    ?cf2 :titulo ?cf2_titulo .\n\n    ?cf1 :temPCA ?pca1 .\n    ?cf2 :temPCA ?pca2 .\n    ?pca1 :pcaValor ?pcav1 .\n    ?pca2 :pcaValor ?pcav2 .\n\n    ?cf1 :temDF ?df1 .\n    ?cf2 :temDF ?df2 .\n    ?df1 :dfValor ?dfv1 .\n    ?df2 :dfValor ?dfv2 .\n\n    FILTER(\n        ?cf1 != ?cf2\n        && ?pcav1 != ?pcav2\n        && ?dfv1 != ?dfv2\n        && NOT EXISTS { ?cf1 :eSinteseDe ?cf2 . }\n    )\n}"
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c ?c_titulo ?cf1 ?cf1_titulo ?df1 ?dfv1 ?pca1 ?pcav1 ?cf2 ?cf2_titulo ?df2 ?dfv2 ?pca2 ?pcav2 where {\n    ?c rdf:type :Classe_N3 .\n    ?c :temFilho ?cf1 .\n    ?c :temFilho ?cf2 .\n    ?c :titulo ?c_titulo .\n    ?cf1 :titulo ?cf1_titulo .\n    ?cf2 :titulo ?cf2_titulo .\n\n    ?cf1 :temPCA ?pca1 .\n    ?cf2 :temPCA ?pca2 .\n    ?pca1 :pcaValor ?pcav1 .\n    ?pca2 :pcaValor ?pcav2 .\n\n    ?cf1 :temDF ?df1 .\n    ?cf2 :temDF ?df2 .\n    ?df1 :dfValor ?dfv1 .\n    ?df2 :dfValor ?dfv2 .\n\n    FILTER(\n        ?cf1 != ?cf2\n        && ?pcav1 != ?pcav2\n        && ?dfv1 != ?dfv2\n        && NOT EXISTS { ?cf1 :eSinteseDe ?cf2 . }\n    )\n}"
                 },
                 {
                     "idInv": "inv_3",
                     "desc": "DF distinto:<ul><li>Deve haver uma relação de sintese (de ou por) entre as classes 4 filhas</li><li>O PCA é igual</li></ul>",
-                    "query":"PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect * where {\n    ?c rdf:type :Classe_N3 .\n    ?c :temFilho ?cf1 .\n    ?c :temFilho ?cf2 .\n    ?c :titulo ?c_titulo .\n    ?cf1 :titulo ?cf1_titulo .\n    ?cf2 :titulo ?cf2_titulo .\n\n    ?cf1 :temPCA ?pca1 .\n    ?cf2 :temPCA ?pca2 .\n    ?pca1 :pcaValor ?pcav1 .\n    ?pca2 :pcaValor ?pcav2 .\n\n    ?cf1 :temDF ?df1 .\n    ?cf2 :temDF ?df2 .\n    ?df1 :dfValor ?dfv1 .\n    ?df2 :dfValor ?dfv2 .\n\n    FILTER (\n        ?cf1 != ?cf2\n        && ?dfv1 != ?dfv2\n        &&(\n        NOT EXISTS { ?cf1 :eSinteseDe ?cf2 . }\n        || ?pcav1 != ?pcav2)\n    )\n}"
+                    "query":"PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c ?c_titulo ?cf1 ?cf1_titulo ?df1 ?dfv1 ?pca1 ?pcav1 ?cf2 ?cf2_titulo ?df2 ?dfv2 ?pca2 ?pcav2 where {\n    ?c rdf:type :Classe_N3 .\n    ?c :temFilho ?cf1 .\n    ?c :temFilho ?cf2 .\n    ?c :titulo ?c_titulo .\n    ?cf1 :titulo ?cf1_titulo .\n    ?cf2 :titulo ?cf2_titulo .\n\n    ?cf1 :temPCA ?pca1 .\n    ?cf2 :temPCA ?pca2 .\n    ?pca1 :pcaValor ?pcav1 .\n    ?pca2 :pcaValor ?pcav2 .\n\n    ?cf1 :temDF ?df1 .\n    ?cf2 :temDF ?df2 .\n    ?df1 :dfValor ?dfv1 .\n    ?df2 :dfValor ?dfv2 .\n\n    FILTER (\n        ?cf1 != ?cf2\n        && ?dfv1 != ?dfv2\n        &&(\n        NOT EXISTS { ?cf1 :eSinteseDe ?cf2 . }\n        || ?pcav1 != ?pcav2)\n    )\n}"
                 },
                 {
                     "idInv": "inv_4",
                     "desc": "Os termos de indice vão para os 4ºs niveis (repetidos)",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect * where{\n    ?c rdf:type :Classe_N3 .\n    ?c :temFilho ?cf .\n    ?c :temTI ?ti .\n    ?c :titulo ?c_titulo .\n    ?cf :titulo ?cf_titulo .\n\n    FILTER (\n        NOT EXISTS { ?cf :temTI ?ti . }\n    )\n}"
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c ?c_titulo ?cf ?cf_titulo ?ti where{\n    ?c rdf:type :Classe_N3 .\n    ?c :temFilho ?cf .\n    ?c :temTI ?ti .\n    ?c :titulo ?c_titulo .\n    ?cf :titulo ?cf_titulo .\n\n    FILTER (\n        NOT EXISTS { ?cf :temTI ?ti . }\n    )\n}"
                 },
                 {
                     "idInv": "inv_5",
                     "desc": "As relações temDF e temPCA, não existem numa classe 3 se esta tiver filhos",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect * where{\n    ?c rdf:type :Classe_N3 .\n    ?c :temFilho ?cf .\n    ?c :titulo ?c_titulo .\n    ?cf :titulo ?cf_titulo .\n\n    FILTER (\n        EXISTS { ?c :temDF ?df . } ||\n        EXISTS { ?c :temPCA ?pca . }\n    )\n}" 
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c ?c_titulo ?cf ?cf_titulo where{\n    ?c rdf:type :Classe_N3 .\n    ?c :temFilho ?cf .\n    ?c :titulo ?c_titulo .\n    ?cf :titulo ?cf_titulo .\n\n    FILTER (\n        EXISTS { ?c :temDF ?df . } ||\n        EXISTS { ?c :temPCA ?pca . }\n    )\n}" 
                 },
                 {
                     "idInv": "inv_6",
@@ -90,12 +90,12 @@
                 {
                     "idInv": "inv_1",
                     "desc": "As relações eComplementarDe e eCruzadoCom são simétricas",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect * where {\n    ?c1 :eComplementarDe ?c2 .\n    ?c3 :eCruzadoCom ?c4 .\n\n    ?c1 :titulo ?c1_titulo .\n    ?c2 :titulo ?c2_titulo .\n    ?c3 :titulo ?c3_titulo .\n    ?c4 :titulo ?c4_titulo .\n\n    FILTER (\n        ?c1 != ?c2\n        && ?c3 != ?c4\n        && NOT EXISTS { ?c2 :eComplementarDe ?c1 . }\n        && NOT EXISTS { ?c4 :eCruzadoCom ?c3 . }\n    )\n}"
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c1 ?c1_titulo ?c2 ?c2_titulo ?c3 ?c3_titulo ?c4 ?c4_titulo where {\n    ?c1 :eComplementarDe ?c2 .\n    ?c3 :eCruzadoCom ?c4 .\n\n    ?c1 :titulo ?c1_titulo .\n    ?c2 :titulo ?c2_titulo .\n    ?c3 :titulo ?c3_titulo .\n    ?c4 :titulo ?c4_titulo .\n\n    FILTER (\n        ?c1 != ?c2\n        && ?c3 != ?c4\n        && NOT EXISTS { ?c2 :eComplementarDe ?c1 . }\n        && NOT EXISTS { ?c4 :eCruzadoCom ?c3 . }\n    )\n}"
                 },
                 {
                     "idInv": "inv_2",
                     "desc": "As relações eSinteseDe, eSucessorDe, eSuplementoDe e eSuplementoPara são antisimétricas.",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect * where {\n    ?c1 :eSinteseDe ?c2 .\n    ?c2 :eSinteseDe ?c1 .\n\n    ?c3 :eSintetizadoPor ?c4 .\n    ?c4 :eSintetizadoPor ?c3 .\n\n    ?c5 :eSucessorDe ?c6 .\n    ?c6 :eSucessorDe ?c5 .\n\n    ?c7 :eSuplementoDe ?c8 .\n    ?c8 :eSuplementoDe ?c7 .\n\n    ?c9 :eSuplementoPara ?c10 .\n    ?c10 :eSuplementoDe ?c9 .\n\n    ?c1 :titulo ?c1_titulo .\n    ?c2 :titulo ?c2_titulo .\n    ?c3 :titulo ?c3_titulo .\n    ?c4 :titulo ?c4_titulo .\n    ?c5 :titulo ?c5_titulo .\n    ?c6 :titulo ?c6_titulo .\n    ?c7 :titulo ?c7_titulo .\n    ?c8 :titulo ?c8_titulo .\n    ?c9 :titulo ?c9_titulo .\n    ?c10 :titulo ?c10_titulo .\n\n    FILTER (\n        ?c1 != ?c2\n        && ?c3 != ?c4\n        && ?c5 != ?c6\n        && ?c7 != ?c8\n        && ?c9 != ?c10\n    )\n}" 
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c1 ?c1_titulo ?c2 ?c2_titulo ?c3 ?c3_titulo ?c4 ?c4_titulo ?c5 ?c5_titulo ?c6 ?c6_titulo ?c7 ?c7_titulo ?c8 ?c8_titulo ?c9 ?c9_titulo ?c10 ?c10_titulo where {\n    ?c1 :eSinteseDe ?c2 .\n    ?c2 :eSinteseDe ?c1 .\n\n    ?c3 :eSintetizadoPor ?c4 .\n    ?c4 :eSintetizadoPor ?c3 .\n\n    ?c5 :eSucessorDe ?c6 .\n    ?c6 :eSucessorDe ?c5 .\n\n    ?c7 :eSuplementoDe ?c8 .\n    ?c8 :eSuplementoDe ?c7 .\n\n    ?c9 :eSuplementoPara ?c10 .\n    ?c10 :eSuplementoDe ?c9 .\n\n    ?c1 :titulo ?c1_titulo .\n    ?c2 :titulo ?c2_titulo .\n    ?c3 :titulo ?c3_titulo .\n    ?c4 :titulo ?c4_titulo .\n    ?c5 :titulo ?c5_titulo .\n    ?c6 :titulo ?c6_titulo .\n    ?c7 :titulo ?c7_titulo .\n    ?c8 :titulo ?c8_titulo .\n    ?c9 :titulo ?c9_titulo .\n    ?c10 :titulo ?c10_titulo .\n\n    FILTER (\n        ?c1 != ?c2\n        && ?c3 != ?c4\n        && ?c5 != ?c6\n        && ?c7 != ?c8\n        && ?c9 != ?c10\n    )\n}" 
                 },
                 {
                     "idInv": "inv_3",
@@ -205,22 +205,22 @@
                 {
                     "idInv": "inv_1",
                     "desc": "Se um PN é eComplementarDe -> DF é de conservação",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect * where{\n    ?c rdf:type :Classe_N3 .\n    ?c :eComplementarDe ?o .\n    ?c :temDF ?df .\n    ?df :dfValor ?dfv .\n\n    ?c :titulo ?c_titulo .\n    ?o :titulo ?o_titulo .\n\n    minus {\n        ?c :temFilho ?f .\n    }\n\n    FILTER ( ?dfv != \"C\" )\n}" 
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c ?c_titulo ?o ?o_titulo ?df ?dfv where{\n    ?c rdf:type :Classe_N3 .\n    ?c :eComplementarDe ?o .\n    ?c :temDF ?df .\n    ?df :dfValor ?dfv .\n\n    ?c :titulo ?c_titulo .\n    ?o :titulo ?o_titulo .\n\n    minus {\n        ?c :temFilho ?f .\n    }\n\n    FILTER ( ?dfv != \"C\" )\n}" 
                 },
                 {
                     "idInv": "inv_2",
                     "desc": "Se um PN é eSinteseDe -> DF é de conservação",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect * where {\n    ?c rdf:type :Classe_N3 .\n    ?c :eSinteseDe ?ca .\n    ?c :temDF ?df .\n    ?df :dfValor ?dfv .\n\n    ?c :titulo ?c_titulo .\n    ?ca :titulo ?ca_titulo .\n\n    minus {\n        ?c :temFilho ?cf .\n        ?c :eComplementarDe ?cb .\n    }\n\n    FILTER ( ?dfv != \"C\" )\n}" 
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c ?c_titulo ?ca ?ca_titulo ?df ?dfv where {\n    ?c rdf:type :Classe_N3 .\n    ?c :eSinteseDe ?ca .\n    ?c :temDF ?df .\n    ?df :dfValor ?dfv .\n\n    ?c :titulo ?c_titulo .\n    ?ca :titulo ?ca_titulo .\n\n    minus {\n        ?c :temFilho ?cf .\n        ?c :eComplementarDe ?cb .\n    }\n\n    FILTER ( ?dfv != \"C\" )\n}" 
                 },
                 {
                     "idInv": "inv_3",
                     "desc": "Se um PN é eSintetizadoPor -> DF é de eliminação",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect * where{\n    ?c rdf:type :Classe_N3 .\n    ?c :eSintetizadoPor ?ca .\n    ?c :temDF ?df .\n    ?df :dfValor ?dfv .\n\n    ?c :titulo ?c_titulo .\n    ?ca :titulo ?ca_titulo .\n\n    minus {\n        ?c :temFilho ?f .\n        ?c :eComplementarDe ?cb .\n        ?c :eSinteseDe ?cc .\n    }\n\n    FILTER ( ?dfv != \"E\" )\n}" 
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c ?c_titulo ?ca ?ca_titulo ?df ?dfv where{\n    ?c rdf:type :Classe_N3 .\n    ?c :eSintetizadoPor ?ca .\n    ?c :temDF ?df .\n    ?df :dfValor ?dfv .\n\n    ?c :titulo ?c_titulo .\n    ?ca :titulo ?ca_titulo .\n\n    minus {\n        ?c :temFilho ?f .\n        ?c :eComplementarDe ?cb .\n        ?c :eSinteseDe ?cc .\n    }\n\n    FILTER ( ?dfv != \"E\" )\n}" 
                 },
                 {
                     "idInv": "inv_4",
                     "desc": "Se um PN é nenhuma das acima -> DF é NE (Não especificado)",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect * where{\n    ?c rdf:type :Classe_N3 .\n    ?c :temDF ?df .\n    ?df :dfValor ?dfv .\n\n    ?c :titulo ?c_titulo .\n\n    minus {\n        ?c :temFilho ?cf .\n        ?c :eComplementarDe ?ca .\n        ?c :eSintetizadoPor ?cb .\n        ?c :eSinteseDe ?cc .\n    }\n\n    FILTER ( ?dfv != \"NE\" )\n}" 
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c ?c_titulo ?df ?dfv where{\n    ?c rdf:type :Classe_N3 .\n    ?c :temDF ?df .\n    ?df :dfValor ?dfv .\n\n    ?c :titulo ?c_titulo .\n\n    minus {\n        ?c :temFilho ?cf .\n        ?c :eComplementarDe ?ca .\n        ?c :eSintetizadoPor ?cb .\n        ?c :eSinteseDe ?cc .\n    }\n\n    FILTER ( ?dfv != \"NE\" )\n}" 
                 }
             ]
         }
