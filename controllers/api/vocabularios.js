@@ -92,3 +92,63 @@ Vocabulario.subFormasContagemPCA = async function () {
     } 
     catch(erro) { throw (erro);}
 }
+
+//Update de VC
+Vocabulario.update = async function (id, label, desc) {
+    var query = `
+        DELETE {    
+            clav:${id} a skos:ConceptScheme;
+                skos:prefLabel ?label;
+                skos:scopeNote ?desc .
+        
+        } INSERT {
+            clav:${id} a skos:ConceptScheme;
+                skos:prefLabel "${label}";
+                skos:scopeNote "${desc}" .
+        } WHERE {
+            clav:${id} a skos:ConceptScheme;
+                skos:prefLabel ?label;
+                skos:scopeNote ?desc .
+        }
+    `
+    try {
+        await client.query(query).execute();
+        var ask = `
+        ASK {
+            clav:${id} a skos:ConceptScheme;
+                    skos:prefLabel '${label}';
+                    skos:scopeNote '${desc}' .
+        }`
+        try {
+            let result = await client.query(ask).execute();
+            return result.boolean;
+        }
+        catch(erro) { throw (erro);}
+    } 
+    catch(erro) { throw (erro);}
+}
+
+Vocabulario.adicionar = async function (id, label, desc) {
+    var query = `
+        INSERT DATA {
+            clav:${id} a skos:ConceptScheme;
+                    skos:prefLabel '${label}';
+                    skos:scopeNote '${desc}' .
+        }
+    `
+    try {
+        await client.query(query).execute();
+        var ask = `
+        ASK {
+            clav:${id} a skos:ConceptScheme;
+                    skos:prefLabel '${label}';
+                    skos:scopeNote '${desc}' .
+        }`
+        try {
+            let result = await client.query(ask).execute();
+            return result.boolean;
+        }
+        catch(erro) { throw (erro);}
+    } 
+    catch(erro) { throw (erro);}
+}
