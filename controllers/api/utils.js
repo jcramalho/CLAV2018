@@ -28,6 +28,43 @@ exports.normalize = function(response) {
 };
 
 /**
+ * Normaliza e simplifica os resultados de uma query SPARQL mantendo a ordem das variáveis da query SPARQL.
+ * 
+ * @example
+ * response = {  
+ *   head: { vars: ["sigla", "designacao", "estado", "internacional"] },
+ *   results: {
+ *     bindings: [{  
+ *       estado:{ type: "literal", value:"Ativa" },
+ *       sigla: { type:"literal", value:"AR" },
+ *       designacao: { type:"literal", value:"Assembeia da República" },
+ *       internacional: { type:"literal", value:"Não" }
+ *     }]
+ *   }
+ * }
+ * 
+ * // O resultado da normalização da resposta acima será:
+ * [{ sigla: "PGR", designacao:"Assembleia da República", estado: "Ativa", internacional:"Não" }]
+ * 
+ * @param response objeto de resposta da query SPARQL
+ * @return objeto normalizado e simplificado (ordenado)
+ */
+exports.normalizeOrdered = function(response) {
+    var out = []
+    
+    response.results.bindings.forEach(e => {
+        var outE = {}
+        response.head.vars.forEach( v => {
+            if(e[v])
+                outE[v] = e[v].value
+        })
+        out.push(outE)
+    })
+
+    return out
+};
+
+/**
  * Efetua uma projeção sobre uma lista de objetos.
  * 
  * @example
