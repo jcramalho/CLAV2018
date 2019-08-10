@@ -94,26 +94,46 @@
                 },
                 {
                     "idInv": "inv_2",
-                    "desc": "As relações eSinteseDe, eSucessorDe, eSuplementoDe e eSuplementoPara são antisimétricas.",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c1 ?c1_titulo ?c2 ?c2_titulo ?c3 ?c3_titulo ?c4 ?c4_titulo ?c5 ?c5_titulo ?c6 ?c6_titulo ?c7 ?c7_titulo ?c8 ?c8_titulo ?c9 ?c9_titulo ?c10 ?c10_titulo where {\n    ?c1 :eSinteseDe ?c2 .\n    ?c2 :eSinteseDe ?c1 .\n\n    ?c3 :eSintetizadoPor ?c4 .\n    ?c4 :eSintetizadoPor ?c3 .\n\n    ?c5 :eSucessorDe ?c6 .\n    ?c6 :eSucessorDe ?c5 .\n\n    ?c7 :eSuplementoDe ?c8 .\n    ?c8 :eSuplementoDe ?c7 .\n\n    ?c9 :eSuplementoPara ?c10 .\n    ?c10 :eSuplementoDe ?c9 .\n\n    ?c1 :titulo ?c1_titulo .\n    ?c2 :titulo ?c2_titulo .\n    ?c3 :titulo ?c3_titulo .\n    ?c4 :titulo ?c4_titulo .\n    ?c5 :titulo ?c5_titulo .\n    ?c6 :titulo ?c6_titulo .\n    ?c7 :titulo ?c7_titulo .\n    ?c8 :titulo ?c8_titulo .\n    ?c9 :titulo ?c9_titulo .\n    ?c10 :titulo ?c10_titulo .\n\n    FILTER (\n        ?c1 != ?c2\n        && ?c3 != ?c4\n        && ?c5 != ?c6\n        && ?c7 != ?c8\n        && ?c9 != ?c10\n    )\n}" 
+                    "desc": "A relação eSinteseDe é antisimétrica.",
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c1 ?c1_titulo ?c2 ?c2_titulo where {\n    ?c1 :eSinteseDe ?c2 .\n    ?c2 :eSinteseDe ?c1 .\n\n    ?c1 :titulo ?c1_titulo .\n    ?c2 :titulo ?c2_titulo .\n\n    FILTER (\n        ?c1 != ?c2\n    )\n}" 
                 },
                 {
                     "idInv": "inv_3",
+                    "desc": "A relação eSintetizadoPor é antisimétrica.",
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c1 ?c1_titulo ?c2 ?c2_titulo where {\n    ?c1 :eSintetizadoPor ?c2 .\n    ?c2 :eSintetizadoPor ?c1 .\n\n    ?c1 :titulo ?c1_titulo .\n    ?c2 :titulo ?c2_titulo .\n\n    FILTER (\n        ?c1 != ?c2\n    )\n}" 
+                },
+                {
+                    "idInv": "inv_4",
+                    "desc": "A relação eSucessorDe é antisimétrica.",
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c1 ?c1_titulo ?c2 ?c2_titulo where {\n    ?c1 :eSucessorDe ?c2 .\n    ?c2 :eSucessorDe ?c1 .\n\n    ?c1 :titulo ?c1_titulo .\n    ?c2 :titulo ?c2_titulo .\n\n    FILTER (\n        ?c1 != ?c2\n    )\n}" 
+                },
+                {
+                    "idInv": "inv_5",
+                    "desc": "A relação eSuplementoDe é antisimétrica.",
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c1 ?c1_titulo ?c2 ?c2_titulo where {\n    ?c1 :eSuplementoDe ?c2 .\n    ?c2 :eSuplementoDe ?c1 .\n\n    ?c1 :titulo ?c1_titulo .\n    ?c2 :titulo ?c2_titulo .\n\n    FILTER (\n        ?c1 != ?c2\n    )\n}" 
+                },
+                {
+                    "idInv": "inv_6",
+                    "desc": "A relação eSuplementoPara é antisimétrica.",
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c1 ?c1_titulo ?c2 ?c2_titulo where {\n    ?c1 :eSuplementoPara ?c2 .\n    ?c2 :eSuplementoDe ?c1 .\n\n    ?c1 :titulo ?c1_titulo .\n    ?c2 :titulo ?c2_titulo .\n\n    FILTER (\n        ?c1 != ?c2\n    )\n}" 
+                },
+                {
+                    "idInv": "inv_7",
                     "desc": "Na relação temRelProc um PN não se relaciona com ele próprio.",
                     "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect * where {\n    ?c1 rdf:type :Classe_N3 .\n    ?c1 :titulo ?c1_titulo .\n\n    ?c2 rdf:type :Classe_N4 .\n    ?c2 :titulo ?c2_titulo .\n\n    FILTER (\n        EXISTS { ?c1 :eAntecessorDe ?c1 . }\n        ||\n        EXISTS { ?c1 :eComplementarDe ?c1. }\n        ||\n        EXISTS { ?c1 :eCruzadoCom ?c1. }\n        ||\n        EXISTS { ?c1 :eSinteseDe ?c1 . }\n        ||\n        EXISTS { ?c1 :eSintetizadoPor ?c1 . }\n        ||\n        EXISTS { ?c2 :eSinteseDe ?c2 . }\n        ||\n        EXISTS { ?c2 :eSintetizadoPor ?c2 . }\n        ||\n        EXISTS { ?c1 :eSucessorDe ?c1. }\n        ||\n        EXISTS { ?c1 :eSuplementoDe ?c1. }\n        ||\n        EXISTS { ?c1 :eSuplementoPara ?c1. }\n    )\n}"
                 },
                 {
-                    "idInv": "inv_4",
+                    "idInv": "inv_8",
                     "desc": "Um PN só pode ter uma relação com outro PN (Um PN não pode ter relações (do tipo Classe nível 4 para Classe nível 3) distintas com o mesmo processo)",
                     "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect * where {\n    ?c1 rdf:type :Classe_N3 .\n    ?c1 :titulo ?c1_titulo .\n\n    ?c2 rdf:type :Classe_N3 .\n    ?c2 :titulo ?c2_titulo .\n\n    ?c1 :eAntecessorDe ?c2 .\n\n    FILTER (\n        ?c1 != ?c2\n        &&\n        (\n        EXISTS { ?c1 :eComplementarDe ?c2 . }\n        ||\n        EXISTS { ?c1 :eCruzadoCom ?c2 . }\n        ||\n        EXISTS { ?c1 :eSinteseDe ?c2 . }\n        ||\n        EXISTS { ?c1 :eSintetizadoPor ?c2 . }\n        ||\n        EXISTS { ?c1 :eSucessorDe ?c2 . }\n        ||\n        EXISTS { ?c1 :eSuplementoDe ?c2 . }\n        ||\n        EXISTS { ?c1 :eSuplementoPara ?c2 . }\n        )\n    )\n}"
                 },
                 {
-                    "idInv": "inv_5",
+                    "idInv": "inv_9",
                     "desc": "Se um PN se desdobra em 4ºs niveis os Termos de Indice passam para os filhos.",
                     "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect * where {\n    ?c rdf:type :Classe_N3 .\n    ?c :titulo ?c_titulo .\n    ?c :temFilho ?cf .\n    ?cf :titulo ?cf_titulo .\n\n    FILTER(\n        EXISTS { ?c :temTI ?ti . }\n    )\n}" 
                 },
                 {
-                    "idInv": "inv_6",
+                    "idInv": "inv_10",
                     "desc": "Os termos de indice de um PN não existem em mais nenhuma classe 3",
                     "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect * where {\n    ?c1 rdf:type :Classe_N3 .\n    ?c1 :titulo ?c1_titulo .\n\n    ?c2 rdf:type :Classe_N3 .\n    ?c2 :titulo ?c2_titulo .\n    \n    ?c1 :temTI ?ti .\n\n    FILTER (\n        ?c1 != ?c2\n        && EXISTS { ?c2 :temTI ?ti . }\n    )\n}" 
                 }
