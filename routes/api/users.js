@@ -4,11 +4,11 @@ var router = express.Router();
 var passport = require('passport');
 var User = require('../../models/user');
 var Users = require('../../controllers/api/users');
+var AuthCalls = require('../../controllers/api/auth');
 var jwt = require('jsonwebtoken');
 var secretKey = require('./../../config/app');
 var Mailer = require('../../controllers/api/mailer');
 var mongoose = require('mongoose');
-var lhost = require('./../../config/global').host
 
 router.get('/', (req, res) => {
     Users.listar(req,function(err, result){
@@ -236,30 +236,33 @@ router.get('/:id', (req, res) => {
 //Callback Autenticação.Gov
 router.post('/callback', async function(req, res){
     await Users.parseSAMLResponse(req.body.SAMLResponse, function(err, result){
-        if(!err && result!=undefined){
-            var NIC = Buffer.from(result.NIC, 'base64').toString('utf8');
-            Users.getUserById(NIC, function (err, user) {
-                if(!user){ //Este cartao cidadao nao tem user associado
-                    res.writeHead(301,{
-                        Location: lhost+'/users/HandlerCC?NIC='+result.NIC+'&Nome='+result.NomeCompleto //TODO depois temos de mudar de localhost para o URL final
-                    });
-                    res.end();
-                }else{ //ja existe user com este cartao cidadao
-                    var token = jwt.sign({id: user._id}, secretKey.key, {expiresIn: '8h'});
-                    var name = Buffer.from(user.name).toString('base64');
-                    var entidade = Buffer.from(user.entidade).toString('base64');
-                    res.writeHead(301,{
-                        Location: lhost+'/users/HandlerCC?Token='+token+'&Nome='+name+'&Entidade='+entidade
-                    });
-                    res.end();
-                }
-            })
-        }else{
-            res.writeHead(301,{
-                Location: lhost+'/users/HandlerCC'
-            });
-            res.end();
-        }
+        // console.log(result)
+        AuthCalls.get(result.RequestID, function(err, url){
+            if(!err && result.NIC!=undefined && result.NomeCompleto!=undefined){
+                var NIC = Buffer.from(result.NIC, 'base64').toString('utf8');
+                Users.getUserById(NIC, function (err, user) {
+                    if(!user){ //Este cartao cidadao nao tem user associado
+                        res.writeHead(301,{
+                            Location: url+'/users/HandlerCC?NIC='+result.NIC+'&Nome='+result.NomeCompleto
+                        });
+                        res.end();
+                    }else{ //ja existe user com este cartao cidadao
+                        var token = jwt.sign({id: user._id}, secretKey.key, {expiresIn: '8h'});
+                        var name = Buffer.from(user.name).toString('base64');
+                        var entidade = Buffer.from(user.entidade).toString('base64');
+                        res.writeHead(301,{
+                            Location: url+'/users/HandlerCC?Token='+token+'&Nome='+name+'&Entidade='+entidade
+                        });
+                        res.end();
+                    }
+                })
+            }else{
+                res.writeHead(301,{
+                    Location: url+'/users/HandlerCC'
+                });
+                res.end();
+            }
+        });
     })
 });
 

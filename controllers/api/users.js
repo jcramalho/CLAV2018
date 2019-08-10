@@ -1,4 +1,5 @@
 var User = require('../../models/user');
+var AuthCall = require('../../models/auth');
 var bcrypt = require('bcryptjs');
 var xml2js = require('xml2js');
 
@@ -266,15 +267,18 @@ Users.parseSAMLResponse = function(SAMLResponse, callback){
         switch(statusMessage){
             case undefined:
                 if(isSucessfull){
+                    var RequestID = result.Response.Assertion[0].Subject[0].SubjectConfirmation[0].SubjectConfirmationData[0].$.InResponseTo;
                     var NIC = Buffer.from(result.Response.Assertion[0].AttributeStatement[0].Attribute[0].AttributeValue[0]._).toString('base64');
                     var NomeCompleto = Buffer.from(result.Response.Assertion[0].AttributeStatement[0].Attribute[1].AttributeValue[0]._).toString('base64');
-                    callback(null, {NIC: NIC, NomeCompleto: NomeCompleto});
+                    callback(null, {NIC: NIC, NomeCompleto: NomeCompleto, RequestID: RequestID});
                 }else{
-                    callback(err, null);
+                    var RequestID = result.Response.Assertion[0].Subject[0].SubjectConfirmation[0].SubjectConfirmationData[0].$.InResponseTo;
+                    callback(err, {RequestID: RequestID});
                 }
                 break;
             default:
-                callback(err, null);
+                var RequestID = result.Response.Assertion[0].Subject[0].SubjectConfirmation[0].SubjectConfirmationData[0].$.InResponseTo;
+                callback(err, {RequestID: RequestID});
                 break;
         }
     });
