@@ -88,7 +88,6 @@ router.post('/', Auth.isLoggedInAPI, function (req, res) {
                     .then(function () {
                         Logging.logger.info('Criada entidade \'' + id + '\' por utilizador \'' + req.user._id + '\'');
 
-                        req.flash('success_msg', 'Entidade adicionada');
                         res.send(id);
                     })
                     .catch(error => console.error(error));
@@ -111,7 +110,6 @@ router.put('/:id', Auth.isLoggedInAPI, function (req, res) {
                     .then(function () {
                         Logging.logger.info('Update a entidade \'' + req.params.id + '\' por utilizador \'' + req.user._id + '\'');
 
-                        req.flash('success_msg', 'Info. de Entidade atualizada');
                         res.send(dataObj.id);
                     })
                     .catch(error => console.error(error));
@@ -126,7 +124,6 @@ router.delete('/:id', Auth.isLoggedInAPI, function (req, res) {
         .then(function () {
             Logging.logger.info('Desativada organização \'' + req.params.id + '\' por utilizador \'' + req.user._id + '\'');
 
-            req.flash('success_msg', 'Entrada desativada');
             res.send("Entrada desativada!");
         })
         .catch(function (error) {

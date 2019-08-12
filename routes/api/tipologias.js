@@ -82,28 +82,4 @@ router.put('/:id', Auth.isLoggedIn, (req, res) => {
         .catch(erro => res.status(500).send(`Erro na alteração da Tipologia '${req.params.id}': ${erro}`));
 })
 
-/*router.put('/:id', Auth.isLoggedIn, function (req, res) {
-    var dataObj = req.body;
-
-    //Executing queries
-    Tipologias.checkAvailability(dataObj.name)
-        .then(function (count) {
-            if (count > 0) {
-                res.send("Designação já existentente!");
-            }
-            else {
-                Tipologias.updateTipologia(dataObj)
-                    .then(function () {
-                        Logging.logger.info('Update a tipologia \'' + req.params.id + '\' por utilizador \'' + req.user._id + '\'');
-
-                        req.flash('success_msg', 'Info. de Tipologia atualizada');
-                        res.send(dataObj.id);
-                    })
-                    .catch(error => console.error(error));
-            }
-        })
-        .catch(error => console.error("Name error:\n" + error));
-
-})*/
-
 module.exports = router;

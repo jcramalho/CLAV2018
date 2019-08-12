@@ -11,8 +11,7 @@ Auth.isLoggedIn = function (req, res, next) {
     if (req.isAuthenticated()) {
         return next();
     }
-    req.flash('warn_msg', 'Login necessário para aceder a esta página');
-    res.redirect('/users/login');
+    res.status(403).send('Login necessário para aceder a esta página');
 }
 
 Auth.checkLevel1 = function (req, res, next) {
@@ -48,12 +47,10 @@ Auth.isLevel = function (clearance, req, res, next) {
         if (req.user.level >= clearance) {
             return next();
         } else {
-            req.flash('warn_msg', 'Não tem permissões suficientes para aceder a esta página');
-            return res.redirect('back');
+            return res.status(403).send('Não tem permissões suficientes para aceder a esta página');
         }
     } else {
-        req.flash('warn_msg', 'Login necessário para aceder a esta página');
-        return res.redirect('/users/login');
+        res.status(403).send('Login necessário para aceder a esta página');
     }
 }
 
@@ -70,13 +67,11 @@ Auth.isLoggedInAPI = async function (req, res, next) {
         if(err){
             throw err;
         }else if(resp.length==0){
-            req.flash('error_msg', 'A sua chave API não se encontra na base de dados.');
-            res.redirect('/');
+            res.status(403).send('A sua chave API não se encontra na base de dados.');
         }else{
             await jwt.verify(ApiKey.key, secretKey.key, async function(err, decoded){
                 if(err){
-                    req.flash('error_msg', 'A sua chave API é inválida ou expirou.');
-                    res.redirect('/');
+                    res.status(403).send('A sua chave API é inválida ou expirou.');
                 }else{
                     await Key.find({}, async function(err, keys){
                         for(var i = 0; i < keys.length; i++) {
@@ -88,15 +83,13 @@ Auth.isLoggedInAPI = async function (req, res, next) {
                                         if(key.active==true){
                                             await Key.update({_id: key._id}, {nCalls: key.nCalls+1, lastUsed: Date.now()}, function(err, affected, resp) {
                                                 if(err){
-                                                    req.flash('error_msg', 'Ocorreu um erro ao atualizar chave API.');
-                                                    res.redirect('/');
+                                                    res.status(500).send('Ocorreu um erro ao atualizar chave API.');
                                                 }else{
                                                     return next();
                                                 }
                                             })
                                         }else{
-                                            req.flash('error_msg', 'A sua chave API foi desativada, por favor contacte os administradores do sistema.');
-                                            res.redirect('/');
+                                            res.status(403).send('A sua chave API foi desativada, por favor contacte os administradores do sistema.');
                                         }
                                     }
                                 });

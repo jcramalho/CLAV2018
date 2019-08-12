@@ -64,9 +64,6 @@ router.post('/', Auth.isLoggedInAPI, function (req, res) {
 
     var dataObj = req.body;
 
-    req.flash('warn_msg', 'Tabela de Seleção em processamento...');
-    
-    
     SelTabs.list()
         .then(function (list) {
             
@@ -101,8 +98,6 @@ router.post('/', Auth.isLoggedInAPI, function (req, res) {
                             SelTabs.createTab(id, dataObj.name, classes, criteriaData)
                                 .then(function () {
                                     Logging.logger.info('Criada Tabela de Seleção \'' + id + '\' por utilizador \'' + req.user._id + '\'');
-
-                                    req.flash('success_msg', 'PNs da nova TS já se encontram disponíveis para edição! (consultar área de trabalho)');
 
                                     let trab = {
                                         type: "TS: Alterar PNs",

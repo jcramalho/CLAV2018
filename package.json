@@ -4,57 +4,38 @@
   "description": "Arquivo Digital: Plataforma Modular para a Classificação e a Avaliação da Informação Pública",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node ./bin/www",
-    "dev": "watchify -vd -p browserify-hmr -t vueify -e public/javascripts/main.js -o public/javascripts/bundle.js & node ./bin/www"
+    "start": "node ./bin/www"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tomasmferreira/M51-CLAV_WEB.git"
+    "url": "git+https://github.com/jcramalho/CLAV2018.git"
   },
   "keywords": [
-    "vue.js",
     "node.js",
-    "pug",
     "sparql"
   ],
-  "author": "Tomás Ferreira",
+  "author": "CLAV",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/tomasmferreira/M51-CLAV_WEB/issues"
-  },
-  "homepage": "https://github.com/tomasmferreira/M51-CLAV_WEB#readme",
+  "homepage": "https://github.com/jcramalho/CLAV2018#readme",
   "dependencies": {
     "@sendgrid/mail": "^6.4.0",
     "axios": "^0.18.1",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.2",
-    "bootstrap-vue": "^1.4.1",
-    "browserify-hmr": "^0.3.7",
-    "connect-flash": "^0.1.1",
     "connect-mongo": "^2.0.3",
     "cookie-parser": "^1.4.3",
     "express": "^4.16.1",
     "express-session": "^1.15.6",
     "express-validator": "^4.3.0",
-    "jsonfile": "^5.0.0",
     "jsonwebtoken": "^8.3.0",
     "mongodb": "^2.2.33",
     "mongoose": "^4.13.19",
     "morgan": "^1.9.1",
     "nanoid": "^2.0.1",
-    "nodemailer": "^6.2.1",
     "npm": "^6.10.2",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
-    "pug": "^2.0.0-rc.4",
     "sparql-client-2": "^0.6.2",
-    "vue": "^2.6.6",
-    "vue-strap": "github:wffranco/vue-strap",
-    "vue-tabs-component": "^1.5.0",
-    "vue-uuid": "^1.1.1",
-    "vueify": "^9.4.1",
-    "vuelidate": "^0.7.4",
-    "watchify": "^3.11.1",
     "winston": "^2.4.0",
     "winston-daily-rotate-file": "^2.0.0-beta",
     "xml2js": "^0.4.19"

@@ -24,13 +24,12 @@ Trabalhos.add = function(dataObj, req, res){
     Trabalho.createTrabalho(newTrabalho, function (err, request) {
         if (err) {
             console.log(err);
-            req.flash('error_msg', 'Ocorreu um erro ao guardar o trabalho! Tente novamente mais tarde');
             res.send('Ocorreu um erro ao guardar o trabalho! Tente novamente mais tarde');
         
             Logging.logger.info(`Erro ao guardar trabalho ${dataObj.type}`);            
         }
         else {
-            req.flash('success_msg', 'Trabalho guardado!');
+            res.send('Trabalho guardado!');
         }
     });  
 }

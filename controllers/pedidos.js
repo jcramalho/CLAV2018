@@ -67,13 +67,11 @@ Pedidos.add = function(dataObj, req, res){
             Pedido.createPedido(newPedido, function (err, request) {
                 if (err) {
                     console.log(err);
-                    req.flash('error_msg', 'Ocorreu um erro a submeter o pedido! Tente novamente mais tarde');
                     res.send('Ocorreu um erro a submeter o pedido! Tente novamente mais tarde');
                 }
                 else {
                     Logging.logger.info('Novo pedido ' + request.tipo + ': '+request.numero+' submetido por '+req.user._id);
     
-                    req.flash('success_msg', 'Pedido submetido com sucesso!');
                     res.send(request.numero);
                 }
             });  

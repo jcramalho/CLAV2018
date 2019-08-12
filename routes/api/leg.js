@@ -85,39 +85,4 @@ router.get('/:id/regula', function (req, res) {
         .catch(erro => res.status(500).send(`Erro na consulta dos processos regulados por ${req.params.id}: ${erro}`));
 });
 
-/*
-router.put('/:id', function (req, res) {
-    var dataObj = req.body;
-
-    if (dataObj.number) {
-        Leg.checkNumberAvailability(dataObj.number)
-            .then(function (count) {
-                if (count > 0) {
-                    res.send("Número já existente!");
-                }
-                else {
-                    Leg.updateDoc(dataObj)
-                        .then(function () {
-                            Logging.logger.info('Update a Diploma \'' + req.params.id + '\' por utilizador \'' + req.user._id + '\'');
-
-                            req.flash('success_msg', 'Info. de Diploma actualizada');
-                            res.send("Actualizado!");
-                        })
-                        .catch(error => console.error(error));
-                }
-            })
-            .catch(error => console.error("Check error:\n" + error));
-    }
-    else {
-        Leg.updateDoc(dataObj)
-            .then(function () {
-                Logging.logger.info('Update a Diploma \'' + req.params.id + '\' por utilizador \'' + req.user._id + '\'');
-
-                req.flash('success_msg', 'Informação de Diploma actualizada');
-                res.send("Actualizado!");
-            })
-            .catch(error => console.error(error));
-    }
-});*/
-
 module.exports = router;

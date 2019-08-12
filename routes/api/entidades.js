@@ -98,29 +98,3 @@ router.get('/:id/intervencao/participante', (req, res) => {
 });
 
 module.exports = router;
-
-/*
-router.put('/:id', Auth.isLoggedInAPI, function (req, res) {
-    var dataObj = req.body;
-
-    //Executing queries
-    Entidades.checkAvailability(dataObj.name)
-        .then(function (count) {
-            if (count > 0) {
-                res.send("Designação já existentente!");
-            }
-            else {
-                Entidades.updateEntidade(dataObj)
-                    .then(function () {
-                        Logging.logger.info('Update a entidade \'' + req.params.id + '\' por utilizador \'' + req.user._id + '\'');
-
-                        req.flash('success_msg', 'Info. de Entidade atualizada');
-                        res.send(dataObj.id);
-                    })
-                    .catch(error => console.error(error));
-            }
-        })
-        .catch(error => console.error("Initials error:\n" + error));
-
-})
-*/
