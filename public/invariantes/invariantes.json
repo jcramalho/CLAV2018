@@ -115,7 +115,7 @@
                 {
                     "idInv": "inv_6",
                     "desc": "A relação eSuplementoPara é antisimétrica.",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c1 ?c1_titulo ?c2 ?c2_titulo where {\n    ?c1 :eSuplementoPara ?c2 .\n    ?c2 :eSuplementoDe ?c1 .\n\n    ?c1 :titulo ?c1_titulo .\n    ?c2 :titulo ?c2_titulo .\n\n    FILTER (\n        ?c1 != ?c2\n    )\n}" 
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c1 ?c1_titulo ?c2 ?c2_titulo where {\n    ?c1 :eSuplementoPara ?c2 .\n    ?c2 :eSuplementoPara ?c1 .\n\n    ?c1 :titulo ?c1_titulo .\n    ?c2 :titulo ?c2_titulo .\n\n    FILTER (\n        ?c1 != ?c2\n    )\n}" 
                 },
                 {
                     "idInv": "inv_7",
