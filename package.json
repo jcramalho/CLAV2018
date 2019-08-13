@@ -14,7 +14,6 @@
     "node.js",
     "sparql"
   ],
-  "author": "CLAV",
   "license": "ISC",
   "homepage": "https://github.com/jcramalho/CLAV2018#readme",
   "dependencies": {

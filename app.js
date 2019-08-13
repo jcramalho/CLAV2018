@@ -107,12 +107,6 @@ mongoose.connect(dataBases.userDB, {useMongoClient: true,})
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'Mongo erro na conexão: '));
 
-// Global Vars
-app.use(function (req, res, next) {
-    res.locals.user = req.user || null;
-    next();
-});
-
 //loads APP State
 var State = require('./controllers/state.js')
 State.reset()
@@ -120,6 +114,9 @@ State.reset()
 //loads APP travessia
 var travessia = require('./controllers/travessia.js')
 travessia.reset()
+
+//Swagger
+app.use(express.static("./swagger"))
 
 //routes and API
 app.use('/api/entidades',require('./routes/api/entidades'));
