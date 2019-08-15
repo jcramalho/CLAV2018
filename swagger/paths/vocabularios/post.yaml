@@ -1,6 +1,6 @@
 summary:
 description:
 tags:
-  - classes
-parameters:
+  - vocabularios
+requestBody:
 responses:

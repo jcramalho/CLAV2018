@@ -9,4 +9,39 @@ basePath: /api
 schemes:
   - https
   - http
+tags:
+  - name: auth
+    description:
+  - name: chaves
+    description:
+  - name: classes
+    description:
+  - name: entidades
+    description:
+  - name: invariantes
+    description:
+  - name: legislacao
+    description:
+  - name: pedidos
+    description:
+  - name: pendentes
+    description:
+  - name: stats
+    description:
+  - name: tabelasSelecao
+    description:
+  - name: termosIndice
+    description:
+  - name: tipologias
+    description:
+  - name: trabalhos
+    description:
+  - name: travessia
+    description:
+  - name: utils
+    description:
+  - name: vocabularios
+    description:
+  - name: users
+    description:
 paths: !!inc/dir [ 'paths' ] 

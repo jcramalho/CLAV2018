@@ -6,9 +6,6 @@ var url = require('url');
 var express = require('express');
 var router = express.Router();
 
-const axios = require('axios');
-const myhost = require('./../../config/database').host
-
 // Middleware de verificação de disponibilidade de uma entidade
 const estaDisponivel = (req, res, next) => {
     const entidade = {

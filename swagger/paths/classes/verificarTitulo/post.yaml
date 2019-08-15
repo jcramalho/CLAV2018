@@ -2,5 +2,5 @@ summary:
 description:
 tags:
   - classes
-parameters:
+requestBody:
 responses:
