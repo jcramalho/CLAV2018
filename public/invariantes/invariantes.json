@@ -115,12 +115,12 @@
                 {
                     "idInv": "inv_6",
                     "desc": "A relação eSuplementoPara é antisimétrica.",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c1 ?c1_titulo ?c2 ?c2_titulo where {\n    ?c1 :eSuplementoPara ?c2 .\n    ?c2 :eSuplementoDe ?c1 .\n\n    ?c1 :titulo ?c1_titulo .\n    ?c2 :titulo ?c2_titulo .\n\n    FILTER (\n        ?c1 != ?c2\n    )\n}" 
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c1 ?c1_titulo ?c2 ?c2_titulo where {\n    ?c1 :eSuplementoPara ?c2 .\n    ?c2 :eSuplementoPara ?c1 .\n\n    ?c1 :titulo ?c1_titulo .\n    ?c2 :titulo ?c2_titulo .\n\n    FILTER (\n        ?c1 != ?c2\n    )\n}" 
                 },
                 {
                     "idInv": "inv_7",
                     "desc": "Na relação temRelProc um PN não se relaciona com ele próprio.",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect * where {\n    ?c1 rdf:type :Classe_N3 .\n    ?c1 :titulo ?c1_titulo .\n\n    ?c2 rdf:type :Classe_N4 .\n    ?c2 :titulo ?c2_titulo .\n\n    FILTER (\n        EXISTS { ?c1 :eAntecessorDe ?c1 . }\n        ||\n        EXISTS { ?c1 :eComplementarDe ?c1. }\n        ||\n        EXISTS { ?c1 :eCruzadoCom ?c1. }\n        ||\n        EXISTS { ?c1 :eSinteseDe ?c1 . }\n        ||\n        EXISTS { ?c1 :eSintetizadoPor ?c1 . }\n        ||\n        EXISTS { ?c2 :eSinteseDe ?c2 . }\n        ||\n        EXISTS { ?c2 :eSintetizadoPor ?c2 . }\n        ||\n        EXISTS { ?c1 :eSucessorDe ?c1. }\n        ||\n        EXISTS { ?c1 :eSuplementoDe ?c1. }\n        ||\n        EXISTS { ?c1 :eSuplementoPara ?c1. }\n    )\n}"
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c1 ?c1_titulo where {\n    ?c1 :temRelProc ?c1 .\n    ?c1 :titulo ?c1_titulo .\n}"
                 },
                 {
                     "idInv": "inv_8",
