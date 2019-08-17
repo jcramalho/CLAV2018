@@ -88,9 +88,14 @@
             "desc": "Invariantes sobre os PNs (Classe 3)",
             "invs": [
                 {
-                    "idInv": "inv_1",
-                    "desc": "As relações eComplementarDe e eCruzadoCom são simétricas",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c1 ?c1_titulo ?c2 ?c2_titulo ?c3 ?c3_titulo ?c4 ?c4_titulo where {\n    ?c1 :eComplementarDe ?c2 .\n    ?c3 :eCruzadoCom ?c4 .\n\n    ?c1 :titulo ?c1_titulo .\n    ?c2 :titulo ?c2_titulo .\n    ?c3 :titulo ?c3_titulo .\n    ?c4 :titulo ?c4_titulo .\n\n    FILTER (\n        ?c1 != ?c2\n        && ?c3 != ?c4\n        && NOT EXISTS { ?c2 :eComplementarDe ?c1 . }\n        && NOT EXISTS { ?c4 :eCruzadoCom ?c3 . }\n    )\n}"
+                    "idInv": "inv_1_1",
+                    "desc": "A relação eCruzadoCom é simétrica",
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c1 ?c1_titulo ?c2 ?c2_titulo  where {\n\t ?c1 :eCruzadoCom ?c2 .\n\t?c1 :titulo ?c1_titulo .\n\t?c2 :titulo ?c2_titulo.\n\tFILTER (NOT EXISTS { ?c2 :eCruzadoCom ?c1 . })\n}"
+                },
+                {
+                    "idInv": "inv_1_2",
+                    "desc": "A relação eComplementarDe é simétrica",
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c1 ?c1_titulo ?c2 ?c2_titulo  where {\n\t ?c1 :eComplementarDe ?c2 .\n\t?c1 :titulo ?c1_titulo .\n\t?c2 :titulo ?c2_titulo.\n\tFILTER (NOT EXISTS { ?c2 :eComplementarDe ?c1 . })\n}"
                 },
                 {
                     "idInv": "inv_2",
@@ -146,12 +151,12 @@
                 {
                     "idInv": "inv_1",
                     "desc": "Quando o PN em causa é <b>suplemento para</b> outro, <b>deve ser acrescentado um critério de utilidade administrativa</b> na justificação do respetivo PCA",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?s ?s_titulo where {\n    ?s clav:eSuplementoPara ?o .\n    ?s :titulo ?s_titulo .\n\n    minus {\n        {\n            ?s clav:temPCA ?pca.\n            ?pca clav:temJustificacao ?pcajust.\n            ?pcajust :temCriterio ?crit.\n            ?crit rdf:type :CriterioJustificacaoUtilidadeAdministrativa\n        }\n        UNION\n        {\n            ?s clav:temFilho ?f\n        }\n    }\n}"
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect distinct ?s ?s_titulo where {\n    ?s clav:eSuplementoPara ?o .\n    ?s :titulo ?s_titulo .\n\n    minus {\n        {\n            ?s clav:temPCA ?pca.\n            ?pca clav:temJustificacao ?pcajust.\n            ?pcajust :temCriterio ?crit.\n            ?crit rdf:type :CriterioJustificacaoUtilidadeAdministrativa\n        }\n        UNION\n        {\n            ?s clav:temFilho ?f\n        }\n    }\n}"
                 },
                 {
                     "idInv": "inv_2",
                     "desc": "No critério de utilidade administrativa devem aparecer todos os processos com os quais existe uma relação de <b>suplemento para</b>",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?s ?s_titulo ?o ?o_titulo where { \n    ?s rdf:type :Classe_N3.\n    ?o rdf:type :Classe_N3.\n    ?s clav:eSuplementoPara ?o .\n\n    ?s :titulo ?s_titulo .\n    ?o :titulo ?o_titulo .\n    \n    minus {\n        ?s clav:temPCA ?pca.\n        ?pca clav:temJustificacao ?pcajust.\n        ?pcajust :temCriterio ?crit.\n        ?crit rdf:type :CriterioJustificacaoUtilidadeAdministrativa.\n        ?crit :temProcessoRelacionado ?o\n    }\n}"
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nselect ?s ?s_titulo ?o ?o_titulo where { \n\t?s rdf:type :Classe_N3.\n\t?o rdf:type :Classe_N3.\n\t?s :eSuplementoPara ?o .\n\n\t?s :titulo ?s_titulo .\n\t?o :titulo ?o_titulo .\n\n\tminus {\n\t\t{?s :temFilho ?f}\n\tUNION\n\t{\n\t\t?s :temPCA ?pca.\n\t\t?pca :temJustificacao ?pcajust.\n\t\t?pcajust :temCriterio ?crit.\n\t\t?crit rdf:type :CriterioJustificacaoUtilidadeAdministrativa.\n\t\t?crit :critTemProcRel ?o\n\t}\n\t}\n}"
                 },
                 {
                     "idInv": "inv_3",
