@@ -2,6 +2,7 @@ var User = require('../../models/user');
 var AuthCall = require('../../models/auth');
 var bcrypt = require('bcryptjs');
 var xml2js = require('xml2js');
+var mongoose = require('mongoose');
 
 var Users = module.exports
 
@@ -88,7 +89,7 @@ Users.listar = function(req, callback){
 }
 
 Users.listarPorId = function(id, callback){
-    User.findById(id, function(err, user){
+    User.findById(mongoose.Types.ObjectId(id), function(err, user){
         if(err){
             callback(err, null);
         }else{
