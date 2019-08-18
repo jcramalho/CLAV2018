@@ -12,5 +12,11 @@ parameters:
     schema:
       $ref: '#/definitions/AuthCall'
 responses:
+  '200':
+     description: AuthCall
+     content:
+       application/json:
+         schema:
+           $ref: '#/definitions/AuthCall'
   '500':
     description: Erro

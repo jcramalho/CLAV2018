@@ -15,7 +15,11 @@ AuthCalls.get = function(id, callback){
                 if (err) {	
                     callback(err, null)
                 } else {
-                    callback(null, authcall.url);
+                    if(authcall != null){
+                        callback(null, authcall.url);
+                    }else{
+                        callback("AuthCall not exist",null)
+                    }
                 }
             });
         }

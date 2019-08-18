@@ -21,6 +21,7 @@ router.post('/adicionar', (req, res) => {
 
     AuthCalls.addRedirectUrl(authCall, function (err, call) {
         if (err) return res.status(500).send(`Erro: ${err}`);
+        else return res.json(call)
     });
 });
 
