@@ -1,6 +1,16 @@
-summary:
-description:
+summary: TODO
+description: TODO
+consumes:
+  - application/json
 tags:
   - auth
-requestBody:
+parameters:
+  - name: AuthCall
+    in: body
+    required: true
+    description: TODO
+    schema:
+      $ref: '#/definitions/AuthCall'
 responses:
+  '500':
+    description: Erro

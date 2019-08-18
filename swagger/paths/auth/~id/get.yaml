@@ -1,6 +1,20 @@
-summary:
-description:
+summary: TODO
+description: TODO
 tags:
   - auth
 parameters:
+  - name: id
+    in: path
+    required: true
+    description: TODO
+    schema:
+      type: string
 responses:
+  '200':
+    description: URL
+    content:
+      application/json:
+        schema:
+          type: string
+  '500':
+    description: Erro
