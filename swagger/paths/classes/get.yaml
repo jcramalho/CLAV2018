@@ -1,6 +1,31 @@
-summary:
-description:
+summary: Devolve as classes em vários formatos podendo ser filtradas por nível
 tags:
   - classes
+description: Devolve as classes em vários formatos podendo ser filtradas por nível
 parameters:
+  - in: query
+    name: formato
+    type: string
+    enum: [arvore, lista]
+    description: Formato de saída. Pode ser em árvore ou em lista. Quanto nenhum parâmetro é definido (formato, tipo e nivel) o formato de saída em arvore é o predefinido.
+    required: false
+    default: arvore
+  - in: query
+    name: tipo
+    type: string
+    enum: [comum, especifico]
+    description: Que tipo de processos são devolvidos numa lista. Podem ser comuns ou especificos. Quanto este parâmetro é definido o parâmetro formato não deve ser definido visto ser subscrito pelo mesmo (parâmetro formato).
+    required: false
+  - in: query
+    name: nivel
+    type: string
+    enum: [1, 2, 3, 4]
+    description: O nível dos processos devolvidos numa lista. Podem ser de 1º, 2º, 3º e 4º nível. Quanto este parâmetro é definido os parâmetros formato e tipo não devem ser definidos visto ser subscrito pelos mesmos (parâmetros formato e tipo).
+    required: false
+produces:
+  - application/json
 responses:
+  200:
+    description: Devolve as classes em vários formatos podendo ser filtradas por nível
+  500:
+    description: Erro

@@ -1,6 +1,17 @@
-summary:
-description:
+summary: Retorna toda a informação relativa a uma classe
 tags:
   - classes
+description: Retorna toda a informação relativa a uma classe
 parameters:
+  - name: id
+    in: path
+    description: 'Identificador de uma classe (exemplo: c200.10.100)'
+    type: string
+    required: true
+produces:
+  - application/json
 responses:
+  200:
+    description: Retorna toda a informação relativa a uma classe
+  500:
+    description: Erro

@@ -1,9 +1,11 @@
 swagger: "2.0"
 info: 
-  description: This is a sample documentation for the CLAV API.
+  description: Esta é a API do projeto CLAV. Pode encontrar mais informação sobre o CLAV em [http://clav.dglab.gov.pt](http://clav.dglab.gov.pt).
   version: 1.0.0
   title: CLAV API
-
+  contact:
+    name: CLAV
+    email: clav@dglab.gov.pt
 host: localhost:7779
 basePath: /api
 schemes:

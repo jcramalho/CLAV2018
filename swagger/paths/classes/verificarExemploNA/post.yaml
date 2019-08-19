@@ -1,6 +1,20 @@
-summary:
-description:
+summary: Verifica se um determinado exemplo de nota de aplicação já existe
+description: Verifica se um determinado exemplo de nota de aplicação já existe
 tags:
   - classes
-requestBody:
+parameters:
+  - name: body
+    in: body
+    description: 'exemplo de nota de aplicação a verificar'
+    required: true
+    schema:
+      properties:
+        exemplo:
+          type: string
+      example:
+        exemplo: Código da Estrada
 responses:
+  200:
+    description: Verifica se um determinado exemplo de nota de aplicação já existe
+  500:
+    description: Erro

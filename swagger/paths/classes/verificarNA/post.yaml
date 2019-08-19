@@ -1,6 +1,20 @@
-summary:
-description:
+summary: Verifica se uma determinada notaAplicação já existe
+description: Verifica se uma determinada notaAplicação já existe
 tags:
   - classes
-requestBody:
+parameters:
+  - name: body
+    in: body
+    description: 'Nota Aplicação a verificar'
+    required: true
+    schema:
+      properties:
+        na:
+          type: string
+      example:
+        na: Violação de normas internacionais ratificadas por Portugal
 responses:
+  200:
+    description: Verifica se uma determinada notaAplicação já existe
+  500:
+    description: Erro

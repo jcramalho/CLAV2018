@@ -1,6 +1,17 @@
-summary:
-description:
+summary: Devolve a(s) entidade(s) participante(s) do processo
+description: Devolve a(s) entidade(s) participante(s) do processo. Para cada entidade é devolvida a informação do id, sigla, designacao e participLabel
 tags:
   - classes
 parameters:
+  - name: id
+    in: path
+    description: 'Identificador de uma classe (exemplo: c200.10.100)'
+    type: string
+    required: true
+produces:
+  - application/json
 responses:
+  200:
+    description: Devolve a(s) entidade(s) participante(s) do processo
+  500:
+    description: Erro

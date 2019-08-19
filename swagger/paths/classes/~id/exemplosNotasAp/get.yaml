@@ -1,6 +1,17 @@
-summary:
-description:
+summary: Devolve a lista de exemplos das notas de aplicação de uma classe
+description: Devolve a lista de exemplos das notas de aplicação de uma classe. Para cada elemento da lista é devolvido a informação do idExemplo e exemplo
 tags:
   - classes
 parameters:
+  - name: id
+    in: path
+    description: 'Identificador de uma classe (exemplo: c100.10.001)'
+    type: string
+    required: true
+produces:
+  - application/json
 responses:
+  200:
+    description: Devolve a lista de exemplos das notas de aplicação de uma classe
+  500:
+    description: Erro

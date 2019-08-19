@@ -1,6 +1,17 @@
-summary:
-description:
+summary: Devolve a metainformação de uma classe
+description: Devolve a metainformação de uma classe, ou seja, codigo, titulo, status, desc, codigoPai, tituloPai, procTrans e procTipo
 tags:
   - classes
 parameters:
+  - name: id
+    in: path
+    description: 'Identificador de uma classe (exemplo: c200.10.100)'
+    type: string
+    required: true
+produces:
+  - application/json
 responses:
+  200:
+    description: Devolve a metainformação de uma classe
+  500:
+    description: Erro

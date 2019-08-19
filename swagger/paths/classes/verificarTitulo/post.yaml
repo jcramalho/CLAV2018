@@ -1,6 +1,20 @@
-summary:
-description:
+summary: Verifica se um determinado título de classe já existe
+description: Verifica se um determinado título de classe já existe
 tags:
   - classes
-requestBody:
+parameters:
+  - name: body
+    in: body
+    description: 'título da classe a verificar'
+    required: true
+    schema:
+      properties:
+        titulo:
+          type: string
+      example:
+        titulo: Definição de políticas conjuntas e de instrumentos de regulação
 responses:
+  200:
+    description: Verifica se um determinado título de classe já existe
+  500:
+    description: Erro

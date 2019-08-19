@@ -1,6 +1,23 @@
-summary:
-description:
+summary: Realizar pedido de criação de uma classe TODO: corrigir
+description: Realizar pedido de criação de uma classe
 tags:
   - classes
-requestBody:
+parameters:
+  - name: body
+    in: body
+    description: 'Classe + Token'
+    required: true
+    schema:
+      properties:
+        #TODO
+        TODO:
+          type: TODO
+        codigo:
+          type: string
+        token:
+          type: string
 responses:
+  200:
+    description: Realizado pedido de criação de classe
+  500:
+    description: Erro
