@@ -22,6 +22,16 @@ parameters:
     enum: [1, 2, 3, 4]
     description: O nível dos processos devolvidos numa lista. Podem ser de 1º, 2º, 3º e 4º nível. Quanto este parâmetro é definido os parâmetros formato e tipo não devem ser definidos visto ser subscrito pelos mesmos (parâmetros formato e tipo).
     required: false
+  - in: query
+    name: ents
+    type: string
+    description: Obtém os processos especificos destas entidades. Este parâmetro só deve ser usado quando o tipo é especifico.
+    required: false
+  - in: query
+    name: tips
+    type: string
+    description: Obtém os processos especificos destas tipologias. Este parâmetro só deve ser usado quando o tipo é especifico.
+    required: false
 produces:
   - application/json
 responses:

@@ -1,19 +1,19 @@
-summary: TODO
-description: TODO
+summary: Adicionar localização de um novo pedido SAML
+description: Adicionar localização de um novo pedido SAML
 consumes:
   - application/json
 tags:
   - auth
 parameters:
-  - name: AuthCall
+  - name: body
     in: body
     required: true
-    description: TODO
+    description: Para adicionar é necessário o id e o url (localização)
     schema:
       $ref: '#/definitions/AuthCall'
 responses:
   '200':
-     description: AuthCall
+     description: Adicionar localização de um novo pedido SAML
      content:
        application/json:
          schema:

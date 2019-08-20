@@ -1,12 +1,12 @@
-summary: TODO
-description: TODO
+summary: Devolve o URL de um pedido SAML
+description: Devolve o URL de um pedido SAML
 tags:
   - auth
 parameters:
   - name: id
     in: path
     required: true
-    description: TODO
+    description: Para obter o URL é necessário fornecer o identificador na DB
     schema:
       type: string
 responses:
