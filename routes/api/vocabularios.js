@@ -26,7 +26,7 @@ router.put('/:id', (req, res) => {
         Vocabulario.update(req.params.id,label,desc)
             .then(dados => {
                 if(dados) res.jsonp({cod: "200", mensagem: "VC modificado com sucesso"})
-                else res.status(404).jsonp({cod: "404", mensagem: "Erro na mudificação do VC "+req.params.id})
+                else res.status(404).jsonp({cod: "404", mensagem: "Erro na modificação do VC "+req.params.id})
             })
             .catch(erro => res.jsonp({cod: "404", mensagem: "Erro no update do VC "+req.params.id+": " + erro}))    
     else res.status(404).jsonp({cod: "404", mensagem: "Erro no update do VC "+req.params.id+": Label or desc Undefined"})
