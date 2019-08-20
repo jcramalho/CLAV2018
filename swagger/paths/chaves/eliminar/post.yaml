@@ -1,6 +1,19 @@
-summary:
-description:
+summary: Eliminar chave API
+description: Eliminar chave API
 tags:
   - chaves
-requestBody:
+parameters:
+  - in: body
+    name: body
+    description: Para eliminar a chave API é necessário fornecer o id da chave na BD
+    schema:
+      properties:
+        id:
+          type: string
+      required:
+        - id
 responses:
+  200:
+    description: Chave API eliminada
+  500:
+    description: Erro

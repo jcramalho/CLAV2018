@@ -1,6 +1,15 @@
-summary:
-description:
+summary: Criar chave API
+description: Criar Chave API
 tags:
   - chaves
-requestBody:
+parameters:
+  - in: body
+    name: body
+    description: Para criar uma chave é necessário o nome para a chave, o email e a entidade
+    schema:
+      $ref: '#/definitions/RegChave'
 responses:
+  200:
+    description: Chave API criada
+  500:
+    description: Erro

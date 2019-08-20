@@ -1,6 +1,15 @@
-summary:
-description:
+summary: Devolve a informação de uma chave API
+description: Devolve a informação de uma chave API
 tags:
   - chaves
 parameters:
+  - name: id
+    in: path
+    description: valor da chave
+    type: string
+    required: true
 responses:
+  200:
+    description: Devolve a informação de uma chave API
+  500:
+    description: Erro
