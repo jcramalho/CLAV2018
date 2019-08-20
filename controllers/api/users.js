@@ -89,11 +89,17 @@ Users.listar = function(req, callback){
 }
 
 Users.listarPorId = function(id, callback){
-    User.findById(mongoose.Types.ObjectId(id), function(err, user){
-        if(err){
-            callback(err, null);
+    Users.getUserByCC(id, function(err, user1){
+        if(err || !user1){
+            User.findById(mongoose.Types.ObjectId(id), function(err, user2){
+                if(err || !user2){
+                    callback(err, null);
+                }else{
+                    callback(null, user2);
+                }
+            })
         }else{
-            callback(null, user);
+            callback(null, user1);
         }
     })
 }
