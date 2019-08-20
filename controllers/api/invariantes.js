@@ -40,7 +40,7 @@ Invariantes.getErros = async (idRel,idInv) => {
         }
 
     }else{
-        throw ("Relação não encontrada!")
+        throw ("Grupo de invariantes não encontrado!")
     }
 }
 

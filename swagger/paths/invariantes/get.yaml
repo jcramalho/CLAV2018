@@ -1,6 +1,25 @@
-summary:
-description:
+summary: Lista os invariantes ou devolve os erros de um invariante em especifico
+description: | 
+    Devolve a lista dos invariantes caso não seja fornecido os parâmetros idRel e idInv. 
+    No caso de os parâmetros serem fornecidos devolve os erros resultantes desse invariante.
+    No 1º caso é devolvida toda a informação presente sobre os invariantes. 
+    Já no segundo caso é devolvido descRel (descrição do grupo de invariantes), descInv (descrição do invariante) e results (os erros obtidos).
+    Por fim caso seja fornecido apenas um dos parâmetros obtêm-se a lista dos invariantes.
 tags:
   - invariantes
 parameters:
+  - in: query
+    name: idRel
+    type: string
+    description: identificador de um grupo de invariantes 
+    required: false
+  - in: query
+    name: idInv
+    type: string
+    description: identificador do invariante dentro do grupo anteriormente identificado 
+    required: false
 responses:
+  200:
+    description: Lista os invariantes ou devolve os erros de um invariante em especifico
+  500:
+    description: Erro
