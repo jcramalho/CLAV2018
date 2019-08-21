@@ -1,6 +1,15 @@
-summary:
-description:
+summary: Lista os processos em que uma entidade intervem como participante
+description: Lista os processos em que uma entidade intervem como participante. Para cada processo devolve a informação do codigo, titulo e tipoPar
 tags:
   - entidades
 parameters:
+  - name: id
+    in: path
+    description: 'Identificador de uma entidade (exemplo: ent_AAN)'
+    type: string
+    required: true
 responses:
+  200:
+    description: Lista os processos em que uma entidade intervem como participante
+  500:
+    description: Erro

@@ -1,6 +1,15 @@
-summary:
-description:
+summary: Consulta de uma entidade
+description: Consulta de uma entidade. Devolve a informação da sigla, designacao, estado, sioe e internacional da entidade
 tags:
   - entidades
 parameters:
+  - name: id
+    in: path
+    description: 'Identificador de uma entidade (exemplo: ent_AAN)'
+    type: string
+    required: true
 responses:
+  200:
+    description: Consulta de uma entidade
+  500:
+    description: Erro

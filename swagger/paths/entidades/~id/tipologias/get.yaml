@@ -1,6 +1,15 @@
-summary:
-description:
+summary: Lista as tipologias a que uma entidade pertence
+description: Lista as tipologias a que uma entidade pertence. Para cada tipologia devolva a informação do id, sigla e designacao
 tags:
   - entidades
 parameters:
+  - name: id
+    in: path
+    description: 'Identificador de uma entidade (exemplo: ent_AAN)'
+    type: string
+    required: true
 responses:
+ 200:
+   description: Lista as tipologias a que uma entidade pertence
+ 500:
+   description: Erro

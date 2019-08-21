@@ -1,6 +1,43 @@
-summary:
-description:
+summary: Lista todas as entidades
+description: Lista todas as entidades. Para cada entidade será devolvida a informação do id, sigla, designacao, sioe, estado e internacional
 tags:
   - entidades
 parameters:
+  - in: query
+    name: processos
+    type: string
+    enum: [com, sem]
+    description: No caso de ser escolhido \"com\" é listado as entidades com PNs associados. Já no caso de ser escolhido \"sem\" é listado as entidades sem PNs associados. Este parâmetro sobrepõe os seguintes, ou seja, caso este parâmetro seja definido os restantes são ignorados.
+    required: false
+  - in: query
+    name: sigla
+    type: string
+    description: 'Permite filtrar as entidades que contém a sigla igual a este valor. Só funciona caso o parâmetro processos não seja definido. (ex: AR)'
+    required: false
+  - in: query
+    name: designacao
+    type: string
+    description: 'Permite filtrar as entidades que contém a designacao igual a este valor. Só funciona caso o parâmetro processos não seja definido. (ex: Assembleia da República)'
+    required: false
+  - in: query
+    name: internacional
+    type: string
+    description: Permite filtrar as entidades que contém internacional igual a este valor. Só funciona caso o parâmetro processos não seja definido.
+    enum: [Sim, Não]
+    required: false
+  - in: query
+    name: sioe
+    type: string
+    description: 'Permite filtrar as entidades que contém sioe igual a este valor. Só funciona caso o parâmetro processos não seja definido. (ex: 875780390)'
+    required: false
+  - in: query
+    name: estado
+    type: string
+    description: Permite filtrar as entidades que contém o estado igual a este valor. Só funciona caso o parâmetro processos não seja definido.
+    enum: [Ativa, Inativa, Harmonização]
+    required: false
 responses:
+  200:
+    description: Lista todas as entidades
+  500:
+    description: Erro
