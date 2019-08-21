@@ -1,7 +1,7 @@
 const { SparqlClient, SPARQL } = require('sparql-client-2');
 
-// const ip = '192.168.85.197'
-const ip = 'localhost'
+const ip = '192.168.85.197'
+// const ip = 'localhost'
 
 module.exports.onthology = new SparqlClient('http://'+ip+':7200/repositories/CLAV', {
     updateEndpoint: 'http://'+ip+':7200/repositories/CLAV/statements'
