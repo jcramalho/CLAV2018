@@ -2,6 +2,7 @@ var User = require('../../models/user');
 var AuthCall = require('../../models/auth');
 var bcrypt = require('bcryptjs');
 var xml2js = require('xml2js');
+var mongoose = require('mongoose');
 
 var Users = module.exports
 
@@ -25,7 +26,19 @@ Users.getUserByCC = function (nic, callback) {
 }
 
 Users.getUserById = function (id, callback) {
-	User.findById(id, callback);
+	Users.getUserByCC(id, function(err, user1){
+        if(err || !user1){
+            Users.getUserById(mongoose.Types.ObjectId(id), function(err, user2){
+                if(err || !user2){
+                    callback(err, null);
+                }else{
+                    callback(null, user2);
+                }
+            })
+        }else{
+            callback(null, user1);
+        }
+    });
 }
 
 Users.comparePassword = function (candidatePassword, hash, callback) {
@@ -88,17 +101,17 @@ Users.listar = function(req, callback){
 }
 
 Users.listarPorId = function(id, callback){
-    User.findById(id, function(err, user){
+    Users.getUserById(id, function(err, user){
         if(err){
             callback(err, null);
         }else{
             callback(null, user);
         }
-    })
+    });
 }
 
 Users.atualizarNivel = function(id, level, callback){
-    User.findById(id, function(err, user){
+    Users.getUserById(id, function(err, user){
 		if (err) {	
             callback(err, null);
 		} else {
@@ -115,7 +128,7 @@ Users.atualizarNivel = function(id, level, callback){
 }
 
 Users.atualizarNome = function(id, name, callback){
-    User.findById(id, function(err, user){
+    Users.getUserById(id, function(err, user){
 		if (err) {	
             callback(err, null);
 		} else {
@@ -132,7 +145,7 @@ Users.atualizarNome = function(id, name, callback){
 }
 
 Users.atualizarEmail = function(id, email, callback){
-    User.findById(id, function(err, user){
+    Users.getUserById(id, function(err, user){
 		if (err) {	
             callback(err, null);
 		} else {
@@ -150,7 +163,7 @@ Users.atualizarEmail = function(id, email, callback){
 
 Users.atualizarMultiplosCampos = function(id, nome, email, entidade, level, callback){
     // console.log("ID: "+ id + " NOME: " + nome + " EMAIL: " + email + " LEVEL: " + level )
-    User.findById(id, function(err, user){
+    Users.getUserById(id, function(err, user){
 		if (err) {	
             callback(err, null);
 		} else {
@@ -171,7 +184,7 @@ Users.atualizarMultiplosCampos = function(id, nome, email, entidade, level, call
 }
 
 Users.atualizarPassword = function(id, password, callback){
-    User.findById(id, function(err, user){
+    Users.getUserById(id, function(err, user){
 		if (err) {
             callback(err, null);
 		} else {
@@ -192,7 +205,7 @@ Users.atualizarPassword = function(id, password, callback){
 }
 
 Users.desativar = function(id, callback){
-    User.findById(id, function(err, user){
+    Users.getUserById(id, function(err, user){
         if (err) {	
             callback(err,null)
         } else {
@@ -209,7 +222,7 @@ Users.desativar = function(id, callback){
 }
 
 Users.eliminar = function(id, callback){
-    User.findByIdAndRemove(id, function(err, user){
+    User.findByIdAndRemove(id, function(err, user){ //TODO FIX pois agora existem IDs pro CC e IDs normais
         if (err) {	
             callback(err, null)
         } else {
@@ -219,7 +232,7 @@ Users.eliminar = function(id, callback){
 }
 
 Users.listarEmail = function(id, callback){
-    User.findById(id, function(err, user){
+    Users.getUserById(id, function(err, user){
         if (err) {
             callback(err, null);
         }else{
@@ -229,7 +242,7 @@ Users.listarEmail = function(id, callback){
 }
 
 Users.adicionarChamadaApi = function(id, callback){
-    User.findById(id, function(err, user){
+    Users.getUserById(id, function(err, user){
         if (err) {	
             callback(err,null)
         } else {
