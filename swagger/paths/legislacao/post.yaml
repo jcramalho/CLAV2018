@@ -1,6 +1,23 @@
-summary:
-description:
+summary: 'Realizar pedido de criação de uma legislação TODO: corrigir'
+description: Realizar pedido de criação de uma legislação
 tags:
   - legislacao
-requestBody:
+parameters:
+  - name: body
+    in: body
+    description: 'Legislacao + Token'
+    required: true
+    schema:
+      properties:
+        #TODO
+        TODO:
+          type: TODO
+        codigo:
+          type: string
+        token:
+          type: string
 responses:
+  200:
+    description: Realizado pedido de criação de legislação
+  500:
+    description: Erro

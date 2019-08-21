@@ -1,6 +1,20 @@
-summary:
-description:
+summary: Lista todos os documentos legislativos
+description: Lista todos os documentos legislativos. Para cada documento legislativo é devolvida a informação do id, data, numero, tipo, sumario e entidades
 tags:
   - legislacao
 parameters:
+  - in: query
+    name: estado
+    type: string
+    enum: [A]
+    description: No caso de ser definido lista os documentos legislativos no estado A. Este parâmetro sobrepõe os seguintes, ou seja, caso este parâmetro seja definido os restantes são ignorados.
+  - in: query
+    name: processos
+    type: string
+    enum: [com, sem]
+    description: No caso de ser escolhido \"com\" é listado os documentos legislativos com PNs associados. Já no caso de ser escolhido \"sem\" é listado os documentos legislativos sem PNs associados. Só funciona caso o parâmetro estado não seja definido.
 responses:
+  200:
+    description: Lista todos os documentos legislativos
+  500:
+    description: Erro

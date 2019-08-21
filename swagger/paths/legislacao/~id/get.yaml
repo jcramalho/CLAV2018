@@ -1,6 +1,15 @@
-summary:
-description:
+summary: Devolve a informação associada a um documento legislativo
+description: Devolve a informação associada a um documento legislativo, ou seja, tipo, data, numero, sumario, link e entidades
 tags:
   - legislacao
 parameters:
+  - name: id
+    in: path
+    description: 'Identificador de um documento legislativo (exemplo: leg_vzJWeOItxoCYX7Oj9WjPd)'
+    type: string
+    required: true
 responses:
+  200:
+    description: Consulta de um documento legislativo
+  500:
+    description: Erro

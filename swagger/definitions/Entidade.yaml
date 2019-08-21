@@ -1,0 +1,22 @@
+type: object
+properties:
+  designacao:
+    type: string
+  internacional:
+    type: string
+    enum: [Sim, Não]
+  sioe:
+    type: string
+  estado:
+    type: string
+    enum: [Ativa, Inativa, Harmonização]
+  tipologias:
+    type: array
+    items:
+      type: string
+required:
+  - designacao
+  - internacional
+  - sioe
+  - estado
+  - tipologias

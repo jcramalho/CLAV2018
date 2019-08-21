@@ -1,6 +1,15 @@
-summary:
-description:
+summary: Devolve a lista de processos regulados pelo documento
+description: Devolve a lista de processos regulados pelo documento. Para cada processo devolve a informação do id, codigo e titulo
 tags:
   - legislacao
 parameters:
+  - name: id
+    in: path
+    description: 'Identificador de um documento legislativo (exemplo: leg_6U8eokSH6rjR0mh34m6-y)'
+    type: string
+    required: true
 responses:
+  200:
+    description: Devolve a lista de processos regulados pelo documento
+  500:
+    description: Erro

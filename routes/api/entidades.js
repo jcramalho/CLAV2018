@@ -26,13 +26,13 @@ const estaDisponivel = (req, res, next) => {
 // Lista todas as entidades: id, sigla, designacao, internacional
 router.get('/', (req, res) => {
     var queryData = url.parse(req.url, true).query;
-    // api/legislacao?processos=com
+    // api/entidades?processos=com
     if (queryData.processos && (queryData.processos == 'com')){
         return Entidades.listarComPNs()
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na listagem das entidades com PNs associados: ${erro}`));
     }
-    // api/legislacao?processos=sem
+    // api/entidades?processos=sem
     if (queryData.processos && (queryData.processos == 'sem')){
         return Entidades.listarSemPNs()
         .then(dados => res.jsonp(dados))

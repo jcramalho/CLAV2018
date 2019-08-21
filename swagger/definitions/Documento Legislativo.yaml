@@ -1,0 +1,24 @@
+type: object
+properties:
+  numero:
+    type: string
+  data:
+    type: string
+  tipo:
+    type: string
+  titulo:
+    type: string
+  estado:
+    type: string
+    enum: [Ativa, Inativa, Harmonização]
+  entidades:
+    type: array
+    items:
+      type: string
+required:
+  - numero
+  - data
+  - tipo
+  - titulo
+  - estado
+  - entidades
