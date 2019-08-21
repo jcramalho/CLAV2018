@@ -1,6 +1,9 @@
-summary:
-description:
+summary: Lista as estatisticas para cada rota
+description: Lista as estatisticas para cada rota. Para cada rota devolve _id, nCallsPut, nCallsPost e nCallsGet.
 tags:
   - stats
-parameters:
 responses:
+  200:
+    description: Lista as estatisticas para cada rota
+  500:
+    description: Erro

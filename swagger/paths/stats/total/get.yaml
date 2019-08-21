@@ -1,6 +1,9 @@
-summary:
-description:
+summary: Devolve o número total de acessos às rotas
+description: Devolve o número total de acessos às rotas
 tags:
   - stats
-parameters:
 responses:
+  200:
+    description: Devolve o número total de acessos às rotas
+  500:
+    description: Erro
