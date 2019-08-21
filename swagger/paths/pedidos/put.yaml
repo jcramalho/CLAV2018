@@ -1,6 +1,21 @@
-summary:
-description:
+summary: 'Atualização de um pedido: mais uma etapa na distribuição TODO: corrigir'
+description: 'Atualização de um pedido: mais uma etapa na distribuição'
 tags:
   - pedidos
-requestBody:
+parameters:
+  - name: body
+    in: body
+    description: 'Dados'
+    required: true
+    schema:
+      properties:
+        #TODO
+        TODO:
+          type: TODO
+        pedido._id:
+          type: string
 responses:
+  200:
+    description: 'Atualização de um pedido: mais uma etapa na distribuição'
+  500:
+    description: Erro

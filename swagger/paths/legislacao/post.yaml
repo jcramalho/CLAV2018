@@ -19,5 +19,7 @@ parameters:
 responses:
   200:
     description: Realizado pedido de criação de legislação
+  409:
+    description: Já existe uma legislação com o número
   500:
     description: Erro

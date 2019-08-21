@@ -1,6 +1,24 @@
-summary:
-description:
+summary: 'Adição de distribuição TODO: corrigir'
+description: Adição de distribuição
 tags:
   - pedidos
-requestBody:
+parameters:
+  - name: codigo
+    in: path
+    description: 'Identificador de um pedido (exemplo: 2019-321)'
+    type: string
+    required: true
+  - name: body
+    in: body
+    description: 'Dados'
+    required: true
+    schema:
+      properties:
+        #TODO
+        TODO:
+          type: TODO
 responses:
+  200:
+    description: Adição de distribuição
+  500:
+    description: Erro

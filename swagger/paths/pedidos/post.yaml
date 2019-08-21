@@ -1,6 +1,19 @@
-summary:
-description:
+summary: 'Criação de um pedido TODO: corrigir'
+description: Criação de um pedido
 tags:
   - pedidos
-requestBody:
+parameters:
+  - name: body
+    in: body
+    description: 'Dados'
+    required: true
+    schema:
+      properties:
+        #TODO
+        TODO:
+          type: TODO
 responses:
+  200:
+    description: Criação de um pedido
+  500:
+    description: Erro

@@ -19,5 +19,7 @@ parameters:
 responses:
   200:
     description: Realizado pedido de criação de entidade
+  409:
+    description: Já existe uma entidade com o id
   500:
     description: Erro

@@ -1,6 +1,30 @@
-summary:
-description:
+summary: Lista todos os pedidos que satisfazem uma condição
+description: Lista todos os pedidos que satisfazem uma condição
 tags:
   - pedidos
 parameters:
+  - in: query
+    name: criadoPor
+    type: string
+    description: 'Permite filtrar os pedidos que contém criadoPor igual a este valor'
+    required: false
+  - in: query
+    name: codigo
+    type: string
+    description: 'Permite filtrar os pedidos que contém codigo igual a este valor'
+    required: false
+  - in: query
+    name: tipo
+    type: string
+    description: 'Permite filtrar os pedidos que contém tipo igual a este valor'
+    required: false
+  - in: query
+    name: acao
+    type: string
+    description: 'Permite filtrar os pedidos que contém acao igual a este valor'
+    required: false
 responses:
+  200:
+    description: Lista todos os pedidos que satisfazem uma condição
+  500:
+    description: Erro

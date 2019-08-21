@@ -1,6 +1,17 @@
-summary:
-description:
+summary: Consulta de um pedido
+description: Consulta de um pedido
 tags:
   - pedidos
 parameters:
+  - name: codigo
+    in: path
+    description: 'Identificador de um pedido (exemplo: 2019-321)'
+    type: string
+    required: true
 responses:
+  200:
+    description: Consulta de um pedido
+  404:
+    description: Pedido não existe
+  500:
+    description: Erro
