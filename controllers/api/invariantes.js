@@ -34,7 +34,9 @@ Invariantes.getErros = async (idRel,idInv) => {
                 var results = await client.query(inv.query).execute()
                 res.results = normalizeOrdered(results)
                 return res    
-            }catch(erro) { throw (erro) }
+            }catch(erro) {
+                throw (erro) 
+            }
         }else{
             throw ("Invariante não encontrado!")
         }

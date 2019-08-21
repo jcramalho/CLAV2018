@@ -1,25 +1,14 @@
 {
     "invariantes": [
         {
-            "idRel": "rel_1",
-            "desc": "Classes de 1º Nível",
-            "invs": [
-                {
-                    "idInv": "inv_1",
-                    "desc": "Se uma Classe de 1º nível pertence a uma Lista Consolidada/Tabela de Seleção, consequentemente os seus filhos, netos, etc.. tambem têm de pertencer.",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect * where {\n    ?c1 rdf:type :Classe_N1 .\n    ?c1 :titulo ?c1_titulo .\n    ?c1 :pertenceLC ?lc1 .\n\n    ?c2 rdf:type :Classe_N2 .\n    ?c2 :temPai ?c1 .\n    ?c2 :titulo ?c2_titulo .\n    ?c2 :pertenceLC ?lc2 .\n    \n    ?c3 rdf:type :Classe_N3 .\n    ?c3 :temPai ?c2 .\n    ?c3 :titulo ?c3_titulo .\n    ?c3 :pertenceLC ?lc3 .\n    \n    ?c4 rdf:type :Classe_N4 .\n    ?c4 :temPai ?c3 .\n    ?c4 :titulo ?c4_titulo .\n    ?c4 :pertenceLC ?lc4 .\n    \n    FILTER (\n        ?c1 != ?c2\n        && ?c2 != ?c3\n        && ?c3 != ?c4\n        && (?lc1 != ?lc2\n            || ?lc2 != ?lc3\n            || ?lc3 != ?lc4)\n    )\n}"                
-                },
-                {
-                    "idInv": "inv_2",
-                    "desc": "Se uma Classe de 1º nível não pertence a uma Lista Consolidada/Tabela de Seleção, consequentemente os seus filhos, netos, etc.. também não pertencem.",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect * where {\n    ?c1 rdf:type :Classe_N1 .\n    ?c1 :titulo ?c1_titulo .\n    \n    minus {\n        ?c1 :pertenceLC ?lc1 .\n    }\n\n    ?c2 rdf:type :Classe_N2 .\n    ?c2 :temPai ?c1 .\n    ?c2 :titulo ?c2_titulo .\n\n    ?c3 rdf:type :Classe_N3 .\n    ?c3 :temPai ?c2 .\n    ?c3 :titulo ?c3_titulo .\n    \n    ?c4 rdf:type :Classe_N4.\n    ?c4 :temPai ?c3 .\n    ?c4 :titulo ?c4_titulo .\n\n    FILTER (\n        ?c1 != ?c2\n        && ?c2 != ?c3\n        && ?c3 != ?c4 &&\n        (EXISTS { ?c2 :pertenceLC ?lc2 . }\n        || EXISTS { ?c3 :pertenceLC ?lc3 . }\n        || EXISTS { ?c4 :pertenceLC ?lc4 . })\n    )\n}"
-                }
-            ]
-        },
-        {
             "idRel": "rel_2",
             "desc": "Classes",
             "invs": [
+                {
+                    "idInv": "inv_0",
+                    "desc": "Se uma Classe pertence a uma Lista Consolidada/Tabela de Seleção, consequentemente os seus filhos, netos, etc.. tambem têm de pertencer.",
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect distinct ?s ?s_titulo where {\n    ?s :temFilho ?f.\n    ?s :titulo ?s_titulo.\n    ?s :pertenceLC :lc1.\n    filter (not exists {?f :pertenceLC :lc1})\n}"                
+                },
                 {
                     "idInv": "inv_1",
                     "desc": "2 Classes (nível 1, 2 ou 3) não podem ter a mesma instância NotaAplicacao",
@@ -90,42 +79,50 @@
                 {
                     "idInv": "inv_1_1",
                     "desc": "A relação eCruzadoCom é simétrica",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c1 ?c1_titulo ?c2 ?c2_titulo  where {\n\t ?c1 :eCruzadoCom ?c2 .\n\t?c1 :titulo ?c1_titulo .\n\t?c2 :titulo ?c2_titulo.\n\tFILTER (NOT EXISTS { ?c2 :eCruzadoCom ?c1 . })\n}"
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c1 ?c1_titulo ?c2 ?c2_titulo  where {\n\t ?c1 :eCruzadoCom ?c2 .\n\t?c1 :titulo ?c1_titulo .\n\t?c2 :titulo ?c2_titulo.\n\tFILTER (NOT EXISTS { ?c2 :eCruzadoCom ?c1 . })\n}",
+                    "checked": true
                 },
                 {
                     "idInv": "inv_1_2",
                     "desc": "A relação eComplementarDe é simétrica",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c1 ?c1_titulo ?c2 ?c2_titulo  where {\n\t ?c1 :eComplementarDe ?c2 .\n\t?c1 :titulo ?c1_titulo .\n\t?c2 :titulo ?c2_titulo.\n\tFILTER (NOT EXISTS { ?c2 :eComplementarDe ?c1 . })\n}"
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c1 ?c1_titulo ?c2 ?c2_titulo  where {\n\t ?c1 :eComplementarDe ?c2 .\n\t?c1 :titulo ?c1_titulo .\n\t?c2 :titulo ?c2_titulo.\n\tFILTER (NOT EXISTS { ?c2 :eComplementarDe ?c1 . })\n}",
+                    "checked": true
                 },
                 {
                     "idInv": "inv_2",
                     "desc": "A relação eSinteseDe é antisimétrica.",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c1 ?c1_titulo ?c2 ?c2_titulo where {\n    ?c1 :eSinteseDe ?c2 .\n    ?c2 :eSinteseDe ?c1 .\n\n    ?c1 :titulo ?c1_titulo .\n    ?c2 :titulo ?c2_titulo .\n\n    FILTER (\n        ?c1 != ?c2\n    )\n}" 
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c1 ?c1_titulo ?c2 ?c2_titulo where {\n    ?c1 :eSinteseDe ?c2 .\n    ?c2 :eSinteseDe ?c1 .\n\n    ?c1 :titulo ?c1_titulo .\n    ?c2 :titulo ?c2_titulo .\n\n    FILTER (\n        ?c1 != ?c2\n    )\n}",
+                    "checked": true
                 },
                 {
                     "idInv": "inv_3",
                     "desc": "A relação eSintetizadoPor é antisimétrica.",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c1 ?c1_titulo ?c2 ?c2_titulo where {\n    ?c1 :eSintetizadoPor ?c2 .\n    ?c2 :eSintetizadoPor ?c1 .\n\n    ?c1 :titulo ?c1_titulo .\n    ?c2 :titulo ?c2_titulo .\n\n    FILTER (\n        ?c1 != ?c2\n    )\n}" 
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c1 ?c1_titulo ?c2 ?c2_titulo where {\n    ?c1 :eSintetizadoPor ?c2 .\n    ?c2 :eSintetizadoPor ?c1 .\n\n    ?c1 :titulo ?c1_titulo .\n    ?c2 :titulo ?c2_titulo .\n\n    FILTER (\n        ?c1 != ?c2\n    )\n}",
+                    "checked": true
                 },
                 {
                     "idInv": "inv_4",
                     "desc": "A relação eSucessorDe é antisimétrica.",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c1 ?c1_titulo ?c2 ?c2_titulo where {\n    ?c1 :eSucessorDe ?c2 .\n    ?c2 :eSucessorDe ?c1 .\n\n    ?c1 :titulo ?c1_titulo .\n    ?c2 :titulo ?c2_titulo .\n\n    FILTER (\n        ?c1 != ?c2\n    )\n}" 
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c1 ?c1_titulo ?c2 ?c2_titulo where {\n    ?c1 :eSucessorDe ?c2 .\n    ?c2 :eSucessorDe ?c1 .\n\n    ?c1 :titulo ?c1_titulo .\n    ?c2 :titulo ?c2_titulo .\n\n    FILTER (\n        ?c1 != ?c2\n    )\n}",
+                    "checked": true
                 },
                 {
                     "idInv": "inv_5",
                     "desc": "A relação eSuplementoDe é antisimétrica.",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c1 ?c1_titulo ?c2 ?c2_titulo where {\n    ?c1 :eSuplementoDe ?c2 .\n    ?c2 :eSuplementoDe ?c1 .\n\n    ?c1 :titulo ?c1_titulo .\n    ?c2 :titulo ?c2_titulo .\n\n    FILTER (\n        ?c1 != ?c2\n    )\n}" 
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c1 ?c1_titulo ?c2 ?c2_titulo where {\n    ?c1 :eSuplementoDe ?c2 .\n    ?c2 :eSuplementoDe ?c1 .\n\n    ?c1 :titulo ?c1_titulo .\n    ?c2 :titulo ?c2_titulo .\n\n    FILTER (\n        ?c1 != ?c2\n    )\n}",
+                    "checked": true
                 },
                 {
                     "idInv": "inv_6",
                     "desc": "A relação eSuplementoPara é antisimétrica.",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c1 ?c1_titulo ?c2 ?c2_titulo where {\n    ?c1 :eSuplementoPara ?c2 .\n    ?c2 :eSuplementoPara ?c1 .\n\n    ?c1 :titulo ?c1_titulo .\n    ?c2 :titulo ?c2_titulo .\n\n    FILTER (\n        ?c1 != ?c2\n    )\n}" 
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c1 ?c1_titulo ?c2 ?c2_titulo where {\n    ?c1 :eSuplementoPara ?c2 .\n    ?c2 :eSuplementoPara ?c1 .\n\n    ?c1 :titulo ?c1_titulo .\n    ?c2 :titulo ?c2_titulo .\n\n    FILTER (\n        ?c1 != ?c2\n    )\n}",
+                    "checked": true 
                 },
                 {
                     "idInv": "inv_7",
                     "desc": "Na relação temRelProc um PN não se relaciona com ele próprio.",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c1 ?c1_titulo where {\n    ?c1 :temRelProc ?c1 .\n    ?c1 :titulo ?c1_titulo .\n}"
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c1 ?c1_titulo where {\n    ?c1 :temRelProc ?c1 .\n    ?c1 :titulo ?c1_titulo .\n}",
+                    "checked": true
                 },
                 {
                     "idInv": "inv_8",
@@ -151,17 +148,20 @@
                 {
                     "idInv": "inv_1",
                     "desc": "Quando o PN em causa é <b>suplemento para</b> outro, <b>deve ser acrescentado um critério de utilidade administrativa</b> na justificação do respetivo PCA",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect distinct ?s ?s_titulo where {\n    ?s clav:eSuplementoPara ?o .\n    ?s :titulo ?s_titulo .\n\n    minus {\n        {\n            ?s clav:temPCA ?pca.\n            ?pca clav:temJustificacao ?pcajust.\n            ?pcajust :temCriterio ?crit.\n            ?crit rdf:type :CriterioJustificacaoUtilidadeAdministrativa\n        }\n        UNION\n        {\n            ?s clav:temFilho ?f\n        }\n    }\n}"
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect distinct ?s ?s_titulo where {\n    ?s clav:eSuplementoPara ?o .\n    ?s :titulo ?s_titulo .\n\n    minus {\n        {\n            ?s clav:temPCA ?pca.\n            ?pca clav:temJustificacao ?pcajust.\n            ?pcajust :temCriterio ?crit.\n            ?crit rdf:type :CriterioJustificacaoUtilidadeAdministrativa\n        }\n        UNION\n        {\n            ?s clav:temFilho ?f\n        }\n    }\n}",
+                    "checked": true
                 },
                 {
                     "idInv": "inv_2",
                     "desc": "No critério de utilidade administrativa devem aparecer todos os processos com os quais existe uma relação de <b>suplemento para</b>",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nselect ?s ?s_titulo ?o ?o_titulo where { \n\t?s rdf:type :Classe_N3.\n\t?o rdf:type :Classe_N3.\n\t?s :eSuplementoPara ?o .\n\n\t?s :titulo ?s_titulo .\n\t?o :titulo ?o_titulo .\n\n\tminus {\n\t\t{?s :temFilho ?f}\n\tUNION\n\t{\n\t\t?s :temPCA ?pca.\n\t\t?pca :temJustificacao ?pcajust.\n\t\t?pcajust :temCriterio ?crit.\n\t\t?crit rdf:type :CriterioJustificacaoUtilidadeAdministrativa.\n\t\t?crit :critTemProcRel ?o\n\t}\n\t}\n}"
+                    "query": "select ?s ?s_titulo ?o ?o_titulo where { \n?s rdf:type clav:Classe_N3.\n?o rdf:type clav:Classe_N3.\n?s clav:eSuplementoPara ?o .\n\n?s clav:titulo ?s_titulo .\n?o clav:titulo ?o_titulo .\n\nminus {\n{?s clav:temFilho ?f}\nUNION\n\t{\n?s clav:temPCA ?pca.\n?pca clav:temJustificacao ?pcajust.\n?pcajust clav:temCriterio ?crit.\n?crit rdf:type clav:CriterioJustificacaoUtilidadeAdministrativa.\n?crit clav:critTemProcRel ?o\n}\n}\n}",
+                    "checked": true
                 },
                 {
                     "idInv": "inv_3",
                     "desc": "Quando o PN em causa é <b>suplemento de</b> outro, o <b>critério</b> a acrescentar na justificação do PCA é <b>livre</b>, normalmente é o <b>critério legal</b>. Todos os processos relacionados pela <b>relação suplemento de</b> devem figurar neste critério",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?s ?s_titulo ?o ?o_titulo where { \n    ?s rdf:type :Classe_N3.\n    ?o rdf:type :Classe_N3.\n    ?s clav:eSuplementoDe ?o .\n\n    ?s :titulo ?s_titulo .\n    ?o :titulo ?o_titulo .\n    \n    minus {\n        ?s clav:temPCA ?pca.\n        ?pca clav:temJustificacao ?pcajust.\n        ?pcajust :temCriterio ?crit.\n        ?crit :temProcessoRelacionado ?o\n    }\n}"
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?s ?s_titulo ?o ?o_titulo where { \n    ?s rdf:type :Classe_N3.\n    ?o rdf:type :Classe_N3.\n    ?s clav:eSuplementoDe ?o .\n\n    ?s :titulo ?s_titulo .\n    ?o :titulo ?o_titulo .\n    \n    minus {\n        ?s clav:temPCA ?pca.\n        ?pca clav:temJustificacao ?pcajust.\n        ?pcajust :temCriterio ?crit.\n        ?crit :temProcessoRelacionado ?o\n    }\n}",
+                    "checked": false
                 }
             ]
         },
@@ -172,22 +172,26 @@
                 {
                     "idInv": "inv_1",
                     "desc": "Quando o PN em causa é <b>síntese de</b> outro, o DF deve ter o valor de \"Conservação\"",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?s ?s_titulo where { \n    ?s :eSinteseDe ?o .\n\n    ?s :titulo ?s_titulo .\n    \n    minus {\n        ?s :temDF ?df.\n        ?df :dfValor \"C\"\n    }\n}"
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect distinct ?s ?s_titulo where { \n    ?s :eSinteseDe ?o .\n\n    ?s :titulo ?s_titulo .\n    \n    minus {\n        ?s :temDF ?df.\n        ?df :dfValor \"C\"\n    }\n}",
+                    "checked": true
                 },
                 {
                     "idInv": "inv_2",
                     "desc": "Quando o PN em causa é <b>síntetizado por</b> outro, o DF deve ter o valor de \"Eliminação\"",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?s ?s_titulo where { \n    ?s :eSintetizadoPor ?o .\n\n    ?s :titulo ?s_titulo .\n    \n    minus {\n        ?s :temDF ?df.\n        ?df :dfValor \"E\"\n    }\n}"
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect distinct ?s ?s_titulo where { \n    ?s :eSintetizadoPor ?o .\n\n    ?s :titulo ?s_titulo .\n    \n    minus {\n        ?s :temDF ?df.\n        ?df :dfValor \"E\"\n    }\n}",
+                    "checked": true
                 },
                 {
                     "idInv": "inv_3",
                     "desc": "Se um PN tem uma <b>relação de síntese</b>, o seu DF deverá ter uma justificação onde consta um <b>critério de densidade informacional</b>",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect distinct ?s ?s_titulo where { \n    {\n        {\n            ?s clav:eSinteseDe ?o .\n            ?s :titulo ?s_titulo .\n        }\n        union\n        {\n            ?s clav:eSintetizadoPor ?o .\n            ?s :titulo ?s_titulo .\n        }\n    }\n    minus {\n        {\n            ?s :temDF ?df.\n            ?df :temJustificacao ?dfjust.\n            ?dfjust :temCriterio ?crit.\n            ?crit rdf:type :CriterioJustificacaoDensidadeInfo\n        }\n        UNION\n        {\n            ?s clav:temFilho ?f\n        }\n    }\n}"
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect distinct ?s ?s_titulo where { \n    {\n        {\n            ?s clav:eSinteseDe ?o .\n            ?s :titulo ?s_titulo .\n        }\n        union\n        {\n            ?s clav:eSintetizadoPor ?o .\n            ?s :titulo ?s_titulo .\n        }\n    }\n    minus {\n        {\n            ?s :temDF ?df.\n            ?df :temJustificacao ?dfjust.\n            ?dfjust :temCriterio ?crit.\n            ?crit rdf:type :CriterioJustificacaoDensidadeInfo\n        }\n        UNION\n        {\n            ?s clav:temFilho ?f\n        }\n    }\n}",
+                    "checked": true
                 },
                 {
                     "idInv": "inv_4",
                     "desc": "Todos os processos relacionados por uma <b>relação de síntese</b> deverão estar relacionados com o <b>critério de densidade informacional da respetiva justificação</b>",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?s ?s_titulo ?o ?o_titulo where { \n    {\n        {\n            ?s clav:eSinteseDe ?o .\n            ?s :titulo ?s_titulo .\n            ?o :titulo ?o_titulo .\n        }\n        union\n        {\n            ?s clav:eSintetizadoPor ?o .\n            ?s :titulo ?s_titulo .\n            ?o :titulo ?o_titulo .\n        }\n    }\n    minus {\n        ?s :temDF ?df.\n        ?df :temJustificacao ?dfjust.\n        ?dfjust :temCriterio ?crit.\n        ?crit rdf:type :CriterioJustificacaoDensidadeInfo.\n        ?crit :temProcessoRelacionado ?o\n    }\n}"
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?s ?s_titulo ?o ?o_titulo where { \n    {\n        {\n            ?s clav:eSinteseDe ?o .\n            ?s :titulo ?s_titulo .\n            ?o :titulo ?o_titulo .\n        }\n        union\n        {\n            ?s clav:eSintetizadoPor ?o .\n            ?s :titulo ?s_titulo .\n            ?o :titulo ?o_titulo .\n        }\n    }\n    minus {\n        {?s :temFilho $f}\n    union\n        {\n        ?s :temDF ?df.\n        ?df :temJustificacao ?dfjust.\n        ?dfjust :temCriterio ?crit.\n        ?crit rdf:type :CriterioJustificacaoDensidadeInfo.\n        ?crit :critTemProcRel ?o\n}\n    }\n}",
+                    "checked": true
                 }
             ]
         },
