@@ -1,6 +1,15 @@
-summary:
-description:
+summary: Consultar trabalho pendente
+description: Consultar trabalho pendente
 tags:
   - pendentes
 parameters:
+  - name: id
+    in: path
+    description: 'Identificador de um trabalho pendente'
+    type: string
+    required: true
 responses:
+  200:
+    description: Consultar trabalho pendente
+  500:
+    description: Erro

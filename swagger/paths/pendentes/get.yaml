@@ -1,6 +1,9 @@
-summary:
-description:
+summary: Listagem dos trabalhos pendentes
+description: Listagem dos trabalhos pendentes
 tags:
   - pendentes
-parameters:
 responses:
+  200:
+    description: Listagem dos trabalhos pendentes
+  500:
+    description: Erro

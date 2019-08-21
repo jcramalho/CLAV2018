@@ -1,6 +1,19 @@
-summary:
-description:
+summary: 'Atualizar um trabalho previamente guardado como pendente TODO: corrigir'
+description: Atualizar um trabalho previamente guardado como pendente
 tags:
   - pendentes
-requestBody:
+parameters:
+  - name: body
+    in: body
+    description: 'Dados'
+    required: true
+    schema:
+      properties:
+        #TODO
+        TODO:
+          type: TODO
 responses:
+  200:
+    description: Atualizar um trabalho previamente guardado como pendente
+  500:
+    description: Erro

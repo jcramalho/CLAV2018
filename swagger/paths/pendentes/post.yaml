@@ -1,6 +1,19 @@
-summary:
-description:
+summary: 'Guardar um trabalho pendente TODO: corrigir'
+description: Guardar um trabalho pendente
 tags:
   - pendentes
-requestBody:
+parameters:
+  - name: body
+    in: body
+    description: 'Dados'
+    required: true
+    schema:
+      properties:
+        #TODO
+        TODO:
+          type: TODO
 responses:
+  200:
+    description: Guardar um trabalho pendente
+  500:
+    description: Erro
