@@ -1,4 +1,4 @@
-const client = require('../../config/database').onthology
+const execQuery = require('../../controllers/api/utils').execQuery
 const normalizeOrdered = require('../../controllers/api/utils').normalizeOrdered
 const Invariantes = module.exports
 const fs = require('fs')
@@ -31,7 +31,7 @@ Invariantes.getErros = async (idRel,idInv) => {
                 var res = {}
                 res.descRel = rel.desc
                 res.descInv = inv.desc
-                var results = await client.query(inv.query).execute()
+                var results = await execQuery(inv.query)
                 res.results = normalizeOrdered(results)
                 return res    
             }catch(erro) { throw (erro) }

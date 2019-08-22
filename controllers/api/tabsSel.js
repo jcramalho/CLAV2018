@@ -1,16 +1,14 @@
-const client = require('../../config/database').onthology;
-
+const execQuery = require('../../controllers/api/utils').execQuery
 var SelTabs = module.exports
 
 SelTabs.list = function () {
-    return client.query(
+    return execQuery(
         `SELECT * WHERE { 
             ?id rdf:type clav:TabelaSelecao ;
                 clav:designacao ?Name ;
                 clav:referencialClassificativoStatus 'A';
         }`
     )
-        .execute()
         //getting the content we want
         .then(response => Promise.resolve(response.results.bindings))
         .catch(function (error) {
@@ -53,7 +51,7 @@ SelTabs.listClasses = function (table) {
         `;
 
 
-    return client.query(listQuery).execute()
+    return execQuery(listQuery)
         .then(response => Promise.resolve(response.results.bindings))
         .catch(function (error) {
             console.error(error);
@@ -73,8 +71,7 @@ SelTabs.classChildren = function (parent, table) {
         }Group by ?Child ?Code ?Title
         `;
 
-    return client.query(fetchQuery)
-        .execute()
+    return execQuery(fetchQuery)
         //getting the content we want
         .then(response => Promise.resolve(response.results.bindings))
         .catch(function (error) {
@@ -83,13 +80,12 @@ SelTabs.classChildren = function (parent, table) {
 }
 
 SelTabs.stats = function (id) {
-    return client.query(
+    return execQuery(
         `SELECT * WHERE { 
                 clav:${id} rdf:type clav:TabelaSelecao ;
                     clav:designacao ?Name .
             }`
     )
-        .execute()
         //getting the content we want
         .then(response => Promise.resolve(response.results.bindings))
         .catch(function (error) {
@@ -309,7 +305,7 @@ SelTabs.createTab = function (id, name, classes, criteriaData) {
 
     //console.log(createQuery);
 
-    return client.query(createQuery).execute()
+    return execQuery(createQuery)
         .then(response => Promise.resolve(response))
         .catch(error => console.error("Error in create:\n" + error));
 }
@@ -327,7 +323,7 @@ SelTabs.deleteTab = function (id) {
         }
     `;
 
-    return client.query(delQuery).execute()
+    return execQuery(delQuery)
         //getting the content we want
         .then(response => Promise.resolve(response))
         .catch(function (error) {

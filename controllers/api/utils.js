@@ -1,3 +1,21 @@
+var axios = require('axios')
+const urlGraphDB = require('../../config/database').onthology
+const prefixes = require('../../config/database').prefixes
+
+/**
+ * Executa uma query SPARQL e devolve o resultado
+ */
+exports.execQuery = async function(query){
+    var link = urlGraphDB + "?query="
+    var encoded = encodeURIComponent(prefixes + query)
+    try{
+        response = await axios.get(link + encoded)
+        return response.data
+    }catch(error){
+        throw(error)
+    }
+}
+
 /**
  * Normaliza e simplifica os resultados de uma query SPARQL.
  * 

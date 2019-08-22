@@ -1,4 +1,4 @@
-const client = require('../../config/database').onthology;
+const execQuery = require('../../controllers/api/utils').execQuery
 const normalize = require('../../controllers/api/utils').normalize;
 const Pedidos = require('../../controllers/pedidos');
 const axios = require('axios');
@@ -39,8 +39,7 @@ Tipologias.listar = (filtro) => {
             .join(' && ')} )
     }`;
 
-    return client.query(query)
-        .execute()
+    return execQuery(query)
         .then(response => normalize(response));
 };
 
@@ -60,8 +59,7 @@ Tipologias.consultar = (id) => {
             clav:tipEstado ?estado .
     }`;
 
-    return client.query(query)
-        .execute()
+    return execQuery(query)
         .then(response => normalize(response)[0]);
 };
 
@@ -122,8 +120,7 @@ Tipologias.existe = (tipologia) => {
         { ?s clav:tipSigla '${tipologia.sigla}' }
     }`;
 
-    return client.query(query)
-        .execute()
+    return execQuery(query)
         .then(response => response.boolean);
 };
 
@@ -161,8 +158,7 @@ Tipologias.elementos = (id) => {
         BIND(STRAFTER(STR(?uri), 'clav#') AS ?id)
     }`;
 
-    return client.query(query)
-        .execute()
+    return execQuery(query)
         .then(response => normalize(response));
 };
 
@@ -184,8 +180,7 @@ Tipologias.dono = (id) => {
         BIND(STRAFTER(STR(?uri), 'clav#') AS ?id)
     }`;
 
-    return client.query(query)
-        .execute()
+    return execQuery(query)
         .then(response => normalize(response));
 };
 
@@ -211,8 +206,7 @@ Tipologias.participante = (id) => {
         FILTER (?tipoParURI != clav:temParticipante && ?tipoParURI != clav:temDono)
     }`;
 
-    return client.query(query)
-        .execute()
+    return execQuery(query)
         .then(response => normalize(response));
 };
 
@@ -230,7 +224,7 @@ Tipologias.checkAvailability = function (name, initials) {
         }
     `;
 
-    return client.query(checkQuery).execute()
+    return execQuery(checkQuery)
         //Getting the content we want
         .then(response => Promise.resolve(response.results.bindings[0].Count.value))
         .catch(function (error) {
@@ -249,7 +243,7 @@ Tipologias.checkNameAvailability = function (name) {
         }
     `;
 
-    return client.query(checkQuery).execute()
+    return execQuery(checkQuery)
         //Getting the content we want
         .then(response => Promise.resolve(response.results.bindings[0].Count.value))
         .catch(function (error) {
@@ -338,7 +332,7 @@ Tipologias.updateTipologia = function (dataObj) {
 
     var updateQuery = deletePart + inserTPart + wherePart;
 
-    return client.query(updateQuery).execute()
+    return execQuery(updateQuery)
         .then(response => Promise.resolve(response))
         .catch(error => console.error("Error in update:\n" + error));
 }

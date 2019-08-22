@@ -1,4 +1,4 @@
-const client = require('../../config/database').onthology;
+const execQuery = require('../../controllers/api/utils').execQuery
 const normalize = require('../../controllers/api/utils').normalize;
 const Pedidos = require('../../controllers/pedidos');
 const axios = require('axios');
@@ -48,8 +48,7 @@ Entidades.listar = (filtro) => {
             .join(' && ')})
     } ORDER BY ?sigla`;
 
-    return client.query(query)
-        .execute()
+    return execQuery(query)
         .then(response => normalize(response));
 };
 
@@ -82,8 +81,7 @@ Entidades.listarComPNs = () => {
         } BIND(CONCAT('ent_', ?sigla) AS ?id).
     } ORDER BY ?sigla`;
     
-    return client.query(query)
-        .execute()
+    return execQuery(query)
         .then(response => normalize(response));
 };
 
@@ -104,8 +102,7 @@ Entidades.listarSemPNs = () => {
 
         } ORDER BY ?sigla`;
 
-    return client.query(query)
-        .execute()
+    return execQuery(query)
         .then(response => normalize(response));
 };
 
@@ -126,8 +123,7 @@ Entidades.tipologias = (id) => {
         BIND (CONCAT('tip_', ?sigla) AS ?id)
     }`;
 
-    return client.query(query)
-        .execute()
+    return execQuery(query)
         .then(response => normalize(response));
 };
 
@@ -152,8 +148,7 @@ Entidades.consultar = (id) => {
         }
     }`;
 
-    return client.query(query)
-        .execute()
+    return execQuery(query)
         .then(response => normalize(response)[0]);
 };
 
@@ -170,8 +165,7 @@ Entidades.existe = (entidade) => {
         { ?s clav:entSigla|clav:tipSigla '${entidade.sigla}' }
     }`;
 
-    return client.query(query)
-        .execute()
+    return execQuery(query)
         .then(response => response.boolean);
 };
 
@@ -260,8 +254,7 @@ Entidades.dono = id => {
             clav:classeStatus "A" .
     }`;
 
-    return client.query(query)
-        .execute()
+    return execQuery(query)
         .then(response => normalize(response));
 };
 
@@ -285,7 +278,6 @@ Entidades.participante = id => {
         FILTER (?tipoParURI != clav:temParticipante && ?tipoParURI != clav:temDono)
     }`;
 
-    return client.query(query)
-        .execute()
+    return execQuery(query)
         .then(response => normalize(response));
 };

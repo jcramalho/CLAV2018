@@ -1,4 +1,4 @@
-const client = require('../../config/database').onthology
+const execQuery = require('../../controllers/api/utils').execQuery
 const normalize = require('../../controllers/api/utils').normalize;
 const Pedidos = require('../../controllers/pedidos');
 var TermosIndice = module.exports
@@ -32,8 +32,7 @@ TermosIndice.listar = () => {
         }
         ORDER BY ?termo`;
 
-    return client.query(query)
-        .execute()
+    return execQuery(query)
         .then(response => normalize(response));
 }
 
@@ -44,8 +43,7 @@ TermosIndice.existe = (termoIndice) => {
             ?s rdf:type clav:TermoIndice.
             ?s clav:termo "${termoIndice.termo}"
         }`;
-    return client.query(query)
-        .execute()
+    return execQuery(query)
         .then(response => {return (response.boolean)});
 }
 
@@ -59,8 +57,7 @@ TermosIndice.assocClasse = classe => {
         }
         ORDER BY ?termo`;
 
-    return client.query(query)
-        .execute()
+    return execQuery(query)
         .then(response => normalize(response));
 }
 
@@ -72,8 +69,7 @@ TermosIndice.lastID = function () {
         LIMIT 1
     `;
 
-    return client.query(fetchQuery)
-        .execute()
+    return execQuery(fetchQuery)
         //getting the content we want
         .then(response => Promise.resolve(response.results.bindings[0]))
         .catch(function (error) {
@@ -88,8 +84,7 @@ TermosIndice.contar = function() {
         }
     `;
 
-    return client.query(query)
-        .execute()
+    return execQuery(query)
         .then(response => normalize(response));
 }
 
@@ -125,6 +120,5 @@ const query = `INSERT DATA {
         clav:estaAssocClasse '${termoIndice.idClasse}' .
 }`;
 
-return client.query(query)
-    .execute()
+return execQuery(query)
     .then(() => Pedidos.criar(pedido));*/

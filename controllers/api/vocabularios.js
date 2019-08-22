@@ -1,4 +1,4 @@
-const client = require('../../config/database').onthology
+const execQuery = require('../../controllers/api/utils').execQuery
 const normalize = require('../../controllers/api/utils').normalize
 
 var Vocabulario = module.exports
@@ -17,7 +17,7 @@ Vocabulario.listar = async function() {
     } 
     `
     try {
-        let result = await client.query(query).execute();
+        let result = await execQuery(query);
         return normalize(result);
     } 
     catch(erro) { throw (erro);}
@@ -38,7 +38,7 @@ Vocabulario.consultar = async function(id) {
         }
     `
     try {
-        let result = await client.query(query).execute();
+        let result = await execQuery(query);
         return normalize(result);
     } 
     catch(erro) { throw (erro);}
@@ -63,7 +63,7 @@ Vocabulario.formasContagemPCA = async function () {
         }`
 
     try {
-        let result = await client.query(query).execute();
+        let result = await execQuery(query);
         return normalize(result);
     } 
     catch(erro) { throw (erro);}
@@ -87,7 +87,7 @@ Vocabulario.subFormasContagemPCA = async function () {
             BIND (STRAFTER(STR(?subid), "#vc_pca") AS ?id)
         }`
     try {
-        let result = await client.query(query).execute();
+        let result = await execQuery(query);
         return normalize(result);
     } 
     catch(erro) { throw (erro);}
@@ -112,7 +112,7 @@ Vocabulario.update = async function (id, label, desc) {
         }
     `
     try {
-        await client.query(query).execute();
+        await execQuery(query);
         var ask = `
         ASK {
             clav:${id} a skos:ConceptScheme;
@@ -120,7 +120,7 @@ Vocabulario.update = async function (id, label, desc) {
                     skos:scopeNote '${desc}' .
         }`
         try {
-            let result = await client.query(ask).execute();
+            let result = await execQuery(ask);
             return result.boolean;
         }
         catch(erro) { throw (erro);}
@@ -137,7 +137,7 @@ Vocabulario.adicionar = async function (id, label, desc) {
         }
     `
     try {
-        await client.query(query).execute();
+        await execQuery(query);
         var ask = `
         ASK {
             clav:${id} a skos:ConceptScheme;
@@ -145,7 +145,7 @@ Vocabulario.adicionar = async function (id, label, desc) {
                     skos:scopeNote '${desc}' .
         }`
         try {
-            let result = await client.query(ask).execute();
+            let result = await execQuery(ask);
             return result.boolean;
         }
         catch(erro) { throw (erro);}
