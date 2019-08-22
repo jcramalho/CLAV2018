@@ -187,13 +187,6 @@ router.get('/:id/df', (req, res) => {
         //.catch(erro => res.jsonp({cod: "404", mensagem: "Erro na consulta do DF associado à classe "+req.params.id+": " + erro}))
 })
 
-// Verifica se um código de classe existe
-router.get('verifica/:codigo', (req, res) => {
-    Classes.verificaCodigo(req.params.codigo, req.params.codigo.split('.').length)
-        .then(dados => res.jsonp(dados))
-        .catch(erro => res.status(500).send(`Erro na verificação da existência do código ${req.params.codigo}: ${erro}`))
-})
-
 router.post('/', Auth.isLoggedInNEW, (req, res) => {
     return Classes.criar(req.body, req.body.token)
         .then(dados => res.jsonp(dados))
