@@ -123,7 +123,7 @@ router.post('/recuperar', function (req, res) {
     });
 });
 
-router.post('/desativar', async function(req, res) {
+router.put('/desativar', async function(req, res) {
     await jwt.verify(req.body.token, secretKey.key, async function(err, decoded){
         if(decoded.id != req.body.id){
             Users.desativar(req.body.id, function(err, user){
@@ -139,7 +139,7 @@ router.post('/desativar', async function(req, res) {
     });
 });
 
-router.post('/eliminar', async function(req, res) {
+router.delete('/eliminar', async function(req, res) {
     await jwt.verify(req.body.token, secretKey.key, async function(err, decoded){
         if(decoded.id != req.body.id){
             Users.eliminar(req.body.id, function(err, user){
@@ -197,11 +197,17 @@ router.put('/alterarPassword', function (req, res) {
 });
 
 router.put('/atualizarMultiplos', function (req, res) {
-    Users.atualizarMultiplosCampos(req.body.id, req.body.nome, req.body.email, req.body.entidade, req.body.level, function (err, cb) {
-        if (err) 
-            return res.status(500).send(`Erro: ${err}`);
-        else {
-            res.send('Utilizador atualizado com sucesso!')
+    Users.getUserByEmail(req.body.email, function(err,user){
+        if(user){
+            res.send('Já existe utilizador registado com esse email!');
+        }else{
+            Users.atualizarMultiplosCampos(req.body.id, req.body.nome, req.body.email, req.body.entidade, req.body.level, function (err, cb) {
+                if (err) 
+                    return res.status(500).send(`Erro: ${err}`);
+                else {
+                    res.send('Utilizador atualizado com sucesso!')
+                }
+            });
         }
     });
 });
