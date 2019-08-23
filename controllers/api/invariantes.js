@@ -46,6 +46,31 @@ Invariantes.getErros = async (idRel,idInv) => {
     }
 }
 
+//devolve os erros de todos os invariantes, devolve apenas os invariantes que possuem erros
+Invariantes.getTodosErros = async () => {
+    var res = []
+    var results, i, j, n = 0
+    var nRels = invs.invariantes.length
+    var nInvs
+
+    for(i=0; i<nRels; i++){
+        nInvs = invs.invariantes[i].invs.length
+        for(j=0; j<nInvs; j++){
+            results = await execQuery(invs.invariantes[i].invs[j].query)
+            results = normalizeOrdered(results)
+            if(results.length!=0){
+                res[n] = {}
+                res[n].descRel = invs.invariantes[i].desc
+                res[n].descInv = invs.invariantes[i].invs[j].desc
+                res[n].results = results
+                n++    
+            }
+        }
+    }
+
+    return res
+}
+
 // Lista todos os invariantes disponíveis
 Invariantes.listar = () => {
     return invs.invariantes
