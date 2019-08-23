@@ -43,7 +43,6 @@ Users.getUserById = function (id, callback) {
 
 Users.comparePassword = function (candidatePassword, hash, callback) {
 	bcrypt.compare(candidatePassword, hash, function (err, isMatch) {
-		if (err) throw err;
 		callback(null, isMatch);
 	});
 }
