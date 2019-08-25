@@ -26,15 +26,17 @@ var ApiStatsSchema = mongoose.Schema({
 var ApiStats = module.exports = mongoose.model('ApiStats', ApiStatsSchema);
 
 module.exports.addUsage = function (method, route) {
-    var newStats = new ApiStats({
-        _id: route,
-		nCallsGet: 0,
-        nCallsPost: 0,
-        nCallsPut: 0
-    });
 
     ApiStats.findById(route,function(err, stats){
         if(err || stats==null){
+
+            var newStats = new ApiStats({
+                _id: route,
+                nCallsGet: 0,
+                nCallsPost: 0,
+                nCallsPut: 0
+            });
+
             if(method=='GET') 
                 newStats.nCallsGet=1;
             else if(method=='POST')
@@ -49,6 +51,7 @@ module.exports.addUsage = function (method, route) {
                     console.log("Criado contador para API: " + route)
                 }
             });
+
         }else{
             if(method=='GET') 
                 stats.nCallsGet+=1;

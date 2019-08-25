@@ -54,7 +54,7 @@ const PedidoSchema = new mongoose.Schema({
             required: true,
         },
         despacho: {
-            type: String,
+            type: String
         }
     }]
 });
@@ -73,7 +73,7 @@ PedidoSchema.methods.sparqlQuery = function() {
         "Entidade": "clav:Entidade",
         "Legislação": "clav:Legislacao",
         "Termo de Indice": "clav:TermoIndice",
-        "Tipologia": "clav:TipologiaEntidade",
+        "Tipologia": "clav:TipologiaEntidade"
     };
     const rdf_type = rdf_types[this.objeto.tipo];
     let query = '';
