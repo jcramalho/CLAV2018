@@ -141,7 +141,8 @@
                 {
                     "idInv": "inv_10",
                     "desc": "Os termos de indice de um PN não existem em mais nenhuma classe 3",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect * where {\n    ?c1 rdf:type :Classe_N3 .\n    ?c1 :titulo ?c1_titulo .\n\n    ?c2 rdf:type :Classe_N3 .\n    ?c2 :titulo ?c2_titulo .\n    \n    ?c1 :temTI ?ti .\n\n    FILTER (\n        ?c1 != ?c2\n        && EXISTS { ?c2 :temTI ?ti . }\n    )\n}" 
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect * where {\n    ?c1 rdf:type :Classe_N3 .\n    ?c1 :titulo ?c1_titulo .\n\n    ?c2 rdf:type :Classe_N3 .\n    ?c2 :titulo ?c2_titulo .\n    \n    ?c1 :temTI ?ti .\n    ?c2 :temTI ?ti\n\n    FILTER (?c1 != ?c2)\n}",
+                    "checked": true
                 }
             ]
         },
