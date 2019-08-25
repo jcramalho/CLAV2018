@@ -7,22 +7,26 @@
                 {
                     "idInv": "inv_0",
                     "desc": "Se uma Classe pertence a uma Lista Consolidada/Tabela de Seleção, consequentemente os seus filhos, netos, etc.. tambem têm de pertencer.",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect distinct ?s ?s_titulo where {\n    ?s :temFilho ?f.\n    ?s :titulo ?s_titulo.\n    ?s :pertenceLC :lc1.\n    filter (not exists {?f :pertenceLC :lc1})\n}"                
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect distinct ?s ?s_titulo where {\n    ?s :temFilho ?f.\n    ?s :titulo ?s_titulo.\n    ?s :pertenceLC :lc1.\n    filter (not exists {?f :pertenceLC :lc1})\n}",
+                    "checked": true               
                 },
                 {
                     "idInv": "inv_1",
                     "desc": "2 Classes (nível 1, 2 ou 3) não podem ter a mesma instância NotaAplicacao",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c1 ?c1_titulo ?c2 ?c2_titulo ?o where {\n    ?c1 :temNotaAplicacao ?o .\n    ?c1 :titulo ?c1_titulo .\n\n    ?c2 :temNotaAplicacao ?o .\n    ?c2 :titulo ?c2_titulo .\n\n    FILTER (\n        ?c1 != ?c2\n    )\n}"
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c1 ?c1_titulo ?c2 ?c2_titulo ?o where {\n    ?c1 :temNotaAplicacao ?o .\n    ?c1 :titulo ?c1_titulo .\n\n    ?c2 :temNotaAplicacao ?o .\n    ?c2 :titulo ?c2_titulo .\n\n    FILTER (\n        ?c1 != ?c2\n    )\n}",
+                    "checked": true
                 },
                 {
                     "idInv": "inv_2",
                     "desc": "2 Classes (nível 1, 2 ou 3) não podem ter a mesma instância NotaExclusao",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c1 ?c1_titulo ?c2 ?c2_titulo ?o where {\n    ?c1 :temNotaExclusao ?o .\n    ?c1 :titulo ?c1_titulo .\n\n    ?c2 :temNotaExclusao ?o .\n    ?c2 :titulo ?c2_titulo .\n\n    FILTER (\n        ?c1 != ?c2\n    )\n}"
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c1 ?c1_titulo ?c2 ?c2_titulo ?o where {\n    ?c1 :temNotaExclusao ?o .\n    ?c1 :titulo ?c1_titulo .\n\n    ?c2 :temNotaExclusao ?o .\n    ?c2 :titulo ?c2_titulo .\n\n    FILTER (\n        ?c1 != ?c2\n    )\n}",
+                    "checked": true
                 },
                 {
                     "idInv": "inv_3",
                     "desc": "2 Classes (nível 1, 2 ou 3) não podem ter a mesma instância ExemploNotaAplicacao",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c1 ?c1_titulo ?c2 ?c2_titulo ?o where {\n    ?c1 :temExemploNA ?o .\n    ?c1 :titulo ?c1_titulo .\n\n    ?c2 :temExemploNA ?o .\n    ?c2 :titulo ?c2_titulo .\n\n    FILTER (\n        ?c1 != ?c2\n    )\n}"
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c1 ?c1_titulo ?c2 ?c2_titulo ?o where {\n    ?c1 :temExemploNA ?o .\n    ?c1 :titulo ?c1_titulo .\n\n    ?c2 :temExemploNA ?o .\n    ?c2 :titulo ?c2_titulo .\n\n    FILTER (\n        ?c1 != ?c2\n    )\n}",
+                    "checked": true
                 }
             ]
         },
