@@ -119,13 +119,13 @@ travessia.reset()
 var fs = require('fs')
 var yaml = require('js-yaml')
 var yamlinc = require('yaml-include')
-var src = fs.readFileSync("./swagger/clav.yaml")
+var src = fs.readFileSync("./swagger/index.yaml")
 
 process.chdir(__dirname + '/swagger');
 var swaggerDoc = yaml.load(src, { schema: yamlinc.YAML_INCLUDE_SCHEMA });
 process.chdir(__dirname);
 
-fs.writeFileSync("./swagger/generated.yaml", yaml.dump(swaggerDoc))
+fs.writeFileSync("./swagger/clav.yaml", yaml.dump(swaggerDoc))
 app.use(express.static("./swagger"))
 
 //routes and API
