@@ -1,6 +1,7 @@
-summary:
-description:
+summary: Gera um id único
+description: Gera um id único através do nanoid
 tags:
   - utils
-parameters:
 responses:
+  200:
+    description: Devolve o id gerado
