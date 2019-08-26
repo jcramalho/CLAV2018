@@ -23,7 +23,7 @@ Classes.listar = async nivel => {
         Order by ?id 
     `
     try {
-        let result = await execQuery(query);
+        let result = await execQuery("query", query);
         return normalize(result);
     } 
     catch(erro) { throw (erro);}
@@ -45,7 +45,7 @@ Classes.listarPNsComuns = () => {
         } 
     `
 
-    return execQuery(query)
+    return execQuery("query", query)
         .then(response => normalize(response))
 }
 
@@ -94,7 +94,7 @@ Classes.listarPNsEspecificos = async (entidades, tipologias) => {
         Order by ?codigo
     `
 
-    return execQuery(query)
+    return execQuery("query", query)
         .then(response => normalize(response))
 }
 
@@ -247,7 +247,7 @@ Classes.consultar = async id => {
                     ?pt skos:prefLabel ?procTipo.
                 }
             }`
-    let resultado = await execQuery(query)
+    let resultado = await execQuery("query", query)
     return normalize(resultado)
 }
 
@@ -264,7 +264,7 @@ Classes.descendencia = async id => {
             }
             ORDER BY ?codigo
             `
-        let resultado = await execQuery(query);
+        let resultado = await execQuery("query", query);
         return normalize(resultado);
     }
     catch(erro){
@@ -279,7 +279,7 @@ Classes.notasAp = id => {
                 clav:${id} clav:temNotaAplicacao ?idNota.
                 ?idNota clav:conteudo ?nota .
             }`
-    return execQuery(query)
+    return execQuery("query", query)
         .then(response => normalize(response))
 }
 
@@ -290,7 +290,7 @@ Classes.exemplosNotasAp = id => {
                 clav:${id} clav:temExemploNA ?idExemplo.
                 ?idExemplo clav:conteudo ?exemplo.
             }`
-    return execQuery(query)
+    return execQuery("query", query)
         .then(response => normalize(response))
 }
 
@@ -301,7 +301,7 @@ Classes.notasEx = id => {
                 clav:${id} clav:temNotaExclusao ?idNota.
                 ?idNota clav:conteudo ?nota .
             }`
-    return execQuery(query)
+    return execQuery("query", query)
         .then(response => normalize(response))
 }
 
@@ -313,7 +313,7 @@ Classes.ti = id => {
               clav:estaAssocClasse clav:${id} ;
               clav:termo ?termo
     }`
-    return execQuery(query)
+    return execQuery("query", query)
         .then(response => normalize(response))
 }
 
@@ -336,7 +336,7 @@ Classes.dono = id => {
             }
         FILTER ( ?tipo NOT IN (owl:NamedIndividual) )
         }`  
-    return execQuery(query)
+    return execQuery("query", query)
         .then(response => normalize(response))
 }
 
@@ -361,7 +361,7 @@ Classes.participante = id => {
                 }      
         }
         order by ?participLabel ?idParticipante`
-    return execQuery(query)
+    return execQuery("query", query)
         .then(response => normalize(response))
 }
 
@@ -380,7 +380,7 @@ Classes.procRel = id => {
         BIND (STRAFTER(STR(?tipoRel), 'clav#') AS ?idRel).
         } Order by ?idRel ?codigo
         `
-    return execQuery(query)
+    return execQuery("query", query)
         .then(response => normalize(response))
 }
 
@@ -393,7 +393,7 @@ Classes.procRelEspecifico = (id, rel) => {
             ?id clav:codigo ?codigo;
                 clav:titulo ?titulo.
         }`
-    return execQuery(query)
+    return execQuery("query", query)
         .then(response => normalize(response))
 }
 
@@ -407,7 +407,7 @@ Classes.legislacao = id => {
                 clav:diplomaTipo ?tipo.
             BIND (STRAFTER(STR(?id), 'clav#') AS ?idLeg).
         } order by ?tipo ?numero`
-    return execQuery(query)
+    return execQuery("query", query)
         .then(response => normalize(response))
 }
 
@@ -443,7 +443,7 @@ Classes.pca = id => {
             }    
         }GROUP BY ?idPCA ?formaContagem ?subFormaContagem ?idJust
     `
-    return execQuery(query)
+    return execQuery("query", query)
         .then(response => normalize(response))
 }
 
@@ -461,7 +461,7 @@ Classes.justificacao = async id => {
             ?tipo rdfs:label ?tipoLabel.
             BIND (STRAFTER(STR(?tipo), 'clav#') AS ?tipoId).
         }`
-        let result = await execQuery(query);
+        let result = await execQuery("query", query);
         return normalize(result);
     } 
     catch(erro) { throw (erro);}
@@ -485,7 +485,7 @@ Classes.df = function (id) {
                 BIND (STRAFTER(STR(?idJustificacao), 'clav#') AS ?idJust).
             }    
         }`
-    return execQuery(query)
+    return execQuery("query", query)
         .then(response => normalize(response))
 }
 
@@ -548,7 +548,7 @@ Classes.filterCommon = function () {
         Order By ?PN
     `;
 
-    return execQuery(fetchQuery)
+    return execQuery("query", fetchQuery)
         //Getting the content we want
         .then(response => Promise.resolve(response.results.bindings))
         .catch(function (error) {
@@ -614,7 +614,7 @@ Classes.filterRest = function (orgs) {
         ORDER BY ?PN
     `;
 
-    return execQuery(fetchQuery)
+    return execQuery("query", fetchQuery)
         //Getting the content we want
         .then(response => Promise.resolve(response.results.bindings))
         .catch(function (error) {
@@ -806,11 +806,9 @@ Classes.createClass = function (data) {
 
     createQuery += '}';
 
-    return execQuery(createQuery)
+    return execQuery("update", createQuery)
         .then(response => Promise.resolve(response))
         .catch(error => console.error("Error in create:\n" + error));
-
-
 }
 
 Classes.updateClass = function (dataObj) {
@@ -1219,7 +1217,7 @@ Classes.updateClass = function (dataObj) {
     `;
     
     
-    return execQuery(updateQuery)
+    return execQuery("update", updateQuery)
         .then(response => Promise.resolve(response))
         .catch(error => console.error("Error in update:\n" + error));
 }
@@ -1260,7 +1258,7 @@ Classes.deleteClass = function (id) {
         }
     `;
 
-    return execQuery(delQuery)
+    return execQuery("update", delQuery)
         //getting the content we want
         .then(response => Promise.resolve(response))
         .catch(function (error) {

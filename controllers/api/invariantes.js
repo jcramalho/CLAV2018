@@ -31,7 +31,7 @@ Invariantes.getErros = async (idRel,idInv) => {
                 var res = {}
                 res.descRel = rel.desc
                 res.descInv = inv.desc
-                var results = await execQuery(inv.query)
+                var results = await execQuery("query", inv.query)
                 res.results = normalizeOrdered(results)
                 return res    
             }catch(erro) {
@@ -56,7 +56,7 @@ Invariantes.getTodosErros = async () => {
     for(i=0; i<nRels; i++){
         nInvs = invs.invariantes[i].invs.length
         for(j=0; j<nInvs; j++){
-            results = await execQuery(invs.invariantes[i].invs[j].query)
+            results = await execQuery("query", invs.invariantes[i].invs[j].query)
             results = normalizeOrdered(results)
             if(results.length!=0){
                 res[n] = {}

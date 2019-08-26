@@ -32,7 +32,7 @@ TermosIndice.listar = () => {
         }
         ORDER BY ?termo`;
 
-    return execQuery(query)
+    return execQuery("query", query)
         .then(response => normalize(response));
 }
 
@@ -43,7 +43,7 @@ TermosIndice.existe = (termoIndice) => {
             ?s rdf:type clav:TermoIndice.
             ?s clav:termo "${termoIndice}"
         }`;
-    return execQuery(query)
+    return execQuery("query", query)
         .then(response => {return (response.boolean)});
 }
 
@@ -57,7 +57,7 @@ TermosIndice.assocClasse = classe => {
         }
         ORDER BY ?termo`;
 
-    return execQuery(query)
+    return execQuery("query", query)
         .then(response => normalize(response));
 }
 
@@ -69,7 +69,7 @@ TermosIndice.lastID = function () {
         LIMIT 1
     `;
 
-    return execQuery(fetchQuery)
+    return execQuery("query", fetchQuery)
         //getting the content we want
         .then(response => Promise.resolve(response.results.bindings[0]))
         .catch(function (error) {
@@ -84,7 +84,7 @@ TermosIndice.contar = function() {
         }
     `;
 
-    return execQuery(query)
+    return execQuery("query", query)
         .then(response => normalize(response));
 }
 
@@ -120,5 +120,5 @@ const query = `INSERT DATA {
         clav:estaAssocClasse '${termoIndice.idClasse}' .
 }`;
 
-return execQuery(query)
+return execQuery("update", query)
     .then(() => Pedidos.criar(pedido));*/

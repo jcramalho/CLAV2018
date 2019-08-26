@@ -43,7 +43,7 @@ Leg.listar = () => {
     const campos = ["id", "data", "numero", "tipo", "sumario", "estado"];
     const agrupar = ["entidades"];
 
-    return execQuery(query)
+    return execQuery("query", query)
         .then(response => {
             let legs = projection(normalize(response), campos, agrupar);
             
@@ -73,7 +73,7 @@ Leg.listarAtivos = () => {
     const campos = ["id", "data", "numero", "tipo", "sumario"];
     const agrupar = ["entidades"];
 
-    return execQuery(query)
+    return execQuery("query", query)
         .then(response => {
             let legs = projection(normalize(response), campos, agrupar);
             
@@ -105,7 +105,7 @@ Leg.listarComPNs = () => {
     const campos = ["id", "data", "numero", "tipo", "sumario"];
     const agrupar = ["entidades"];
 
-    return execQuery(query)
+    return execQuery("query", query)
         .then(response => {
             let legs = projection(normalize(response), campos, agrupar);
             
@@ -137,7 +137,7 @@ Leg.listarSemPNs = () => {
     const campos = ["id", "data", "numero", "tipo", "sumario"];
     const agrupar = ["entidades"];
 
-    return execQuery(query)
+    return execQuery("query", query)
         .then(response => {
             let legs = projection(normalize(response), campos, agrupar);
             
@@ -176,7 +176,7 @@ Leg.consultar = id => {
      const campos = ["id", "data", "numero", "tipo", "sumario", "link", "estado"];
      const agrupar = ["entidades"];
 
-     return execQuery(query)
+     return execQuery("query", query)
         .then(response => projection(normalize(response), campos, agrupar)[0]);
 };
 
@@ -231,7 +231,7 @@ Leg.alterar = async (id, alteracoes, utilizador) => {
         ${legislacao.entidades.map(entidade => `clav:${id} clav:temEntidadeResponsavel clav:${entidade}.`).join('\n')}
         
     }`;
-    return execQuery(query)
+    return execQuery("update", query)
         .then(() => Pedidos.criar(pedido));*/
 
 /**
@@ -245,7 +245,7 @@ Leg.existe = (legislacao) => {
             ?e clav:diplomaNumero '${legislacao.numero}'
         }`;
 
-    return execQuery(query)
+    return execQuery("query", query)
         .then(response => response.boolean);
 };
 
@@ -260,7 +260,7 @@ Leg.temPNs = (legislacao) => {
         ?e clav:temLegislacao clav:'${legislacao.id}'
         }`;
 
-    return execQuery(query)
+    return execQuery("query", query)
         .then(response => response.boolean);
 };
 
@@ -309,7 +309,7 @@ Leg.regula = id => {
                 
         } ORDER BY ?codigo
     `
-    return execQuery(query)
+    return execQuery("query", query)
         .then(response => normalize(response));
 };
 
@@ -361,7 +361,7 @@ Leg.updateDoc = function (dataObj) {
     
     console.log(updateQuery);
 
-    return execQuery(updateQuery)
+    return execQuery("update", updateQuery)
         .then(response => Promise.resolve(response))
         .catch(error => console.error("Error in update:\n" + error));
 };*/

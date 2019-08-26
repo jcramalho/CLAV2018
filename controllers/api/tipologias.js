@@ -39,7 +39,7 @@ Tipologias.listar = (filtro) => {
             .join(' && ')} )
     }`;
 
-    return execQuery(query)
+    return execQuery("query", query)
         .then(response => normalize(response));
 };
 
@@ -59,7 +59,7 @@ Tipologias.consultar = (id) => {
             clav:tipEstado ?estado .
     }`;
 
-    return execQuery(query)
+    return execQuery("query", query)
         .then(response => normalize(response)[0]);
 };
 
@@ -120,7 +120,7 @@ Tipologias.existe = (tipologia) => {
         { ?s clav:tipSigla '${tipologia.sigla}' }
     }`;
 
-    return execQuery(query)
+    return execQuery("query", query)
         .then(response => response.boolean);
 };
 
@@ -158,7 +158,7 @@ Tipologias.elementos = (id) => {
         BIND(STRAFTER(STR(?uri), 'clav#') AS ?id)
     }`;
 
-    return execQuery(query)
+    return execQuery("query", query)
         .then(response => normalize(response));
 };
 
@@ -180,7 +180,7 @@ Tipologias.dono = (id) => {
         BIND(STRAFTER(STR(?uri), 'clav#') AS ?id)
     }`;
 
-    return execQuery(query)
+    return execQuery("query", query)
         .then(response => normalize(response));
 };
 
@@ -206,7 +206,7 @@ Tipologias.participante = (id) => {
         FILTER (?tipoParURI != clav:temParticipante && ?tipoParURI != clav:temDono)
     }`;
 
-    return execQuery(query)
+    return execQuery("query", query)
         .then(response => normalize(response));
 };
 
@@ -224,7 +224,7 @@ Tipologias.checkAvailability = function (name, initials) {
         }
     `;
 
-    return execQuery(checkQuery)
+    return execQuery("query", checkQuery)
         //Getting the content we want
         .then(response => Promise.resolve(response.results.bindings[0].Count.value))
         .catch(function (error) {
@@ -243,7 +243,7 @@ Tipologias.checkNameAvailability = function (name) {
         }
     `;
 
-    return execQuery(checkQuery)
+    return execQuery("query", checkQuery)
         //Getting the content we want
         .then(response => Promise.resolve(response.results.bindings[0].Count.value))
         .catch(function (error) {
@@ -332,7 +332,7 @@ Tipologias.updateTipologia = function (dataObj) {
 
     var updateQuery = deletePart + inserTPart + wherePart;
 
-    return execQuery(updateQuery)
+    return execQuery("update", updateQuery)
         .then(response => Promise.resolve(response))
         .catch(error => console.error("Error in update:\n" + error));
 }

@@ -4,12 +4,25 @@ const prefixes = require('../../config/database').prefixes
 
 /**
  * Executa uma query SPARQL e devolve o resultado
+ * @param method Define se é uma SPARQL Query ou uma SPARQL Update
+ * @param query a query a executar
  */
-exports.execQuery = async function(query){
-    var link = urlGraphDB + "?query="
+exports.execQuery = async function(method, query){
+    var getLink = urlGraphDB + "?query="
+    var postLink = urlGraphDB + "/statements"
     var encoded = encodeURIComponent(prefixes + query)
     try{
-        response = await axios.get(link + encoded)
+        switch(method) {
+            case "query":
+                response = await axios.get(getLink + encoded)
+                break;
+            case "update":
+                response = await axios.post(postLink, `update=${encoded}`)
+                break;
+            default:
+                response = await axios.get(getLink + encoded)
+                break;
+        }
         return response.data
     }catch(error){
         throw(error)

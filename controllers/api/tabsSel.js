@@ -2,7 +2,7 @@ const execQuery = require('../../controllers/api/utils').execQuery
 var SelTabs = module.exports
 
 SelTabs.list = function () {
-    return execQuery(
+    return execQuery("query",
         `SELECT * WHERE { 
             ?id rdf:type clav:TabelaSelecao ;
                 clav:designacao ?Name ;
@@ -51,7 +51,7 @@ SelTabs.listClasses = function (table) {
         `;
 
 
-    return execQuery(listQuery)
+    return execQuery("query", listQuery)
         .then(response => Promise.resolve(response.results.bindings))
         .catch(function (error) {
             console.error(error);
@@ -71,7 +71,7 @@ SelTabs.classChildren = function (parent, table) {
         }Group by ?Child ?Code ?Title
         `;
 
-    return execQuery(fetchQuery)
+    return execQuery("query", fetchQuery)
         //getting the content we want
         .then(response => Promise.resolve(response.results.bindings))
         .catch(function (error) {
@@ -80,7 +80,7 @@ SelTabs.classChildren = function (parent, table) {
 }
 
 SelTabs.stats = function (id) {
-    return execQuery(
+    return execQuery("query",
         `SELECT * WHERE { 
                 clav:${id} rdf:type clav:TabelaSelecao ;
                     clav:designacao ?Name .
@@ -305,7 +305,7 @@ SelTabs.createTab = function (id, name, classes, criteriaData) {
 
     //console.log(createQuery);
 
-    return execQuery(createQuery)
+    return execQuery("update", createQuery)
         .then(response => Promise.resolve(response))
         .catch(error => console.error("Error in create:\n" + error));
 }
@@ -323,7 +323,7 @@ SelTabs.deleteTab = function (id) {
         }
     `;
 
-    return execQuery(delQuery)
+    return execQuery("update", delQuery)
         //getting the content we want
         .then(response => Promise.resolve(response))
         .catch(function (error) {

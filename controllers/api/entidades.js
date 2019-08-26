@@ -48,7 +48,7 @@ Entidades.listar = (filtro) => {
             .join(' && ')})
     } ORDER BY ?sigla`;
 
-    return execQuery(query)
+    return execQuery("query", query)
         .then(response => normalize(response));
 };
 
@@ -81,7 +81,7 @@ Entidades.listarComPNs = () => {
         } BIND(CONCAT('ent_', ?sigla) AS ?id).
     } ORDER BY ?sigla`;
     
-    return execQuery(query)
+    return execQuery("query", query)
         .then(response => normalize(response));
 };
 
@@ -102,7 +102,7 @@ Entidades.listarSemPNs = () => {
 
         } ORDER BY ?sigla`;
 
-    return execQuery(query)
+    return execQuery("query", query)
         .then(response => normalize(response));
 };
 
@@ -123,7 +123,7 @@ Entidades.tipologias = (id) => {
         BIND (CONCAT('tip_', ?sigla) AS ?id)
     }`;
 
-    return execQuery(query)
+    return execQuery("query", query)
         .then(response => normalize(response));
 };
 
@@ -148,7 +148,7 @@ Entidades.consultar = (id) => {
         }
     }`;
 
-    return execQuery(query)
+    return execQuery("query", query)
         .then(response => normalize(response)[0]);
 };
 
@@ -165,7 +165,7 @@ Entidades.existe = (entidade) => {
         { ?s clav:entSigla|clav:tipSigla '${entidade.sigla}' }
     }`;
 
-    return execQuery(query)
+    return execQuery("query", query)
         .then(response => response.boolean);
 };
 
@@ -254,7 +254,7 @@ Entidades.dono = id => {
             clav:classeStatus "A" .
     }`;
 
-    return execQuery(query)
+    return execQuery("query", query)
         .then(response => normalize(response));
 };
 
@@ -278,6 +278,6 @@ Entidades.participante = id => {
         FILTER (?tipoParURI != clav:temParticipante && ?tipoParURI != clav:temDono)
     }`;
 
-    return execQuery(query)
+    return execQuery("query", query)
         .then(response => normalize(response));
 };
