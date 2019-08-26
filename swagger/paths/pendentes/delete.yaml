@@ -1,0 +1,15 @@
+summary: 'Remove um trabalho pendente'
+description: Remove um trabalho pendente
+tags:
+  - pendentes
+parameters:
+  - name: id
+    in: path
+    description: 'Identificador de um trabalho pendente'
+    type: string
+    required: true
+responses:
+  200:
+    description: Removido um trabalho pendente
+  500:
+    description: Erro
