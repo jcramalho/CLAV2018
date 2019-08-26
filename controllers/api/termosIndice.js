@@ -41,7 +41,7 @@ TermosIndice.existe = (termoIndice) => {
     const query = `
         ASK { 
             ?s rdf:type clav:TermoIndice.
-            ?s clav:termo "${termoIndice.termo}"
+            ?s clav:termo "${termoIndice}"
         }`;
     return execQuery(query)
         .then(response => {return (response.boolean)});

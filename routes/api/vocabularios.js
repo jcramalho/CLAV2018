@@ -8,14 +8,14 @@ var router = express.Router();
 router.get('/', (req, res) => {
     Vocabulario.listar()
         .then(dados => res.jsonp(dados))
-        .catch(erro => res.jsonp({cod: "404", mensagem: "Erro na listagem dos VC: " + erro}))
+        .catch(erro => res.status(404).jsonp("Erro na listagem dos VC: " + erro))
 })
 
 // Devolve a lista de termos de um VC: idtermo, termo
 router.get('/:id', function (req, res) {
     Vocabulario.consultar(req.params.id)
         .then(dados => res.jsonp(dados))
-        .catch(erro => res.jsonp({cod: "404", mensagem: "Erro na consulta do VC "+req.params.id+": " + erro}))
+        .catch(erro => res.status(404).jsonp("Erro na consulta do VC "+req.params.id+": " + erro))
 })
 
 //Update da Legenda e da Descrição de um VC
@@ -25,11 +25,11 @@ router.put('/:id', (req, res) => {
     if(typeof label !== "undefined" && typeof desc !== "undefined")
         Vocabulario.update(req.params.id,label,desc)
             .then(dados => {
-                if(dados) res.jsonp({cod: "200", mensagem: "VC modificado com sucesso"})
-                else res.status(404).jsonp({cod: "404", mensagem: "Erro na modificação do VC "+req.params.id})
+                if(dados) res.jsonp("VC modificado com sucesso")
+                else res.status(404).jsonp("Erro na modificação do VC "+req.params.id)
             })
-            .catch(erro => res.jsonp({cod: "404", mensagem: "Erro no update do VC "+req.params.id+": " + erro}))    
-    else res.status(404).jsonp({cod: "404", mensagem: "Erro no update do VC "+req.params.id+": Label or desc Undefined"})
+            .catch(erro => res.status(404).jsonp("Erro no update do VC "+req.params.id+": " + erro))    
+    else res.status(404).jsonp("Erro no update do VC "+req.params.id+": Label or desc Undefined")
 
 })
 
@@ -42,11 +42,11 @@ router.post('/', (req, res) => {
         if(!/^vc_/.test(id)) id = "vc_"+id
         Vocabulario.adicionar(id,label,desc)
             .then(dados => {
-                if(dados) res.jsonp({cod: "200", mensagem: "VC adicionado com sucesso"})
-                else res.status(404).jsonp({cod: "404", mensagem: "Erro na adição do VC "+req.body.id})
+                if(dados) res.jsonp("VC adicionado com sucesso")
+                else res.status(404).jsonp("Erro na adição do VC "+req.body.id)
             })
-            .catch(erro => res.jsonp({cod: "404", mensagem: "Erro na adição do VC "+req.body.id+": " + erro}))
-    } else res.status(404).jsonp({cod: "404", mensagem: "Erro na adição do VC: Campos em falta"})
+            .catch(erro => res.status(404).jsonp("Erro na adição do VC "+req.body.id+": " + erro))
+    } else res.status(404).jsonp("Erro na adição do VC: Campos em falta")
 })
 
 module.exports = router;
