@@ -1,6 +1,9 @@
-summary:
-description:
+summary: Obtém as travessias
+description: Obtém as travessias, ou seja, uma lista em que cada elemento possui o código do processo (campo processo) e a travessia (lista de códigos de processos)
 tags:
   - travessia
-parameters:
 responses:
+  200:
+    description: Obtém as travessias
+  500:
+    description: Erro

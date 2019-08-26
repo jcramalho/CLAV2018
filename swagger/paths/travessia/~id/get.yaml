@@ -1,6 +1,15 @@
-summary:
-description:
+summary: Obtém a travessia de um processo
+description: Obtém a travessia de um processo (lista de códigos de processos)
 tags:
   - travessia
 parameters:
+  - name: id
+    in: path
+    description: 'Código de um processo (exemplo: 100.10.001)'
+    type: string
+    required: true
 responses:
+  200:
+    description: Obtém a travessia de um processo
+  500:
+    description: Erro

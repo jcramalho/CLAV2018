@@ -1,6 +1,25 @@
-summary:
-description:
+summary: Define as travessias
+description: Define as travessias, ou seja, as travessias que estavam anteriormente definidas são descartadas e são consideradas apenas as providenciadas
 tags:
   - travessia
-requestBody:
+parameters:
+  - name: body
+    in: body
+    description: 'Lista de objetos onde em cada objeto no processo deve ser colocado o código do processo e na travessia uma lista de códigos de processos'
+    required: true
+    schema:
+      type: array
+      items:
+        type: object
+        properties:
+          processo:
+            type: string
+          travessia:
+            type: array
+            items:
+              type: string
 responses:
+  200:
+    description: Travessias definidas
+  500:
+    description: Erro
