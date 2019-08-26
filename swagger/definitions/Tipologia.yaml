@@ -1,0 +1,13 @@
+type: object
+properties:
+  sigla:
+    type: string
+  designacao:
+    type: string
+  estado:
+    type: string
+    enum: [Ativa, Inativa, Harmonização]
+required:
+  - sigla
+  - designacao
+  - estado

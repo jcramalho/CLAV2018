@@ -1,6 +1,15 @@
-summary:
-description:
+summary: Lista os processos em que uma tipologia intervem como dono
+description: Lista os processos em que uma tipologia intervem como dono. Para cada processo devolve a informação do codigo, titulo e id.
 tags:
   - tipologias
 parameters:
+  - name: id
+    in: path
+    description: 'Identificador de uma tipologia (exemplo: tip_FA)'
+    type: string
+    required: true
 responses:
+  200:
+    description: Lista os processos em que uma tipologia intervem como dono
+  500:
+    description: Erro

@@ -1,6 +1,22 @@
-summary:
-description:
+summary: Gera um pedido de alteração da tipologia
+description: Gera um pedido de alteração da tipologia
 tags:
   - tipologias
-requestBody:
+parameters:
+  - name: id
+    in: path
+    description: 'Identificador de uma tipologia (exemplo: tip_AADR)'
+    type: string
+    required: true
+  - name: body
+    in: body
+    description: Dados a alterar
+    required: true
+    schema:
+      $ref: '#/definitions/Tipologia'
+
 responses:
+  200:
+    description: Gera um pedido de alteração da tipologia
+  500:
+    description: Erro

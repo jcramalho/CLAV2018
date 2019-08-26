@@ -1,6 +1,23 @@
-summary:
-description:
+summary: 'Realizar pedido de criação de uma tipologia TODO: corrigir'
+description: Realizar pedido de criação de uma tipologia
 tags:
   - tipologias
-requestBody:
+parameters:
+  - name: body
+    in: body
+    description: 'Tipologia + Token'
+    required: true
+    schema:
+      properties:
+        #TODO
+        TODO:
+          type: TODO
+        codigo:
+          type: string
+        token:
+          type: string
 responses:
+  200:
+    description: Realizado pedido de criação de tipologia
+  500:
+    description: Erro

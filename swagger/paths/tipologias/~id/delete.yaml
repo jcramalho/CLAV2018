@@ -1,6 +1,24 @@
-summary:
-description:
+summary: 'Gera um pedido de remoção da tipologia TODO: corrigir'
+description: Gera um pedido de remoção da tipologia
 tags:
   - tipologias
-requestBody:
+parameters:
+  - name: id
+    in: path
+    description: 'Identificador de uma tipologia (exemplo: tip_AADR)'
+    type: string
+    required: true
+  - name: body
+    in: body
+    description: 'Tipologia'
+    required: true
+    schema:
+      properties:
+        #TODO
+        TODO:
+          type: TODO
 responses:
+  200:
+    description: Gera um pedido de remoção da Tipologia
+  500:
+    description: Erro

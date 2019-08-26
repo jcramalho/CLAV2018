@@ -1,6 +1,15 @@
-summary:
-description:
+summary: Lista os processos em que uma tipologia intervem como participante
+description: Lista os processos em que uma tipologia intervem como participante. Para cada processo devolve a informação do id, codigo, titulo e tipoPar.
 tags:
   - tipologias
 parameters:
+  - name: id
+    in: path
+    description: 'Identificador de uma tipologia (exemplo: tip_AADR)'
+    type: string
+    required: true
 responses:
+  200:
+    description: Lista os processos em que uma tipologia intervem como participante
+  500:
+    description: Erro

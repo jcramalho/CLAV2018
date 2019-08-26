@@ -1,6 +1,21 @@
-summary:
-description:
+summary: Lista todas as tipologias podendo a lista ser filtrada
+description: Lista todas as tipologias podendo a lista ser filtrada. Para cada tipologia devolve a informação do id, sigla, designação e estado
 tags:
   - tipologias
 parameters:
+  - in: query
+    name: estado
+    type: string
+    description: Filtra as tipologias pelo estado das mesmas. O estado pode ser Ativa, Inativa ou Harmonização.
+    required: false
+    enum: [Ativa, Inativa, Harmonização]
+  - in: query
+    name: designacao
+    type: string
+    description: Filtra as tipologias pelo designação das mesmas.
+    required: false
 responses:
+  200:
+    description: Lista todas as tipologias
+  500:
+    description: Erro

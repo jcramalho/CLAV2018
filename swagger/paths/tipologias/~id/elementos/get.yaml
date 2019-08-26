@@ -1,6 +1,15 @@
-summary:
-description:
+summary: Lista as entidades que pertencem à tipologia
+description: Lista as entidades que pertencem à tipologia. Para cada entidade devolve a informação de sigla, designação e id
 tags:
   - tipologias
 parameters:
+  - name: id
+    in: path
+    description: 'Identificador de uma tipologia (exemplo: tip_FA)'
+    type: string
+    required: true
 responses:
+  200:
+    description: Lista as entidades que pertencem à tipologia
+  500:
+    description: Erro

@@ -1,6 +1,17 @@
-summary:
-description:
+summary: Consulta de uma tipologia
+description: Consulta de uma tipologia devolvendo a informação de sigla, designação e estado
 tags:
   - tipologias
 parameters:
+  - name: id
+    in: path
+    description: 'Identificador de uma tipologia (exemplo: tip_AADR)'
+    type: string
+    required: true
 responses:
+  200:
+    description: Consulta de uma tipologia
+  404:
+    description: A tipologia não existe
+  500:
+    description: Erro
