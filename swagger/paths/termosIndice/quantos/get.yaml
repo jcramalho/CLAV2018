@@ -1,6 +1,9 @@
-summary:
-description:
+summary: Devolve o número de termos índice
+description: Devolve o número de termos índice
 tags:
   - termosIndice
-parameters:
 responses:
+  200:
+    description: Devolve o número de termos
+  500:
+    description: Erro

@@ -1,6 +1,15 @@
-summary:
-description:
+summary: Devolve a lista dos termos de índice associados a uma determinada classe
+description: Devolve a lista dos termos de índice associados a uma determinada classe. Para cada termo devolve a informação do id e do nome
 tags:
   - termosIndice
 parameters:
+  - name: classe
+    in: path
+    description: 'Identificador de uma classe (exemplo: c200.10.100)'
+    type: string
+    required: true
 responses:
+  200:
+    description: Devolve a lista dos termos de índice associados a uma determinada classe
+  500:
+    description: Erro

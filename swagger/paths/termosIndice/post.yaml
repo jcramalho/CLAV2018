@@ -1,6 +1,20 @@
-summary:
-description:
+summary: 'Realizar pedido de criação de uma entidade TODO: corrigir'
+description: Realizar pedido de criação de um termo índice
 tags:
   - termosIndice
-requestBody:
+parameters:
+  - name: body
+    in: body
+    description: 'Nome do termo e o id da classe ao qual deve estar associado'
+    required: true
+    schema:
+      properties:
+        termo:
+          type: string
+        idClasse:
+          type: string
 responses:
+  200:
+    description: Realizado pedido de criação de um termo índice
+  500:
+    description: Erro
