@@ -32,4 +32,13 @@ router.put('/', (req, res) => {
             res.status(500).send(`Erro ao atualizar trabalho pendente: ${erro}`)});
 })
 
+// Apaga um trabalho pendente
+router.delete('/:id', (req, res) => {
+    Pendentes.apagar(req.params.id, req.body)
+        .then(dados => {
+            res.jsonp(dados)})
+        .catch(erro => {
+            res.status(500).send(`Erro na remoção de um trabalho pendente ' ${req.params.id}': ${erro}`)});
+})
+
 module.exports = router;
