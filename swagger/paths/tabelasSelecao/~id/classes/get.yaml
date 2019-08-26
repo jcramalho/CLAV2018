@@ -1,5 +1,5 @@
-summary: Consultar tabela de seleção
-description: Consultar tabela de seleção
+summary: Lista as classes da tabela de seleção
+description: Lista as classes da tabela de seleção
 tags:
   - tabelasSelecao
 parameters:
@@ -10,6 +10,6 @@ parameters:
     required: true
 responses:
   200:
-    description: Consultar tabela de seleção
+    description: Lista as classes da tabela de seleção
   500:
     description: Erro

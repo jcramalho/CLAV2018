@@ -1,6 +1,19 @@
-summary:
-description:
+summary: 'Criar uma tabela de seleção TODO: corrigir'
+description: Criar uma tabela de seleção 
 tags:
   - tabelasSelecao
-requestBody:
+parameters:
+  - name: body
+    in: body
+    description: 'TODO'
+    required: true
+    schema:
+      properties:
+        #TODO
+        TODO:
+          type: TODO
 responses:
+  200:
+    description: Criar uma tabela de seleção
+  500:
+    description: Erro

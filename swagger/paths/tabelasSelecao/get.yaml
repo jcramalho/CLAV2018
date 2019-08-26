@@ -1,6 +1,9 @@
-summary:
-description:
+summary: Lista as tabelas de seleção
+description: Lista as tabelas de seleção
 tags:
   - tabelasSelecao
-parameters:
 responses:
+  200:
+    description: Lista todas as tabelas de seleção
+  500:
+    description: Erro

@@ -1,6 +1,20 @@
-summary:
-description:
+summary: Lista as classes filho da classe com id parent da tabela de seleção
+description: Lista as classes filho da classe com id parent da tabela de seleção
 tags:
   - tabelasSelecao
 parameters:
+  - name: id
+    in: path
+    description: 'Identificador de uma tabela de seleção'
+    type: string
+    required: true
+  - name: parent
+    in: path
+    description: 'Identificador de uma classe (exemplo: c200.10.100)'
+    type: string
+    required: true
 responses:
+  200:
+    description: Lista as classes filho da classe com id parent da tabela de seleção
+  500:
+    description: Erro
