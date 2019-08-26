@@ -1,6 +1,22 @@
-summary:
-description:
+summary: Adicionar um vocabulário
+description: Adicionar um vocabulário
 tags:
   - vocabularios
-requestBody:
+parameters:
+  - name: body
+    in: body
+    description: 'Vocabulário'
+    required: true
+    schema:
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+        desc:
+          type: string
 responses:
+  200:
+    description: Adicionar um vocabulário
+  404:
+    description: Erro

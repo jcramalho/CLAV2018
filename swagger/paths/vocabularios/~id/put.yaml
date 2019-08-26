@@ -1,6 +1,25 @@
-summary:
-description:
+summary: Atualizar a legenda e descrição de um vocabulário
+description: Atualizar a legenda e descrição de um vocabulário
 tags:
   - vocabularios
-requestBody:
+parameters:
+  - name: id
+    in: path
+    description: 'Identificador de um vocabulario (exemplo: vc_processoTipoRelacao)'
+    type: string
+    required: true
+  - name: body
+    in: body
+    description: 'Dados a alterar'
+    required: true
+    schema:
+      properties:
+        label:
+          type: string
+        desc:
+          type: string
 responses:
+  200:
+    description: Atualizada a legenda e descrição de um vocabulário
+  404:
+    description: Erro

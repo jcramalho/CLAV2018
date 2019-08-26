@@ -1,6 +1,15 @@
-summary:
-description:
+summary: Devolve a lista de termos de um vocabulario
+description: Devolve a lista de termos de um vocabulario, onde para cada termo é devolvida a informação do idtermo, termo e desc
 tags:
   - vocabularios
 parameters:
+  - name: id
+    in: path
+    description: 'Identificador de um vocabulario (exemplo: vc_processoTipoRelacao)'
+    type: string
+    required: true
 responses:
+  200:
+    description: Devolve a lista de termos de um vocabulario
+  404:
+    description: Erro

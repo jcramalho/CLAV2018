@@ -1,6 +1,9 @@
-summary:
-description:
+summary: Devolve a lista de todos os vocabularios
+description: Devolve a lista de todos os vocabularios onde para cada vocabulario devolve a informação do id, label e desc
 tags:
   - vocabularios
-parameters:
 responses:
+  200:
+    description: Devolve a lista de todos os vocabularios
+  404:
+    description: Erro
