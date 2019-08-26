@@ -92,3 +92,23 @@ Pendentes.atualizar = async function(pendente){
         return err
     }
 }
+
+/**
+ * Apaga um pendente no sistema.
+ * 
+ * @param pendente a apagar no sistema.
+ * @return {Pendente} pendente atualizado.
+ */
+Pendentes.apagar = async function(pendente){
+    try {
+        Pendente.findByIdAndRemove({ _id: pendente}, function(err, updatedPendente){
+            if (err) {
+                return err;
+            } else {
+                return (updatedPendente)
+            }
+        })
+    } catch (err) {
+        return err
+    }
+}
