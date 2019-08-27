@@ -35,8 +35,6 @@ tags:
     description:
   - name: tipologias
     description:
-  - name: trabalhos
-    description:
   - name: travessia
     description:
   - name: utils
