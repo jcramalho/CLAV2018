@@ -1,6 +1,20 @@
-summary:
-description:
+summary: Altera o nome da conta de um utilizador
+description: Altera o nome da conta de um utilizador
 tags:
   - users
-requestBody:
+parameters:
+  - name: body
+    in: body
+    description: 'De forma a alterar o nome de uma conta de um utilizador é necessário o id da conta e o novo nome'
+    required: true
+    schema:
+      properties:
+        id:
+          type: string
+        nome:
+          type: string
 responses:
+  200:
+    description: Alterado o nível da conta de um utilizador
+  500:
+    description: Erro

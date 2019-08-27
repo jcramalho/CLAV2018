@@ -1,6 +1,15 @@
-summary:
-description:
+summary: Consulta um utilizador
+description: Consulta um utilizador devolvendo a informação de id, name, email, entidade, internal, level, password and nCalls
 tags:
   - users
 parameters:
+  - name: id
+    in: path
+    description: 'Identificador de um utilizador'
+    type: string
+    required: true
 responses:
+  200:
+    description: Consulta um utilizador
+  500:
+    description: Erro

@@ -1,6 +1,15 @@
-summary:
-description:
+summary: Dado o token de um utilizador devolve a informação do utilizador
+description: Dado o token de um utilizador devolve a informação do utilizador, ou seja, o id, name, email, entidade, internal, level, password e nCalls.
 tags:
   - users
 parameters:
+  - name: id
+    in: path
+    description: 'Token de um utilizador'
+    type: string
+    required: true
 responses:
+ 200:
+   description: Informação de um utilizador
+ 500:
+   description: Erro

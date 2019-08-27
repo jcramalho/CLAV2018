@@ -1,6 +1,20 @@
-summary:
-description:
+summary: Efetua login de um utilizador
+description: Efetua login de um utilizador devolvendo token, name e entidade.
 tags:
   - users
-requestBody:
+parameters:
+  - name: body
+    in: body
+    description: 'De forma a efetuar login um utilizador é necessário email(username) e password'
+    required: true
+    schema:
+      properties:
+        username:
+          type: string
+        password:
+          type: string
 responses:
+  200:
+    description: Login efetuado com sucesso
+  500:
+    description: Erro

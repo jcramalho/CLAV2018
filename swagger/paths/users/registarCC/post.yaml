@@ -1,6 +1,26 @@
-summary:
-description:
+summary: Adiciona/regista um utilizador através de CC
+description: Adiciona/regista um utilizador através de CC
 tags:
   - users
-requestBody:
+parameters:
+  - name: body
+    in: body
+    description: 'De forma a registar um utilizador através de CC é necessário nic, name, email, entidade (sigla) e type (level)'
+    required: true
+    schema:
+      properties:
+        nic:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        entidade:
+          type: string
+        type:
+          type: number
 responses:
+  200:
+    description: Adicionado/registado um utilizador através de CC
+  500:
+    description: Erro

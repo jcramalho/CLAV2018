@@ -1,6 +1,18 @@
-summary:
-description:
+summary: 'callback após login através de autenticação.gov TODO: corrigir'
+description: callback após login através de autenticação.gov
 tags:
   - users
-requestBody:
+parameters:
+  - name: body
+    in: body
+    description: 'SAML response'
+    required: true
+    schema:
+      properties:
+        SAMLResponse:
+          type: string
 responses:
+  200:
+    description: TODO
+  500:
+    description: Erro

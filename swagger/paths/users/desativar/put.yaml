@@ -1,6 +1,20 @@
-summary:
-description:
+summary: Desativa a conta de um utilizador
+description: Desativa a conta de um utilizador
 tags:
   - users
-requestBody:
+parameters:
+  - name: body
+    in: body
+    description: 'De forma a desativar a conta de um utilizador é necessário token e o id da conta a desativar'
+    required: true
+    schema:
+      properties:
+        token:
+          type: string
+        id:
+          type: string
 responses:
+  200:
+    description: Desativada a conta de um utilizador
+  500:
+    description: Erro

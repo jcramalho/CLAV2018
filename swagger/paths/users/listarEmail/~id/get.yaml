@@ -1,6 +1,15 @@
-summary:
-description:
+summary: Devolve o email de um utilizador
+description: Devolve o email de um utilizador
 tags:
   - users
 parameters:
+  - name: id
+    in: path
+    description: 'Identificador de um utilizador'
+    type: string
+    required: true
 responses:
+ 200:
+   description: Email de um utilizador
+ 500:
+   description: Erro

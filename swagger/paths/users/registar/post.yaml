@@ -1,6 +1,26 @@
-summary:
-description:
+summary: Adiciona/regista um utilizador
+description: Adiciona/regista um utilizador
 tags:
   - users
-requestBody:
+parameters:
+  - name: body
+    in: body
+    description: 'De forma a registar um utilizador é necessário name, email, entidade (sigla), type (level) e password'
+    required: true
+    schema:
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        entidade:
+          type: string
+        type:
+          type: number
+        password:
+          type: string
 responses:
+  200:
+    description: Adicionado/registado um utilizador
+  500:
+    description: Erro

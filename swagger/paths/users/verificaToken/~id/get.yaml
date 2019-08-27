@@ -1,6 +1,15 @@
-summary:
-description:
+summary: Verifica o token para um utilizador
+description: Verifica o token para um utilizador devolvendo o id do utilizador, iat e exp.
 tags:
   - users
 parameters:
+  - name: id
+    in: path
+    description: 'Token de um utilizador'
+    type: string
+    required: true
 responses:
+ 200:
+   description: Informação acerca do token
+ 500:
+   description: Erro

@@ -1,6 +1,21 @@
-summary:
-description:
+summary: Devolve a lista utilizadores
+description: Devolve a lista utilizadores. Para cada utilizador devolve a informação do id, name, email, entidade, internal, level, password and nCalls
 tags:
   - users
 parameters:
+  - in: query
+    name: entidade
+    type: string
+    description: Filtra os utilizadores pela entidade a que correspondem 
+    required: false
+  - in: query
+    name: formato
+    type: string
+    enum: [normalizado]
+    description: Caso o formato seja normalizado em vez de devolver o level como um número devolve em texto para além de que devolve apenas o name, entidade, level, email e id
+    required: false
 responses:
+  200:
+    description: Devolve a lista dos utilizadores
+  500:
+    description: Erro
