@@ -98,8 +98,6 @@ Classes.listarPNsEspecificos = async (entidades, tipologias) => {
         .then(response => normalize(response))
 }
 
-
-
 // Devolve toda a informação de uma classe
 Classes.retrieve = async id => {
     try{
