@@ -35,9 +35,12 @@ app.use(function(req, res, next) {
 
 //body parser for post requests
 var bodyParser = require('body-parser')
-app.use(bodyParser.json());         // to support JSON-encoded bodies
-app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
-    extended: true
+app.use(bodyParser.json({limit: '50mb'}));         // to support JSON-encoded bodies
+app.use(bodyParser.urlencoded({
+    limit : '50mb',
+    // to support URL-encoded bodies
+    extended: true,
+    parameterLimit:50000
 }));
 
 //Server JWT gen
