@@ -1,6 +1,5 @@
 const execQuery = require('../../controllers/api/utils').execQuery
 const normalize = require('../../controllers/api/utils').normalize;
-const Pedidos = require('../../controllers/pedidos');
 const axios = require('axios');
 const myhost = require('./../../config/database').host
 const Entidades = module.exports;
@@ -169,26 +168,6 @@ Entidades.existe = (entidade) => {
         .then(response => response.boolean);
 };
 
-/**
- * Insere uma nova entidade no sistema, gerando um pedido apropriado.
- * A entidade criada encontrar-se-á no estado "Harmonização".
- * NOTA: Esta função altera sempre o estado da base de dados, devendo-se por
- * isso verificar primeiro se o identificador da entidade a inserir ainda não
- * se encontra em uso.
- * 
- * @see pedidos 
- * 
- * @param {Entidade} entidade entidade que se pretende criar
- * @param {string} utilizador email do utilizador que criou a entidade
- * @return {Promise<Pedido | Error>} promessa que quando cumprida possui o
- * pedido gerado para a criação da nova entidade
- */
-Entidades.criar = async (entidade, utilizador) => {
-    let user = await axios.get(myhost + "/api/users/listarToken/" + utilizador);
-
-    Pedidos.criar('Criação', 'Entidade', entidade, user.data.email);
-};
-
 //Criar controller para inserir na base de dados, depois do pedido aprovado!!
 /*const query = `INSERT DATA {
         clav:ent_${entidade.sigla} rdf:type owl:NamedIndividual , clav:Entidade ;
@@ -200,42 +179,6 @@ Entidades.criar = async (entidade, utilizador) => {
             ${entidade.tipologias.map(tipologia => `clav:pertenceTipologiaEnt clav:${tipologia} ;`).join('\n')}
             clav:entEstado 'Harmonização' .
     }`;*/
-
-/**
- * Gera um pedido de remoção da entidade.
- * Nenhuma alteração será feita à entidade, só quando o pedido for
- * validado é que esta passará para o estado "Inativa"
- * 
- * @see pedidos
- * 
- * @param {string} id código identificador da entidade (p.e, "ent_CEE")
- * @param {string} utilizador email do utilizador que apagou a entidade
- * @return {Promise<Pedido | Error>} promessa que quando cumprida possui o
- * pedido gerado para a remoção da entidade 
- */
-Entidades.apagar = async (id, entidade, utilizador) => {
-    return Pedidos.criar('Remoção', 'Entidade', entidade, utilizador);
-};
-
-/**
- * Gera um pedido de alteração de uma entidade.
- * Nenhuma alteração será feita à entidade, só quando o pedido for
- * validado.
- * 
- * @see pedidos
- * 
- * @param {string} id código identificador da entidade (p.e, "ent_CEE")
- * @param {Object} alteracoes
- * @param {string} alteracoes.designacao (ex: "Assembleia da República")
- * @param {string} alteracoes.internacional (ex: "Sim" ou "Não")
- * @param {string} alteracoes.sioe id para sistema SIOE
- * @param {string} alteracoes.estado (ex: "Ativa", "Inativa" ou "Harmonização")
- * @param {[string]} alteracoes.tipologias lista de identificadores das tipologias
- * @param {string} utilizador email do utilizador que alterou a entidade
- */
-Entidades.alterar = async (id, alteracoes, utilizador) => {
-    return Pedidos.criar('Alteração', 'Entidade', alteracoes, utilizador);
-}
 
 /**
  * Lista os processos em que uma entidade intervem como dona.

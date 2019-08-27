@@ -187,12 +187,6 @@ router.get('/:id/df', (req, res) => {
         //.catch(erro => res.jsonp({cod: "404", mensagem: "Erro na consulta do DF associado à classe "+req.params.id+": " + erro}))
 })
 
-router.post('/', Auth.isLoggedInNEW, (req, res) => {
-    return Classes.criar(req.body, req.body.token)
-        .then(dados => res.jsonp(dados))
-        .catch(erro => res.status(500).send(`Erro na criação da classe: ${erro}`));
-})
-
 // Verifica se um determinado título de classe já existe
 router.post('/verificarTitulo', async (req, res) => {
     try {

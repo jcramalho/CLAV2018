@@ -1,6 +1,5 @@
 const execQuery = require('../../controllers/api/utils').execQuery
 const normalize = require('../../controllers/api/utils').normalize;
-const Pedidos = require('../../controllers/pedidos');
 const axios = require('axios');
 const myhost = require('./../../config/database').host
 const Tipologias = module.exports;
@@ -63,40 +62,6 @@ Tipologias.consultar = (id) => {
         .then(response => normalize(response)[0]);
 };
 
-/**
- * Insere uma nova tipologia no sistema, gerando um pedido apropriado.
- * A entidade criada encontrar-se-á no estado "Harmonização".
- * NOTA: Esta função altera sempre o estado da base de dados, devendo-se por
- * isso verificar primeiro se o identificador da entidade a inserir ainda não
- * se encontra em uso.
- * 
- * @see pedidos
- * 
- * @param {Tipologia} tipologia tipologia que se pretende criar
- * @param {string} utilizador email do utilizador que criou a tipologia
- * @return {Promise<Pedido | Error>} promessa que quando cumprida possui o
- * pedido gerado para a criação da nova tipologia
- */
-Tipologias.criar = async (tipologia, utilizador) => {
-    let user = await axios.get(myhost + "/api/users/listarToken/" + utilizador);
-
-    Pedidos.criar('Criação', 'Tipologia', tipologia, user.data.email)
-};
-
-/**
- * Gera um pedido de alteração de uma tipologia.
- * Nenhuma alteração será feita à tipologia, só quando o pedido for
- * validado.
- * 
- * @see pedidos
- * 
- * @param {string} id código identificador da tipologia (p.e, "tip_CEE")
- * @param {Object} alteracoes
- */
-Tipologias.alterar = async (id, alteracoes, utilizador) => {
-    return Pedidos.criar('Alteração', 'Tipologia', alteracoes, utilizador);
-}
-
 //Criar controller para inserir na base de dados, depois do pedido aprovado!!
 /*const query = `INSERT DATA {
         clav:tip_${tipologia.sigla} rdf:type owl:NamedIndividual , clav:TipologiaEntidade ;
@@ -122,22 +87,6 @@ Tipologias.existe = (tipologia) => {
 
     return execQuery("query", query)
         .then(response => response.boolean);
-};
-
-/**
- * Gera um pedido de remoção da tipologia
- * Nenhuma alteração será feita à tipologia, só quando o pedido for
- * validado é que esta passará para o estado "Inativa"
- * 
- * @see pedidos
- * 
- * @param {string} id código identificador da tipologia (p.e, "tip_AP")
- * @param {string} utilizador email do utilizador que apagou a tipologia
- * @return {Promise<Pedido | Error>} promessa que quando cumprida possui o
- * pedido gerado para a remoção da tipologia
- */
-Tipologias.apagar = async (id, tipologia, utilizador) => {
-    return Pedidos.criar('Remoção', 'Tipologia', tipologia, utilizador);
 };
 
 /**

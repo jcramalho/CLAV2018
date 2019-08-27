@@ -1,7 +1,6 @@
 const execQuery = require('../../controllers/api/utils').execQuery
 const normalize = require('../../controllers/api/utils').normalize;
 const projection = require('../../controllers/api/utils').projection;
-const Pedidos = require('../../controllers/pedidos');
 const axios = require('axios');
 const myhost = require('./../../config/database').host
 const Leg = module.exports;
@@ -180,44 +179,6 @@ Leg.consultar = id => {
         .then(response => projection(normalize(response), campos, agrupar)[0]);
 };
 
-/**
- * Insere uma nova legislação no sistema, gerando um pedido apropriado.
- * O identificador da nova legislação é gerado sequencialmente.
- * A legislação criada encontrar-se-á no estado "Harmonização".
- * 
- * @see pedidos
- *
- * @param {Legislacao} legislacao legislação que se pretende criar
- * @param {string} utilizador email do utilizador que criou a legislação
- * @return {Promise<Pedido | Error>} promessa que quando cumprida possui o
- * pedido gerado para a criação da nova legislação
- */
-Leg.criar = async (legislacao, utilizador) => {
-    let user = await axios.get(myhost + "/api/users/listarToken/" + utilizador);
-
-    const nanoid = require('nanoid')
-    const id = "leg_" + nanoid();
-
-    legislacao.codigo= id;
-
-    Pedidos.criar('Criação', 'Legislação', legislacao, user.data.email);
-};
-
-/**
- * Gera um pedido de alteração de uma Legislação.
- * Nenhuma alteração será feita à legislação, só quando o pedido for
- * validado.
- * 
- * @see pedidos
- * 
- * @param {string} id código identificador da legislação (p.e, "leg_CEE")
- * @param {Object} alteracoes
- * @param {string} utilizador email do utilizador que alterou a entidade
- */
-Leg.alterar = async (id, alteracoes, utilizador) => {
-    return Pedidos.criar('Alteração', 'Legislação', alteracoes, utilizador);
-}
-
 //Criar controller para inserir na base de dados, depois do pedido aprovado!!
 /*const query = `INSERT DATA {
         clav:${id} rdf:type owl:NamedIndividual , clav:Legislacao ;
@@ -230,9 +191,7 @@ Leg.alterar = async (id, alteracoes, utilizador) => {
         
         ${legislacao.entidades.map(entidade => `clav:${id} clav:temEntidadeResponsavel clav:${entidade}.`).join('\n')}
         
-    }`;
-    return execQuery("update", query)
-        .then(() => Pedidos.criar(pedido));*/
+    }`;*/
 
 /**
  * Verifica se um determinado numero de legislação existe no sistema.
@@ -263,24 +222,6 @@ Leg.temPNs = (legislacao) => {
     return execQuery("query", query)
         .then(response => response.boolean);
 };
-
-
-/**
- * Gera um pedido de remoção da legislação.
- * Nenhuma alteração será feita à legislação., só quando o pedido for
- * validado
- * 
- * @see pedidos
- * 
- * @param {string} id código identificador da legislação (p.e, "leg_123")
- * @param {string} utilizador email do utilizador que apagou a legislação
- * @return {Promise<Pedido | Error>} promessa que quando cumprida possui o
- * pedido gerado para a remoção da legislação
- */
-Leg.apagar = (id, legislacao, utilizador) => {
-    return Pedidos.criar('Remoção', 'Legislação', legislacao, utilizador);
-};
-
 
 // Devolve a lista de processos regulados pelo documento: id, codigo, titulo
 Leg.regula = id => {

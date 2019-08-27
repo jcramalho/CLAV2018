@@ -1,6 +1,5 @@
 const execQuery = require('../../controllers/api/utils').execQuery
 const normalize = require('../../controllers/api/utils').normalize
-const Pedidos = require('../../controllers/pedidos')
 const axios = require('axios')
 const Classes = module.exports
 const myhost = require('../../config/database').host
@@ -488,23 +487,6 @@ Classes.df = function (id) {
 }
 
 // ============================================================================
-
-/**
- * Insere uma nova classe no sistema, gerando um pedido apropriado.
- * A classe criada encontrar-se-á no estado "Harmonização".
- * 
- * @see pedidos
- *
- * @param {Classe} classe que se pretende criar
- * @param {string} utilizador identificação do utilizador que criou a classe
- * @return {Promise<Pedido | Error>} promessa que quando cumprida possui o
- * pedido gerado para a criação da nova classe
- */
-Classes.criar = async (classe, utilizador) => {
-    let user = await axios.get(myhost + "/api/users/listarToken/" + utilizador);
-    Pedidos.criar('Criação', 'Classe', classe, user.data.email)
-};
-
 
 Classes.filterCommon = function () {
     var fetchQuery = `

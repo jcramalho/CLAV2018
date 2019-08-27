@@ -34,26 +34,12 @@ router.get('/', (req, res) => {
         .catch(erro => res.status(500).send(`Erro na listagem das tipologias: ${erro}`));
 });
 
-// Criação de uma nova tipologia. Em caso de sucesso gera um novo pedido
-router.post('/', Auth.isLoggedInNEW, estaDisponivel, (req, res) => {
-    return Tipologias.criar(req.body, req.body.token)
-        .then(dados => res.jsonp(dados))
-        .catch(erro => res.status(500).send(`Erro na criação da tipologia: ${erro}`));
-});
-
 // Consulta de uma tipologia: sigla, designacao, estado
 router.get('/:id', (req, res) => {
     return Tipologias.consultar(req.params.id)
         .then(dados => dados ? res.jsonp(dados) : res.status(404).send(`Erro. A tipologia '${req.params.id}' não existe`))
         .catch(erro => res.status(500).send(`Erro na consulta da tipologia '${req.params.id}': ${erro}`));
 });
-
-// Apaga uma tipologia identificada por uma sigla. Em caso de sucesso gera um novo pedido
-router.delete('/:id', Auth.isLoggedIn, (req, res) => {
-    return Tipologias.apagar(req.params.id, req.body, req.user.email)
-        .then(dados => res.jsonp(dados))
-        .catch(erro => res.status(500).send(`Erro na remoção da tipologia '${req.params.id}': ${erro}`));
-})
 
 // Lista as entidades que pertencem à tipologia: sigla, designacao, id
 router.get('/:id/elementos', (req, res) => {
@@ -75,11 +61,5 @@ router.get('/:id/intervencao/participante', (req, res) => {
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na query sobre as participações da entidade '${req.params.id}': ${erro}`));
 });
-
-router.put('/:id', Auth.isLoggedIn, (req, res) => {
-    return Tipologias.alterar(req.params.id, req.body, req.user.email)
-        .then(dados => res.jsonp(dados))
-        .catch(erro => res.status(500).send(`Erro na alteração da Tipologia '${req.params.id}': ${erro}`));
-})
 
 module.exports = router;

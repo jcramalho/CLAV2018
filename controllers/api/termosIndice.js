@@ -1,6 +1,5 @@
 const execQuery = require('../../controllers/api/utils').execQuery
 const normalize = require('../../controllers/api/utils').normalize;
-const Pedidos = require('../../controllers/pedidos');
 var TermosIndice = module.exports
 
 /**
@@ -88,29 +87,6 @@ TermosIndice.contar = function() {
         .then(response => normalize(response));
 }
 
-/**
- * Insere um novo termo de indice no sistema, gerando um pedido apropriado.
- * O TI criado encontrar-se-á no estado "Harmonização".
- * NOTA: Esta função altera sempre o estado da base de dados, devendo-se por
- * isso verificar primeiro se o identificador da entidade a inserir ainda não
- * se encontra em uso.
- * 
- * @see pedidos 
- * 
- * @param {TermosIndice}  termoIndice termos de indice que se pretende criar
- * @param {string} utilizador email do utilizador que criou a entidade
- * @return {Promise<Pedido | Error>} promessa que quando cumprida possui o
- * pedido gerado para a criação de novo termo de indice
- */
-TermosIndice.criar = async (termoIndice, utilizador) => {
-    const nanoid = require('nanoid')
-    const id = "ti_" + nanoid();
-
-    termoIndice.codigo = id;
-
-    Pedidos.criar('Criação', 'Termo de Indice', termoIndice, utilizador);
-};
-
 //Criar controller para inserir na base de dados, depois do pedido aprovado!!
 /*
 const query = `INSERT DATA {
@@ -118,7 +94,4 @@ const query = `INSERT DATA {
         clav:termo '${termoIndice.termo}';
         clav:estado 'Harmonização' ;
         clav:estaAssocClasse '${termoIndice.idClasse}' .
-}`;
-
-return execQuery("update", query)
-    .then(() => Pedidos.criar(pedido));*/
+}`;*/

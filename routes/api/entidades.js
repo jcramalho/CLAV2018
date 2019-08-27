@@ -46,31 +46,11 @@ router.get('/', (req, res) => {
         
 });
 
-// Criação de uma nova entidade. Em caso de sucesso gera um novo pedido
-router.post('/', Auth.isLoggedInNEW, estaDisponivel, (req, res) => {
-    return Entidades.criar(req.body, req.body.token)
-        .then(dados => res.jsonp(dados))
-        .catch(erro => res.status(500).send(`Erro na criação da entidade: ${erro}`));
-});
-
 // Consulta de uma entidade: sigla, designacao, estado, internacional
 router.get('/:id', (req, res) => {
     return Entidades.consultar(req.params.id)
         .then(dados => dados ? res.jsonp(dados) : res.status(404).send(`Erro. A entidade '${req.params.id}' não existe`))
         .catch(erro => res.status(500).send(`Erro na consulta da entidade '${req.params.id}': ${erro}`));
-});
-
-router.put('/:id', Auth.isLoggedIn, (req, res) => {
-    return Entidades.alterar(req.params.id, req.body, req.user.email)
-        .then(dados => res.jsonp(dados))
-        .catch(erro => res.status(500).send(`Erro na alteração da entidade '${req.params.id}': ${erro}`));
-})
-
-// Apaga uma entidade identificada por uma sigla. Em caso de sucesso gera um novo pedido
-router.delete('/:id', Auth.isLoggedIn, (req, res) => {
-    return Entidades.apagar(req.params.id, req.body, req.user.email)
-        .then(dados => res.jsonp(dados))
-        .catch(erro => res.status(500).send(`Erro na remoção da entidade '${req.params.id}': ${erro}`));
 });
 
 // Lista as tipologias a que uma entidade pertence: id, sigla, designacao
