@@ -13,6 +13,7 @@ var level4Classes = []
 
 var notasAplicacao = []
 var exemplosNotasAplicacao = []
+var termosInd = []
 
 exports.reset = async () => { 
     try {
@@ -88,6 +89,7 @@ async function loadClasses() {
         try {
             let classes = await Classes.listar(null);
             level1Classes = JSON.parse(JSON.stringify(classes))
+            // Carregamento da informação das classes de nível 1
             for(var i = 0; i < classes.length; i++){
                 classes[i].drop = false
                 let cid = classes[i].id.split('#')[1]
@@ -99,6 +101,7 @@ async function loadClasses() {
                 let ex = await Classes.exemplosNotasAp(cid)
                 exemplosNotasAplicacao = exemplosNotasAplicacao.concat(JSON.parse(JSON.stringify(ex.map(e => e.exemplo))))
 
+                // Carregamento da informação das classes de nível 2
                 for(var j=0; j < desc.length; j++){
                     let cid2 = desc[j].id.split('#')[1]
                     desc[j].drop = false
@@ -110,6 +113,7 @@ async function loadClasses() {
                     let ex = await Classes.exemplosNotasAp(cid2)
                     exemplosNotasAplicacao = exemplosNotasAplicacao.concat(JSON.parse(JSON.stringify(ex.map(e => e.exemplo))))
 
+                    // Carregamento da informação das classes de nível 3
                     for(var k=0; k < desc2.length; k++){
                         desc2[k].drop = false
                         let cid3 = desc2[k].id.split('#')[1]
@@ -120,6 +124,8 @@ async function loadClasses() {
                         notasAplicacao = notasAplicacao.concat(JSON.parse(JSON.stringify(na.map(n => n.nota))))
                         let ex = await Classes.exemplosNotasAp(cid3)
                         exemplosNotasAplicacao = exemplosNotasAplicacao.concat(JSON.parse(JSON.stringify(ex.map(e => e.exemplo))))
+                        let ti = await Classes.ti(cid3)
+                        termosInd = termosInd.concat(JSON.parse(JSON.stringify(ti.map(t => t.termo))))
 
                         desc2[k].filhos = desc3
                     }
