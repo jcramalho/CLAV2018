@@ -1,0 +1,27 @@
+type: object
+properties:
+  dataCriacao:
+    type: string
+    format: date-time
+  dataAtualizacao:
+    type: string
+    format: date-time
+  numInterv:
+    type: number
+  criadoPor:
+    type: string
+  objeto:
+    type: object
+  tipo:
+    type: string
+    enum: [Classe, TS Organizacional, TS Pluriorganizacional, Entidade, Tipologia, Legislação, Termo de Indice]
+  acao:
+    type: string
+    enum: [Criação, Alteração, Remoção]
+required:
+  - dataCriacao
+  - dataAtualizacao
+  - numInterv
+  - criadoPor
+  - tipo
+  - acao

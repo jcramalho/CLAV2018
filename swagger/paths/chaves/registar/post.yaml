@@ -7,7 +7,13 @@ parameters:
     name: body
     description: Para criar uma chave é necessário o nome para a chave, o email e a entidade
     schema:
-      $ref: '#/definitions/RegChave'
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        entidade:
+          type: string
 responses:
   200:
     description: Chave API criada

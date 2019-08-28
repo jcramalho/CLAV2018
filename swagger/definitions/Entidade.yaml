@@ -2,6 +2,8 @@ type: object
 properties:
   designacao:
     type: string
+  sigla:
+    type: string
   internacional:
     type: string
     enum: [Sim, Não]
@@ -14,9 +16,14 @@ properties:
     type: array
     items:
       type: string
+  codigo:
+    type: string
+    description: "'ent_' concatenado com o valor de sigla"
 required:
   - designacao
   - internacional
   - sioe
   - estado
   - tipologias
+  - sigla
+  - codigo

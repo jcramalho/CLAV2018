@@ -1,0 +1,45 @@
+type: object
+properties:
+  internal:
+    type: boolean
+  level:
+    type: number
+  email:
+    type: string
+  permissions:
+    type: object
+    properties:
+      LC:
+        type: boolean
+      AE:
+        type: boolean
+      ES:
+        type: boolean
+    required:
+      - LC
+      - AE
+      - ES
+  cc:
+    type: number
+  name:
+    type: string
+  entidade:
+    type: string
+  nCalls:
+    type: number
+  local:
+    type: object
+    properties:
+      password:
+        type: string
+    required:
+      - password
+required:
+  - internal
+  - level
+  - name
+  - email
+  - cc
+  - entidade
+  - local
+  - permissions

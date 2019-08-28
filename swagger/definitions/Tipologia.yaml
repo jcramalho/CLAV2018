@@ -7,7 +7,16 @@ properties:
   estado:
     type: string
     enum: [Ativa, Inativa, Harmonização]
+  entidades:
+    type: array
+    items:
+      type: string
+  codigo:
+    type: string
+    description: "'tip_' concatenado com o valor de sigla"
 required:
   - sigla
   - designacao
   - estado
+  - entidades
+  - codigo

@@ -1,0 +1,13 @@
+type: object
+properties:
+  termo:
+    type: string
+  idClasse:
+    type: string
+  id:
+    type: string
+    description: "'ti_' concatenado com um valor aleatório"
+required:
+  - termo
+  - idClasse
+  - id
