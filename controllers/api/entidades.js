@@ -168,18 +168,6 @@ Entidades.existe = (entidade) => {
         .then(response => response.boolean);
 };
 
-//Criar controller para inserir na base de dados, depois do pedido aprovado!!
-/*const query = `INSERT DATA {
-        clav:ent_${entidade.sigla} rdf:type owl:NamedIndividual , clav:Entidade ;
-            clav:entDesignacao '${entidade.designacao}' ;
-            clav:entSigla '${entidade.sigla}' ;
-            clav:entInternacional '${entidade.internacional}' ;
-            clav:entSIOE '${entidade.sioe}';
-
-            ${entidade.tipologias.map(tipologia => `clav:pertenceTipologiaEnt clav:${tipologia} ;`).join('\n')}
-            clav:entEstado 'Harmonização' .
-    }`;*/
-
 /**
  * Lista os processos em que uma entidade intervem como dona.
  * 

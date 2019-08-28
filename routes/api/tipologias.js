@@ -1,26 +1,8 @@
-var Logging = require('../../controllers/logging');
 var Auth = require('../../controllers/auth.js');
 var Tipologias = require('../../controllers/api/tipologias.js');
 
 var express = require('express');
 var router = express.Router();
-
-// Middleware de verificação de disponibilidade de uma tipologia
-const estaDisponivel = (req, res, next) => {
-    const tipologia = {
-        sigla: req.body.sigla,
-        designacao: req.body.designacao,
-    };
-
-    Tipologias.existe(tipologia)
-        .then(function(existe) {
-            if (existe) {
-                res.status(409).send(`Já existe uma tipologia com a sigla '${tipologia.sigla}' ou designação '${tipologia.designacao}'`);
-            } else {
-                next();
-            }
-        })
-};
 
 // Lista todas as tipologias: id, sigla, designacao
 router.get('/', (req, res) => {

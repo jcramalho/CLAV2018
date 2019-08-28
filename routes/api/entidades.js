@@ -1,27 +1,9 @@
-var Logging = require('../../controllers/logging');
 var Auth = require('../../controllers/auth.js');
 var Entidades = require('../../controllers/api/entidades.js');
 var url = require('url');
 
 var express = require('express');
 var router = express.Router();
-
-// Middleware de verificação de disponibilidade de uma entidade
-const estaDisponivel = (req, res, next) => {
-    const entidade = {
-        sigla: req.body.sigla,
-        designacao: req.body.designacao,
-    };
-
-    Entidades.existe(entidade)
-        .then(function(existe) {
-            if (existe) {
-                res.status(409).send(`Já existe uma entidade com a sigla '${entidade.sigla}' ou designação '${entidade.designacao}'`);
-            } else {
-                next();
-            }
-        })
-};
 
 // Lista todas as entidades: id, sigla, designacao, internacional
 router.get('/', (req, res) => {

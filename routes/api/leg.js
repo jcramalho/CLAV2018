@@ -5,22 +5,6 @@ var url = require('url');
 var express = require('express');
 var router = express.Router();
 
-// Middleware de verificação de disponibilidade de uma legislação
-const estaDisponivel = (req, res, next) => {
-    const legislacao = {
-        numero: req.body.numero,
-    };
-
-    Leg.existe(legislacao)
-        .then(function(existe) {
-            if (existe) {
-                res.status(409).send(`Já existe uma legislação com o número '${legislacao.numero}'`);
-            } else {
-                next();
-            }
-        })
-};
-
 // Lista todos os documentos legislativos: id, data, numero, tipo, sumario, entidades
 router.get('/', (req, res) => {
     var queryData = url.parse(req.url, true).query;

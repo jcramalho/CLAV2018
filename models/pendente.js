@@ -34,4 +34,4 @@ const PendenteSchema = new mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model('Pendente', PendenteSchema);
+module.exports = mongoose.model('Pendente', PendenteSchema, 'pendentes');

@@ -86,12 +86,3 @@ TermosIndice.contar = function() {
     return execQuery("query", query)
         .then(response => normalize(response));
 }
-
-//Criar controller para inserir na base de dados, depois do pedido aprovado!!
-/*
-const query = `INSERT DATA {
-    clav:${id} rdf:type owl:NamedIndividual , clav:TermoIndice;
-        clav:termo '${termoIndice.termo}';
-        clav:estado 'Harmonização' ;
-        clav:estaAssocClasse '${termoIndice.idClasse}' .
-}`;*/

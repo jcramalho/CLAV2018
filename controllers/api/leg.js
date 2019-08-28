@@ -179,20 +179,6 @@ Leg.consultar = id => {
         .then(response => projection(normalize(response), campos, agrupar)[0]);
 };
 
-//Criar controller para inserir na base de dados, depois do pedido aprovado!!
-/*const query = `INSERT DATA {
-        clav:${id} rdf:type owl:NamedIndividual , clav:Legislacao ;
-            clav:diplomaData '${legislacao.data}' ;
-            clav:diplomaNumero '${legislacao.numero}' ;
-            clav:diplomaTipo '${legislacao.tipo}' ;
-            clav:diplomaSumario '${legislacao.sumario}' ;
-            clav:diplomaLink '${legislacao.link}' ;
-            clav:diplomaEstado 'Harmonização' .
-        
-        ${legislacao.entidades.map(entidade => `clav:${id} clav:temEntidadeResponsavel clav:${entidade}.`).join('\n')}
-        
-    }`;*/
-
 /**
  * Verifica se um determinado numero de legislação existe no sistema.
  * 
@@ -253,56 +239,3 @@ Leg.regula = id => {
     return execQuery("query", query)
         .then(response => normalize(response));
 };
-
-/*
-Leg.updateDoc = function (dataObj) {
-
-    var del = "";
-    var ins = "";
-    var wer = "";
-
-    if (dataObj.year) {
-        del += `clav:${dataObj.id} clav:diplomaAno ?y .\n`;
-        ins += `clav:${dataObj.id} clav:diplomaAno "${dataObj.year}" .\n`;
-    }
-    if (dataObj.date) {
-        del += `clav:${dataObj.id} clav:diplomaData ?d .\n`;
-        ins += `clav:${dataObj.id} clav:diplomaData "${dataObj.date}" .\n`;
-    }
-    if (dataObj.number) {
-        del += `clav:${dataObj.id} clav:diplomaNumero ?n .\n`;
-        ins += `clav:${dataObj.id} clav:diplomaNumero "${dataObj.number}" .\n`;
-    }
-    if (dataObj.type) {
-        del += `clav:${dataObj.id} clav:diplomaTipo ?t .\n`;
-        ins += `clav:${dataObj.id} clav:diplomaTipo "${dataObj.type}" .\n`;
-    }
-    if (dataObj.title) {
-        del += `clav:${dataObj.id} clav:diplomaTitulo ?tit .\n`;
-        ins += `clav:${dataObj.id} clav:diplomaTitulo "${dataObj.title}" .\n`;
-    }
-    if (dataObj.link) {
-        del += `clav:${dataObj.id} clav:diplomaLink ?l .\n`;
-        ins += `clav:${dataObj.id} clav:diplomaLink "${dataObj.link}" .\n`;
-    }
-
-    if (dataObj.org && dataObj.org.length) {
-        del += `clav:${dataObj.id} clav:temEntidadeResponsavel ?org .\n`;
-
-        for(let ent of dataObj.org){
-            ins += `clav:${dataObj.id} clav:temEntidadeResponsavel clav:${ent}.\n`;    
-        }        
-    }
-
-    wer = "WHERE {\n" + del + "}\n";
-    del = "DELETE {\n" + del + "}\n";
-    ins = "INSERT {\n" + ins + "}\n";
-
-    var updateQuery = del + ins + wer;
-    
-    console.log(updateQuery);
-
-    return execQuery("update", updateQuery)
-        .then(response => Promise.resolve(response))
-        .catch(error => console.error("Error in update:\n" + error));
-};*/

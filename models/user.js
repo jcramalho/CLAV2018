@@ -1,10 +1,4 @@
 var mongoose = require('mongoose');
-var dataBases = require('../config/database');
-
-mongoose.Promise = require('bluebird');
-mongoose.connect(dataBases.userDB, {
-	useMongoClient: true,
-});
 
 // User Schema
 var UserSchema = mongoose.Schema({
@@ -53,4 +47,4 @@ var UserSchema = mongoose.Schema({
 	}
 });
 
-module.exports = mongoose.model('User', UserSchema);
+module.exports = mongoose.model('User', UserSchema, 'users');

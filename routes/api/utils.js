@@ -1,4 +1,3 @@
-var Logging = require('../../controllers/logging');
 var Auth = require('../../controllers/auth.js');
 const nanoid = require('nanoid')
 

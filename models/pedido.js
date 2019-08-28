@@ -94,4 +94,4 @@ PedidoSchema.methods.sparqlQuery = function() {
     return query;
 }
 
-module.exports = mongoose.model('Pedido', PedidoSchema);
+module.exports = mongoose.model('Pedido', PedidoSchema, 'pedidos');

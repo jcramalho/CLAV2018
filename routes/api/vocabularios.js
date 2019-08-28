@@ -1,4 +1,3 @@
-var Logging = require('../../controllers/logging');
 var Auth = require('../../controllers/auth.js');
 var Vocabulario = require('../../controllers/api/vocabularios.js');
 

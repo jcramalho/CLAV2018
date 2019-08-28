@@ -296,14 +296,9 @@ SelTabs.createTab = function (id, name, classes, criteriaData) {
                 critsToRemove.push(critIndex);
             }
         }    
-        /*for(let i of critsToRemove.sort().reverse()){
-            criteriaData.splice(i,1);
-        }   */ 
     }
 
     createQuery += "}"
-
-    //console.log(createQuery);
 
     return execQuery("update", createQuery)
         .then(response => Promise.resolve(response))
@@ -347,4 +342,11 @@ SelTabs.trueDelete = function (id) {
             ?s4 ?p4 clav:${id} .
         }
     `;
+
+    return execQuery("update", delQuery)
+        //getting the content we want
+        .then(response => Promise.resolve(response))
+        .catch(function (error) {
+            console.error(error);
+        });
 }

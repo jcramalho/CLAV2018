@@ -161,7 +161,6 @@ Users.atualizarEmail = function(id, email, callback){
 }
 
 Users.atualizarMultiplosCampos = function(id, nome, email, entidade, level, callback){
-    // console.log("ID: "+ id + " NOME: " + nome + " EMAIL: " + email + " LEVEL: " + level )
     Users.getUserById(id, function(err, user){
 		if (err) {	
             callback(err, null);
@@ -256,20 +255,6 @@ Users.adicionarChamadaApi = function(id, callback){
         }
     });
 }
-
-// Users.contarChamadasApi = function(callback){
-//     User.find({}, function(err, users){
-//         if(!err){
-//             var calls = 0;
-//             for(var i = 0; i < users.length; i++) {
-//                 calls += users[i].nCalls;
-//             }
-//             callback(null, calls);
-//         }else{
-//             callback(err, null);
-//         }
-//     });
-// }
 
 Users.parseSAMLResponse = function(SAMLResponse, callback){
     var parser = new xml2js.Parser();

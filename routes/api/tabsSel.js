@@ -1,4 +1,3 @@
-var Logging = require('../../controllers/logging');
 var Auth = require('../../controllers/auth.js');
 var SelTabs = require('../../controllers/api/tabsSel.js');
 

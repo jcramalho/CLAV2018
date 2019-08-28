@@ -5,13 +5,13 @@ module.exports = function(passport) {
     passport.use(new LocalStrategy(
         function (email, password, done) {
             Users.getUserByEmail(email, function (err, user) {
-                if (err) throw err;
+                if (err) done(err);
                 if (!user) {
                     return done(null, false, { message: 'Email não reconhecido' });
                 }
 
                 Users.comparePassword(password, user.local.password, function (err, isMatch) {
-                    if (err) throw err;
+                    if (err) done(err);
                     if (isMatch) {
                         if(user.level==-1){
                             return done(null, false, { message: 'Utilizador desativado.' });

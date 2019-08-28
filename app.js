@@ -43,10 +43,6 @@ app.use(bodyParser.urlencoded({
     parameterLimit:50000
 }));
 
-//Server JWT gen
-// var serverKey = require('./models/chave')
-// serverKey.generateServerKey();
-
 //authentication dependencies
 var cookieParser = require('cookie-parser');
 var expressValidator = require('express-validator');
@@ -103,7 +99,7 @@ app.use(logger('dev'))
 
 // Connect mongo and mongoose
 mongoose.Promise = global.Promise;
-mongoose.connect(dataBases.userDB, {useMongoClient: true,})
+mongoose.connect(dataBases.userDB, {useMongoClient: true, poolSize: 100 /*max number of connections (default is 5)*/})
     .then(()=> console.log('Mongo ready: ' + mongoose.connection.readyState))
     .catch(()=> console.log('Mongo: erro na conexão...'))
 

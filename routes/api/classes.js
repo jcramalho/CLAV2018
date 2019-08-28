@@ -1,4 +1,3 @@
-var Logging = require('../../controllers/logging');
 var Auth = require('../../controllers/auth.js');
 var Classes = require('../../controllers/api/classes.js');
 var State = require('../../controllers/state.js')
@@ -183,8 +182,6 @@ router.get('/:id/df', (req, res) => {
     Classes.df(req.params.id)
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na consulta do DF associado à classe ${req.params.id}: ${erro}`))
-        //.then(dados => res.jsonp(fa.simplificaSPARQLRes(dados, ['idDF', 'valor', 'idJustificacao'])))
-        //.catch(erro => res.jsonp({cod: "404", mensagem: "Erro na consulta do DF associado à classe "+req.params.id+": " + erro}))
 })
 
 // Verifica se um determinado título de classe já existe
