@@ -211,4 +211,13 @@ router.post('/verificarExemploNA', async (req, res) => {
     }
 })
 
+// Verifica se um determinado termo de índice já existe
+router.post('/verificarTI', async (req, res) => {
+    try {
+        res.jsonp(await State.verificaTI(req.body.ti))
+    } catch(err) {
+        res.status(500).send(`Erro na verificação de um termo de índice: ${err}`)
+    }
+})
+
 module.exports = router;
