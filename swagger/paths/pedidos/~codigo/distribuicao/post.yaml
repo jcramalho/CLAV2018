@@ -1,4 +1,4 @@
-summary: 'Adição de distribuição TODO: corrigir'
+summary: Adição de distribuição
 description: Adição de distribuição
 tags:
   - pedidos
@@ -14,9 +14,19 @@ parameters:
     required: true
     schema:
       properties:
-        #TODO
-        TODO:
-          type: TODO
+        estado:
+          type: string
+          enum: [Submetido, Distribuído, Apreciado, Validado]
+        responsavel:
+          type: string
+        data:
+          type: string
+          format: date-time
+        despacho:
+          type: string
+      required:
+        - estado
+        - data
 responses:
   200:
     description: Adição de distribuição

@@ -1,4 +1,4 @@
-summary: 'Atualização de um pedido: mais uma etapa na distribuição TODO: corrigir'
+summary: Atualização de um pedido: mais uma etapa na distribuição
 description: 'Atualização de um pedido: mais uma etapa na distribuição'
 tags:
   - pedidos
@@ -9,11 +9,64 @@ parameters:
     required: true
     schema:
       properties:
-        #TODO
-        TODO:
-          type: TODO
-        pedido._id:
-          type: string
+        pedido:
+          type: object
+          properties:
+            _id:
+              type: string
+            codigo:
+              type: string
+              pattern: '\d{4}-\d{1,}'
+            estado:
+              type: string
+              enum: [Submetido, Distribuído, Apreciado, Validado]
+            data:
+              type: string
+              format: date-time
+            criadoPor:
+              type: string
+            objeto:
+              type: object
+              properties:
+                codigo:
+                  type: string
+                dados:
+                  type: object
+                tipo:
+                  type: string
+                  enum: [Classe, TS Organizacional, TS Pluriorganizacional, Entidade, Tipologia, Legislação, Termo de Indice]
+                acao:
+                  type: string
+                  enum: [Criação, Alteração, Remoção]
+              required:
+                - tipo
+                - acao
+          required:
+            - _id
+            - codigo
+            - estado
+            - criadoPor
+            - data
+            - objeto
+        distribuicao:
+          type: object
+          properties:
+            estado:
+              type: string
+              enum: [Submetido, Distribuído, Apreciado, Validado]
+            responsavel:
+              type: string
+            data:
+              type: string
+              format: date-time
+            despacho:
+              type: string
+          required:
+            - estado
+            - data
+      required:
+        - pedido
+        - distribuicao
 responses:
   200:
     description: 'Atualização de um pedido: mais uma etapa na distribuição'

@@ -1,17 +1,28 @@
-summary: 'Atualizar um trabalho previamente guardado como pendente TODO: corrigir'
+summary: 'Atualizar um trabalho previamente guardado como pendente'
 description: Atualizar um trabalho previamente guardado como pendente
 tags:
   - pendentes
 parameters:
   - name: body
     in: body
-    description: 'Dados'
+    description: 'Dados a alterar. No campo objeto é colocado o objeto a guardar. Pode ser um objeto Classe, TS Organizacional, TS Pluriorganizacional, Entidade, Tipologia, Legislação ou Termo de Indice'
     required: true
     schema:
       properties:
-        #TODO
-        TODO:
-          type: TODO
+        _id:
+          type: string
+        dataAtualizacao:
+          type: string
+          format: date-time
+        numInterv:
+          type: number
+        objeto:
+          type: object
+      required:
+        - _id
+        - dataAtualizacao
+        - numInterv
+        - objeto
 responses:
   200:
     description: Atualizar um trabalho previamente guardado como pendente

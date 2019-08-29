@@ -1,17 +1,14 @@
-summary: 'Guardar um trabalho pendente TODO: corrigir'
+summary: Guardar um trabalho pendente
 description: Guardar um trabalho pendente
 tags:
   - pendentes
 parameters:
   - name: body
     in: body
-    description: 'Dados'
+    description: 'Dados. No campo objeto é colocado o objeto a guardar. Pode ser um objeto Classe, TS Organizacional, TS Pluriorganizacional, Entidade, Tipologia, Legislação ou Termo de Indice'
     required: true
     schema:
-      properties:
-        #TODO
-        TODO:
-          type: TODO
+      $ref: '#/definitions/Pendente'
 responses:
   200:
     description: Guardar um trabalho pendente

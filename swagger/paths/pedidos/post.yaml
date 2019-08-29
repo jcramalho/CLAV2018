@@ -1,17 +1,14 @@
-summary: 'Criação de um pedido TODO: corrigir'
+summary: Criação de um pedido
 description: Criação de um pedido
 tags:
   - pedidos
 parameters:
   - name: body
     in: body
-    description: 'Dados'
+    description: 'Dados. No campo dados é colocado os dados com o qual se pretende realizar o pedido. Pode ser um objeto Classe, TS Organizacional, TS Pluriorganizacional, Entidade, Tipologia, Legislação ou Termo de Indice'
     required: true
     schema:
-      properties:
-        #TODO
-        TODO:
-          type: TODO
+      $ref: '#/definitions/Pedido'
 responses:
   200:
     description: Criação de um pedido
