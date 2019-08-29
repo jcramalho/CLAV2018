@@ -192,7 +192,7 @@
                 {
                     "idInv": "inv_4",
                     "desc": "Todos os processos relacionados por uma <b>relação de síntese</b> deverão estar relacionados com o <b>critério de densidade informacional da respetiva justificação</b>",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?s ?s_titulo ?o ?o_titulo where { \n    {\n        {\n            ?s clav:eSinteseDe ?o .\n            ?s :titulo ?s_titulo .\n            ?o :titulo ?o_titulo .\n        }\n        union\n        {\n            ?s clav:eSintetizadoPor ?o .\n            ?s :titulo ?s_titulo .\n            ?o :titulo ?o_titulo .\n        }\n    }\n    minus {\n        {?s :temFilho $f}\n    union\n        {\n        ?s :temDF ?df.\n        ?df :temJustificacao ?dfjust.\n        ?dfjust :temCriterio ?crit.\n        ?crit rdf:type :CriterioJustificacaoDensidadeInfo.\n        ?crit :critTemProcRel ?o\n}\n    }\n}",
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?s ?s_titulo ?o ?o_titulo where { \n    {\n        {\n            ?s clav:eSinteseDe ?o .\n            ?s :titulo ?s_titulo .\n            ?o :titulo ?o_titulo .\n        }\n        union\n        {\n            ?s clav:eSintetizadoPor ?o .\n            ?s :titulo ?s_titulo .\n            ?o :titulo ?o_titulo .\n        }\n    }\n    minus {\n        {?s :temFilho ?f}\n    union\n        {\n        ?s :temDF ?df.\n        ?df :temJustificacao ?dfjust.\n        ?dfjust :temCriterio ?crit.\n        ?crit rdf:type :CriterioJustificacaoDensidadeInfo.\n        ?crit :critTemProcRel ?o\n}\n    }\n}",
                     "checked": true
                 }
             ]
@@ -204,17 +204,20 @@
                 {
                     "idInv": "inv_1",
                     "desc": "Uma relação de complementaridade implica a conservação dos PN que mantêm essa relação",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect distinct ?s ?s_titulo where { \n    ?s rdf:type :Classe_N3 .\n    ?s :eComplementarDe ?o .\n    ?s :titulo ?s_titulo .\n    \n    minus {\n        ?s :temDF ?df.\n        ?df :dfValor \"C\" \n    }\n}"
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect distinct ?s ?s_titulo where { \n    ?s rdf:type :Classe_N3 .\n    ?s :eComplementarDe ?o .\n    ?s :titulo ?s_titulo .\n    \n    minus {\n        ?s :temDF ?df.\n        ?df :dfValor \"C\" \n    }\n}", 
+                    "checked":true
                 },
                 {
                     "idInv": "inv_2",
                     "desc": "Quando o PN em causa é <b>complementar de</b> outro, a justificação do DF deverá conter o <b>critério de complementaridade informacional</b>",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?s ?s_titulo ?o ?o_titulo where { \n    {\n        ?s rdf:type :Classe_N3.\n        ?o rdf:type :Classe_N3.\n        ?s clav:eComplementarDe ?o .\n\n        ?s :titulo ?s_titulo .\n        ?o :titulo ?o_titulo .\n    }\n    minus\n    {\n        ?s :temDF ?df.\n        ?df :temJustificacao ?dfjust.\n        ?dfjust :temCriterio ?crit.\n        ?crit rdf:type :CriterioJustificacaoComplementaridadeInfo\n    }\n}"
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?s ?s_titulo ?o ?o_titulo where { \n    {\n        ?s rdf:type :Classe_N3.\n        ?o rdf:type :Classe_N3.\n        ?s clav:eComplementarDe ?o .\n\n        ?s :titulo ?s_titulo .\n        ?o :titulo ?o_titulo .\n    }\n    minus\n    {\n        ?s :temDF ?df.\n        ?df :temJustificacao ?dfjust.\n        ?dfjust :temCriterio ?crit.\n        ?crit rdf:type :CriterioJustificacaoComplementaridadeInfo\n    }\n}", 
+                    "checked":true
                 },
                 {
                     "idInv": "inv_3",
                     "desc": "Todos os processos relacionados pela <b>relação é complementar de</b>, devem <b>estar relacionados</b> com o <b>critério de complementaridade informacional</b> da respetiva justificação",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?s ?s_titulo ?o ?o_titulo where { \n    {\n        ?s rdf:type :Classe_N3.\n        ?o rdf:type :Classe_N3.\n        ?s clav:eComplementarDe ?o .\n\n        ?s :titulo ?s_titulo .\n        ?o :titulo ?o_titulo .\n    }\n    minus {\n        ?s :temDF ?df.\n        ?df :temJustificacao ?dfjust.\n        ?dfjust :temCriterio ?crit.\n        ?crit rdf:type :CriterioJustificacaoComplementaridadeInfo.\n        ?crit :temProcessoRelacionado ?o\n    }\n}"
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?s ?s_titulo ?o ?o_titulo where { \n    {\n        ?s rdf:type :Classe_N3.\n        ?o rdf:type :Classe_N3.\n        ?s clav:eComplementarDe ?o .\n\n        ?s :titulo ?s_titulo .\n        ?o :titulo ?o_titulo .\n    }\n    minus {\n        ?s :temDF ?df.\n        ?df :temJustificacao ?dfjust.\n        ?dfjust :temCriterio ?crit.\n        ?crit rdf:type :CriterioJustificacaoComplementaridadeInfo.\n        ?crit :critTemProcRel ?o\n    }\n}", 
+                    "checked":true
                 }
             ]
         },
