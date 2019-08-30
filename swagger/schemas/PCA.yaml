@@ -1,0 +1,16 @@
+type: object
+properties:
+  valor:
+    type: string
+    nullable: true
+  formaContagem:
+    type: string
+  subFormaContagem:
+    type: string
+  justificacao:
+    $ref: '#/components/schemas/Justificacao'
+required:
+  - valor
+  - formaContagem
+  - subFormaContagem
+  - justificacao

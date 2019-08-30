@@ -1,0 +1,10 @@
+type: object
+properties:
+  id:
+    type: string
+    description: "'ne_' concatenado com valor aleatório"
+  nota:
+    type: string
+required:
+  - id
+  - nota

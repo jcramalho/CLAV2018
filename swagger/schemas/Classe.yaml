@@ -1,413 +1,80 @@
 type: object
-properties:
-  nivel:
-    type: string
-  pai:
-    type: string
-  codigo:
-    type: string
-  titulo:
-    type: string
-  descricao:
-    type: string
-  notasAp:
-    type: array
-    items:
-      properties:
-        id:
-          type: string
-          description: "'na_' concatenado com valor aleatório"
-        nota:
-          type: string
-  exemplosNotasAp:
-   type: array
-   items:
-     properties:
-       idExemplo:
-         type: string
-         description: "'exna_' concatenado com valor aleatório"
-       exemplo:
-         type: string 
-  notasEx:
-   type: array
-   items:
-     properties:
-       id:
-         type: string
-         description: "'ne_' concatenado com valor aleatório"
-       nota:
-         type: string 
-  termosInd:
-   type: array
-   items:
-     properties:
-       id:
-         type: string
-         description: "'ti_' concatenado com valor aleatório"
-       termo:
-         type: string 
-       existe:
-         type: boolean
-  temSubclasses4Nivel:
-    type: boolean
-  temSubclasses4NivelPCA:
-    type: boolean
-  temSubclasses4NivelDF:
-    type: boolean
-  subdivisao4Nivel01Sintetiza02:
-    type: boolean
-  tipoProc:
-    type: string
-  procTrans:
-    type: string
-  donos:
-    type: array
-    items:
-      properties:
-        intervencao:
-          type: string
-        tipo:
-          type: string
-        designacao:
-          type: string
-        sigla:
-          type: string
-        id:
-          type: string
-          description: "'ent_' concatenado com o valor de sigla"
-        selected:
-          type: boolean
-  participantes:
-    type: array
-    items:
-      properties:
-        intervencao:
-          type: string
-        tipo:
-          type: string
-        designacao:
-          type: string
-        sigla:
-          type: string
-        id:
-          type: string
-          description: "'ent_' concatenado com o valor de sigla"
-        selected:
-          type: boolean
-  processosRelacionados:
-    type: array
-    items:
-      properties:
-        selected:
-          type: boolean
-        id:
-          type: string
-          description: "'c' concatenado com o valor de codigo"
-        codigo:
-          type: string
-        titulo:
-          type: string
-        idRel:
-          type: string
-        relacao:
-          type: string
-  legislacao:
-    type: array
-    items:
-      properties:
-        tipo:
-          type: string
-        numero:
-          type: string
-          pattern: '\d{1,6}/\d{1,4}'
-        sumario:
-          type: string
-        data:
-          type: string
-          pattern: '\d{4}/\d{2}/\d{2}'
-        selected:
-          type: boolean
-        id:
-          type: string
-          description: "'leg_' concatenado com valor aleatório"
-  pca:
-    type: object
+allOf:
+  - $ref: '#/components/schemas/SubClasse'
+  - type: object
     properties:
-      valor:
+      notasAp:
+        type: array
+        items:
+          $ref: '#/components/schemas/NotaAp'
+      exemplosNotasAp:
+       type: array
+       items:
+          $ref: '#/components/schemas/ExemploNotaAp'
+      notasEx:
+       type: array
+       items:
+          $ref: '#/components/schemas/NotaEx'
+      temSubclasses4Nivel:
+        type: boolean
+      temSubclasses4NivelPCA:
+        type: boolean
+      temSubclasses4NivelDF:
+        type: boolean
+      subdivisao4Nivel01Sintetiza02:
+        type: boolean
+      tipoProc:
         type: string
-        nullable: true
-      formaContagem:
+      procTrans:
         type: string
-      subFormaContagem:
-        type: string
-      justificacao:
+      donos:
         type: array
         items:
           properties:
+            intervencao:
+              type: string
             tipo:
               type: string
-            label:
+            designacao:
               type: string
-            notas:
+            sigla:
               type: string
-            procRel:
-              type: array
-              items:
-                properties:
-                  relacao:
-                    type: string
-                  idRel:
-                    type: string
-                  titulo:
-                    type: string
-                  codigo:
-                    type: string
-                  id:
-                    type: string
-                    description: "'c' concatenado com o valor de codigo"
-                  selected:
-                    type: boolean
-            legislacao:
-              type: array
-              items:
-                properties:
-                  tipo:
-                    type: string
-                  numero:
-                    type: string
-                    pattern: '\d{1,6}/\d{1,4}'
-                  sumario:
-                    type: string
-                  data:
-                    type: string
-                    pattern: '\d{4}/\d{2}/\d{2}'
-                  selected:
-                    type: boolean
-                  id:
-                    type: string
-                    description: "'leg_' concatenado com valor aleatório"
-  df:
-    type: object
-    properties:
-      valor:
-        type: string
-      notas:
-        type: string
-      justificacao:
+            id:
+              type: string
+              description: "'ent_' concatenado com o valor de sigla"
+            selected:
+              type: boolean
+      participantes:
         type: array
         items:
           properties:
+            intervencao:
+              type: string
             tipo:
               type: string
-            label:
+            designacao:
               type: string
-            notas:
+            sigla:
               type: string
-            procRel:
-              type: array
-              items:
-                properties:
-                  relacao:
-                    type: string
-                  idRel:
-                    type: string
-                  titulo:
-                    type: string
-                  codigo:
-                    type: string
-                  id:
-                    type: string
-                    description: "'c' concatenado com o valor de codigo"
-                  selected:
-                    type: boolean
-            legislacao:
-              type: array
-              items:
-                properties:
-                  tipo:
-                    type: string
-                  numero:
-                    type: string
-                    pattern: '\d{1,6}/\d{1,4}'
-                  sumario:
-                    type: string
-                  data:
-                    type: string
-                    pattern: '\d{4}/\d{2}/\d{2}'
-                  selected:
-                    type: boolean
-                  id:
-                    type: string
-                    description: "'leg_' concatenado com valor aleatório"
-  subclasses:
-    type: array
-    items:
-      properties:
-        nivel:
-          type: string
-        pai:
-          type: string
-        codigo:
-          type: string
-        titulo:
-          type: string
-        descricao:
-          type: string
-        termosInd:
-          type: array
-          items:
-            properties:
-              id:
-                type: string
-                description: "'ti_' concatenado com valor aleatório"
-              termo:
-                type: string 
-              existe:
-                type: boolean
-        processosRelacionados:
-          type: array
-          items:
-            properties:
-              selected:
-                type: boolean
-              id:
-                type: string
-                description: "'c' concatenado com o valor de codigo"
-              codigo:
-                type: string
-              titulo:
-                type: string
-              idRel:
-                type: string
-              relacao:
-                type: string
-        legislacao:
-          type: array
-          items:
-            properties:
-              tipo:
-                type: string
-              numero:
-                type: string
-                pattern: '\d{1,6}/\d{1,4}'
-              sumario:
-                type: string
-              data:
-                type: string
-                pattern: '\d{4}/\d{2}/\d{2}'
-              selected:
-                type: boolean
-              id:
-                type: string
-                description: "'leg_' concatenado com valor aleatório"
-        pca:
-          type: object
-          properties:
-            valor:
+            id:
               type: string
-              nullable: true
-            formaContagem:
-              type: string
-            subFormaContagem:
-              type: string
-            justificacao:
-              type: array
-              items:
-                properties:
-                  tipo:
-                    type: string
-                  label:
-                    type: string
-                  notas:
-                    type: string
-                  procRel:
-                    type: array
-                    items:
-                      properties:
-                        relacao:
-                          type: string
-                        idRel:
-                          type: string
-                        titulo:
-                          type: string
-                        codigo:
-                          type: string
-                        id:
-                          type: string
-                          description: "'c' concatenado com o valor de codigo"
-                        selected:
-                          type: boolean
-                  legislacao:
-                    type: array
-                    items:
-                      properties:
-                        tipo:
-                          type: string
-                        numero:
-                          type: string
-                          pattern: '\d{1,6}/\d{1,4}'
-                        sumario:
-                          type: string
-                        data:
-                          type: string
-                          pattern: '\d{4}/\d{2}/\d{2}'
-                        selected:
-                          type: boolean
-                        id:
-                          type: string
-                          description: "'leg_' concatenado com valor aleatório"
-        df:
-          type: object
-          properties:
-            valor:
-              type: string
-            notas:
-              type: string
-            justificacao:
-              type: array
-              items:
-                properties:
-                  tipo:
-                    type: string
-                  label:
-                    type: string
-                  notas:
-                    type: string
-                  procRel:
-                    type: array
-                    items:
-                      properties:
-                        relacao:
-                          type: string
-                        idRel:
-                          type: string
-                        titulo:
-                          type: string
-                        codigo:
-                          type: string
-                        id:
-                          type: string
-                          description: "'c' concatenado com o valor de codigo"
-                        selected:
-                          type: boolean
-                  legislacao:
-                    type: array
-                    items:
-                      properties:
-                        tipo:
-                          type: string
-                        numero:
-                          type: string
-                          pattern: '\d{1,6}/\d{1,4}'
-                        sumario:
-                          type: string
-                        data:
-                          type: string
-                          pattern: '\d{4}/\d{2}/\d{2}'
-                        selected:
-                          type: boolean
-                        id:
-                          type: string
-                          description: "'leg_' concatenado com valor aleatório"
-required:
-
+              description: "'ent_' concatenado com o valor de sigla"
+            selected:
+              type: boolean
+      subclasses:
+        type: array
+        items:
+          $ref: '#/components/schemas/SubClasse'
+    required:
+      - notasAp
+      - exemplosNotasAp
+      - notasEx
+      - temSubclasses4Nivel
+      - temSubclasses4NivelPCA
+      - temSubclasses4NivelDF
+      - subdivisao4Nivel01Sintetiza02
+      - tipoProc
+      - procTrans
+      - donos
+      - participantes
+      - subclasses

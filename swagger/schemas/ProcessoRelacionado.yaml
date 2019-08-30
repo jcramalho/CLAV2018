@@ -1,0 +1,22 @@
+type: object
+properties:
+  relacao:
+    type: string
+  idRel:
+    type: string
+  titulo:
+    type: string
+  codigo:
+    type: string
+  id:
+    type: string
+    description: "'c' concatenado com o valor de codigo"
+  selected:
+    type: boolean
+required:
+  - relacao
+  - idRel
+  - titulo
+  - codigo
+  - id
+  - selected
