@@ -72,6 +72,13 @@ exports.verificaExemploNA = async (exemplo) => {
     return r
 }
 
+// Verifica a existência dum termo de índice: true == existe, false == não existe
+exports.verificaTI = async (ti) => {
+    var r = false
+    r = await termosInd.filter(t => t == ti).length != 0
+    return r
+}
+
 //Devolve a lista dos processos de negócio comuns, ou seja, aqueles com :processoTipoVC :vc_processoTipo_pc
 exports.getProcessosComuns = async () => {
     let PC = await Classes.listarPNsComuns();
@@ -124,8 +131,15 @@ async function loadClasses() {
                         notasAplicacao = notasAplicacao.concat(JSON.parse(JSON.stringify(na.map(n => n.nota))))
                         let ex = await Classes.exemplosNotasAp(cid3)
                         exemplosNotasAplicacao = exemplosNotasAplicacao.concat(JSON.parse(JSON.stringify(ex.map(e => e.exemplo))))
-                        let ti = await Classes.ti(cid3)
-                        termosInd = termosInd.concat(JSON.parse(JSON.stringify(ti.map(t => t.termo))))
+                        let ti3 = await Classes.ti(cid3)
+                        termosInd = termosInd.concat(JSON.parse(JSON.stringify(ti3.map(t => t.termo))))
+
+                        // Carregamento dos TI das classes de nível 4
+                        for(var l=0; l < desc3.length; l++){
+                            let cid4 = desc3[l].id.split('#')[1]
+                            let ti4 = await Classes.ti(cid4)
+                            termosInd = termosInd.concat(JSON.parse(JSON.stringify(ti4.map(t => t.termo))))
+                        }
 
                         desc2[k].filhos = desc3
                     }
