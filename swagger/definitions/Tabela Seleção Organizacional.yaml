@@ -1,0 +1,91 @@
+type: object
+properties:
+  idEntidade:
+    type: string
+  designacao:
+    type: string
+  tipologias:
+    type: array
+    items:
+      properties:
+        sigla:
+          type: string
+        designacao:
+          type: string
+        id:
+          type: string
+          description: "'tip_' concatenado com o valor de sigla"
+      required:
+        - sigla
+        - designacao
+        - id
+  procComuns:
+    type: array
+    items:
+      properties:
+        classe:
+          type: string
+        designacao:
+          type: string
+        dono:
+          type: boolean
+      required:
+        - classe
+        - designacao
+        - dono
+  procEspecificos:
+    type: array
+    items:
+      properties:
+        classe:
+          type: string
+        designacao:
+          type: string
+        dono:
+          type: boolean
+        participante:
+          type: boolean
+      required:
+        - classe
+        - designacao
+        - dono
+        - participante
+  procEspRestantes:
+    type: array
+    items:
+      properties:
+        classe:
+          type: string
+        designacao:
+          type: string
+        dono:
+          type: boolean
+      required:
+        - classe
+        - designacao
+        - dono
+  procUltimos:
+    type: array
+    items:
+      properties:
+        classe:
+          type: string
+        designacao:
+          type: string
+        dono:
+          type: boolean
+        participante:
+          type: boolean
+      required:
+        - classe
+        - designacao
+        - dono
+        - participante
+required:
+  - idEntidade
+  - designacao
+  - tipologias
+  - procComuns
+  - procEspecificos
+  - procEspRestantes
+  - procUltimos
