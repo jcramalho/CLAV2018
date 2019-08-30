@@ -2,13 +2,13 @@ summary: Guardar um trabalho pendente
 description: Guardar um trabalho pendente
 tags:
   - pendentes
-parameters:
-  - name: body
-    in: body
-    description: 'Dados. No campo objeto é colocado o objeto a guardar. Pode ser um objeto Classe, TS Organizacional, TS Pluriorganizacional, Entidade, Tipologia, Legislação ou Termo de Indice'
-    required: true
-    schema:
-      $ref: '#/definitions/Pendente'
+requestBody:
+  description: 'Dados. No campo objeto é colocado o objeto a guardar. Pode ser um objeto Classe, TS Organizacional, TS Pluriorganizacional, Entidade, Tipologia, Legislação ou Termo de Indice'
+  required: true
+  content:
+    application/json:
+      schema:
+        $ref: '#/components/schemas/Pendente'
 responses:
   200:
     description: Guardar um trabalho pendente

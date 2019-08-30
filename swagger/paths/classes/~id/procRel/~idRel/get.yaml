@@ -6,15 +6,15 @@ parameters:
   - name: id
     in: path
     description: 'Identificador de uma classe (exemplo: c200.10.100)'
-    type: string
+    schema:
+      type: string
     required: true
   - name: idRel
     in: path
     description: 'Identificador da relação (exemplo: eSucessorDe)'
-    type: string
+    schema:
+      type: string
     required: true
-produces:
-  - application/json
 responses:
   200:
     description: Devolve o(s) processo(s) relacionado(s) por uma relação específica

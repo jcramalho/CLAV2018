@@ -2,16 +2,17 @@ summary: Desativar chave API
 description: Desativar chave API
 tags:
   - chaves
-parameters:
-  - in: body
-    name: body
-    description: Para desativar a chave API é necessário fornecer o id da chave na BD
-    schema:
-      properties:
-        id:
-          type: string
-      required:
-        - id
+requestBody:
+  description: Para desativar a chave API é necessário fornecer o id da chave na BD
+  required: true
+  content:
+    application/json:
+      schema:
+        properties:
+          id:
+            type: string
+        required:
+          - id
 responses:
   200:
     description: Chave API desativada

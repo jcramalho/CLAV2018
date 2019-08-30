@@ -3,70 +3,79 @@ description: 'Atualização de um pedido: mais uma etapa na distribuição'
 tags:
   - pedidos
 parameters:
-  - name: body
-    in: body
-    description: 'Dados'
-    required: true
-    schema:
-      properties:
-        pedido:
-          type: object
-          properties:
-            _id:
-              type: string
-            codigo:
-              type: string
-              pattern: '\d{4}-\d{1,}'
-            estado:
-              type: string
-              enum: [Submetido, Distribuído, Apreciado, Validado]
-            data:
-              type: string
-              format: date-time
-            criadoPor:
-              type: string
-            objeto:
-              type: object
-              properties:
-                codigo:
-                  type: string
-                dados:
-                  type: object
-                tipo:
-                  type: string
-                  enum: [Classe, TS Organizacional, TS Pluriorganizacional, Entidade, Tipologia, Legislação, Termo de Indice]
-                acao:
-                  type: string
-                  enum: [Criação, Alteração, Remoção]
-              required:
-                - tipo
-                - acao
-          required:
-            - _id
-            - codigo
-            - estado
-            - criadoPor
-            - data
-            - objeto
-        distribuicao:
-          type: object
-          properties:
-            estado:
-              type: string
-              enum: [Submetido, Distribuído, Apreciado, Validado]
-            responsavel:
-              type: string
-            data:
-              type: string
-              format: date-time
-            despacho:
-              type: string
-          required:
-            - estado
-            - data
-      required:
-        - pedido
-        - distribuicao
+requestBody:
+  description: 'Dados'
+  required: true
+  content:
+    application/json:
+      schema:
+        properties:
+          pedido:
+            type: object
+            properties:
+              _id:
+                type: string
+              codigo:
+                type: string
+                pattern: '\d{4}-\d{1,}'
+              estado:
+                type: string
+                enum: [Submetido, Distribuído, Apreciado, Validado]
+              data:
+                type: string
+                format: date-time
+              criadoPor:
+                type: string
+              objeto:
+                type: object
+                properties:
+                  codigo:
+                    type: string
+                  dados:
+                    type: object
+                    oneOf:
+                      - $ref: '#/components/schemas/Classe'
+                      - $ref: '#/components/schemas/DocumentoLegislativo'
+                      - $ref: '#/components/schemas/Entidade'
+                      - $ref: '#/components/schemas/TabelaSelecaoOrganizacional'
+                      - $ref: '#/components/schemas/TabelaSelecaoPluriorganizacional'
+                      - $ref: '#/components/schemas/TermosIndice'
+                      - $ref: '#/components/schemas/Tipologia'
+                  tipo:
+                    type: string
+                    enum: [Classe, TS Organizacional, TS Pluriorganizacional, Entidade, Tipologia, Legislação, Termo de Indice]
+                  acao:
+                    type: string
+                    enum: [Criação, Alteração, Remoção]
+                required:
+                  - tipo
+                  - acao
+            required:
+              - _id
+              - codigo
+              - estado
+              - criadoPor
+              - data
+              - objeto
+          distribuicao:
+            type: object
+            properties:
+              estado:
+                type: string
+                enum: [Submetido, Distribuído, Apreciado, Validado]
+              responsavel:
+                type: string
+              data:
+                type: string
+                format: date-time
+              despacho:
+                type: string
+            required:
+              - estado
+              - data
+        required:
+          - pedido
+          - distribuicao
 responses:
   200:
     description: 'Atualização de um pedido: mais uma etapa na distribuição'

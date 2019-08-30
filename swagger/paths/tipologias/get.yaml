@@ -5,13 +5,15 @@ tags:
 parameters:
   - in: query
     name: estado
-    type: string
+    schema:
+      type: string
+      enum: [Ativa, Inativa, Harmonização]
     description: Filtra as tipologias pelo estado das mesmas. O estado pode ser Ativa, Inativa ou Harmonização.
     required: false
-    enum: [Ativa, Inativa, Harmonização]
   - in: query
     name: designacao
-    type: string
+    schema:
+      type: string
     description: Filtra as tipologias pelo designação das mesmas.
     required: false
 responses:

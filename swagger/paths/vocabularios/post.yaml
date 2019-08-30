@@ -2,19 +2,19 @@ summary: Adicionar um vocabulário
 description: Adicionar um vocabulário
 tags:
   - vocabularios
-parameters:
-  - name: body
-    in: body
-    description: 'Vocabulário'
-    required: true
-    schema:
-      properties:
-        id:
-          type: string
-        label:
-          type: string
-        desc:
-          type: string
+requestBody:
+  description: 'Vocabulário'
+  required: true
+  content:
+    application/json:
+      schema:
+        properties:
+          id:
+            type: string
+          label:
+            type: string
+          desc:
+            type: string
 responses:
   200:
     description: Adicionar um vocabulário

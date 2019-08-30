@@ -6,7 +6,8 @@ parameters:
   - name: classe
     in: path
     description: 'Identificador de uma classe (exemplo: c200.10.100)'
-    type: string
+    schema:
+      type: string
     required: true
 responses:
   200:

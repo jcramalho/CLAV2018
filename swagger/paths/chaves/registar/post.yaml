@@ -2,18 +2,19 @@ summary: Criar chave API
 description: Criar Chave API
 tags:
   - chaves
-parameters:
-  - in: body
-    name: body
-    description: Para criar uma chave é necessário o nome para a chave, o email e a entidade
-    schema:
-      properties:
-        name:
-          type: string
-        email:
-          type: string
-        entidade:
-          type: string
+requestBody:
+  description: Para criar uma chave é necessário o nome para a chave, o email e a entidade
+  required: true
+  content:
+    application/json:
+      schema:
+        properties:
+          name:
+            type: string
+          email:
+            type: string
+          entidade:
+            type: string
 responses:
   200:
     description: Chave API criada

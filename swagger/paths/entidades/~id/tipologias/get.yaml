@@ -6,7 +6,8 @@ parameters:
   - name: id
     in: path
     description: 'Identificador de uma entidade (exemplo: ent_AAN)'
-    type: string
+    schema:
+      type: string
     required: true
 responses:
  200:

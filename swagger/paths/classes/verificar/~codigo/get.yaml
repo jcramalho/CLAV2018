@@ -6,10 +6,9 @@ parameters:
   - name: codigo
     in: path
     description: 'Código a verificar (exemplo: 200.10.100)'
-    type: string
+    schema:
+      type: string
     required: true
-produces:
-  - application/json
 responses:
   200:
     description: Verifica se um determinado código de classe já existe 

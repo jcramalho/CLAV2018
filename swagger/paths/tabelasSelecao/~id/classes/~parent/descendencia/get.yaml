@@ -6,12 +6,14 @@ parameters:
   - name: id
     in: path
     description: 'Identificador de uma tabela de seleção'
-    type: string
+    schema:
+      type: string
     required: true
   - name: parent
     in: path
     description: 'Identificador de uma classe (exemplo: c200.10.100)'
-    type: string
+    schema:
+      type: string
     required: true
 responses:
   200:

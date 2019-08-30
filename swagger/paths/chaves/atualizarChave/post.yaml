@@ -2,16 +2,17 @@ summary: Renovar chave API
 description: Renovar chave API. Apenas altera o valor da chave e a data de criação
 tags:
   - chaves
-parameters:
-  - in: body
-    name: body
-    description: Para renovar a chave API é necessário fornecer o id da chave na BD
-    schema:
-      properties:
-        id:
-          type: string
-      required:
-        - id
+requestBody:
+  description: Para renovar a chave API é necessário fornecer o id da chave na BD
+  required: true
+  content:
+    application/json:
+      schema:
+        properties:
+          id:
+            type: string
+        required:
+          - id
 responses:
   200:
     description: Chave API renovada

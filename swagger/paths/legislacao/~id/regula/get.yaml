@@ -6,7 +6,8 @@ parameters:
   - name: id
     in: path
     description: 'Identificador de um documento legislativo (exemplo: leg_6U8eokSH6rjR0mh34m6-y)'
-    type: string
+    schema:
+      type: string
     required: true
 responses:
   200:

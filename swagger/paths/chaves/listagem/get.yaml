@@ -2,8 +2,6 @@ summary: Devolve todas as chaves API
 description: Devolve todas as chaves API
 tags:
   - chaves
-produces:
-  - application/json
 responses:
   200:
     description: Devolve todas as chaves API

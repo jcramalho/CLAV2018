@@ -6,18 +6,20 @@ parameters:
   - name: id
     in: path
     description: 'Identificador de um vocabulario (exemplo: vc_processoTipoRelacao)'
-    type: string
-    required: true
-  - name: body
-    in: body
-    description: 'Dados a alterar'
-    required: true
     schema:
-      properties:
-        label:
-          type: string
-        desc:
-          type: string
+      type: string
+    required: true
+requestBody:
+  description: 'Dados a alterar'
+  required: true
+  content:
+    application/json:
+      schema:
+        properties:
+          label:
+            type: string
+          desc:
+            type: string
 responses:
   200:
     description: Atualizada a legenda e descrição de um vocabulário

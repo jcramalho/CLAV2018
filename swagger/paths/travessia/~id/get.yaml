@@ -6,7 +6,8 @@ parameters:
   - name: id
     in: path
     description: 'Código de um processo (exemplo: 100.10.001)'
-    type: string
+    schema:
+      type: string
     required: true
 responses:
   200:

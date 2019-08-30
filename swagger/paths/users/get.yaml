@@ -5,13 +5,15 @@ tags:
 parameters:
   - in: query
     name: entidade
-    type: string
+    schema:
+      type: string
     description: Filtra os utilizadores pela entidade a que correspondem 
     required: false
   - in: query
     name: formato
-    type: string
-    enum: [normalizado]
+    schema:
+      type: string
+      enum: [normalizado]
     description: Caso o formato seja normalizado em vez de devolver o level como um número devolve em texto para além de que devolve apenas o name, entidade, level, email e id
     required: false
 responses:

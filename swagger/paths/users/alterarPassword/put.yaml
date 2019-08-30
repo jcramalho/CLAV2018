@@ -2,17 +2,17 @@ summary: Altera a password da conta de um utilizador
 description: Altera a password da conta de um utilizador
 tags:
   - users
-parameters:
-  - name: body
-    in: body
-    description: 'De forma a alterar a password de uma conta de um utilizador é necessário o id da conta e a nova password'
-    required: true
-    schema:
-      properties:
-        id:
-          type: string
-        password:
-          type: string
+requestBody:
+  description: 'De forma a alterar a password de uma conta de um utilizador é necessário o id da conta e a nova password'
+  required: true
+  content:
+    application/json:
+      schema:
+        properties:
+          id:
+            type: string
+          password:
+            type: string
 responses:
   200:
     description: Alterado a password da conta de um utilizador

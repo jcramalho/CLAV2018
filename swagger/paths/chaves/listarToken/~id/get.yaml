@@ -6,7 +6,8 @@ parameters:
   - name: id
     in: path
     description: valor da chave
-    type: string
+    schema:
+      type: string
     required: true
 responses:
   200:

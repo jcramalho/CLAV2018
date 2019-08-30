@@ -2,33 +2,41 @@ summary: Criação de um pedido
 description: Criação de um pedido
 tags:
   - pedidos
-parameters:
-  - name: body
-    in: body
-    description: 'Dados. No campo novoObjeto é colocado os dados com o qual se pretende realizar o pedido. Pode ser um objeto Classe, TS Organizacional, TS Pluriorganizacional, Entidade, Tipologia, Legislação ou Termo de Indice'
-    required: true
-    schema:
-      properties:
-        tipoPedido:
-          type: string
-          enum: [Criação, Alteração, Remoção]
-        tipoObjeto:
-          type: string
-          enum: [Classe, TS Organizacional, TS Pluriorganizacional, Entidade, Tipologia, Legislação, Termo de Indice]
-        novoObjeto:
-          type: object
-        user:
-          type: object
-          properties:
-            email:
-              type: string
-          required:
-            - email
-      required:
-        - tipoPedido
-        - tipoObjeto
-        - novoObjeto
-        - user
+requestBody:
+  description: 'Dados. No campo novoObjeto é colocado os dados com o qual se pretende realizar o pedido. Pode ser um objeto Classe, TS Organizacional, TS Pluriorganizacional, Entidade, Tipologia, Legislação ou Termo de Indice'
+  required: true
+  content:
+    application/json:
+      schema:
+        properties:
+          tipoPedido:
+            type: string
+            enum: [Criação, Alteração, Remoção]
+          tipoObjeto:
+            type: string
+            enum: [Classe, TS Organizacional, TS Pluriorganizacional, Entidade, Tipologia, Legislação, Termo de Indice]
+          novoObjeto:
+            type: object
+            oneOf:
+              - $ref: '#/components/schemas/Classe'
+              - $ref: '#/components/schemas/DocumentoLegislativo'
+              - $ref: '#/components/schemas/Entidade'
+              - $ref: '#/components/schemas/TabelaSelecaoOrganizacional'
+              - $ref: '#/components/schemas/TabelaSelecaoPluriorganizacional'
+              - $ref: '#/components/schemas/TermosIndice'
+              - $ref: '#/components/schemas/Tipologia'
+          user:
+            type: object
+            properties:
+              email:
+                type: string
+            required:
+              - email
+        required:
+          - tipoPedido
+          - tipoObjeto
+          - novoObjeto
+          - user
 responses:
   200:
     description: Criação de um pedido

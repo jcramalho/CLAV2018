@@ -6,10 +6,9 @@ parameters:
   - name: id
     in: path
     description: 'Identificador de uma classe (exemplo: c100.10.001)'
-    type: string
+    schema:
+      type: string
     required: true
-produces:
-  - application/json
 responses:
   200:
     description: Devolve a lista de notas de exclusão de uma classe

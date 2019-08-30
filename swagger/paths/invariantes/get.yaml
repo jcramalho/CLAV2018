@@ -10,12 +10,14 @@ tags:
 parameters:
   - in: query
     name: idRel
-    type: string
+    schema:
+      type: string
     description: identificador de um grupo de invariantes 
     required: false
   - in: query
     name: idInv
-    type: string
+    schema:
+      type: string
     description: identificador do invariante dentro do grupo anteriormente identificado 
     required: false
 responses:

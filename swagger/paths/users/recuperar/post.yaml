@@ -2,19 +2,19 @@ summary: Envia um email ao utilizador de forma a puder recuperar a conta
 description: Envia um email ao utilizador de forma a puder recuperar a conta
 tags:
   - users
-parameters:
-  - name: body
-    in: body
-    description: 'De forma a puder recuperar a conta de um utilizador é necessário email e url'
-    required: true
-    schema:
-      properties:
-        email:
-          type: string
-        url:
-          type: string
+requestBody:
+  description: 'De forma a puder recuperar a conta de um utilizador é necessário email e url'
+  required: true
+  content:
+    application/json:
+      schema:
+        properties:
+          email:
+            type: string
+          url:
+            type: string
 responses:
   200:
-    description:
+    description: Enviado email ao utilizador
   500:
     description: Erro

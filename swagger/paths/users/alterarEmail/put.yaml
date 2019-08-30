@@ -2,17 +2,17 @@ summary: Altera o email da conta de um utilizador
 description: Altera o email da conta de um utilizador
 tags:
   - users
-parameters:
-  - name: body
-    in: body
-    description: 'De forma a alterar o email de uma conta de um utilizador é necessário o id da conta e o novo email'
-    required: true
-    schema:
-      properties:
-        id:
-          type: string
-        email:
-          type: string
+requestBody:
+  description: 'De forma a alterar o email de uma conta de um utilizador é necessário o id da conta e o novo email'
+  required: true
+  content:
+    application/json:
+      schema:
+        properties:
+          id:
+            type: string
+          email:
+            type: string
 responses:
   200:
     description: Alterado o email da conta de um utilizador

@@ -6,10 +6,9 @@ parameters:
   - name: id
     in: path
     description: 'Identificador de uma justificação (exemplo: just_pca_c200.10.100)'
-    type: string
+    schema:
+      type: string
     required: true
-produces:
-  - application/json
 responses:
   200:
     description: Devolve uma justificação, PCA ou DF

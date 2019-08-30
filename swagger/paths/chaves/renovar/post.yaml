@@ -2,19 +2,20 @@ summary: Envia email ao utilizador para renovar a chave API
 description: Envia email ao utilizador para renovar a chave API (serve apenas para a interface desenvolvida para o CLAV)
 tags:
   - chaves
-parameters:
-  - in: body
-    name: body
-    description: Para enviar email ao utilizador para renovar a chave API é necessário fornecer o email associado à chave API e o url de onde é proveniente o pedido de renovação (serve apenas para a interface desenvolvida para o CLAV)
-    schema:
-      properties:
-        email:
-          type: string
-        url:
-          type: string
-      required:
-        - email
-        - url
+requestBody:
+  description: Para enviar email ao utilizador para renovar a chave API é necessário fornecer o email associado à chave API e o url de onde é proveniente o pedido de renovação (serve apenas para a interface desenvolvida para o CLAV)
+  required: true
+  content:
+    application/json:
+      schema:
+        properties:
+          email:
+            type: string
+          url:
+            type: string
+        required:
+          - email
+          - url
 responses:
   200:
     description: Email enviado ao utilizador

@@ -5,7 +5,8 @@ tags:
 parameters:
   - in: query
     name: existe
-    type: string
+    schema:
+      type: string
     description: 'nome do termo índice (exemplo: ADSE, receção de cartão da)'
     required: false
 responses:

@@ -6,7 +6,8 @@ parameters:
   - name: codigo
     in: path
     description: 'Identificador de um pedido (exemplo: 2019-321)'
-    type: string
+    schema:
+      type: string
     required: true
 responses:
   200:
