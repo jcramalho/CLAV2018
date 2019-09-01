@@ -1,5 +1,5 @@
 const { json2xml } = require('./json2xml.js')
-//const json2csv = require('json2csv')
+const { json2csv } = require('./json2csv.js')
 
 module.exports.outputFormat = (req, res, next) => {
 	if (res.locals.dados) {
@@ -18,8 +18,10 @@ module.exports.outputFormat = (req, res, next) => {
             case 'text/csv':
             case 'csv':
                 res.setHeader('content-type', 'text/csv');
-                //res.send(json2csv(res.locals.dados))
-                res.send(res.locals.dados)
+                res.send(json2csv(res.locals.dados))
+                //res.send(res.locals.dados)
+                break
+            case 'rdf':
                 break
             default:
                 res.json(res.locals.dados)

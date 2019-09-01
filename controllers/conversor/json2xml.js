@@ -27,7 +27,7 @@ function json2xmlRec(json, nTabs){
     var xml = ''
 
     if(json instanceof Array){
-        xml = json2xmlArray(json)
+        xml = json2xmlArray(json, nTabs)
     }else{
         for(var key in json){
             var aux = ''
