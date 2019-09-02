@@ -127,11 +127,14 @@ process.chdir(__dirname);
 fs.writeFileSync("./swagger/clav.yaml", yaml.dump(swaggerDoc))
 app.use(express.static("./swagger"))
 
+//formatar o resultado consoante a querystring OF
+const { outputFormat } = require('./controllers/conversor/outputFormat.js')
+
 //routes and API
 app.use('/api/entidades',require('./routes/api/entidades'));
 app.use('/api/tipologias',require('./routes/api/tipologias'));
 app.use('/api/legislacao',require('./routes/api/leg'));
-app.use('/api/classes',require('./routes/api/classes'));
+app.use('/api/classes',require('./routes/api/classes'), outputFormat);
 app.use('/api/tabelasSelecao',require('./routes/api/tabsSel'));
 app.use('/api/termosIndice',require('./routes/api/termosIndice'));
 app.use('/api/vocabularios',require('./routes/api/vocabularios'));

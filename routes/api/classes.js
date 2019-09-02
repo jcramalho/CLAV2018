@@ -6,17 +6,20 @@ var express = require('express');
 var router = express.Router();
 
 // Devolve as classes em vários formatos podendo ser filtradas por nível 
-router.get('/', async (req, res) => { 
+router.get('/', async (req, res, next) => { 
     try {
         if(req.query.formato == "arvore"){
-            res.jsonp(await State.getAllClasses());
+            res.locals.dados = await State.getAllClasses()
+            next()
         }
         else if(req.query.formato == "lista"){
-            res.jsonp(await State.getClassesFlatList());
+            res.locals.dados = await State.getClassesFlatList()
+            next()
         }
         // Devolve a lista dos processos comuns
         else if(req.query.tipo == "comum"){
-            res.json(await State.getProcessosComuns());
+            res.locals.dados = await State.getProcessosComuns()
+            next()
         }
         // Devolve a lista dos processos especificos
         else if(req.query.tipo == "especifico"){
@@ -26,33 +29,38 @@ router.get('/', async (req, res) => {
             if( req.query.tips ) {
                 var tips = req.query.tips.split(',');
             }
-            res.json(await State.getProcessosEspecificos(ents, tips));
+            res.locals.dados = await State.getProcessosEspecificos(ents, tips)
+            next()
         }
         else if(req.query.nivel){
             switch(req.query.nivel){
                 case '1': try {
-                        res.jsonp(await State.getLevel1Classes());
+                        res.locals.dados = await State.getLevel1Classes()
+                        next()
                         break  
                     } catch(err) {
                         res.status(500).send(`Erro na listagem geral das classes de nível 1: ${err}`)
                         break
                     }
                 case '2': try {
-                        res.jsonp(await State.getLevel2Classes());  
+                        res.locals.dados = await State.getLevel2Classes()
+                        next()
                         break
                     } catch(err) {
                         res.status(500).send(`Erro na listagem geral das classes de nível 2: ${err}`)
                         break
                     }  
                 case '3': try {
-                        res.jsonp(await State.getLevel3Classes()); 
+                        res.locals.dados = await State.getLevel3Classes()
+                        next()
                         break 
                     } catch(err) {
                         res.status(500).send(`Erro na listagem geral das classes de nível 3: ${err}`)
                         break
                     }
                 case '4': try {
-                        res.jsonp(await State.getLevel4Classes()); 
+                        res.locals.dados = await State.getLevel4Classes()
+                        next()
                         break 
                     } catch(err) {
                         res.status(500).send(`Erro na listagem geral das classes de nível 4: ${err}`)
@@ -61,7 +69,8 @@ router.get('/', async (req, res) => {
             }
         }
         else{
-            res.jsonp(await State.getAllClasses());
+            res.locals.dados = await State.getAllClasses()
+            next()
         }
     } catch(err) {
         res.status(500).send(`Erro na listagem geral das classes: ${err}`)
@@ -69,9 +78,10 @@ router.get('/', async (req, res) => {
 })
 
 // Devolve a informação de uma classe
-router.get('/:id', async function (req, res) {
+router.get('/:id', async function (req, res, next) {
     try {
-        res.jsonp(await Classes.retrieve(req.params.id)) 
+        res.locals.dados = await Classes.retrieve(req.params.id)
+        next()
     } catch(err) {
         res.status(500).send(`Erro na recuperação da classe ` + req.params.id + `: ${err}`)
     }
