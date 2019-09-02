@@ -21,7 +21,7 @@ Users.getUserByEmail = function (email, callback) {
 }
 
 Users.getUserByCC = function (nic, callback) {
-	var query = { _id:  nic};
+	var query = { _id: nic};
 	User.findOne(query, callback);
 }
 
