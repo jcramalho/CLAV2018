@@ -33,6 +33,7 @@ router.get('/listarEmail/:id', function(req, res) {
 router.get('/listarToken/:id', async function(req,res){
     await jwt.verify(req.params.id, secretKey.key, async function(err, decoded){
         if(!err){
+            console.log(decoded)
             await Users.listarPorId(decoded.id,function(err, result){
                 if(err){
                     res.send(err);
@@ -111,14 +112,18 @@ router.post('/recuperar', function (req, res) {
             return res.status(500).send(`Erro: ${err}`);
         if (!user)
             res.send('Não existe utilizador com esse email!');
-        else {
-            if(user._id.toString().includes('ObjectId')){
-                var token = jwt.sign({id: user._id}, secretKey.key, {expiresIn: '30m'});
-                Mailer.sendEmailRecuperacao(req.body.email, req.body.url.split('/recuperacao')[0]+'/alteracaoPassword?jwt='+token);
-                res.send('Email enviado com sucesso!')
-            }else{
-                res.send('Este utilizador foi registado através do Cartão de Cidadão!')
-            }
+        else{
+            Users.getUserById(user._id, function(err, user){
+                if(err) 
+                    return res.status(500).send(`Erro: ${err}`);
+                if(user.local.password != undefined){
+                    var token = jwt.sign({id: user._id}, secretKey.key, {expiresIn: '30m'});
+                    Mailer.sendEmailRecuperacao(req.body.email, req.body.url.split('/recuperacao')[0]+'/alteracaoPassword?jwt='+token);
+                    res.send('Email enviado com sucesso!')
+                }else{
+                    res.send('Este utilizador foi registado através do Cartão de Cidadão!')
+                }
+            })
         }
     });
 });
