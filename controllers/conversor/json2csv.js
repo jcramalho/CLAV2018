@@ -5,12 +5,13 @@ function protect(string){
 function json2csvArray(name, array){
     var csv = [[]]
     var accum = []
+    var remHeaders = []
     var len = array.length
 
     if(len){
         if(array[0] instanceof Array){
-            var header = name != '' ? name + '.' : ''
-            array.forEach((arr, index) => csv = csv.concat(json2csvRec(header + index, arr)))
+            var header = name != '' ? '.' + name : ''
+            array.forEach((arr, index) => csv = csv.concat(json2csvRec(index + header, arr)))
         }else{
             if(typeof array[0] === 'object'){
 
@@ -28,12 +29,24 @@ function json2csvArray(name, array){
                         if(typeof array[i][key] != 'object' && !(array[i][key] instanceof Array)){
                             line.push(protect(array[i][key]))
                         }else{
-                            accum = accum.concat(json2csvRec(header + key + '.' + i, array[i][key]))
+                            if(array[i][key] instanceof Array){
+                                if(!remHeaders.includes(protect(header + key))){
+                                    remHeaders.push(protect(header + key))
+                                }
+                            }
+                            accum = accum.concat(json2csvRec(header + i + '.' + key, array[i][key]))
                         }
                     }
 
                     csv.push(line)
                 }
+
+                remHeaders.forEach(h => {
+                    var i = csv[0].indexOf(h)
+                    if(i>-1){
+                        csv[0].splice(i,1)
+                    }
+                })
             }else{
                 csv[0].push(protect(name))
                 array.forEach(e => csv.push([e]))
@@ -50,6 +63,7 @@ function json2csvArray(name, array){
 
 function json2csvRec(name,json){
     var csvLines
+    var remHeaders = []
 
     if(json instanceof Array){
         csvLines = json2csvArray(name, json)
@@ -61,6 +75,10 @@ function json2csvRec(name,json){
 
             if(json[key] instanceof Array){
                 csvLines = csvLines.concat(json2csvArray(header, json[key]))
+
+                if(!remHeaders.includes(protect(header))){
+                    remHeaders.push(protect(header))
+                }
             }else{
                 if(typeof json[key] === 'object'){
                     csvLines = csvLines.concat(json2csvRec(header, json[key]))
@@ -70,6 +88,13 @@ function json2csvRec(name,json){
                 }
             }
         }
+
+        remHeaders.forEach(h => {
+            var i = csvLines[0].indexOf(h)
+            if(i>-1){
+                csvLines[0].splice(i,1)
+            }
+        })
 
         if(csvLines[0].length == 0 && csvLines[1].length == 0){
             csvLines = csvLines.slice(3)
