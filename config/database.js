@@ -2,6 +2,7 @@
 const ip = 'localhost'
 
 module.exports.onthology = 'http://'+ip+':7200/repositories/CLAV'
+//module.exports.onthology = 'http://graphdb:7200/repositories/CLAV' //docker
 
 module.exports.prefixes = `
     PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -15,3 +16,4 @@ module.exports.prefixes = `
 module.exports.host = 'http://'+ip+':7779'
 
 module.exports.userDB = 'mongodb://localhost/m51-clav'
+//module.exports.userDB = 'mongodb://mongo/m51-clav' //docker
