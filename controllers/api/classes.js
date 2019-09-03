@@ -210,14 +210,14 @@ Classes.retrieve = async id => {
         if(pca.data.length > 0) classe.pca = pca.data[0]
     
         if(classe.pca && classe.pca.idJust){
-            let just = await axios.get(myhost + "/api/classes/justificacao/" + classe.pca.idJust);
+            let just = await axios.get(myhost + "/api/classes/justificacao2/" + classe.pca.idJust);
             classe.pca.justificacao = just.data
         }
 
         let df = await axios.get(myhost + "/api/classes/" + id + "/df");
         if(df.data.length > 0) classe.df = df.data[0]
         if(classe.df && classe.df.idJust){
-            let just = await axios.get(myhost + "/api/classes/justificacao/" + classe.df.idJust);
+            let just = await axios.get(myhost + "/api/classes/justificacao2/" + classe.df.idJust);
             classe.df.justificacao = just.data
         }
 
