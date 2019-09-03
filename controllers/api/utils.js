@@ -1,6 +1,51 @@
 var axios = require('axios')
+var fs = require('fs')
 const urlGraphDB = require('../../config/database').onthology
 const prefixes = require('../../config/database').prefixes
+
+/**
+ * Exporta todos os triplos do repositório, caso já exista uma exportação realizada no dia à qual é feito o pedido de exportação apenas devolve o ficheiro dessa exportação, caso contrário faz um novo export do graphDB
+ * @param infer se false não obtém os triplos inferidos se true obtém os triplos inferidos
+ */
+exports.exportRDF = async function(infer){
+    var url = urlGraphDB + "/statements?infer="
+    var response
+    var headers = {
+        headers: {
+            'Accept': 'text/turtle'
+        }
+    }
+
+    var files = fs.readdirSync('./public/rdf')
+
+    var today = new Date()
+    var d = String(today.getDate()).padStart(2, '0')
+    var m = String(today.getMonth() + 1).padStart(2, '0')
+    var y = today.getFullYear()
+    var date = y + m + d
+
+    if(files[0] == 'clav-' + date + '.ttl'){
+        return fs.readFileSync('./public/rdf/' + files[0])
+    }else{
+        try{
+            switch(infer) {
+                case "true":
+                    response = await axios.get(url + infer, headers)
+                    break;
+                default:
+                    response = await axios.get(url + "false", headers)
+                    break;
+            }
+            
+            fs.unlinkSync('./public/rdf/' + files[0])
+            fs.writeFileSync('./public/rdf/clav-' + date + '.ttl', response.data)
+        }catch(error){
+            throw(error)
+        }
+
+        return response.data
+    }
+}
 
 /**
  * Executa uma query SPARQL e devolve o resultado
@@ -11,6 +56,7 @@ exports.execQuery = async function(method, query){
     var getLink = urlGraphDB + "?query="
     var postLink = urlGraphDB + "/statements"
     var encoded = encodeURIComponent(prefixes + query)
+    var response
     try{
         switch(method) {
             case "query":

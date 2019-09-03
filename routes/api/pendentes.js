@@ -34,7 +34,7 @@ router.put('/', (req, res) => {
 
 // Apaga um trabalho pendente
 router.delete('/:id', (req, res) => {
-    Pendentes.apagar(req.params.id, req.body)
+    Pendentes.apagar(req.params.id)
         .then(dados => {
             res.jsonp(dados)})
         .catch(erro => {

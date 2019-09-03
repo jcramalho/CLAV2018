@@ -19,9 +19,6 @@ module.exports.outputFormat = (req, res, next) => {
             case 'csv':
                 res.setHeader('content-type', 'text/csv');
                 res.send(json2csv(res.locals.dados))
-                //res.send(res.locals.dados)
-                break
-            case 'rdf':
                 break
             default:
                 res.json(res.locals.dados)
