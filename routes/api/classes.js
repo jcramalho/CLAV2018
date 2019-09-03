@@ -178,6 +178,13 @@ router.get('/justificacao/:id', (req, res) => {
         .catch(erro => res.status(500).send(`Erro na consulta da justificação ${req.params.id}: ${erro}`))
 })
 
+// Devolve uma justificação, PCA ou DF, que é composta por uma lista de critérios: criterio, tipoLabel, conteudo
+router.get('/justificacao2/:id', (req, res) => {
+    Classes.justificacao2(req.params.id)
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.status(500).send(`Erro na consulta da justificação ${req.params.id}: ${erro}`))
+})
+
 // Devolve a informação base do DF: idDF, valor, idJustificacao
 router.get('/:id/df', (req, res) => {
     Classes.df(req.params.id)
