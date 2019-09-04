@@ -50,7 +50,7 @@ router.post('/registar', (req, res) => {
     });
 });
 
-router.post('/desativar', function(req, res) {
+router.put('/desativar', function(req, res) {
     Chaves.desativar(req.body.id, function(err, cb){
         if(err){
             return res.status(500).send(`Erro: ${err}`);
@@ -60,7 +60,7 @@ router.post('/desativar', function(req, res) {
     });
 });
 
-router.post('/ativar', function(req, res) {
+router.put('/ativar', function(req, res) {
     Chaves.ativar(req.body.id, function(err, cb){
         if(err){
             return res.status(500).send(`Erro: ${err}`);
@@ -70,7 +70,7 @@ router.post('/ativar', function(req, res) {
     });
 });
 
-router.post('/eliminar', function(req, res) {
+router.delete('/eliminar', function(req, res) {
     Chaves.eliminar(req.body.id, function(err, cb){
         if(err){
             return res.status(500).send(`Erro: ${err}`);
@@ -80,7 +80,7 @@ router.post('/eliminar', function(req, res) {
     });
 });
 
-router.post('/renovar', function(req, res) {
+router.put('/renovar', function(req, res) {
     Chaves.listarPorEmail(req.body.email, function(err, chave){
         if(err || !chave){
             res.send("Não existe nenhuma chave API associada neste email!");
@@ -92,7 +92,7 @@ router.post('/renovar', function(req, res) {
     });
 });
 
-router.post('/atualizarChave', function(req, res) {
+router.put('/atualizarChave', function(req, res) {
     Chaves.renovar(req.body.id, function(err, chave){
         if(err){
             return res.status(500).send(`Erro: ${err}`);

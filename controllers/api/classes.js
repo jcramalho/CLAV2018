@@ -205,14 +205,14 @@ Classes.retrieve = async id => {
         if(pca.data.length > 0) classe.pca = pca.data[0]
     
         if(classe.pca && classe.pca.idJust){
-            let just = await axios.get(myhost + "/api/classes/justificacao/" + classe.pca.idJust);
+            let just = await axios.get(myhost + "/api/classes/justificacao2/" + classe.pca.idJust);
             classe.pca.justificacao = just.data
         }
 
         let df = await axios.get(myhost + "/api/classes/" + id + "/df");
         if(df.data.length > 0) classe.df = df.data[0]
         if(classe.df && classe.df.idJust){
-            let just = await axios.get(myhost + "/api/classes/justificacao/" + classe.df.idJust);
+            let just = await axios.get(myhost + "/api/classes/justificacao2/" + classe.df.idJust);
             classe.df.justificacao = just.data
         }
 
@@ -460,6 +460,47 @@ Classes.justificacao = async id => {
         }`
         let result = await execQuery("query", query);
         return normalize(result);
+    } 
+    catch(erro) { throw (erro);}
+}
+
+// Devolve uma justificação, PCA ou DF, que é composta por uma lista de critérios: criterio, tipoLabel, procs relacionados e leg
+Classes.justificacao2 = async id => {
+    try {
+        var query = `
+        SELECT
+            ?criterio ?tipoId ?proc
+        WHERE {
+            clav:${id} clav:temCriterio ?criterio . 
+            ?criterio a ?tipo.
+            ?tipo rdfs:subClassOf clav:CriterioJustificacao.
+            BIND (STRAFTER(STR(?tipo), 'clav#') AS ?tipoId).
+        }`
+        let result = await client.query(query).execute();
+        let criterios = normalize(result)
+        for(var i=0; i < criterios.length; i++){
+            // Processos relacionados aos critérios
+            query = `
+            SELECT ?procId 
+            WHERE {
+                <${criterios[i].criterio}> clav:critTemProcRel ?proc .
+                BIND (STRAFTER(STR(?proc), 'clav#') AS ?procId).
+            }`
+            let result = await client.query(query).execute();
+            let processos = normalize(result)
+            criterios[i].processos = processos
+            // Legislação associada aos critérios
+            query = `
+            SELECT ?legId
+            WHERE {
+                <${criterios[i].criterio}> clav:critTemLegAssoc ?leg .
+                BIND (STRAFTER(STR(?leg), 'clav#') AS ?legId).
+            }`
+            result = await client.query(query).execute();
+            let legislacao = normalize(result)
+            criterios[i].legislacao = legislacao
+        }
+        return criterios;
     } 
     catch(erro) { throw (erro);}
 }
