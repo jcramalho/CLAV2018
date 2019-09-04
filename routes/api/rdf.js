@@ -4,7 +4,7 @@ const exportRDF = require('../../controllers/api/utils').exportRDF
 
 router.get('/export', (req, res) => {
     var format = req.query.format || req.headers.accept 
-    exportRDF(req.query.infer, format)
+    exportRDF(req.query.infer, format, 7)
         .then(dados => {
             res.setHeader('content-type', dados[1])
             res.send(dados[0])
