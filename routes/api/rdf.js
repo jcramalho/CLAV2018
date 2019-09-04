@@ -3,10 +3,11 @@ var router = express.Router();
 const exportRDF = require('../../controllers/api/utils').exportRDF
 
 router.get('/export', (req, res) => {
-    exportRDF("false")
+    var format = req.query.format || req.headers.accept 
+    exportRDF(req.query.infer, format)
         .then(dados => {
-            res.setHeader('content-type', 'text/turle')
-            res.send(dados)
+            res.setHeader('content-type', dados[1])
+            res.send(dados[0])
         })
         .catch(erro => res.status(500).send(`Erro: ${erro}`))
 })

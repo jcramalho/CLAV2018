@@ -3,47 +3,124 @@ var fs = require('fs')
 const urlGraphDB = require('../../config/database').onthology
 const prefixes = require('../../config/database').prefixes
 
-/**
- * Exporta todos os triplos do repositório, caso já exista uma exportação realizada no dia à qual é feito o pedido de exportação apenas devolve o ficheiro dessa exportação, caso contrário faz um novo export do graphDB
- * @param infer se false não obtém os triplos inferidos se true obtém os triplos inferidos
- */
-exports.exportRDF = async function(infer){
-    var url = urlGraphDB + "/statements?infer="
-    var response
-    var headers = {
-        headers: {
-            'Accept': 'text/turtle'
-        }
+//Define cabeçalho e extensão do ficheiro de saída
+function getAcceptExtension(format){
+    var accept
+    var extension
+
+    switch(format){
+        case 'text/turtle':
+        case "turtle":
+            accept = 'text/turtle'
+            extension = 'ttl'
+            break
+        case 'application/ld+json':
+        case "json-ld":
+            accept = 'application/ld+json'
+            extension = 'jsonld'
+            break
+        case 'application/rdf+xml':
+        case "rdf-xml":
+            accept = 'application/rdf+xml'
+            extension = 'rdf'
+            break
+        default:
+            accept = 'text/turtle'
+            extension = 'ttl'
+            break
     }
 
-    var files = fs.readdirSync('./public/rdf')
+    return [accept, extension]
+}
 
+//Obtém a data atual
+function currentDate(){
     var today = new Date()
     var d = String(today.getDate()).padStart(2, '0')
     var m = String(today.getMonth() + 1).padStart(2, '0')
     var y = today.getFullYear()
     var date = y + m + d
 
-    if(files[0] == 'clav-' + date + '.ttl'){
-        return fs.readFileSync('./public/rdf/' + files[0])
+    return date
+}
+
+//Remove o ficheiro anterior se existe de forma a manter apenas o mais atual
+function remFile(files, infer, extension){
+    var remFile
+
+    files.forEach(f => {
+        if(f.endsWith(infer + '.' + extension)){
+            remFile = f
+        }
+    })
+    
+    if(remFile){
+        fs.unlinkSync('./public/rdf/' + remFile)
+    }
+}
+
+/**
+ * Exporta todos os triplos do repositório, caso já exista uma exportação realizada no dia à qual é feito o pedido de exportação apenas devolve o ficheiro dessa exportação, caso contrário faz um novo export do graphDB
+ * @param infer se false não obtém os triplos inferidos se true obtém os triplos inferidos
+ * @param format formato de saida da exportação. Pode ser turtle, json-ld ou rdf-xml
+ */
+exports.exportRDF = async function(infer, format){
+    var url = urlGraphDB + "/statements?infer="
+    var response
+    var ae = getAcceptExtension(format)
+    var accept = ae[0]
+    var extension = ae[1]
+    
+    var headers = {
+        headers: {
+            'Accept': accept
+        }
+    }
+
+    switch(infer){
+        case "true":
+            break
+        default:
+            infer = "false"
+            break
+    }
+    
+    try{
+        var files = fs.readdirSync('./public/rdf')
+    }catch(erro){
+        throw(erro)
+    }
+
+    var date = currentDate()
+    var file = 'clav-' + date + '-' + infer + '.' + extension
+
+    if(files.includes(file)){
+        try{
+            var fileContent = fs.readFileSync('./public/rdf/' + file)
+        }catch(erro){
+            throw(erro)
+        }
+
+        return [fileContent, accept]
     }else{
         try{
-            switch(infer) {
-                case "true":
-                    response = await axios.get(url + infer, headers)
-                    break;
-                default:
-                    response = await axios.get(url + "false", headers)
-                    break;
+            response = await axios.get(url + infer, headers)
+            
+            remFile(files, infer, extension)
+
+            var dados
+            if(extension == 'jsonld'){
+                dados = JSON.stringify(response.data, null, 4)
+            }else{
+                dados = response.data
             }
             
-            fs.unlinkSync('./public/rdf/' + files[0])
-            fs.writeFileSync('./public/rdf/clav-' + date + '.ttl', response.data)
+            fs.writeFileSync('./public/rdf/' + file, dados)
         }catch(error){
             throw(error)
         }
-
-        return response.data
+        
+        return [dados, accept]
     }
 }
 
