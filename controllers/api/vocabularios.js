@@ -152,3 +152,59 @@ Vocabulario.adicionar = async function (id, label, desc) {
     } 
     catch(erro) { throw (erro);}
 }
+
+Vocabulario.adicionarTermo = async function (idVC, id, termo, desc) {
+    var query = `
+        INSERT DATA {
+            clav:${id} a skos:Concept ;
+        						skos:prefLabel "${termo}" ;
+        						skos:scopeNote "${desc}" .
+            clav:${idVC} skos:hasTopConcept clav:${id} .
+        }
+    `
+    try {
+        await client.query(query).execute();
+        var ask = `
+        ASK {
+            clav:${id} a skos:Concept ;
+        						skos:prefLabel "${termo}" ;
+        						skos:scopeNote "${desc}" .
+            clav:${idVC} skos:hasTopConcept clav:${id} .
+        }`
+        try {
+            let result = await client.query(ask).execute();
+            return result.boolean;
+        }
+        catch(erro) { throw (erro);}
+    } 
+    catch(erro) { throw (erro);}
+}
+
+Vocabulario.deleteTermo = async function (id) {
+    var query = `
+        DELETE {    
+            clav:${id} a skos:Concept;
+                skos:prefLabel ?termo;
+                skos:scopeNote ?desc .
+            ?vc skos:hasTopConcept clav:${id} .
+        }  WHERE {
+            clav:${id} a skos:Concept;
+                skos:prefLabel ?termo;
+                skos:scopeNote ?desc .
+            ?vc skos:hasTopConcept clav:${id} .
+        }
+    `
+    try {
+        await client.query(query).execute();
+        var ask = `
+        ASK {
+            clav:${id} a skos:Concept.
+        }`
+        try {
+            let result = await client.query(ask).execute();
+            return result.boolean;
+        }
+        catch(erro) { throw (erro);}
+    } 
+    catch(erro) { throw (erro);}
+}
