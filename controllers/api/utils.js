@@ -72,7 +72,7 @@ function fileEndsWith(files, eW){
  * Exporta todos os triplos do repositório, caso já exista uma exportação realizada nos days anteriores à qual é feito o pedido de exportação apenas devolve o ficheiro dessa exportação, caso contrário faz um novo export do graphDB
  * @param infer se false não obtém os triplos inferidos se true obtém os triplos inferidos
  * @param format formato de saida da exportação. Pode ser turtle, json-ld ou rdf-xml
- * @param days número de dias em os ficheiros não são atualizados
+ * @param days número de dias em os ficheiros não são atualizados, valor inteiro maior ou igual a 0
  */
 exports.exportRDF = async function(infer, format, days){
     var url = urlGraphDB + "/statements?infer="
