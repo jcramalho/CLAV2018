@@ -1,0 +1,16 @@
+summary: Apaga um Termo de vocabulário
+description: Apaga um Termo de vocabulário
+tags:
+  - vocabularios
+parameters:
+  - name: id
+    in: path
+    required: true
+    description: 'Identificador de um termo a remover (exemplo: vc_status_A)'
+    schema:
+      type: string
+responses:
+  200:
+    description: Apagado um termo de vocabulário
+  404:
+    description: Erro

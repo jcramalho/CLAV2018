@@ -1,0 +1,30 @@
+summary: Adiciona um Termo a um vocabulário
+description: Adiciona um Termo a um vocabulário
+tags:
+  - vocabularios
+parameters:
+  - name: idVC
+    in: path
+    required: true
+    description: 'Identificador de um vocabulário a adicionar o termo (exemplo: vc_processoTipoRelacao)'
+    schema:
+      type: string
+requestBody:
+  description: 'Termo'
+  required: true
+  content:
+    application/json:
+      schema:
+        properties:
+          idtermo:
+            type: string
+            description: 'o valor de idVC é concatenado com _ sendo posteriormente concatenado com o valor de idtermo'
+          termo:
+            type: string
+          desc:
+            type: string
+responses:
+  200:
+    description: Adicionar um termo a um vocabulário
+  404:
+    description: Erro
