@@ -476,7 +476,7 @@ Classes.justificacao2 = async id => {
             ?tipo rdfs:subClassOf clav:CriterioJustificacao.
             BIND (STRAFTER(STR(?tipo), 'clav#') AS ?tipoId).
         }`
-        let result = await client.query(query).execute();
+        let result = await execQuery("query", query);
         let criterios = normalize(result)
         for(var i=0; i < criterios.length; i++){
             // Processos relacionados aos critérios
@@ -486,7 +486,7 @@ Classes.justificacao2 = async id => {
                 <${criterios[i].criterio}> clav:critTemProcRel ?proc .
                 BIND (STRAFTER(STR(?proc), 'clav#') AS ?procId).
             }`
-            let result = await client.query(query).execute();
+            let result = await execQuery("query", query);
             let processos = normalize(result)
             criterios[i].processos = processos
             // Legislação associada aos critérios
@@ -496,7 +496,7 @@ Classes.justificacao2 = async id => {
                 <${criterios[i].criterio}> clav:critTemLegAssoc ?leg .
                 BIND (STRAFTER(STR(?leg), 'clav#') AS ?legId).
             }`
-            result = await client.query(query).execute();
+            result = await execQuery("query", query);
             let legislacao = normalize(result)
             criterios[i].legislacao = legislacao
         }
