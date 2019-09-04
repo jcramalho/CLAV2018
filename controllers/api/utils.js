@@ -55,7 +55,7 @@ function currentDateMinusDays(nDays){
     return stringifyDate(prevDate)
 }
 
-//Obtém da lista a string que termina com o parametro string
+//Obtém da lista a string que termina com eW
 function fileEndsWith(files, eW){
     var file
 

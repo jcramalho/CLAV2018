@@ -205,14 +205,14 @@ Classes.retrieve = async id => {
         if(pca.data.length > 0) classe.pca = pca.data[0]
     
         if(classe.pca && classe.pca.idJust){
-            let just = await axios.get(myhost + "/api/classes/justificacao2/" + classe.pca.idJust);
+            let just = await axios.get(myhost + "/api/classes/justificacao/" + classe.pca.idJust);
             classe.pca.justificacao = just.data
         }
 
         let df = await axios.get(myhost + "/api/classes/" + id + "/df");
         if(df.data.length > 0) classe.df = df.data[0]
         if(classe.df && classe.df.idJust){
-            let just = await axios.get(myhost + "/api/classes/justificacao2/" + classe.df.idJust);
+            let just = await axios.get(myhost + "/api/classes/justificacao/" + classe.df.idJust);
             classe.df.justificacao = just.data
         }
 
@@ -445,7 +445,7 @@ Classes.pca = id => {
 }
 
 // Devolve uma justificação, PCA ou DF, que é composta por uma lista de critérios: criterio, tipoLabel, conteudo
-Classes.justificacao = async id => {
+/*Classes.justificacao = async id => {
     try {
         var query = `
         SELECT
@@ -462,10 +462,10 @@ Classes.justificacao = async id => {
         return normalize(result);
     } 
     catch(erro) { throw (erro);}
-}
+}*/
 
 // Devolve uma justificação, PCA ou DF, que é composta por uma lista de critérios: criterio, tipoLabel, procs relacionados e leg
-Classes.justificacao2 = async id => {
+Classes.justificacao = async id => {
     try {
         var query = `
         SELECT

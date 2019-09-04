@@ -13,7 +13,12 @@ Vocabulario.listar = async function() {
         } 
         OPTIONAL {
             ?id skos:scopeNote ?desc.
-        }       
+        }
+        MINUS {
+            clav:vc_removidos a skos:ConceptScheme ;
+                              skos:prefLabel ?label ;
+                              skos:scopeNote ?desc .
+        }      
     } 
     `
     try {
@@ -143,6 +148,58 @@ Vocabulario.adicionar = async function (id, label, desc) {
             clav:${id} a skos:ConceptScheme;
                     skos:prefLabel '${label}';
                     skos:scopeNote '${desc}' .
+        }`
+        try {
+            let result = await execQuery("query", ask);
+            return result.boolean;
+        }
+        catch(erro) { throw (erro);}
+    } 
+    catch(erro) { throw (erro);}
+}
+
+Vocabulario.adicionarTermo = async function (idVC, id, termo, desc) {
+    var query = `
+        INSERT DATA {
+            clav:${id} a skos:Concept ;
+        						skos:prefLabel "${termo}" ;
+        						skos:scopeNote "${desc}" .
+            clav:${idVC} skos:hasTopConcept clav:${id} .
+        }
+    `
+    try {
+        await execQuery("update", query);
+        var ask = `
+        ASK {
+            clav:${id} a skos:Concept ;
+        						skos:prefLabel "${termo}" ;
+        						skos:scopeNote "${desc}" .
+            clav:${idVC} skos:hasTopConcept clav:${id} .
+        }`
+        try {
+            let result = await execQuery("query", ask);
+            return result.boolean;
+        }
+        catch(erro) { throw (erro);}
+    } 
+    catch(erro) { throw (erro);}
+}
+
+Vocabulario.deleteTermo = async function (id) {
+    var query = `
+        DELETE {
+            ?vc skos:hasTopConcept clav:${id} .
+        } INSERT {
+            clav:vc_removidos skos:hasTopConcept clav:${id} .
+        } WHERE {
+            ?vc skos:hasTopConcept clav:${id} .
+        }
+    `
+    try {
+        await execQuery("update", query);
+        var ask = `
+        ASK {
+            clav:vc_removidos skos:hasTopConcept clav:${id} .
         }`
         try {
             let result = await execQuery("query", ask);
