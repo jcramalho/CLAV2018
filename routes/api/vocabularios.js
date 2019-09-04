@@ -70,7 +70,7 @@ router.delete('/termo/:id', (req, res) => {
     var id = req.params.id
     Vocabulario.deleteTermo(id)
         .then(dados => {
-            if(!dados) res.jsonp({cod: "200", mensagem: "Termo de VC apagado com sucesso"})
+            if(dados) res.jsonp({cod: "200", mensagem: "Termo de VC apagado com sucesso"})
             else res.status(404).jsonp({cod: "404", mensagem: "Erro na remoção do Termo de VC "+id})
         })
         .catch(erro => res.jsonp({cod: "404", mensagem: "Erro na remoção do Termo de VC "+id+": " + erro}))    

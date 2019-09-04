@@ -13,7 +13,12 @@ Vocabulario.listar = async function() {
         } 
         OPTIONAL {
             ?id skos:scopeNote ?desc.
-        }       
+        }
+        MINUS {
+            clav:vc_removidos a skos:ConceptScheme ;
+                              skos:prefLabel ?label ;
+                              skos:scopeNote ?desc .
+        }      
     } 
     `
     try {
@@ -182,15 +187,11 @@ Vocabulario.adicionarTermo = async function (idVC, id, termo, desc) {
 
 Vocabulario.deleteTermo = async function (id) {
     var query = `
-        DELETE {    
-            clav:${id} a skos:Concept;
-                skos:prefLabel ?termo;
-                skos:scopeNote ?desc .
+        DELETE {
             ?vc skos:hasTopConcept clav:${id} .
-        }  WHERE {
-            clav:${id} a skos:Concept;
-                skos:prefLabel ?termo;
-                skos:scopeNote ?desc .
+        } INSERT {
+            clav:vc_removidos skos:hasTopConcept clav:${id} .
+        } WHERE {
             ?vc skos:hasTopConcept clav:${id} .
         }
     `
@@ -198,7 +199,7 @@ Vocabulario.deleteTermo = async function (id) {
         await client.query(query).execute();
         var ask = `
         ASK {
-            clav:${id} a skos:Concept.
+            clav:vc_removidos skos:hasTopConcept clav:${id} .
         }`
         try {
             let result = await client.query(ask).execute();
