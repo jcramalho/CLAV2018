@@ -460,7 +460,7 @@ Classes.pca = id => {
 }
 
 // Devolve uma justificação, PCA ou DF, que é composta por uma lista de critérios: criterio, tipoLabel, conteudo
-Classes.justificacao = async id => {
+/*Classes.justificacao = async id => {
     try {
         var query = `
         SELECT
@@ -475,6 +475,47 @@ Classes.justificacao = async id => {
         }`
         let result = await client.query(query).execute();
         return normalize(result);
+    } 
+    catch(erro) { throw (erro);}
+}*/
+
+// Devolve uma justificação, PCA ou DF, que é composta por uma lista de critérios: criterio, tipoLabel, procs relacionados e leg
+Classes.justificacao = async id => {
+    try {
+        var query = `
+        SELECT
+            ?criterio ?tipoId ?proc
+        WHERE {
+            clav:${id} clav:temCriterio ?criterio . 
+            ?criterio a ?tipo.
+            ?tipo rdfs:subClassOf clav:CriterioJustificacao.
+            BIND (STRAFTER(STR(?tipo), 'clav#') AS ?tipoId).
+        }`
+        let result = await client.query(query).execute();
+        let criterios = normalize(result)
+        for(var i=0; i < criterios.length; i++){
+            // Processos relacionados aos critérios
+            query = `
+            SELECT ?procId 
+            WHERE {
+                <${criterios[i].criterio}> clav:critTemProcRel ?proc .
+                BIND (STRAFTER(STR(?proc), 'clav#') AS ?procId).
+            }`
+            let result = await client.query(query).execute();
+            let processos = normalize(result)
+            criterios[i].processos = processos
+            // Legislação associada aos critérios
+            query = `
+            SELECT ?legId
+            WHERE {
+                <${criterios[i].criterio}> clav:critTemLegAssoc ?leg .
+                BIND (STRAFTER(STR(?leg), 'clav#') AS ?legId).
+            }`
+            result = await client.query(query).execute();
+            let legislacao = normalize(result)
+            criterios[i].legislacao = legislacao
+        }
+        return criterios;
     } 
     catch(erro) { throw (erro);}
 }
