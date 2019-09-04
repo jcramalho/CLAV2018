@@ -57,11 +57,11 @@ router.post('/termo/:idVC', (req, res) => {
     if(typeof id !== "undefined" && typeof termo !== "undefined" && typeof desc !== "undefined") {
         Vocabulario.adicionarTermo(idVC,id,termo,desc)
             .then(dados => {
-                if(dados) res.jsonp({cod: "200", mensagem: "Termo adicionado a VC com sucesso"})
-                else res.status(404).jsonp({cod: "404", mensagem: "Erro na adição de Termo a VC "+req.body.id})
+                if(dados) res.jsonp("Termo adicionado a VC com sucesso")
+                else res.status(404).jsonp("Erro na adição de Termo a VC "+req.body.id)
             })
-            .catch(erro => res.jsonp({cod: "404", mensagem: "Erro na adição de Termo a VC "+req.body.id+": " + erro}))
-    } else res.status(404).jsonp({cod: "404", mensagem: "Erro na adição de Termo a VC: Campos em falta"})
+            .catch(erro => res.status(404).jsonp("Erro na adição de Termo a VC "+req.body.id+": " + erro))
+    } else res.status(404).jsonp("Erro na adição de Termo a VC: Campos em falta")
 })
 
 //Update da Legenda e da Descrição de um VC
@@ -69,10 +69,10 @@ router.delete('/termo/:id', (req, res) => {
     var id = req.params.id
     Vocabulario.deleteTermo(id)
         .then(dados => {
-            if(dados) res.jsonp({cod: "200", mensagem: "Termo de VC apagado com sucesso"})
-            else res.status(404).jsonp({cod: "404", mensagem: "Erro na remoção do Termo de VC "+id})
+            if(dados) res.jsonp("Termo de VC apagado com sucesso")
+            else res.status(404).jsonp("Erro na remoção do Termo de VC "+id)
         })
-        .catch(erro => res.jsonp({cod: "404", mensagem: "Erro na remoção do Termo de VC "+id+": " + erro}))    
+        .catch(erro => res.status(404).jsonp("Erro na remoção do Termo de VC "+id+": " + erro))
 })
 
 module.exports = router;
