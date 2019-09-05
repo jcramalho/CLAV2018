@@ -116,6 +116,7 @@ travessia.reset()
 
 //Swagger
 var fs = require('fs')
+const swaggerUi = require('swagger-ui-express');
 var yaml = require('js-yaml')
 var yamlinc = require('yaml-include')
 var src = fs.readFileSync("./swagger/index.yaml")
@@ -124,8 +125,18 @@ process.chdir(__dirname + '/swagger');
 var swaggerDoc = yaml.load(src, { schema: yamlinc.YAML_INCLUDE_SCHEMA });
 process.chdir(__dirname);
 
-fs.writeFileSync("./swagger/clav.yaml", yaml.dump(swaggerDoc))
-app.use(express.static("./swagger"))
+swaggerDoc.servers[0].url = dataBases.swaggerURL + '/api'
+fs.writeFileSync("./public/clav.yaml", yaml.dump(swaggerDoc))
+
+var options = {
+  explorer: true,
+  customSiteTitle: 'CLAV API',
+  swaggerOptions: {
+    url: dataBases.swaggerURL + '/clav.yaml'
+  }
+};
+
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(null, options));
 
 //formatar o resultado consoante a querystring OF
 const { outputFormat } = require('./controllers/conversor/outputFormat.js')

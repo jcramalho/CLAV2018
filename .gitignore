@@ -4,4 +4,4 @@ logs/
 misc/
 sessions/
 package-lock.json
-swagger/clav.yaml
+public/clav.yaml

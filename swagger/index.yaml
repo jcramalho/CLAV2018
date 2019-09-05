@@ -8,7 +8,7 @@ info:
     email: clav@dglab.gov.pt
 servers:
   - url: http://localhost:7779/api
-    description: Local testing
+    description: Main API server
   - url: http://clav-test.di.uminho.pt/api
     description: Server for testing
 tags:

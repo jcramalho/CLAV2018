@@ -1,8 +1,7 @@
 // const ip = '192.168.85.197'
-const ip = 'localhost'
+const ip = process.env.IP || 'localhost'
 
-module.exports.onthology = 'http://'+ip+':7200/repositories/CLAV'
-//module.exports.onthology = 'http://graphdb:7200/repositories/CLAV' //docker
+module.exports.onthology = process.env.GRAPHDB ? 'http://' + process.env.GRAPHDB +'/repositories/CLAV' : 'http://'+ip+':7200/repositories/CLAV'
 
 module.exports.prefixes = `
     PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -15,5 +14,6 @@ module.exports.prefixes = `
 
 module.exports.host = 'http://'+ip+':7779'
 
-module.exports.userDB = 'mongodb://localhost/m51-clav'
-//module.exports.userDB = 'mongodb://mongo/m51-clav' //docker
+module.exports.swaggerURL = process.env.SWAGGER_URL || this.host
+
+module.exports.userDB = process.env.MONGODB ? 'mongodb://' + process.env.MONGODB + '/m51-clav' : 'mongodb://localhost/m51-clav'
