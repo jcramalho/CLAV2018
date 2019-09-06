@@ -1,4 +1,4 @@
-const client = require('../../config/database').onthology
+const execQuery = require('../../controllers/api/utils').execQuery
 const normalizeOrdered = require('../../controllers/api/utils').normalizeOrdered
 const urlGraphDB = require('../../config/database').onthology
 var fs = require('fs')
@@ -12,7 +12,7 @@ Ontologia.data = async () => {
         }`
 
     try{
-        var res = await client.query(query).execute()
+        var res = await execQuery("query", query)
         return res.results.bindings[0].d.value 
     }catch(erro) {
         throw (erro) 
@@ -25,7 +25,7 @@ Ontologia.descricao = async () => {
         }`
 
     try{
-        var res = await client.query(query).execute()
+        var res = await execQuery("query", query)
         return res.results.bindings[0].d.value 
     }catch(erro) {
         throw (erro) 
