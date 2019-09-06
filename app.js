@@ -149,6 +149,7 @@ app.use('/api/classes',require('./routes/api/classes'), outputFormat);
 app.use('/api/tabelasSelecao',require('./routes/api/tabsSel'));
 app.use('/api/termosIndice',require('./routes/api/termosIndice'));
 app.use('/api/vocabularios',require('./routes/api/vocabularios'));
+app.use('/api/autosEliminacao',require('./routes/api/autosEliminacao'));
 app.use('/api/pedidos',require('./routes/api/pedidos'));
 app.use('/api/pendentes',require('./routes/api/pendentes'));
 app.use('/api/users',require('./routes/api/users'));
@@ -158,7 +159,7 @@ app.use('/api/stats', require('./routes/api/stats'))
 app.use('/api/travessia',require('./routes/api/travessia'));
 app.use('/api/invariantes',require('./routes/api/invariantes'));
 app.use('/api/auth', require('./routes/api/auth'));
-app.use('/api/rdf', require('./routes/api/rdf'));
+app.use('/api/ontologia', require('./routes/api/ontologia'));
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
