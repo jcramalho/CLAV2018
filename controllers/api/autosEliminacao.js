@@ -1,11 +1,12 @@
 const client = require('../../config/database').onthology
 const normalize = require('../../controllers/api/utils').normalize
+const projection = require('../../controllers/api/utils').projection;
 
 var AutosEliminacao = module.exports
 
 AutosEliminacao.listar = async function() {
     let query = `
-    select * where {
+    select ?id ?data ?entidade ?fundo ?tipo ?num where {
         ?id a clav:AutoEliminacao;
                 clav:autoDataAutenticacao ?data;
                 clav:temEntidadeResponsavel ?entidade ;
@@ -25,20 +26,26 @@ AutosEliminacao.listar = async function() {
 // Devolve a lista de termos de um VC: idtermo, termo
 AutosEliminacao.consultar = async function(id) {
     var query = `
-        SELECT ?idtermo ?termo ?desc
-        WHERE {
-            clav:${id} skos:hasTopConcept ?idtermo .
-            OPTIONAL {
-                ?idtermo skos:prefLabel ?termo .
-            }
-            OPTIONAL {
-                ?idtermo skos:scopeNote ?desc .
-            }
-        }
+    select * where {
+        clav:${id} a clav:AutoEliminacao;
+                clav:autoDataAutenticacao ?data;
+                clav:autoResponsavel ?resp ;
+                clav:temEntidadeResponsavel ?entidade ;
+                clav:temLegislacao ?legislacao ;
+                clav:fundo ?fundo ;
+                   clav:temZonaControlo ?zc .
+        ?legislacao clav:diplomaTipo ?tipo ;
+                clav:diplomaNumero ?num .
+        ?zc clav:codigo ?codigo ;
+            clav:temAgregacao ?ag .
+    }
     `
+    const campos = ["data","resp","entidade","legislacao","fundo","tipo","num"]
+    const agrupar = ["ag"]
     try {
-        let result = await client.query(query).execute();
-        return normalize(result);
+        return client.query(query)
+            .execute()
+            .then(response => projection(normalize(response), campos, agrupar));
     } 
     catch(erro) { throw (erro);}
 }
