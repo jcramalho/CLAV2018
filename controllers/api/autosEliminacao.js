@@ -1,4 +1,4 @@
-const client = require('../../config/database').onthology
+const execQuery = require('../../controllers/api/utils').execQuery
 const normalize = require('../../controllers/api/utils').normalize
 const projection = require('../../controllers/api/utils').projection;
 
@@ -17,7 +17,7 @@ AutosEliminacao.listar = async function() {
     } 
     `
     try {
-        let result = await client.query(query).execute();
+        let result = await execQuery("query", query);
         return normalize(result);
     } 
     catch(erro) { throw (erro);}
@@ -43,8 +43,7 @@ AutosEliminacao.consultar = async function(id) {
     const campos = ["data","resp","entidade","legislacao","fundo","tipo","num"]
     const agrupar = ["ag"]
     try {
-        return client.query(query)
-            .execute()
+        return execQuery("query", query)
             .then(response => projection(normalize(response), campos, agrupar));
     } 
     catch(erro) { throw (erro);}
@@ -69,7 +68,7 @@ AutosEliminacao.update = async function (id, label, desc) {
         }
     `
     try {
-        await client.query(query).execute();
+        await execQuery("update", query);
         var ask = `
         ASK {
             clav:${id} a skos:ConceptScheme;
@@ -77,7 +76,7 @@ AutosEliminacao.update = async function (id, label, desc) {
                     skos:scopeNote '${desc}' .
         }`
         try {
-            let result = await client.query(ask).execute();
+            let result = await execQuery("query", ask);
             return result.boolean;
         }
         catch(erro) { throw (erro);}
@@ -94,7 +93,7 @@ AutosEliminacao.adicionar = async function (id, label, desc) {
         }
     `
     try {
-        await client.query(query).execute();
+        await execQuery("update", query);
         var ask = `
         ASK {
             clav:${id} a skos:ConceptScheme;
@@ -102,7 +101,7 @@ AutosEliminacao.adicionar = async function (id, label, desc) {
                     skos:scopeNote '${desc}' .
         }`
         try {
-            let result = await client.query(ask).execute();
+            let result = await execQuery("ask", query);
             return result.boolean;
         }
         catch(erro) { throw (erro);}
