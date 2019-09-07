@@ -1,9 +1,7 @@
 const execQuery = require('../../controllers/api/utils').execQuery
-const normalizeOrdered = require('../../controllers/api/utils').normalizeOrdered
 const urlGraphDB = require('../../config/database').onthology
 var fs = require('fs')
 var axios = require('axios')
-const Ontologia = module.exports
 
 Ontologia.data = async () => {
     const query = `PREFIX dc: <http://purl.org/dc/elements/1.1#>
