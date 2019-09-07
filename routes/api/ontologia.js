@@ -5,8 +5,8 @@ var express = require('express');
 var router = express.Router();
 
 router.get('/', (req, res) => {
-    var format = req.query.format || req.headers.accept
-    Ontologia.exportar(req.query.infer, format, 7)
+    var format = req.query.formato || req.headers.accept
+    Ontologia.exportar(req.query.inferir, format, 7)
         .then(dados => {
             res.setHeader("content-disposition","attachment; filename=clav." + dados[2])
             res.setHeader('content-type', dados[1])

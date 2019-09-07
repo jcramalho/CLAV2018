@@ -1,0 +1,9 @@
+summary: Devolve a descrição da ontologia
+description: Devolve a descrição da ontologia
+tags:
+  - ontologia
+responses:
+  200:
+    description: Descrição da ontologia
+  500:
+    description: Erro

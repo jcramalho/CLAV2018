@@ -1,0 +1,382 @@
+summary: Exporta todos os triplos do repositório
+description: Exporta todos os triplos do repositório
+tags:
+  - ontologia
+parameters:
+  - in: query
+    name: inferir
+    description: Caso true devolve todos os triplos incluindo os inferidos. Caso false não inclui os inferidos.
+    schema:
+      type: boolean
+    required: false
+  - in: query
+    name: formato
+    description: "Formato em que é devolvido os triplos. Pode ser um dos seguintes valores: turtle (text/turtle), json-ld (application/ld+json) ou rdf-xml (application/rdf+xml). No caso de não ser passado nenhum formato ou o que é colocado não é suportado é devolvido turtle. O formato também pode ser indicado na header 'Accept' sofrendo das mesmas restrições que se for indicado por query. Caso seja definido das duas formas a fornecida pela query string é a que é usada."
+    schema:
+      type: string
+      enum: [turtle, text/turtle, json-ld, application/ld+json, rdf-xml, application/rdf+xml]
+    required: false
+responses:
+  200:
+    description: Devolve um ficheiro com os triplos do repositório
+    content:
+      text/turtle:
+        schema:
+          type: string
+          format: binary
+        example: "@prefix : <http://jcr.di.uminho.pt/m51-clav#> .
+
+@prefix dc: <http://purl.org/dc/elements/1.1#> .
+
+@prefix fn: <http://www.w3.org/2005/xpath-functions#> .
+
+%...
+
+rdf:type a rdf:Property .
+
+rdfs:subPropertyOf a rdf:Property, owl:TransitiveProperty .
+
+rdfs:subClassOf a rdf:Property, owl:TransitiveProperty .
+
+rdfs:domain a rdf:Property .
+
+rdfs:range a rdf:Property .
+
+%...
+
+:c650.10.305 a :Classe_N3, owl:NamedIndividual .
+
+:c650.10.306 a :Classe_N3, owl:NamedIndividual .
+
+:c650.10.307 a :Classe_N3, owl:NamedIndividual .
+
+:c650.10.308 a :Classe_N3, owl:NamedIndividual .
+
+:c650.10.400 a :Classe_N3, owl:NamedIndividual .
+
+%..."
+      turtle:
+        schema:
+          type: string
+          format: binary
+        example: "@prefix : <http://jcr.di.uminho.pt/m51-clav#> .
+
+@prefix dc: <http://purl.org/dc/elements/1.1#> .
+
+@prefix fn: <http://www.w3.org/2005/xpath-functions#> .
+
+%...
+
+rdf:type a rdf:Property .
+
+rdfs:subPropertyOf a rdf:Property, owl:TransitiveProperty .
+
+rdfs:subClassOf a rdf:Property, owl:TransitiveProperty .
+
+rdfs:domain a rdf:Property .
+
+rdfs:range a rdf:Property .
+
+%...
+
+:c650.10.305 a :Classe_N3, owl:NamedIndividual .
+
+:c650.10.306 a :Classe_N3, owl:NamedIndividual .
+
+:c650.10.307 a :Classe_N3, owl:NamedIndividual .
+
+:c650.10.308 a :Classe_N3, owl:NamedIndividual .
+
+:c650.10.400 a :Classe_N3, owl:NamedIndividual .
+
+%..."
+      application/ld+json:
+        schema:
+          type: string
+          format: binary
+        example: [
+    {
+        "@id": "_:node156",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Class"
+        ],
+        "http://www.w3.org/2002/07/owl#unionOf": [
+            {
+                "@list": [
+                    {
+                        "@id": "http://jcr.di.uminho.pt/m51-clav#Classe_N3"
+                    },
+                    {
+                        "@id": "http://jcr.di.uminho.pt/m51-clav#Classe_N4"
+                    }
+                ]
+            }
+        ]
+    },
+    "...",
+    {
+        "@id": "http://jcr.di.uminho.pt/m51-clav#c200.30.303",
+        "@type": [
+            "http://jcr.di.uminho.pt/m51-clav#Classe_N3",
+            "http://www.w3.org/2002/07/owl#NamedIndividual"
+        ],
+        "http://jcr.di.uminho.pt/m51-clav#classeStatus": [
+            {
+                "@value": "A"
+            }
+        ],
+        "http://jcr.di.uminho.pt/m51-clav#codigo": [
+            {
+                "@value": "200.30.303"
+            }
+        ],
+        "http://jcr.di.uminho.pt/m51-clav#descricao": [
+            {
+                "@value": "Avaliação dos programas de cooperação e de ajuda ao desenvolvimento, executados por entidades públicas e privadasInicia com verificação de procedimentos previamente estabelecidos e termina com a apresentação de relatório final.Inclui, quando devido, apresentação de caderno de encargos, convite ou candidatura do avaliador, apresentação do memorando da cooperação em análise, compilação de informação de referência, análise da matriz de seguimento das recomendações, produção de relatórios das reuniões, avaliação do seguimento das recomendações e do respetivo plano de implementação e produção de um relatório final da avaliação."
+            }
+        ],
+        "http://jcr.di.uminho.pt/m51-clav#eComplementarDe": [
+            {
+                "@id": "http://jcr.di.uminho.pt/m51-clav#c200.30.301"
+            }
+        ],
+        "...":"..."
+    },
+    {
+        "@id": "http://www.w3.org/2004/02/skos/core#related",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#AnnotationProperty"
+        ]
+    },
+    {
+        "@id": "http://www.w3.org/2004/02/skos/core#scopeNote",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#AnnotationProperty"
+        ]
+    }
+]
+      json-ld:
+        schema:
+          type: string
+          format: binary
+        example: [
+    {
+        "@id": "_:node156",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Class"
+        ],
+        "http://www.w3.org/2002/07/owl#unionOf": [
+            {
+                "@list": [
+                    {
+                        "@id": "http://jcr.di.uminho.pt/m51-clav#Classe_N3"
+                    },
+                    {
+                        "@id": "http://jcr.di.uminho.pt/m51-clav#Classe_N4"
+                    }
+                ]
+            }
+        ]
+    },
+    "...",
+    {
+        "@id": "http://jcr.di.uminho.pt/m51-clav#c200.30.303",
+        "@type": [
+            "http://jcr.di.uminho.pt/m51-clav#Classe_N3",
+            "http://www.w3.org/2002/07/owl#NamedIndividual"
+        ],
+        "http://jcr.di.uminho.pt/m51-clav#classeStatus": [
+            {
+                "@value": "A"
+            }
+        ],
+        "http://jcr.di.uminho.pt/m51-clav#codigo": [
+            {
+                "@value": "200.30.303"
+            }
+        ],
+        "http://jcr.di.uminho.pt/m51-clav#descricao": [
+            {
+                "@value": "Avaliação dos programas de cooperação e de ajuda ao desenvolvimento, executados por entidades públicas e privadasInicia com verificação de procedimentos previamente estabelecidos e termina com a apresentação de relatório final.Inclui, quando devido, apresentação de caderno de encargos, convite ou candidatura do avaliador, apresentação do memorando da cooperação em análise, compilação de informação de referência, análise da matriz de seguimento das recomendações, produção de relatórios das reuniões, avaliação do seguimento das recomendações e do respetivo plano de implementação e produção de um relatório final da avaliação."
+            }
+        ],
+        "http://jcr.di.uminho.pt/m51-clav#eComplementarDe": [
+            {
+                "@id": "http://jcr.di.uminho.pt/m51-clav#c200.30.301"
+            }
+        ],
+        "...":"..."
+    },
+    {
+        "@id": "http://www.w3.org/2004/02/skos/core#related",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#AnnotationProperty"
+        ]
+    },
+    {
+        "@id": "http://www.w3.org/2004/02/skos/core#scopeNote",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#AnnotationProperty"
+        ]
+    }
+]
+      application/rdf+xml:
+        schema:
+          type: string
+          format: binary
+        example: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<rdf:RDF
+
+\txmlns=\"http://jcr.di.uminho.pt/m51-clav#\"
+
+\txmlns:wgs=\"http://www.w3.org/2003/01/geo/wgs84_pos#\"
+
+\txmlns:obda=\"https://w3id.org/obda/vocabulary#\"
+
+\txmlns:owl=\"http://www.w3.org/2002/07/owl#\"
+
+\txmlns:gn=\"http://www.geonames.org/ontology#\"
+
+\txmlns:xsd=\"http://www.w3.org/2001/XMLSchema#\"
+
+\txmlns:fn=\"http://www.w3.org/2005/xpath-functions#\"
+
+\txmlns:skos=\"http://www.w3.org/2004/02/skos/core#\"
+
+\txmlns:rdfs=\"http://www.w3.org/2000/01/rdf-schema#\"
+
+\txmlns:noInferences=\"http://www.ontotext.com/explicit\"
+
+\txmlns:clav=\"http://jcr.di.uminho.pt/m51-clav#\"
+
+\txmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"
+
+\txmlns:xml=\"http://www.w3.org/XML/1998/namespace\"
+
+\txmlns:sesame=\"http://www.openrdf.org/schema/sesame#\"
+
+\txmlns:dc=\"http://purl.org/dc/elements/1.1#\">
+
+
+<rdf:Description rdf:about=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\">
+
+\t<rdf:type rdf:resource=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#Property\"/>
+
+</rdf:Description>
+
+
+<rdf:Description rdf:about=\"http://www.w3.org/2000/01/rdf-schema#subPropertyOf\">
+
+\t<rdf:type rdf:resource=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#Property\"/>
+
+\t<rdf:type rdf:resource=\"http://www.w3.org/2002/07/owl#TransitiveProperty\"/>
+
+</rdf:Description>
+
+
+<...></...>
+
+
+<rdf:Description rdf:about=\"http://jcr.di.uminho.pt/m51-clav#c950.10.600\">
+
+\t<processoUniform>S</processoUniform>
+
+</rdf:Description>
+
+
+<rdf:Description rdf:about=\"http://jcr.di.uminho.pt/m51-clav#c350.10.518\">
+
+\t<processoUniform>S</processoUniform>
+
+</rdf:Description>
+
+
+<rdf:Description rdf:about=\"http://jcr.di.uminho.pt/m51-clav\">
+
+\t<dc:date>2019-09-05</dc:date>
+
+</rdf:Description>
+
+
+</rdf:RDF>"
+      rdf-xml:
+        schema:
+          type: string
+          format: binary
+        example: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<rdf:RDF
+
+\txmlns=\"http://jcr.di.uminho.pt/m51-clav#\"
+
+\txmlns:wgs=\"http://www.w3.org/2003/01/geo/wgs84_pos#\"
+
+\txmlns:obda=\"https://w3id.org/obda/vocabulary#\"
+
+\txmlns:owl=\"http://www.w3.org/2002/07/owl#\"
+
+\txmlns:gn=\"http://www.geonames.org/ontology#\"
+
+\txmlns:xsd=\"http://www.w3.org/2001/XMLSchema#\"
+
+\txmlns:fn=\"http://www.w3.org/2005/xpath-functions#\"
+
+\txmlns:skos=\"http://www.w3.org/2004/02/skos/core#\"
+
+\txmlns:rdfs=\"http://www.w3.org/2000/01/rdf-schema#\"
+
+\txmlns:noInferences=\"http://www.ontotext.com/explicit\"
+
+\txmlns:clav=\"http://jcr.di.uminho.pt/m51-clav#\"
+
+\txmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"
+
+\txmlns:xml=\"http://www.w3.org/XML/1998/namespace\"
+
+\txmlns:sesame=\"http://www.openrdf.org/schema/sesame#\"
+
+\txmlns:dc=\"http://purl.org/dc/elements/1.1#\">
+
+
+<rdf:Description rdf:about=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\">
+
+\t<rdf:type rdf:resource=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#Property\"/>
+
+</rdf:Description>
+
+
+<rdf:Description rdf:about=\"http://www.w3.org/2000/01/rdf-schema#subPropertyOf\">
+
+\t<rdf:type rdf:resource=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#Property\"/>
+
+\t<rdf:type rdf:resource=\"http://www.w3.org/2002/07/owl#TransitiveProperty\"/>
+
+</rdf:Description>
+
+
+<...></...>
+
+
+<rdf:Description rdf:about=\"http://jcr.di.uminho.pt/m51-clav#c950.10.600\">
+
+\t<processoUniform>S</processoUniform>
+
+</rdf:Description>
+
+
+<rdf:Description rdf:about=\"http://jcr.di.uminho.pt/m51-clav#c350.10.518\">
+
+\t<processoUniform>S</processoUniform>
+
+</rdf:Description>
+
+
+<rdf:Description rdf:about=\"http://jcr.di.uminho.pt/m51-clav\">
+
+\t<dc:date>2019-09-05</dc:date>
+
+</rdf:Description>
+
+
+</rdf:RDF>"
+  500:
+    description: Erro
