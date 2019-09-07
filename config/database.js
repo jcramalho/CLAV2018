@@ -1,5 +1,6 @@
 // const ip = '192.168.85.197'
 const ip = process.env.IP || 'localhost'
+const port = process.env.PORT || '7779'
 
 module.exports.onthology = process.env.GRAPHDB ? 'http://' + process.env.GRAPHDB +'/repositories/CLAV' : 'http://'+ip+':7200/repositories/CLAV'
 
@@ -12,7 +13,7 @@ module.exports.prefixes = `
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 `
 
-module.exports.host = 'http://'+ip+':7779'
+module.exports.host = 'http://'+ip+':'+port
 
 module.exports.swaggerURL = process.env.SWAGGER_URL || this.host
 
