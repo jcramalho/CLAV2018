@@ -1,5 +1,4 @@
 const client = require('../../config/database').onthology
-const normalizeOrdered = require('../../controllers/api/utils').normalizeOrdered
 const Ontologia = module.exports
 
 Ontologia.data = async () => {
