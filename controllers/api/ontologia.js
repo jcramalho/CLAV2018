@@ -123,7 +123,7 @@ Ontologia.exportar = async function(infer, format, days){
     }
 
     try{
-        var files = fs.readdirSync('./public/rdf')
+        var files = fs.readdirSync('./public/ontologia')
     }catch(erro){
         throw(erro)
     }
@@ -142,7 +142,7 @@ Ontologia.exportar = async function(infer, format, days){
 
     if(findedDate && Date.parse(prevDate) < Date.parse(findedDate)){
         try{
-            var fileContent = fs.readFileSync('./public/rdf/' + findedFile)
+            var fileContent = fs.readFileSync('./public/ontologia/' + findedFile)
         }catch(erro){
             throw(erro)
         }
@@ -153,7 +153,7 @@ Ontologia.exportar = async function(infer, format, days){
             response = await axios.get(url + infer, headers)
 
             if(findedFile){
-                fs.unlinkSync('./public/rdf/' + findedFile)
+                fs.unlinkSync('./public/ontologia/' + findedFile)
             }
 
             var dados
@@ -164,7 +164,7 @@ Ontologia.exportar = async function(infer, format, days){
             }
 
             var file = 'clav-' + date + endsWith
-            fs.writeFileSync('./public/rdf/' + file, dados)
+            fs.writeFileSync('./public/ontologia/' + file, dados)
         }catch(error){
             throw(error)
         }
