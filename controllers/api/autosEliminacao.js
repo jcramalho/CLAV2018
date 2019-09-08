@@ -27,7 +27,7 @@ AutosEliminacao.listar = async function() {
 AutosEliminacao.consultar = async function(id) {
     var query = `
     select * where {
-        clav:${id} a clav:AutoEliminacao;
+        clav:ae_DGLAB_2019 a clav:AutoEliminacao;
                 clav:autoDataAutenticacao ?data;
                 clav:autoResponsavel ?resp ;
                 clav:temEntidadeResponsavel ?entidade ;
@@ -37,15 +37,63 @@ AutosEliminacao.consultar = async function(id) {
         ?legislacao clav:diplomaTipo ?tipo ;
                 clav:diplomaNumero ?num .
         ?zc clav:codigo ?codigo ;
+            clav:autoDataInicio ?dataInicio;
+            clav:autoDataFim ?dataFim;
             clav:temAgregacao ?ag .
+    	?ag clav:agregacaoCodigo ?agCodigo ;
+            clav:agregacaoTitulo ?agTitulo ;
+            clav:agregacaoDataContagem ?agData.
+        OPTIONAL {
+            ?zc clav:temNI ?zcNI .
+        }
+        OPTIONAL {
+            ?zc clav:temDono ?dono .
+        }
+        OPTIONAL {
+            ?ag clav:temNI ?agNI .
+        }
+        OPTIONAL {
+            ?zc clav:referencia ?referencia .
+        }
     }
     `
-    const campos = ["data","resp","entidade","legislacao","fundo","tipo","num"]
-    const agrupar = ["ag"]
     try {
         return client.query(query)
             .execute()
-            .then(response => projection(normalize(response), campos, agrupar));
+            .then(response => {
+                if(normalize(response).length === 0) return []
+                var autos = normalize(response)
+                var res = {
+                    id: id,
+                    data: autos[0].data,
+                    entidade: autos[0].entidade,
+                    legislacaoID: autos[0].legislacao,
+                    legislacao: autos[0].tipo + ' ' + autos[0].num,
+                    fundo: autos[0].fundo,
+                    zonaControlo: {}
+                }
+                for(ae of autos) {
+                    if(!(ae.codigo in res.zonaControlo)) {
+                        res.zonaControlo[ae.codigo] = {
+                            codigo: ae.codigo,
+                            referencia: ae.referencia,
+                            dataInicio: ae.dataInicio,
+                            dataFim: ae.dataFim,
+                            dono: ae.dono,
+                            ni: ae.zcNI,
+                            ag: {}
+                        }
+
+                    }
+                    res.zonaControlo[ae.codigo].ag[ae.agCodigo] = {
+                        codigo: ae.agCodigo,
+                        titulo: ae.agTitulo,
+                        dataContagem: ae.agData,
+                        ni: ae.agNI
+                    }
+                }
+                return res
+            });
     } 
     catch(erro) { throw (erro);}
 }
