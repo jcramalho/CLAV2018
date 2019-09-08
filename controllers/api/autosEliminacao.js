@@ -67,6 +67,7 @@ AutosEliminacao.consultar = async function(id) {
                     id: id,
                     data: autos[0].data,
                     entidade: autos[0].entidade,
+                    responsavel: autos[0].resp,
                     legislacaoID: autos[0].legislacao,
                     legislacao: autos[0].tipo + ' ' + autos[0].num,
                     fundo: autos[0].fundo,
