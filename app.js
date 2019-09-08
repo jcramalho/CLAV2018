@@ -132,7 +132,25 @@ var options = {
   explorer: true,
   customSiteTitle: 'CLAV API',
   swaggerOptions: {
-    url: dataBases.swaggerURL + '/clav.yaml'
+    url: dataBases.swaggerURL + '/clav.yaml',
+    //tagsSorter: 'alpha',
+    operationsSorter: (a, b) => {
+        var methods = ["get", "post", "put", "delete", "patch", "options", "trace"]
+        var result = methods.indexOf(a.get("method")) - methods.indexOf(b.get("method"))
+
+        if(result == 0){
+            var a_path = a.get("path")
+            var b_path = b.get("path")
+
+            result = a_path.length - b_path.length
+
+            if(result == 0){
+                result = a_path.localeCompare(b_path)
+            }
+        }
+
+        return result
+    }
   }
 };
 
