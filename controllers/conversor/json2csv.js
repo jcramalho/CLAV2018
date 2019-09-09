@@ -1,103 +1,119 @@
 function protect(string){
-    return '"' + string + '"'
+    if(string){
+        if(typeof string === 'string'){
+            string = string.replace(/"/g,'""')
+        }
+        return '"' + string + '"'
+    }else
+        return '""'
 }
 
-function json2csvArray(name, array){
-    var csv = [[]]
-    var accum = []
-    var remHeaders = []
+function merge(arr1, arr2){
+    arr2.forEach((l, index) => {
+        if(arr1[index]){
+            arr1[index] = arr1[index].concat(arr2[index])
+        }else{
+            arr1.push(arr2[index])
+        }
+    })
+}
+
+function join(array){
+    return array.join('#\n')
+}
+
+function json2csvArray(array){
+    var csv = []
     var len = array.length
 
     if(len){
         if(array[0] instanceof Array){
-            var header = name != '' ? '.' + name : ''
-            array.forEach((arr, index) => csv = csv.concat(json2csvRec(index + header, arr)))
+            //array.forEach((arr, index) => csv = csv.concat(json2csvArray(arr)))
         }else{
             if(typeof array[0] === 'object'){
+                if(array[0].nota){
+                    var aux = []
+                    array.forEach(e => {
+                        aux.push(e.nota)
+                    })
+                    csv = protect(join(aux))
+                }else if(array[0].exemplo){
 
-                //headers
-                for(var key in array[0]){
-                    var header = name != '' ? name + '.' + key : key
-                    csv[0].push(protect(header))
+                }else{
+                /*    for(var i=0; i<len; i++){
+                        csv.push([protect(JSON.stringify(array[i]))])
+                    }*/
                 }
-                //lines
-                for(var i=0; i<len; i++){
-                    var line = []
-                    for(var key in array[i]){
-                        var header = name != '' ? name + '.' : ''
-
-                        if(typeof array[i][key] != 'object' && !(array[i][key] instanceof Array)){
-                            line.push(protect(array[i][key]))
-                        }else{
-                            if(array[i][key] instanceof Array){
-                                if(!remHeaders.includes(protect(header + key))){
-                                    remHeaders.push(protect(header + key))
-                                }
-                            }
-                            accum = accum.concat(json2csvRec(header + i + '.' + key, array[i][key]))
-                        }
-                    }
-
-                    csv.push(line)
-                }
-
-                remHeaders.forEach(h => {
-                    var i = csv[0].indexOf(h)
-                    if(i>-1){
-                        csv[0].splice(i,1)
-                    }
-                })
             }else{
-                csv[0].push(protect(name))
-                array.forEach(e => csv.push([e]))
+                csv = protect(join(array))
             }
         }
-    }else{
-        csv[0].push(protect(name))
     }
 
-    csv.push([])
-    csv = csv.concat(accum)
     return csv
 }
 
-function json2csvRec(name,json){
+function json2csvRec(json){
     var csvLines
-    var remHeaders = []
 
     if(json instanceof Array){
-        csvLines = json2csvArray(name, json)
+        csvLines = json2csvArray(json)
     }else{
-        csvLines = [[],[],[]]
+        csvLines = [[],[]]
 
         for(var key in json){
-            var header = name != '' ? name + '.' + key : key
-
             if(json[key] instanceof Array){
-                csvLines = csvLines.concat(json2csvArray(header, json[key]))
-
-                if(!remHeaders.includes(protect(header))){
-                    remHeaders.push(protect(header))
+                if(key == 'filhos'){
+                    csvLines = csvLines.concat(json[key])
+                }else{
+                    csvLines[0].push(protect(key))
+                    csvLines[1].push(json2csvArray(json[key]))
                 }
             }else{
                 if(typeof json[key] === 'object'){
-                    csvLines = csvLines.concat(json2csvRec(header, json[key]))
+                    if(key != "pai"){
+                        if(key == 'pca' || key == 'df'){
+                            for(var k in json[key]){
+                                if(!k.startsWith('id')){
+                                    if(k == 'justificacao'){
+                                        var crits = []
+                                        var procs = []
+                                        var legs = []
+                                        csvLines[0].push(protect('Critério'))
+                                        csvLines[0].push(protect('Processos'))
+                                        csvLines[0].push(protect('Legislação'))
+
+                                        json[key][k].forEach(just => {
+                                            crits.push(just.tipoId)
+                                            if(just.processos){
+                                                var ps = []
+                                                just.processos.forEach(p => ps.push(p.procId))
+                                                procs.push(ps.join(';\n'))
+                                                legs.push("")
+                                            }else if(just.legislacao){
+                                                legs.push(JSON.stringify(json[key][k].legislacao))
+                                                procs.push("")
+                                            }
+                                        })
+                                        csvLines[1].push(protect(join(crits)))
+                                        csvLines[1].push(protect(join(procs)))
+                                        csvLines[1].push(protect(join(legs)))
+                                    }else{
+                                        csvLines[0].push(protect(k + ' ' + key.toUpperCase()))
+                                        csvLines[1].push(protect(json[key][k]))
+                                    }
+                                }
+                            }
+                        }else{
+                            var aux = json2csvRec(json[key])
+                            merge(csvLines, aux)
+                        }
+                    }
                 }else{
-                    csvLines[0].push(protect(header))
+                    csvLines[0].push(protect(key))
                     csvLines[1].push(protect(json[key]))
                 }
             }
-        }
-
-        remHeaders.forEach(h => {
-            var i = csvLines[0].indexOf(h)
-            if(i>-1){
-                csvLines[0].splice(i,1)
-            }
-        })
-
-        if(csvLines[0].length == 0 && csvLines[1].length == 0){
-            csvLines = csvLines.slice(3)
         }
     }
     
@@ -105,9 +121,27 @@ function json2csvRec(name,json){
 }
 
 module.exports.json2csv = (json) => {
-    csvLines = json2csvRec('', json)
+    var csvL = json2csvRec(json)
 
-    var len = csvLines.length
+    var len = csvL.length
+
+    var csvLines = []
+    csvLines[0] = csvL[0]
+    csvLines[1] = csvL[1]
+
+    for(var i=2; i<len; i++){
+        csvLines[i] = []
+
+        csvL[0].forEach(h => {
+            var header = h.replace(/"/g,'') 
+            if(csvL[i][header]){
+                csvLines[i].push(protect(csvL[i][header]))
+            }else{
+                csvLines[i].push("")
+            }
+        })
+    }
+
     for(var i=0; i<len; i++){
         csvLines[i] = csvLines[i].join(',')
     }
