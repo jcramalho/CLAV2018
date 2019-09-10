@@ -1,5 +1,5 @@
 function protect(string){
-    if(string){
+    if(string != null){
         if(typeof string === 'string'){
             string = string.replace(/"/g,'""')
         }
@@ -22,32 +22,76 @@ function join(array){
     return array.join('#\n')
 }
 
-function json2csvArray(array){
+function json2csvArray(array, key){
     var csv = []
-    var len = array.length
+    var titles = []
+    var columns = [[]]
 
-    if(len){
-        if(array[0] instanceof Array){
-            //array.forEach((arr, index) => csv = csv.concat(json2csvArray(arr)))
-        }else{
-            if(typeof array[0] === 'object'){
-                if(array[0].nota){
-                    var aux = []
-                    array.forEach(e => {
-                        aux.push(e.nota)
-                    })
-                    csv = protect(join(aux))
-                }else if(array[0].exemplo){
+    switch(key){
+        case 'notasAp':
+            titles[0] = "Notas de aplicação"
+        case 'notasEx':
+            if(titles.length == 0) titles[0] = "Notas de exclusão"
+            array.forEach(e => {
+                columns[0].push(e.nota)
+            })
+            break
+        case 'exemplosNotasAp':
+            console.log(JSON.stringify(array))
+            titles[0] = "Exemplos de NA"
+            array.forEach(e => {
+                columns[0].push(e.exemplo)
+            })
+            break
+        case 'termosInd':
+            titles[0] = "Termos Indice"
+            array.forEach(e => {
+                columns[0].push(e.termo)
+            })
+            break
+        case 'participantes':
+            titles[0] = "Participante no processo"
+            titles[1] = "Tipo de intervenção do participante"
+            columns[1] = []
+            array.forEach(e => {
+                columns[1].push(e.participLabel)
+            })
+        case 'donos':
+            if(titles.length == 0) titles[0] = "Donos do processo"
+            array.forEach(e => {
+                columns[0].push(e.sigla)
+            })
+            break
+        case 'processosRelacionados':
+            titles[0] = "Código do processo relacionado"
+            titles[1] = "Título do processo relacionado"
+            titles[2] = "Tipo de relação entre processos"
+            columns[1] = []
+            columns[2] = []
+            array.forEach(e => {
+                columns[0].push(e.codigo)
+                columns[1].push(e.titulo)
+                columns[2].push(e.idRel)
+            })
+            break
+        case 'legislacao':
+            titles[0] = "Diplomas jurídico-administrativos REF Ids"
+            titles[1] = "Diplomas jurídico-administrativos REF Títulos"
+            columns[1] = []
+            array.forEach(e => {
+                columns[0].push(e.idLeg)
+                columns[1].push(e.tipo + ' ' + e.numero)
+            })
+            break
+        default:
+            csv = [protect(key), protect(join(array))]
+            break
+    }
 
-                }else{
-                /*    for(var i=0; i<len; i++){
-                        csv.push([protect(JSON.stringify(array[i]))])
-                    }*/
-                }
-            }else{
-                csv = protect(join(array))
-            }
-        }
+    if(csv.length == 0){
+        titles.forEach((t, index) => titles[index] = protect(t))
+        columns.forEach((c, index) => columns[index] = protect(join(c)))
+        csv = [titles, columns]
     }
 
     return csv
@@ -57,7 +101,7 @@ function json2csvRec(json){
     var csvLines
 
     if(json instanceof Array){
-        csvLines = json2csvArray(json)
+        //csvLines = json2csvArray(json)
     }else{
         csvLines = [[],[]]
 
@@ -66,8 +110,9 @@ function json2csvRec(json){
                 if(key == 'filhos'){
                     csvLines = csvLines.concat(json[key])
                 }else{
-                    csvLines[0].push(protect(key))
-                    csvLines[1].push(json2csvArray(json[key]))
+                    var aux = json2csvArray(json[key], key)
+                    csvLines[0] = csvLines[0].concat(aux[0])
+                    csvLines[1] = csvLines[1].concat(aux[1])
                 }
             }else{
                 if(typeof json[key] === 'object'){
@@ -85,13 +130,15 @@ function json2csvRec(json){
 
                                         json[key][k].forEach(just => {
                                             crits.push(just.tipoId)
-                                            if(just.processos){
+                                            if(just.processos.length > 0){
                                                 var ps = []
                                                 just.processos.forEach(p => ps.push(p.procId))
                                                 procs.push(ps.join(';\n'))
                                                 legs.push("")
-                                            }else if(just.legislacao){
-                                                legs.push(JSON.stringify(json[key][k].legislacao))
+                                            }else if(just.legislacao.length > 0){
+                                                var ls = []
+                                                just.legislacao.forEach(l => ls.push(l.legId))
+                                                legs.push(ls.join(';\n'))
                                                 procs.push("")
                                             }
                                         })
@@ -99,7 +146,13 @@ function json2csvRec(json){
                                         csvLines[1].push(protect(join(procs)))
                                         csvLines[1].push(protect(join(legs)))
                                     }else{
-                                        csvLines[0].push(protect(k + ' ' + key.toUpperCase()))
+                                        if(key == 'pca' && k == 'valores'){
+                                            csvLines[0].push(protect("Prazo de conservação administrativa"))
+                                        }else if(key == 'df' && k == 'valor'){
+                                            csvLines[0].push(protect("Destino final"))
+                                        }else{
+                                            csvLines[0].push(protect(k + ' ' + key.toUpperCase()))
+                                        }
                                         csvLines[1].push(protect(json[key][k]))
                                     }
                                 }
