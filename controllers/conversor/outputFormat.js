@@ -17,8 +17,12 @@ module.exports.outputFormat = (req, res, next) => {
                 break
             case 'text/csv':
             case 'csv':
-                res.setHeader('content-type', 'text/csv');
-                res.send(json2csv(res.locals.dados))
+                if(res.locals.tipo){
+                    res.setHeader('content-type', 'text/csv');
+                    res.send(json2csv(res.locals.dados, res.locals.tipo))
+                }else{
+                    res.status(406).send("Esta rota não suporta exportação para CSV. Contudo pode exportar para JSON (application/json ou json) ou XML (application/xml ou xml) nesta rota.")
+                }
                 break
             default:
                 res.json(res.locals.dados)
