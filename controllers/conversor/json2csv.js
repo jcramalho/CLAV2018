@@ -173,16 +173,7 @@ function json2csvRec(json){
     return csvLines
 }
 
-module.exports.json2csv = (json, type) => {
-
-    switch(type){
-        case "classe":
-            break
-        default:
-            throw("Não é possível exportar esta rota para CSV...")
-            break
-    }
-
+function convertClasse(json){
     var csvL = json2csvRec(json)
 
     var len = csvL.length
@@ -209,5 +200,22 @@ module.exports.json2csv = (json, type) => {
     }
 
     var csv = csvLines.join('\n')
+    return csv
+}
+
+module.exports.json2csv = (json, type) => {
+    var csv
+
+    switch(type){
+        case "classes":
+            break
+        case "classe":
+            csv = convertClasse(json)
+            break
+        default:
+            throw("Não é possível exportar para CSV nesta rota...")
+            break
+    }
+
     return csv
 }

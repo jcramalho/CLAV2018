@@ -10,15 +10,18 @@ router.get('/', async (req, res, next) => {
     try {
         if(req.query.formato == "arvore"){
             res.locals.dados = await State.getAllClasses()
+            res.locals.tipo = "classes"
             next()
         }
         else if(req.query.formato == "lista"){
             res.locals.dados = await State.getClassesFlatList()
+            res.locals.tipo = "classes"
             next()
         }
         // Devolve a lista dos processos comuns
         else if(req.query.tipo == "comum"){
             res.locals.dados = await State.getProcessosComuns()
+            res.locals.tipo = "classes"
             next()
         }
         // Devolve a lista dos processos especificos
@@ -30,12 +33,14 @@ router.get('/', async (req, res, next) => {
                 var tips = req.query.tips.split(',');
             }
             res.locals.dados = await State.getProcessosEspecificos(ents, tips)
+            res.locals.tipo = "classes"
             next()
         }
         else if(req.query.nivel){
             switch(req.query.nivel){
                 case '1': try {
                         res.locals.dados = await State.getLevel1Classes()
+                        res.locals.tipo = "classes"
                         next()
                         break  
                     } catch(err) {
@@ -44,6 +49,7 @@ router.get('/', async (req, res, next) => {
                     }
                 case '2': try {
                         res.locals.dados = await State.getLevel2Classes()
+                        res.locals.tipo = "classes"
                         next()
                         break
                     } catch(err) {
@@ -52,6 +58,7 @@ router.get('/', async (req, res, next) => {
                     }  
                 case '3': try {
                         res.locals.dados = await State.getLevel3Classes()
+                        res.locals.tipo = "classes"
                         next()
                         break 
                     } catch(err) {
@@ -60,6 +67,7 @@ router.get('/', async (req, res, next) => {
                     }
                 case '4': try {
                         res.locals.dados = await State.getLevel4Classes()
+                        res.locals.tipo = "classes"
                         next()
                         break 
                     } catch(err) {
@@ -70,6 +78,7 @@ router.get('/', async (req, res, next) => {
         }
         else{
             res.locals.dados = await State.getAllClasses()
+            res.locals.tipo = "classes"
             next()
         }
     } catch(err) {
@@ -81,6 +90,7 @@ router.get('/', async (req, res, next) => {
 router.get('/:id', async function (req, res, next) {
     try {
         res.locals.dados = await Classes.retrieve(req.params.id)
+        res.locals.tipo = "classe"
         next()
     } catch(err) {
         res.status(500).send(`Erro na recuperação da classe ` + req.params.id + `: ${err}`)
