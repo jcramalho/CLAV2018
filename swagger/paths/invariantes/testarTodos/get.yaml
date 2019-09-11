@@ -1,0 +1,9 @@
+summary: Testa todos os invariantes
+description: Testa todos os invariantes. Devolve os erros dos invariantes.
+tags:
+  - invariantes
+responses:
+  200:
+    description: Devolve os erros dos invariantes
+  500:
+    description: Erro
