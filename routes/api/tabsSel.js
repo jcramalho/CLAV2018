@@ -4,6 +4,7 @@ var SelTabs = require('../../controllers/api/tabsSel.js');
 var Classes = require('../../controllers/api/classes.js');
 var Trabalhos = require('../../controllers/api/trabalhos_guardados.js');
 
+const Excel = require('exceljs/modern.nodejs');
 var formidable = require("formidable")
 var express = require('express');
 var router = express.Router();
@@ -131,16 +132,32 @@ router.post('/CSV', async function (req, res){
 
     form.parse(req, (error, fields, formData) => {
         if(!error){
-            console.log(JSON.stringify(formData))
-            res.send("OK")
+            var workbook = new Excel.Workbook();
+
+            if(formData.file.type == "text/csv"){
+                //TODO: fix
+                workbook.csv.readFile(formData.file.path)
+                    .then(worksheet => {
+                        SelTabs.criarPedidoDoCSV(worksheet, fields.email)
+                            .then(dados => res.json("Criado Pedido de criação de tabela de seleção a partir do ficheiro importado."))
+                            .catch(erro => res.status(500).jsonp(`Erro ao importar CSV: ${erro}`))
+                    })
+                    .catch(erro => res.status(500).jsonp(`Erro ao importar CSV: ${erro}`))
+            }else if(formData.file.type == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"){
+                workbook.xlsx.readFile(formData.file.path)
+                    .then(function() {
+                        SelTabs.criarPedidoDoCSV(workbook, fields.email)
+                            .then(dados => res.json("Criado Pedido de criação de tabela de seleção a partir do ficheiro importado."))
+                            .catch(erro => res.status(500).jsonp(`Erro ao importar Excel: ${erro}`))
+                    })
+                    .catch(erro => res.status(500).jsonp(`Erro ao importar Excel: ${erro}`))
+            }else{
+                res.status(415).json(`Erro ao importar CSV/Excel: o ficheiro tem de estar no formato csv ou excel (xlsx)`)
+            }
         }else{
-            res.status(500).json(`Erro ao importar CSV: ${erro}`)
+            res.status(500).json(`Erro ao importar CSV/Excel: ${erro}`)
         }
     })
-    /*SelTabs.()
-        .then(dados => res.json(dados))
-        .catch(erro => res.status(500).jsonp(`Erro ao importar CSV: ${erro}`))
-    */
 })
 
 module.exports = router;

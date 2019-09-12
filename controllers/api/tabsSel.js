@@ -1,5 +1,7 @@
 const client = require('../../config/database').onthology;
+const Excel = require('exceljs/modern.nodejs');
 
+var Pedidos = require('../../controllers/api/pedidos');
 var SelTabs = module.exports
 
 SelTabs.list = function () {
@@ -351,4 +353,16 @@ SelTabs.trueDelete = function (id) {
             ?s4 ?p4 clav:${id} .
         }
     `;
+}
+
+SelTabs.criarPedidoDoCSV = function (workbook, email) {
+    var pedido = {
+        tipoPedido: "Criação",
+        tipoObjeto: "TS ...",
+        novoObjeto: {},
+        user: {email: email}
+    }
+    
+    console.log(JSON.stringify(pedido))
+    return pedido//Pedidos.criar(pedido)
 }
