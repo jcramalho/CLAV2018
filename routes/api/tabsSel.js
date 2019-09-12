@@ -130,19 +130,31 @@ router.post('/', Auth.isLoggedInAPI, function (req, res) {
 router.post('/CSV', async function (req, res){
     var form = new formidable.IncomingForm()
 
-    form.parse(req, (error, fields, formData) => {
+    form.parse(req, async (error, fields, formData) => {
         if(!error){
             var workbook = new Excel.Workbook();
 
             if(formData.file.type == "text/csv"){
-                //TODO: fix
-                workbook.csv.readFile(formData.file.path)
-                    .then(worksheet => {
+                var possibleDelimiters = [",",";","\t","|"]
+                var i = 0
+                var len = possibleDelimiters.length
+                var parsed = false
+
+                while(!parsed){
+                    try{
+                        var worksheet = await workbook.csv.readFile(formData.file.path, {delimiter: possibleDelimiters[i]})
+                        parsed = true
+
                         SelTabs.criarPedidoDoCSV(worksheet, fields.email)
                             .then(dados => res.json("Criado Pedido de criação de tabela de seleção a partir do ficheiro importado."))
                             .catch(erro => res.status(500).jsonp(`Erro ao importar CSV: ${erro}`))
-                    })
-                    .catch(erro => res.status(500).jsonp(`Erro ao importar CSV: ${erro}`))
+                    }catch(erro){
+                        if(++i == len){
+                            parsed = true
+                            res.status(500).jsonp(`Erro ao importar CSV: Não foi possível fazer parsing do ficheiro.`)
+                        }
+                    }
+                }
             }else if(formData.file.type == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"){
                 workbook.xlsx.readFile(formData.file.path)
                     .then(function() {
