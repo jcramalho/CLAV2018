@@ -145,7 +145,7 @@ router.post('/CSV', async function (req, res){
                         var worksheet = await workbook.csv.readFile(formData.file.path, {delimiter: possibleDelimiters[i]})
                         parsed = true
 
-                        SelTabs.criarPedidoDoCSV(worksheet, fields.email)
+                        SelTabs.criarPedidoDoCSV(workbook, fields.email)
                             .then(dados => res.json("Criado Pedido de criação de tabela de seleção a partir do ficheiro importado."))
                             .catch(erro => res.status(500).jsonp(`Erro ao importar CSV: ${erro}`))
                     }catch(erro){
