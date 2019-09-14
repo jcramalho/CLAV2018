@@ -1,4 +1,6 @@
 const execQuery = require('../../controllers/api/utils').execQuery
+const Excel = require('exceljs/modern.nodejs');
+var Pedidos = require('../../controllers/api/pedidos');
 var SelTabs = module.exports
 
 SelTabs.list = function () {
@@ -349,4 +351,166 @@ SelTabs.trueDelete = function (id) {
         .catch(function (error) {
             console.error(error);
         });
+}
+
+function hasXs(worksheet, row, reX){
+    var len = row.length
+    var ret = false
+    var reDP = new RegExp("Dono|Participante", "g")
+
+    for(var i=2; i < len && !ret; i++){
+        if(reDP.test(row[i])){
+            var c = worksheet.getColumn(i).values
+            var cLen = c.length
+            
+            for(var j=1; j < cLen && !ret; j++){
+                if(reX.test(c[j])){
+                    ret = true
+                }
+            }
+        }
+    }
+
+    return ret
+}
+
+//Descobrir onde está a tabela de onde se obtém os valores
+function findSheet(workbook, reX){
+    var sheetN = null
+    var rowHeaderN = null
+    var founded = false
+
+    workbook.eachSheet((worksheet, sheetId) => {
+        var rC = worksheet.rowCount
+
+        if(!founded && rC > 0 && worksheet.state == 'visible'){
+            for(var j=1; j <= rC && !founded; j++){
+                var row = worksheet.getRow(j).values
+
+                if(row[1] == 'Código' && hasXs(worksheet, row, reX)){
+                    sheetN = sheetId
+                    rowHeaderN = j
+                    founded = true
+                }
+            }
+        }
+    })
+
+    return [sheetN, rowHeaderN, founded]
+}
+
+function parseHeaders(worksheet, rowHeaderN, columns, entidades){
+    var headers = worksheet.getRow(rowHeaderN).values
+    var typeOrg = null
+
+    for(var i = 2; i < headers.length; i++){
+        if(headers[i].startsWith('Dono')){
+
+            typeOrg = "TS Organizacional"
+            columns.push({type: "dono", value: i})
+
+        }else if(headers[i].startsWith('Participante')){
+
+            typeOrg = "TS Organizacional"
+            columns.push({type: "participante", value: i})
+
+        }else if(headers[i].includes('Dono')){
+
+            typeOrg = "TS Pluriorganizacional"
+            var entidade = headers[i].split(' Dono')[0]
+            columns.push({type: "dono", entidade: entidade, value: i})
+
+            if(entidades.indexOf(entidade) == -1){
+                entidades.push(entidade)
+            }
+
+        }else if(headers[i].includes('Participante')){
+
+            typeOrg = "TS Pluriorganizacional"
+            var entidade = headers[i].split(' Participante')[0]
+            columns.push({type: "participante", entidade: entidade, value: i})
+
+            if(entidades.indexOf(entidade) == -1){
+                entidades.push(entidade)
+            }
+        }
+    }
+
+    return typeOrg
+}
+
+function constructObj(worksheet, codigos, start, c, obj, reX){
+    var column = worksheet.getColumn(c.value).values
+
+    for(var i = start + 1; i < worksheet.rowCount; i++){
+        if(reX.test(column[i])){
+            obj.push(codigos[i].replace(/\r|\n/g,""))
+        }
+    }
+}
+
+SelTabs.criarPedidoDoCSV = async function (workbook, email) {
+    var reX = new RegExp("^\s*[xX]\s*$", "g")
+    var aux = findSheet(workbook, reX)
+    var sheetN = aux[0]
+    var rowHeaderN = aux[1]
+    var founded = aux[2]
+
+    if(founded){
+        var worksheet = workbook.getWorksheet(sheetN)
+        var columns = [] 
+        var entidades = []
+
+        var typeOrg = parseHeaders(worksheet, rowHeaderN, columns, entidades)
+
+        if(typeOrg != null){
+            var obj
+
+            if(typeOrg == "TS Organizacional"){
+                obj = {
+                    donos: [],
+                    participantes: []
+                }
+            }else{
+                obj = {}
+                
+                entidades.forEach(e => {
+                    obj[e] = {
+                        donos: [],
+                        participantes: []
+                    }
+                })
+            }
+
+            var codigos = worksheet.getColumn(1).values
+
+            if(typeOrg == "TS Organizacional"){
+                columns.forEach(c => {
+                    constructObj(worksheet, codigos, rowHeaderN, c, obj[c.type + "s"], reX)
+                })
+            }else{
+                columns.forEach(c => {
+                    constructObj(worksheet, codigos, rowHeaderN, c, obj[c.entidade][c.type + "s"], reX)
+                })
+            }
+
+            var pedido = {
+                tipoPedido: "Criação",
+                tipoObjeto: typeOrg,
+                novoObjeto: obj,
+                user: {email: email}
+            }
+            
+            try{
+                var pedido = await Pedidos.criar(pedido)
+                return pedido.codigo
+            }catch(e){
+                throw(e)
+            }
+        }else{
+            throw("Não contém informação suficiente para criar a tabela de seleção.")
+        }
+    }else{
+        throw("Não foi encontrado informação por forma a criar a tabela de seleção.")
+    }
 }

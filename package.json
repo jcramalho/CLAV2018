@@ -4,7 +4,8 @@
   "description": "Arquivo Digital: Plataforma Modular para a Classificação e a Avaliação da Informação Pública",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "nodemon": "nodemon ./bin/www"
   },
   "repository": {
     "type": "git",
@@ -23,6 +24,7 @@
     "body-parser": "^1.18.2",
     "connect-mongo": "^2.0.3",
     "cookie-parser": "^1.4.3",
+    "exceljs": "^2.0.1",
     "express": "^4.16.1",
     "express-session": "^1.15.6",
     "express-validator": "^4.3.0",
