@@ -452,7 +452,7 @@ function constructObj(worksheet, codigos, start, c, obj, reX){
 }
 
 SelTabs.criarPedidoDoCSV = async function (workbook, email) {
-    var reX = new RegExp("^\s*[x|X]\s*$", "g")
+    var reX = new RegExp("^\s*[xX]\s*$", "g")
     var aux = findSheet(workbook, reX)
     var sheetN = aux[0]
     var rowHeaderN = aux[1]
