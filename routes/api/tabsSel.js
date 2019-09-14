@@ -140,14 +140,59 @@ router.post('/CSV', async function (req, res){
                 var len = possibleDelimiters.length
                 var parsed = false
 
+                var options = {
+                    //tenta as várias hipóteses de delimitadores do CSV
+                    delimiter: possibleDelimiters[i],
+                    //Substitui função por forma a não realizar parse de datas, igual à usada pelo exceljs, só não realiza o parse de datas
+                    map: (value, index) => {
+                        if (value === '') {
+                            return null;
+                        }
+                        
+                        const datumNumber = Number(value);
+                        if (!Number.isNaN(datumNumber)) {
+                            return datumNumber;
+                        }
+
+                        //Em comentário por forma a não fazer parse de datas
+                        //para usar dayjs fazer: const dayjs = require('dayjs');
+                        //const dt = dayjs(value, dateFormats, true);
+                        //if (dt.isValid()) {
+                        //    return new Date(dt.valueOf());
+                        //}
+
+                        const SpecialValues = {
+                            true: true,
+                            false: false,
+                            '#N/A': {error: '#N/A'},
+                            '#REF!': {error: '#REF!'},
+                            '#NAME?': {error: '#NAME?'},
+                            '#DIV/0!': {error: '#DIV/0!'},
+                            '#NULL!': {error: '#NULL!'},
+                            '#VALUE!': {error: '#VALUE!'},
+                            '#NUM!': {error: '#NUM!'},
+                        }
+
+                        const special = SpecialValues[value];
+                        if (special !== undefined) {
+                            return special;
+                        }
+                        
+                        return value;
+                    }
+                }
+
                 while(!parsed){
                     try{
-                        var worksheet = await workbook.csv.readFile(formData.file.path, {delimiter: possibleDelimiters[i]})
+                        var worksheet = await workbook.csv.readFile(formData.file.path, options)
                         parsed = true
 
-                        SelTabs.criarPedidoDoCSV(workbook, fields.email)
-                            .then(dados => res.json("Criado Pedido de criação de tabela de seleção a partir do ficheiro importado."))
-                            .catch(erro => res.status(500).jsonp(`Erro ao importar CSV: ${erro}`))
+                        try{
+                            var codigoPedido = await SelTabs.criarPedidoDoCSV(workbook, fields.email)
+                            res.json(codigoPedido)
+                        }catch(erro){
+                            res.status(500).jsonp(`Erro ao importar CSV: ${erro}`)
+                        }
                     }catch(erro){
                         if(++i == len){
                             parsed = true
@@ -159,7 +204,7 @@ router.post('/CSV', async function (req, res){
                 workbook.xlsx.readFile(formData.file.path)
                     .then(function() {
                         SelTabs.criarPedidoDoCSV(workbook, fields.email)
-                            .then(dados => res.json("Criado Pedido de criação de tabela de seleção a partir do ficheiro importado."))
+                            .then(dados => res.json(dados))
                             .catch(erro => res.status(500).jsonp(`Erro ao importar Excel: ${erro}`))
                     })
                     .catch(erro => res.status(500).jsonp(`Erro ao importar Excel: ${erro}`))

@@ -451,7 +451,7 @@ function constructObj(worksheet, codigos, start, c, obj, reX){
     }
 }
 
-SelTabs.criarPedidoDoCSV = function (workbook, email) {
+SelTabs.criarPedidoDoCSV = async function (workbook, email) {
     var reX = new RegExp("^\s*[x|X]\s*$", "g")
     var aux = findSheet(workbook, reX)
     var sheetN = aux[0]
@@ -503,8 +503,12 @@ SelTabs.criarPedidoDoCSV = function (workbook, email) {
                 user: {email: email}
             }
             
-            console.log(JSON.stringify(pedido))
-            return Promise.resolve(pedido)//Pedidos.criar(pedido)
+            try{
+                var pedido = await Pedidos.criar(pedido)
+                return pedido.codigo
+            }catch(e){
+                throw(e)
+            }
         }else{
             throw("Não contém informação suficiente para criar a tabela de seleção.")
         }
