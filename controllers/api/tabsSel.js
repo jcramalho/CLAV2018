@@ -4,6 +4,8 @@ const Excel = require('exceljs/modern.nodejs');
 var Pedidos = require('../../controllers/api/pedidos');
 var SelTabs = module.exports
 
+const requisitosFicheiro = "O ficheiro tem de possuir uma sheet em que na 1º coluna tenha como header 'Código' e por baixo os códigos dos processos. Para além disso, na mesma linha da header 'Código' tem de possuir pelo menos uma coluna começada por 'Dono' ou 'Participante', no máximo uma de cada (TS Organizacional); ou uma coluna do tipo 'Entidade Dono' ou 'Entidade Participante', no máximo uma de cada para cada entidade (TS PluriOrganizacional). Por baixo de cada coluna deve estar assinalado com x ou X os processos selecionados para a coluna. Caso não possua nada significa que o processo não é selecionado."
+
 SelTabs.list = function () {
     return client.query(
         `SELECT * WHERE { 
@@ -355,19 +357,19 @@ SelTabs.trueDelete = function (id) {
     `;
 }
 
-function hasXs(worksheet, row, reX){
+function onlyHasXsOrNulls(worksheet, row, start){
     var len = row.length
-    var ret = false
-    var reDP = new RegExp("Dono|Participante", "g")
+    var ret = true
 
-    for(var i=2; i < len && !ret; i++){
-        if(reDP.test(row[i])){
+    for(var i=2; i < len && ret; i++){
+        if(/Dono|Participante/g.test(row[i])){
             var c = worksheet.getColumn(i).values
             var cLen = c.length
             
-            for(var j=1; j < cLen && !ret; j++){
-                if(reX.test(c[j])){
-                    ret = true
+            for(var j=start; j < cLen && ret; j++){
+                if(c[j] != null && !/^\s*[xX]\s*$/g.test(c[j])){
+                    console.log(c[j])
+                    ret = false
                 }
             }
         }
@@ -376,8 +378,21 @@ function hasXs(worksheet, row, reX){
     return ret
 }
 
+function onlyCodigos(codigos){
+    var len = codigos.length
+    var valid = true
+
+    for(var i = 0; i < len && valid; i++){
+        if(!/^\s*\d+(\.\d+){0,3}\s*$/g.test(codigos[i])){
+            valid = false
+        }
+    }
+
+    return valid
+}
+
 //Descobrir onde está a tabela de onde se obtém os valores
-function findSheet(workbook, reX){
+function findSheet(workbook){
     var sheetN = null
     var rowHeaderN = null
     var founded = false
@@ -389,10 +404,15 @@ function findSheet(workbook, reX){
             for(var j=1; j <= rC && !founded; j++){
                 var row = worksheet.getRow(j).values
 
-                if(row[1] == 'Código' && hasXs(worksheet, row, reX)){
-                    sheetN = sheetId
-                    rowHeaderN = j
-                    founded = true
+                if(row[1] == 'Código'){
+                    var codigos = worksheet.getColumn(1).values
+                    codigos.splice(0,j+1)
+
+                    if(onlyCodigos(codigos) && onlyHasXsOrNulls(worksheet, row, j+1)){
+                        sheetN = sheetId
+                        rowHeaderN = j
+                        founded = true
+                    }
                 }
             }
         }
@@ -441,19 +461,18 @@ function parseHeaders(worksheet, rowHeaderN, columns, entidades){
     return typeOrg
 }
 
-function constructObj(worksheet, codigos, start, c, obj, reX){
+function constructObj(worksheet, codigos, start, c, obj){
     var column = worksheet.getColumn(c.value).values
 
     for(var i = start + 1; i < worksheet.rowCount; i++){
-        if(reX.test(column[i])){
-            obj.push(codigos[i].replace(/\r|\n/g,""))
+        if(/^\s*[xX]\s*$/g.test(column[i])){
+            obj.push(codigos[i].replace(/\s*|\r|\n/g,""))
         }
     }
 }
 
 SelTabs.criarPedidoDoCSV = async function (workbook, email) {
-    var reX = new RegExp("^\s*[xX]\s*$", "g")
-    var aux = findSheet(workbook, reX)
+    var aux = findSheet(workbook)
     var sheetN = aux[0]
     var rowHeaderN = aux[1]
     var founded = aux[2]
@@ -488,11 +507,11 @@ SelTabs.criarPedidoDoCSV = async function (workbook, email) {
 
             if(typeOrg == "TS Organizacional"){
                 columns.forEach(c => {
-                    constructObj(worksheet, codigos, rowHeaderN, c, obj[c.type + "s"], reX)
+                    constructObj(worksheet, codigos, rowHeaderN, c, obj[c.type + "s"])
                 })
             }else{
                 columns.forEach(c => {
-                    constructObj(worksheet, codigos, rowHeaderN, c, obj[c.entidade][c.type + "s"], reX)
+                    constructObj(worksheet, codigos, rowHeaderN, c, obj[c.entidade][c.type + "s"])
                 })
             }
 
@@ -510,9 +529,9 @@ SelTabs.criarPedidoDoCSV = async function (workbook, email) {
                 throw(e)
             }
         }else{
-            throw("Não contém informação suficiente para criar a tabela de seleção.")
+            throw("Não contém informação suficiente para criar a tabela de seleção. Não é possível distinguir se é TS Organizacional ou TS Pluriorganizacional. " + requisitosFicheiro)
         }
     }else{
-        throw("Não foi encontrado informação por forma a criar a tabela de seleção.")
+        throw("Não foi encontrada informação por forma a criar a tabela de seleção. " + requisitosFicheiro)
     }
 }
