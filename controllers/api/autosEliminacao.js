@@ -6,7 +6,7 @@ var AutosEliminacao = module.exports
 
 AutosEliminacao.listar = async function() {
     let query = `
-    select ?id ?data ?entidade ?fundo ?tipo ?num where {
+    SELECT ?id ?data ?entidade ?fundo ?tipo ?num WHERE {
         ?id a clav:AutoEliminacao;
                 clav:autoDataAutenticacao ?data;
                 clav:temEntidadeResponsavel ?entidade ;
@@ -26,7 +26,7 @@ AutosEliminacao.listar = async function() {
 // Devolve a lista de termos de um VC: idtermo, termo
 AutosEliminacao.consultar = async function(id) {
     var query = `
-    select * where {
+    SELECT * WHERE {
         clav:ae_DGLAB_2019 a clav:AutoEliminacao;
                 clav:autoDataAutenticacao ?data;
                 clav:autoResponsavel ?resp ;
@@ -98,62 +98,80 @@ AutosEliminacao.consultar = async function(id) {
     catch(erro) { throw (erro);}
 }
 
-//Update de VC
-AutosEliminacao.update = async function (id, label, desc) {
-    var query = `
-        DELETE {    
-            clav:${id} a skos:ConceptScheme;
-                skos:prefLabel ?label;
-                skos:scopeNote ?desc .
-        
-        } INSERT {
-            clav:${id} a skos:ConceptScheme;
-                skos:prefLabel "${label}";
-                skos:scopeNote "${desc}" .
-        } WHERE {
-            clav:${id} a skos:ConceptScheme;
-                skos:prefLabel ?label;
-                skos:scopeNote ?desc .
+AutosEliminacao.adicionarTS = async function (auto) {
+    const nanoid = require('nanoid')
+    //Invariante Legislação
+    var tipo = auto.legislacao.split(' ')[0]
+    var numero = auto.legislacao.split(' ')[1]
+    var queryLeg = `
+        ASK {
+            ?leg a clav:Legislacao;
+            	:diplomaTipo ${tipo};
+              	:diplomaNumero ${numero} .
+        }
+    `
+    var queryEnt = `
+        SELECT * WHERE {
+            ?ent a clav:Entidade ;
+                 clav:entDesignacao ${auto.entidade} .
         }
     `
     try {
-        await execQuery("update", query);
-        var ask = `
-        ASK {
-            clav:${id} a skos:ConceptScheme;
-                    skos:prefLabel '${label}';
-                    skos:scopeNote '${desc}' .
-        }`
-        try {
-            let result = await execQuery("query", ask);
-            return result.boolean;
+        let resultLeg = execQuery("query", queryLeg)
+        let resultEnt = normalize(execQuery("query", queryEnt));
+        if(resultLeg.boolean && (resultEnt.length > 0)) {
+            var id = ":ae_"+nanoid();
+            var data = currentTime.getDate()+"/"+(currentTime.getMonth()+1)+"/"+currentTime.getFullYear()
+            var query = `
+                INSERT DATA {
+                    clav:${id} a clav:AutoEliminacao ;
+                               clav:autoNumero "${id}" ;
+                               clav:autoDataAutenticacao "${data}" ;
+                               clav:autoResponsavel "${auto.responsavel}" ;
+                               clav:autoLegislacao "${auto.legislacao}" ;
+                               clav:temEntidadeResponsavel :${resultEnt.split("#")[1]} .
+            `
+            for(zona of auto.zonaControlo) {
+                var idZona = ":zc_"+nanoid();
+                query += `
+                    clav:${id} clav:temZonaControlo clav:${idZona} .
+                `
+                query += `
+                    clav:${idZona} a clav:ZonaControlo ;`
+                if(zona.ni.lowerCase() === "dono") query += `
+                   clav:temNI clav:vc_naturezaIntervencao_dono ;`
+                else if(zona.ni.lowerCase() === "participante") query += `
+                   clav:temNI clav:vc_naturezaIntervencao_participante ;`
+                if(zona.dono !== "") query += `
+                     clav:temDono :ent_${zona.dono} ;`
+                
+                query += `
+                    clav:autoDataInicio "${zona.dataInicio}" ;
+                    clav:autoDataFim "${zona.dataInicio}" .
+                `
+                for(agregacao of zona.agregacoes) {
+                    var idAg = ":ag_"+agregacao.codigo
+                    query += `
+                        clav:${idZona} clav:temAgregacao clav:${idAg} .
+                    `
+                    query += `
+                        clav:${idAg} a :Agregacao ;
+                            clav:agregacaoCodigo "${agregacao.codigo}" ;
+                            clav:agregacaoTitulo "${agregacao.titulo}" ;
+                    `
+                    if(agregacao.ni.lowerCase() === "dono") query += `
+                        clav:temNI clav:vc_naturezaIntervencao_dono ;`
+                    else if(agregacao.ni.lowerCase() === "participante") query += `
+                        clav:temNI clav:vc_naturezaIntervencao_participante ;`
+                    
+                    query += `
+                        clav:agregacaoDataContagem "${agregacao.dataContagem}" .
+                    `
+                }
+            }
+            return execQuery("update", query)
+                    .then(response => normalize(response));
         }
-        catch(erro) { throw (erro);}
-    } 
-    catch(erro) { throw (erro);}
-}
-
-AutosEliminacao.adicionar = async function (id, label, desc) {
-    var query = `
-        INSERT DATA {
-            clav:${id} a skos:ConceptScheme;
-                    skos:prefLabel '${label}';
-                    skos:scopeNote '${desc}' .
-        }
-    `
-    try {
-        await execQuery("update", query);
-        var ask = `
-        ASK {
-            clav:${id} a skos:ConceptScheme;
-                    skos:prefLabel '${label}';
-                    skos:scopeNote '${desc}' .
-        }`
-        try {
-            let result = await execQuery("ask", query);
-            return result.boolean;
-        }
-        catch(erro) { throw (erro);}
     } 
     catch(erro) { throw (erro);}
 }
