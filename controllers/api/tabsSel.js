@@ -1,6 +1,10 @@
 const client = require('../../config/database').onthology;
+const Excel = require('exceljs/modern.nodejs');
 
+var Pedidos = require('../../controllers/api/pedidos');
 var SelTabs = module.exports
+
+const requisitosFicheiro = "O ficheiro tem de possuir uma sheet em que na 1º coluna tenha como header 'Código' e por baixo os códigos dos processos. Para além disso, na mesma linha da header 'Código' tem de possuir pelo menos uma coluna começada por 'Dono' ou 'Participante', no máximo uma de cada (TS Organizacional); ou uma coluna do tipo 'Entidade Dono' ou 'Entidade Participante', no máximo uma de cada para cada entidade (TS PluriOrganizacional). Por baixo de cada coluna deve estar assinalado com x ou X os processos selecionados para a coluna. Caso não possua nada significa que o processo não é selecionado."
 
 SelTabs.list = function () {
     return client.query(
@@ -351,4 +355,183 @@ SelTabs.trueDelete = function (id) {
             ?s4 ?p4 clav:${id} .
         }
     `;
+}
+
+function onlyHasXsOrNulls(worksheet, row, start){
+    var len = row.length
+    var ret = true
+
+    for(var i=2; i < len && ret; i++){
+        if(/Dono|Participante/g.test(row[i])){
+            var c = worksheet.getColumn(i).values
+            var cLen = c.length
+            
+            for(var j=start; j < cLen && ret; j++){
+                if(c[j] != null && !/^\s*[xX]\s*$/g.test(c[j])){
+                    console.log(c[j])
+                    ret = false
+                }
+            }
+        }
+    }
+
+    return ret
+}
+
+function onlyCodigos(codigos){
+    var len = codigos.length
+    var valid = true
+
+    for(var i = 0; i < len && valid; i++){
+        if(!/^\s*\d+(\.\d+){0,3}\s*$/g.test(codigos[i])){
+            valid = false
+        }
+    }
+
+    return valid
+}
+
+//Descobrir onde está a tabela de onde se obtém os valores
+function findSheet(workbook){
+    var sheetN = null
+    var rowHeaderN = null
+    var founded = false
+
+    workbook.eachSheet((worksheet, sheetId) => {
+        var rC = worksheet.rowCount
+
+        if(!founded && rC > 0 && worksheet.state == 'visible'){
+            for(var j=1; j <= rC && !founded; j++){
+                var row = worksheet.getRow(j).values
+
+                if(row[1] == 'Código'){
+                    var codigos = worksheet.getColumn(1).values
+                    codigos.splice(0,j+1)
+
+                    if(onlyCodigos(codigos) && onlyHasXsOrNulls(worksheet, row, j+1)){
+                        sheetN = sheetId
+                        rowHeaderN = j
+                        founded = true
+                    }
+                }
+            }
+        }
+    })
+
+    return [sheetN, rowHeaderN, founded]
+}
+
+function parseHeaders(worksheet, rowHeaderN, columns, entidades){
+    var headers = worksheet.getRow(rowHeaderN).values
+    var typeOrg = null
+
+    for(var i = 2; i < headers.length; i++){
+        if(headers[i].startsWith('Dono')){
+
+            typeOrg = "TS Organizacional"
+            columns.push({type: "dono", value: i})
+
+        }else if(headers[i].startsWith('Participante')){
+
+            typeOrg = "TS Organizacional"
+            columns.push({type: "participante", value: i})
+
+        }else if(headers[i].includes('Dono')){
+
+            typeOrg = "TS Pluriorganizacional"
+            var entidade = headers[i].split(' Dono')[0]
+            columns.push({type: "dono", entidade: entidade, value: i})
+
+            if(entidades.indexOf(entidade) == -1){
+                entidades.push(entidade)
+            }
+
+        }else if(headers[i].includes('Participante')){
+
+            typeOrg = "TS Pluriorganizacional"
+            var entidade = headers[i].split(' Participante')[0]
+            columns.push({type: "participante", entidade: entidade, value: i})
+
+            if(entidades.indexOf(entidade) == -1){
+                entidades.push(entidade)
+            }
+        }
+    }
+
+    return typeOrg
+}
+
+function constructObj(worksheet, codigos, start, c, obj){
+    var column = worksheet.getColumn(c.value).values
+
+    for(var i = start + 1; i < worksheet.rowCount; i++){
+        if(/^\s*[xX]\s*$/g.test(column[i])){
+            obj.push(codigos[i].replace(/\s*|\r|\n/g,""))
+        }
+    }
+}
+
+SelTabs.criarPedidoDoCSV = async function (workbook, email) {
+    var aux = findSheet(workbook)
+    var sheetN = aux[0]
+    var rowHeaderN = aux[1]
+    var founded = aux[2]
+
+    if(founded){
+        var worksheet = workbook.getWorksheet(sheetN)
+        var columns = [] 
+        var entidades = []
+
+        var typeOrg = parseHeaders(worksheet, rowHeaderN, columns, entidades)
+
+        if(typeOrg != null){
+            var obj
+
+            if(typeOrg == "TS Organizacional"){
+                obj = {
+                    donos: [],
+                    participantes: []
+                }
+            }else{
+                obj = {}
+                
+                entidades.forEach(e => {
+                    obj[e] = {
+                        donos: [],
+                        participantes: []
+                    }
+                })
+            }
+
+            var codigos = worksheet.getColumn(1).values
+
+            if(typeOrg == "TS Organizacional"){
+                columns.forEach(c => {
+                    constructObj(worksheet, codigos, rowHeaderN, c, obj[c.type + "s"])
+                })
+            }else{
+                columns.forEach(c => {
+                    constructObj(worksheet, codigos, rowHeaderN, c, obj[c.entidade][c.type + "s"])
+                })
+            }
+
+            var pedido = {
+                tipoPedido: "Criação",
+                tipoObjeto: typeOrg,
+                novoObjeto: obj,
+                user: {email: email}
+            }
+            
+            try{
+                var pedido = await Pedidos.criar(pedido)
+                return pedido.codigo
+            }catch(e){
+                throw(e)
+            }
+        }else{
+            throw("Não contém informação suficiente para criar a tabela de seleção. Não é possível distinguir se é TS Organizacional ou TS Pluriorganizacional. " + requisitosFicheiro)
+        }
+    }else{
+        throw("Não foi encontrada informação por forma a criar a tabela de seleção. " + requisitosFicheiro)
+    }
 }
