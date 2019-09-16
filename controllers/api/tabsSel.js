@@ -3,7 +3,7 @@ const Excel = require('exceljs/modern.nodejs');
 var Pedidos = require('../../controllers/api/pedidos');
 var SelTabs = module.exports
 
-const requisitosFicheiro = "O ficheiro tem de possuir uma sheet em que na 1º coluna tenha como header 'Código' e por baixo os códigos dos processos. Para além disso, na mesma linha da header 'Código' tem de possuir pelo menos uma coluna começada por 'Dono' ou 'Participante', no máximo uma de cada (TS Organizacional); ou uma coluna do tipo 'Entidade Dono' ou 'Entidade Participante', no máximo uma de cada para cada entidade (TS PluriOrganizacional). Por baixo de cada coluna deve estar assinalado com x ou X os processos selecionados para a coluna. Caso não possua nada significa que o processo não é selecionado."
+const requisitosFicheiro = "O ficheiro tem de:<ul><li>Possuir uma sheet em que na 1º coluna tenha como header 'Código' e por baixo os códigos dos processos</li><li>Na mesma linha da header 'Código' possuir:<ul><li>Pelo menos uma coluna começada por 'Dono' ou 'Participante', no máximo uma de cada (TS Organizacional)</li><li>Pelo menos uma coluna do tipo 'Entidade Dono' ou 'Entidade Participante', no máximo uma de cada para cada entidade (TS Pluriorganizacional)</li><li>Por baixo de cada coluna deve estar:<ul><li>x ou X os processos selecionados</li><li>Nada para os processos não selecionados</li></ul></li></ul></li></ul>"
 
 SelTabs.list = function () {
     return execQuery("query",
@@ -365,7 +365,7 @@ function onlyHasXsOrNulls(worksheet, row, start){
             
             for(var j=start; j < cLen; j++){
                 if(c[j] != null && !/^\s*[xX]\s*$/g.test(c[j])){
-                    throw(`Célula inválida na linha ${start+i} e coluna ${i} da tabela! Apenas deve conter x ou X (selecionado) ou nada (não selecionado).`)
+                    throw(`Célula inválida na linha ${j} e coluna ${i} da tabela!\nApenas deve conter x ou X (processo selecionado) ou nada (processo não selecionado).`)
                 }
             }
         }
@@ -379,7 +379,7 @@ function onlyCodigos(codigos, start){
 
     for(var i = 0; i < len; i++){
         if(!/^\s*\d+(\.\d+){0,3}\s*$/g.test(codigos[i])){
-            throw(`Código inválido na linha ${start+i} da tabela! O código para ser válido deve ser, por exemplo, no seguinte formato: 100 ou 150.01 ou 200.20.002 ou 400.20.100.01`)
+            throw(`Código inválido na linha ${start+i} da tabela!\nO código para ser válido deve ser, por exemplo, no seguinte formato: 100 ou 150.01 ou 200.20.002 ou 400.20.100.01`)
         }
     }
 
@@ -461,7 +461,7 @@ function parseHeaders(worksheet, rowHeaderN, columns, entidades){
 
         for(var i = 0; i < columns.length && typeOrg != null; i++){
             //garante que não há colunas de entidades
-            if(!columns[i].entidade){
+            if(columns[i].entidade == null){
                 ent[columns[i].type + 's']++
             }else{
                 typeOrg = null
@@ -477,7 +477,7 @@ function parseHeaders(worksheet, rowHeaderN, columns, entidades){
 
         for(var i = 0; i < columns.length && typeOrg != null; i++){
             //garante que as colunas são de entidades
-            if(columns[i].entidade){
+            if(columns[i].entidade != null){
                 if(!ents[columns[i].entidade]){
                     ents[columns[i].entidade] = {
                         donos: 0,
@@ -507,7 +507,7 @@ function constructObj(worksheet, codigos, start, c, obj){
     var column = worksheet.getColumn(c.value).values
     var count = 0
 
-    for(var i = start + 1; i < worksheet.rowCount; i++){
+    for(var i = start + 1; i <= worksheet.rowCount; i++){
         if(/^\s*[xX]\s*$/g.test(column[i])){
             obj.push(codigos[i].replace(/\s*|\r|\n/g,""))
             count++
@@ -597,9 +597,9 @@ SelTabs.criarPedidoDoCSV = async function (workbook, email) {
                 throw(e)
             }
         }else{
-            throw("Não contém informação suficiente ou contém colunas a mais. Não é possível distinguir se é TS Organizacional ou TS Pluriorganizacional. " + requisitosFicheiro)
+            throw("Não contém informação suficiente ou contém colunas a mais.\nNão é possível distinguir se é TS Organizacional ou TS Pluriorganizacional.\n" + requisitosFicheiro)
         }
     }else{
-        throw("Não foi encontrada informação por forma a criar a tabela de seleção. " + requisitosFicheiro)
+        throw("Não foi encontrada informação por forma a criar a tabela de seleção.\n" + requisitosFicheiro)
     }
 }

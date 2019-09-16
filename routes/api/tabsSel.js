@@ -100,7 +100,7 @@ router.post('/CSV', async function (req, res){
                     }catch(erro){
                         if(++i == len){
                             parsed = true
-                            res.status(500).json(`Erro ao importar CSV: Não foi possível fazer parsing do ficheiro. Os delimitadores só podem ser ',', ';', '\\t' ou '|'. Para além disso o quote e o escape são realizados através de '"'. Por fim, o encoding do ficheiro tem de ser UTF-8.`)
+                            res.status(500).json(`Erro ao importar CSV: Não foi possível fazer parsing do ficheiro.\nOs delimitadores podem ser: , ou ; ou \\t ou |.\nPara além disso o quote e o escape são realizados através de ".\nPor fim, o encoding do ficheiro tem de ser UTF-8.`)
                         }
                     }
                 }
