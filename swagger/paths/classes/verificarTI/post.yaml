@@ -1,0 +1,20 @@
+summary: Verifica se um determinado termo de índice já existe
+description: Verifica se um determinado termo de índice já existe
+tags:
+  - classes
+requestBody:
+  description: 'termo de índice a verificar'
+  required: true
+  content:
+    application/json:
+      schema:
+        properties:
+          ti:
+            type: string
+        example:
+          ti: Contestação do incumprimento de instrumento ratificado por Portugal
+responses:
+  200:
+    description: Verifica se um determinado termo de índice já existe
+  500:
+    description: Erro

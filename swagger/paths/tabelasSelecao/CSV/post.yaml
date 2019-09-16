@@ -1,0 +1,40 @@
+summary: Cria um pedido de criação de uma tabela de seleção a partir de um ficheiro CSV/Excel
+description: |
+  Cria um pedido de criação de uma tabela de seleção a partir de um ficheiro CSV/Excel. É necessário um ficheiro no formato CSV ou Excel (xlsx) e o email do utilizador que realiza o pedido.
+
+  Caso o ficheiro seja CSV deve respeitar o seguinte:
+
+  * Os delimitadores podem ser: ',' ou ';' ou '\t' ou '|'
+  * O quote e o escape são realizados através de '\"'
+  * O encoding do ficheiro tem de ser UTF-8
+
+  O ficheiro (seja CSV ou Excel(xslx)) tem de:
+
+  * Possuir uma sheet em que na 1º coluna tenha como header 'Código' e por baixo os códigos dos processos
+  * Na mesma linha da header 'Código' possuir:
+    * Possuir no máximo uma coluna 'Título'
+    * Pelo menos uma coluna começada por 'Dono' ou 'Participante', no máximo uma de cada (TS Organizacional)
+    * Pelo menos uma coluna do tipo 'Entidade Dono' ou 'Entidade Participante', no máximo uma de cada para cada entidade (TS Pluriorganizacional)
+    * Por baixo de cada coluna deve estar:
+      * x ou X os processos selecionados
+      * Nada para os processos não selecionados
+tags:
+  - tabelasSelecao
+requestBody:
+  description: 'FormData com o ficheiro e o email'
+  required: true
+  content:
+    multipart/form-data:
+      schema:
+        type: object
+        properties:
+          file:
+            type: string
+            format: binary
+          email:
+            type: string
+responses:
+  200:
+    description: Cria um pedido de criação de uma tabela de seleção a partir de um ficheiro CSV/Excel
+  500:
+    description: Erro
