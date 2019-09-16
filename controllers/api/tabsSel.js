@@ -597,7 +597,7 @@ SelTabs.criarPedidoDoCSV = async function (workbook, email) {
                 throw(e)
             }
         }else{
-            throw("Não contém informação suficiente ou contém colunas a mais.\nNão é possível distinguir se é TS Organizacional ou TS Pluriorganizacional.\n" + requisitosFicheiro)
+            throw(`Não contém informação suficiente ou contém colunas a mais na linha ${rowHeaderN}.\nNão é possível distinguir se é TS Organizacional ou TS Pluriorganizacional.\n` + requisitosFicheiro)
         }
     }else{
         throw("Não foi encontrada informação por forma a criar a tabela de seleção.\n" + requisitosFicheiro)
