@@ -53,8 +53,6 @@ router.post('/CSV', async function (req, res){
                     var parsed = false
 
                     var options = {
-                        //tenta as várias hipóteses de delimitadores do CSV
-                        delimiter: possibleDelimiters[i],
                         //Substitui função por forma a não realizar parse de datas, igual a usada pelo exceljs, caso vazio devolve null, no resto devolve string
                         map: (value, index) => {
                             if (value === '') {
@@ -96,6 +94,8 @@ router.post('/CSV', async function (req, res){
 
                     while(!parsed){
                         try{
+                            //tenta as várias hipóteses de delimitadores do CSV
+                            options.delimiter = possibleDelimiters[i]
                             var worksheet = await workbook.csv.readFile(formData.file.path, options)
                             parsed = true
                         }catch(erro){

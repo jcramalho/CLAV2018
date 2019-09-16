@@ -3,7 +3,7 @@ const Excel = require('exceljs/modern.nodejs');
 var Pedidos = require('../../controllers/api/pedidos');
 var SelTabs = module.exports
 
-const requisitosFicheiro = "O ficheiro tem de:<ul><li>Possuir uma sheet em que na 1º coluna tenha como header 'Código' e por baixo os códigos dos processos</li><li>Na mesma linha da header 'Código' possuir:<ul><li>Pelo menos uma coluna começada por 'Dono' ou 'Participante', no máximo uma de cada (TS Organizacional)</li><li>Pelo menos uma coluna do tipo 'Entidade Dono' ou 'Entidade Participante', no máximo uma de cada para cada entidade (TS Pluriorganizacional)</li><li>Por baixo de cada coluna deve estar:<ul><li>x ou X os processos selecionados</li><li>Nada para os processos não selecionados</li></ul></li></ul></li></ul>"
+const requisitosFicheiro = "O ficheiro tem de:<ul><li>Possuir uma sheet em que na 1º coluna tenha como header 'Código' e por baixo os códigos dos processos</li><li>Na mesma linha da header 'Código' possuir:<ul><li>Possuir no máximo uma coluna 'Título'</li><li>Pelo menos uma coluna começada por 'Dono' ou 'Participante', no máximo uma de cada (TS Organizacional)</li><li>Pelo menos uma coluna do tipo 'Entidade Dono' ou 'Entidade Participante', no máximo uma de cada para cada entidade (TS Pluriorganizacional)</li><li>Por baixo de cada coluna deve estar:<ul><li>x ou X os processos selecionados</li><li>Nada para os processos não selecionados</li></ul></li></ul></li></ul>"
 
 SelTabs.list = function () {
     return execQuery("query",
@@ -355,12 +355,29 @@ SelTabs.trueDelete = function (id) {
         });
 }
 
+function parseCell(cell){
+    if(cell != null){
+        var type = typeof cell
+
+        if(type != "string"){
+            if(type == "object" && cell.richText){
+                cell = cell.richText.map(e => e.text).join('')
+            }else{
+                cell = JSON.stringify(cell)
+            }
+        }
+    }
+
+    return cell
+}
+
 function onlyHasXsOrNulls(worksheet, row, start){
     var len = row.length
 
     for(var i=2; i < len; i++){
         if(/Dono|Participante/g.test(row[i])){
             var c = worksheet.getColumn(i).values
+            c = c.map(e => parseCell(e))
             var cLen = c.length
             
             for(var j=start; j < cLen; j++){
@@ -378,7 +395,7 @@ function onlyCodigos(codigos, start){
     var len = codigos.length
 
     for(var i = 0; i < len; i++){
-        if(!/^\s*\d+(\.\d+){0,3}\s*$/g.test(codigos[i])){
+        if(!/^\s*\d{3}(\.\d{2}(\.\d{3}(\.\d{2})?)?)?\s*$/g.test(codigos[i])){
             throw(`Código inválido na linha ${start+i} da tabela!\nO código para ser válido deve ser, por exemplo, no seguinte formato: 100 ou 150.01 ou 200.20.002 ou 400.20.100.01`)
         }
     }
@@ -398,10 +415,12 @@ function findSheet(workbook){
         if(!founded && rC > 0 && worksheet.state == 'visible'){
             for(var j=1; j <= rC && !founded; j++){
                 var row = worksheet.getRow(j).values
+                row = row.map(e => parseCell(e))
 
                 if(row[1] == 'Código'){
                     var codigos = worksheet.getColumn(1).values
                     codigos.splice(0,j+1)
+                    codigos = codigos.map(e => parseCell(e))
 
                     if(onlyCodigos(codigos, j+1) && onlyHasXsOrNulls(worksheet, row, j+1)){
                         sheetN = sheetId
@@ -416,43 +435,7 @@ function findSheet(workbook){
     return [sheetN, rowHeaderN, founded]
 }
 
-function parseHeaders(worksheet, rowHeaderN, columns, entidades){
-    var headers = worksheet.getRow(rowHeaderN).values
-    var typeOrg = null
-
-    for(var i = 2; i < headers.length; i++){
-        if(headers[i].startsWith('Dono')){
-
-            typeOrg = "TS Organizacional"
-            columns.push({type: "dono", value: i})
-
-        }else if(headers[i].startsWith('Participante')){
-
-            typeOrg = "TS Organizacional"
-            columns.push({type: "participante", value: i})
-
-        }else if(headers[i].includes('Dono')){
-
-            typeOrg = "TS Pluriorganizacional"
-            var entidade = headers[i].split(' Dono')[0]
-            columns.push({type: "dono", entidade: entidade, value: i})
-
-            if(entidades.indexOf(entidade) == -1){
-                entidades.push(entidade)
-            }
-
-        }else if(headers[i].includes('Participante')){
-
-            typeOrg = "TS Pluriorganizacional"
-            var entidade = headers[i].split(' Participante')[0]
-            columns.push({type: "participante", entidade: entidade, value: i})
-
-            if(entidades.indexOf(entidade) == -1){
-                entidades.push(entidade)
-            }
-        }
-    }
-
+function checkHeaders(typeOrg, columns){
     if(typeOrg == "TS Organizacional"){
         var ent = {
             donos: 0,
@@ -503,18 +486,160 @@ function parseHeaders(worksheet, rowHeaderN, columns, entidades){
     return typeOrg
 }
 
-function constructObj(worksheet, codigos, start, c, obj){
-    var column = worksheet.getColumn(c.value).values
-    var count = 0
+function parseHeaders(worksheet, rowHeaderN, columns, entidades){
+    var headers = worksheet.getRow(rowHeaderN).values
+    headers = headers.map(e => parseCell(e))
+    var typeOrg = null
+    var titulos = []
 
-    for(var i = start + 1; i <= worksheet.rowCount; i++){
-        if(/^\s*[xX]\s*$/g.test(column[i])){
-            obj.push(codigos[i].replace(/\s*|\r|\n/g,""))
-            count++
+    for(var i = 2; i < headers.length; i++){
+        if(headers[i].startsWith('Dono')){
+
+            typeOrg = "TS Organizacional"
+            columns.push({type: "dono", value: i})
+
+        }else if(headers[i].startsWith('Participante')){
+
+            typeOrg = "TS Organizacional"
+            columns.push({type: "participante", value: i})
+
+        }else if(headers[i].includes('Dono')){
+
+            typeOrg = "TS Pluriorganizacional"
+            var entidade = headers[i].split(' Dono')[0]
+            columns.push({type: "dono", entidade: entidade, value: i})
+
+            if(entidades.indexOf(entidade) == -1){
+                entidades.push(entidade)
+            }
+
+        }else if(headers[i].includes('Participante')){
+
+            typeOrg = "TS Pluriorganizacional"
+            var entidade = headers[i].split(' Participante')[0]
+            columns.push({type: "participante", entidade: entidade, value: i})
+
+            if(entidades.indexOf(entidade) == -1){
+                entidades.push(entidade)
+            }
+        }else if(headers[i] == "Título"){
+            titulos.push(i)
         }
     }
 
-    return count
+    switch(titulos.length){
+        case 0:
+            titulos = null
+            break
+        case 1:
+            titulos = titulos[0]
+            break
+        default:
+            titulos = titulos.length
+            typeOrg = null
+            break
+    }
+
+    typeOrg = checkHeaders(typeOrg, columns)
+
+    return [typeOrg, titulos]
+}
+
+function constructTSO(worksheet, columns, codigos, titulos, start, obj, stats){
+    var cLen = columns.length
+
+    for(var i = start + 1; i <= worksheet.rowCount; i++){
+        var row = worksheet.getRow(i).values
+        var p = {}
+
+        for(var j=0; j < cLen; j++){
+            var type = columns[j].type
+
+            if(/^\s*[xX]\s*$/g.test(parseCell(row[columns[j].value]))){
+                p[type] = true
+                stats[type + 's']++
+            }else{
+                p[type] = false
+            }
+        }
+
+        if(p.dono || p.participante){
+            p.codigo = codigos[i].replace(/\s*/g,"")
+            
+            if(titulos != null){
+                if(titulos[i] != null){
+                    p.titulo = titulos[i].replace(/^\s*(\S.*\S)\s*$/g,"$1")
+                }else{
+                    p.titulo = ''
+                }
+            }
+
+            stats.processos++
+            obj.push(p)
+        }
+    }
+}
+
+function constructTSP(worksheet, columns, codigos, titulos, start, obj, stats){
+    var cLen = columns.length
+
+    for(var i = start + 1; i <= worksheet.rowCount; i++){
+        var row = worksheet.getRow(i).values
+        var p = {
+            entidades: []
+        }
+
+        for(var j=0; j < cLen; j++){
+            var type = columns[j].type
+            var entidade = columns[j].entidade
+            var nEnts = p.entidades.length
+
+            var index = -1
+            for(var w = 0; w < nEnts; w++){
+                if(p.entidades[w].sigla == entidade){
+                    index = w
+                }
+            }
+
+            if(index == -1){
+                p.entidades.push({sigla: entidade})
+                index = nEnts
+            }
+
+            if(/^\s*[xX]\s*$/g.test(parseCell(row[columns[j].value]))){
+                p.entidades[index][type] = true
+                stats[entidade][type + 's']++
+            }else{
+                p.entidades[index][type] = false
+            }
+        }
+
+        var aux = []
+        for(var w =0; w < p.entidades.length; w++){
+            if(p.entidades[w].dono || p.entidades[w].participante){
+                aux.push(p.entidades[w])
+            }
+        }
+        p.entidades = aux
+
+        if(p.entidades.length > 0){
+            p.codigo = codigos[i].replace(/\s*/g,"")
+            
+            if(titulos != null){
+                if(titulos[i] != null){
+                    p.titulo = titulos[i].replace(/^\s*(\S.*\S)\s*$/g,"$1")
+                }else{
+                    p.titulo = ''
+                }
+            }
+            
+            for(var w = 0; w < p.entidades.length; w++){
+                stats[p.entidades[w].sigla].processos++
+            }
+
+            obj.push(p)
+        }
+    }
 }
 
 SelTabs.criarPedidoDoCSV = async function (workbook, email) {
@@ -528,33 +653,23 @@ SelTabs.criarPedidoDoCSV = async function (workbook, email) {
         var columns = [] 
         var entidades = []
 
-        var typeOrg = parseHeaders(worksheet, rowHeaderN, columns, entidades)
+        aux = parseHeaders(worksheet, rowHeaderN, columns, entidades)
+        var typeOrg = aux[0]
+        var cTitulos = aux[1]
 
         if(typeOrg != null){
-            var obj
-            var stats
+            var obj = []
+            var stats = {}
 
             if(typeOrg == "TS Organizacional"){
-                obj = {
-                    donos: [],
-                    participantes: []
-                }
-
                 stats = {
                     processos: 0,
                     donos: 0,
                     participantes: 0
                 }
             }else{
-                obj = {}
-                stats = {}
-                
-                entidades.forEach(e => {
-                    obj[e] = {
-                        donos: [],
-                        participantes: []
-                    }
 
+                entidades.forEach(e => {
                     stats[e] = {
                         processos: 0,
                         donos: 0,
@@ -564,23 +679,19 @@ SelTabs.criarPedidoDoCSV = async function (workbook, email) {
             }
 
             var codigos = worksheet.getColumn(1).values
+            codigos = codigos.map(e => parseCell(e))
+
+            var titulos = null
+            if(cTitulos != null){
+                titulos = worksheet.getColumn(cTitulos).values
+                titulos = titulos.map(e => parseCell(e))
+            }
 
             if(typeOrg == "TS Organizacional"){
-                columns.forEach(c => {
-                    stats[c.type + "s"] = constructObj(worksheet, codigos, rowHeaderN, c, obj[c.type + "s"])
-                })
+                constructTSO(worksheet, columns, codigos, titulos, rowHeaderN, obj, stats)
 
-                var uniqList = Array.from(new Set(obj.donos.concat(obj.participantes)))
-                stats.processos = uniqList.length
             }else{
-                columns.forEach(c => {
-                    stats[c.entidade][c.type + "s"] = constructObj(worksheet, codigos, rowHeaderN, c, obj[c.entidade][c.type + "s"])
-                })
-
-                for(var k in obj){
-                    var uniqList = Array.from(new Set(obj[k].donos.concat(obj[k].participantes)))
-                    stats[k].processos = uniqList.length
-                }
+                constructTSP(worksheet, columns, codigos, titulos, rowHeaderN, obj, stats)
             }
 
             var pedido = {
@@ -589,7 +700,7 @@ SelTabs.criarPedidoDoCSV = async function (workbook, email) {
                 novoObjeto: obj,
                 user: {email: email}
             }
-            
+           
             try{
                 var pedido = await Pedidos.criar(pedido)
                 return {codigo: pedido.codigo, stats: stats}
