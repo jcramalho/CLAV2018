@@ -43,7 +43,7 @@ router.post('/CSV', async function (req, res){
 
     form.parse(req, async (error, fields, formData) => {
         if(!error){
-            if(formData.file && formData.file.type && formData.file.path && formData.email){
+            if(formData.file && formData.file.type && formData.file.path && fields.email){
                 var workbook = new Excel.Workbook();
 
                 if(formData.file.type == "text/csv"){
