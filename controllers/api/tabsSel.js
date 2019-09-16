@@ -541,6 +541,7 @@ SelTabs.criarPedidoDoCSV = async function (workbook, email) {
                 }
 
                 stats = {
+                    processos: 0,
                     donos: 0,
                     participantes: 0
                 }
@@ -555,6 +556,7 @@ SelTabs.criarPedidoDoCSV = async function (workbook, email) {
                     }
 
                     stats[e] = {
+                        processos: 0,
                         donos: 0,
                         participantes: 0
                     }
@@ -567,10 +569,18 @@ SelTabs.criarPedidoDoCSV = async function (workbook, email) {
                 columns.forEach(c => {
                     stats[c.type + "s"] = constructObj(worksheet, codigos, rowHeaderN, c, obj[c.type + "s"])
                 })
+
+                var uniqList = Array.from(new Set(obj.donos.concat(obj.participantes)))
+                stats.processos = uniqList.length
             }else{
                 columns.forEach(c => {
                     stats[c.entidade][c.type + "s"] = constructObj(worksheet, codigos, rowHeaderN, c, obj[c.entidade][c.type + "s"])
                 })
+
+                for(var k in obj){
+                    var uniqList = Array.from(new Set(obj[k].donos.concat(obj[k].participantes)))
+                    stats[k].processos = uniqList.length
+                }
             }
 
             var pedido = {
