@@ -1,6 +1,6 @@
 summary: Cria um pedido de criação de uma tabela de seleção a partir de um ficheiro CSV/Excel
 description: |
-  Cria um pedido de criação de uma tabela de seleção a partir de um ficheiro CSV/Excel. É necessário um ficheiro no formato CSV ou Excel (xlsx) e o email do utilizador que realiza o pedido.
+  Cria um pedido de criação de uma tabela de seleção a partir de um ficheiro CSV/Excel. É necessário um ficheiro no formato CSV ou Excel (xlsx), do email e da entidade do utilizador que realiza o pedido.
 
   Caso o ficheiro seja CSV deve respeitar o seguinte:
 
@@ -21,7 +21,7 @@ description: |
 tags:
   - tabelasSelecao
 requestBody:
-  description: 'FormData com o ficheiro e o email'
+  description: 'FormData com o ficheiro, o email e a entidade do utilizador'
   required: true
   content:
     multipart/form-data:
@@ -32,6 +32,8 @@ requestBody:
             type: string
             format: binary
           email:
+            type: string
+          entidade:
             type: string
 responses:
   200:
