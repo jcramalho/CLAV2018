@@ -45,7 +45,7 @@ Pedidos.consultar = (codigo) => {
  * @return {Pedido} pedido criado.
  */
 Pedidos.criar = function(pedidoParams){
-    var newPedido = new Pedido({
+    var pedido = {
         estado: "Submetido",
         criadoPor: pedidoParams.user.email,
         objeto: {
@@ -59,7 +59,13 @@ Pedidos.criar = function(pedidoParams){
             responsavel: pedidoParams.user.email,
             despacho: "Submissão inicial"
         }]
-    });
+    }
+
+    if(pedidoParams.entidade){
+        pedido.entidade = pedidoParams.entidade
+    }
+
+    var newPedido = new Pedido(pedido);
 
     return newPedido.save(function (err) {
         if (err) {

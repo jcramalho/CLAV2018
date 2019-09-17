@@ -56,7 +56,11 @@ const PedidoSchema = new mongoose.Schema({
         despacho: {
             type: String
         }
-    }]
+    }],
+    entidade: {
+        type: String,
+        required: false
+    }
 });
 
 PedidoSchema.pre('validate', async function(next) {
