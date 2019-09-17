@@ -43,7 +43,7 @@ router.post('/CSV', async function (req, res){
 
     form.parse(req, async (error, fields, formData) => {
         if(!error){
-            if(formData.file && formData.file.type && formData.file.path && fields.email){
+            if(formData.file && formData.file.type && formData.file.path && fields.email && fields.entidade){
                 var workbook = new Excel.Workbook();
 
                 if(formData.file.type == "text/csv"){
@@ -107,14 +107,14 @@ router.post('/CSV', async function (req, res){
                     }
 
                     if(i < len){
-                        SelTabs.criarPedidoDoCSV(workbook, fields.email)
+                        SelTabs.criarPedidoDoCSV(workbook, fields.email, fields.entidade)
                             .then(codigoPedido => res.json(codigoPedido))
                             .catch(erro => res.status(500).json(`Erro ao importar CSV: ${erro}`))
                     }
                 }else if(formData.file.type == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"){
                     workbook.xlsx.readFile(formData.file.path)
                         .then(function() {
-                            SelTabs.criarPedidoDoCSV(workbook, fields.email)
+                            SelTabs.criarPedidoDoCSV(workbook, fields.email, fields.entidade)
                                 .then(dados => res.json(dados))
                                 .catch(erro => res.status(500).json(`Erro ao importar Excel: ${erro}`))
                         })
@@ -123,7 +123,7 @@ router.post('/CSV', async function (req, res){
                     res.status(415).json(`Erro ao importar CSV/Excel: o ficheiro tem de estar no formato CSV ou Excel (.xlsx)`)
                 }
             }else{
-                res.status(500).json(`Erro ao importar CSV/Excel: O FormData deve possuir dois campos: um ficheiro em file e um email em email.`)
+                res.status(500).json(`Erro ao importar CSV/Excel: O FormData deve possuir três campos: um ficheiro em file, um email em email e a sigla da entidade em entidade.`)
             }
         }else{
             res.status(500).json(`Erro ao importar CSV/Excel: ${error}`)

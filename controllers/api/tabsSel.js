@@ -642,7 +642,7 @@ function constructTSP(worksheet, columns, codigos, titulos, start, obj, stats){
     }
 }
 
-SelTabs.criarPedidoDoCSV = async function (workbook, email) {
+SelTabs.criarPedidoDoCSV = async function (workbook, email, entidade) {
     var aux = findSheet(workbook)
     var sheetN = aux[0]
     var rowHeaderN = aux[1]
@@ -699,6 +699,10 @@ SelTabs.criarPedidoDoCSV = async function (workbook, email) {
                 tipoObjeto: typeOrg,
                 novoObjeto: obj,
                 user: {email: email}
+            }
+
+            if(typeOrg == "TS Organizacional"){
+                pedido.entidade = entidade
             }
            
             try{
