@@ -43,8 +43,16 @@ router.post('/CSV', async function (req, res){
 
     form.parse(req, async (error, fields, formData) => {
         if(!error){
-            if(formData.file && formData.file.type && formData.file.path && fields.email && fields.entidade){
+            if(formData.file && formData.file.type && formData.file.path &&
+               fields.email &&
+               fields.entidade_user &&
+               fields.tipo_ts &&
+               (fields.entidade_ts || fields.tipo_ts == 'TS Pluriorganizacional')){
                 var workbook = new Excel.Workbook();
+
+                if(!fields.entidade_ts){
+                    fields.entidade_ts = null
+                }
 
                 if(formData.file.type == "text/csv"){
                     var possibleDelimiters = [",",";","\t","|"]
@@ -107,14 +115,14 @@ router.post('/CSV', async function (req, res){
                     }
 
                     if(i < len){
-                        SelTabs.criarPedidoDoCSV(workbook, fields.email, fields.entidade)
+                        SelTabs.criarPedidoDoCSV(workbook, fields.email, fields.entidade_user, fields.entidade_ts, fields.tipo_ts)
                             .then(codigoPedido => res.json(codigoPedido))
                             .catch(erro => res.status(500).json(`Erro ao importar CSV: ${erro}`))
                     }
                 }else if(formData.file.type == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"){
                     workbook.xlsx.readFile(formData.file.path)
                         .then(function() {
-                            SelTabs.criarPedidoDoCSV(workbook, fields.email, fields.entidade)
+                            SelTabs.criarPedidoDoCSV(workbook, fields.email, fields.entidade_user, fields.entidade_ts, fields.tipo_ts)
                                 .then(dados => res.json(dados))
                                 .catch(erro => res.status(500).json(`Erro ao importar Excel: ${erro}`))
                         })
@@ -123,7 +131,7 @@ router.post('/CSV', async function (req, res){
                     res.status(415).json(`Erro ao importar CSV/Excel: o ficheiro tem de estar no formato CSV ou Excel (.xlsx)`)
                 }
             }else{
-                res.status(500).json(`Erro ao importar CSV/Excel: O FormData deve possuir três campos: um ficheiro em file, um email em email e a sigla da entidade em entidade.`)
+                res.status(500).json(`Erro ao importar CSV/Excel: O FormData deve possuir quatro campos: um ficheiro em file, um email em email, a sigla da entidade do utilizador em entidade_user e o tipo de TS em tipo_ts. Caso o tipo de TS seja 'TS Organizacional' deve possuir outro campo: a sigla da entidade da TS em entidade_ts.`)
             }
         }else{
             res.status(500).json(`Erro ao importar CSV/Excel: ${error}`)

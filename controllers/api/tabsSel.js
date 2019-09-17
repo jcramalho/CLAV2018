@@ -642,7 +642,7 @@ function constructTSP(worksheet, columns, codigos, titulos, start, obj, stats){
     }
 }
 
-SelTabs.criarPedidoDoCSV = async function (workbook, email, entidade) {
+SelTabs.criarPedidoDoCSV = async function (workbook, email, entidade_user, entidade_ts, tipo_ts) {
     var aux = findSheet(workbook)
     var sheetN = aux[0]
     var rowHeaderN = aux[1]
@@ -658,58 +658,66 @@ SelTabs.criarPedidoDoCSV = async function (workbook, email, entidade) {
         var cTitulos = aux[1]
 
         if(typeOrg != null){
-            var obj = []
-            var stats = {}
+            if(tipo_ts == typeOrg){ 
+                var obj
+                var stats = {}
 
-            if(typeOrg == "TS Organizacional"){
-                stats = {
-                    processos: 0,
-                    donos: 0,
-                    participantes: 0
-                }
-            }else{
-
-                entidades.forEach(e => {
-                    stats[e] = {
+                if(typeOrg == "TS Organizacional"){
+                    stats = {
                         processos: 0,
                         donos: 0,
                         participantes: 0
                     }
-                })
-            }
+                }else{
 
-            var codigos = worksheet.getColumn(1).values
-            codigos = codigos.map(e => parseCell(e))
+                    entidades.forEach(e => {
+                        stats[e] = {
+                            processos: 0,
+                            donos: 0,
+                            participantes: 0
+                        }
+                    })
+                }
 
-            var titulos = null
-            if(cTitulos != null){
-                titulos = worksheet.getColumn(cTitulos).values
-                titulos = titulos.map(e => parseCell(e))
-            }
+                var codigos = worksheet.getColumn(1).values
+                codigos = codigos.map(e => parseCell(e))
 
-            if(typeOrg == "TS Organizacional"){
-                constructTSO(worksheet, columns, codigos, titulos, rowHeaderN, obj, stats)
+                var titulos = null
+                if(cTitulos != null){
+                    titulos = worksheet.getColumn(cTitulos).values
+                    titulos = titulos.map(e => parseCell(e))
+                }
 
+                if(typeOrg == "TS Organizacional"){
+                    var list = [] 
+                    constructTSO(worksheet, columns, codigos, titulos, rowHeaderN, list, stats)
+                    obj = {
+                        processos: list,
+                        entidade: entidade_ts
+                    }
+                }else{
+                    obj = []
+                    constructTSP(worksheet, columns, codigos, titulos, rowHeaderN, obj, stats)
+                }
+
+                var pedido = {
+                    tipoPedido: "Criação",
+                    tipoObjeto: typeOrg,
+                    novoObjeto: obj,
+                    user: {email: email}
+                }
+
+                //Adiciona a entidade do utilizador criador do pedido
+                pedido.entidade = entidade_user
+               
+                try{
+                    var pedido = await Pedidos.criar(pedido)
+                    return {codigo: pedido.codigo, stats: stats}
+                }catch(e){
+                    throw(e)
+                }
             }else{
-                constructTSP(worksheet, columns, codigos, titulos, rowHeaderN, obj, stats)
-            }
-
-            var pedido = {
-                tipoPedido: "Criação",
-                tipoObjeto: typeOrg,
-                novoObjeto: obj,
-                user: {email: email}
-            }
-
-            if(typeOrg == "TS Organizacional"){
-                pedido.entidade = entidade
-            }
-           
-            try{
-                var pedido = await Pedidos.criar(pedido)
-                return {codigo: pedido.codigo, stats: stats}
-            }catch(e){
-                throw(e)
+                throw(`Tipo de Tabela de Seleção escolhida não coincide com o tipo de tabela de seleção presente no ficheiro.`)
             }
         }else{
             throw(`Não contém informação suficiente ou contém colunas a mais na linha ${rowHeaderN}.\nNão é possível distinguir se é TS Organizacional ou TS Pluriorganizacional.\n` + requisitosFicheiro)
