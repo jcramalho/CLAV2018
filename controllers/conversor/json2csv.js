@@ -8,16 +8,6 @@ function protect(string){
         return '""'
 }
 
-function merge(arr1, arr2){
-    arr2.forEach((l, index) => {
-        if(arr1[index]){
-            arr1[index] = arr1[index].concat(arr2[index])
-        }else{
-            arr1.push(arr2[index])
-        }
-    })
-}
-
 function join(array){
     return array.join('#\n')
 }
@@ -84,7 +74,6 @@ function json2csvArray(array, key){
             })
             break
         default:
-            csv = [protect(key), protect(join(array))]
             break
     }
 
@@ -97,75 +86,97 @@ function json2csvArray(array, key){
     return csv
 }
 
-function json2csvRec(json){
-    var csvLines
+function convertClasse(json){
+    var csvLines = [[],[]]
 
-    if(json instanceof Array){
-        //csvLines = json2csvArray(json)
-    }else{
-        csvLines = [[],[]]
-
-        for(var key in json){
-            if(json[key] instanceof Array){
-                if(key == 'filhos'){
-                    csvLines = csvLines.concat(json[key])
-                }else{
-                    var aux = json2csvArray(json[key], key)
-                    csvLines[0] = csvLines[0].concat(aux[0])
-                    csvLines[1] = csvLines[1].concat(aux[1])
-                }
+    for(var key in json){
+        if(json[key] instanceof Array){
+            if(key == 'filhos'){
+                csvLines = csvLines.concat(json[key])
             }else{
-                if(typeof json[key] === 'object'){
-                    if(key != "pai"){
-                        if(key == 'pca' || key == 'df'){
-                            for(var k in json[key]){
-                                if(!k.startsWith('id')){
-                                    if(k == 'justificacao'){
-                                        var crits = []
-                                        var procs = []
-                                        var legs = []
-                                        csvLines[0].push(protect('Critério'))
-                                        csvLines[0].push(protect('Processos'))
-                                        csvLines[0].push(protect('Legislação'))
+                var aux = json2csvArray(json[key], key)
+                csvLines[0] = csvLines[0].concat(aux[0])
+                csvLines[1] = csvLines[1].concat(aux[1])
+            }
+        }else{
+            switch(key){
+                case 'pca':
+                case 'df':
+                    for(var k in json[key]){
+                        if(k == 'justificacao'){
+                            var crits = []
+                            var procs_legs = []
 
-                                        json[key][k].forEach(just => {
-                                            crits.push(just.tipoId)
-                                            if(just.processos.length > 0){
-                                                var ps = []
-                                                just.processos.forEach(p => ps.push(p.procId))
-                                                procs.push(ps.join(';\n'))
-                                                legs.push("")
-                                            }else if(just.legislacao.length > 0){
-                                                var ls = []
-                                                just.legislacao.forEach(l => ls.push(l.legId))
-                                                legs.push(ls.join(';\n'))
-                                                procs.push("")
-                                            }
-                                        })
-                                        csvLines[1].push(protect(join(crits)))
-                                        csvLines[1].push(protect(join(procs)))
-                                        csvLines[1].push(protect(join(legs)))
-                                    }else{
-                                        if(key == 'pca' && k == 'valores'){
-                                            csvLines[0].push(protect("Prazo de conservação administrativa"))
-                                        }else if(key == 'df' && k == 'valor'){
-                                            csvLines[0].push(protect("Destino final"))
-                                        }else{
-                                            csvLines[0].push(protect(k + ' ' + key.toUpperCase()))
-                                        }
-                                        csvLines[1].push(protect(json[key][k]))
-                                    }
+                            csvLines[0].push(protect('Critério ' + key.toUpperCase()))
+                            csvLines[0].push(protect('ProcRefs/LegRefs ' + key.toUpperCase()))
+
+                            json[key][k].forEach(just => {
+                                crits.push(just.tipoId)
+
+                                if(just.processos.length > 0){
+                                    var ps = []
+                                    just.processos.forEach(p => ps.push(p.procId))
+                                    procs_legs.push('(' + join(ps) + ')')
+                                }else if(just.legislacao.length > 0){
+                                    var ls = []
+                                    just.legislacao.forEach(l => ls.push(l.legId))
+                                    procs_legs.push('(' + join(ls) + ')')
+                                }else{
+                                    procs_legs.push('()')
+                                }
+                            })
+
+                            csvLines[1].push(protect(join(crits)))
+                            csvLines[1].push(protect(join(procs_legs)))
+                        }else{
+                            if(key == 'pca'){
+                                if(k == 'valores' || k == 'valor'){
+                                    csvLines[0].push(protect("Prazo de conservação administrativa"))
+                                    csvLines[1].push(protect(json[key][k]))
+                                }else if(k == 'notas'){
+                                    csvLines[0].push(protect('Nota ao PCA'))
+                                    csvLines[1].push(protect(json[key][k]))
+                                }else if(k == 'formaContagem'){
+                                    csvLines[0].push(protect('Forma de contagem do PCA'))
+                                    csvLines[1].push(protect(json[key][k]))
+                                }else if(k == 'subFormaContagem'){
+                                    csvLines[0].push(protect('Sub Forma de contagem do PCA'))
+                                    csvLines[1].push(protect(json[key][k]))
+                                }
+                            }else if(key == 'df'){
+                                if(k == 'valor'){
+                                    csvLines[0].push(protect("Destino final"))
+                                    csvLines[1].push(protect(json[key][k]))
+                                }else if(k == 'notas'){
+                                    csvLines[0].push(protect("Notas ao DF"))
+                                    csvLines[1].push(protect(json[key][k]))
                                 }
                             }
-                        }else{
-                            var aux = json2csvRec(json[key])
-                            merge(csvLines, aux)
                         }
                     }
-                }else{
-                    csvLines[0].push(protect(key))
+                    break
+                case 'codigo':
+                    csvLines[0].push(protect('Código'))
                     csvLines[1].push(protect(json[key]))
-                }
+                    break
+                case 'titulo':
+                    csvLines[0].push(protect('Título'))
+                    csvLines[1].push(protect(json[key]))
+                    break
+                case 'descricao':
+                    csvLines[0].push(protect('Descrição'))
+                    csvLines[1].push(protect(json[key]))
+                    break
+                case 'tipoProc':
+                    csvLines[0].push(protect('Tipo de processo'))
+                    csvLines[1].push(protect(json[key]))
+                    break
+                case 'procTrans':
+                    csvLines[0].push(protect('Processo transversal (S/N)'))
+                    csvLines[1].push(protect(json[key]))
+                    break
+                default:
+                    break
             }
         }
     }
@@ -173,27 +184,8 @@ function json2csvRec(json){
     return csvLines
 }
 
-function convertClasse(json){
-    var csvL = json2csvRec(json)
-
-    var len = csvL.length
-
-    var csvLines = []
-    csvLines[0] = csvL[0]
-    csvLines[1] = csvL[1]
-
-    for(var i=2; i<len; i++){
-        csvLines[i] = []
-
-        csvL[0].forEach(h => {
-            var header = h.replace(/"/g,'') 
-            if(csvL[i][header]){
-                csvLines[i].push(protect(csvL[i][header]))
-            }else{
-                csvLines[i].push("")
-            }
-        })
-    }
+function joinLines(csvLines){
+    var len = csvLines.length
 
     for(var i=0; i<len; i++){
         csvLines[i] = csvLines[i].join(',')
@@ -210,12 +202,13 @@ module.exports.json2csv = (json, type) => {
         case "classes":
             break
         case "classe":
-            csv = convertClasse(json)
+            csvLines = convertClasse(json)
             break
         default:
             throw("Não é possível exportar para CSV nesta rota...")
             break
     }
 
+    csv = joinLines(csvLines)
     return csv
 }
