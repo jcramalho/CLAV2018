@@ -251,7 +251,7 @@ router.post('/callback', async function(req, res){
         AuthCalls.get(result.RequestID, function(err, url){
             if(!err && result.NIC!=undefined && result.NomeCompleto!=undefined){
                 var NIC = Buffer.from(result.NIC, 'base64').toString('utf8');
-                Users.getUserById(NIC, function (err, user) {
+                Users.getUserByCC(NIC, function (err, user) {
                     if(!user){ //Este cartao cidadao nao tem user associado
                         res.writeHead(301,{
                             Location: url+'/users/HandlerCC?NIC='+result.NIC+'&Nome='+result.NomeCompleto
@@ -289,7 +289,7 @@ router.post('/registarCC', function (req, res) {
         level: req.body.type
     });
     
-    Users.getUserById(req.body.nic, function (err, user) {
+    Users.getUserByCC(req.body.nic, function (err, user) {
         if (err) 
             return res.status(500).send(`Erro: ${err}`);
         if (!user) {
