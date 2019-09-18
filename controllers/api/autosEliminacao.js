@@ -1,19 +1,16 @@
 const execQuery = require('../../controllers/api/utils').execQuery
 const normalize = require('../../controllers/api/utils').normalize
-const projection = require('../../controllers/api/utils').projection;
 
 var AutosEliminacao = module.exports
 
 AutosEliminacao.listar = async function() {
     let query = `
-    SELECT ?id ?data ?entidade ?fundo ?tipo ?num WHERE {
+    SELECT ?id ?data ?entidade ?legislacao ?fundo WHERE {
         ?id a clav:AutoEliminacao;
                 clav:autoDataAutenticacao ?data;
                 clav:temEntidadeResponsavel ?entidade ;
-                clav:temLegislacao ?legislacao ;
+                clav:autoLegislacao ?legislacao ;
                 clav:fundo ?fundo .
-        ?legislacao clav:diplomaTipo ?tipo ;
-                    clav:diplomaNumero ?num .
     } 
     `
     try {
@@ -27,15 +24,13 @@ AutosEliminacao.listar = async function() {
 AutosEliminacao.consultar = async function(id) {
     var query = `
     SELECT * WHERE {
-        clav:ae_DGLAB_2019 a clav:AutoEliminacao;
+        clav:${id} a clav:AutoEliminacao;
                 clav:autoDataAutenticacao ?data;
                 clav:autoResponsavel ?resp ;
                 clav:temEntidadeResponsavel ?entidade ;
-                clav:temLegislacao ?legislacao ;
+                clav:autoLegislacao ?legislacao ;
                 clav:fundo ?fundo ;
                    clav:temZonaControlo ?zc .
-        ?legislacao clav:diplomaTipo ?tipo ;
-                clav:diplomaNumero ?num .
         ?zc clav:codigo ?codigo ;
             clav:autoDataInicio ?dataInicio;
             clav:autoDataFim ?dataFim;
@@ -67,8 +62,7 @@ AutosEliminacao.consultar = async function(id) {
                     data: autos[0].data,
                     entidade: autos[0].entidade,
                     responsavel: autos[0].resp,
-                    legislacaoID: autos[0].legislacao,
-                    legislacao: autos[0].tipo + ' ' + autos[0].num,
+                    legislacao: autos[0].legislacao,
                     fundo: autos[0].fundo,
                     zonaControlo: {}
                 }
@@ -120,7 +114,7 @@ AutosEliminacao.adicionarTS = async function (auto) {
         let resultLeg = execQuery("query", queryLeg)
         let resultEnt = normalize(execQuery("query", queryEnt));
         if(resultLeg.boolean && (resultEnt.length > 0)) {
-            var id = ":ae_"+nanoid();
+            var id = "ae_"+nanoid();
             var data = currentTime.getDate()+"/"+(currentTime.getMonth()+1)+"/"+currentTime.getFullYear()
             var query = `
                 INSERT DATA {
@@ -129,6 +123,7 @@ AutosEliminacao.adicionarTS = async function (auto) {
                                clav:autoDataAutenticacao "${data}" ;
                                clav:autoResponsavel "${auto.responsavel}" ;
                                clav:autoLegislacao "${auto.legislacao}" ;
+                               clav:fundo "${auto.fundo}" ;
                                clav:temEntidadeResponsavel :${resultEnt.split("#")[1]} .
             `
             for(zona of auto.zonaControlo) {
@@ -137,7 +132,8 @@ AutosEliminacao.adicionarTS = async function (auto) {
                     clav:${id} clav:temZonaControlo clav:${idZona} .
                 `
                 query += `
-                    clav:${idZona} a clav:ZonaControlo ;`
+                    clav:${idZona} a clav:ZonaControlo ;
+                    clav:codigo "${zona.codigo}" ;`
                 if(zona.ni.lowerCase() === "dono") query += `
                    clav:temNI clav:vc_naturezaIntervencao_dono ;`
                 else if(zona.ni.lowerCase() === "participante") query += `
@@ -171,6 +167,199 @@ AutosEliminacao.adicionarTS = async function (auto) {
             }
             return execQuery("update", query)
                     .then(response => normalize(response));
+        }
+    } 
+    catch(erro) { throw (erro);}
+}
+
+
+AutosEliminacao.adicionarPGD = async function (auto) {
+    const nanoid = require('nanoid')
+    var currentTime = new Date()
+    var queryEnt = `
+        SELECT ?ent WHERE {
+            ?ent a clav:Entidade ;
+                 clav:entDesignacao "${auto.entidade}" .
+        }
+    `
+    try {
+        let resultEnt = await execQuery("query", queryEnt);
+        resultEnt = normalize(resultEnt)
+        if(resultEnt.length > 0) {
+            var id = "ae_"+nanoid();
+            var data = currentTime.getDate()+"/"+(currentTime.getMonth()+1)+"/"+currentTime.getFullYear()
+            var query = `
+                    clav:${id} a clav:AutoEliminacao ;
+                               clav:autoNumero "${id}" ;
+                               clav:autoDataAutenticacao "${data}" ;
+                               clav:autoResponsavel "${auto.responsavel}" ;
+                               clav:autoLegislacao "${"Portaria "+auto.legislacao}" ;
+                               clav:fundo "${auto.fundo}" ;
+                               clav:temEntidadeResponsavel clav:${resultEnt[0].ent.split("#")[1]} .
+            `
+            
+            for(zona of auto.zonaControlo) {
+                var idZona = "zc_"+nanoid();
+
+                query += `
+                    clav:${id} clav:temZonaControlo clav:${idZona} .
+                `
+                query += `
+                    clav:${idZona} a clav:ZonaControlo ;
+                        clav:codigo "${zona.codigo}" ;`
+                if(zona.uiPapel !== "")
+                    query += `
+                    clav:medicaoPapel "${zona.uiPapel}" ;`
+                if(zona.uiDigital !== "")
+                    query += `
+                    clav:medicaoDigital "${zona.uiDigital}" ;`
+                if(zona.uiOutros !== "")
+                    query += `
+                    clav:medicaoOutros "${zona.uiOutros}" ;`
+                query += `
+                        clav:autoDataInicio "${zona.dataInicio}" ;
+                        clav:autoDataFim "${zona.dataFim}" .
+                `
+                for(agregacao of zona.agregacoes) {
+                    var idAg = "ag_"+zona.codigo+'_'+agregacao.codigo
+                    query += `
+                        clav:${idZona} clav:temAgregacao clav:${idAg} .
+                    
+                        clav:${idAg} a clav:Agregacao ;
+                            clav:agregacaoCodigo "${agregacao.codigo}" ;
+                            clav:agregacaoTitulo "${agregacao.titulo}" ;`
+                    
+                    if(agregacao.ni.toLowerCase() === "dono") query += `
+                        clav:temNI clav:vc_naturezaIntervencao_dono ;`
+                    else if(agregacao.ni.toLowerCase() === "participante") query += `
+                        clav:temNI clav:vc_naturezaIntervencao_participante ;`
+                    
+                    query += `
+                        clav:agregacaoDataContagem "${agregacao.dataContagem}" .
+                    `
+                }
+            }
+            try {
+                var insert = "INSERT DATA {\n"+query+"\n}"
+                await execQuery("update", insert)
+                // O ASK demora 1.6s não premite fazer return
+                // try {
+                    
+                //     var ask = "ASK {\n" + query + "\n}"
+                //     let result = await execQuery("update", ask);
+                //     console.log("res: "+result.boolean)
+                //     return result.boolean
+                // }
+                // catch(erro) { throw (erro); }
+                return true
+            }
+            catch(erro) { throw (erro);}
+        }
+    } 
+    catch(erro) { throw (erro);}
+}
+
+AutosEliminacao.adicionarRADA = async function (auto) {
+    const nanoid = require('nanoid')
+    var currentTime = new Date()
+    var queryEnt = `
+        SELECT ?ent WHERE {
+            ?ent a clav:Entidade ;
+                 clav:entDesignacao "${auto.entidade}" .
+        }
+    `
+    try {
+        let resultEnt = await execQuery("query", queryEnt);
+        resultEnt = normalize(resultEnt)
+        console.log(resultEnt)
+        if(resultEnt.length > 0) {
+            var id = "ae_"+nanoid();
+            var data = currentTime.getDate()+"/"+(currentTime.getMonth()+1)+"/"+currentTime.getFullYear()
+            var query = `
+                    clav:${id} a clav:AutoEliminacao ;
+                               clav:autoNumero "${id}" ;
+                               clav:autoDataAutenticacao "${data}" ;
+                               clav:autoResponsavel "${auto.responsavel}" ;
+                               clav:autoLegislacao "${auto.legislacao}" ;
+                               clav:fundo "${auto.fundo}" ;
+                               clav:temEntidadeResponsavel clav:${resultEnt[0].ent.split("#")[1]} .
+            `
+            
+            for(zona of auto.zonaControlo) {
+                var idZona = "zc_"+nanoid();
+
+                query += `
+                    clav:${id} clav:temZonaControlo clav:${idZona} .
+                `
+                query += `
+                    clav:${idZona} a clav:ZonaControlo ;
+                        clav:codigo "${zona.codigo}" ;`
+                if(zona.uiPapel !== "")
+                    query += `
+                    clav:medicaoPapel "${zona.uiPapel}" ;`
+                if(zona.uiDigital !== "")
+                    query += `
+                    clav:medicaoDigital "${zona.uiDigital}" ;`
+                if(zona.uiOutros !== "")
+                    query += `
+                    clav:medicaoOutros "${zona.uiOutros}" ;`
+                query += `
+                        clav:autoDataInicio "${zona.dataInicio}" ;
+                        clav:autoDataFim "${zona.dataFim}" .
+                `
+                //Definição da classe RADA
+                var classe = "c"
+                if(zona.codigo !== "") classe += zona.codigo
+                if(zona.referencia !== "") classe += "_" + zona.referencia
+
+                query += `
+                    clav:${classe} a clav:classe_RADA ;
+                            clav:temPCA clav:pca_${classe} ;
+                            clav:temDF clav:df_${classe} .
+                    
+                    clav:pca_${classe} a clav:PCA ;
+                            clav:pcaValor "${zona.prazoConservacao}" .
+
+                    clav:df_${classe} a clav:DestinoFinal ;
+                            clav:dfValor "${zona.destino}" .
+                `
+
+                for(agregacao of zona.agregacoes) {
+                    var idAg = "ag_"+zona.codigo+'_'+agregacao.codigo
+                    query += `
+                        clav:${idZona} clav:temAgregacao clav:${idAg} .
+                    
+                        clav:${idAg} a clav:Agregacao ;
+                            clav:agregacaoCodigo "${agregacao.codigo}" ;
+                            clav:agregacaoTitulo "${agregacao.titulo}" ;`
+                    
+                    if(agregacao.ni.toLowerCase() === "dono") query += `
+                        clav:temNI clav:vc_naturezaIntervencao_dono ;`
+                    else if(agregacao.ni.toLowerCase() === "participante") query += `
+                        clav:temNI clav:vc_naturezaIntervencao_participante ;`
+                    
+                    query += `
+                        clav:agregacaoDataContagem "${agregacao.dataContagem}" .
+                    `
+                }
+            }
+            try {
+                console.log("1")
+                var insert = "INSERT DATA {\n"+query+"\n}"
+                await execQuery("update", insert)
+                console.log("2")
+                // O ASK demora 1.6s não premite fazer return
+                // try {
+                    
+                //     var ask = "ASK {\n" + query + "\n}"
+                //     let result = await execQuery("update", ask);
+                //     console.log("res: "+result.boolean)
+                //     return result.boolean
+                // }
+                // catch(erro) { throw (erro); }
+                return true
+            }
+            catch(erro) { throw (erro);}
         }
     } 
     catch(erro) { throw (erro);}
