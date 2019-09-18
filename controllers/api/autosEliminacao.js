@@ -293,7 +293,7 @@ AutosEliminacao.adicionarRADA = async function (auto) {
                 `
                 query += `
                     clav:${idZona} a clav:ZonaControlo ;
-                        clav:codigo "${zona.codigo}" ;`
+                        clav:codigo "${zona.codigo + "_" + zona.referencia}" ;`
                 if(zona.uiPapel !== "")
                     query += `
                     clav:medicaoPapel "${zona.uiPapel}" ;`
@@ -306,22 +306,6 @@ AutosEliminacao.adicionarRADA = async function (auto) {
                 query += `
                         clav:autoDataInicio "${zona.dataInicio}" ;
                         clav:autoDataFim "${zona.dataFim}" .
-                `
-                //Definição da classe RADA
-                var classe = "c"
-                if(zona.codigo !== "") classe += zona.codigo
-                if(zona.referencia !== "") classe += "_" + zona.referencia
-
-                query += `
-                    clav:${classe} a clav:classe_RADA ;
-                            clav:temPCA clav:pca_${classe} ;
-                            clav:temDF clav:df_${classe} .
-                    
-                    clav:pca_${classe} a clav:PCA ;
-                            clav:pcaValor "${zona.prazoConservacao}" .
-
-                    clav:df_${classe} a clav:DestinoFinal ;
-                            clav:dfValor "${zona.destino}" .
                 `
 
                 for(agregacao of zona.agregacoes) {
