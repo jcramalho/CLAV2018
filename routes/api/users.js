@@ -36,13 +36,13 @@ router.get('/listarToken/:id', async function(req,res){
             console.log(decoded)
             await Users.listarPorId(decoded.id,function(err, result){
                 if(err){
-                    res.send(err);
+                    res.status(500).send(err);
                 }else{
                     res.send(result);
                 }
             });
         }else{
-            res.send(err);
+            res.status(500).send(err);
         }
     });
 });
@@ -52,7 +52,7 @@ router.get('/verificaToken/:id', async function(req,res){
         if(!err){
             res.send(decoded);
         }else{
-            res.send(err);
+            res.status(500).send(err);
         }
     });
 });
@@ -82,7 +82,7 @@ router.post('/registar', function (req, res) {
             res.send('Utilizador registado com sucesso!');
         }
         else {
-            res.send('Email já em uso!');
+            res.status(500).send('Email já em uso!');
         }
     });
 });
@@ -90,9 +90,9 @@ router.post('/registar', function (req, res) {
 router.post("/login", (req, res, next) => {
     passport.authenticate('local', (err, user, info) => {
         if (err)
-            res.send(err)
+            res.status(500).send(err)
         if (!user)
-            res.send('Credenciais inválidas')
+            res.status(500).send('Credenciais inválidas')
         else{
             req.login(user, () => {
                 var token = jwt.sign({id: user._id}, secretKey.key, {expiresIn: '8h'});
@@ -111,7 +111,7 @@ router.post('/recuperar', function (req, res) {
         if (err) 
             return res.status(500).send(`Erro: ${err}`);
         if (!user)
-            res.send('Não existe utilizador com esse email!');
+            res.status(500).send('Não existe nenhum utilizador registado com esse email!');
         else{
             Users.getUserById(user._id, function(err, user){
                 if(err) 
@@ -121,7 +121,7 @@ router.post('/recuperar', function (req, res) {
                     Mailer.sendEmailRecuperacao(req.body.email, req.body.url.split('/recuperacao')[0]+'/alteracaoPassword?jwt='+token);
                     res.send('Email enviado com sucesso!')
                 }else{
-                    res.send('Este utilizador foi registado através do Cartão de Cidadão!')
+                    res.status(500).send('Este utilizador foi registado na plataforma CLAV através do Cartão de Cidadão, não existindo uma password para o mesmo!')
                 }
             })
         }
@@ -139,7 +139,7 @@ router.put('/desativar', async function(req, res) {
                 }
             })
         }else{
-            res.send('Não pode desativar o seu próprio utilizador!');
+            res.status(500).send('Não pode desativar o seu próprio utilizador!');
         }
     });
 });
@@ -155,7 +155,7 @@ router.delete('/eliminar', async function(req, res) {
                 }
             })
         }else{
-            res.send('Não pode eliminar o seu próprio utilizador!');
+            res.status(500).send('Não pode eliminar o seu próprio utilizador!');
         }
     });
 });
@@ -204,7 +204,7 @@ router.put('/alterarPassword', function (req, res) {
 router.put('/atualizarMultiplos', function (req, res) {
     Users.getUserByEmail(req.body.email, function(err,user){
         if(user){
-            res.send('Já existe utilizador registado com esse email!');
+            res.status(500).send('Já existe utilizador registado com esse email!');
         }else{
             Users.atualizarMultiplosCampos(req.body.id, req.body.nome, req.body.email, req.body.entidade, req.body.level, function (err, cb) {
                 if (err) 
@@ -293,14 +293,22 @@ router.post('/registarCC', function (req, res) {
         if (err) 
             return res.status(500).send(`Erro: ${err}`);
         if (!user) {
-            Users.createUser(newUser, function (err, user) {
-                Logging.logger.info('Utilizador ' + user._id + ' registado.');
-                if (err) return res.status(500).send(`Erro: ${err}`);
-            });
-            res.send('Utilizador registado com sucesso!');
+            Users.getUserByEmail(req.body.email, function(err, user){
+                if (err) 
+                    return res.status(500).send(`Erro: ${err}`);
+                if (!user) {
+                    Users.createUser(newUser, function (err, user) {
+                        Logging.logger.info('Utilizador ' + user._id + ' registado.');
+                        if (err) return res.status(500).send(`Erro: ${err}`);
+                    });
+                    res.send('Utilizador registado com sucesso!');
+                }else{
+                    res.status(500).send('Email já em uso!');
+                }
+            })
         }
         else {
-            res.send('Utilizador já registado!');
+            res.status(500).send('Utilizador já registado!');
         }
     });
 });
