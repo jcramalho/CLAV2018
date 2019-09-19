@@ -349,3 +349,20 @@ AutosEliminacao.adicionarRADA = async function (auto) {
     catch(erro) { throw (erro);}
 }
 
+// ============================================================================
+
+/**
+ * Insere um novo Auto de Eliminação no sistema, gerando um pedido apropriado.
+ * O Auto de Eliminação criado encontrar-se-á no estado "Harmonização".
+ * 
+ * @see pedidos
+ *
+ * @param {AutoEliminacao} auto que se pretende criar
+ * @param {string} utilizador identificação do utilizador que criou o auto
+ * @return {Promise<Pedido | Error>} promessa que quando cumprida possui o
+ * pedido gerado para a criação da nova classe
+ */
+AutosEliminacao.importarTS = async (auto, tipo, utilizador) => {
+    let user = await axios.get(myhost + "/api/users/listarToken/" + utilizador);
+    Pedidos.criar('Importação',tipo, auto, user.data.email)
+};

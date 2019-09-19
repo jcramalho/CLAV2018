@@ -30,12 +30,12 @@ const PedidoSchema = new mongoose.Schema({
         },
         tipo: {
             type: String,
-            enum: ["Classe", "TS Organizacional", "TS Pluriorganizacional", "Entidade", "Tipologia", "Legislação", "Termo de Indice"],
+            enum: ["Classe", "TS Organizacional", "TS Pluriorganizacional", "Entidade", "Tipologia", "Legislação", "Termo de Indice", "AE PGD/LC", "AE PGD", "AE RADA"],
             required: true,
         },
         acao: {
             type: String,
-            enum: ["Criação", "Alteração", "Remoção"],
+            enum: ["Criação", "Alteração", "Remoção", "Importação"],
             required: true,
         }
     },
