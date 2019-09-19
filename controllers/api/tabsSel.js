@@ -704,12 +704,11 @@ SelTabs.criarPedidoDoCSV = async function (workbook, email, entidade_user, entid
                     tipoPedido: "Criação",
                     tipoObjeto: typeOrg,
                     novoObjeto: {ts: obj},
-                    user: {email: email}
+                    user: {email: email},
+                    //Adiciona a entidade do utilizador criador do pedido
+                    entidade: entidade_user
                 }
 
-                //Adiciona a entidade do utilizador criador do pedido
-                pedido.entidade = entidade_user
-               
                 try{
                     var pedido = await Pedidos.criar(pedido)
                     return {codigo: pedido.codigo, stats: stats}
