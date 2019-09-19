@@ -87,6 +87,29 @@ router.post('/registar', function (req, res) {
     });
 });
 
+router.post('/registarParaEntidade', function (req, res) {
+//    if(req.body.users instanceof Array && req.body.entidade){
+//        var valid = true
+//
+//        for(var i = 0; i < req.body.length && valid; i++){
+//            if(!req.body[i].name || !req.body[i].email || !req.body[i].nic || !req.body[i].type){
+//                valid = false
+//                res.status(500).send('O utilizador no índice ' + i + 'não possui um dos seguinte campo: name, email, nic (Número do Cartão de Cidadão) ou type (tipo de conta). Nenhum utilizador foi registado. Tente novamente.')
+//            }
+//        }
+//
+//        console.log("AQUI")
+//        if(valid){
+//            for(var i = 0; i < req.body.length; i++){
+//                
+//            }
+//        }
+//    }else{
+//        res.status(500).send('O body deve possuir uma lista de utilizadores (users) e a entidade a adicionar os utilizadores (entidade).')
+//    }
+    res.send("Por implementar...")
+});
+
 router.post("/login", (req, res, next) => {
     passport.authenticate('local', (err, user, info) => {
         if (err)
@@ -203,7 +226,7 @@ router.put('/alterarPassword', function (req, res) {
 
 router.put('/atualizarMultiplos', function (req, res) {
     Users.getUserByEmail(req.body.email, function(err,user){
-        if(user){
+        if(user && req.body.id != user._id){
             res.status(500).send('Já existe utilizador registado com esse email!');
         }else{
             Users.atualizarMultiplosCampos(req.body.id, req.body.nome, req.body.email, req.body.entidade, req.body.level, function (err, cb) {
