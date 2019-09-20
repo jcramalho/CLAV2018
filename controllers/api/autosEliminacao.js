@@ -388,7 +388,7 @@ AutosEliminacao.importar = async (auto, tipo, token) => {
                 entidade: resultEnt[0].ent.split("#")[1]
             }
             var pedido = await Pedidos.criar(pedido)
-            return pedido
+            return {codigo: pedido, auto: auto }
         }
         else throw(`Entidade ${auto.entidade} não encontrada no sistema.`)
     }  catch(erro) { throw(`Entidade ${auto.entidade} não encontrada no sistema.`) }
