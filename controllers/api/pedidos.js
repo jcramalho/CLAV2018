@@ -49,7 +49,6 @@ Pedidos.criar = function(pedidoParams){
         estado: "Submetido",
         criadoPor: pedidoParams.user.email,
         objeto: {
-            codigo: pedidoParams.novoObjeto.codigo,
             dados: pedidoParams.novoObjeto,
             tipo: pedidoParams.tipoObjeto,
             acao: pedidoParams.tipoPedido
@@ -59,6 +58,10 @@ Pedidos.criar = function(pedidoParams){
             responsavel: pedidoParams.user.email,
             despacho: "Submissão inicial"
         }]
+    }
+
+    if(pedidoParams.novoObjeto.codigo){
+        pedido.objeto.codigo = pedidoParams.novoObjeto.codigo
     }
 
     if(pedidoParams.entidade){
