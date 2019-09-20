@@ -24,10 +24,9 @@ router.post('/:tipo', (req, res) => {
     if(tipo==="PGD") tipo = "AE PGD"
     else if(tipo === "RADA") tipo = "AE RADA"
     else tipo = "AE PGD/LC"
-    AutosEliminacao.importarTS(req.body, tipo, req.body.token)
+    AutosEliminacao.importar(req.body.auto, tipo, req.body.token)
             .then(dados => {
-                if(dados) res.jsonp("AE PGD adicionado com sucesso")
-                else res.status(404).jsonp("Erro na adição do AE "+req.body.codigo)
+                res.jsonp(tipo+" adicionado aos pedidos com sucesso com codigo: "+dados.codigo)
             })
             .catch(erro => res.status(404).jsonp("Erro na adição do AE "+req.body.codigo+": " + erro))
 })
