@@ -77,7 +77,8 @@ PedidoSchema.methods.sparqlQuery = function() {
         "Entidade": "clav:Entidade",
         "Legislação": "clav:Legislacao",
         "Termo de Indice": "clav:TermoIndice",
-        "Tipologia": "clav:TipologiaEntidade"
+        "Tipologia": "clav:TipologiaEntidade",
+        "Auto de Eliminacao": "clav:AutoEliminacao"
     };
     const rdf_type = rdf_types[this.objeto.tipo];
     let query = '';

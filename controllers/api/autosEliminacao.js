@@ -1,5 +1,7 @@
 const execQuery = require('../../controllers/api/utils').execQuery
 const normalize = require('../../controllers/api/utils').normalize
+const myhost = require('../../config/database').host
+var axios = require('axios')
 
 var AutosEliminacao = module.exports
 
@@ -362,7 +364,34 @@ AutosEliminacao.adicionarRADA = async function (auto) {
  * @return {Promise<Pedido | Error>} promessa que quando cumprida possui o
  * pedido gerado para a criação da nova classe
  */
-AutosEliminacao.importarTS = async (auto, tipo, utilizador) => {
-    let user = await axios.get(myhost + "/api/users/listarToken/" + utilizador);
-    Pedidos.criar('Importação',tipo, auto, user.data.email)
+AutosEliminacao.importar = async (auto, tipo, token) => {
+    let user = await axios.get(myhost + "/api/users/listarToken/" + token);
+    var queryEnt = `
+        SELECT ?ent WHERE {
+            ?ent a clav:Entidade ;
+                 clav:entDesignacao "${auto.entidade}" .
+        }
+    `
+    try {
+        let resultEnt = await execQuery("query", queryEnt);
+        resultEnt = normalize(resultEnt)
+        if(resultEnt.length > 0) {
+            auto.responsavel = user.data.name
+            var pedido = {
+                tipoPedido: "Importação",
+                tipoObjeto: tipo,
+                novoObjeto: {
+                    ae: auto
+                },
+                user: {
+                    email: user.data.email
+                },
+                entidade: resultEnt[0].ent.split("#")[1]
+            }
+            console.log(pedido)
+            var pedido = await Pedidos.criar(pedido)
+            console.log("2")
+            return pedido
+        }
+    }  catch(erro) { throw("Entidade não encontrada") }
 };
