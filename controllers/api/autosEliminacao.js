@@ -2,6 +2,7 @@ const execQuery = require('../../controllers/api/utils').execQuery
 const normalize = require('../../controllers/api/utils').normalize
 const myhost = require('../../config/database').host
 var axios = require('axios')
+var Pedidos = require('../../controllers/api/pedidos');
 
 var AutosEliminacao = module.exports
 
@@ -273,7 +274,7 @@ AutosEliminacao.adicionarRADA = async function (auto) {
     try {
         let resultEnt = await execQuery("query", queryEnt);
         resultEnt = normalize(resultEnt)
-        console.log(resultEnt)
+
         if(resultEnt.length > 0) {
             var id = "ae_"+nanoid();
             var data = currentTime.getDate()+"/"+(currentTime.getMonth()+1)+"/"+currentTime.getFullYear()
@@ -330,10 +331,8 @@ AutosEliminacao.adicionarRADA = async function (auto) {
                 }
             }
             try {
-                console.log("1")
                 var insert = "INSERT DATA {\n"+query+"\n}"
                 await execQuery("update", insert)
-                console.log("2")
                 // O ASK demora 1.6s não premite fazer return
                 // try {
                     
@@ -388,10 +387,9 @@ AutosEliminacao.importar = async (auto, tipo, token) => {
                 },
                 entidade: resultEnt[0].ent.split("#")[1]
             }
-            console.log(pedido)
             var pedido = await Pedidos.criar(pedido)
-            console.log("2")
-            return pedido
+            return {codigo: pedido, auto: auto }
         }
-    }  catch(erro) { throw("Entidade não encontrada") }
+        else throw(`Entidade ${auto.entidade} não encontrada no sistema.`)
+    }  catch(erro) { throw(`Entidade ${auto.entidade} não encontrada no sistema.`) }
 };

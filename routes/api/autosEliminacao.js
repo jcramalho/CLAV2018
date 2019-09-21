@@ -28,7 +28,7 @@ router.post('/:tipo', (req, res) => {
             .then(dados => {
                 res.jsonp(tipo+" adicionado aos pedidos com sucesso com codigo: "+dados.codigo)
             })
-            .catch(erro => res.status(404).jsonp("Erro na adição do AE "+req.body.codigo+": " + erro))
+            .catch(erro => res.status(500).json(`Erro na adição do AE: ${erro}`))
 })
 
 
