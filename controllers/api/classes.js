@@ -469,10 +469,11 @@ Classes.justificacao = async id => {
     try {
         var query = `
         SELECT
-            ?criterio ?tipoId ?proc
+            ?criterio ?tipoId ?proc ?conteudo
         WHERE {
             clav:${id} clav:temCriterio ?criterio . 
             ?criterio a ?tipo.
+            ?criterio clav:conteudo ?conteudo.
             ?tipo rdfs:subClassOf clav:CriterioJustificacao.
             BIND (STRAFTER(STR(?tipo), 'clav#') AS ?tipoId).
         }`
@@ -509,14 +510,14 @@ Classes.justificacao = async id => {
 Classes.df = function (id) {
     var query = `
         SELECT 
-            ?idDF ?valor ?idJust
+            ?idDF ?valor ?nota ?idJust
         WHERE { 
             clav:${id} clav:temDF ?idDF .
             OPTIONAL {
                 ?idDF clav:dfValor ?valor ;
             }
             OPTIONAL {
-                ?idDF clav:dfNota ?Nota ;
+                ?idDF clav:dfNota ?nota ;
             }
             OPTIONAL {
                 ?idDF clav:temJustificacao ?idJustificacao .
