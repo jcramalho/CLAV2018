@@ -12,5 +12,7 @@ parameters:
 responses:
   200:
     description: Consulta de uma entidade
+  404:
+    description: A entidade não existe
   500:
     description: Erro

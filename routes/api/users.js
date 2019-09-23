@@ -87,96 +87,11 @@ router.post('/registar', function (req, res) {
     });
 });
 
-router.post('/registarParaEntidade', async function (req, res) {
+router.post('/registarParaEntidade', function (req, res) {
     if(req.body.users instanceof Array && req.body.entidade){
-
-        //validar se não há utilizadores com o mesmo email o nic na lista recebida
-        var emails = []
-        var nics = []
-
-        for(var i = 0; i < req.body.users.length; i++){
-
-            if(!req.body.users[i].name || !req.body.users[i].email || !req.body.users[i].nic || !req.body.users[i].type){
-                return res.status(500).send('O utilizador no índice ' + i + ' não possui um dos seguinte campo: name, email, nic (Número do Cartão de Cidadão) ou type (tipo de conta). Nenhum utilizador foi registado. Tente novamente.')
-            }else{
-                var email = req.body.users[i].email
-                var index = emails.indexOf(email)
-
-                if(index == -1){
-                    emails.push(email)
-                }else{
-                    return res.status(500).send('O utilizador no índice ' + index + ' e o utilizador no índice ' + i + ' tem o mesmo email! Nenhum utilizador foi registado. Tente novamente.')    
-                }
-                
-                var nic = req.body.users[i].nic
-                index = nics.indexOf(nic)
-
-                if(index == -1){
-                    nics.push(nic)
-                }else{
-                    return res.status(500).send('O utilizador no índice ' + index + ' e o utilizador no índice ' + i + ' tem o mesmo NIC! Nenhum utilizador foi registado. Tente novamente.')    
-                }
-            }
-        }
-
-        //validação dos utilizadores com a BD antes de os registar
-        for(var i = 0; i < req.body.users.length; i++){
-            try{
-                var user = await new Promise((resolve, reject) => {
-                    Users.getUserByCC(req.body.users[i].nic, function (err, user) {
-                        if (err) reject(err)
-                        else resolve(user)
-                    })
-                })
-
-                if (!user) {
-                    try{
-                        user = await new Promise((resolve, reject) => {
-                            Users.getUserByEmail(req.body.users[i].email, function(err, user){
-                                if (err) reject(err)
-                                else resolve(user)
-                            })
-                        })
-
-                        if (user) {
-                            return res.status(500).send('Email do utilizador no índice ' + i + ' já em uso! Nenhum utilizador foi registado. Tente novamente.');
-                        }
-                    } catch(err) {
-                        return res.status(500).send(`Erro ao verificar se email já existe: ${err}`);
-                    }
-                } else {
-                    return res.status(500).send('Utilizador no indíce ' + i + ' já se encontra registado ou possui um NIC errado! Nenhum utilizador foi registado. Tente novamente.');
-                }
-            } catch (err) {
-                return res.status(500).send(`Erro ao verificar se utilizador já existe: ${err}`);
-            }
-        }
-
-        //inserir os utilizadores na BD
-        var ent = req.body.entidade.split('_')[0] == 'ent' ? req.body.entidade : 'ent_' + req.body.entidade
-        for(var i = 0; i < req.body.users.length; i++){
-            var internal = (req.body.users[i].type > 1);
-            var newUser = new User({
-                _id: req.body.users[i].nic,
-                name: req.body.users[i].name,
-                email: req.body.users[i].email,
-                entidade: ent,
-                internal: internal,
-                level: req.body.users[i].type
-            });
-
-            try{
-                await new Promise((resolve, reject) => {
-                    Users.createUser(newUser, function (err, user) {
-                        if (err) reject(err)
-                        else resolve(user)
-                    })
-                })
-            }catch(err){
-                return res.status(500).send(`Erro no registo do utilizador no índice ${i}. Apenas foram registados os utilizadores anteriores a este.`);
-            }
-        }
-        res.send("Utilizadores registados com sucesso!")
+        Users.registarParaEntidade(req.body.entidade, req.body.users)
+           .then(data => res.send(data))
+           .catch(erro => res.status(500).send(erro))
     }else{
         res.status(500).send('O body deve possuir uma lista de utilizadores (users) e a entidade a adicionar os utilizadores (entidade).')
     }

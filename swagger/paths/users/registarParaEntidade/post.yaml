@@ -1,0 +1,34 @@
+summary: Adiciona/regista utilizadores para uma determinada entidade
+description: Adiciona/regista utilizadores para uma determinada entidade
+tags:
+  - users
+requestBody:
+  description: 'De forma a registar os utilizadores é necessário a entidade(sigla) e o nic, name, email e type (level) para cada um deles'
+  required: true
+  content:
+    application/json:
+      schema:
+        properties:
+          entidade:
+            type: string
+          users:
+            type: array
+            items:
+              type: object
+              properties:
+                nic:
+                  type: string
+                  pattern: '^[0-9]{7,}$'
+                name:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                type:
+                  type: string
+                  pattern: '^[0-9]$'
+responses:
+  200:
+    description: Adicionados/registados utilizadores para uma determinada entidade
+  500:
+    description: Erro
