@@ -1,0 +1,9 @@
+summary: Devolve a lista de todos os autos de eliminação
+description: Devolve a lista de todos os autos de eliminação onde para cada auto de eliminação devolve a informação do id, data, entidade, legislacao e fundo
+tags:
+  - autosEliminacao
+responses:
+  200:
+    description: Devolve a lista de todos os autos de eliminação
+  404:
+    description: Erro

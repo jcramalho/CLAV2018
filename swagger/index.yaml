@@ -46,6 +46,8 @@ tags:
     description:
   - name: ontologia
     description:
+  - name: autosEliminacao
+    description:
 paths: !!inc/dir [ 'paths' ] 
 components: 
   schemas: !!inc/dir [ 'schemas', excludeTopLevelDirSeparator: true ]

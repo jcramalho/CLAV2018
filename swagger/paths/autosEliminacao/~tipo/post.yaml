@@ -1,0 +1,31 @@
+summary: Cria um pedido de criação de um auto de eliminação
+description: Cria um pedido de criação de um auto de eliminação
+tags:
+  - autosEliminacao
+parameters:
+  - name: tipo
+    in: path
+    description: 'Tipo do auto de eliminação'
+    schema:
+      type: string
+      enum: [PGD, RADA, PGD/LC]
+    required: true
+requestBody:
+  description: 'Auto de eliminação'
+  required: true
+  content:
+    application/json:
+      schema:
+        properties:
+          auto:
+            type: object
+            properties:
+              entidade:
+                type: string
+          token:
+            type: string
+responses:
+  200:
+    description: Criado um pedido para a criação de uma auto de eliminação
+  404:
+    description: Erro

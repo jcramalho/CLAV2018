@@ -23,7 +23,6 @@ AutosEliminacao.listar = async function() {
     catch(erro) { throw (erro);}
 }
 
-// Devolve a lista de termos de um VC: idtermo, termo
 AutosEliminacao.consultar = async function(id) {
     var query = `
     SELECT * WHERE {

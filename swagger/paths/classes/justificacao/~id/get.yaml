@@ -1,5 +1,5 @@
 summary: Devolve uma justificação, PCA ou DF
-description: 'Devolve uma justificação, PCA ou DF, que é composta por uma lista de critérios: tipoId, criterio, processos relacionados e legislação'
+description: 'Devolve uma justificação, PCA ou DF, que é composta por uma lista de critérios: tipoId, conteudo, criterio, processos relacionados e legislação'
 tags:
   - classes
 parameters:

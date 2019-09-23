@@ -11,7 +11,6 @@ router.get('/', (req, res) => {
         .catch(erro => res.status(404).jsonp("Erro na listagem dos AE: " + erro))
 })
 
-// Devolve a lista de termos de um VC: idtermo, termo
 router.get('/:id', function (req, res) {
     AutosEliminacao.consultar(req.params.id)
         .then(dados => res.jsonp(dados))
