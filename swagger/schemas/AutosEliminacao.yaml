@@ -16,9 +16,9 @@ properties:
       properties:
         codigo:
           type: string
-          pattern: '^\s*\d{3}(\.\d{2}(\.\d{3}(\.\d{2})?)?)?\s*$'
         referencia:
           type: string
+          description: Apenas presente caso o tipo seja RADA
         titulo:
           type: string
         prazoConservacao:
@@ -27,6 +27,7 @@ properties:
           type: string
         ni:
           type: string
+          enum: [Dono, Participante, Vazio]
         dono:
           type: string
         dataInicio:
@@ -52,6 +53,7 @@ properties:
                 type: string
               ni:
                 type: string
+                enum: [Dono, Participante, Vazio]
             required:
               - codigo
               - titulo
