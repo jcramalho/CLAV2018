@@ -120,6 +120,13 @@ router.get('/:id/descendencia', function (req, res) {
         .catch(erro => res.status(500).send(`Erro na consulta da descendência da classe ${req.params.id}: ${erro}`))
 })
 
+// Devolve a lista de todas as notas de aplicação: idNota, nota, codigoProc, tituloProc
+router.get('/notasAp', (req, res) => {
+    Classes.todasNotasAp()
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.status(500).send(`Erro na consulta das notas de aplicação da classe ${req.params.id}: ${erro}`))
+})
+
 // Devolve a lista de notas de aplicação de uma classe: idNota, nota
 router.get('/:id/notasAp', (req, res) => {
     Classes.notasAp(req.params.id)

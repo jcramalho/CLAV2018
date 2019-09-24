@@ -269,6 +269,19 @@ Classes.descendencia = async id => {
     }
 }
 
+// Devolve a lista com todas as notas de aplicação: idNota, nota, codigoProc, tituloProc
+Classes.todasNotasAp = () => {
+    var query = `
+            SELECT ?idNota ?nota ?codigoProc ?tituloProc WHERE { 
+                ?idNota a clav:NotaAplicacao .
+                ?idNota clav:conteudo ?nota .
+                ?codigoProc clav:temNotaAplicacao ?idNota .
+                ?codigoProc clav:titulo ?tituloProc .
+            }`
+    return execQuery("query", query)
+        .then(response => normalize(response))
+}
+
 // Devolve a lista de notas de aplicação de uma classe: idNota, nota
 Classes.notasAp = id => {
     var query = `
