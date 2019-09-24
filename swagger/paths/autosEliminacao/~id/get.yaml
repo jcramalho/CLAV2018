@@ -5,7 +5,7 @@ tags:
 parameters:
   - name: id
     in: path
-    description: 'Identificador de um auto de eliminação(exemplo: ae_xdQCoMoSS5o9yilq4d2ad)'
+    description: 'Identificador de um auto de eliminação(exemplo: ae_xjGYpNN8ztyKGTjOU0MWJ)'
     schema:
       type: string
     required: true

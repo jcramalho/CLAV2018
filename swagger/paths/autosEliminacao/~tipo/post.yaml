@@ -18,10 +18,7 @@ requestBody:
       schema:
         properties:
           auto:
-            type: object
-            properties:
-              entidade:
-                type: string
+            $ref: '#/components/schemas/AutosEliminacao'
           token:
             type: string
 responses:
