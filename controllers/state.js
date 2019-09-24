@@ -2,7 +2,10 @@
  * Carrega a árvore de classes em estruturas de suporte 
  *   - vai permitir acelerar as querys e todas as operações de consulta
  */
-var Classes = require('./api/classes.js');
+var Classes = require('./api/classes.js')
+var NotasAp = require('./api/notasAp.js')
+var ExemplosNotasAp = require('./api/exemplosNotasAp.js')
+var TermosIndice = require('./api/termosIndice.js')
 
 var classTree = []
 var classList = []
@@ -15,12 +18,19 @@ var notasAplicacao = []
 var exemplosNotasAplicacao = []
 var termosInd = []
 
+// Índice invertido de suporte ao motor de busca: 
+//  [ {chave: "texto duma nota, exemplo ou ti", processo:{codigo:"cxxx", titulo:"..."}}, ...]
+var indiceInvertido = []
+
 exports.reset = async () => { 
     try {
-        console.debug("Loading classes from DB")
+        console.debug("A carregar as classes da BD para a cache...")
         classTree = await loadClasses();
         classList = level1Classes.concat(level2Classes, level3Classes, level4Classes)
-        console.debug("Finished loading...")
+        console.debug("Terminei de carregar as classes.")
+        console.debug("A criar o índice invertido...")
+        indiceInvertido = await criaIndice()
+        console.debug("Índice criado com " + indiceInvertido.length + " entradas.")
     } catch(err) {
         throw err
     }
@@ -90,6 +100,20 @@ exports.getProcessosComuns = async () => {
 exports.getProcessosEspecificos = async (entidades, tipologias) => {
     let PE = await Classes.listarPNsEspecificos(entidades, tipologias);
     return PE;
+}
+
+async function criaIndice(){
+    let notas = await NotasAp.todasNotasAp()
+    let exemplos = await ExemplosNotasAp.todosExemplosNotasAp()
+    let tis = await TermosIndice.listar()
+    let indice = []
+    
+    //  [ {chave: "texto duma nota, exemplo ou ti", processo:{codigo:"cxxx", titulo:"..."}}, ...]
+    indice = indice.concat(notas.map(n => ({chave: n.nota, processo: {codigo: n.codigoProc, titulo: n.tituloProc}})))
+    indice = indice.concat(exemplos.map(e => ({chave: e.exemplo, processo: {codigo: e.codigoProc, titulo: e.tituloProc}})))
+    indice = indice.concat(tis.map(t => ({chave: t.termo, processo: {codigo: t.idClasse, titulo: t.tituloClasse}})))
+
+    return indice
 }
 
 async function loadClasses() {
