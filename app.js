@@ -166,6 +166,7 @@ app.use('/api/legislacao',require('./routes/api/leg'));
 app.use('/api/classes',require('./routes/api/classes'), outputFormat);
 app.use('/api/notasAp',require('./routes/api/notasAp'));
 app.use('/api/exemplosNotasAp',require('./routes/api/exemplosNotasAp'));
+app.use('/api/indiceInvertido',require('./routes/api/indiceInvertido'));
 app.use('/api/tabelasSelecao',require('./routes/api/tabsSel'));
 app.use('/api/termosIndice',require('./routes/api/termosIndice'));
 app.use('/api/vocabularios',require('./routes/api/vocabularios'));

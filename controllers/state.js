@@ -43,6 +43,8 @@ exports.getLevel2Classes = async () => { return level2Classes }
 exports.getLevel3Classes = async () => { return level3Classes }
 exports.getLevel4Classes = async () => { return level4Classes }
 
+exports.getIndiceInvertido = async () => { return indiceInvertido }
+
 // Verifica a existência do código de uma classe: true == existe, false == não existe
 exports.verificaCodigo = async (cod) => {
     var nivel = cod.split('.').length
