@@ -19,7 +19,7 @@ var TermosIndice = module.exports
  */
 TermosIndice.listar = () => {
     let query = `
-        SELECT ?id ?termo ?idClasse ?tituloClasse ?estado
+        SELECT ?id ?termo ?idClasse ?tituloClasse ?estado ?codigoClasse
         WHERE { 
             ?idTI rdf:type clav:TermoIndice ;
                 clav:termo ?termo ;
@@ -27,7 +27,8 @@ TermosIndice.listar = () => {
                 clav:estaAssocClasse ?idC .
             ?idC clav:titulo ?tituloClasse ;
                 clav:codigo ?idClasse.
-            BIND(STRAFTER(STR(?idTI), "clav#") AS ?id)
+            BIND(STRAFTER(STR(?idTI), "clav#") AS ?id) .
+            BIND(STRAFTER(STR(?idC), "clav#") AS ?codigoClasse)
         }
         ORDER BY ?termo`;
 
