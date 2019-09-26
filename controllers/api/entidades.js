@@ -1,8 +1,8 @@
 const execQuery = require('../../controllers/api/utils').execQuery
-const normalize = require('../../controllers/api/utils').normalize;
-const axios = require('axios');
+const normalize = require('../../controllers/api/utils').normalize
+const axios = require('axios')
 const myhost = require('./../../config/database').host
-const Entidades = module.exports;
+const Entidades = module.exports
 
 /**
  * @typedef {Object} Entidade
@@ -17,7 +17,7 @@ const Entidades = module.exports;
 /**
  * Lista as meta informações de todas as entidades no sistema, de acordo
  * com o filtro especificado.
- * 
+ *
  * @param {Object} filtro objeto com os campos para filtrar. Se o valor de um
  * campo for `undefined` esse campo é ignorado.
  * @param {string} filtro.sigla (ex: "AR")
@@ -29,7 +29,7 @@ const Entidades = module.exports;
  * lista das entidades existentes que respeitam o filtro dado
  */
 Entidades.listar = (filtro) => {
-    const query = `SELECT ?id ?sigla ?designacao ?internacional ?sioe ?estado {
+	const query = `SELECT ?id ?sigla ?designacao ?internacional ?sioe ?estado {
         ?uri rdf:type clav:Entidade ;
             clav:entEstado ?estado;
             clav:entDesignacao ?designacao ;
@@ -41,19 +41,18 @@ Entidades.listar = (filtro) => {
         BIND(CONCAT('ent_', ?sigla) AS ?id).
 
         FILTER (${Object.entries(filtro)
-            .filter(([k, v]) => v !== undefined)
-            .map(([k, v]) => `?${k} = "${v}"`)
-            .concat(["True"])
-            .join(' && ')})
-    } ORDER BY ?sigla`;
+			.filter(([k, v]) => v !== undefined)
+			.map(([k, v]) => `?${k} = "${v}"`)
+			.concat(['True'])
+			.join(' && ')})
+    } ORDER BY ?sigla`
 
-    return execQuery("query", query)
-        .then(response => normalize(response));
-};
+	return execQuery('query', query).then((response) => normalize(response))
+}
 
 // Lista todas as entidades com PNs associados (como Dono ou como Participante)
 Entidades.listarComPNs = () => {
-    const query = `SELECT ?id ?sigla ?designacao ?internacional ?sioe ?estado 
+	const query = `SELECT ?id ?sigla ?designacao ?internacional ?sioe ?estado 
     WHERE { 
             ?uri rdf:type clav:Entidade ;
                 clav:entEstado ?estado;
@@ -78,15 +77,14 @@ Entidades.listarComPNs = () => {
         FILTER NOT EXISTS { ?pn clav:temParticipante ?uri. }
             }
         } BIND(CONCAT('ent_', ?sigla) AS ?id).
-    } ORDER BY ?sigla`;
-    
-    return execQuery("query", query)
-        .then(response => normalize(response));
-};
+    } ORDER BY ?sigla`
+
+	return execQuery('query', query).then((response) => normalize(response))
+}
 
 // Lista todas as entidades sem PNs associados (como Dono ou como Participante)
 Entidades.listarSemPNs = () => {
-    const query = `SELECT ?id ?sigla ?designacao ?internacional ?sioe ?estado {
+	const query = `SELECT ?id ?sigla ?designacao ?internacional ?sioe ?estado {
             ?uri rdf:type clav:Entidade ;
                 clav:entEstado ?estado;
                 clav:entDesignacao ?designacao ;
@@ -99,11 +97,10 @@ Entidades.listarSemPNs = () => {
         FILTER NOT EXISTS {?pn clav:temParticipante ?uri.}
             BIND(CONCAT('ent_', ?sigla) AS ?id).
 
-        } ORDER BY ?sigla`;
+        } ORDER BY ?sigla`
 
-    return execQuery("query", query)
-        .then(response => normalize(response));
-};
+	return execQuery('query', query).then((response) => normalize(response))
+}
 
 /**
  * Devolve a lista das tipologias às quais uma entidade pertence.
@@ -114,17 +111,16 @@ Entidades.listarSemPNs = () => {
  * às quais a entidade pertence
  */
 Entidades.tipologias = (id) => {
-    const query = `SELECT ?id ?sigla ?designacao WHERE {
+	const query = `SELECT ?id ?sigla ?designacao WHERE {
         clav:${id} clav:pertenceTipologiaEnt ?uri .
         ?uri clav:tipEstado "Ativa";
             clav:tipSigla ?sigla;
             clav:tipDesignacao ?designacao.
         BIND (CONCAT('tip_', ?sigla) AS ?id)
-    }`;
+    }`
 
-    return execQuery("query", query)
-        .then(response => normalize(response));
-};
+	return execQuery('query', query).then((response) => normalize(response))
+}
 
 /**
  * Consulta a meta informação relativa a uma entidade (sigla, designação,
@@ -136,7 +132,7 @@ Entidades.tipologias = (id) => {
  * então a promessa conterá o valor `undefined`
  */
 Entidades.consultar = (id) => {
-    const query = `SELECT ?sigla ?designacao ?estado ?internacional ?sioe WHERE {
+	const query = `SELECT ?sigla ?designacao ?estado ?internacional ?sioe WHERE {
         clav:${id} rdf:type clav:Entidade ;
             clav:entDesignacao ?designacao ;
             clav:entSigla ?sigla ;
@@ -145,49 +141,75 @@ Entidades.consultar = (id) => {
         OPTIONAL {
             clav:${id} clav:entSIOE ?sioe
         }
-    }`;
+    }`
 
-    return execQuery("query", query)
-        .then(response => normalize(response)[0]);
-};
+	return execQuery('query', query).then((response) => normalize(response)[0])
+}
 
 /**
  * Verifica se uma determinada entidade existe no sistema.
- * 
+ *
  * @param {Entidade} entidade
  * @return {Promise<boolean | Error>}
  */
 Entidades.existe = (entidade) => {
-    const query = `ASK {
+	const query = `ASK {
         { ?e clav:entDesignacao|clav:tipDesignacao '${entidade.designacao}' }
         UNION
         { ?s clav:entSigla|clav:tipSigla '${entidade.sigla}' }
-    }`;
+    }`
 
-    return execQuery("query", query)
-        .then(response => response.boolean);
-};
+	return execQuery('query', query).then((response) => response.boolean)
+}
+
+/**
+ * Verifica se uma determinada sigla de entidade existe no sistema.
+ *
+ * @param {Sigla} sigla
+ * @return {Promise<boolean | Error>}
+ */
+Entidades.existeSigla = (sigla) => {
+	console.log(sigla)
+	const query = `ASK {
+      ?s clav:entSigla|clav:tipSigla '${sigla}' 
+  }`
+
+	return execQuery('query', query).then((response) => response.boolean)
+}
+
+/**
+ * Verifica se uma determinada sigla de entidade existe no sistema.
+ *
+ * @param {Designacao} designacao
+ * @return {Promise<boolean | Error>}
+ */
+Entidades.existeDesignacao = (designacao) => {
+	const query = `ASK {
+      ?e clav:entDesignacao|clav:tipDesignacao '${designacao}' 
+  }`
+
+	return execQuery('query', query).then((response) => response.boolean)
+}
 
 /**
  * Lista os processos em que uma entidade intervem como dona.
- * 
+ *
  * @param {string} id código identificador da entidade (p.e, "ent_CEE")
  * @return {Promise<{codigo: string, titulo: string} | Error>} promessa que
  * quando cumprida contém os códigos e títulos dos processos onde a entidade
  * participa como dona
  */
-Entidades.dono = id => {
-    const query = `SELECT ?codigo ?titulo WHERE {
+Entidades.dono = (id) => {
+	const query = `SELECT ?codigo ?titulo WHERE {
         ?id clav:temDono clav:${id} ;
             clav:codigo ?codigo ;
             clav:titulo ?titulo ;
             clav:pertenceLC clav:lc1 ;
             clav:classeStatus "A" .
-    }`;
+    }`
 
-    return execQuery("query", query)
-        .then(response => normalize(response));
-};
+	return execQuery('query', query).then((response) => normalize(response))
+}
 
 /**
  * Lista os processos em que uma entidade intervem como participante.
@@ -197,8 +219,8 @@ Entidades.dono = id => {
  * quando cumprida contém os códigos e títulos dos processos onde a entidade
  * participa
  */
-Entidades.participante = id => {
-    const query = `SELECT ?tipoPar ?codigo ?titulo WHERE { 
+Entidades.participante = (id) => {
+	const query = `SELECT ?tipoPar ?codigo ?titulo WHERE { 
         ?uri clav:temParticipante clav:${id} ;
             ?tipoParURI clav:${id} ;
             clav:titulo ?titulo ;
@@ -207,8 +229,7 @@ Entidades.participante = id => {
             clav:classeStatus "A" .
         BIND (STRAFTER(STR(?tipoParURI), 'clav#') AS ?tipoPar).
         FILTER (?tipoParURI != clav:temParticipante && ?tipoParURI != clav:temDono)
-    }`;
+    }`
 
-    return execQuery("query", query)
-        .then(response => normalize(response));
-};
+	return execQuery('query', query).then((response) => normalize(response))
+}
