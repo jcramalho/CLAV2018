@@ -16,6 +16,12 @@ Auth.checkLevel = function (clearance) {
     }
 }
 
+Auth.generateTokenEmail = function (user) {
+    var token = jwt.sign({id: user._id}, secretKey.key, {expiresIn: '30m'});
+
+    return token
+}
+
 Auth.generateTokenUser = function (user) {
     var token = jwt.sign({id: user._id}, secretKey.key, {expiresIn: '8h', algorithm: "RS256"});
 
@@ -23,7 +29,7 @@ Auth.generateTokenUser = function (user) {
 }
 
 Auth.generateTokenKey = function () {
-    var token = jwt.sign({}, secretKey.key, {expiresIn: '30d', algorithm: "RS256"});
+    var token = jwt.sign({}, secretKey.key, {expiresIn: '30d'});
 
     return token
 }

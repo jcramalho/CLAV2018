@@ -127,7 +127,7 @@ router.post('/recuperar', function (req, res) {
                 if(err) 
                     return res.status(500).send(`Erro: ${err}`);
                 if(user.local.password != undefined){
-                    var token = jwt.sign({id: user._id}, secretKey.key, {expiresIn: '30m'});
+                    var token = Auth.generateTokenEmail();
                     Mailer.sendEmailRecuperacao(req.body.email, req.body.url.split('/recuperacao')[0]+'/alteracaoPassword?jwt='+token);
                     res.send('Email enviado com sucesso!')
                 }else{
@@ -268,7 +268,7 @@ router.post('/callback', async function(req, res){
                         });
                         res.end();
                     }else{ //ja existe user com este cartao cidadao
-                        var token = jwt.sign({id: user._id}, secretKey.key, {expiresIn: '8h'});
+                        var token = Auth.generateTokenUser();
                         var name = Buffer.from(user.name).toString('base64');
                         var entidade = Buffer.from(user.entidade).toString('base64');
                         res.writeHead(301,{

@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var jwt = require('jsonwebtoken')
 var secretKey = require('./../../config/app');
+var Auth = require('../../controllers/auth');
 var Chaves = require('../../controllers/api/chaves');
 var Mailer = require('../../controllers/api/mailer');
 
@@ -85,7 +86,7 @@ router.put('/renovar', function(req, res) {
         if(err || !chave){
             res.send("Não existe nenhuma chave API associada neste email!");
         }else{
-            var token = jwt.sign({id: chave._id}, secretKey.key, {expiresIn: '30m'});
+            var token = Auth.generateTokenEmail();
             Mailer.sendEmailRenovacaoAPI(chave.contactInfo, req.body.url.split('/renovar')[0]+'/alteracaoChaveApi?jwt='+token);
             res.send('Email enviado com sucesso!');
         }
