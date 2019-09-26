@@ -1,47 +1,18 @@
 var Auth = module.exports
-var passport = require("passport")
+var passport = require("passport");
 var jwt = require('jsonwebtoken');
 var Key = require('../models/chave');
 var apiKey = require('./../config/api');
 var secretKey = require('./../config/app');
 
-Auth.checkLevel1 = function (req, res, next) {
-    return Auth.isLevel(1, req, res, next);
-}
-
-Auth.checkLevel2 = function (req, res, next) {
-    return Auth.isLevel(2, req, res, next);
-}
-
-Auth.checkLevel3 = function (req, res, next) {
-    return Auth.isLevel(3, req, res, next);
-}
-
-Auth.checkLevel4 = function (req, res, next) {
-    return Auth.isLevel(4, req, res, next);
-}
-
-Auth.checkLevel5 = function (req, res, next) {
-    return Auth.isLevel(5, req, res, next);
-}
-
-Auth.checkLevel6 = function (req, res, next) {
-    return Auth.isLevel(6, req, res, next);
-}
-
-Auth.checkLevel7 = function (req, res, next) {
-    return Auth.isLevel(7, req, res, next);
-}
-
-Auth.isLevel = function (clearance, req, res, next) {
-    if (req.isAuthenticated()) {
+//WARNING: correr primeiro isLoggedInUser e só depois correr esta função como middleware
+Auth.checkLevel = function (clearance) {
+    return function(req, res, next) {
         if (req.user.level >= clearance) {
             return next();
         } else {
-            return res.status(403).send('Não tem permissões suficientes para aceder a esta página');
+            return res.status(403).send('Não tem permissões suficientes para aceder');
         }
-    } else {
-        res.status(403).send('Login necessário para aceder a esta página');
     }
 }
 
