@@ -242,18 +242,11 @@ Users.listarEmail = function(id, callback){
 }
 
 Users.adicionarChamadaApi = function(id, callback){
-    Users.getUserById(id, function(err, user){
+    User.findOneAndUpdate({_id: id}, {$inc: {nCalls: 1}}, {useFindAndModify: false}, function(err, user){
         if (err) {	
             callback(err,null)
         } else {
-            user.nCalls+=1;
-            user.save(function(err) {
-                if (err) {
-		            callback(err, null);
-                }else{
-		            callback(null, user);
-                }
-            });
+		    callback(null, user);
         }
     });
 }

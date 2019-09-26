@@ -227,23 +227,6 @@ router.put('/atualizarMultiplos', function (req, res) {
     });
 });
 
-//API calls
-// router.get('/contarChamadasApi', async function (req, res) {
-//     await Users.contarChamadasApi(function(err, count){
-//         if(err){
-//             return res.status(500).send(`Erro: ${err}`);
-//         }else{
-//             return res.json(count);
-//         }
-//     });
-// });
-
-// router.post('/adicionarChamadaApi/:id', function (req, res) {
-//     Users.adicionarChamadaApi(req.params.id, function (err, cb) {
-//         if (err) return res.status(500).send(`Erro: ${err}`);
-//     });
-// });
-
 router.get('/:id', (req, res) => {
     Users.listarPorId(req.params.id,function(err, result){
         if(err){
