@@ -1,8 +1,12 @@
 var LocalStrategy = require('passport-local').Strategy;
+var JWTstrategy = require("passport-jwt").Strategy;
+var ExtractJWT = require("passport-jwt").ExtractJwt;
+var secretKey = require('./../config/app');
+var User = require('../models/user');
 var Users = require('../controllers/api/users');
 
 module.exports = function(passport) {
-    passport.use(new LocalStrategy(
+    passport.use("login", new LocalStrategy(
         function (email, password, done) {
             Users.getUserByEmail(email, function (err, user) {
                 if (err) done(err);
@@ -35,4 +39,31 @@ module.exports = function(passport) {
             done(err, user);
         });
     });
+
+    passport.use("jwt", new JWTstrategy({
+        secretOrKey: secretKey.key,
+        algorithms: ["RS256"],
+        jwtFromRequest: ExtractJWT.fromExtractors([
+            ExtractJWT.fromBodyField('token'),
+            ExtractJWT.fromUrlQueryParameter('token'),
+            ExtractJWT.fromAuthHeaderWithScheme('token')
+        ])
+    }, async (token, done) => {
+        User.findOne({id: token.id}, async function(err, user) {
+            if (err) {
+                return done(err, false);
+            }
+            if (user) {
+                await Users.adicionarChamadaApi(token.id, function (err, cb){
+                    if (err){
+                        done(null, false);
+                    }else{
+                        return done(null, user);
+                    }
+                })
+            } else {
+                return done(null, false);
+            }
+        });
+    }))
 };

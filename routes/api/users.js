@@ -5,6 +5,7 @@ var passport = require('passport');
 var User = require('../../models/user');
 var Users = require('../../controllers/api/users');
 var AuthCalls = require('../../controllers/api/auth');
+var Auth = require('../../controllers/auth');
 var jwt = require('jsonwebtoken');
 var secretKey = require('./../../config/app');
 var Mailer = require('../../controllers/api/mailer');
@@ -33,8 +34,7 @@ router.get('/listarEmail/:id', function(req, res) {
 router.get('/listarToken/:id', async function(req,res){
     await jwt.verify(req.params.id, secretKey.key, async function(err, decoded){
         if(!err){
-            console.log(decoded)
-            await Users.listarPorId(decoded.id,function(err, result){
+            await Users.listarPorId(decoded.id, function(err, result){
                 if(err){
                     res.status(500).send(err);
                 }else{
@@ -76,7 +76,6 @@ router.post('/registar', function (req, res) {
             return res.status(500).send(`Erro: ${err}`);
         if (!user) {
             await Users.createUser(newUser, function (err, user) {
-                Logging.logger.info('Utilizador ' + user._id + ' registado.');
                 if (err) return res.status(500).send(`Erro: ${err}`);
             });
             res.send('Utilizador registado com sucesso!');
@@ -98,14 +97,15 @@ router.post('/registarParaEntidade', function (req, res) {
 });
 
 router.post("/login", (req, res, next) => {
-    passport.authenticate('local', (err, user, info) => {
+    passport.authenticate('login', (err, user, info) => {
         if (err)
             res.status(500).send(err)
         if (!user)
-            res.status(500).send('Credenciais inválidas')
+            res.status(401).send('Credenciais inválidas')
         else{
             req.login(user, () => {
-                var token = jwt.sign({id: user._id}, secretKey.key, {expiresIn: '8h'});
+                var token = Auth.generateTokenUser(user);
+
                 res.send({
                     token: token, 
                     name : user.name, 

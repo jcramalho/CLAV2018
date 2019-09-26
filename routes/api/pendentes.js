@@ -16,7 +16,7 @@ router.get('/:id', (req, res) => {
 })
 
 // Guardar um trabalho pendente
-router.post('/', Auth.isLoggedInNEW, (req, res) => {
+router.post('/', (req, res) => {
     Pendentes.criar(req.body)
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro ao guardar trabalho pendente: ${erro}`));
