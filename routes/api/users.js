@@ -32,7 +32,7 @@ router.get('/listarEmail/:id', function(req, res) {
 });
 
 router.get('/listarToken/:id', async function(req,res){
-    await jwt.verify(req.params.id, secretKey.key, async function(err, decoded){
+    await jwt.verify(req.params.id, secretKey.userKey, async function(err, decoded){
         if(!err){
             await Users.listarPorId(decoded.id, function(err, result){
                 if(err){
@@ -48,7 +48,7 @@ router.get('/listarToken/:id', async function(req,res){
 });
 
 router.get('/verificaToken/:id', async function(req,res){
-    await jwt.verify(req.params.id, secretKey.key, async function(err, decoded){
+    await jwt.verify(req.params.id, secretKey.userKey, async function(err, decoded){
         if(!err){
             res.send(decoded);
         }else{
@@ -139,7 +139,7 @@ router.post('/recuperar', function (req, res) {
 });
 
 router.put('/desativar', async function(req, res) {
-    await jwt.verify(req.body.token, secretKey.key, async function(err, decoded){
+    await jwt.verify(req.body.token, secretKey.userKey, async function(err, decoded){
         if(decoded.id != req.body.id){
             Users.desativar(req.body.id, function(err, user){
                 if(err){
@@ -155,7 +155,7 @@ router.put('/desativar', async function(req, res) {
 });
 
 router.delete('/eliminar', async function(req, res) {
-    await jwt.verify(req.body.token, secretKey.key, async function(err, decoded){
+    await jwt.verify(req.body.token, secretKey.userKey, async function(err, decoded){
         if(decoded.id != req.body.id){
             Users.eliminar(req.body.id, function(err, user){
                 if(err){

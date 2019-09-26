@@ -12,7 +12,7 @@ Chaves.listar = function(callback){
         }else {
             for(var i = 0; i < keys.length; i++) {
                 item = {}
-                jwt.verify(keys[i].key, secretKey.key, function(err, decoded){
+                jwt.verify(keys[i].key, secretKey.apiKey, function(err, decoded){
                     item["expiration"] = new Date(decoded.exp*1000).toLocaleString();
                 });
                 item["id"] = keys[i]._id;

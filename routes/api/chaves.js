@@ -17,7 +17,7 @@ router.get('/listagem', (req, res) => {
 });
 
 router.get('/listarToken/:id', async function(req,res){
-    await jwt.verify(req.params.id, secretKey.key, async function(err, decoded){
+    await jwt.verify(req.params.id, secretKey.apiKey, async function(err, decoded){
         if(!err){
             await Chaves.listarPorId(decoded.id,function(err, result){
                 if(err){

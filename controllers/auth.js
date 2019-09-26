@@ -1,5 +1,6 @@
 var Auth = module.exports
 var passport = require("passport");
+var ExtractJWT = require("passport-jwt").ExtractJwt;
 var jwt = require('jsonwebtoken');
 var Key = require('../models/chave');
 var apiKey = require('./../config/api');
@@ -17,19 +18,19 @@ Auth.checkLevel = function (clearance) {
 }
 
 Auth.generateTokenEmail = function (user) {
-    var token = jwt.sign({id: user._id}, secretKey.key, {expiresIn: '30m'});
+    var token = jwt.sign({id: user._id}, secretKey.emailKey, {expiresIn: '30m'});
 
     return token
 }
 
 Auth.generateTokenUser = function (user) {
-    var token = jwt.sign({id: user._id}, secretKey.key, {expiresIn: '8h', algorithm: "RS256"});
+    var token = jwt.sign({id: user._id, level: user.level, entidade: user.entidade}, secretKey.userKey, {expiresIn: '8h'});
 
     return token
 }
 
 Auth.generateTokenKey = function () {
-    var token = jwt.sign({}, secretKey.key, {expiresIn: '30d'});
+    var token = jwt.sign({}, secretKey.apiKey, {expiresIn: '30d'});
 
     return token
 }
@@ -40,7 +41,7 @@ Auth.isLoggedInKey = async function (req, res, next) {
         ExtractJWT.fromBodyField('apikey'),
         ExtractJWT.fromUrlQueryParameter('apikey'),
         ExtractJWT.fromAuthHeaderWithScheme('apikey')
-    ], req)
+    ])(req)
 
     if(key){
         if(key != apiKey){
@@ -50,7 +51,7 @@ Auth.isLoggedInKey = async function (req, res, next) {
                 }else if(resp.length==0){
                     res.status(403).send('A sua chave API não se encontra na base de dados.');
                 }else{
-                    await jwt.verify(key, secretKey.key, async function(err, decoded){
+                    await jwt.verify(key, secretKey.apiKey, async function(err, decoded){
                         if(err){
                             res.status(403).send('A sua chave API é inválida ou expirou.');
                         }else{

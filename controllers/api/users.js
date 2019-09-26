@@ -246,6 +246,7 @@ Users.adicionarChamadaApi = function(id, callback){
         if (err) {	
             callback(err,null)
         } else {
+            user.nCalls++;
 		    callback(null, user);
         }
     });
