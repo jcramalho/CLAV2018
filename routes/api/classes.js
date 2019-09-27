@@ -6,7 +6,7 @@ var express = require('express');
 var router = express.Router();
 
 // Devolve as classes em vários formatos podendo ser filtradas por nível 
-router.get('/', async (req, res, next) => { 
+router.get('/', Auth.isLoggedInKey, async (req, res, next) => { 
     try {
         if(req.query.formato == "arvore"){
             res.locals.dados = await State.getAllClasses()
