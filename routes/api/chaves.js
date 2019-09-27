@@ -17,7 +17,7 @@ router.get('/listagem', (req, res) => {
 });
 
 router.get('/clavToken', (req, res) => {
-    if(/https?:\/\/(localhost:8080|clav.dglab.gov.pt)/.test(req.headers.origin)){
+    if(/https?:\/\/(localhost:8080|clav.dglab.gov.pt|epl.di.uminho.pt:7780)/.test(req.headers.origin)){
         Chaves.listarPorEmail('interface_clav@dglab.pt', function(err, chave){
             if(err){
                 res.status(500).send(`Erro: ${err}`);
