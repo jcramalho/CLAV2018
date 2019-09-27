@@ -16,18 +16,52 @@ router.get('/listagem', (req, res) => {
     });
 });
 
+router.get('/clavToken', (req, res) => {
+    if(/https?:\/\/(localhost:8080|clav.dglab.gov.pt)/.test(req.headers.origin)){
+        Chaves.listarPorEmail('interface_clav@dglab.pt', function(err, chave){
+            if(err){
+                res.status(500).send(`Erro: ${err}`);
+            }else if(!chave){
+                Chaves.criarChave("clav_interface", "interface_clav@dglab.pt", "ent_DGLAB", function(err, chave){
+                    if(err){
+                        res.status(403).send(err);
+                    }else{
+                        jwt.verify(chave.key, secretKey.apiKey, function(err, decoded){
+                            if(err){
+                                res.status(403).send(err);
+                            }else{
+                                res.send({token: chave.key, exp: decoded.exp})
+                            }
+                        });
+                    }
+                })
+            }else{
+                jwt.verify(chave.key, secretKey.apiKey, function(err, decoded){
+                    if(err){
+                        res.status(403).send(err);
+                    }else{
+                        res.send({token: chave.key, exp: decoded.exp})
+                    }
+                });           
+            }
+        })
+    }else{
+        res.status(403).send("Não pode fazer o pedido desse domínio!")
+    }
+})
+
 router.get('/listarToken/:id', async function(req,res){
     await jwt.verify(req.params.id, secretKey.apiKey, async function(err, decoded){
         if(!err){
             await Chaves.listarPorId(decoded.id,function(err, result){
                 if(err){
-                    res.send(err);
+                    res.status(403).send(err);
                 }else{
                     res.send(result);
                 }
             });
         }else{
-            res.send(err);
+            res.status(403).send(err);
         }
     });
 });

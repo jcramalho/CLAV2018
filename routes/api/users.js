@@ -11,7 +11,7 @@ var secretKey = require('./../../config/app');
 var Mailer = require('../../controllers/api/mailer');
 var mongoose = require('mongoose');
 
-router.get('/', (req, res) => {
+router.get('/', Auth.isLoggedInUser, Auth.checkLevel(6), (req, res) => {
     Users.listar(req,function(err, result){
         if(err){
             return res.status(500).send(`Erro: ${err}`);
@@ -42,19 +42,13 @@ router.get('/listarToken/:id', async function(req,res){
                 }
             });
         }else{
-            res.status(500).send(err);
+            res.status(403).send(err);
         }
     });
 });
 
-router.get('/verificaToken/:id', async function(req,res){
-    await jwt.verify(req.params.id, secretKey.userKey, async function(err, decoded){
-        if(!err){
-            res.send(decoded);
-        }else{
-            res.status(500).send(err);
-        }
-    });
+router.get('/verificaToken', Auth.isLoggedInUser, async function(req,res){
+    res.send(req.user);
 });
 
 router.post('/registar', function (req, res) {
