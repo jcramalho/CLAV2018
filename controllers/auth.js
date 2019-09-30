@@ -1,4 +1,4 @@
-var Auth = module.exports
+var Auth = module.exports;
 var passport = require("passport");
 var ExtractJWT = require("passport-jwt").ExtractJwt;
 var jwt = require('jsonwebtoken');
@@ -7,9 +7,24 @@ var apiKey = require('./../config/api');
 var secretKey = require('./../config/app');
 
 //WARNING: correr primeiro isLoggedInUser e só depois correr esta função como middleware
+//clearance se for um número, permite o acesso a todos os utilizadores com nivel igual ou superior; se for uma lista de números, apenas permite ao acesso aos níveis presentes nessa lista.
 Auth.checkLevel = function (clearance) {
     return function(req, res, next) {
-        if (req.user.level >= clearance) {
+        var havePermissions = false;
+
+        //Array
+        if (clearance instanceof Array) {
+            if (clearance.includes(req.user.level)) {
+                havePermissions = true;
+            }
+        //Number
+        } else {
+            if (req.user.level >= clearance) {
+                havePermissions = true;
+            }
+        }
+
+        if (havePermissions) {
             return next();
         } else {
             return res.status(403).send('Não tem permissões suficientes para aceder');
