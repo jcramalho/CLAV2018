@@ -6,7 +6,7 @@ var formidable = require("formidable")
 var express = require('express');
 var router = express.Router();
 
-router.get('/', function (req, res) {
+router.get('/', Auth.isLoggedInKey, function (req, res) {
     SelTabs.list()
         .then(list => res.send(list))
         .catch(function (error) {
@@ -14,7 +14,7 @@ router.get('/', function (req, res) {
         });
 })
 
-router.get('/:id/classes', function (req, res) {
+router.get('/:id/classes', Auth.isLoggedInKey, function (req, res) {
     SelTabs.listClasses(req.params.id)
         .then(list => res.send(list))
         .catch(function (error) {
@@ -22,7 +22,7 @@ router.get('/:id/classes', function (req, res) {
         });
 })
 
-router.get('/:id/classes/:parent/descendencia', function (req, res) {
+router.get('/:id/classes/:parent/descendencia', Auth.isLoggedInKey, function (req, res) {
     SelTabs.classChildren(req.params.parent,req.params.id)
         .then(list => res.send(list))
         .catch(function (error) {
@@ -30,7 +30,7 @@ router.get('/:id/classes/:parent/descendencia', function (req, res) {
         });
 })
 
-router.get('/:id', function (req, res) {
+router.get('/:id', Auth.isLoggedInKey, function (req, res) {
     SelTabs.stats(req.params.id)
         .then(result => res.send(result))
         .catch(function (error) {
@@ -38,7 +38,7 @@ router.get('/:id', function (req, res) {
         });
 })
 
-router.post('/CSV', async function (req, res){
+router.post('/CSV', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 4, 5, 6, 7]), async function (req, res){
     var form = new formidable.IncomingForm()
 
     form.parse(req, async (error, fields, formData) => {

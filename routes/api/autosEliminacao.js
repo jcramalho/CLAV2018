@@ -1,29 +1,28 @@
-var Logging = require('../../controllers/logging');
 var Auth = require('../../controllers/auth.js');
 var AutosEliminacao = require('../../controllers/api/autosEliminacao.js');
 
 var express = require('express');
 var router = express.Router();
 
-router.get('/', (req, res) => {
+router.get('/', Auth.isLoggedInKey, (req, res) => {
     AutosEliminacao.listar()
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(404).jsonp("Erro na listagem dos AE: " + erro))
 })
 
-router.get('/:id', function (req, res) {
+router.get('/:id', Auth.isLoggedInKey, function (req, res) {
     AutosEliminacao.consultar(req.params.id)
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(404).jsonp("Erro na consulta do AE "+req.params.id+": " + erro))
 })
 
 //Importar um AE
-router.post('/:tipo', (req, res) => {
+router.post('/:tipo', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 4, 5, 6, 7]), (req, res) => {
     var tipo = req.params.tipo
     if(tipo==="PGD") tipo = "AE PGD"
     else if(tipo === "RADA") tipo = "AE RADA"
     else tipo = "AE PGD/LC"
-    AutosEliminacao.importar(req.body.auto, tipo, req.body.token)
+    AutosEliminacao.importar(req.body.auto, tipo, req.user.name, req.user.email)
             .then(dados => {
                 res.jsonp(tipo+" adicionado aos pedidos com sucesso com codigo: "+dados.codigo)
             })

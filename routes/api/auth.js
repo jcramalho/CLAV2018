@@ -1,9 +1,10 @@
 var express = require('express');
 var router = express.Router();
+var Auth = require('../../controllers/auth.js');
 var AuthCall = require('../../models/auth')
 var AuthCalls = require('../../controllers/api/auth');
 
-router.get('/:id', (req, res) => {
+router.get('/:id', Auth.isLoggedInKey, (req, res) => {
     AuthCalls.get(req.params.id,function(err, call){
         if(err){
             return res.status(500).send(`Erro: ${err}`);
@@ -13,7 +14,7 @@ router.get('/:id', (req, res) => {
     });
 })
 
-router.post('/adicionar', (req, res) => {
+router.post('/adicionar', Auth.isLoggedInKey, (req, res) => {
     var authCall = new AuthCall({
         _id: req.body.id,
         url: req.body.url

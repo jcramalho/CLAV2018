@@ -4,21 +4,21 @@ var Vocabulario = require('../../controllers/api/vocabularios.js');
 var express = require('express');
 var router = express.Router();
 
-router.get('/', (req, res) => {
+router.get('/', Auth.isLoggedInKey, (req, res) => {
     Vocabulario.listar()
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(404).jsonp("Erro na listagem dos VC: " + erro))
 })
 
 // Devolve a lista de termos de um VC: idtermo, termo
-router.get('/:id', function (req, res) {
+router.get('/:id', Auth.isLoggedInKey, function (req, res) {
     Vocabulario.consultar(req.params.id)
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(404).jsonp("Erro na consulta do VC "+req.params.id+": " + erro))
 })
 
 //Update da Legenda e da Descrição de um VC
-router.put('/:id', (req, res) => {
+router.put('/:id', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 4, 5, 6, 7]), (req, res) => {
     var label = req.body.label
     var desc = req.body.desc
     if(typeof label !== "undefined" && typeof desc !== "undefined")
@@ -33,7 +33,7 @@ router.put('/:id', (req, res) => {
 })
 
 //Adiciona um VC
-router.post('/', (req, res) => {
+router.post('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 4, 5, 6, 7]), (req, res) => {
     var id = req.body.id
     var label = req.body.label
     var desc = req.body.desc
@@ -49,7 +49,7 @@ router.post('/', (req, res) => {
 })
 
 //Adiciona um Termo a um VC
-router.post('/termo/:idVC', (req, res) => {
+router.post('/termo/:idVC', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 4, 5, 6, 7]), (req, res) => {
     var idVC = req.params.idVC
     var id = idVC+"_"+req.body.idtermo
     var termo = req.body.termo
@@ -65,7 +65,7 @@ router.post('/termo/:idVC', (req, res) => {
 })
 
 //Update da Legenda e da Descrição de um VC
-router.delete('/termo/:id', (req, res) => {
+router.delete('/termo/:id', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 4, 5, 6, 7]), (req, res) => {
     var id = req.params.id
     Vocabulario.deleteTermo(id)
         .then(dados => {

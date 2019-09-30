@@ -7,7 +7,7 @@ var Auth = require('../../controllers/auth');
 var Chaves = require('../../controllers/api/chaves');
 var Mailer = require('../../controllers/api/mailer');
 
-router.get('/listagem', (req, res) => {
+router.get('/listagem', Auth.isLoggedInUser, Auth.checkLevel(7), (req, res) => {
     Chaves.listar(function(err, result){
         if(err){
             return res.status(500).send(`Erro: ${err}`);
@@ -51,7 +51,7 @@ router.get('/clavToken', (req, res) => {
     }
 })
 
-router.get('/listarToken/:id', async function(req,res){
+router.get('/listarToken/:id', Auth.isLoggedInUser, Auth.checkLevel(7), async function(req,res){
     await jwt.verify(req.params.id, secretKey.apiKey, async function(err, decoded){
         if(!err){
             await Chaves.listarPorId(decoded.id,function(err, result){
@@ -86,8 +86,8 @@ router.post('/registar', (req, res) => {
     });
 });
 
-router.put('/desativar', function(req, res) {
-    Chaves.desativar(req.body.id, function(err, cb){
+router.put('/desativar/:id', Auth.isLoggedInUser, Auth.checkLevel(7), function(req, res) {
+    Chaves.desativar(req.params.id, function(err, cb){
         if(err){
             return res.status(500).send(`Erro: ${err}`);
         }else{
@@ -96,8 +96,8 @@ router.put('/desativar', function(req, res) {
     });
 });
 
-router.put('/ativar', function(req, res) {
-    Chaves.ativar(req.body.id, function(err, cb){
+router.put('/ativar/:id', Auth.isLoggedInUser, Auth.checkLevel(7), function(req, res) {
+    Chaves.ativar(req.params.id, function(err, cb){
         if(err){
             return res.status(500).send(`Erro: ${err}`);
         }else{
@@ -106,8 +106,8 @@ router.put('/ativar', function(req, res) {
     });
 });
 
-router.delete('/eliminar', function(req, res) {
-    Chaves.eliminar(req.body.id, function(err, cb){
+router.delete('/eliminar/:id', Auth.isLoggedInUser, Auth.checkLevel(7), function(req, res) {
+    Chaves.eliminar(req.params.id, function(err, cb){
         if(err){
             return res.status(500).send(`Erro: ${err}`);
         }else{
@@ -128,8 +128,8 @@ router.put('/renovar', function(req, res) {
     });
 });
 
-router.put('/atualizarChave', function(req, res) {
-    Chaves.renovar(req.body.id, function(err, chave){
+router.put('/atualizarChave/:id', function(req, res) {
+    Chaves.renovar(req.params.id, function(err, chave){
         if(err){
             return res.status(500).send(`Erro: ${err}`);
         }else{
@@ -139,8 +139,8 @@ router.put('/atualizarChave', function(req, res) {
     });
 });
 
-router.put('/atualizarMultiplos', function (req, res) {
-    Chaves.atualizarMultiplosCampos(req.body.id, req.body.name, req.body.contactInfo, req.body.entity, function (err, cb) {
+router.put('/atualizarMultiplos/:id', Auth.isLoggedInUser, Auth.checkLevel(7), function (req, res) {
+    Chaves.atualizarMultiplosCampos(req.params.id, req.body.name, req.body.contactInfo, req.body.entity, function (err, cb) {
         if (err) 
             return res.status(500).send(`Erro: ${err}`);
         else {

@@ -21,26 +21,34 @@ router.get('/', Auth.isLoggedInUser, Auth.checkLevel(6), (req, res) => {
     });
 });
 
-router.get('/listarEmail/:id', function(req, res) {
-    Users.listarEmail(req.params.id,function(err, email){
-        if(err){
-            return res.status(500).send(`Erro: ${err}`);
-        }else{
-            return res.json(email);
-        }
-    });
+router.get('/listarEmail/:id', Auth.isLoggedInUser, function(req, res) {
+    if(req.params.id == req.user.id || req.user.level == 7){
+        Users.listarEmail(req.params.id,function(err, email){
+            if(err){
+                return res.status(500).send(`Erro: ${err}`);
+            }else{
+                return res.json(email);
+            }
+        });
+    }else{
+        return res.status(403).send("Não tem permissões para aceder à informação de outro utilizador!")
+    }
 });
 
-router.get('/listarToken/:id', async function(req,res){
+router.get('/listarToken/:id', Auth.isLoggedInUser, async function(req,res){
     await jwt.verify(req.params.id, secretKey.userKey, async function(err, decoded){
         if(!err){
-            await Users.listarPorId(decoded.id, function(err, result){
-                if(err){
-                    res.status(500).send(err);
-                }else{
-                    res.send(result);
-                }
-            });
+            if(decoded.id == req.user.id || req.user.level == 7){
+                await Users.listarPorId(decoded.id, function(err, result){
+                    if(err){
+                        res.status(500).send(err);
+                    }else{
+                        res.send(result);
+                    }
+                });
+            }else{
+                res.status(403).send("Não tem permissões para aceder à informação de outro utilizador!")
+            }
         }else{
             res.status(403).send(err);
         }
@@ -51,7 +59,7 @@ router.get('/verificaToken', Auth.isLoggedInUser, async function(req,res){
     res.send(req.user);
 });
 
-router.post('/registar', function (req, res) {
+router.post('/registar', Auth.isLoggedInUser, Auth.checkLevel(6), function (req, res) {
     var internal = (req.body.type > 1);
     var newUser = new User({
         _id: mongoose.Types.ObjectId(),
@@ -80,7 +88,7 @@ router.post('/registar', function (req, res) {
     });
 });
 
-router.post('/registarParaEntidade', function (req, res) {
+router.post('/registarParaEntidade', Auth.isLoggedInUser, Auth.checkLevel(6), function (req, res) {
     if(req.body.users instanceof Array && req.body.entidade){
         Users.registarParaEntidade(req.body.entidade, req.body.users)
            .then(data => res.send(data))
@@ -132,103 +140,123 @@ router.post('/recuperar', function (req, res) {
     });
 });
 
-router.put('/desativar', async function(req, res) {
-    await jwt.verify(req.body.token, secretKey.userKey, async function(err, decoded){
-        if(decoded.id != req.body.id){
-            Users.desativar(req.body.id, function(err, user){
-                if(err){
-                    return res.status(500).send(`Erro: ${err}`);
-                }else{
-                    res.send('Utilizador desativado com sucesso!');
-                }
-            })
-        }else{
-            res.status(500).send('Não pode desativar o seu próprio utilizador!');
-        }
-    });
+router.put('/desativar/:id', Auth.isLoggedInUser, Auth.checkLevel(6), async function(req, res) {
+    if(req.user.id != req.params.id){
+        Users.desativar(req.params.id, function(err, user){
+            if(err){
+                return res.status(500).send(`Erro: ${err}`);
+            }else{
+                res.send('Utilizador desativado com sucesso!');
+            }
+        })
+    }else{
+        res.status(500).send('Não pode desativar o seu próprio utilizador!');
+    }
 });
 
-router.delete('/eliminar', async function(req, res) {
-    await jwt.verify(req.body.token, secretKey.userKey, async function(err, decoded){
-        if(decoded.id != req.body.id){
-            Users.eliminar(req.body.id, function(err, user){
-                if(err){
-                    return res.status(500).send(`Erro: ${err}`);
-                }else{
-                    res.send('Utilizador eliminado com sucesso!');
-                }
-            })
-        }else{
-            res.status(500).send('Não pode eliminar o seu próprio utilizador!');
-        }
-    });
+router.delete('/eliminar/:id', Auth.isLoggedInUser, Auth.checkLevel(6), async function(req, res) {
+    if(req.user.id != req.params.id){
+        Users.eliminar(req.params.id, function(err, user){
+            if(err){
+                return res.status(500).send(`Erro: ${err}`);
+            }else{
+                res.send('Utilizador eliminado com sucesso!');
+            }
+        })
+    }else{
+        res.status(500).send('Não pode eliminar o seu próprio utilizador!');
+    }
 });
 
 //Funcoes de alteracao de utilizador
-router.put('/alterarNivel', function (req, res) {
-    Users.atualizarNivel(req.body.id, req.body.level, function (err, cb) {
-        if (err) 
-            return res.status(500).send(`Erro: ${err}`);
-        else {
-            res.send('Nivel atualizado com sucesso!')
-        }
-    });
+router.put('/alterarNivel/:id', Auth.isLoggedInUser, function (req, res) {
+    if(req.params.id == req.user.id || req.user.level >= 6){
+        Users.atualizarNivel(req.params.id, req.body.level, function (err, cb) {
+            if (err) 
+                return res.status(500).send(`Erro: ${err}`);
+            else {
+                res.send('Nivel atualizado com sucesso!')
+            }
+        });
+    }else{
+        return res.status(403).send("Não tem permissões para alterar a informação de outro utilizador!")
+    }
 });
 
-router.put('/alterarNome', function (req, res) {
-    Users.atualizarNome(req.body.id, req.body.nome, function (err, cb) {
-        if (err) 
-            return res.status(500).send(`Erro: ${err}`);
-        else {
-            res.send('Nome atualizado com sucesso!')
-        }
-    });
+router.put('/alterarNome/:id', function (req, res) {
+    if(req.params.id == req.user.id || req.user.level >= 6){
+        Users.atualizarNome(req.params.id, req.body.nome, function (err, cb) {
+            if (err) 
+                return res.status(500).send(`Erro: ${err}`);
+            else {
+                res.send('Nome atualizado com sucesso!')
+            }
+        });
+    }else{
+        return res.status(403).send("Não tem permissões para alterar a informação de outro utilizador!")
+    }
 });
 
-router.put('/alterarEmail', function (req, res) {
-    Users.atualizarEmail(req.body.id, req.body.email, function (err, cb) {
-        if (err) 
-            return res.status(500).send(`Erro: ${err}`);
-        else {
-            res.send('Email atualizado com sucesso!')
-        }
-    });
+router.put('/alterarEmail/:id', function (req, res) {
+    if(req.params.id == req.user.id || req.user.level == 7){
+        Users.atualizarEmail(req.params.id, req.body.email, function (err, cb) {
+            if (err) 
+                return res.status(500).send(`Erro: ${err}`);
+            else {
+                res.send('Email atualizado com sucesso!')
+            }
+        });
+    }else{
+        return res.status(403).send("Não tem permissões para alterar a informação de outro utilizador!")
+    }
 });
 
-router.put('/alterarPassword', function (req, res) {
-    Users.atualizarPassword(req.body.id, req.body.password, function (err, cb) {
-        if (err) 
-            return res.status(500).send(`Erro: ${err}`);
-        else {
-            res.send('Password atualizada com sucesso!')
-        }
-    });
+router.put('/alterarPassword/:id', function (req, res) {
+    if(req.params.id == req.user.id || req.user.level == 7){
+        Users.atualizarPassword(req.params.id, req.body.password, function (err, cb) {
+            if (err) 
+                return res.status(500).send(`Erro: ${err}`);
+            else {
+                res.send('Password atualizada com sucesso!')
+            }
+        });
+    }else{
+        return res.status(403).send("Não tem permissões para alterar a informação de outro utilizador!")
+    }
 });
 
-router.put('/atualizarMultiplos', function (req, res) {
-    Users.getUserByEmail(req.body.email, function(err,user){
-        if(user && req.body.id != user._id){
-            res.status(500).send('Já existe utilizador registado com esse email!');
-        }else{
-            Users.atualizarMultiplosCampos(req.body.id, req.body.nome, req.body.email, req.body.entidade, req.body.level, function (err, cb) {
-                if (err) 
-                    return res.status(500).send(`Erro: ${err}`);
-                else {
-                    res.send('Utilizador atualizado com sucesso!')
-                }
-            });
-        }
-    });
+router.put('/atualizarMultiplos/:id', function (req, res) {
+    if(req.params.id == req.user.id || req.user.level == 7){
+        Users.getUserByEmail(req.body.email, function(err,user){
+            if(user && req.params.id != user._id){
+                res.status(500).send('Já existe utilizador registado com esse email!');
+            }else{
+                Users.atualizarMultiplosCampos(req.params.id, req.body.nome, req.body.email, req.body.entidade, req.body.level, function (err, cb) {
+                    if (err) 
+                        return res.status(500).send(`Erro: ${err}`);
+                    else {
+                        res.send('Utilizador atualizado com sucesso!')
+                    }
+                });
+            }
+        });
+    }else{
+        return res.status(403).send("Não tem permissões para alterar a informação de outro utilizador!")
+    }
 });
 
-router.get('/:id', (req, res) => {
-    Users.listarPorId(req.params.id,function(err, result){
-        if(err){
-            return res.status(500).send(`Erro: ${err}`);
-        }else{
-            return res.json(result);
-        }
-    });
+router.get('/:id', Auth.isLoggedInUser, (req, res) => {
+    if(req.params.id == req.user.id || req.user.level == 7){
+        Users.listarPorId(req.params.id,function(err, result){
+            if(err){
+                return res.status(500).send(`Erro: ${err}`);
+            }else{
+                return res.json(result);
+            }
+        });
+    }else{
+        return res.status(403).send("Não tem permissões para aceder à informação de outro utilizador!")
+    }
 });
 
 //Callback Autenticação.Gov
