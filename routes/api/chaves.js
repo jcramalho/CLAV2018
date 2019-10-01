@@ -121,7 +121,7 @@ router.put('/renovar', function(req, res) {
         if(err || !chave){
             res.send("Não existe nenhuma chave API associada neste email!");
         }else{
-            var token = Auth.generateTokenEmail();
+            var token = Auth.generateTokenEmail(chave);
             Mailer.sendEmailRenovacaoAPI(chave.contactInfo, req.body.url.split('/renovar')[0]+'/alteracaoChaveApi?jwt='+token);
             res.send('Email enviado com sucesso!');
         }
