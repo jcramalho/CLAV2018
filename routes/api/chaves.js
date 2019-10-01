@@ -25,11 +25,11 @@ router.get('/clavToken', (req, res) => {
             }else if(!chave){
                 Chaves.criarChave("clav_interface", "interface_clav@dglab.pt", "ent_DGLAB", function(err, chave){
                     if(err){
-                        res.status(403).send(err);
+                        res.status(500).send(err);
                     }else{
                         jwt.verify(chave.key, secretKey.apiKey, function(err, decoded){
                             if(err){
-                                res.status(403).send(err);
+                                res.status(500).send(err);
                             }else{
                                 res.send({token: chave.key, exp: decoded.exp})
                             }
@@ -39,7 +39,7 @@ router.get('/clavToken', (req, res) => {
             }else{
                 jwt.verify(chave.key, secretKey.apiKey, function(err, decoded){
                     if(err){
-                        res.status(403).send(err);
+                        res.status(500).send(err);
                     }else{
                         res.send({token: chave.key, exp: decoded.exp})
                     }
