@@ -1,5 +1,8 @@
 summary: Adiciona/regista um utilizador através de CC
 description: Adiciona/regista um utilizador através de CC
+security:
+  - userQuery: []
+  - userAuth: []
 tags:
   - users
 requestBody:
@@ -22,5 +25,9 @@ requestBody:
 responses:
   200:
     description: Adicionado/registado um utilizador através de CC
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
   500:
     description: Erro

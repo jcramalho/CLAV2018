@@ -273,7 +273,7 @@ router.post('/callback', async function(req, res){
                         });
                         res.end();
                     }else{ //ja existe user com este cartao cidadao
-                        var token = Auth.generateTokenUser();
+                        var token = Auth.generateTokenUser(user);
                         var name = Buffer.from(user.name).toString('base64');
                         var entidade = Buffer.from(user.entidade).toString('base64');
                         res.writeHead(301,{
@@ -293,7 +293,7 @@ router.post('/callback', async function(req, res){
 });
 
 //Registo via CC
-router.post('/registarCC', function (req, res) {
+router.post('/registarCC', Auth.isLoggedInUser, Auth.checkLevel(6), function (req, res) {
     var internal = (req.body.type > 1);
     var newUser = new User({
         _id: req.body.nic,
