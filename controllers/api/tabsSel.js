@@ -1,5 +1,4 @@
 const execQuery = require('../../controllers/api/utils').execQuery
-const Excel = require('exceljs/modern.nodejs');
 var Pedidos = require('../../controllers/api/pedidos');
 var SelTabs = module.exports
 

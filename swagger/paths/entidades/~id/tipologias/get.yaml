@@ -15,11 +15,11 @@ parameters:
       type: string
     required: true
 responses:
- 200:
-   description: Lista as tipologias a que uma entidade pertence
+  200:
+    description: Lista as tipologias a que uma entidade pertence
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:
     $ref: '#/components/responses/PermissionsKey'
- 500:
-   description: Erro
+  500:
+    description: Erro

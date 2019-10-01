@@ -1,0 +1,39 @@
+type: object
+properties:
+  ts:
+    type: object
+    properties:
+      processos:
+        type: array
+        items:
+          type: object
+          properties:
+            codigo:
+              type: string
+            titulo:
+              type: string
+            entidades:
+              type: array
+              items:
+                type: object
+                properties:
+                  sigla:
+                    type: string
+                  dono:
+                    type: boolean
+                  participante:
+                    type: boolean
+                required:
+                  - sigla
+                  - dono
+                  - participante
+          required:
+            - codigo
+            - entidades
+      designacao:
+        type: string
+    required:
+      - designacao
+      - processos
+required:
+  - ts
