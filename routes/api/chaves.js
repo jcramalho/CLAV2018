@@ -140,11 +140,17 @@ router.put('/atualizarChave/:id', function(req, res) {
 });
 
 router.put('/atualizarMultiplos/:id', Auth.isLoggedInUser, Auth.checkLevel(7), function (req, res) {
-    Chaves.atualizarMultiplosCampos(req.params.id, req.body.name, req.body.contactInfo, req.body.entity, function (err, cb) {
-        if (err) 
-            return res.status(500).send(`Erro: ${err}`);
-        else {
-            res.send('Chave API atualizada com sucesso!')
+    Chaves.listarPorEmail(req.body.contactInfo, function(err, chave){
+        if(chave && req.params.id != chave._id){
+            res.status(500).send('Já existe uma chave API registada com esse email!');
+        }else{
+            Chaves.atualizarMultiplosCampos(req.params.id, req.body.name, req.body.contactInfo, req.body.entity, function (err, cb) {
+                if (err) 
+                    return res.status(500).send(`Erro: ${err}`);
+                else {
+                    res.send('Chave API atualizada com sucesso!')
+                }
+            });
         }
     });
 });
