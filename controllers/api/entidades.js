@@ -1,7 +1,5 @@
 const execQuery = require('../../controllers/api/utils').execQuery
 const normalize = require('../../controllers/api/utils').normalize
-const axios = require('axios')
-const myhost = require('./../../config/database').host
 const Entidades = module.exports
 
 /**

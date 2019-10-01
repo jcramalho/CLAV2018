@@ -3,8 +3,7 @@ var AuthCall = require('../../models/auth');
 var bcrypt = require('bcryptjs');
 var xml2js = require('xml2js');
 var mongoose = require('mongoose');
-var axios = require('axios')
-const myhost = require('../../config/database').host
+const request = require('../../controllers/api/utils').request
 
 var Users = module.exports
 
@@ -277,12 +276,12 @@ Users.parseSAMLResponse = function(SAMLResponse, callback){
     });
 }
 
-Users.registarParaEntidade = async function(entidade, users){
+Users.registarParaEntidade = async function(req, entidade, users){
     var ent = entidade.split('_')[0] == 'ent' ? entidade : 'ent_' + entidade
 
     //validar se entidade existe
     try{
-        await axios.get(myhost + '/api/entidades/' + ent)
+        await request.get(req, '/api/entidades/' + ent)
     } catch (e) {
         if(e.response.status == 404){
             throw('Entidade não existe! Nenhum utilizador foi registado. Tente novamente.')

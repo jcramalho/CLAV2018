@@ -90,7 +90,7 @@ router.post('/registar', Auth.isLoggedInUser, Auth.checkLevel(6), function (req,
 
 router.post('/registarParaEntidade', Auth.isLoggedInUser, Auth.checkLevel(6), function (req, res) {
     if(req.body.users instanceof Array && req.body.entidade){
-        Users.registarParaEntidade(req.body.entidade, req.body.users)
+        Users.registarParaEntidade(req, req.body.entidade, req.body.users)
            .then(data => res.send(data))
            .catch(erro => res.status(500).send(erro))
     }else{
