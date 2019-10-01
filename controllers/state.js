@@ -111,6 +111,8 @@ async function criaIndice(){
     let indice = []
     
     //  [ {chave: "texto duma nota, exemplo ou ti", processo:{codigo:"cxxx", titulo:"..."}}, ...]
+    indice = indice.concat(classList.map(c => ({chave: c.codigo, processo: {codigo: c.codigo, titulo: c.titulo}})))
+    indice = indice.concat(classList.map(c => ({chave: c.titulo, processo: {codigo: c.codigo, titulo: c.titulo}})))
     indice = indice.concat(notas.map(n => ({chave: n.nota, processo: {codigo: n.cProc, titulo: n.tituloProc}})))
     indice = indice.concat(exemplos.map(e => ({chave: e.exemplo, processo: {codigo: e.cProc, titulo: e.tituloProc}})))
     indice = indice.concat(tis.map(t => ({chave: t.termo, processo: {codigo: t.codigoClasse, titulo: t.tituloClasse}})))
