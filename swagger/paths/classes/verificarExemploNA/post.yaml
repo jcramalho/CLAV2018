@@ -19,5 +19,9 @@ requestBody:
 responses:
   200:
     description: Verifica se um determinado exemplo de nota de aplicação já existe
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
   500:
     description: Erro

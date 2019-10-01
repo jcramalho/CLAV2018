@@ -17,5 +17,9 @@ parameters:
 responses:
   200:
     description: Devolve a lista de processos regulados pelo documento
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
   500:
     description: Erro

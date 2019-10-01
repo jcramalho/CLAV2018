@@ -27,5 +27,9 @@ requestBody:
 responses:
   200:
     description: Criado um pedido para a criação de uma auto de eliminação
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
   404:
     description: Erro

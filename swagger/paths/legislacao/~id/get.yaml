@@ -17,5 +17,9 @@ parameters:
 responses:
   200:
     description: Consulta de um documento legislativo
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
   500:
     description: Erro

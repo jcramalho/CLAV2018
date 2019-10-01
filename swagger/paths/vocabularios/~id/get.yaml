@@ -17,5 +17,9 @@ parameters:
 responses:
   200:
     description: Devolve a lista de termos de um vocabulario
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
   404:
     description: Erro

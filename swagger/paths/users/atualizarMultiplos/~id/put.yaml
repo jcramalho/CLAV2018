@@ -30,5 +30,9 @@ requestBody:
 responses:
   200:
     description: Alterado os dados da conta de um utilizador
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
   500:
     description: Erro

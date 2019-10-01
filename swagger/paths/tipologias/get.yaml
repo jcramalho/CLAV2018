@@ -24,5 +24,9 @@ parameters:
 responses:
   200:
     description: Lista todas as tipologias
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
   500:
     description: Erro

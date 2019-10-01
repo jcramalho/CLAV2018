@@ -13,7 +13,11 @@ parameters:
       type: string
     required: true
 responses:
- 200:
-   description: Email de um utilizador
- 500:
-   description: Erro
+  200:
+    description: Email de um utilizador
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro

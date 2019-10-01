@@ -15,11 +15,15 @@ requestBody:
       schema:
         $ref: '#/components/schemas/AuthCall'
 responses:
-  '200':
+  200:
      description: Adicionar localização de um novo pedido SAML
      content:
        application/json:
          schema:
            $ref: '#/components/schemas/AuthCall'
-  '500':
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  500:
     description: Erro

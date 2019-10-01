@@ -8,5 +8,9 @@ tags:
 responses:
   200:
     description: Devolve todas as chaves API
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
   500:
     description: Erro

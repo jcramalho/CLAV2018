@@ -72,3 +72,12 @@ components:
       in: header
       name: Authorization
       description: 'Introduza o seu token com o formato: **token &lt;token>**'
+  responses:
+    UnauthorizedKey:
+      description: Precisa de estar autenticado ou de usar uma chave API. O seu token ou a chave API expirou?
+    UnauthorizedUser:
+      description: Precisa de estar autenticado. O seu token expirou?
+    PermissionsKey:
+      description: Não tem permissões suficientes para realizar o pedido ou a sua chave API foi desativada.
+    PermissionsUser:
+      description: Não tem permissões suficientes para realizar o pedido.

@@ -8,5 +8,9 @@ security:
 responses:
   200:
     description: Devolve a lista de todos os exemplos de notas de aplicação
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
   500:
     description: Erro

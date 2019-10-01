@@ -10,5 +10,9 @@ tags:
 responses:
   200:
     description: Devolve a lista de todos os autos de eliminação
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
   404:
     description: Erro

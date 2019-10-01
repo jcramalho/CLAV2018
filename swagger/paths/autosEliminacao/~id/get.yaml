@@ -17,5 +17,9 @@ parameters:
 responses:
   200:
     description: Devolve a informação de um auto de eliminação
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
   404:
     description: Erro

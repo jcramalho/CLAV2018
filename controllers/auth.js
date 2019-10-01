@@ -64,11 +64,11 @@ Auth.isLoggedInKey = async function (req, res, next) {
                 if(err){
                     throw err;
                 }else if(resp.length==0){
-                    res.status(403).send('A sua chave API não se encontra na base de dados.');
+                    res.status(401).send('A sua chave API não se encontra na base de dados.');
                 }else{
                     await jwt.verify(key, secretKey.apiKey, async function(err, decoded){
                         if(err){
-                            res.status(403).send('A sua chave API é inválida ou expirou.');
+                            res.status(401).send('A sua chave API é inválida ou expirou.');
                         }else{
                             if(resp[0].active==true){
                                 await Key.update({_id: resp[0]._id}, {nCalls: resp[0].nCalls+1, lastUsed: Date.now()}, function(err, affected, resp) {

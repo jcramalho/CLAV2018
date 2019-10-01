@@ -15,11 +15,15 @@ parameters:
     schema:
       type: string
 responses:
-  '200':
+  200:
     description: URL
     content:
       application/json:
         schema:
           type: string
-  '500':
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  500:
     description: Erro

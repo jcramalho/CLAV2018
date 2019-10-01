@@ -17,5 +17,9 @@ parameters:
 responses:
   200:
     description: Devolve a lista dos termos de índice ou verifica se um determinado termo índice existe
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
   500:
     description: Erro

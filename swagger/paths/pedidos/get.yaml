@@ -33,5 +33,9 @@ parameters:
 responses:
   200:
     description: Lista todos os pedidos que satisfazem uma condição
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
   500:
     description: Erro

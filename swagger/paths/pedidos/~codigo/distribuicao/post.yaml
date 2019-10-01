@@ -35,5 +35,9 @@ requestBody:
 responses:
   200:
     description: Adição de distribuição
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
   500:
     description: Erro

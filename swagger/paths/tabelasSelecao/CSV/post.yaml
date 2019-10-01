@@ -47,5 +47,9 @@ requestBody:
 responses:
   200:
     description: Cria um pedido de criação de uma tabela de seleção a partir de um ficheiro CSV/Excel
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
   500:
     description: Erro

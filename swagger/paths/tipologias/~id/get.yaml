@@ -17,6 +17,10 @@ parameters:
 responses:
   200:
     description: Consulta de uma tipologia
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
   404:
     description: A tipologia não existe
   500:

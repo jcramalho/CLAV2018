@@ -15,6 +15,10 @@ parameters:
 responses:
   200:
     description: Consulta de um pedido
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
   404:
     description: Pedido não existe
   500:
