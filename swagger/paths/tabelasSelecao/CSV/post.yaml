@@ -18,6 +18,9 @@ description: |
     * Por baixo de cada coluna deve estar:
       * x ou X os processos selecionados
       * Nada para os processos não selecionados
+security:
+  - userQuery: []
+  - userAuth: []
 tags:
   - tabelasSelecao
 requestBody:

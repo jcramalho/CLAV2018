@@ -1,5 +1,10 @@
 summary: Exporta todos os triplos do repositório
 description: Exporta todos os triplos do repositório
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
 tags:
   - ontologia
 parameters:

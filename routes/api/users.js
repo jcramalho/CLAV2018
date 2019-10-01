@@ -183,7 +183,7 @@ router.put('/alterarNivel/:id', Auth.isLoggedInUser, function (req, res) {
     }
 });
 
-router.put('/alterarNome/:id', function (req, res) {
+router.put('/alterarNome/:id', Auth.isLoggedInUser, function (req, res) {
     if(req.params.id == req.user.id || req.user.level >= 6){
         Users.atualizarNome(req.params.id, req.body.nome, function (err, cb) {
             if (err) 
@@ -197,7 +197,7 @@ router.put('/alterarNome/:id', function (req, res) {
     }
 });
 
-router.put('/alterarEmail/:id', function (req, res) {
+router.put('/alterarEmail/:id', Auth.isLoggedInUser, function (req, res) {
     if(req.params.id == req.user.id || req.user.level == 7){
         Users.atualizarEmail(req.params.id, req.body.email, function (err, cb) {
             if (err) 
@@ -211,7 +211,7 @@ router.put('/alterarEmail/:id', function (req, res) {
     }
 });
 
-router.put('/alterarPassword/:id', function (req, res) {
+router.put('/alterarPassword/:id', Auth.isLoggedInUser, function (req, res) {
     if(req.params.id == req.user.id || req.user.level == 7){
         Users.atualizarPassword(req.params.id, req.body.password, function (err, cb) {
             if (err) 
@@ -225,7 +225,7 @@ router.put('/alterarPassword/:id', function (req, res) {
     }
 });
 
-router.put('/atualizarMultiplos/:id', function (req, res) {
+router.put('/atualizarMultiplos/:id', Auth.isLoggedInUser, function (req, res) {
     if(req.params.id == req.user.id || req.user.level == 7){
         Users.getUserByEmail(req.body.email, function(err,user){
             if(user && req.params.id != user._id){

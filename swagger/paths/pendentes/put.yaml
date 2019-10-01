@@ -1,5 +1,8 @@
 summary: 'Atualizar um trabalho previamente guardado como pendente'
 description: Atualizar um trabalho previamente guardado como pendente
+security:
+  - userQuery: []
+  - userAuth: []
 tags:
   - pendentes
 requestBody:

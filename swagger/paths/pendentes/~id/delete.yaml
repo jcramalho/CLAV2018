@@ -1,5 +1,8 @@
 summary: 'Remove um trabalho pendente'
 description: Remove um trabalho pendente
+security:
+  - userQuery: []
+  - userAuth: []
 tags:
   - pendentes
 parameters:

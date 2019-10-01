@@ -1,5 +1,8 @@
 summary: Apaga um Termo de vocabulário
 description: Apaga um Termo de vocabulário
+security:
+  - userQuery: []
+  - userAuth: []
 tags:
   - vocabularios
 parameters:

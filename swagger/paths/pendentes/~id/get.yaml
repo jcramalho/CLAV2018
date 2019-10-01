@@ -1,5 +1,8 @@
 summary: Consultar trabalho pendente
 description: Consultar trabalho pendente
+security:
+  - userQuery: []
+  - userAuth: []
 tags:
   - pendentes
 parameters:

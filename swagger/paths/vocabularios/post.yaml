@@ -1,5 +1,8 @@
 summary: Adicionar um vocabulário
 description: Adicionar um vocabulário
+security:
+  - userQuery: []
+  - userAuth: []
 tags:
   - vocabularios
 requestBody:

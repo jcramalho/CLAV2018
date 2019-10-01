@@ -1,5 +1,8 @@
 summary: Adiciona um Termo a um vocabulário
 description: Adiciona um Termo a um vocabulário
+security:
+  - userQuery: []
+  - userAuth: []
 tags:
   - vocabularios
 parameters:

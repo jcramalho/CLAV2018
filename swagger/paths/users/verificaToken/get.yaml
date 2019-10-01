@@ -1,14 +1,10 @@
 summary: Verifica o token para um utilizador
 description: Verifica o token para um utilizador devolvendo o id do utilizador, iat e exp.
+security:
+  - userQuery: []
+  - userAuth: []
 tags:
   - users
-parameters:
-  - name: id
-    in: path
-    description: 'Token de um utilizador'
-    schema:
-      type: string
-    required: true
 responses:
  200:
    description: Informação acerca do token

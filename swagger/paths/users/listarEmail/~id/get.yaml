@@ -1,5 +1,8 @@
 summary: Devolve o email de um utilizador
 description: Devolve o email de um utilizador
+security:
+  - userQuery: []
+  - userAuth: []
 tags:
   - users
 parameters:

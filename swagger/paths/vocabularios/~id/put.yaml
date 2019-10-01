@@ -1,5 +1,8 @@
 summary: Atualizar a legenda e descrição de um vocabulário
 description: Atualizar a legenda e descrição de um vocabulário
+security:
+  - userQuery: []
+  - userAuth: []
 tags:
   - vocabularios
 parameters:

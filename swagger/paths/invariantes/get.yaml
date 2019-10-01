@@ -5,6 +5,9 @@ description: |
     No 1º caso é devolvida toda a informação presente sobre os invariantes. 
     Já no segundo caso é devolvido descRel (descrição do grupo de invariantes), descInv (descrição do invariante) e results (os erros obtidos).
     Por fim caso seja fornecido apenas um dos parâmetros obtêm-se a lista dos invariantes.
+security:
+  - userQuery: []
+  - userAuth: []
 tags:
   - invariantes
 parameters:

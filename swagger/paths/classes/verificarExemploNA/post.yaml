@@ -1,5 +1,8 @@
 summary: Verifica se um determinado exemplo de nota de aplicação já existe
 description: Verifica se um determinado exemplo de nota de aplicação já existe
+security:
+  - userQuery: []
+  - userAuth: []
 tags:
   - classes
 requestBody:

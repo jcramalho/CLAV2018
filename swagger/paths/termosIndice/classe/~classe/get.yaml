@@ -1,5 +1,10 @@
 summary: Devolve a lista dos termos de índice associados a uma determinada classe
 description: Devolve a lista dos termos de índice associados a uma determinada classe. Para cada termo devolve a informação do id e do nome
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
 tags:
   - termosIndice
 parameters:

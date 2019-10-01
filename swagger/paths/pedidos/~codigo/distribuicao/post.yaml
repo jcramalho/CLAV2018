@@ -1,5 +1,8 @@
 summary: Adição de distribuição
 description: Adição de distribuição
+security:
+  - userQuery: []
+  - userAuth: []
 tags:
   - pedidos
 parameters:

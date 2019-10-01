@@ -1,5 +1,10 @@
 summary: Consulta de uma tipologia
 description: Consulta de uma tipologia devolvendo a informação de sigla, designação e estado
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
 tags:
   - tipologias
 parameters:

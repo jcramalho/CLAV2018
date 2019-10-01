@@ -1,16 +1,24 @@
 summary: Altera o nome da conta de um utilizador
 description: Altera o nome da conta de um utilizador
+security:
+  - userQuery: []
+  - userAuth: []
 tags:
   - users
+parameters:
+  - name: id
+    in: path
+    description: 'Identificador de um utilizador'
+    schema:
+      type: string
+    required: true
 requestBody:
-  description: 'De forma a alterar o nome de uma conta de um utilizador é necessário o id da conta e o novo nome'
+  description: 'De forma a alterar o nome de uma conta de um utilizador é necessário o novo nome'
   required: true
   content:
     application/json:
       schema:
         properties:
-          id:
-            type: string
           nome:
             type: string
 responses:

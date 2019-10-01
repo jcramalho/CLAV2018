@@ -1,5 +1,10 @@
 summary: Lista as tabelas de seleção
 description: Lista as tabelas de seleção
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
 tags:
   - tabelasSelecao
 responses:

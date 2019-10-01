@@ -1,5 +1,10 @@
 summary: Devolve a informação base do DF
 description: Devolve a informação base do DF, ou seja, idDF, valor e idJustificacao
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
 tags:
   - classes
 parameters:

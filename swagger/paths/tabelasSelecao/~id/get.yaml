@@ -1,5 +1,10 @@
 summary: Consultar tabela de seleção
 description: Consultar tabela de seleção
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
 tags:
   - tabelasSelecao
 parameters:

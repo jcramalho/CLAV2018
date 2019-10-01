@@ -1,5 +1,10 @@
 summary: Lista as classes filho da classe com id parent da tabela de seleção
 description: Lista as classes filho da classe com id parent da tabela de seleção
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
 tags:
   - tabelasSelecao
 parameters:

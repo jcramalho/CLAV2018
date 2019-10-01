@@ -1,5 +1,8 @@
 summary: Lista todos os pedidos que satisfazem uma condição
 description: Lista todos os pedidos que satisfazem uma condição
+security:
+  - userQuery: []
+  - userAuth: []
 tags:
   - pedidos
 parameters:

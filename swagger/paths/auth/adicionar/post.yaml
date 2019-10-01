@@ -2,6 +2,11 @@ summary: Adicionar localização de um novo pedido SAML
 description: Adicionar localização de um novo pedido SAML
 tags:
   - auth
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
 requestBody:
   required: true
   description: Para adicionar é necessário o id e o url (localização)

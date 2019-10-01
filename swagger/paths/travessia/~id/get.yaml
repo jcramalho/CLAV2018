@@ -1,5 +1,8 @@
 summary: Obtém a travessia de um processo
 description: Obtém a travessia de um processo (lista de códigos de processos)
+security:
+  - userQuery: []
+  - userAuth: []
 tags:
   - travessia
 parameters:

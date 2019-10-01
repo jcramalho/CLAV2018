@@ -1,5 +1,8 @@
 summary: Criação de um pedido
 description: Criação de um pedido
+security:
+  - userQuery: []
+  - userAuth: []
 tags:
   - pedidos
 requestBody:

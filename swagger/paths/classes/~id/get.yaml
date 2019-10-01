@@ -1,4 +1,9 @@
 summary: Retorna toda a informação relativa a uma classe
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
 tags:
   - classes
 description: Retorna toda a informação relativa a uma classe

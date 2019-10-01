@@ -1,5 +1,8 @@
 summary: Verifica se um determinado código de classe já existe
 description: Verifica se um determinado código de classe já existe
+security:
+  - userQuery: []
+  - userAuth: []
 tags:
   - classes
 parameters:

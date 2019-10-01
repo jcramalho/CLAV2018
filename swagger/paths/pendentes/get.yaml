@@ -1,5 +1,8 @@
 summary: Listagem dos trabalhos pendentes
 description: Listagem dos trabalhos pendentes
+security:
+  - userQuery: []
+  - userAuth: []
 tags:
   - pendentes
 responses:

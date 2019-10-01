@@ -1,0 +1,16 @@
+summary: Renovar chave API
+description: Renovar chave API. Apenas altera o valor da chave e a data de criação
+tags:
+  - chaves
+parameters:
+  - name: id
+    in: path
+    description: identificador da chave na BD
+    schema:
+      type: string
+    required: true
+responses:
+  200:
+    description: Chave API renovada
+  500:
+    description: Erro

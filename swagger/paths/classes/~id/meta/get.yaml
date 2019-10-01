@@ -1,5 +1,10 @@
 summary: Devolve a metainformação de uma classe
 description: Devolve a metainformação de uma classe, ou seja, codigo, titulo, status, desc, codigoPai, tituloPai, procTrans e procTipo
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
 tags:
   - classes
 parameters:

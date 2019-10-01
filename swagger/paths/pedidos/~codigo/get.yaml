@@ -1,5 +1,8 @@
 summary: Consulta de um pedido
 description: Consulta de um pedido
+security:
+  - userQuery: []
+  - userAuth: []
 tags:
   - pedidos
 parameters:

@@ -1,5 +1,8 @@
 summary: Adiciona/regista um utilizador
 description: Adiciona/regista um utilizador
+security:
+  - userQuery: []
+  - userAuth: []
 tags:
   - users
 requestBody:

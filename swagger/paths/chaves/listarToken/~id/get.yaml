@@ -1,5 +1,8 @@
 summary: Devolve a informação de uma chave API
 description: Devolve a informação de uma chave API
+security:
+  - userQuery: []
+  - userAuth: []
 tags:
   - chaves
 parameters:

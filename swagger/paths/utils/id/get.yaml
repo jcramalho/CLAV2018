@@ -1,5 +1,10 @@
 summary: Gera um id único
 description: Gera um id único através do nanoid
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
 tags:
   - utils
 responses:

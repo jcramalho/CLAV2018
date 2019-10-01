@@ -1,5 +1,8 @@
 summary: Adiciona/regista utilizadores para uma determinada entidade
 description: Adiciona/regista utilizadores para uma determinada entidade
+security:
+  - userQuery: []
+  - userAuth: []
 tags:
   - users
 requestBody:

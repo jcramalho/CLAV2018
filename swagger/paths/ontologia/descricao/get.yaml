@@ -1,5 +1,10 @@
 summary: Devolve a descrição da ontologia
 description: Devolve a descrição da ontologia
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
 tags:
   - ontologia
 responses:

@@ -1,5 +1,8 @@
 summary: Devolve todas as chaves API
 description: Devolve todas as chaves API
+security:
+  - userQuery: []
+  - userAuth: []
 tags:
   - chaves
 responses:

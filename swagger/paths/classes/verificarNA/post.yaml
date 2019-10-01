@@ -1,5 +1,8 @@
 summary: Verifica se uma determinada notaAplicação já existe
 description: Verifica se uma determinada notaAplicação já existe
+security:
+  - userQuery: []
+  - userAuth: []
 tags:
   - classes
 requestBody:

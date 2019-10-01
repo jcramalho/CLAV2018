@@ -1,5 +1,10 @@
 summary: Devolve a(s) entidade(s) participante(s) do processo
 description: Devolve a(s) entidade(s) participante(s) do processo. Para cada entidade é devolvida a informação do id, sigla, designacao e participLabel
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
 tags:
   - classes
 parameters:

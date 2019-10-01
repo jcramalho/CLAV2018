@@ -1,5 +1,8 @@
 summary: Guardar um trabalho pendente
 description: Guardar um trabalho pendente
+security:
+  - userQuery: []
+  - userAuth: []
 tags:
   - pendentes
 requestBody:

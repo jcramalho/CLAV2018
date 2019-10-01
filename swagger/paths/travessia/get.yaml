@@ -1,5 +1,8 @@
 summary: Obtém as travessias
 description: Obtém as travessias, ou seja, uma lista em que cada elemento possui o código do processo (campo processo) e a travessia (lista de códigos de processos)
+security:
+  - userQuery: []
+  - userAuth: []
 tags:
   - travessia
 responses:
