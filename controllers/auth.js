@@ -3,7 +3,6 @@ var passport = require("passport");
 var ExtractJWT = require("passport-jwt").ExtractJwt;
 var jwt = require('jsonwebtoken');
 var Key = require('../models/chave');
-var apiKey = require('./../config/api');
 var secretKey = require('./../config/app');
 
 //WARNING: correr primeiro isLoggedInUser e só depois correr esta função como middleware
