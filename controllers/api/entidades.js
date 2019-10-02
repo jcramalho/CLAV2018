@@ -167,7 +167,6 @@ Entidades.existe = (entidade) => {
  * @return {Promise<boolean | Error>}
  */
 Entidades.existeSigla = (sigla) => {
-	console.log(sigla)
 	const query = `ASK {
       ?s clav:entSigla|clav:tipSigla '${sigla}' 
   }`
@@ -176,7 +175,7 @@ Entidades.existeSigla = (sigla) => {
 }
 
 /**
- * Verifica se uma determinada sigla de entidade existe no sistema.
+ * Verifica se uma determinada designacao de entidade existe no sistema.
  *
  * @param {Designacao} designacao
  * @return {Promise<boolean | Error>}
