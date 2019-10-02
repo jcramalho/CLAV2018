@@ -24,11 +24,13 @@ properties:
           - $ref: '#/components/schemas/Entidade'
           - $ref: '#/components/schemas/TabelaSelecaoOrganizacional'
           - $ref: '#/components/schemas/TabelaSelecaoPluriorganizacional'
+          - $ref: '#/components/schemas/TabelaSelecaoPluriorganizacionalWeb'
           - $ref: '#/components/schemas/TermosIndice'
           - $ref: '#/components/schemas/Tipologia'
+          - $ref: '#/components/schemas/AutosEliminacao'
       tipo:
         type: string
-        enum: [Classe, TS Organizacional, TS Pluriorganizacional, Entidade, Tipologia, Legislação, Termo de Indice]
+        enum: [Classe, TS Organizacional, TS Pluriorganizacional, TS Pluriorganizacional web, Entidade, Tipologia, Legislação, Termo de Indice, AE PGD/LC, AE PGD, AE RADA]
       acao:
         type: string
         enum: [Criação, Alteração, Remoção]

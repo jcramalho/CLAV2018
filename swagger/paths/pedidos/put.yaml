@@ -1,8 +1,10 @@
 summary: 'Atualização de um pedido: mais uma etapa na distribuição'
 description: 'Atualização de um pedido: mais uma etapa na distribuição'
+security:
+  - userQuery: []
+  - userAuth: []
 tags:
   - pedidos
-parameters:
 requestBody:
   description: 'Dados'
   required: true
@@ -79,5 +81,9 @@ requestBody:
 responses:
   200:
     description: 'Atualização de um pedido: mais uma etapa na distribuição'
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
   500:
     description: Erro

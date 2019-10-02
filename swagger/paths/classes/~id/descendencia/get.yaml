@@ -1,5 +1,10 @@
 summary: Devolve a lista de filhos de uma classe
 description: Devolve a lista de filhos de uma classe. Para cada elemento da lista de filhos é devolvida a informação do id, codigo e titulo
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
 tags:
   - classes
 parameters:
@@ -12,5 +17,9 @@ parameters:
 responses:
   200:
     description: Devolve a lista de filhos de uma classe
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
   500:
     description: Erro

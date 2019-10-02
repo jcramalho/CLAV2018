@@ -1,9 +1,16 @@
 summary: Lista as estatisticas para cada rota
 description: Lista as estatisticas para cada rota. Para cada rota devolve _id, nCallsPut, nCallsPost e nCallsGet.
+security:
+  - userQuery: []
+  - userAuth: []
 tags:
   - stats
 responses:
   200:
     description: Lista as estatisticas para cada rota
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
   500:
     description: Erro

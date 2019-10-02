@@ -1,5 +1,10 @@
 summary: Devolve a lista dos termos de índice associados a uma determinada classe
 description: Devolve a lista dos termos de índice associados a uma determinada classe. Para cada termo devolve a informação do id e do nome
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
 tags:
   - termosIndice
 parameters:
@@ -12,5 +17,9 @@ parameters:
 responses:
   200:
     description: Devolve a lista dos termos de índice associados a uma determinada classe
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
   500:
     description: Erro

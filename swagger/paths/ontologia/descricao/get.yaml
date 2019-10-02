@@ -1,9 +1,18 @@
 summary: Devolve a descrição da ontologia
 description: Devolve a descrição da ontologia
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
 tags:
   - ontologia
 responses:
   200:
     description: Descrição da ontologia
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
   500:
     description: Erro

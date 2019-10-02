@@ -1,5 +1,8 @@
 summary: Adiciona/regista utilizadores para uma determinada entidade
 description: Adiciona/regista utilizadores para uma determinada entidade
+security:
+  - userQuery: []
+  - userAuth: []
 tags:
   - users
 requestBody:
@@ -30,5 +33,9 @@ requestBody:
 responses:
   200:
     description: Adicionados/registados utilizadores para uma determinada entidade
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
   500:
     description: Erro

@@ -1,0 +1,32 @@
+summary: Altera a password da conta de um utilizador
+description: Altera a password da conta de um utilizador
+security:
+  - userQuery: []
+  - userAuth: []
+tags:
+  - users
+parameters:
+  - name: id
+    in: path
+    description: 'Identificador de um utilizador'
+    schema:
+      type: string
+    required: true
+requestBody:
+  description: 'De forma a alterar a password de uma conta de um utilizador é necessário a nova password'
+  required: true
+  content:
+    application/json:
+      schema:
+        properties:
+          password:
+            type: string
+responses:
+  200:
+    description: Alterado a password da conta de um utilizador
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro

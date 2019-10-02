@@ -1,5 +1,10 @@
 summary: Devolve o(s) processo(s) relacionado(s) por uma relação específica
 description: Devolve o(s) processo(s) relacionado(s) por uma relação específica. Para cada processo é devolvida a informação do id, codigo e titulo
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
 tags:
   - classes
 parameters:
@@ -18,5 +23,9 @@ parameters:
 responses:
   200:
     description: Devolve o(s) processo(s) relacionado(s) por uma relação específica
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
   500:
     description: Erro

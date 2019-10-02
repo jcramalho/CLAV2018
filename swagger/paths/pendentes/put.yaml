@@ -1,5 +1,8 @@
 summary: 'Atualizar um trabalho previamente guardado como pendente'
 description: Atualizar um trabalho previamente guardado como pendente
+security:
+  - userQuery: []
+  - userAuth: []
 tags:
   - pendentes
 requestBody:
@@ -34,5 +37,9 @@ requestBody:
 responses:
   200:
     description: Atualizar um trabalho previamente guardado como pendente
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
   500:
     description: Erro

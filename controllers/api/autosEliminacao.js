@@ -1,7 +1,5 @@
 const execQuery = require('../../controllers/api/utils').execQuery
 const normalize = require('../../controllers/api/utils').normalize
-const myhost = require('../../config/database').host
-var axios = require('axios')
 var Pedidos = require('../../controllers/api/pedidos');
 
 var AutosEliminacao = module.exports
@@ -362,8 +360,7 @@ AutosEliminacao.adicionarRADA = async function (auto) {
  * @return {Promise<Pedido | Error>} promessa que quando cumprida possui o
  * pedido gerado para a criação da nova classe
  */
-AutosEliminacao.importar = async (auto, tipo, token) => {
-    let user = await axios.get(myhost + "/api/users/listarToken/" + token);
+AutosEliminacao.importar = async (auto, tipo, userName, userEmail) => {
     var queryEnt = `
         SELECT ?ent WHERE {
             ?ent a clav:Entidade ;
@@ -374,7 +371,7 @@ AutosEliminacao.importar = async (auto, tipo, token) => {
         let resultEnt = await execQuery("query", queryEnt);
         resultEnt = normalize(resultEnt)
         if(resultEnt.length > 0) {
-            auto.responsavel = user.data.name
+            auto.responsavel = userName
             var pedido = {
                 tipoPedido: "Importação",
                 tipoObjeto: tipo,
@@ -382,7 +379,7 @@ AutosEliminacao.importar = async (auto, tipo, token) => {
                     ae: auto
                 },
                 user: {
-                    email: user.data.email
+                    email: userEmail
                 },
                 entidade: resultEnt[0].ent.split("#")[1]
             }

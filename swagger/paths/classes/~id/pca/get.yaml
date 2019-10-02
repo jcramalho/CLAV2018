@@ -1,5 +1,10 @@
 summary: Devolve a informação base do PCA
 description: Devolve a informação base do PCA, ou seja, idPCA, formaContagem, subFormaContagem, idJustificacao, valores e notas
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
 tags:
   - classes
 parameters:
@@ -12,5 +17,9 @@ parameters:
 responses:
   200:
     description: Devolve a informação base do PCA
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
   500:
     description: Erro

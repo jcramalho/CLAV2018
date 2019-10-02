@@ -1,4 +1,9 @@
 summary: Devolve as classes em vários formatos podendo ser filtradas por nível
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
 tags:
   - classes
 description: Devolve as classes em vários formatos podendo ser filtradas por nível
@@ -40,5 +45,9 @@ parameters:
 responses:
   200:
     description: Devolve as classes em vários formatos podendo ser filtradas por nível
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
   500:
     description: Erro

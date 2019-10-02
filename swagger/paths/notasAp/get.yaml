@@ -1,0 +1,16 @@
+summary: Devolve a lista de todos as notas de aplicação
+description: Devolve a lista de todas as notas de aplicação. Para cada exemplo de nota de aplicação devolve idNota, nota, cProc e tituloProc.
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
+responses:
+  200:
+    description: Devolve a lista de todas as notas de aplicação
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  500:
+    description: Erro

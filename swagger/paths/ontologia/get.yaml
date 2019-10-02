@@ -1,5 +1,10 @@
 summary: Exporta todos os triplos do repositório
 description: Exporta todos os triplos do repositório
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
 tags:
   - ontologia
 parameters:
@@ -378,5 +383,9 @@ rdfs:range a rdf:Property .
 
 
 </rdf:RDF>"
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
   500:
     description: Erro

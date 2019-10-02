@@ -1,5 +1,10 @@
 summary: Consulta de uma entidade
 description: Consulta de uma entidade. Devolve a informação da sigla, designacao, estado, sioe e internacional da entidade
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
 tags:
   - entidades
 parameters:
@@ -12,6 +17,10 @@ parameters:
 responses:
   200:
     description: Consulta de uma entidade
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
   404:
     description: A entidade não existe
   500:

@@ -1,5 +1,8 @@
 summary: Define as travessias
 description: Define as travessias, ou seja, as travessias que estavam anteriormente definidas são descartadas e são consideradas apenas as providenciadas
+security:
+  - userQuery: []
+  - userAuth: []
 tags:
   - travessia
 requestBody:
@@ -21,5 +24,9 @@ requestBody:
 responses:
   200:
     description: Travessias definidas
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
   500:
     description: Erro

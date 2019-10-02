@@ -1,5 +1,8 @@
 summary: Apaga um Termo de vocabulário
 description: Apaga um Termo de vocabulário
+security:
+  - userQuery: []
+  - userAuth: []
 tags:
   - vocabularios
 parameters:
@@ -12,5 +15,9 @@ parameters:
 responses:
   200:
     description: Apagado um termo de vocabulário
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
   404:
     description: Erro

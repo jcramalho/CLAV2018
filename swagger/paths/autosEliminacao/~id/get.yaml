@@ -1,5 +1,10 @@
 summary: Devolve a informação de um auto de eliminação
 description: Devolve a informação de um auto de eliminação, onde é devolvido a informação do id, data, entidade, responsavel, legislacao, fundo, zonaControlo em que cada elemento de zonaControlo possui codigo, referencia, dataInicio, dataFim, dono, ni e ag em que cada elemento de ag possui codigo, titulo, dataContagem e ni.
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
 tags:
   - autosEliminacao
 parameters:
@@ -12,5 +17,9 @@ parameters:
 responses:
   200:
     description: Devolve a informação de um auto de eliminação
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
   404:
     description: Erro

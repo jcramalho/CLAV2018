@@ -1,5 +1,8 @@
 summary: Criação de um pedido
 description: Criação de um pedido
+security:
+  - userQuery: []
+  - userAuth: []
 tags:
   - pedidos
 requestBody:
@@ -41,5 +44,9 @@ requestBody:
 responses:
   200:
     description: Criação de um pedido
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
   500:
     description: Erro

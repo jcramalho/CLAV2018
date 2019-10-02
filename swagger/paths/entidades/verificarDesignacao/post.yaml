@@ -1,0 +1,27 @@
+summary: Verifica se uma determinada designação de uma entidade já existe
+description: Verifica se uma determinada designação de uma entidade já existe
+tags:
+  - entidades
+security:
+  - userQuery: []
+  - userAuth: []
+requestBody:
+  description: 'designação da entidade a verificar'
+  required: true
+  content:
+    application/json:
+      schema:
+        properties:
+          designacao:
+            type: string
+        example:
+          designacao: Agência de Avaliação e Acreditação do Ensino Superior
+responses:
+  200:
+    description: Verifica se uma determinada designação de uma entidade já existe
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro

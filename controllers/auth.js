@@ -1,129 +1,106 @@
-var Auth = module.exports
+var Auth = module.exports;
+var passport = require("passport");
+var ExtractJWT = require("passport-jwt").ExtractJwt;
 var jwt = require('jsonwebtoken');
 var Key = require('../models/chave');
-var ApiKey = require('./../config/api');
+var apiKey = require('./../config/api');
 var secretKey = require('./../config/app');
-var Users = require('../controllers/api/users');
-const axios = require('axios');
-const myhost = require('./../config/database').host
 
-Auth.isLoggedIn = function (req, res, next) {
-    if (req.isAuthenticated()) {
-        return next();
-    }
-    res.status(403).send('Login necessário para aceder a esta página');
-}
+//WARNING: correr primeiro isLoggedInUser e só depois correr esta função como middleware
+//clearance se for um número, permite o acesso a todos os utilizadores com nivel igual ou superior; se for uma lista de números, apenas permite ao acesso aos níveis presentes nessa lista.
+Auth.checkLevel = function (clearance) {
+    return function(req, res, next) {
+        var havePermissions = false;
 
-Auth.checkLevel1 = function (req, res, next) {
-    return Auth.isLevel(1, req, res, next);
-}
+        //Array
+        if (clearance instanceof Array) {
+            if (clearance.includes(req.user.level)) {
+                havePermissions = true;
+            }
+        //Number
+        } else {
+            if (req.user.level >= clearance) {
+                havePermissions = true;
+            }
+        }
 
-Auth.checkLevel2 = function (req, res, next) {
-    return Auth.isLevel(2, req, res, next);
-}
-
-Auth.checkLevel3 = function (req, res, next) {
-    return Auth.isLevel(3, req, res, next);
-}
-
-Auth.checkLevel4 = function (req, res, next) {
-    return Auth.isLevel(4, req, res, next);
-}
-
-Auth.checkLevel5 = function (req, res, next) {
-    return Auth.isLevel(5, req, res, next);
-}
-
-Auth.checkLevel6 = function (req, res, next) {
-    return Auth.isLevel(6, req, res, next);
-}
-
-Auth.checkLevel7 = function (req, res, next) {
-    return Auth.isLevel(7, req, res, next);
-}
-
-Auth.isLevel = function (clearance, req, res, next) {
-    if (req.isAuthenticated()) {
-        if (req.user.level >= clearance) {
+        if (havePermissions) {
             return next();
         } else {
-            return res.status(403).send('Não tem permissões suficientes para aceder a esta página');
+            return res.status(403).send('Não tem permissões suficientes para aceder');
         }
-    } else {
-        res.status(403).send('Login necessário para aceder a esta página');
     }
 }
 
-// Auth.isLoggedInAPI = function (req, res, next) {
-//     if (req.isAuthenticated()) {
-//         return next();
-//     }
-//     res.send('Login necessário para esta operação');
-// }
+Auth.generateTokenEmail = function (user) {
+    var token = jwt.sign({id: user._id}, secretKey.emailKey, {expiresIn: '30m'});
 
+    return token
+}
 
-Auth.isLoggedInAPI = async function (req, res, next) {
-    await Key.find({key: ApiKey.key}, async function(err, resp){
-        if(err){
-            throw err;
-        }else if(resp.length==0){
-            res.status(403).send('A sua chave API não se encontra na base de dados.');
-        }else{
-            await jwt.verify(ApiKey.key, secretKey.key, async function(err, decoded){
+Auth.generateTokenUser = function (user) {
+    var token = jwt.sign({id: user._id, level: user.level, entidade: user.entidade}, secretKey.userKey, {expiresIn: '8h'});
+
+    return token
+}
+
+Auth.generateTokenKey = function () {
+    var token = jwt.sign({}, secretKey.apiKey, {expiresIn: '30d'});
+
+    return token
+}
+
+//verifica se está forneceu chave API. Em caso afirmativo verifica se é válido. Caso não tenha fornecido uma chave API verifica se forneceu antes um token.
+Auth.isLoggedInKey = async function (req, res, next) {
+    var key = ExtractJWT.fromExtractors([
+        ExtractJWT.fromBodyField('apikey'),
+        ExtractJWT.fromUrlQueryParameter('apikey'),
+        ExtractJWT.fromAuthHeaderWithScheme('apikey')
+    ])(req)
+
+    if(key){
+        if(key != apiKey){
+            await Key.find({key: key}, async function(err, resp){
                 if(err){
-                    res.status(403).send('A sua chave API é inválida ou expirou.');
+                    throw err;
+                }else if(resp.length==0){
+                    res.status(401).send('A sua chave API não se encontra na base de dados.');
                 }else{
-                    await Key.find({}, async function(err, keys){
-                        for(var i = 0; i < keys.length; i++) {
-                            if(keys[i].key==ApiKey.key){
-                                await Key.findById(keys[i]._id, async function(err, key){
+                    await jwt.verify(key, secretKey.apiKey, async function(err, decoded){
+                        if(err){
+                            res.status(401).send('A sua chave API é inválida ou expirou.');
+                        }else{
+                            if(resp[0].active==true){
+                                await Key.update({_id: resp[0]._id}, {nCalls: resp[0].nCalls+1, lastUsed: Date.now()}, function(err, affected, resp) {
                                     if(err){
-                                        throw err;
+                                        res.status(500).send('Ocorreu um erro ao atualizar chave API.');
                                     }else{
-                                        if(key.active==true){
-                                            await Key.update({_id: key._id}, {nCalls: key.nCalls+1, lastUsed: Date.now()}, function(err, affected, resp) {
-                                                if(err){
-                                                    res.status(500).send('Ocorreu um erro ao atualizar chave API.');
-                                                }else{
-                                                    return next();
-                                                }
-                                            })
-                                        }else{
-                                            res.status(403).send('A sua chave API foi desativada, por favor contacte os administradores do sistema.');
-                                        }
+                                        return next();
                                     }
-                                });
+                                })
+                            }else{
+                                res.status(403).send('A sua chave API foi desativada, por favor contacte os administradores do sistema.');
                             }
                         }
                     });
                 }
-            });
+            })
+        }else{
+            return next();
         }
-    })
+    }else{
+        return Auth.isLoggedInUser(req, res, next)
+    }
 }
 
-Auth.isLoggedInNEW = async function (req, res, next) {
-    if(req.body.token){
-        await jwt.verify(req.body.token, secretKey.key, async function(err, decoded){
-            if(!err){
-                console.log("TOKEN VALIDO: " + decoded.id)
-                let user = await axios.get(myhost + "/api/users/" + decoded.id);
-                if(user.data._id!=undefined){
-                    // await axios.get(myhost + 'api/users/adicionarChamadaApi/' + decoded.id)
-                    await Users.adicionarChamadaApi(decoded.id,function (err, cb) {
-                        if (err) 
-                            throw err;
-                        else 
-                            return next();
-                    });
-                }
-            }
-            else{
-                console.log("TOKEN INVALIDO: " + err)
-            }
+//Verifica se um utilizador (token) está autenticado
+Auth.isLoggedInUser = function (req, res, next) {
+    passport.authenticate("jwt", { session: false }, function(err, user, info) {
+        if (err) { return res.status(401).send("Unauthorized") }
+        if (!user) { return res.status(401).send("Unauthorized") }
+        req.logIn(user, function(err) {
+            if (err) { return res.status(401).send("Unauthorized") }
+            next()
         });
-    }
-    else{
-        console.log("TOKEN INEXISTENTE!")
-    }
+    })(req, res, next)
 }

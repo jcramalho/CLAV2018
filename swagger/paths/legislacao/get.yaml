@@ -1,5 +1,10 @@
 summary: Lista todos os documentos legislativos
 description: Lista todos os documentos legislativos. Para cada documento legislativo é devolvida a informação do id, data, numero, tipo, sumario e entidades
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
 tags:
   - legislacao
 parameters:
@@ -18,5 +23,9 @@ parameters:
 responses:
   200:
     description: Lista todos os documentos legislativos
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
   500:
     description: Erro

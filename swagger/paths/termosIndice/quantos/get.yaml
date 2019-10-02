@@ -1,9 +1,18 @@
 summary: Devolve o número de termos índice
 description: Devolve o número de termos índice
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
 tags:
   - termosIndice
 responses:
   200:
     description: Devolve o número de termos
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
   500:
     description: Erro

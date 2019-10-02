@@ -1,4 +1,5 @@
 var jwt = require('jsonwebtoken');
+var Auth = require('../../controllers/auth');
 var secretKey = require('./../../config/app');
 var Chave = require('./../../models/chave');
 var Chaves = module.exports
@@ -11,8 +12,8 @@ Chaves.listar = function(callback){
         }else {
             for(var i = 0; i < keys.length; i++) {
                 item = {}
-                jwt.verify(keys[i].key, secretKey.key, function(err, decoded){
-                    item["expiration"] = new Date(decoded.exp*1000).toDateString();
+                jwt.verify(keys[i].key, secretKey.apiKey, function(err, decoded){
+                    item["expiration"] = new Date(decoded.exp*1000).toLocaleString();
                 });
                 item["id"] = keys[i]._id;
                 item["name"] = keys[i].name;
@@ -53,7 +54,7 @@ Chaves.listarPorEmail = function (email, callback) {
 
 Chaves.criarChave = function(name, email, entidade, callback){
     var newKey = new Chave({
-        key: jwt.sign({}, secretKey.key, {expiresIn: '30d'}),
+        key: Auth.generateTokenKey(),
         name: name,
 		contactInfo: email,
         entity: entidade
@@ -117,7 +118,7 @@ Chaves.renovar = function(id, callback){
 		if(err || !key){
 			callback(err, null);
 		}else{
-            key.key = jwt.sign({}, secretKey.key, {expiresIn: '30d'});
+            key.key = Auth.generateTokenKey();
             key.created = Date.now();
             key.nCalls = 0;
             key.lastUsed = null;

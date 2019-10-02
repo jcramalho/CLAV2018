@@ -1,9 +1,18 @@
 summary: Devolve a data da ontologia
 description: Devolve a data da ontologia
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
 tags:
   - ontologia
 responses:
   200:
     description: Data da ontologia
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
   500:
     description: Erro

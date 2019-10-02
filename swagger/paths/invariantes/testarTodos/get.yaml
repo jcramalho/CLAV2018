@@ -1,9 +1,16 @@
 summary: Testa todos os invariantes
 description: Testa todos os invariantes. Devolve os erros dos invariantes.
+security:
+  - userQuery: []
+  - userAuth: []
 tags:
   - invariantes
 responses:
   200:
     description: Devolve os erros dos invariantes
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
   500:
     description: Erro

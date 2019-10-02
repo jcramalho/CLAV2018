@@ -1,9 +1,16 @@
 summary: Listagem dos trabalhos pendentes
 description: Listagem dos trabalhos pendentes
+security:
+  - userQuery: []
+  - userAuth: []
 tags:
   - pendentes
 responses:
   200:
     description: Listagem dos trabalhos pendentes
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
   500:
     description: Erro

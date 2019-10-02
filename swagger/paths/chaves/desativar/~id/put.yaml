@@ -1,0 +1,23 @@
+summary: Desativar chave API
+description: Desativar chave API
+security:
+  - userQuery: []
+  - userAuth: []
+tags:
+  - chaves
+parameters:
+  - name: id
+    in: path
+    description: identificador da chave na BD
+    schema:
+      type: string
+    required: true
+responses:
+  200:
+    description: Chave API desativada
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro

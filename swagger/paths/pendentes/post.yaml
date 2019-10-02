@@ -1,5 +1,8 @@
 summary: Guardar um trabalho pendente
 description: Guardar um trabalho pendente
+security:
+  - userQuery: []
+  - userAuth: []
 tags:
   - pendentes
 requestBody:
@@ -12,5 +15,9 @@ requestBody:
 responses:
   200:
     description: Guardar um trabalho pendente
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
   500:
     description: Erro

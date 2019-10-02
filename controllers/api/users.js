@@ -3,8 +3,7 @@ var AuthCall = require('../../models/auth');
 var bcrypt = require('bcryptjs');
 var xml2js = require('xml2js');
 var mongoose = require('mongoose');
-var axios = require('axios')
-const myhost = require('../../config/database').host
+const request = require('../../controllers/api/utils').request
 
 var Users = module.exports
 
@@ -72,13 +71,13 @@ Users.listar = function(req, callback){
                             item["level"] = 'Administrador de Perfil Funcional';
                             break;
                         case 5:
-                            item["level"] = 'Utilizador Validador';
+                            item["level"] = 'Utilizador Decisor';
                             break;
                         case 4:
-                            item["level"] = 'Utilizador Avançado';
+                            item["level"] = 'Utilizador Validador';
                             break;
                         case 3:
-                            item["level"] = 'Utilizador Decisor';
+                            item["level"] = 'Utilizador Avançado';
                             break;
                         case 2:
                             item["level"] = 'Utilizador Simples';
@@ -242,18 +241,12 @@ Users.listarEmail = function(id, callback){
 }
 
 Users.adicionarChamadaApi = function(id, callback){
-    Users.getUserById(id, function(err, user){
+    User.findOneAndUpdate({_id: id}, {$inc: {nCalls: 1}}, {useFindAndModify: false}, function(err, user){
         if (err) {	
             callback(err,null)
         } else {
-            user.nCalls+=1;
-            user.save(function(err) {
-                if (err) {
-		            callback(err, null);
-                }else{
-		            callback(null, user);
-                }
-            });
+            user.nCalls++;
+		    callback(null, user);
         }
     });
 }
@@ -283,12 +276,12 @@ Users.parseSAMLResponse = function(SAMLResponse, callback){
     });
 }
 
-Users.registarParaEntidade = async function(entidade, users){
+Users.registarParaEntidade = async function(req, entidade, users){
     var ent = entidade.split('_')[0] == 'ent' ? entidade : 'ent_' + entidade
 
     //validar se entidade existe
     try{
-        await axios.get(myhost + '/api/entidades/' + ent)
+        await request.get(req, '/api/entidades/' + ent)
     } catch (e) {
         if(e.response.status == 404){
             throw('Entidade não existe! Nenhum utilizador foi registado. Tente novamente.')

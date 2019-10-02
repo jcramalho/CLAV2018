@@ -1,70 +1,31 @@
 type: object
 properties:
-  idEntidade:
-    type: string
-  designacao:
-    type: string
-  entidades:
+  ts:
     type: array
     items:
+      type: object
       properties:
-        sigla:
+        codigo:
           type: string
-        designacao:
+        titulo:
           type: string
-        id:
-          type: string
-          description: "'ent_' concatenado com o valor de sigla"
+        entidades:
+          type: array
+          items:
+            type: object
+            properties:
+              sigla:
+                type: string
+              dono:
+                type: boolean
+              participante:
+                type: boolean
+            required:
+              - sigla
+              - dono
+              - participante
       required:
-        - sigla
-        - designacao
-        - id
-  #procComuns:
-  #  type: array
-  #  items:
-  #    properties:
-  #procEspecificos:
-  #  type: array
-  #  items:
-  #    properties:
-  #procEspRestantes:
-  #  type: array
-  #  items:
-  #    properties:
-  #procUltimos:
-  #  type: array
-  #  items:
-  #    properties:
-  listaProcSel:
-    type: object
-    properties:
-      procSelComuns:
-        type: array
-        items:
-          type: string
-      procSelEspecificos:
-        type: array
-        items:
-          type: string
-      procSelEspRestantes:
-        type: array
-        items:
-          type: string
-      procSelUltimos:
-        type: array
-        items:
-          type: string
-    required:
-      - procSelComuns
-      - procSelEspecificos
-      - procSelEspRestantes
-      - procSelUltimos
+        - codigo
+        - entidades
 required:
-  - idEntidade
-  - designacao
-  - entidades
-  #- procComuns
-  #- procEspecificos
-  #- procEspRestantes
-  #- procUltimos
-  - listaProcSel
+  - ts

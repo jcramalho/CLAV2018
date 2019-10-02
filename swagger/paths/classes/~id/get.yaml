@@ -1,4 +1,9 @@
 summary: Retorna toda a informação relativa a uma classe
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
 tags:
   - classes
 description: Retorna toda a informação relativa a uma classe
@@ -12,5 +17,9 @@ parameters:
 responses:
   200:
     description: Retorna toda a informação relativa a uma classe
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
   500:
     description: Erro

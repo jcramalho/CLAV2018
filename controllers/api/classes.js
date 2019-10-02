@@ -1,8 +1,6 @@
 const execQuery = require('../../controllers/api/utils').execQuery
 const normalize = require('../../controllers/api/utils').normalize
-const axios = require('axios')
 const Classes = module.exports
-const myhost = require('../../config/database').host
 
 // Devolve a lista de classes de um determinado nível, por omissão do nível 1
 Classes.listar = async nivel => {
@@ -161,59 +159,41 @@ Classes.retrieve = async id => {
             subclasses: []
         };
         
-        let base = await axios.get(myhost + "/api/classes/" + id + "/meta");
-        classe.nivel = base.data[0].codigo.split('.').length
-        classe.codigo = base.data[0].codigo
-        classe.pai.codigo = base.data[0].codigoPai
-        classe.pai.titulo = base.data[0].tituloPai
-        classe.titulo = base.data[0].titulo
-        classe.descricao = base.data[0].desc
-        classe.tipoProc = base.data[0].procTipo
-        classe.procTrans = base.data[0].procTrans
+        let base = await Classes.consultar(id)
+        classe.nivel = base[0].codigo.split('.').length
+        classe.codigo = base[0].codigo
+        classe.pai.codigo = base[0].codigoPai
+        classe.pai.titulo = base[0].tituloPai
+        classe.titulo = base[0].titulo
+        classe.descricao = base[0].desc
+        classe.tipoProc = base[0].procTipo
+        classe.procTrans = base[0].procTrans
 
-        let filhos = await axios.get(myhost + "/api/classes/" + id + "/descendencia");
-        if(filhos.data.length > 0){
-            classe.filhos = filhos.data
+        classe.filhos = await Classes.descendencia(id)
+        if(classe.filhos.length > 0){
             if(classe.nivel == 3) classe.temSubclasses4Nivel = true
         }
     
-        let notasAp = await axios.get(myhost + "/api/classes/" + id + "/notasAp");
-        classe.notasAp = notasAp.data
+        classe.notasAp = await Classes.notasAp(id)
+        classe.exemplosNotasAp = await Classes.exemplosNotasAp(id)
+        classe.notasEx = await Classes.notasEx(id)
+        classe.termosInd = await Classes.ti(id)
+        classe.donos = await Classes.dono(id)
+        classe.participantes = await Classes.participante(id)
+        classe.processosRelacionados = await Classes.procRel(id)
+        classe.legislacao = await Classes.legislacao(id)
 
-        let exemplosNotasAp = await axios.get(myhost + "/api/classes/" + id + "/exemplosNotasAp");
-        classe.exemplosNotasAp = exemplosNotasAp.data
-
-        let notasEx = await axios.get(myhost + "/api/classes/" + id + "/notasEx");
-        classe.notasEx = notasEx.data
-
-        let termosInd = await axios.get(myhost + "/api/classes/" + id + "/ti");
-        classe.termosInd = termosInd.data
-
-        let donos = await axios.get(myhost + "/api/classes/" + id + "/dono");
-        classe.donos = donos.data
-
-        let participantes = await axios.get(myhost + "/api/classes/" + id + "/participante");
-        classe.participantes = participantes.data
-
-        let procRel = await axios.get(myhost + "/api/classes/" + id + "/procRel");
-        classe.processosRelacionados = procRel.data 
-
-        let legislacao = await axios.get(myhost + "/api/classes/" + id + "/legislacao");
-        classe.legislacao = legislacao.data
-
-        let pca = await axios.get(myhost + "/api/classes/" + id + "/pca");
-        if(pca.data.length > 0) classe.pca = pca.data[0]
+        let pca = await Classes.pca(id)
+        if(pca.length > 0) classe.pca = pca[0]
     
         if(classe.pca && classe.pca.idJust){
-            let just = await axios.get(myhost + "/api/classes/justificacao/" + classe.pca.idJust);
-            classe.pca.justificacao = just.data
+            classe.pca.justificacao = await Classes.justificacao(classe.pca.idJust)
         }
 
-        let df = await axios.get(myhost + "/api/classes/" + id + "/df");
-        if(df.data.length > 0) classe.df = df.data[0]
+        let df = await Classes.df(id)
+        if(df.length > 0) classe.df = df[0]
         if(classe.df && classe.df.idJust){
-            let just = await axios.get(myhost + "/api/classes/justificacao/" + classe.df.idJust);
-            classe.df.justificacao = just.data
+            classe.df.justificacao = await Classes.justificacao(classe.df.idJust)
         }
 
         return classe

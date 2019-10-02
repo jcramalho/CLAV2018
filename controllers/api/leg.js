@@ -1,8 +1,6 @@
 const execQuery = require('../../controllers/api/utils').execQuery
 const normalize = require('../../controllers/api/utils').normalize;
 const projection = require('../../controllers/api/utils').projection;
-const axios = require('axios');
-const myhost = require('./../../config/database').host
 const Leg = module.exports;
 
 /**

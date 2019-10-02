@@ -1,0 +1,23 @@
+summary: Elimina a conta de um utilizador
+description: Elimina a conta de um utilizador
+security:
+  - userQuery: []
+  - userAuth: []
+tags:
+  - users
+parameters:
+  - name: id
+    in: path
+    description: 'Identificador de um utilizador'
+    schema:
+      type: string
+    required: true
+responses:
+  200:
+    description: Eliminado a conta de um utilizador
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro

@@ -1,0 +1,40 @@
+summary: Atualizar chave API
+description: Atualizar chave API. Pode-se alterar nome, email (contactInfo) e entidade.
+security:
+  - userQuery: []
+  - userAuth: []
+tags:
+  - chaves
+parameters:
+  - name: id
+    in: path
+    description: identificador da chave na BD
+    schema:
+      type: string
+    required: true
+requestBody:
+  description: Para renovar a chave API é necessário o nome a usar, o email a usar (contactInfo) e a entidade a usar.
+  required: true
+  content:
+    application/json:
+      schema:
+        properties:
+          name:
+            type: string
+          contactInfo:
+            type: string
+          entity:
+            type: string
+        required:
+          - name
+          - contactInfo
+          - entity
+responses:
+  200:
+    description: Chave API atualizada
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro

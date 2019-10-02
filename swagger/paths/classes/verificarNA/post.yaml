@@ -1,5 +1,8 @@
 summary: Verifica se uma determinada notaAplicação já existe
 description: Verifica se uma determinada notaAplicação já existe
+security:
+  - userQuery: []
+  - userAuth: []
 tags:
   - classes
 requestBody:
@@ -16,5 +19,9 @@ requestBody:
 responses:
   200:
     description: Verifica se uma determinada notaAplicação já existe
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
   500:
     description: Erro

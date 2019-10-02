@@ -1,5 +1,8 @@
 summary: 'Remove um trabalho pendente'
 description: Remove um trabalho pendente
+security:
+  - userQuery: []
+  - userAuth: []
 tags:
   - pendentes
 parameters:
@@ -12,5 +15,9 @@ parameters:
 responses:
   200:
     description: Removido um trabalho pendente
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
   500:
     description: Erro

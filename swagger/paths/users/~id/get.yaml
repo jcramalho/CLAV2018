@@ -1,5 +1,8 @@
 summary: Consulta um utilizador
 description: Consulta um utilizador devolvendo a informação de id, name, email, entidade, internal, level, password and nCalls
+security:
+  - userQuery: []
+  - userAuth: []
 tags:
   - users
 parameters:
@@ -12,5 +15,9 @@ parameters:
 responses:
   200:
     description: Consulta um utilizador
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
   500:
     description: Erro

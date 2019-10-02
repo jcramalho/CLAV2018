@@ -18,6 +18,9 @@ description: |
     * Por baixo de cada coluna deve estar:
       * x ou X os processos selecionados
       * Nada para os processos não selecionados
+security:
+  - userQuery: []
+  - userAuth: []
 tags:
   - tabelasSelecao
 requestBody:
@@ -44,5 +47,9 @@ requestBody:
 responses:
   200:
     description: Cria um pedido de criação de uma tabela de seleção a partir de um ficheiro CSV/Excel
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
   500:
     description: Erro

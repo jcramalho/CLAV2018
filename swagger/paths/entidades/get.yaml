@@ -1,5 +1,10 @@
 summary: Lista todas as entidades
 description: Lista todas as entidades. Para cada entidade será devolvida a informação do id, sigla, designacao, sioe, estado e internacional
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
 tags:
   - entidades
 parameters:
@@ -45,5 +50,9 @@ parameters:
 responses:
   200:
     description: Lista todas as entidades
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
   500:
     description: Erro

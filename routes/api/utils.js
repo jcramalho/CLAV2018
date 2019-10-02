@@ -4,7 +4,7 @@ const nanoid = require('nanoid')
 var express = require('express');
 var router = express.Router();
 
-router.get('/id', (req, res) => {
+router.get('/id', Auth.isLoggedInKey, (req, res) => {
     res.send(nanoid())
 })
 

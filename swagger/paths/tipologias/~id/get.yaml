@@ -1,5 +1,10 @@
 summary: Consulta de uma tipologia
 description: Consulta de uma tipologia devolvendo a informação de sigla, designação e estado
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
 tags:
   - tipologias
 parameters:
@@ -12,6 +17,10 @@ parameters:
 responses:
   200:
     description: Consulta de uma tipologia
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
   404:
     description: A tipologia não existe
   500:

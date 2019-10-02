@@ -1,8 +1,11 @@
 var LocalStrategy = require('passport-local').Strategy;
+var JWTstrategy = require("passport-jwt").Strategy;
+var ExtractJWT = require("passport-jwt").ExtractJwt;
+var secretKey = require('./../config/app');
 var Users = require('../controllers/api/users');
 
 module.exports = function(passport) {
-    passport.use(new LocalStrategy(
+    passport.use("login", new LocalStrategy(
         function (email, password, done) {
             Users.getUserByEmail(email, function (err, user) {
                 if (err) done(err);
@@ -35,4 +38,16 @@ module.exports = function(passport) {
             done(err, user);
         });
     });
+
+    passport.use("jwt", new JWTstrategy({
+        secretOrKey: secretKey.userKey,
+        algorithms: ["HS256"],
+        jwtFromRequest: ExtractJWT.fromExtractors([
+            ExtractJWT.fromBodyField('token'),
+            ExtractJWT.fromUrlQueryParameter('token'),
+            ExtractJWT.fromAuthHeaderWithScheme('token')
+        ])
+    }, async (token, done) => {
+        done(null, token);
+    }))
 };

@@ -1,5 +1,8 @@
 summary: Adicionar um vocabulário
 description: Adicionar um vocabulário
+security:
+  - userQuery: []
+  - userAuth: []
 tags:
   - vocabularios
 requestBody:
@@ -18,5 +21,9 @@ requestBody:
 responses:
   200:
     description: Adicionar um vocabulário
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
   404:
     description: Erro

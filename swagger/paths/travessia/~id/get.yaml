@@ -1,5 +1,8 @@
 summary: Obtém a travessia de um processo
 description: Obtém a travessia de um processo (lista de códigos de processos)
+security:
+  - userQuery: []
+  - userAuth: []
 tags:
   - travessia
 parameters:
@@ -12,5 +15,9 @@ parameters:
 responses:
   200:
     description: Obtém a travessia de um processo
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
   500:
     description: Erro

@@ -1,7 +1,16 @@
 summary: Gera um id único
 description: Gera um id único através do nanoid
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
 tags:
   - utils
 responses:
   200:
     description: Devolve o id gerado
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'

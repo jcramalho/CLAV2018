@@ -1,5 +1,10 @@
 summary: Lista os processos em que uma entidade intervem como participante
 description: Lista os processos em que uma entidade intervem como participante. Para cada processo devolve a informação do codigo, titulo e tipoPar
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
 tags:
   - entidades
 parameters:
@@ -12,5 +17,9 @@ parameters:
 responses:
   200:
     description: Lista os processos em que uma entidade intervem como participante
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
   500:
     description: Erro

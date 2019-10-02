@@ -1,5 +1,10 @@
 summary: Lista as entidades que pertencem à tipologia
 description: Lista as entidades que pertencem à tipologia. Para cada entidade devolve a informação de sigla, designação e id
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
 tags:
   - tipologias
 parameters:
@@ -12,5 +17,9 @@ parameters:
 responses:
   200:
     description: Lista as entidades que pertencem à tipologia
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
   500:
     description: Erro

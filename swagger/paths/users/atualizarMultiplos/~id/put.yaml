@@ -1,0 +1,38 @@
+summary: Altera os dados da conta de um utilizador
+description: Altera os dados da conta de um utilizador
+security:
+  - userQuery: []
+  - userAuth: []
+tags:
+  - users
+parameters:
+  - name: id
+    in: path
+    description: 'Identificador de um utilizador'
+    schema:
+      type: string
+    required: true
+requestBody:
+  description: 'dados a alterar'
+  required: true
+  content:
+    application/json:
+      schema:
+        properties:
+          nome:
+            type: string
+          email:
+            type: string
+          entidade:
+            type: string
+          level:
+            type: number
+responses:
+  200:
+    description: Alterado os dados da conta de um utilizador
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro

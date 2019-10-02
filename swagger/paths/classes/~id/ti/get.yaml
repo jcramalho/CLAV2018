@@ -1,5 +1,10 @@
 summary: Devolve os termos de índice de uma classe
 description: Devolve os termos de índice de uma classe. Para cada elemento da lista devolvida é devolvida a informação do idTI e termo
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
 tags:
   - classes
 parameters:
@@ -12,5 +17,9 @@ parameters:
 responses:
   200:
     description: Devolve os termos de índice de uma classe
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
   500:
     description: Erro

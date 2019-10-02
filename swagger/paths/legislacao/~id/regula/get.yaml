@@ -1,5 +1,10 @@
 summary: Devolve a lista de processos regulados pelo documento
 description: Devolve a lista de processos regulados pelo documento. Para cada processo devolve a informação do id, codigo e titulo
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
 tags:
   - legislacao
 parameters:
@@ -12,5 +17,9 @@ parameters:
 responses:
   200:
     description: Devolve a lista de processos regulados pelo documento
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
   500:
     description: Erro
