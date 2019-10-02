@@ -142,7 +142,8 @@ Classes.retrieve = async id => {
             // Bloco de decisão de avaliação: PCA e DF
     
             pca: {
-                valor: "",
+                valores: "",
+                notas: "",
                 formaContagem: "",
                 subFormaContagem: "",
                 justificacao: []        // j = [criterio]
@@ -150,13 +151,9 @@ Classes.retrieve = async id => {
     
             df: {
                 valor: "NE",
-                notas: null,
+                nota: null,
                 justificacao: []
-            },
-    
-            // Bloco de subclasses de nível 4, caso haja desdobramento
-    
-            subclasses: []
+            }
         };
         
         let base = await Classes.consultar(id)
@@ -184,7 +181,7 @@ Classes.retrieve = async id => {
         classe.legislacao = await Classes.legislacao(id)
 
         let pca = await Classes.pca(id)
-        if(pca.length > 0) classe.pca = pca[0]
+        if(pca.length > 0 && pca[0].valores != "") classe.pca = pca[0]
     
         if(classe.pca && classe.pca.idJust){
             classe.pca.justificacao = await Classes.justificacao(classe.pca.idJust)

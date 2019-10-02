@@ -27,7 +27,6 @@ function json2csvArray(array, key){
             })
             break
         case 'exemplosNotasAp':
-            console.log(JSON.stringify(array))
             titles[0] = "Exemplos de NA"
             array.forEach(e => {
                 columns[0].push(e.exemplo)
@@ -92,7 +91,11 @@ function convertClasse(json){
     for(var key in json){
         if(json[key] instanceof Array){
             if(key == 'filhos'){
-                csvLines = csvLines.concat(json[key])
+                json[key].forEach(classe => {
+                    var aux = convertClasse(classe)
+                    aux.splice(0, 1)
+                    csvLines = csvLines.concat(aux)
+                })
             }else{
                 var aux = json2csvArray(json[key], key)
                 csvLines[0] = csvLines[0].concat(aux[0])
@@ -146,7 +149,11 @@ function convertClasse(json){
                             }else if(key == 'df'){
                                 if(k == 'valor'){
                                     csvLines[0].push(protect("Destino final"))
-                                    csvLines[1].push(protect(json[key][k]))
+                                    if(json[key][k] == "NE"){
+                                        csvLines[1].push(protect(""))
+                                    }else{
+                                        csvLines[1].push(protect(json[key][k]))
+                                    }
                                 }else if(k == 'notas'){
                                     csvLines[0].push(protect("Notas ao DF"))
                                     csvLines[1].push(protect(json[key][k]))
@@ -195,11 +202,29 @@ function joinLines(csvLines){
     return csv
 }
 
+function convertClasses(json){
+    var csvLines = []
+    var len = json.length
+
+    if(len > 0){
+        csvLines = convertClasse(json[0])
+
+        for(var i = 1; i < len; i++){
+            var aux = convertClasse(json[i])
+            aux.splice(0, 1)
+            csvLines = csvLines.concat(aux)
+        }
+    }
+
+    return csvLines
+}
+
 module.exports.json2csv = (json, type) => {
     var csv
 
     switch(type){
         case "classes":
+            csvLines = convertClasses(json)
             break
         case "classe":
             csvLines = convertClasse(json)
