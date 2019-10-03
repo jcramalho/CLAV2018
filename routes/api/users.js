@@ -59,7 +59,7 @@ router.get('/verificaToken', Auth.isLoggedInUser, async function(req,res){
     res.send(req.user);
 });
 
-router.post('/registar', Auth.isLoggedInUser, Auth.checkLevel(6), function (req, res) {
+router.post('/registar', Auth.isLoggedInUser, Auth.checkLevel(5), function (req, res) {
     var internal = (req.body.type > 1);
     var newUser = new User({
         _id: mongoose.Types.ObjectId(),
@@ -88,7 +88,7 @@ router.post('/registar', Auth.isLoggedInUser, Auth.checkLevel(6), function (req,
     });
 });
 
-router.post('/registarParaEntidade', Auth.isLoggedInUser, Auth.checkLevel(6), function (req, res) {
+router.post('/registarParaEntidade', Auth.isLoggedInUser, Auth.checkLevel(5), function (req, res) {
     if(req.body.users instanceof Array && req.body.entidade){
         Users.registarParaEntidade(req, req.body.entidade, req.body.users)
            .then(data => res.send(data))
@@ -293,7 +293,7 @@ router.post('/callback', async function(req, res){
 });
 
 //Registo via CC
-router.post('/registarCC', Auth.isLoggedInUser, Auth.checkLevel(6), function (req, res) {
+router.post('/registarCC', Auth.isLoggedInUser, Auth.checkLevel(5), function (req, res) {
     var internal = (req.body.type > 1);
     var newUser = new User({
         _id: req.body.nic,
