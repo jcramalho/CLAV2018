@@ -3,7 +3,6 @@ var passport = require("passport");
 var ExtractJWT = require("passport-jwt").ExtractJwt;
 var jwt = require('jsonwebtoken');
 var Key = require('../models/chave');
-var apiKey = require('./../config/api');
 var secretKey = require('./../config/app');
 
 //WARNING: correr primeiro isLoggedInUser e só depois correr esta função como middleware
@@ -59,35 +58,31 @@ Auth.isLoggedInKey = async function (req, res, next) {
     ])(req)
 
     if(key){
-        if(key != apiKey){
-            await Key.find({key: key}, async function(err, resp){
-                if(err){
-                    throw err;
-                }else if(resp.length==0){
-                    res.status(401).send('A sua chave API não se encontra na base de dados.');
-                }else{
-                    await jwt.verify(key, secretKey.apiKey, async function(err, decoded){
-                        if(err){
-                            res.status(401).send('A sua chave API é inválida ou expirou.');
+        await Key.find({key: key}, async function(err, resp){
+            if(err){
+                throw err;
+            }else if(resp.length==0){
+                res.status(401).send('A sua chave API não se encontra na base de dados.');
+            }else{
+                await jwt.verify(key, secretKey.apiKey, async function(err, decoded){
+                    if(err){
+                        res.status(401).send('A sua chave API é inválida ou expirou.');
+                    }else{
+                        if(resp[0].active==true){
+                            await Key.update({_id: resp[0]._id}, {nCalls: resp[0].nCalls+1, lastUsed: Date.now()}, function(err, affected, resp) {
+                                if(err){
+                                    res.status(500).send('Ocorreu um erro ao atualizar chave API.');
+                                }else{
+                                    return next();
+                                }
+                            })
                         }else{
-                            if(resp[0].active==true){
-                                await Key.update({_id: resp[0]._id}, {nCalls: resp[0].nCalls+1, lastUsed: Date.now()}, function(err, affected, resp) {
-                                    if(err){
-                                        res.status(500).send('Ocorreu um erro ao atualizar chave API.');
-                                    }else{
-                                        return next();
-                                    }
-                                })
-                            }else{
-                                res.status(403).send('A sua chave API foi desativada, por favor contacte os administradores do sistema.');
-                            }
+                            res.status(403).send('A sua chave API foi desativada, por favor contacte os administradores do sistema.');
                         }
-                    });
-                }
-            })
-        }else{
-            return next();
-        }
+                    }
+                });
+            }
+        })
     }else{
         return Auth.isLoggedInUser(req, res, next)
     }
