@@ -16,5 +16,7 @@ requestBody:
 responses:
   200:
     description: Login efetuado com sucesso
+  401:
+    description: Credenciais inválidas
   500:
     description: Erro
