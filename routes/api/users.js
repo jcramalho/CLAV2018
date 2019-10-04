@@ -154,7 +154,7 @@ router.put('/desativar/:id', Auth.isLoggedInUser, Auth.checkLevel(5), async func
     }
 });
 
-router.delete('/eliminar/:id', Auth.isLoggedInUser, Auth.checkLevel(5), async function(req, res) {
+router.delete('/eliminar/:id', Auth.isLoggedInUser, Auth.checkLevel(7), async function(req, res) {
     if(req.user.id != req.params.id){
         Users.eliminar(req.params.id, function(err, user){
             if(err){
