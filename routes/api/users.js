@@ -22,7 +22,7 @@ router.get('/', Auth.isLoggedInUser, Auth.checkLevel(5), (req, res) => {
 });
 
 router.get('/listarEmail/:id', Auth.isLoggedInUser, function(req, res) {
-    if(req.params.id == req.user.id || req.user.level == 7){
+    if(req.params.id == req.user.id || req.user.level >= 7){
         Users.listarEmail(req.params.id,function(err, email){
             if(err){
                 return res.status(500).send(`Erro: ${err}`);
@@ -198,7 +198,7 @@ router.put('/alterarNome/:id', Auth.isLoggedInUser, function (req, res) {
 });
 
 router.put('/alterarEmail/:id', Auth.isLoggedInUser, function (req, res) {
-    if(req.params.id == req.user.id || req.user.level == 5){
+    if(req.params.id == req.user.id || req.user.level >= 5){
         Users.atualizarEmail(req.params.id, req.body.email, function (err, cb) {
             if (err) 
                 return res.status(500).send(`Erro: ${err}`);
@@ -212,7 +212,7 @@ router.put('/alterarEmail/:id', Auth.isLoggedInUser, function (req, res) {
 });
 
 router.put('/alterarPassword/:id', Auth.isLoggedInUser, function (req, res) {
-    if(req.params.id == req.user.id || req.user.level == 5){
+    if(req.params.id == req.user.id || req.user.level >= 5){
         Users.atualizarPassword(req.params.id, req.body.password, function (err, cb) {
             if (err) 
                 return res.status(500).send(`Erro: ${err}`);
@@ -226,7 +226,7 @@ router.put('/alterarPassword/:id', Auth.isLoggedInUser, function (req, res) {
 });
 
 router.put('/atualizarMultiplos/:id', Auth.isLoggedInUser, function (req, res) {
-    if(req.params.id == req.user.id || req.user.level == 5){
+    if(req.params.id == req.user.id || req.user.level >= 5){
         Users.getUserByEmail(req.body.email, function(err,user){
             if(user && req.params.id != user._id){
                 res.status(500).send('Já existe utilizador registado com esse email!');
@@ -246,7 +246,7 @@ router.put('/atualizarMultiplos/:id', Auth.isLoggedInUser, function (req, res) {
 });
 
 router.get('/:id', Auth.isLoggedInUser, (req, res) => {
-    if(req.params.id == req.user.id || req.user.level == 5){
+    if(req.params.id == req.user.id || req.user.level >= 5){
         Users.listarPorId(req.params.id,function(err, result){
             if(err){
                 return res.status(500).send(`Erro: ${err}`);
