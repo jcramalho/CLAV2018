@@ -11,7 +11,7 @@ var secretKey = require('./../../config/app');
 var Mailer = require('../../controllers/api/mailer');
 var mongoose = require('mongoose');
 
-router.get('/', Auth.isLoggedInUser, Auth.checkLevel(6), (req, res) => {
+router.get('/', Auth.isLoggedInUser, Auth.checkLevel(5), (req, res) => {
     Users.listar(req,function(err, result){
         if(err){
             return res.status(500).send(`Erro: ${err}`);
@@ -140,7 +140,7 @@ router.post('/recuperar', function (req, res) {
     });
 });
 
-router.put('/desativar/:id', Auth.isLoggedInUser, Auth.checkLevel(6), async function(req, res) {
+router.put('/desativar/:id', Auth.isLoggedInUser, Auth.checkLevel(5), async function(req, res) {
     if(req.user.id != req.params.id){
         Users.desativar(req.params.id, function(err, user){
             if(err){
@@ -154,7 +154,7 @@ router.put('/desativar/:id', Auth.isLoggedInUser, Auth.checkLevel(6), async func
     }
 });
 
-router.delete('/eliminar/:id', Auth.isLoggedInUser, Auth.checkLevel(6), async function(req, res) {
+router.delete('/eliminar/:id', Auth.isLoggedInUser, Auth.checkLevel(5), async function(req, res) {
     if(req.user.id != req.params.id){
         Users.eliminar(req.params.id, function(err, user){
             if(err){
@@ -170,7 +170,7 @@ router.delete('/eliminar/:id', Auth.isLoggedInUser, Auth.checkLevel(6), async fu
 
 //Funcoes de alteracao de utilizador
 router.put('/alterarNivel/:id', Auth.isLoggedInUser, function (req, res) {
-    if(req.params.id == req.user.id || req.user.level >= 6){
+    if(req.params.id == req.user.id || req.user.level >= 5){
         Users.atualizarNivel(req.params.id, req.body.level, function (err, cb) {
             if (err) 
                 return res.status(500).send(`Erro: ${err}`);
@@ -184,7 +184,7 @@ router.put('/alterarNivel/:id', Auth.isLoggedInUser, function (req, res) {
 });
 
 router.put('/alterarNome/:id', Auth.isLoggedInUser, function (req, res) {
-    if(req.params.id == req.user.id || req.user.level >= 6){
+    if(req.params.id == req.user.id || req.user.level >= 5){
         Users.atualizarNome(req.params.id, req.body.nome, function (err, cb) {
             if (err) 
                 return res.status(500).send(`Erro: ${err}`);
@@ -198,7 +198,7 @@ router.put('/alterarNome/:id', Auth.isLoggedInUser, function (req, res) {
 });
 
 router.put('/alterarEmail/:id', Auth.isLoggedInUser, function (req, res) {
-    if(req.params.id == req.user.id || req.user.level == 7){
+    if(req.params.id == req.user.id || req.user.level == 5){
         Users.atualizarEmail(req.params.id, req.body.email, function (err, cb) {
             if (err) 
                 return res.status(500).send(`Erro: ${err}`);
@@ -212,7 +212,7 @@ router.put('/alterarEmail/:id', Auth.isLoggedInUser, function (req, res) {
 });
 
 router.put('/alterarPassword/:id', Auth.isLoggedInUser, function (req, res) {
-    if(req.params.id == req.user.id || req.user.level == 7){
+    if(req.params.id == req.user.id || req.user.level == 5){
         Users.atualizarPassword(req.params.id, req.body.password, function (err, cb) {
             if (err) 
                 return res.status(500).send(`Erro: ${err}`);
@@ -226,7 +226,7 @@ router.put('/alterarPassword/:id', Auth.isLoggedInUser, function (req, res) {
 });
 
 router.put('/atualizarMultiplos/:id', Auth.isLoggedInUser, function (req, res) {
-    if(req.params.id == req.user.id || req.user.level == 7){
+    if(req.params.id == req.user.id || req.user.level == 5){
         Users.getUserByEmail(req.body.email, function(err,user){
             if(user && req.params.id != user._id){
                 res.status(500).send('Já existe utilizador registado com esse email!');
@@ -246,7 +246,7 @@ router.put('/atualizarMultiplos/:id', Auth.isLoggedInUser, function (req, res) {
 });
 
 router.get('/:id', Auth.isLoggedInUser, (req, res) => {
-    if(req.params.id == req.user.id || req.user.level == 7){
+    if(req.params.id == req.user.id || req.user.level == 5){
         Users.listarPorId(req.params.id,function(err, result){
             if(err){
                 return res.status(500).send(`Erro: ${err}`);
