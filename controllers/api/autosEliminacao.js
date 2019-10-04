@@ -367,10 +367,19 @@ AutosEliminacao.importar = async (auto, tipo, userName, userEmail) => {
                  clav:entDesignacao "${auto.entidade}" .
         }
     `
+    var queryFundo = `
+        SELECT ?ent WHERE {
+            ?ent a clav:Entidade ;
+                clav:entDesignacao "${auto.fundo}" .
+        }
+    `
     try {
         let resultEnt = await execQuery("query", queryEnt);
+        let resultFundo = await execQuery("query",queryFundo);
         resultEnt = normalize(resultEnt)
+        resultFundo = normalize(resultFundo)
         if(resultEnt.length > 0) {
+          if(resultFundo.length > 0) {
             auto.responsavel = userName
             var pedido = {
                 tipoPedido: "Importação",
@@ -385,6 +394,8 @@ AutosEliminacao.importar = async (auto, tipo, userName, userEmail) => {
             }
             var pedido = await Pedidos.criar(pedido)
             return {codigo: pedido, auto: auto }
+          }
+          else throw(`Entidade responsável pelo Fundo, "${auto.fundo}", não encontrada no sistema.`)
         }
         else throw(`Entidade ${auto.entidade} não encontrada no sistema.`)
     }  catch(erro) { throw(`Entidade ${auto.entidade} não encontrada no sistema.`) }
