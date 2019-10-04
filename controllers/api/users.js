@@ -221,9 +221,17 @@ Users.desativar = function(id, callback){
 }
 
 Users.eliminar = function(id, callback){
-    User.findByIdAndRemove(id, function(err, user){ //TODO FIX pois agora existem IDs pro CC e IDs normais
+    User.findOneAndRemove({_id: id}, function(err, user){
         if (err) {	
-            callback(err, null)
+            callback(err, null);
+        } else if(!user){
+            User.findOneAndRemove({_id: mongoose.Types.ObjectId(id)}, function(err2, user2){
+                if(err2){
+                    callback(err2, null);
+                }else{
+                    callback(null, user2);
+                }
+            })
         } else {
 		    callback(null, user);
         }

@@ -22,6 +22,7 @@ router.post('/:tipo', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 4, 5, 6, 7]), 
     if(tipo==="PGD") tipo = "AE PGD"
     else if(tipo === "RADA") tipo = "AE RADA"
     else tipo = "AE PGD/LC"
+    console.log(req.user)
     AutosEliminacao.importar(req.body.auto, tipo, req.user.name, req.user.email)
             .then(dados => {
                 res.jsonp(tipo+" adicionado aos pedidos com sucesso com codigo: "+dados.codigo)
