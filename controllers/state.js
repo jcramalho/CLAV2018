@@ -14,6 +14,14 @@ var level2Classes = []
 var level3Classes = []
 var level4Classes = []
 
+var classTreeInfo = []
+var classListInfo = []
+var classListSimpleInfo = []
+var level1ClassesInfo = []
+var level2ClassesInfo = []
+var level3ClassesInfo = []
+var level4ClassesInfo = []
+
 var notasAplicacao = []
 var exemplosNotasAplicacao = []
 var termosInd = []
@@ -36,6 +44,23 @@ exports.reset = async () => {
     }
 }
 
+exports.reload = async () => { 
+    try {
+        console.debug("A carregar as classes da BD para a cache...")
+        classTree = await loadClasses();
+        classList = level1Classes.concat(level2Classes, level3Classes, level4Classes)
+        classTreeInfo = await loadClassesInfo();
+        classListInfo = level1ClassesInfo.concat(level2ClassesInfo, level3ClassesInfo, level4ClassesInfo)
+        classListSimpleInfo = classesIndicePesquisa(classListInfo)
+        console.debug("Terminei de carregar as classes.")
+        console.debug("A criar o índice invertido...")
+        indiceInvertido = await criaIndice()
+        console.debug("Índice criado com " + indiceInvertido.length + " entradas.")
+    } catch(err) {
+        throw err
+    }
+}
+
 exports.getAllClasses = async () => { return classTree }
 exports.getClassesFlatList = async () => { return classList }
 exports.getLevel1Classes = async () => { return level1Classes }
@@ -43,7 +68,15 @@ exports.getLevel2Classes = async () => { return level2Classes }
 exports.getLevel3Classes = async () => { return level3Classes }
 exports.getLevel4Classes = async () => { return level4Classes }
 
+exports.getAllClassesInfo = async () => { return classTreeInfo }
+exports.getClassesInfoFlatList = async () => { return classListInfo }
+exports.getLevel1ClassesInfo = async () => { return level1ClassesInfo }
+exports.getLevel2ClassesInfo = async () => { return level2ClassesInfo }
+exports.getLevel3ClassesInfo = async () => { return level3ClassesInfo }
+exports.getLevel4ClassesInfo = async () => { return level4ClassesInfo }
+
 exports.getIndiceInvertido = async () => { return indiceInvertido }
+exports.pesquisaClassesIndice = async () => { return classListSimpleInfo }
 
 // Verifica a existência do código de uma classe: true == existe, false == não existe
 exports.verificaCodigo = async (cod) => {
@@ -179,4 +212,62 @@ async function loadClasses() {
         } catch(err) {
             throw err;
         }
+}
+
+async function getAllClassesInfo(list) {
+    var ret = []
+
+    for(var i=0; i < list.length; i++){
+        var classe = await Classes.retrieve('c' + list[i].codigo)
+        var copy = JSON.parse(JSON.stringify(classe))
+        delete copy.filhos
+        switch(classe.nivel){
+            case 1:
+                level1ClassesInfo.push(copy)
+                break
+            case 2:
+                level2ClassesInfo.push(copy)
+                break
+            case 3:
+                level3ClassesInfo.push(copy)
+                break
+            case 4:
+                level4ClassesInfo.push(copy)
+                break
+        }
+        classe.filhos = await getAllClassesInfo(classe.filhos)
+        ret.push(classe)
+    }
+
+    return ret
+}
+
+async function loadClassesInfo() {
+    try{
+        return await getAllClassesInfo(classTree)
+    } catch(err) {
+        throw err;
+    }
+}
+
+function classesIndicePesquisa(list){
+    var classes = []
+
+    list.forEach(c => {
+        var classe = {}
+
+        classe.idClasse = c.codigo
+        classe.titulo = c.titulo
+        classe.descricao = c.descricao
+        classe.notasAp = []
+        c.notasAp.forEach(n => classe.notasAp.push(n.nota))
+        classe.exemplosNotasAp = []
+        c.exemplosNotasAp.forEach(e => classe.exemplosNotasAp.push(e.exemplo))
+        classe.termosIndice = []
+        c.termosInd.forEach(t => classe.termosIndice.push(t.termo))
+
+        classes.push(classe)
+    })
+
+    return classes
 }
