@@ -85,6 +85,33 @@ function json2csvArray(array, key){
     return csv
 }
 
+function addJustificacao(csvLines, json, key, k){
+    var crits = []
+    var procs_legs = []
+
+    csvLines[0].push(protect('Critério ' + key.toUpperCase()))
+    csvLines[0].push(protect('ProcRefs/LegRefs ' + key.toUpperCase()))
+
+    json[key][k].forEach(just => {
+        crits.push(just.tipoId)
+
+        if(just.processos.length > 0){
+            var ps = []
+            just.processos.forEach(p => ps.push(p.procId))
+            procs_legs.push('(' + join(ps) + ')')
+        }else if(just.legislacao.length > 0){
+            var ls = []
+            just.legislacao.forEach(l => ls.push(l.legId))
+            procs_legs.push('(' + join(ls) + ')')
+        }else{
+            procs_legs.push('()')
+        }
+    })
+
+    csvLines[1].push(protect(join(crits)))
+    csvLines[1].push(protect(join(procs_legs)))
+}
+
 function convertClasse(json){
     var csvLines = [[],[]]
 
@@ -104,61 +131,46 @@ function convertClasse(json){
         }else{
             switch(key){
                 case 'pca':
-                case 'df':
+                    csvLines[0].push("Prazo de conservação administrativa")
+                    csvLines[0].push('Nota ao PCA')
+                    csvLines[0].push('Forma de contagem do PCA')
+                    csvLines[0].push('Sub Forma de contagem do PCA')
+
+                    var index = csvLines[1].length
+                    csvLines[1] = csvLines[1].concat(["", "", "", ""])
+
                     for(var k in json[key]){
-                        if(k == 'justificacao'){
-                            var crits = []
-                            var procs_legs = []
+                        if(k == 'valores'){
+                            csvLines[1][index] = protect(json[key][k])
+                        }else if(k == 'notas'){
+                            csvLines[1][index + 1] = protect(json[key][k])
+                        }else if(k == 'formaContagem'){
+                            csvLines[1][index + 2] = protect(json[key][k])
+                        }else if(k == 'subFormaContagem'){
+                            csvLines[1][index + 3] = protect(json[key][k])
+                        }else if(k == 'justificacao'){
+                            addJustificacao(csvLines, json, key, k)
+                        }
+                    }
+                    break
+                case 'df':
+                    csvLines[0].push("Destino final")
+                    csvLines[0].push('Notas ao DF')
 
-                            csvLines[0].push(protect('Critério ' + key.toUpperCase()))
-                            csvLines[0].push(protect('ProcRefs/LegRefs ' + key.toUpperCase()))
+                    var index = csvLines[1].length
+                    csvLines[1] = csvLines[1].concat(["", ""])
 
-                            json[key][k].forEach(just => {
-                                crits.push(just.tipoId)
-
-                                if(just.processos.length > 0){
-                                    var ps = []
-                                    just.processos.forEach(p => ps.push(p.procId))
-                                    procs_legs.push('(' + join(ps) + ')')
-                                }else if(just.legislacao.length > 0){
-                                    var ls = []
-                                    just.legislacao.forEach(l => ls.push(l.legId))
-                                    procs_legs.push('(' + join(ls) + ')')
-                                }else{
-                                    procs_legs.push('()')
-                                }
-                            })
-
-                            csvLines[1].push(protect(join(crits)))
-                            csvLines[1].push(protect(join(procs_legs)))
-                        }else{
-                            if(key == 'pca'){
-                                if(k == 'valores' || k == 'valor'){
-                                    csvLines[0].push(protect("Prazo de conservação administrativa"))
-                                    csvLines[1].push(protect(json[key][k]))
-                                }else if(k == 'notas'){
-                                    csvLines[0].push(protect('Nota ao PCA'))
-                                    csvLines[1].push(protect(json[key][k]))
-                                }else if(k == 'formaContagem'){
-                                    csvLines[0].push(protect('Forma de contagem do PCA'))
-                                    csvLines[1].push(protect(json[key][k]))
-                                }else if(k == 'subFormaContagem'){
-                                    csvLines[0].push(protect('Sub Forma de contagem do PCA'))
-                                    csvLines[1].push(protect(json[key][k]))
-                                }
-                            }else if(key == 'df'){
-                                if(k == 'valor'){
-                                    csvLines[0].push(protect("Destino final"))
-                                    if(json[key][k] == "NE"){
-                                        csvLines[1].push(protect(""))
-                                    }else{
-                                        csvLines[1].push(protect(json[key][k]))
-                                    }
-                                }else if(k == 'notas'){
-                                    csvLines[0].push(protect("Notas ao DF"))
-                                    csvLines[1].push(protect(json[key][k]))
-                                }
+                    for(var k in json[key]){
+                        if(k == 'valor'){
+                            if(json[key][k] == "NE"){
+                                csvLines[1][index] = protect("")
+                            }else{
+                                csvLines[1][index] = protect(json[key][k])
                             }
+                        }else if(k == 'notas'){
+                            csvLines[1][index + 1] = protect(json[key][k])
+                        }else if(k == 'justificacao'){
+                            addJustificacao(csvLines, json, key, k)
                         }
                     }
                     break

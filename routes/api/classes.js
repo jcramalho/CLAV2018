@@ -9,12 +9,20 @@ var router = express.Router();
 router.get('/', Auth.isLoggedInKey, async (req, res, next) => { 
     try {
         if(req.query.formato == "arvore"){
-            res.locals.dados = await State.getAllClasses()
+            if(req.query.info == true){
+                res.locals.dados = await State.getAllClassesInfo()
+            }else{
+                res.locals.dados = await State.getAllClasses()
+            }
             res.locals.tipo = "classes"
             next()
         }
         else if(req.query.formato == "lista"){
-            res.locals.dados = await State.getClassesFlatList()
+            if(req.query.info == true){
+                res.locals.dados = await State.getClassesInfoFlatList()
+            }else{
+                res.locals.dados = await State.getClassesFlatList()
+            }
             res.locals.tipo = "classes"
             next()
         }
@@ -39,7 +47,11 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
         else if(req.query.nivel){
             switch(req.query.nivel){
                 case '1': try {
-                        res.locals.dados = await State.getLevel1Classes()
+                        if(req.query.info == true){
+                            res.locals.dados = await State.getLevel1ClassesInfo()
+                        }else{
+                            res.locals.dados = await State.getLevel1Classes()
+                        }
                         res.locals.tipo = "classes"
                         next()
                         break  
@@ -48,7 +60,11 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
                         break
                     }
                 case '2': try {
-                        res.locals.dados = await State.getLevel2Classes()
+                        if(req.query.info == true){
+                            res.locals.dados = await State.getLevel2ClassesInfo()
+                        }else{
+                            res.locals.dados = await State.getLevel2Classes()
+                        }
                         res.locals.tipo = "classes"
                         next()
                         break
@@ -57,7 +73,11 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
                         break
                     }  
                 case '3': try {
-                        res.locals.dados = await State.getLevel3Classes()
+                        if(req.query.info == true){
+                            res.locals.dados = await State.getLevel3ClassesInfo()
+                        }else{
+                            res.locals.dados = await State.getLevel3Classes()
+                        }
                         res.locals.tipo = "classes"
                         next()
                         break 
@@ -66,7 +86,11 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
                         break
                     }
                 case '4': try {
-                        res.locals.dados = await State.getLevel4Classes()
+                        if(req.query.info == true){
+                            res.locals.dados = await State.getLevel4ClassesInfo()
+                        }else{
+                            res.locals.dados = await State.getLevel4Classes()
+                        }
                         res.locals.tipo = "classes"
                         next()
                         break 
@@ -77,13 +101,24 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
             }
         }
         else{
-            res.locals.dados = await State.getAllClasses()
+            if(req.query.info == true){
+                res.locals.dados = await State.getAllClassesInfo()
+            }else{
+                res.locals.dados = await State.getAllClasses()
+            }
             res.locals.tipo = "classes"
             next()
         }
     } catch(err) {
         res.status(500).send(`Erro na listagem geral das classes: ${err}`)
     }
+})
+
+// Devolve indíce de pesquisa para as classes
+router.get('/indicePesquisa', Auth.isLoggedInKey, (req, res) => {
+    State.pesquisaClassesIndice()
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.status(500).send(`Erro na obtenção do índice de pesquisa: ${erro}`))
 })
 
 // Devolve a informação de uma classe

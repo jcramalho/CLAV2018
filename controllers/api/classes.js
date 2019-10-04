@@ -163,8 +163,8 @@ Classes.retrieve = async id => {
         classe.pai.titulo = base[0].tituloPai
         classe.titulo = base[0].titulo
         classe.descricao = base[0].desc
-        classe.tipoProc = base[0].procTipo
-        classe.procTrans = base[0].procTrans
+        classe.tipoProc = base[0].procTipo || ""
+        classe.procTrans = base[0].procTrans || ""
 
         classe.filhos = await Classes.descendencia(id)
         if(classe.filhos.length > 0){
