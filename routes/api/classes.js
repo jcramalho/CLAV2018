@@ -28,7 +28,12 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
         }
         // Devolve a lista dos processos comuns
         else if(req.query.tipo == "comum"){
-            res.locals.dados = await State.getProcessosComuns()
+            if(req.query.info == "completa"){
+                res.locals.dados = await State.getProcessosComunsInfo()
+            }else{
+                res.locals.dados = await State.getProcessosComuns()
+            }
+
             res.locals.tipo = "classes"
             next()
         }
@@ -40,7 +45,12 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
             if( req.query.tips ) {
                 var tips = req.query.tips.split(',');
             }
-            res.locals.dados = await State.getProcessosEspecificos(ents, tips)
+
+            if(req.query.info == "completa"){
+                res.locals.dados = await State.getProcessosEspecificosInfo(ents, tips)
+            }else{
+                res.locals.dados = await State.getProcessosEspecificos(ents, tips)
+            }
             res.locals.tipo = "classes"
             next()
         }
