@@ -63,8 +63,11 @@ exports.reload = async () => {
 
         classTree = await loadClasses();
         classList = level1Classes.concat(level2Classes, level3Classes, level4Classes)
+        console.debug("Informação base das classes carregada...")
+        console.debug("A carregar as informação completa das classes...")
         classTreeInfo = await loadClassesInfo();
         classListInfo = level1ClassesInfo.concat(level2ClassesInfo, level3ClassesInfo, level4ClassesInfo)
+        console.debug("A filtrar informação para o índice de pesquisa...")
         classListSimpleInfo = classesIndicePesquisa(classListInfo)
         console.debug("Terminei de carregar as classes.")
         console.debug("A criar o índice invertido...")
