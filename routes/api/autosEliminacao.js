@@ -1,5 +1,7 @@
+
 var Auth = require('../../controllers/auth.js');
 var AutosEliminacao = require('../../controllers/api/autosEliminacao.js');
+var User = require('../../controllers/api/users.js')
 
 var express = require('express');
 var router = express.Router();
@@ -22,12 +24,17 @@ router.post('/:tipo', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 4, 5, 6, 7]), 
     if(tipo==="PGD") tipo = "AE PGD"
     else if(tipo === "RADA") tipo = "AE RADA"
     else tipo = "AE PGD/LC"
-    console.log(req.user)
-    AutosEliminacao.importar(req.body.auto, tipo, req.user.name, req.user.email)
-            .then(dados => {
-                res.jsonp(tipo+" adicionado aos pedidos com sucesso com codigo: "+dados.codigo)
-            })
-            .catch(erro => res.status(500).json(`Erro na adição do AE: ${erro}`))
+    User.getUserById(req.user.id, function (err, user) {
+        if(err ) res.status(500).json(`Erro na adição do AE: ${err}`)
+        else {
+            AutosEliminacao.importar(req.body.auto, tipo, user.name, user.email)
+                .then(dados => {
+                    res.jsonp(tipo+" adicionado aos pedidos com sucesso com codigo: "+dados.codigo)
+                })
+                .catch(erro => res.status(500).json(`Erro na adição do AE: ${erro}`))
+        }
+    });
+        
 })
 
 
