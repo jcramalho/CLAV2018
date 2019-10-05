@@ -47,6 +47,20 @@ exports.reset = async () => {
 exports.reload = async () => { 
     try {
         console.debug("A carregar as classes da BD para a cache...")
+        level1Classes = []
+        level2Classes = []
+        level3Classes = []
+        level4Classes = []
+
+        level1ClassesInfo = []
+        level2ClassesInfo = []
+        level3ClassesInfo = []
+        level4ClassesInfo = []
+
+        notasAplicacao = []
+        exemplosNotasAplicacao = []
+        termosInd = []
+
         classTree = await loadClasses();
         classList = level1Classes.concat(level2Classes, level3Classes, level4Classes)
         classTreeInfo = await loadClassesInfo();
@@ -221,7 +235,7 @@ async function getAllClassesInfo(list) {
         var classe = await Classes.retrieve('c' + list[i].codigo)
         var copy = JSON.parse(JSON.stringify(classe))
         delete copy.filhos
-        switch(classe.nivel){
+        switch(copy.nivel){
             case 1:
                 level1ClassesInfo.push(copy)
                 break

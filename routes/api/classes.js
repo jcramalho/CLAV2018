@@ -9,7 +9,7 @@ var router = express.Router();
 router.get('/', Auth.isLoggedInKey, async (req, res, next) => { 
     try {
         if(req.query.formato == "arvore"){
-            if(req.query.info == true){
+            if(req.query.info == "completa"){
                 res.locals.dados = await State.getAllClassesInfo()
             }else{
                 res.locals.dados = await State.getAllClasses()
@@ -18,7 +18,7 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
             next()
         }
         else if(req.query.formato == "lista"){
-            if(req.query.info == true){
+            if(req.query.info == "completa"){
                 res.locals.dados = await State.getClassesInfoFlatList()
             }else{
                 res.locals.dados = await State.getClassesFlatList()
@@ -47,7 +47,7 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
         else if(req.query.nivel){
             switch(req.query.nivel){
                 case '1': try {
-                        if(req.query.info == true){
+                        if(req.query.info == "completa"){
                             res.locals.dados = await State.getLevel1ClassesInfo()
                         }else{
                             res.locals.dados = await State.getLevel1Classes()
@@ -60,7 +60,7 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
                         break
                     }
                 case '2': try {
-                        if(req.query.info == true){
+                        if(req.query.info == "completa"){
                             res.locals.dados = await State.getLevel2ClassesInfo()
                         }else{
                             res.locals.dados = await State.getLevel2Classes()
@@ -73,7 +73,7 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
                         break
                     }  
                 case '3': try {
-                        if(req.query.info == true){
+                        if(req.query.info == "completa"){
                             res.locals.dados = await State.getLevel3ClassesInfo()
                         }else{
                             res.locals.dados = await State.getLevel3Classes()
@@ -86,7 +86,7 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
                         break
                     }
                 case '4': try {
-                        if(req.query.info == true){
+                        if(req.query.info == "completa"){
                             res.locals.dados = await State.getLevel4ClassesInfo()
                         }else{
                             res.locals.dados = await State.getLevel4Classes()
@@ -101,7 +101,7 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
             }
         }
         else{
-            if(req.query.info == true){
+            if(req.query.info == "completa"){
                 res.locals.dados = await State.getAllClassesInfo()
             }else{
                 res.locals.dados = await State.getAllClasses()
