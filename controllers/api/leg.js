@@ -237,3 +237,25 @@ Leg.regula = id => {
     return execQuery("query", query)
         .then(response => normalize(response));
 };
+
+
+/**
+ * Verifica se um determinado numero de legislação existe no sistema.
+ * 
+ * @param {Legislacao} legislacao
+ * @return {Promise<[Legislacao] | Error>} promessa que quando cumprida contém a
+ * lista das legislacoes que são do Tipo "Portaria"
+ */
+Leg.portarias = () => {
+    const query = `
+    SELECT * WHERE {
+        ?legislacao a clav:Legislacao ;
+             clav:diplomaTipo "Portaria" ;
+             clav:diplomaNumero ?numero ;
+             clav:diplomaSumario ?sumario ;
+             clav:diplomaEstado ?estado
+    }`;
+
+    return execQuery("query", query)
+        .then(response => normalize(response));
+};
