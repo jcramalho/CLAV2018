@@ -1,0 +1,18 @@
+summary: Devolve o índice de pesquisa das classes
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
+tags:
+  - classes
+description: Devolve o índice de pesquisa das classes. Para cada classe devolve a informação do código (idClasse), do titulo, da descrição, uma lista com as Notas de Aplicação, uma lista com os Exemplos de Notas de Aplicação e uma lista com os Termos Índice.
+responses:
+  200:
+    description: Devolve o índice de pesquisa das classes
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  500:
+    description: Erro
