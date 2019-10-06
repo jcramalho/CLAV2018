@@ -29,6 +29,8 @@ var termosInd = []
 // Índice invertido de suporte ao motor de busca: 
 //  [ {chave: "texto duma nota, exemplo ou ti", processo:{codigo:"cxxx", titulo:"..."}}, ...]
 var indiceInvertido = []
+// Índice de pesquisa para v-trees: 
+var indicePesquisa = []
 
 exports.reset = async () => { 
     try {
@@ -38,7 +40,9 @@ exports.reset = async () => {
         console.debug("Terminei de carregar as classes.")
         console.debug("A criar o índice invertido...")
         indiceInvertido = await criaIndice()
-        console.debug("Índice criado com " + indiceInvertido.length + " entradas.")
+        console.debug("Índice invertido criado com " + indiceInvertido.length + " entradas.")
+        indicePesquisa = await criaIndicePesquisa()
+        console.debug("Índice de pesquisa criado com " + indicePesquisa.length + " entradas.")
     } catch(err) {
         throw err
     }
@@ -72,7 +76,9 @@ exports.reload = async () => {
         console.debug("Terminei de carregar as classes.")
         console.debug("A criar o índice invertido...")
         indiceInvertido = await criaIndice()
-        console.debug("Índice criado com " + indiceInvertido.length + " entradas.")
+        console.debug("Índice invertido criado com " + indiceInvertido.length + " entradas.")
+        indicePesquisa = await criaIndicePesquisa()
+        console.debug("Índice de pesquisa criado com " + indicePesquisa.length + " entradas.")
     } catch(err) {
         throw err
     }
@@ -93,6 +99,7 @@ exports.getLevel3ClassesInfo = async () => { return level3ClassesInfo }
 exports.getLevel4ClassesInfo = async () => { return level4ClassesInfo }
 
 exports.getIndiceInvertido = async () => { return indiceInvertido }
+exports.getIndicePesquisa = async () => { return indicePesquisa }
 exports.pesquisaClassesIndice = async () => { return classListSimpleInfo }
 
 // Verifica a existência do código de uma classe: true == existe, false == não existe
@@ -200,7 +207,7 @@ async function criaIndice(){
     return indice
 }
 
-async function criaIndiceNovo(){
+async function criaIndicePesquisa(){
     let notas = await NotasAp.todasNotasAp()
     let exemplos = await ExemplosNotasAp.todosExemplosNotasAp()
     let tis = await TermosIndice.listar()
