@@ -154,7 +154,7 @@ exports.getProcessosEspecificos = async (entidades, tipologias) => {
     return PE;
 }
 
-async function criaIndice(){
+async function criaIndiceInvertido(){
     let notas = await NotasAp.todasNotasAp()
     let exemplos = await ExemplosNotasAp.todosExemplosNotasAp()
     let tis = await TermosIndice.listar()
@@ -167,6 +167,55 @@ async function criaIndice(){
     indice = indice.concat(exemplos.map(e => ({chave: e.exemplo, processo: {codigo: e.cProc, titulo: e.tituloProc}})))
     indice = indice.concat(tis.map(t => ({chave: t.termo, processo: {codigo: t.codigoClasse, titulo: t.tituloClasse}})))
 
+    return indice
+}
+
+async function criaIndice(){
+    let notas = await NotasAp.todasNotasAp()
+    let exemplos = await ExemplosNotasAp.todosExemplosNotasAp()
+    let tis = await TermosIndice.listar()
+    let indice = []
+    
+    //  [ {codigo:"cxxx", titulo:"...", notas: [], exemplos:[], tis:[]}, ...]
+    indice = indice.concat(classList.map(c => ({codigo: c.codigo, titulo: c.titulo, notas:[], exemplos:[], tis:[]})))
+    // Vamos colocar as notas no processo certo
+    notas.forEach(n => {
+        var index = indice.findIndex(c => {
+            return ('c'+c.codigo) == n.cProc
+        })
+        if(index != -1){
+            indice[index].notas.push(n.nota)
+        }
+        else{
+            console.log('Cálculo do índice::Notas:: não encontrei a classe com código: ' + n.cProc)
+        }
+    })
+    
+    // Vamos fazer o mesmo para os exemplos
+    exemplos.forEach(e => {
+        var index = indice.findIndex(c => {
+            return ('c'+c.codigo) == e.cProc
+        })
+        if(index != -1){
+            indice[index].exemplos.push(e.exemplo)
+        }
+        else{
+            console.log('Cálculo do índice::Exemplos:: não encontrei a classe com código: ' + e.cProc)
+        }
+    })
+    // Vamos fazer o mesmo para os tis
+    tis.forEach(t => {
+        var index = indice.findIndex(c => {
+            return ('c'+c.codigo) == t.codigoClasse
+        })
+        if(index != -1){
+            indice[index].tis.push(t.termo)
+        }
+        else{
+            console.log('Cálculo do índice::Termos:: não encontrei a classe com código: ' + t.codigoClasse)
+        }
+    }) 
+    
     return indice
 }
 
