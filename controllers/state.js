@@ -147,6 +147,12 @@ exports.getProcessosComuns = async () => {
     return PC;
 }
 
+//Devolve a lista dos processos de negócio comuns, ou seja, aqueles com :processoTipoVC :vc_processoTipo_pc
+exports.getProcessosComunsInfo = async () => {
+    let PC = classListInfo.filter(c => c.tipoProc == "Processo Comum")
+    return PC;
+}
+
 //Devolve a lista dos processos de negócio especificos, ou seja, aqueles com :processoTipoVC :vc_processoTipo_pc
 // especificos da entidade em causa e das tipologias a que este pertence
 exports.getProcessosEspecificos = async (entidades, tipologias) => {
@@ -154,7 +160,31 @@ exports.getProcessosEspecificos = async (entidades, tipologias) => {
     return PE;
 }
 
-async function criaIndiceInvertido(){
+function filterEntsTips(classe, ent_tip){
+    var ret = classe.tipoProc == "Processo Específico"
+
+    if(ret && ent_tip.length > 0){
+        var donos = classe.donos.filter(d => ent_tip.includes(d.idDono))
+        var parts = classe.participantes.filter(p => ent_tip.includes(p.idParticipante)) 
+        ret = donos.length > 0 || parts.length > 0
+    }
+
+    return ret
+}
+
+//Devolve a lista dos processos de negócio especificos, ou seja, aqueles com :processoTipoVC :vc_processoTipo_pc
+// especificos da entidade em causa e das tipologias a que este pertence
+exports.getProcessosEspecificosInfo = async (entidades, tipologias) => {
+    entidades = entidades || []
+    tipologias = tipologias || []
+
+    let ent_tip = entidades.concat(tipologias)
+    let PE = classListInfo.filter(c => filterEntsTips(c, ent_tip))
+
+    return PE;
+}
+
+async function criaIndice(){
     let notas = await NotasAp.todasNotasAp()
     let exemplos = await ExemplosNotasAp.todosExemplosNotasAp()
     let tis = await TermosIndice.listar()
@@ -170,7 +200,7 @@ async function criaIndiceInvertido(){
     return indice
 }
 
-async function criaIndice(){
+async function criaIndiceNovo(){
     let notas = await NotasAp.todasNotasAp()
     let exemplos = await ExemplosNotasAp.todosExemplosNotasAp()
     let tis = await TermosIndice.listar()

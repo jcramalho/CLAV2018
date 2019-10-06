@@ -43,7 +43,6 @@ module.exports = function(passport) {
         secretOrKey: secretKey.userKey,
         algorithms: ["HS256"],
         jwtFromRequest: ExtractJWT.fromExtractors([
-            ExtractJWT.fromBodyField('token'),
             ExtractJWT.fromUrlQueryParameter('token'),
             ExtractJWT.fromAuthHeaderWithScheme('token')
         ])

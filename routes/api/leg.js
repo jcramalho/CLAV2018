@@ -34,6 +34,13 @@ router.get('/', Auth.isLoggedInKey, (req, res) => {
     
 });
 
+// Devolve a lista de legislações do tipo Portaria
+router.get('/portarias', Auth.isLoggedInKey, (req, res) => {
+    return Leg.portarias()
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.status(500).send(`Erro na consulta da leg de portarias: ${erro}`));
+});
+
 // Devolve a informação associada a um documento legislativo: tipo data numero sumario link entidades
 router.get('/:id', Auth.isLoggedInKey, (req, res) => {
     return Leg.consultar(req.params.id)
