@@ -1,4 +1,4 @@
-summary: Devolve as classes em vários formatos podendo ser filtradas por nível
+summary: Devolve as classes em vários formatos podendo ser filtradas por nível e por tipo
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []
