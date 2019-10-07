@@ -37,6 +37,12 @@ Auth.generateTokenEmail = function (user) {
     return token
 }
 
+Auth.generateTokenUserRecuperar = function (user) {
+    var token = jwt.sign({id: user._id, name: user.name}, secretKey.userKey, {expiresIn: '30m'});
+
+    return token
+}
+
 Auth.generateTokenUser = function (user) {
     var token = jwt.sign({id: user._id, level: user.level, entidade: user.entidade}, secretKey.userKey, {expiresIn: '8h'});
 

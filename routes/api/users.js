@@ -129,8 +129,8 @@ router.post('/recuperar', function (req, res) {
                 if(err) 
                     return res.status(500).send(`Erro: ${err}`);
                 if(user.local.password != undefined){
-                    var token = Auth.generateTokenEmail(user);
-                    Mailer.sendEmailRecuperacao(req.body.email, req.body.url.split('/recuperacao')[0]+'/alteracaoPassword?jwt='+token);
+                    var token = Auth.generateTokenUserRecuperar(user);
+                    Mailer.sendEmailRecuperacao(req.body.email, req.body.url.split('/recuperacao')[0]+'/alteracaoPasswordRecuperacao?jwt='+token);
                     res.send('Email enviado com sucesso!')
                 }else{
                     res.status(500).send('Este utilizador foi registado na plataforma CLAV através do Cartão de Cidadão, não existindo uma password para o mesmo!')
