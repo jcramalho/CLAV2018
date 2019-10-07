@@ -59,7 +59,11 @@ router.post('/verificarNumero', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 4, 5
 		console.debug(req.body)
 		res.jsonp(await Leg.existe(req.body))
 	} catch (err) {
+<<<<<<< HEAD
 		res.status(500).send(`Erro na verificação do número do diploma: ${err}`)
+=======
+		res.status(500).send(`Erro na verificação da sigla: ${err}`)
+>>>>>>> cb98da1778248e07afc78b89f071314de822b4f3
 	}
 })
 
