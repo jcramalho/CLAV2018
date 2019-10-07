@@ -398,5 +398,5 @@ AutosEliminacao.importar = async (auto, tipo, userName, userEmail) => {
           else throw(`Entidade responsável pelo Fundo, "${auto.fundo}", não encontrada no sistema.`)
         }
         else throw(`Entidade ${auto.entidade} não encontrada no sistema.`)
-    }  catch(erro) { throw(`Entidade ${auto.entidade} não encontrada no sistema.`) }
+    }  catch(erro) { throw(`Erro no servidor`) }
 };

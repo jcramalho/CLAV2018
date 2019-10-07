@@ -39,7 +39,19 @@ router.get('/clavToken', (req, res) => {
             }else{
                 jwt.verify(chave.key, secretKey.apiKey, function(err, decoded){
                     if(err){
-                        res.status(500).send(err);
+                        Chaves.renovar(chave.id, function(err, chave){
+                            if(err){
+                                res.status(500).send(err);
+                            }else{
+                                jwt.verify(chave.key, secretKey.apiKey, function(err, decoded){
+                                    if(err){
+                                        res.status(500).send(err);
+                                    }else{
+                                        res.send({token: chave.key, exp: decoded.exp})
+                                    }
+                                })
+                            }
+                        })
                     }else{
                         res.send({token: chave.key, exp: decoded.exp})
                     }

@@ -212,7 +212,7 @@ router.put('/alterarEmail/:id', Auth.isLoggedInUser, function (req, res) {
 });
 
 router.put('/alterarPassword/:id', Auth.isLoggedInUser, function (req, res) {
-    if(req.params.id == req.user.id || req.user.level >= 5){
+    if(req.params.id == req.user.id || req.user.level >= 6){
         Users.atualizarPassword(req.params.id, req.body.password, function (err, cb) {
             if (err) 
                 return res.status(500).send(`Erro: ${err}`);

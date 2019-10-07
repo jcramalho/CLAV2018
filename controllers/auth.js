@@ -52,7 +52,6 @@ Auth.generateTokenKey = function () {
 //verifica se está forneceu chave API. Em caso afirmativo verifica se é válido. Caso não tenha fornecido uma chave API verifica se forneceu antes um token.
 Auth.isLoggedInKey = async function (req, res, next) {
     var key = ExtractJWT.fromExtractors([
-        ExtractJWT.fromBodyField('apikey'),
         ExtractJWT.fromUrlQueryParameter('apikey'),
         ExtractJWT.fromAuthHeaderWithScheme('apikey')
     ])(req)
