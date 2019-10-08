@@ -54,7 +54,7 @@ router.get('/:id/regula', Auth.isLoggedInKey, function(req, res) {
 })
 
 // Verifica a existência do número de um diploma/legislacao: true == existe, false == não existe
-router.post('/verificarNumero', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 4, 5, 6, 7]), async (req, res) => {
+router.post('/verificarNumero', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), async (req, res) => {
 	try {
 		res.jsonp(await Leg.existe(req.body))
 	} catch (err) {

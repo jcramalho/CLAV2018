@@ -143,7 +143,7 @@ router.get('/:id', Auth.isLoggedInKey, async function (req, res, next) {
 })
 
 // Verifica se um determinado código de classe já existe
-router.get('/verificar/:codigo', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 4, 5, 6, 7]), async (req, res) => {
+router.get('/verificar/:codigo', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), async (req, res) => {
     try {
         res.jsonp(await State.verificaCodigo(req.params.codigo)) 
     } catch(err) {
@@ -250,7 +250,7 @@ router.get('/:id/df', Auth.isLoggedInKey, (req, res) => {
 })
 
 // Verifica se um determinado título de classe já existe
-router.post('/verificarTitulo', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 4, 5, 6, 7]), async (req, res) => {
+router.post('/verificarTitulo', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), async (req, res) => {
     try {
         res.jsonp(await State.verificaTitulo(req.body.titulo))
     } catch(err) {
@@ -259,7 +259,7 @@ router.post('/verificarTitulo', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 4, 5
 })
 
 // Verifica se uma determinada notaAplicação já existe
-router.post('/verificarNA', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 4, 5, 6, 7]), async (req, res) => {
+router.post('/verificarNA', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), async (req, res) => {
     try {
         res.jsonp(await State.verificaNA(req.body.na))
     } catch(err) {
@@ -268,7 +268,7 @@ router.post('/verificarNA', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 4, 5, 6,
 })
 
 // Verifica se um determinado exemplo de nota de aplicação já existe
-router.post('/verificarExemploNA', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 4, 5, 6, 7]), async (req, res) => {
+router.post('/verificarExemploNA', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), async (req, res) => {
     try {
         res.jsonp(await State.verificaExemploNA(req.body.exemplo))
     } catch(err) {
@@ -277,7 +277,7 @@ router.post('/verificarExemploNA', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 4
 })
 
 // Verifica se um determinado termo de índice já existe
-router.post('/verificarTI', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 4, 5, 6, 7]), async (req, res) => {
+router.post('/verificarTI', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), async (req, res) => {
     try {
         res.jsonp(await State.verificaTI(req.body.ti))
     } catch(err) {
