@@ -111,7 +111,8 @@ router.post("/login", (req, res, next) => {
                 res.send({
                     token: token, 
                     name : user.name, 
-                    entidade: user.entidade
+                    entidade: user.entidade,
+                    level: user.level
                 })
             })
         }
