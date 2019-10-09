@@ -79,9 +79,9 @@ Auth.isLoggedInKey = async function (req, res, next) {
                                 if(err){
                                     res.status(500).send('Ocorreu um erro ao atualizar chave API.');
                                 }else{
-                                    Calls.newCall(Calls.getRoute(req), req.method, resp[0]._id, "Chave")
-                                        .then(data => next())    
-                                        .catch(err => res.status(500).send('Ocorreu um erro ao realizar logging do pedido'))
+                                    res.locals.id = resp[0]._id
+                                    res.locals.idType = "Chave"
+                                    next()
                                 }
                             })
                         }else{
@@ -104,9 +104,9 @@ Auth.isLoggedInUser = function (req, res, next) {
         req.logIn(user, function(err) {
             if (err) { return res.status(401).send("Unauthorized") }
 
-            Calls.newCall(Calls.getRoute(req), req.method, req.user.id, "User")
-                .then(data => next())
-                .catch(err => res.status(401).send("Unauthorized"))
-        });
+            res.locals.id = req.user.id
+            res.locals.idType = "User"
+            next()
+        })
     })(req, res, next)
 }

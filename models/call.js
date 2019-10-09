@@ -20,11 +20,22 @@ var CallSchema = new mongoose.Schema({
             type: String,
             required: true
         },
-        nCalls: {
-            type: Number,
-            required: true,
-            default: 0
-        }
+        accesses: [{
+            httpStatus: {
+                type: Number,
+                required: true
+            },
+            nCalls: {
+                type: Number,
+                required: true,
+                default: 0
+            },
+            lastAccess: {
+                type: Date,
+                default: Date.now(),
+                required: true
+            }
+        }]
     }]
 });
 
