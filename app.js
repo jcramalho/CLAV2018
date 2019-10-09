@@ -7,6 +7,8 @@ var logger = require('morgan')
 
 //Funcao auxiliar para contar numero de GET e POST
 var apiStats = require('./models/api')
+var Calls = require('./controllers/api/calls')
+
 function getRoute(req){
     const route = req.route ? req.route.path : '' // check if the handler exist
     const baseUrl = req.baseUrl ? req.baseUrl : '' // adding the base url if the handler is a child of another handler
@@ -20,6 +22,10 @@ app.use((req, res, next) => {
         //console.log('_DEBUG_:' + `${req.method} ${getRoute(req)} ${res.statusCode}`) 
         if(getRoute(req).includes('/api/')){
             apiStats.addUsage(req.method, getRoute(req));
+        }
+
+        if(res.locals.id && res.locals.idType){
+            Calls.newCall(Calls.getRoute(req), req.method, res.locals.id, res.locals.idType, res.statusCode)
         }
     });
     next();

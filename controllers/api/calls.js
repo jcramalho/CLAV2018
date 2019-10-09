@@ -2,56 +2,58 @@ var Call = require('./../../models/call');
 var Calls = module.exports
 
 Calls.getRoute = function(req){
-    const route = req.route ? req.route.path : '' // check if the handler exist
-    const baseUrl = req.baseUrl ? req.baseUrl : '' // adding the base url if the handler is a child of another handler
-
-    return route ? `${baseUrl === '/' ? '' : baseUrl + route}` : 'unknown route'
+    return req.originalUrl.replace(/\?.*$/,"")
 }
 
-Calls.newCall = async function(route, method, id, type){
+Calls.newCall = async function(route, method, id, type, httpStatus){
     var call = await Call.findOne({route: route, method: method})
 
     if(call){
-        call = await Call.findOne(
-        {
-            route: route,
-            method: method,
-            accesses: {$elemMatch: {id: id, type: type}}
-        })
+        var len = call.accesses.length
+        var index = -1
 
-        if(call){
-            return Call.findOneAndUpdate(
-            {
-                route: route,
-                method: method,
-                accesses: {$elemMatch: {id: id, type: type}}
-            },
-            {
-                $inc: {
-                    "accesses.$.nCalls": 1
+        for(var i=0; i < len && index == -1; i++){
+            if(call.accesses[i].id == id && call.accesses[i].type == type){
+                index = i
+            }
+        }
+
+        if(index != -1){
+            var len2 = call.accesses[index].accesses.length
+            var index2 = -1
+
+            for(var j=0; j < len2 && index2 == -1; j++){
+                if(call.accesses[index].accesses[j]._id == httpStatus){
+                    index2 = j
                 }
-            },
-            {
-                useFindAndModify: false
-            })
+            }
+
+            if(index2 != -1){
+                call.accesses[index].accesses[index2].nCalls++
+                call.accesses[index].accesses[index2].lastAccess = Date.now()
+
+                return call.save()
+            }else{
+                call.accesses[index].accesses.push({
+                    _id: httpStatus,
+                    nCalls: 1,
+                    lastAccess: Date.now()
+                })
+
+                return call.save()
+            }   
         }else{
-            return Call.findOneAndUpdate(
-            {
-                route: route,
-                method: method
-            },
-            {
-                $push: {
-                    accesses: {
-                        id: id,
-                        type: type,
-                        nCalls: 1
-                    }
-                }
-            },
-            {
-                useFindAndModify: false
+            call.accesses.push({
+                id: id,
+                type: type,
+                accesses: [{
+                    _id: httpStatus,
+                    nCalls: 1,
+                    lastAccess: Date.now()
+                }]
             })
+
+            return call.save()
         }   
     }else{
         return Call.create({
@@ -60,7 +62,11 @@ Calls.newCall = async function(route, method, id, type){
             accesses: [{
                 id: id,
                 type: type,
-                nCalls: 1
+                accesses: [{
+                    _id: httpStatus,
+                    nCalls: 1,
+                    lastAccess: Date.now()
+                }]
             }]
         })
     }
