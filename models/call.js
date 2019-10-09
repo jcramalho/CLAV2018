@@ -21,7 +21,7 @@ var CallSchema = new mongoose.Schema({
             required: true
         },
         accesses: [{
-            httpStatus: {
+            _id: { //httpStatus
                 type: Number,
                 required: true
             },
@@ -37,6 +37,8 @@ var CallSchema = new mongoose.Schema({
             }
         }]
     }]
+}, {
+    usePushEach: true
 });
 
 module.exports = mongoose.model('Call', CallSchema, 'calls');

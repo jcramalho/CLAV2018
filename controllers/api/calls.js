@@ -9,91 +9,51 @@ Calls.newCall = async function(route, method, id, type, httpStatus){
     var call = await Call.findOne({route: route, method: method})
 
     if(call){
-        call = await Call.findOne(
-        {
-            route: route,
-            method: method,
-            accesses: {$elemMatch: {id: id, type: type}}
-        })
+        var len = call.accesses.length
+        var index = -1
 
-        if(call){
-            call = await Call.findOne(
-            {
-                route: route,
-                method: method,
-                accesses: {
-                    $elemMatch: {
-                        id: id,
-                        type: type,
-                        accesses: {$elemMatch: {httpStatus: httpStatus}}
-                    }
+        for(var i=0; i < len && index == -1; i++){
+            if(call.accesses[i].id == id && call.accesses[i].type == type){
+                index = i
+            }
+        }
+
+        if(index != -1){
+            var len2 = call.accesses[index].accesses.length
+            var index2 = -1
+
+            for(var j=0; j < len2 && index2 == -1; j++){
+                if(call.accesses[index].accesses[j]._id == httpStatus){
+                    index2 = j
                 }
-            })
+            }
 
-            if(call){
-                var len = call.accesses.length
-                var f1 = false
-                var f2 = false
-
-                for (var i=0; i < len && !f1; i++){
-                    if(call.accesses[i].id == id && call.accesses[i].type == type){
-                        len = call.accesses[i].accesses.length
-                        f1 = true
-
-                        for(var j=0; j < len && !f2; j++){
-                            if(call.accesses[i].accesses[j].httpStatus == httpStatus){
-                                f2 = true
-
-                                call.accesses[i].accesses[j].nCalls++
-                                call.accesses[i].accesses[j].lastAccess = Date.now()
-                            }
-                        }
-                    }
-                }
+            if(index2 != -1){
+                call.accesses[index].accesses[index2].nCalls++
+                call.accesses[index].accesses[index2].lastAccess = Date.now()
 
                 return call.save()
             }else{
-                return Call.updateOne(
-                {
-                    route: route,
-                    method: method,
-                    accesses: {$elemMatch: {id: id, type: type}}
-                },
-                {
-                    $push: {
-                        "accesses.$.accesses": {
-                            httpStatus: httpStatus,
-                            nCalls: 1,
-                            lastAccess: Date.now()
-                        }
-                    },
-                },
-                {
-                    useFindAndModify: false
+                call.accesses[index].accesses.push({
+                    _id: httpStatus,
+                    nCalls: 1,
+                    lastAccess: Date.now()
                 })
+
+                return call.save()
             }   
         }else{
-            return Call.updateOne(
-            {
-                route: route,
-                method: method
-            },
-            {
-                $push: {
-                    accesses: {
-                        id: id,
-                        type: type,
-                        accesses: [{
-                            httpStatus: httpStatus,
-                            nCalls: 1,
-                            lastAccess: Date.now()
-                        }]
-                    }
-                }
-            },
-            {
-                useFindAndModify: false
+            call.accesses.push({
+                id: id,
+                type: type,
+                accesses: [{
+                    _id: httpStatus,
+                    nCalls: 1,
+                    lastAccess: Date.now()
+                }]
             })
+
+            return call.save()
         }   
     }else{
         return Call.create({
@@ -103,7 +63,7 @@ Calls.newCall = async function(route, method, id, type, httpStatus){
                 id: id,
                 type: type,
                 accesses: [{
-                    httpStatus: httpStatus,
+                    _id: httpStatus,
                     nCalls: 1,
                     lastAccess: Date.now()
                 }]
