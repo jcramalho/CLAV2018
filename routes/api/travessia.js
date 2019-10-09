@@ -4,7 +4,7 @@ var Trav = require('../../controllers/travessia.js');
 var express = require('express');
 var router = express.Router();
 
-router.get('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 4, 5, 6, 7]), async (req, res) => {
+router.get('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), async (req, res) => {
     try {
         res.jsonp(await Trav.loadTravessias())
     } catch (error) {
@@ -12,7 +12,7 @@ router.get('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 4, 5, 6, 7]), async 
     }
 })
 
-router.get('/:id', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 4, 5, 6, 7]), async function(req,res){
+router.get('/:id', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), async function(req,res){
     try {
         res.jsonp(await Trav.travProc(req.params.id))
     } catch (err) {

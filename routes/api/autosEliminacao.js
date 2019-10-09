@@ -19,7 +19,7 @@ router.get('/:id', Auth.isLoggedInKey, function (req, res) {
 })
 
 //Importar um AE
-router.post('/:tipo', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 4, 5, 6, 7]), (req, res) => {
+router.post('/:tipo', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), (req, res) => {
     var tipo = req.params.tipo
     if(tipo==="PGD") tipo = "AE PGD"
     else if(tipo === "RADA") tipo = "AE RADA"

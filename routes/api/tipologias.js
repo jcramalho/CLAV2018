@@ -45,7 +45,7 @@ router.get('/:id/intervencao/participante', Auth.isLoggedInKey, (req, res) => {
 })
 
 // Verifica a existência da sigla de uma tipologia: true == existe, false == não existe
-router.post('/verificarSigla', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 4, 5, 6, 7]), async (req, res) => {
+router.post('/verificarSigla', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), async (req, res) => {
 	try {
 		res.jsonp(await Tipologias.existeSigla(req.body.sigla))
 	} catch (err) {
@@ -54,7 +54,7 @@ router.post('/verificarSigla', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 4, 5,
 })
 
 // Verifica a existência da designação de uma tipologia: true == existe, false == não existe
-router.post('/verificarDesignacao', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 4, 5, 6, 7]), async (req, res) => {
+router.post('/verificarDesignacao', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), async (req, res) => {
 	try {
 		res.jsonp(await Tipologias.existeDesignacao(req.body.designacao))
 	} catch (err) {

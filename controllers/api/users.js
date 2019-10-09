@@ -76,6 +76,9 @@ Users.listar = function(req, callback){
                         case 4:
                             item["level"] = 'Utilizador Validador';
                             break;
+                        case 3.5:
+                            item["level"] = 'Utilizador Validador (AD)';
+                            break;
                         case 3:
                             item["level"] = 'Utilizador Avançado';
                             break;

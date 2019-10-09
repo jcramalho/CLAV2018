@@ -38,7 +38,7 @@ router.get('/:id', Auth.isLoggedInKey, function (req, res) {
         });
 })
 
-router.post('/CSV', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 4, 5, 6, 7]), async function (req, res){
+router.post('/CSV', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), async function (req, res){
     var form = new formidable.IncomingForm()
 
     form.parse(req, async (error, fields, formData) => {

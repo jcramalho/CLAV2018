@@ -18,7 +18,7 @@ router.get('/:id', Auth.isLoggedInKey, function (req, res) {
 })
 
 //Update da Legenda e da Descrição de um VC
-router.put('/:id', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 4, 5, 6, 7]), (req, res) => {
+router.put('/:id', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), (req, res) => {
     var label = req.body.label
     var desc = req.body.desc
     if(typeof label !== "undefined" && typeof desc !== "undefined")
@@ -33,7 +33,7 @@ router.put('/:id', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 4, 5, 6, 7]), (re
 })
 
 //Adiciona um VC
-router.post('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 4, 5, 6, 7]), (req, res) => {
+router.post('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), (req, res) => {
     var id = req.body.id
     var label = req.body.label
     var desc = req.body.desc
@@ -49,7 +49,7 @@ router.post('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 4, 5, 6, 7]), (req,
 })
 
 //Adiciona um Termo a um VC
-router.post('/termo/:idVC', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 4, 5, 6, 7]), (req, res) => {
+router.post('/termo/:idVC', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), (req, res) => {
     var idVC = req.params.idVC
     var id = idVC+"_"+req.body.idtermo
     var termo = req.body.termo
@@ -65,7 +65,7 @@ router.post('/termo/:idVC', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 4, 5, 6,
 })
 
 //Update da Legenda e da Descrição de um VC
-router.delete('/termo/:id', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 4, 5, 6, 7]), (req, res) => {
+router.delete('/termo/:id', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), (req, res) => {
     var id = req.params.id
     Vocabulario.deleteTermo(id)
         .then(dados => {
