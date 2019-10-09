@@ -4,6 +4,7 @@ var ExtractJWT = require("passport-jwt").ExtractJwt;
 var jwt = require('jsonwebtoken');
 var Key = require('../models/chave');
 var secretKey = require('./../config/app');
+var Calls = require('./api/calls')
 
 //WARNING: correr primeiro isLoggedInUser e só depois correr esta função como middleware
 //clearance se for um número, permite o acesso a todos os utilizadores com nivel igual ou superior; se for uma lista de números, apenas permite ao acesso aos níveis presentes nessa lista.
@@ -74,11 +75,13 @@ Auth.isLoggedInKey = async function (req, res, next) {
                         res.status(401).send('A sua chave API é inválida ou expirou.');
                     }else{
                         if(resp[0].active==true){
-                            await Key.update({_id: resp[0]._id}, {nCalls: resp[0].nCalls+1, lastUsed: Date.now()}, function(err, affected, resp) {
+                            await Key.update({_id: resp[0]._id}, {nCalls: resp[0].nCalls+1, lastUsed: Date.now()}, function(err, affected, resp2) {
                                 if(err){
                                     res.status(500).send('Ocorreu um erro ao atualizar chave API.');
                                 }else{
-                                    return next();
+                                    Calls.newCall(Calls.getRoute(req), req.method, resp[0]._id, "Chave")
+                                        .then(data => next())    
+                                        .catch(err => res.status(500).send('Ocorreu um erro ao realizar logging do pedido'))
                                 }
                             })
                         }else{
@@ -100,7 +103,10 @@ Auth.isLoggedInUser = function (req, res, next) {
         if (!user) { return res.status(401).send("Unauthorized") }
         req.logIn(user, function(err) {
             if (err) { return res.status(401).send("Unauthorized") }
-            next()
+
+            Calls.newCall(Calls.getRoute(req), req.method, req.user.id, "User")
+                .then(data => next())
+                .catch(err => res.status(401).send("Unauthorized"))
         });
     })(req, res, next)
 }
