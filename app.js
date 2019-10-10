@@ -18,7 +18,7 @@ function getRoute(req){
 }
 
 app.use((req, res, next) => {
-    res.on('finish', () => {
+    res.on('finish', async () => {
         //console.log('_DEBUG_:' + `${req.method} ${getRoute(req)} ${res.statusCode}`) 
         if(getRoute(req).includes('/api/')){
             apiStats.addUsage(req.method, getRoute(req));
@@ -190,6 +190,7 @@ app.use('/api/invariantes',require('./routes/api/invariantes'));
 app.use('/api/auth', require('./routes/api/auth'));
 app.use('/api/ontologia', require('./routes/api/ontologia'));
 app.use('/api/reload', require('./routes/api/reload'));
+app.use('/api/calls', require('./routes/api/calls'));
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
