@@ -10,35 +10,24 @@ var CallSchema = new mongoose.Schema({
         enum: ["GET", "POST", "PUT", "DELETE"],
         required: true
     },
-    accesses: [{
-        type: {
-            type: String,
-            enum: ["User", "Chave"],
-            required: true
-        },
-        id: {
-            type: String,
-            required: true
-        },
-        accesses: [{
-            _id: { //httpStatus
-                type: Number,
-                required: true
-            },
-            nCalls: {
-                type: Number,
-                required: true,
-                default: 0
-            },
-            lastAccess: {
-                type: Date,
-                default: Date.now(),
-                required: true
-            }
-        }]
-    }]
-}, {
-    usePushEach: true
+    type: {
+        type: String,
+        enum: ["User", "Chave"],
+        required: true
+    },
+    id: {
+        type: String,
+        required: true
+    },
+    httpStatus: {
+        type: Number,
+        required: true
+    },
+    accessDate: {
+        type: Date,
+        default: Date.now(),
+        required: true
+    }
 });
 
 module.exports = mongoose.model('Call', CallSchema, 'calls');
