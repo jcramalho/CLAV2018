@@ -111,8 +111,7 @@ router.post("/login", (req, res, next) => {
                 res.send({
                     token: token, 
                     name : user.name, 
-                    entidade: user.entidade,
-                    level: user.level
+                    entidade: user.entidade
                 })
             })
         }
@@ -277,9 +276,8 @@ router.post('/callback', async function(req, res){
                         var token = Auth.generateTokenUser(user);
                         var name = Buffer.from(user.name).toString('base64');
                         var entidade = Buffer.from(user.entidade).toString('base64');
-                        var level = Buffer.from(user.level.toString()).toString('base64');
                         res.writeHead(301,{
-                            Location: url+'/users/HandlerCC?Token='+token+'&Nome='+name+'&Entidade='+entidade+'&Nivel='+level
+                            Location: url+'/users/HandlerCC?Token='+token+'&Nome='+name+'&Entidade='+entidade
                         });
                         res.end();
                     }
