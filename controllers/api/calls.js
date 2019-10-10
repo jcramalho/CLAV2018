@@ -72,10 +72,41 @@ Calls.newCall = async function(route, method, id, type, httpStatus){
     }
 }
 
+Calls.getAllCalls = function(route, method){
+    return Call.find({})
+}
+
 Calls.getCall = function(route, method){
     return Call.findOne({route: route, method: method})
 }
 
-Calls.getUserCalls = function(id, type){
-    return Call.find({accesses: {$elemMatch: {id: id, type: type}}})
+Calls.getUserCalls = async function(id, type){
+    var calls = await Call.find({accesses: {$elemMatch: {id: id, type: type}}})
+    var len = calls.length
+    var ret = []
+
+    for(var i=0; i < len; i++){
+        var len2 = calls[i].accesses.length
+        var index = -1
+
+        for(var j=0; j < len2 && index == -1; j++){
+            if(calls[i].accesses[j].id == id && calls[i].accesses[j].type == type){
+                index = j
+            }
+        }
+
+        ret[i] = {}
+        ret[i].id = calls[i]._id
+        ret[i].route = calls[i].route
+        ret[i].method = calls[i].method
+        ret[i].accesses = calls[i].accesses[index].accesses.map(function(c){
+            return {
+                httpStatus: c._id,
+                nCalls: c.nCalls,
+                lastAccess: c.lastAccess
+            }
+        })
+    }
+
+    return ret
 }
