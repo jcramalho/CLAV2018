@@ -7,7 +7,7 @@ var Auth = require('../../controllers/auth');
 var Chaves = require('../../controllers/api/chaves');
 var Mailer = require('../../controllers/api/mailer');
 
-router.get('/listagem', Auth.isLoggedInUser, Auth.checkLevel(7), (req, res) => {
+router.get('/listagem', Auth.isLoggedInUser, Auth.checkLevel(6), (req, res) => {
     Chaves.listar(function(err, result){
         if(err){
             return res.status(500).send(`Erro: ${err}`);
