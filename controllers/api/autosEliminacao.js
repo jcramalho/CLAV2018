@@ -435,7 +435,7 @@ AutosEliminacao.criar = async (auto, userName, userEmail) => {
             auto.responsavel = userName
             var pedido = {
                 tipoPedido: "Criação",
-                tipoObjeto: "AE",
+                tipoObjeto: "Auto de Eliminação",
                 novoObjeto: {
                     ae: auto
                 },
