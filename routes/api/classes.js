@@ -124,13 +124,6 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
     }
 })
 
-// Devolve indíce de pesquisa para as classes
-router.get('/indicePesquisa', Auth.isLoggedInKey, (req, res) => {
-    State.pesquisaClassesIndice()
-        .then(dados => res.jsonp(dados))
-        .catch(erro => res.status(500).send(`Erro na obtenção do índice de pesquisa: ${erro}`))
-})
-
 // Devolve a informação de uma classe
 router.get('/:id', Auth.isLoggedInKey, async function (req, res, next) {
     try {
