@@ -20,6 +20,7 @@ properties:
       - $ref: '#/components/schemas/TabelaSelecaoPluriorganizacional'
       - $ref: '#/components/schemas/TermosIndice'
       - $ref: '#/components/schemas/Tipologia'
+      - $ref: '#/components/schemas/AutosEliminacaoS'
   tipo:
     type: string
     enum: [Classe, TS Organizacional, TS Pluriorganizacional, Entidade, Tipologia, Legislação, Termo de Indice]
