@@ -1,5 +1,5 @@
-summary: Cria um pedido de criação de um auto de eliminação
-description: Cria um pedido de criação de um auto de eliminação
+summary: Cria um pedido de importação de um auto de eliminação
+description: Cria um pedido de importação de um auto de eliminação
 tags:
   - autosEliminacao
 security:
@@ -22,11 +22,9 @@ requestBody:
         properties:
           auto:
             $ref: '#/components/schemas/AutosEliminacao'
-          token:
-            type: string
 responses:
   200:
-    description: Criado um pedido para a criação de uma auto de eliminação
+    description: Criado um pedido para a importação de uma auto de eliminação
   401:
     $ref: '#/components/responses/UnauthorizedUser'
   403:

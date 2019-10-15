@@ -1,0 +1,27 @@
+summary: Verifica a existência do número de um diploma/legislação
+description: Verifica a existência do número de um diploma/legislação. Devolve true ou false
+security:
+  - userQuery: []
+  - userAuth: []
+tags:
+  - legislacao
+requestBody:
+  description: 'número de um diploma/legislação a verificar'
+  required: true
+  content:
+    application/json:
+      schema:
+        properties:
+          numero:
+            type: string
+        example:
+          numero: '14/2018'
+responses:
+  200:
+    description: Verificada a existência do número de um diploma/legislação
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro

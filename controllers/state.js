@@ -16,7 +16,6 @@ var level4Classes = []
 
 var classTreeInfo = []
 var classListInfo = []
-var classListSimpleInfo = []
 var level1ClassesInfo = []
 var level2ClassesInfo = []
 var level3ClassesInfo = []
@@ -26,9 +25,6 @@ var notasAplicacao = []
 var exemplosNotasAplicacao = []
 var termosInd = []
 
-// Índice invertido de suporte ao motor de busca: 
-//  [ {chave: "texto duma nota, exemplo ou ti", processo:{codigo:"cxxx", titulo:"..."}}, ...]
-var indiceInvertido = []
 // Índice de pesquisa para v-trees: 
 var indicePesquisa = []
 
@@ -38,9 +34,7 @@ exports.reset = async () => {
         classTree = await loadClasses();
         classList = level1Classes.concat(level2Classes, level3Classes, level4Classes)
         console.debug("Terminei de carregar as classes.")
-        console.debug("A criar o índice invertido...")
-        indiceInvertido = await criaIndice()
-        console.debug("Índice invertido criado com " + indiceInvertido.length + " entradas.")
+        console.debug("A criar o índice de pesquisa...")
         indicePesquisa = await criaIndicePesquisa()
         console.debug("Índice de pesquisa criado com " + indicePesquisa.length + " entradas.")
     } catch(err) {
@@ -71,12 +65,8 @@ exports.reload = async () => {
         console.debug("A carregar as informação completa das classes...")
         classTreeInfo = await loadClassesInfo();
         classListInfo = level1ClassesInfo.concat(level2ClassesInfo, level3ClassesInfo, level4ClassesInfo)
-        console.debug("A filtrar informação para o índice de pesquisa...")
-        classListSimpleInfo = classesIndicePesquisa(classListInfo)
         console.debug("Terminei de carregar as classes.")
-        console.debug("A criar o índice invertido...")
-        indiceInvertido = await criaIndice()
-        console.debug("Índice invertido criado com " + indiceInvertido.length + " entradas.")
+        console.debug("A criar o índice de pesquisa...")
         indicePesquisa = await criaIndicePesquisa()
         console.debug("Índice de pesquisa criado com " + indicePesquisa.length + " entradas.")
     } catch(err) {
@@ -98,9 +88,7 @@ exports.getLevel2ClassesInfo = async () => { return level2ClassesInfo }
 exports.getLevel3ClassesInfo = async () => { return level3ClassesInfo }
 exports.getLevel4ClassesInfo = async () => { return level4ClassesInfo }
 
-exports.getIndiceInvertido = async () => { return indiceInvertido }
 exports.getIndicePesquisa = async () => { return indicePesquisa }
-exports.pesquisaClassesIndice = async () => { return classListSimpleInfo }
 
 // Verifica a existência do código de uma classe: true == existe, false == não existe
 exports.verificaCodigo = async (cod) => {
@@ -189,22 +177,6 @@ exports.getProcessosEspecificosInfo = async (entidades, tipologias) => {
     let PE = classListInfo.filter(c => filterEntsTips(c, ent_tip))
 
     return PE;
-}
-
-async function criaIndice(){
-    let notas = await NotasAp.todasNotasAp()
-    let exemplos = await ExemplosNotasAp.todosExemplosNotasAp()
-    let tis = await TermosIndice.listar()
-    let indice = []
-    
-    //  [ {chave: "texto duma nota, exemplo ou ti", processo:{codigo:"cxxx", titulo:"..."}}, ...]
-    indice = indice.concat(classList.map(c => ({chave: c.codigo, processo: {codigo: c.codigo, titulo: c.titulo}})))
-    indice = indice.concat(classList.map(c => ({chave: c.titulo, processo: {codigo: c.codigo, titulo: c.titulo}})))
-    indice = indice.concat(notas.map(n => ({chave: n.nota, processo: {codigo: n.cProc, titulo: n.tituloProc}})))
-    indice = indice.concat(exemplos.map(e => ({chave: e.exemplo, processo: {codigo: e.cProc, titulo: e.tituloProc}})))
-    indice = indice.concat(tis.map(t => ({chave: t.termo, processo: {codigo: t.codigoClasse, titulo: t.tituloClasse}})))
-
-    return indice
 }
 
 async function criaIndicePesquisa(){
@@ -351,26 +323,4 @@ async function loadClassesInfo() {
     } catch(err) {
         throw err;
     }
-}
-
-function classesIndicePesquisa(list){
-    var classes = []
-
-    list.forEach(c => {
-        var classe = {}
-
-        classe.idClasse = c.codigo
-        classe.titulo = c.titulo
-        classe.descricao = c.descricao
-        classe.notasAp = []
-        c.notasAp.forEach(n => classe.notasAp.push(n.nota))
-        classe.exemplosNotasAp = []
-        c.exemplosNotasAp.forEach(e => classe.exemplosNotasAp.push(e.exemplo))
-        classe.termosIndice = []
-        c.termosInd.forEach(t => classe.termosIndice.push(t.termo))
-
-        classes.push(classe)
-    })
-
-    return classes
 }

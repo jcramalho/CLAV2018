@@ -1,0 +1,16 @@
+summary: Devolve o Índice de Pesquisa para Notas de Aplicação, Exemplos de Notas de Aplicação e Termos de Índice
+description: Devolve o Índice de Pesquisa para Notas de Aplicação, Exemplos de Notas de Aplicação e Termos de Índice. Devolve uma relação entre o código e o título da classe e estes componentes.
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
+responses:
+  200:
+    description: Devolve o Índice de Pesquisa de Notas de Aplicação, Exemplos de Notas de Aplicação e Termos de Índice
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  500:
+    description: Erro

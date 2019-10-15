@@ -1,0 +1,25 @@
+summary: Cria um pedido de criação de um auto de eliminação
+description: Cria um pedido de criação de um auto de eliminação
+tags:
+  - autosEliminacao
+security:
+  - userQuery: []
+  - userAuth: []
+requestBody:
+  description: 'Auto de eliminação'
+  required: true
+  content:
+    application/json:
+      schema:
+        properties:
+          auto:
+            $ref: '#/components/schemas/AutosEliminacaoS'
+responses:
+  200:
+    description: Criado um pedido para a criação de uma auto de eliminação
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  404:
+    description: Erro
