@@ -53,11 +53,12 @@ Chaves.listarPorEmail = function (email, callback) {
 }
 
 Chaves.criarChave = function(name, email, entidade, callback){
+    var ent = entidade.split('_')[0] == 'ent' ? entidade : 'ent_' + entidade
     var newKey = new Chave({
         key: Auth.generateTokenKey(),
         name: name,
 		contactInfo: email,
-        entity: entidade
+        entity: ent
     });
 
 	Chave.collection.insert(newKey, function(err, key) {

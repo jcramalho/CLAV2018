@@ -10,7 +10,7 @@ Mailer.sendEmailRecuperacao = function(destination, link){
         to: destination,
         templateId: 'd-0e44af0539c04db4adc4eca28c2ef67e',
         dynamic_template_data: {
-          url: link,
+          url: link
         }
     };
     mailer.send(msg);
@@ -22,7 +22,7 @@ Mailer.sendEmailRegistoAPI = function(destination, jwt){
       to: destination,
       templateId: 'd-113714263ec4430194429f0ff92617b7',
       dynamic_template_data: {
-        key: jwt,
+        key: jwt
       }
   };
   mailer.send(msg);
@@ -34,7 +34,19 @@ Mailer.sendEmailRenovacaoAPI = function(destination, link){
       to: destination,
       templateId: 'd-0f179960befa48e4925a31a565d053bc',
       dynamic_template_data: {
-        url: link,
+        url: link
+      }
+  };
+  mailer.send(msg);
+}
+
+Mailer.sendEmailRenovadoAPI = function(destination, jwt){
+  const msg = {
+      from: 'api@clav.dglab.gov.pt',
+      to: destination,
+      templateId: 'd-ca711210ec224fc5b840ee7584c8ce45',
+      dynamic_template_data: {
+        key: jwt
       }
   };
   mailer.send(msg);

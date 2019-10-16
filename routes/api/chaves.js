@@ -63,6 +63,16 @@ router.get('/clavToken', (req, res) => {
     }
 })
 
+router.get('/verificaTokenRenovar/:id', async function(req,res){
+    await jwt.verify(req.params.id, secretKey.emailKey, async function(err, decoded){
+        if(!err){
+            res.send({id: decoded.id});
+        }else{
+            res.status(500).send("Link de renovação Expirou! Se pretende renovar a chave API peça uma nova renovação.");
+        }
+    });
+});
+
 router.get('/listarToken/:id', Auth.isLoggedInUser, Auth.checkLevel(7), async function(req,res){
     await jwt.verify(req.params.id, secretKey.apiKey, async function(err, decoded){
         if(!err){
@@ -93,7 +103,7 @@ router.post('/registar', (req, res) => {
                 }
             });
         }else{
-            res.send('Email já em uso!');
+            res.status(500).send('Email já em uso!');
         }
     });
 });
@@ -131,9 +141,9 @@ router.delete('/eliminar/:id', Auth.isLoggedInUser, Auth.checkLevel(7), function
 router.put('/renovar', function(req, res) {
     Chaves.listarPorEmail(req.body.email, function(err, chave){
         if(err || !chave){
-            res.send("Não existe nenhuma chave API associada neste email!");
+            res.status(500).send("Não existe nenhuma chave API associada neste email!");
         }else{
-            var token = Auth.generateTokenEmail(chave);
+            var token = Auth.generateTokenKeyRenovar(chave);
             Mailer.sendEmailRenovacaoAPI(chave.contactInfo, req.body.url.split('/renovar')[0]+'/alteracaoChaveApi?jwt='+token);
             res.send('Email enviado com sucesso!');
         }
@@ -145,7 +155,7 @@ router.put('/atualizarChave/:id', function(req, res) {
         if(err){
             return res.status(500).send(`Erro: ${err}`);
         }else{
-            Mailer.sendEmailRegistoAPI(chave.contactInfo, chave.key);
+            Mailer.sendEmailRenovadoAPI(chave.contactInfo, chave.key);
             res.send('Chave API renovada com sucesso!');
         }
     });
