@@ -20,7 +20,7 @@ module.exports.swaggerURL = process.env.SWAGGER_URL || this.host
 module.exports.userDB = process.env.MONGODB ? 'mongodb://' + process.env.MONGODB + '/m51-clav' : 'mongodb://localhost/m51-clav'
 
 module.exports.interfaceHosts = [
-    "localhost:8080",
-    "clav.dglab.gov.pt",
-    "epl.di.uminho.pt:7780"
+    "http://localhost:8080",
+    "http://clav.dglab.gov.pt",
+    "http://epl.di.uminho.pt:7780"
 ]
