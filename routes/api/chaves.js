@@ -18,7 +18,7 @@ router.get('/listagem', Auth.isLoggedInUser, Auth.checkLevel(6), (req, res) => {
 });
 
 router.get('/clavToken', (req, res) => {
-    if(interfaceHosts.includes(req.headers.origin)){
+    if(interfaceHosts.includes(req.headers.host)){
         Chaves.listarPorEmail('interface_clav@dglab.pt', function(err, chave){
             if(err){
                 res.status(500).send(`Erro: ${err}`);
