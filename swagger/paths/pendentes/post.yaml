@@ -6,7 +6,7 @@ security:
 tags:
   - pendentes
 requestBody:
-  description: 'Dados. No campo objeto é colocado o objeto a guardar. Pode ser um objeto Classe, TS Organizacional, TS Pluriorganizacional, Entidade, Tipologia, Legislação ou Termo de Indice'
+  description: 'Dados. No campo objeto é colocado o objeto a guardar. Pode ser um objeto Classe, TS Organizacional, TS Pluriorganizacional, Entidade, Tipologia, Legislação, Termo de Indice ou Autos de Eliminação'
   required: true
   content:
     application/json:

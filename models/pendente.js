@@ -24,7 +24,7 @@ const PendenteSchema = new mongoose.Schema({
     },
     tipo: {
         type: String,
-        enum: ["Classe", "TS Organizacional", "TS Pluriorganizacional", "Entidade", "Tipologia", "Legislação", "Termo de Indice"],
+        enum: ["Classe", "TS Organizacional", "TS Pluriorganizacional", "Entidade", "Tipologia", "Legislação", "Termo de Indice", "Auto de Eliminação"],
         required: true,
     },
     acao: {

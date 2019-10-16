@@ -6,7 +6,7 @@ security:
 tags:
   - pedidos
 requestBody:
-  description: 'Dados. No campo novoObjeto é colocado os dados com o qual se pretende realizar o pedido. Pode ser um objeto Classe, TS Organizacional, TS Pluriorganizacional, Entidade, Tipologia, Legislação ou Termo de Indice'
+  description: 'Dados. No campo novoObjeto é colocado os dados com o qual se pretende realizar o pedido. Pode ser um objeto Classe, TS Organizacional, TS Pluriorganizacional, Entidade, Tipologia, Legislação, Termo de Indice ou Autos de Eliminação'
   required: true
   content:
     application/json:
@@ -17,7 +17,7 @@ requestBody:
             enum: [Criação, Alteração, Remoção]
           tipoObjeto:
             type: string
-            enum: [Classe, TS Organizacional, TS Pluriorganizacional, Entidade, Tipologia, Legislação, Termo de Indice, AE PGD/LC, AE PGD, AE RADA]
+            enum: [Classe, TS Organizacional, TS Pluriorganizacional, Entidade, Tipologia, Legislação, Termo de Indice, Auto de Eliminação, AE PGD/LC, AE PGD, AE RADA]
           novoObjeto:
             type: object
             oneOf:
@@ -29,6 +29,7 @@ requestBody:
               - $ref: '#/components/schemas/TermosIndice'
               - $ref: '#/components/schemas/Tipologia'
               - $ref: '#/components/schemas/AutosEliminacao'
+              - $ref: '#/components/schemas/AutosEliminacaoS'
           user:
             type: object
             properties:
