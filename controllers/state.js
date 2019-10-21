@@ -152,6 +152,41 @@ exports.getLevel4ClassesInfo = async () => {
     return ret
 }
 
+//Devolve a informação das classes da subárvore com raiz na classe com o id 'id'
+exports.subarvore = async id => {
+    var classTreeInfo = JSON.parse(fs.readFileSync('./public/classes/classesInfo.json'))
+    var finded = null;
+
+    var codigo = id.split('c')[1]
+    codigos = codigo.split('.')
+    var nivel = codigos.length
+    var len
+    var found
+
+    for(var i = 0; i < nivel; i++){
+        len = classTreeInfo.length
+        found = false
+        testCodigo = codigos.slice(0, i + 1).join('.') 
+
+        for(var j = 0; j < len && !found; j++){
+            if(classTreeInfo[j].codigo == testCodigo){
+                if(nivel == i + 1){
+                    classTreeInfo = classTreeInfo[j]
+                }else{
+                    classTreeInfo = classTreeInfo[j].filhos
+                }
+                found = true
+            }
+        }
+
+        if(!found){
+            classTreeInfo = []
+        }
+    }
+
+    return classTreeInfo
+}
+
 exports.getIndicePesquisa = async () => { return indicePesquisa }
 
 // Verifica a existência do código de uma classe: true == existe, false == não existe

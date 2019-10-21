@@ -42,6 +42,13 @@ parameters:
       type: string
     description: Obtém os processos especificos destas tipologias. Este parâmetro só deve ser usado quando o tipo é especifico.
     required: false
+  - in: query
+    name: info
+    schema:
+      type: string
+      enum: [completa]
+    description: "Caso seja um valor que não 'completa' devolve apenas o código e o título das classes. Caso o valor seja 'completa' devolve toda a informação de cada classe."
+    required: false
 responses:
   200:
     description: Devolve as classes em vários formatos podendo ser filtradas por nível

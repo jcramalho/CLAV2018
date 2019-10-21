@@ -200,6 +200,17 @@ Classes.retrieve = async id => {
     }
 }
 
+//Devolve a informação das classes da subárvore com raiz na classe com o id 'id'
+Classes.subarvore = async id => {
+    var raiz = await Classes.retrieve(id)
+
+    for(var i = 0; i < raiz.filhos.length; i++){
+        raiz.filhos[i] = await Classes.subarvore('c' + raiz.filhos[i].codigo)
+    }
+
+    return raiz
+}
+
 // Devolve a metainformação de uma classe: codigo, titulo, status, desc, codigoPai?, tituloPai?, procTipo?
 Classes.consultar = async id => {
     var query = `
