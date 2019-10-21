@@ -1,3 +1,5 @@
+var fs = require('fs')
+
 /**
  * Carrega a árvore de classes em estruturas de suporte 
  *   - vai permitir acelerar as querys e todas as operações de consulta
@@ -13,13 +15,6 @@ var level1Classes = []
 var level2Classes = []
 var level3Classes = []
 var level4Classes = []
-
-var classTreeInfo = []
-var classListInfo = []
-var level1ClassesInfo = []
-var level2ClassesInfo = []
-var level3ClassesInfo = []
-var level4ClassesInfo = []
 
 var notasAplicacao = []
 var exemplosNotasAplicacao = []
@@ -50,11 +45,6 @@ exports.reload = async () => {
         level3Classes = []
         level4Classes = []
 
-        level1ClassesInfo = []
-        level2ClassesInfo = []
-        level3ClassesInfo = []
-        level4ClassesInfo = []
-
         notasAplicacao = []
         exemplosNotasAplicacao = []
         termosInd = []
@@ -62,13 +52,16 @@ exports.reload = async () => {
         classTree = await loadClasses();
         classList = level1Classes.concat(level2Classes, level3Classes, level4Classes)
         console.debug("Informação base das classes carregada...")
-        console.debug("A carregar as informação completa das classes...")
-        classTreeInfo = await loadClassesInfo();
-        classListInfo = level1ClassesInfo.concat(level2ClassesInfo, level3ClassesInfo, level4ClassesInfo)
-        console.debug("Terminei de carregar as classes.")
+
         console.debug("A criar o índice de pesquisa...")
         indicePesquisa = await criaIndicePesquisa()
         console.debug("Índice de pesquisa criado com " + indicePesquisa.length + " entradas.")
+
+        //Carrega a info completa de todas as classes de forma assincrona
+        console.debug("A obter a informação completa das classes e a guardar a mesma num ficheiro...")
+        var data = await loadClassesInfo()
+        fs.writeFileSync('./public/classes/classesInfo.json', JSON.stringify(data, null, 4))
+        console.debug("Terminei de carregar as classes.")
     } catch(err) {
         throw err
     }
@@ -81,12 +74,83 @@ exports.getLevel2Classes = async () => { return level2Classes }
 exports.getLevel3Classes = async () => { return level3Classes }
 exports.getLevel4Classes = async () => { return level4Classes }
 
-exports.getAllClassesInfo = async () => { return classTreeInfo }
-exports.getClassesInfoFlatList = async () => { return classListInfo }
-exports.getLevel1ClassesInfo = async () => { return level1ClassesInfo }
-exports.getLevel2ClassesInfo = async () => { return level2ClassesInfo }
-exports.getLevel3ClassesInfo = async () => { return level3ClassesInfo }
-exports.getLevel4ClassesInfo = async () => { return level4ClassesInfo }
+exports.getAllClassesInfo = async () => {
+    return JSON.parse(fs.readFileSync('./public/classes/classesInfo.json'))
+}
+
+exports.getClassesInfoFlatList = async () => { 
+    var classTreeInfo = JSON.parse(fs.readFileSync('./public/classes/classesInfo.json'))
+    
+    var len = classTreeInfo.length
+    for(var i = 0; i < len; i++){
+        classTreeInfo[i].filhos.forEach(c => {
+            classTreeInfo.push(c)
+            len++
+        })
+
+        delete classTreeInfo[i].filhos
+    }
+
+    return classTreeInfo
+}
+
+exports.getLevel1ClassesInfo = async () => {
+    var classTreeInfo = JSON.parse(fs.readFileSync('./public/classes/classesInfo.json'))
+
+    for(var i = 0; i < classTreeInfo.length; i++){
+        delete classTreeInfo[i].filhos
+    }
+
+    return classTreeInfo
+}
+
+exports.getLevel2ClassesInfo = async () => {
+    var classTreeInfo = JSON.parse(fs.readFileSync('./public/classes/classesInfo.json'))
+    var ret = []
+
+    for(var i = 0; i < classTreeInfo.length; i++){
+        for(var j = 0; j < classTreeInfo[i].filhos.length; j++){
+            delete classTreeInfo[i].filhos[j].filhos
+            ret.push(classTreeInfo[i].filhos[j])
+        }
+    }
+
+    return ret
+}
+
+exports.getLevel3ClassesInfo = async () => {
+    var classTreeInfo = JSON.parse(fs.readFileSync('./public/classes/classesInfo.json'))
+    var ret = []
+
+    for(var i = 0; i < classTreeInfo.length; i++){
+        for(var j = 0; j < classTreeInfo[i].filhos.length; j++){
+            for(var k = 0; k < classTreeInfo[i].filhos[j].filhos.length; k++){
+                delete classTreeInfo[i].filhos[j].filhos[k].filhos
+                ret.push(classTreeInfo[i].filhos[j].filhos[k])
+            }
+        }
+    }
+
+    return ret
+}
+
+exports.getLevel4ClassesInfo = async () => {
+    var classTreeInfo = JSON.parse(fs.readFileSync('./public/classes/classesInfo.json'))
+    var ret = []
+
+    for(var i = 0; i < classTreeInfo.length; i++){
+        for(var j = 0; j < classTreeInfo[i].filhos.length; j++){
+            for(var k = 0; k < classTreeInfo[i].filhos[j].filhos.length; k++){
+                for(var l = 0; l < classTreeInfo[i].filhos[j].filhos[k].filhos.length; l++){
+                    delete classTreeInfo[i].filhos[j].filhos[k].filhos[l].filhos
+                    ret.push(classTreeInfo[i].filhos[j].filhos[k].filhos[l])
+                }
+            }
+        }
+    }
+
+    return ret
+}
 
 exports.getIndicePesquisa = async () => { return indicePesquisa }
 
@@ -144,6 +208,7 @@ exports.getProcessosComuns = async () => {
 
 //Devolve a lista dos processos de negócio comuns, ou seja, aqueles com :processoTipoVC :vc_processoTipo_pc
 exports.getProcessosComunsInfo = async () => {
+    var classListInfo = await this.getClassesInfoFlatList()
     let PC = classListInfo.filter(c => c.tipoProc == "Processo Comum")
     return PC;
 }
@@ -172,6 +237,7 @@ function filterEntsTips(classe, ent_tip){
 exports.getProcessosEspecificosInfo = async (entidades, tipologias) => {
     entidades = entidades || []
     tipologias = tipologias || []
+    var classListInfo = await this.getClassesInfoFlatList()
 
     let ent_tip = entidades.concat(tipologias)
     let PE = classListInfo.filter(c => filterEntsTips(c, ent_tip))
@@ -294,22 +360,6 @@ async function getAllClassesInfo(list) {
 
     for(var i=0; i < list.length; i++){
         var classe = await Classes.retrieve('c' + list[i].codigo)
-        var copy = JSON.parse(JSON.stringify(classe))
-        delete copy.filhos
-        switch(copy.nivel){
-            case 1:
-                level1ClassesInfo.push(copy)
-                break
-            case 2:
-                level2ClassesInfo.push(copy)
-                break
-            case 3:
-                level3ClassesInfo.push(copy)
-                break
-            case 4:
-                level4ClassesInfo.push(copy)
-                break
-        }
         classe.filhos = await getAllClassesInfo(classe.filhos)
         ret.push(classe)
     }
@@ -320,7 +370,7 @@ async function getAllClassesInfo(list) {
 async function loadClassesInfo() {
     try{
         return await getAllClassesInfo(classTree)
-    } catch(err) {
-        throw err;
-    }
+    }catch(err){
+        throw err
+    }   
 }
