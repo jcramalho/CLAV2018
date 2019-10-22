@@ -39,11 +39,59 @@ Entidades.listar = (filtro) => {
         BIND(CONCAT('ent_', ?sigla) AS ?id).
 
         FILTER (${Object.entries(filtro)
-			.filter(([k, v]) => v !== undefined)
+			.filter(([k, v]) => v !== undefined && k != 'token' && k != 'apikey' && k != 'OF')
 			.map(([k, v]) => `?${k} = "${v}"`)
 			.concat(['True'])
 			.join(' && ')})
     } ORDER BY ?sigla`
+
+	return execQuery('query', query).then((response) => normalize(response))
+}
+
+Entidades.listarAllInfo = () => {
+    const query = `SELECT ?sigla
+                        (sample(?d) as ?designacao)
+                        (sample(?i) as ?internacional)
+                        (sample(?s) as ?sioe)
+                        (sample(?e) as ?estado)
+                        (GROUP_CONCAT(DISTINCT ?tipologiaSigla; SEPARATOR="#\\n") AS ?tipologias)
+                        (GROUP_CONCAT(DISTINCT ?donoCodigo; SEPARATOR="#\\n") AS ?dono)
+                        (GROUP_CONCAT(?partCodigo; SEPARATOR="#\\n") AS ?participante)
+                        (GROUP_CONCAT(?tipoP; SEPARATOR="#\\n") AS ?tipoPar) {
+
+        ?uri rdf:type clav:Entidade ;
+            clav:entEstado ?e;
+            clav:entDesignacao ?d ;
+            clav:entSigla ?sigla ;
+            clav:entInternacional ?i .
+        OPTIONAL {
+            ?uri clav:entSIOE ?s.
+        }
+		
+    	OPTIONAL {
+        	?uri clav:pertenceTipologiaEnt ?uriT .
+        	?uriT clav:tipEstado "Ativa";
+            	clav:tipSigla ?tipologiaSigla.
+    	}
+
+    	OPTIONAL{
+        	?do clav:temDono ?uri;
+            	clav:codigo ?donoCodigo ;
+            	clav:pertenceLC clav:lc1 ;
+            	clav:classeStatus "A" .
+    	}
+    
+        OPTIONAL{
+        	?uriP clav:temParticipante ?uri;
+        	    ?tipoParURI ?uri ;
+        	    clav:codigo ?partCodigo ;
+        	    clav:pertenceLC clav:lc1 ;
+        	    clav:classeStatus "A" .
+  	     	BIND (STRAFTER(STR(?tipoParURI), 'clav#') AS ?tipoP).
+    	   	FILTER (?tipoParURI != clav:temParticipante && ?tipoParURI != clav:temDono)
+    	}
+    }
+    group by ?sigla`
 
 	return execQuery('query', query).then((response) => normalize(response))
 }

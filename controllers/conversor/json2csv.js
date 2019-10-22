@@ -231,6 +231,64 @@ function convertClasses(json){
     return csvLines
 }
 
+function convertEntidade(json){
+    var csvLines = [[],[]]
+    
+    csvLines[0].push(protect("Sigla"))
+    csvLines[1].push(protect(json.sigla))
+
+    csvLines[0].push(protect("Designação"))
+    csvLines[1].push(protect(json.designacao))
+
+    csvLines[0].push(protect("Estado"))
+    csvLines[1].push(protect(json.estado))
+
+    csvLines[0].push(protect("ID SIOE"))
+    csvLines[1].push(protect(json.sioe))
+
+    csvLines[0].push(protect("Internacional"))
+    if(json.internacional == ""){
+        csvLines[1].push(protect("Não"))
+    }else{
+        csvLines[1].push(protect("Sim"))
+    }
+
+    csvLines[0].push(protect("Dono no processo"))
+    //csvLines[1].push(protect(join(json.dono.map(p => p.codigo))))
+    csvLines[1].push(protect(json.dono))
+
+    csvLines[0].push(protect("Participante no processo"))
+    //csvLines[1].push(protect(join(json.participante.map(p => p.codigo))))
+    csvLines[1].push(protect(json.participante))
+
+    csvLines[0].push(protect("Tipo de intervenção no processo"))
+    //csvLines[1].push(protect(join(json.participante.map(p => p.tipoPar))))
+    csvLines[1].push(protect(json.tipoPar))
+
+    csvLines[0].push(protect("Tipologias da entidade"))
+    //csvLines[1].push(protect(join(json.tipologias.map(t => t.sigla))))
+    csvLines[1].push(protect(json.tipologias))
+
+    return csvLines
+}
+
+function convertEntidades(json){
+    var csvLines = []
+    var len = json.length
+
+    if(len > 0){
+        csvLines = convertEntidade(json[0])
+
+        for(var i = 1; i < len; i++){
+            var aux = convertEntidade(json[i])
+            aux.splice(0, 1)
+            csvLines = csvLines.concat(aux)
+        }
+    }
+
+    return csvLines
+}
+
 module.exports.json2csv = (json, type) => {
     var csv
 
@@ -240,6 +298,12 @@ module.exports.json2csv = (json, type) => {
             break
         case "classe":
             csvLines = convertClasse(json)
+            break
+        case "entidades":
+            csvLines = convertEntidades(json)
+            break
+        case "entidade":
+            csvLines = convertEntidade(json)
             break
         default:
             throw("Não é possível exportar para CSV nesta rota...")

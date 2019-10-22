@@ -167,7 +167,7 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(null, options));
 const { outputFormat } = require('./controllers/conversor/outputFormat.js')
 
 //routes and API
-app.use('/api/entidades',require('./routes/api/entidades'));
+app.use('/api/entidades',require('./routes/api/entidades'), outputFormat);
 app.use('/api/tipologias',require('./routes/api/tipologias'));
 app.use('/api/legislacao',require('./routes/api/leg'));
 app.use('/api/classes',require('./routes/api/classes'), outputFormat);

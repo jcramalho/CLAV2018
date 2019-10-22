@@ -6,31 +6,49 @@ var express = require('express')
 var router = express.Router()
 
 // Lista todas as entidades: id, sigla, designacao, internacional
-router.get('/', Auth.isLoggedInKey, (req, res) => {
+router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
 	var queryData = url.parse(req.url, true).query
-	// api/entidades?processos=com
-	if (queryData.processos && queryData.processos == 'com') {
-		return Entidades.listarComPNs()
-			.then((dados) => res.jsonp(dados))
-			.catch((erro) => res.status(500).send(`Erro na listagem das entidades com PNs associados: ${erro}`))
+
+    // api/entidades?processos=com
+    if (queryData.processos && queryData.processos == 'com') {
+        try{
+		    res.locals.dados = await Entidades.listarComPNs()
+            res.locals.tipo = "entidades"
+            next()
+		}catch(erro){
+            res.status(500).send(`Erro na listagem das entidades com PNs associados: ${erro}`)
+        }
 	}
 	// api/entidades?processos=sem
-	if (queryData.processos && queryData.processos == 'sem') {
-		return Entidades.listarSemPNs()
-			.then((dados) => res.jsonp(dados))
-			.catch((erro) => res.status(500).send(`Erro na listagem das entidades sem PNs associados: ${erro}`))
+    else if (queryData.processos && queryData.processos == 'sem') {
+        try{
+            res.locals.dados = await Entidades.listarSemPNs()
+            res.locals.tipo = "entidades"
+            next()
+		}catch(erro){
+            res.status(500).send(`Erro na listagem das entidades sem PNs associados: ${erro}`)
+        }
 	} else {
-		return Entidades.listar(req.query)
-			.then((dados) => res.jsonp(dados))
-			.catch((erro) => res.status(500).send(`Erro na listagem das entidades: ${erro}`))
+        try{
+		    res.locals.dados = await Entidades.listar(req.query)
+            res.locals.tipo = "entidades"
+            next()
+		}catch(erro){
+            res.status(500).send(`Erro na listagem das entidades: ${erro}`)
+        }
 	}
 })
 
 // Consulta de uma entidade: sigla, designacao, estado, internacional
-router.get('/:id', Auth.isLoggedInKey, (req, res) => {
-	return Entidades.consultar(req.params.id)
-		.then((dados) => (dados ? res.jsonp(dados) : res.status(404).send(`Erro. A entidade '${req.params.id}' não existe`)))
-		.catch((erro) => res.status(500).send(`Erro na consulta da entidade '${req.params.id}': ${erro}`))
+router.get('/:id', Auth.isLoggedInKey, async (req, res, next) => {
+    try{
+        res.locals.dados = await Entidades.consultar(req.params.id)
+        res.locals.tipo = "entidade"
+        
+        res.locals.dados ? next() : res.status(404).send(`Erro. A entidade '${req.params.id}' não existe`)
+	} catch(erro) {
+        res.status(500).send(`Erro na consulta da entidade '${req.params.id}': ${erro}`)
+    }
 })
 
 // Lista as tipologias a que uma entidade pertence: id, sigla, designacao
