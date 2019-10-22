@@ -1,0 +1,16 @@
+summary: Verifica se o token enviado por email para a renovação da chave API ainda é válido
+description: Verifica se o token enviado por email para a renovação da chave API ainda é válido. Se ainda for válido devolve o id da chave API associada a este token.
+tags:
+  - chaves
+parameters:
+  - name: id
+    in: path
+    description: valor do token de renovação da chave API enviado por email
+    schema:
+      type: string
+    required: true
+responses:
+  200:
+    description: O token enviado por email para a renovação da chave API ainda é válido
+  500:
+    description: Link de renovação Expirou! Se pretende renovar a chave API peça uma nova renovação.

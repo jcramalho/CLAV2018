@@ -1,11 +1,11 @@
 summary: Realiza reload da cache da API
-description: "CUIDADO: Pedido pesado que deve ser apenas executado quando houver alterações nas classes; deve ser executado fora de 'horas de ponta'. Realiza reload da cache da API. Faz o reset das travessias bem como o reload da cache das classes, da cache do índice invertido e da cache do índice das classes."
+description: "CUIDADO: Pedido pesado que deve ser apenas executado quando houver alterações nas classes; deve ser executado fora das 'horas de ponta' do servidor. Realiza reload da cache da API. Faz o reset das travessias bem como o reload da cache das classes e da cache do índice de pesquisa e gera o ficheiro com toda a informação das classes."
 security:
   - userQuery: []
   - userAuth: []
 responses:
   200:
-    description: Realizado reload da cache da API
+    description: Reload da cache da API iniciado
   401:
     $ref: '#/components/responses/UnauthorizedUser'
   403:
