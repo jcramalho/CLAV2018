@@ -18,6 +18,37 @@ async function getAllEntidadeInfo (req, ent) {
     ent.participante = response.data
 }
 
+async function getAllEntidadesInfo(ents){
+    //obtém as tipologias e os donos para todas as entidades
+    var data = await Entidades.listarTipsDonos()
+    var tipsDonos = []
+
+    for(var i = 0; i < data.length; i++){
+        tipsDonos[data[i].sigla] = {
+            tipologias: data[i].tipologias,
+            dono: data[i].dono
+        }
+    }
+
+    //obtém os participantes e o tipo de participação para todas as entidades
+    data = await Entidades.listarParticipantes()
+    var parts = []
+
+    for(i = 0; i < data.length; i++){
+        parts[data[i].sigla] = {
+            participante: data[i].participante,
+            tipoPar: data[i].tipoPar
+        }
+    }
+
+    for(i = 0; i < ents.length; i++){
+        ents[i].tipologias = tipsDonos[ents[i].sigla].tipologias
+        ents[i].dono = tipsDonos[ents[i].sigla].dono
+        ents[i].participante = parts[ents[i].sigla].participante
+        ents[i].tipoPar = parts[ents[i].sigla].tipoPar
+    }
+}
+
 module.exports.outputFormat = async (req, res, next) => {
 	if (res.locals.dados) {
 	    const outF = req.query.OF || req.headers.accept
@@ -41,7 +72,7 @@ module.exports.outputFormat = async (req, res, next) => {
                                 await getAllEntidadeInfo(req, res.locals.dados)
                                 break
                             case "entidades":
-                                res.locals.dados = await Entidades.listarAllInfo()
+                                await getAllEntidadesInfo(res.locals.dados)
                                 break
                             default:
                                 break
@@ -50,7 +81,6 @@ module.exports.outputFormat = async (req, res, next) => {
                         res.setHeader('content-type', 'text/csv');
                         res.send(json2csv(res.locals.dados, res.locals.tipo))
                     }catch(e){
-                        console.log(e)
                         res.status(406).send(notSup)
                     }
                 }else{

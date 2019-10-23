@@ -48,25 +48,13 @@ Entidades.listar = (filtro) => {
 	return execQuery('query', query).then((response) => normalize(response))
 }
 
-Entidades.listarAllInfo = () => {
+Entidades.listarTipsDonos = () => {
     const query = `SELECT ?sigla
-                        (sample(?d) as ?designacao)
-                        (sample(?i) as ?internacional)
-                        (sample(?s) as ?sioe)
-                        (sample(?e) as ?estado)
                         (GROUP_CONCAT(DISTINCT ?tipologiaSigla; SEPARATOR="#\\n") AS ?tipologias)
-                        (GROUP_CONCAT(DISTINCT ?donoCodigo; SEPARATOR="#\\n") AS ?dono)
-                        (GROUP_CONCAT(?partCodigo; SEPARATOR="#\\n") AS ?participante)
-                        (GROUP_CONCAT(?tipoP; SEPARATOR="#\\n") AS ?tipoPar) {
+                        (GROUP_CONCAT(DISTINCT ?donoCodigo; SEPARATOR="#\\n") AS ?dono) {
 
         ?uri rdf:type clav:Entidade ;
-            clav:entEstado ?e;
-            clav:entDesignacao ?d ;
-            clav:entSigla ?sigla ;
-            clav:entInternacional ?i .
-        OPTIONAL {
-            ?uri clav:entSIOE ?s.
-        }
+            clav:entSigla ?sigla .
 		
     	OPTIONAL {
         	?uri clav:pertenceTipologiaEnt ?uriT .
@@ -80,8 +68,21 @@ Entidades.listarAllInfo = () => {
             	clav:pertenceLC clav:lc1 ;
             	clav:classeStatus "A" .
     	}
+    }
+    group by ?sigla`
+
+	return execQuery('query', query).then((response) => normalize(response))
+}
+
+Entidades.listarParticipantes = () => {
+    const query = `SELECT ?sigla
+                        (GROUP_CONCAT(?partCodigo; SEPARATOR="#\\n") AS ?participante)
+                        (GROUP_CONCAT(?tipoP; SEPARATOR="#\\n") AS ?tipoPar) {
+
+        ?uri rdf:type clav:Entidade ;
+    		clav:entSigla ?sigla .
     
-        OPTIONAL{
+    	OPTIONAL{
         	?uriP clav:temParticipante ?uri;
         	    ?tipoParURI ?uri ;
         	    clav:codigo ?partCodigo ;
