@@ -127,9 +127,15 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
 // Devolve a informação de uma classe
 router.get('/:id', Auth.isLoggedInKey, async function (req, res, next) {
     try {
-        res.locals.dados = await Classes.retrieve(req.params.id)
-        res.locals.tipo = "classe"
-        next()
+        if(req.query.tipo == "subarvore"){
+            res.locals.dados = await State.subarvore(req.params.id)
+            res.locals.tipo = "classe"
+            next()
+        }else{
+            res.locals.dados = await Classes.retrieve(req.params.id)
+            res.locals.tipo = "classe"
+            next()
+        }
     } catch(err) {
         res.status(500).send(`Erro na recuperação da classe ` + req.params.id + `: ${err}`)
     }
