@@ -2,22 +2,33 @@ const { json2xml } = require('./json2xml.js')
 const { json2csv } = require('./json2csv.js')
 const request = require('./../api/utils.js').request
 var Entidades = require('./../api/entidades.js')
+var Tipologias = require('./../api/tipologias.js')
 
 const notSup = "Esta rota não suporta exportação para CSV. Contudo pode exportar para JSON (application/json ou json) ou XML (application/xml ou xml) nesta rota."
 
-//Obtém o resto da info da Entidade para exportar para CSV
-async function getAllEntidadeInfo (req, ent) {
-    var baseURL = '/api/entidades/ent_' + ent.sigla
+//Obtém o resto da info da Entidade/Tipologia para exportar para CSV
+async function getAllObjectInfo(req, obj, type){
+    var baseURL
     var response
 
-    response = await request.get(req, baseURL + '/tipologias')
-    ent.tipologias = response.data
+    if(type == "entidade"){
+        baseURL = '/api/entidades/ent_' + obj.sigla
+    }else if(type == "tipologia"){
+        baseURL = '/api/tipologias/tip_' + obj.sigla
+    }
+
+    if (type == "entidade") {
+        response = await request.get(req, baseURL + '/tipologias')
+        obj.tipologias = response.data
+    }
+
     response = await request.get(req, baseURL + '/intervencao/dono')
-    ent.dono = response.data
+    obj.dono = response.data
     response = await request.get(req, baseURL + '/intervencao/participante')
-    ent.participante = response.data
+    obj.participante = response.data
 }
 
+//Obtém o resto da info das Entidades para exportar para CSV
 async function getAllEntidadesInfo(ents){
     //obtém as tipologias e os donos para todas as entidades
     var data = await Entidades.listarTipsDonos()
@@ -49,6 +60,36 @@ async function getAllEntidadesInfo(ents){
     }
 }
 
+//Obtém o resto da info das Tipologias para exportar para CSV
+async function getAllTipologiasInfo(tips){
+    //obtém os donos para todas as entidades
+    var data = await Tipologias.listarDonos()
+    var donos = []
+
+    for(var i = 0; i < data.length; i++){
+        donos[data[i].sigla] = {
+            dono: data[i].dono
+        }
+    }
+
+    //obtém os participantes e o tipo de participação para todas as entidades
+    data = await Tipologias.listarParticipantes()
+    var parts = []
+
+    for(i = 0; i < data.length; i++){
+        parts[data[i].sigla] = {
+            participante: data[i].participante,
+            tipoPar: data[i].tipoPar
+        }
+    }
+
+    for(i = 0; i < tips.length; i++){
+        tips[i].dono = donos[tips[i].sigla].dono
+        tips[i].participante = parts[tips[i].sigla].participante
+        tips[i].tipoPar = parts[tips[i].sigla].tipoPar
+    }
+}
+
 module.exports.outputFormat = async (req, res, next) => {
 	if (res.locals.dados) {
 	    const outF = req.query.OF || req.headers.accept
@@ -69,10 +110,16 @@ module.exports.outputFormat = async (req, res, next) => {
                     try{
                         switch(res.locals.tipo){
                             case "entidade":
-                                await getAllEntidadeInfo(req, res.locals.dados)
+                                await getAllObjectInfo(req, res.locals.dados, res.locals.tipo)
                                 break
                             case "entidades":
                                 await getAllEntidadesInfo(res.locals.dados)
+                                break
+                            case "tipologia":
+                                await getAllObjectInfo(req, res.locals.dados, res.locals.tipo)
+                                break
+                            case "tipologias":
+                                await getAllTipologiasInfo(res.locals.dados)
                                 break
                             default:
                                 break

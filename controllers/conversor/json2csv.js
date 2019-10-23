@@ -12,6 +12,17 @@ function join(array){
     return array.join('#\n')
 }
 
+function joinLines(csvLines){
+    var len = csvLines.length
+
+    for(var i=0; i<len; i++){
+        csvLines[i] = csvLines[i].join(',')
+    }
+
+    var csv = csvLines.join('\n')
+    return csv
+}
+
 function json2csvArray(array, key){
     var csv = []
     var titles = []
@@ -203,35 +214,7 @@ function convertClasse(json){
     return csvLines
 }
 
-function joinLines(csvLines){
-    var len = csvLines.length
-
-    for(var i=0; i<len; i++){
-        csvLines[i] = csvLines[i].join(',')
-    }
-
-    var csv = csvLines.join('\n')
-    return csv
-}
-
-function convertClasses(json){
-    var csvLines = []
-    var len = json.length
-
-    if(len > 0){
-        csvLines = convertClasse(json[0])
-
-        for(var i = 1; i < len; i++){
-            var aux = convertClasse(json[i])
-            aux.splice(0, 1)
-            csvLines = csvLines.concat(aux)
-        }
-    }
-
-    return csvLines
-}
-
-function convertEntidade(json){
+function convertObject(json, type){
     var csvLines = [[],[]]
     
     csvLines[0].push(protect("Sigla"))
@@ -243,44 +226,60 @@ function convertEntidade(json){
     csvLines[0].push(protect("Estado"))
     csvLines[1].push(protect(json.estado))
 
-    csvLines[0].push(protect("ID SIOE"))
-    csvLines[1].push(protect(json.sioe))
+    if(type == "entidade" || type == "entidades"){
+        csvLines[0].push(protect("ID SIOE"))
+        csvLines[1].push(protect(json.sioe))
 
-    csvLines[0].push(protect("Internacional"))
-    if(json.internacional == ""){
-        csvLines[1].push(protect("Não"))
-    }else{
-        csvLines[1].push(protect("Sim"))
+        csvLines[0].push(protect("Internacional"))
+        if(json.internacional == ""){
+            csvLines[1].push(protect("Não"))
+        }else{
+            csvLines[1].push(protect("Sim"))
+        }
     }
 
     csvLines[0].push(protect("Dono no processo"))
-    //csvLines[1].push(protect(join(json.dono.map(p => p.codigo))))
-    csvLines[1].push(protect(json.dono))
+    if(json.dono instanceof Array){
+        csvLines[1].push(protect(join(json.dono.map(p => p.codigo))))
+    }else{
+        csvLines[1].push(protect(json.dono))
+    }
 
     csvLines[0].push(protect("Participante no processo"))
-    //csvLines[1].push(protect(join(json.participante.map(p => p.codigo))))
-    csvLines[1].push(protect(json.participante))
+    if(json.dono instanceof Array){
+        csvLines[1].push(protect(join(json.participante.map(p => p.codigo))))
+    }else{
+        csvLines[1].push(protect(json.participante))
+    }
 
     csvLines[0].push(protect("Tipo de intervenção no processo"))
-    //csvLines[1].push(protect(join(json.participante.map(p => p.tipoPar))))
-    csvLines[1].push(protect(json.tipoPar))
+    if(json.dono instanceof Array){
+    csvLines[1].push(protect(join(json.participante.map(p => p.tipoPar))))
+    }else{
+        csvLines[1].push(protect(json.tipoPar))
+    }
 
-    csvLines[0].push(protect("Tipologias da entidade"))
-    //csvLines[1].push(protect(join(json.tipologias.map(t => t.sigla))))
-    csvLines[1].push(protect(json.tipologias))
+    if(type == "entidade" || type == "entidades"){
+        csvLines[0].push(protect("Tipologias da entidade"))
+        if(json.dono instanceof Array){
+            csvLines[1].push(protect(join(json.tipologias.map(t => t.sigla))))
+        }else{
+            csvLines[1].push(protect(json.tipologias))
+        }
+    }
 
     return csvLines
 }
 
-function convertEntidades(json){
+function convertObjects(json, convObj, type){
     var csvLines = []
     var len = json.length
 
     if(len > 0){
-        csvLines = convertEntidade(json[0])
+        csvLines = convObj(json[0], type)
 
         for(var i = 1; i < len; i++){
-            var aux = convertEntidade(json[i])
+            var aux = convObj(json[i], type)
             aux.splice(0, 1)
             csvLines = csvLines.concat(aux)
         }
@@ -294,16 +293,18 @@ module.exports.json2csv = (json, type) => {
 
     switch(type){
         case "classes":
-            csvLines = convertClasses(json)
+            csvLines = convertObjects(json, convertClasse)
             break
         case "classe":
             csvLines = convertClasse(json)
             break
         case "entidades":
-            csvLines = convertEntidades(json)
+        case "tipologias":
+            csvLines = convertObjects(json, convertObject, type)
             break
         case "entidade":
-            csvLines = convertEntidade(json)
+        case "tipologia":
+            csvLines = convertObject(json, type)
             break
         default:
             throw("Não é possível exportar para CSV nesta rota...")

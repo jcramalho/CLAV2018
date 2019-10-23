@@ -48,6 +48,7 @@ Entidades.listar = (filtro) => {
 	return execQuery('query', query).then((response) => normalize(response))
 }
 
+//Lista tipologias e donos de todas as entidades. O formato devolvido está pronto ao ser usado na exportação CSV
 Entidades.listarTipsDonos = () => {
     const query = `SELECT ?sigla
                         (GROUP_CONCAT(DISTINCT ?tipologiaSigla; SEPARATOR="#\\n") AS ?tipologias)
@@ -74,6 +75,7 @@ Entidades.listarTipsDonos = () => {
 	return execQuery('query', query).then((response) => normalize(response))
 }
 
+//Lista participantes de todas as entidades. O formato devolvido está pronto ao ser usado na exportação CSV
 Entidades.listarParticipantes = () => {
     const query = `SELECT ?sigla
                         (GROUP_CONCAT(?partCodigo; SEPARATOR="#\\n") AS ?participante)

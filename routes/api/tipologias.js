@@ -5,22 +5,31 @@ var express = require('express')
 var router = express.Router()
 
 // Lista todas as tipologias: id, sigla, designacao
-router.get('/', Auth.isLoggedInKey, (req, res) => {
+router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
 	const filtro = {
 		estado: req.query.estado ? req.query.estado : 'Ativa',
 		designacao: req.query.designacao
 	}
 
-	return Tipologias.listar(filtro)
-		.then((dados) => res.jsonp(dados))
-		.catch((erro) => res.status(500).send(`Erro na listagem das tipologias: ${erro}`))
+    try{
+        res.locals.dados = await Tipologias.listar(filtro)
+        res.locals.tipo = "tipologias"
+        next()
+	} catch(erro) {
+        res.status(500).send(`Erro na listagem das tipologias: ${erro}`)
+    }
 })
 
 // Consulta de uma tipologia: sigla, designacao, estado
-router.get('/:id', Auth.isLoggedInKey, (req, res) => {
-	return Tipologias.consultar(req.params.id)
-		.then((dados) => (dados ? res.jsonp(dados) : res.status(404).send(`Erro. A tipologia '${req.params.id}' não existe`)))
-		.catch((erro) => res.status(500).send(`Erro na consulta da tipologia '${req.params.id}': ${erro}`))
+router.get('/:id', Auth.isLoggedInKey, async (req, res, next) => {
+    try{
+        res.locals.dados = await Tipologias.consultar(req.params.id)
+        res.locals.tipo = "tipologia"
+
+		res.locals.dados ? next() : res.status(404).send(`Erro. A tipologia '${req.params.id}' não existe`)
+	} catch(erro) {
+        res.status(500).send(`Erro na consulta da tipologia '${req.params.id}': ${erro}`)
+    }
 })
 
 // Lista as entidades que pertencem à tipologia: sigla, designacao, id
