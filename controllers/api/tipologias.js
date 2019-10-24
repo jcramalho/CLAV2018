@@ -39,6 +39,49 @@ Tipologias.listar = (filtro) => {
 	return execQuery('query', query).then((response) => normalize(response))
 }
 
+//Lista donos de todas as tipologias. O formato devolvido está pronto ao ser usado na exportação CSV
+Tipologias.listarDonos = () => {
+	const query = `SELECT ?sigla
+                        (GROUP_CONCAT(DISTINCT ?donoCodigo; SEPARATOR="#\\n") AS ?dono){
+        ?uri rdf:type clav:TipologiaEntidade ;
+            clav:tipSigla ?sigla .
+
+        OPTIONAL{
+            ?uriD clav:temDono ?uri ;
+                clav:codigo ?donoCodigo ;
+                clav:pertenceLC clav:lc1;
+                clav:classeStatus "A" .
+        }
+    }
+    group by ?sigla`
+
+	return execQuery('query', query).then((response) => normalize(response))
+}
+
+//Lista participantes de todas as tipologias. O formato devolvido está pronto ao ser usado na exportação CSV
+Tipologias.listarParticipantes = () => {
+    const query = `SELECT ?sigla
+                        (GROUP_CONCAT(?parCodigo; SEPARATOR="#\\n") AS ?participante)
+                        (GROUP_CONCAT(?tipoP; SEPARATOR="#\\n") AS ?tipoPar){
+        ?uri rdf:type clav:TipologiaEntidade ;
+            clav:tipSigla ?sigla .
+
+        OPTIONAL{
+            ?uriP clav:temParticipante ?uri ;
+                ?tipoParURI ?uri ;
+                clav:codigo ?parCodigo ;
+                clav:pertenceLC clav:lc1 ;
+                clav:classeStatus "A" .
+
+            BIND (STRAFTER(STR(?tipoParURI), 'clav#') AS ?tipoP).
+            FILTER (?tipoParURI != clav:temParticipante && ?tipoParURI != clav:temDono)
+        }
+    }
+    group by ?sigla`
+
+	return execQuery('query', query).then((response) => normalize(response))
+}
+
 /**
  * Consulta a meta informação relativa a uma tipologia entidade
  * (sigla, designação e estado).
