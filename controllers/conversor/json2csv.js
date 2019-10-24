@@ -271,6 +271,34 @@ function convertObject(json, type){
     return csvLines
 }
 
+function convertLegislacao(json, type){
+    var csvLines = [[],[]]
+    
+    csvLines[0].push(protect("Tipo"))
+    csvLines[1].push(protect(json.tipo))
+
+    csvLines[0].push(protect("Número"))
+    csvLines[1].push(protect(json.numero))
+
+    csvLines[0].push(protect("Data"))
+    csvLines[1].push(protect(json.data))
+
+    csvLines[0].push(protect("Sumário"))
+    csvLines[1].push(protect(json.sumario))
+
+    csvLines[0].push(protect("Link"))
+    csvLines[1].push(protect(json.link))
+
+    csvLines[0].push(protect("Entidades"))
+    if(type == "legislacoes"){
+        csvLines[1].push(protect(join(json.entidades.map(t => t.sigla))))
+    }else if(type == "legislacao"){
+        csvLines[1].push(protect(join(json.entidades)))
+    }
+
+    return csvLines
+}
+
 function convertObjects(json, convObj, type){
     var csvLines = []
     var len = json.length
@@ -305,6 +333,12 @@ module.exports.json2csv = (json, type) => {
         case "entidade":
         case "tipologia":
             csvLines = convertObject(json, type)
+            break
+        case "legislacoes":
+            csvLines = convertObjects(json, convertLegislacao, type)
+            break
+        case "legislacao":
+            csvLines = convertLegislacao(json, type)
             break
         default:
             throw("Não é possível exportar para CSV nesta rota...")
