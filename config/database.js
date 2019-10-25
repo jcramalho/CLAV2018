@@ -1,5 +1,5 @@
 // const ip = '192.168.85.197'
-const ip = process.env.IP || 'localhost'
+const ip = process.env.IP || '192.168.85.197' //'localhost'
 const port = process.env.PORT || '7779'
 
 module.exports.onthology = process.env.GRAPHDB ? 'http://' + process.env.GRAPHDB +'/repositories/CLAV' : 'http://'+ip+':7200/repositories/CLAV'
@@ -15,7 +15,7 @@ module.exports.prefixes = `
 
 module.exports.host = 'http://'+ip+':'+port
 
-module.exports.swaggerURL = process.env.SWAGGER_URL || this.host
+module.exports.swaggerURL = process.env.SWAGGER_URL || 'http://clav-test.di.uminho.pt'
 
 module.exports.userDB = process.env.MONGODB ? 'mongodb://' + process.env.MONGODB + '/m51-clav' : 'mongodb://localhost/m51-clav'
 
