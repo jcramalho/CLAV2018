@@ -90,3 +90,12 @@ components:
       description: Não tem permissões suficientes para realizar o pedido ou a sua chave API foi desativada.
     PermissionsUser:
       description: Não tem permissões suficientes para realizar o pedido.
+  parameters:
+    OutputFormatWithCSV:
+      in: query
+      name: OF
+      required: false
+      schema:
+        type: string
+        enum: [application/json, json, application/xml, xml, text/csv, csv]
+      description: "Formato de saída do resultado"

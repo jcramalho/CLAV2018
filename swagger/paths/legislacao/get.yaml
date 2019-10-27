@@ -20,6 +20,7 @@ parameters:
       type: string
       enum: [com, sem]
     description: No caso de ser escolhido \"com\" é listado os documentos legislativos com PNs associados. Já no caso de ser escolhido \"sem\" é listado os documentos legislativos sem PNs associados. Só funciona caso o parâmetro estado não seja definido.
+  - $ref: '#/components/parameters/OutputFormatWithCSV'
 responses:
   200:
     description: Lista todos os documentos legislativos

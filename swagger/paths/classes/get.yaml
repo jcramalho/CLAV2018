@@ -49,6 +49,7 @@ parameters:
       enum: [completa]
     description: "Caso seja um valor que não 'completa' devolve apenas o código e o título das classes. Caso o valor seja 'completa' devolve toda a informação de cada classe."
     required: false
+  - $ref: '#/components/parameters/OutputFormatWithCSV'
 responses:
   200:
     description: Devolve as classes em vários formatos podendo ser filtradas por nível
