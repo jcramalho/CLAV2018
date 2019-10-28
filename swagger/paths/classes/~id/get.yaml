@@ -15,12 +15,13 @@ parameters:
       type: string
     required: true
   - name: tipo
-    in: path
+    in: query
     description: "Caso o valor deste campo seja 'subarvore' é devolvida a subarvore com raiz na classe com id igual ao do campo 'id'"
     schema:
       type: string
       enum: [subarvore]
     required: false
+  - $ref: '#/components/parameters/OutputFormatWithCSV'
 responses:
   200:
     description: "Retorna toda a informação relativa a uma classe ou a uma subarvore de classes com raiz na classe com id igual a 'id'"

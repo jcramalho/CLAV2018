@@ -14,6 +14,7 @@ parameters:
     schema:
       type: string
     required: true
+  - $ref: '#/components/parameters/OutputFormatWithCSV'
 responses:
   200:
     description: Consulta de um documento legislativo
