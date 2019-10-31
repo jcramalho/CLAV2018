@@ -12,11 +12,19 @@ router.get('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), a
     }
 })
 
+router.get('/reset', Auth.isLoggedInUser, Auth.checkLevel(7), async function(req,res){
+    try {
+        res.jsonp(await Trav.reset())
+    } catch (err) {
+        res.status(500).send(`Erro ao fazer reset das travessias: ${err}`)
+    }
+})
+
 router.get('/:id', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), async function(req,res){
     try {
         res.jsonp(await Trav.travProc(req.params.id))
     } catch (err) {
-        res.status(500).send('Erro na travessia do processo: ' + req.params.id + `: ${err}`)
+        res.status(500).send(`Erro na travessia do processo ${req.params.id}: ${err}`)
     }
 })
 
