@@ -14,6 +14,14 @@ router.get('/', Auth.isLoggedInKey, function (req, res) {
         });
 })
 
+router.get('/skeleton', Auth.isLoggedInKey, function (req, res) {
+    SelTabs.skeleton()
+        .then( tsSkeleton => res.send(tsSkeleton))
+        .catch(function (error) {
+            console.error(error);
+        });
+})
+
 router.get('/:id/classes', Auth.isLoggedInKey, function (req, res) {
     SelTabs.listClasses(req.params.id)
         .then(list => res.send(list))
