@@ -140,7 +140,7 @@ var options = {
   customSiteTitle: 'CLAV API',
   swaggerOptions: {
     url: dataBases.swaggerURL + '/clav.yaml',
-    //tagsSorter: 'alpha',
+    tagsSorter: 'alpha',
     operationsSorter: (a, b) => {
         var methods = ["get", "post", "put", "delete", "patch", "options", "trace"]
         var result = methods.indexOf(a.get("method")) - methods.indexOf(b.get("method"))
