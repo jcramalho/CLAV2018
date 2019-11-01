@@ -13,6 +13,7 @@ exports.reset = async () => {
             travessias[Trav[i].processo] = Trav[i].travessia
         }
         console.debug("Travessia completa")
+        return "Reset efetuado com sucesso!"
     } catch (err) {
         throw err
     }
@@ -30,11 +31,12 @@ exports.novaTravessia = async (newTrav) => {
     try {
         fs.writeFileSync("./public/travessia/travessia.json", JSON.stringify(newTrav), function(err){
             if(err) {
-                return console.log("ERRO")
+                return `Erro a guardar ficheiro: ${err}`
             }
+            return "Ficheiro com as travessias atualizado!"
         })
     } catch (error) {
-        console.log(error)
+        return `Erro: ${error}`
     }
 }
 

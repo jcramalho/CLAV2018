@@ -1,0 +1,16 @@
+summary: Reset das travessias
+description: Carrega as travessias para cache
+security:
+  - userQuery: []
+  - userAuth: []
+tags:
+  - travessia
+responses:
+  200:
+    description: Travessias carregadas para cache
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro
