@@ -181,7 +181,7 @@ Classes.retrieve = async id => {
         classe.legislacao = await Classes.legislacao(id)
 
         let pca = await Classes.pca(id)
-        if(pca.length > 0 && pca[0].valores != "") classe.pca = pca[0]
+        if(pca.length > 0 && (pca[0].valores != "")||(pca[0].notas != "")) classe.pca = pca[0]
     
         if(classe.pca && classe.pca.idJust){
             classe.pca.justificacao = await Classes.justificacao(classe.pca.idJust)
