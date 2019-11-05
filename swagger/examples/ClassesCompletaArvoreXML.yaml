@@ -1,0 +1,85 @@
+value: "<?xml version=\"1.0\" encoding=\"utf-8\"?>
+
+<root>
+
+\t<item index=\"0\">
+
+\t\t<nivel type=\"number\">1</nivel>
+
+\t\t<pai type=\"object\">
+
+\t\t</pai>
+
+\t\t<codigo type=\"string\">100</codigo>
+
+\t\t<titulo type=\"string\">ORDENAMENTO JURÍDICO E NORMATIVO</titulo>
+
+\t\t<descricao type=\"string\">Relativo à construção e interpretação das Normas, no sentido lato do termo (com e sem caráter coercivo): elaboração, aprovação e publicitação dos atos de caráter dispositivo e de caráter orientador que regulam as ações e relações entre os diversos atores sociais - da legislação aos regulamentos, regras internas de funcionamento, instruções procedimentais e normas técnicas.Inclui os processos de vinculação do Estado português a convenções internacionais, bem como os avisos relativos à vinculação dos restantes Estados-parte naquelas convenções.</descricao>
+
+\t\t<filhos type=\"array\">
+
+\t\t\t<item index=\"0\">
+
+\t\t\t\t<nivel type=\"number\">2</nivel>
+
+\t\t\t\t<pai type=\"object\">
+
+\t\t\t\t\t<codigo type=\"string\">100</codigo>
+
+\t\t\t\t\t<titulo type=\"string\">ORDENAMENTO JURÍDICO E NORMATIVO</titulo>
+
+\t\t\t\t</pai>
+
+\t\t\t\t<codigo type=\"string\">100.10</codigo>
+
+\t\t\t\t<titulo type=\"string\">Elaboração de diplomas jurídico-normativos e de normas técnicas</titulo>
+
+\t\t\t\t<descricao type=\"string\">Compreende os processos de elaboração/alteração de legislação, de regulamentos e de diretivas políticas ou operacionais portuguesas, independentemente da forma, do assunto ou do tipo de participação no processo.Inclui o depósito dos instrumentos de regulação (por exemplo, instrumentos de gestão territorial) nas entidades competentes.Abrange os diplomas jurídico-normativos da competência dos órgãos de soberania (Presidente da República, Assembleia da República, Governo e Tribunais) ou dos órgãos de poder político (regiões autónomas e autarquias), bem como os atos da Administração que têm caráter normativo.Compreende, igualmente, a elaboração ou colaboração na elaboração de normas técnicas nacionais.</descricao>
+
+\t\t\t\t<filhos type=\"array\">
+
+\t\t\t\t\t<item index=\"0\">
+
+\t\t\t\t\t\t<nivel type=\"number\">3</nivel>
+
+\t\t\t\t\t\t<pai type=\"object\">
+
+\t\t\t\t\t\t\t<codigo type=\"string\">100.10</codigo>
+
+\t\t\t\t\t\t\t<titulo type=\"string\">Elaboração de diplomas jurídico-normativos e de normas técnicas</titulo>
+
+\t\t\t\t\t\t</pai>
+
+\t\t\t\t\t\t<codigo type=\"string\">100.10.001</codigo>
+
+\t\t\t\t\t\t<titulo type=\"string\">Produção e comunicação de atos legislativos</titulo>
+
+\t\t\t\t\t\t<descricao type=\"string\">Elaboração ou participação na elaboração de atos legislativos conduzidos por iniciativa das autoridades competentes para a definição do regime jurídico aplicável.Inicia com a apresentação de um projeto acompanhado dos documentos que o fundamentam e justificam à entidade com competência para legislar e termina com a respetiva publicação ou publicitação.Inclui verificação jurídica, apreciação, discussão e votação conducentes à elaboração do texto final, aprovação da iniciativa, ratificação pelas entidades competentes e promulgação.</descricao>
+
+\t\t\t\t\t\t<filhos type=\"array\">
+
+\t\t\t\t\t\t</filhos>
+
+\t\t\t\t\t\t<...></...>
+
+\t\t\t\t\t</item>
+
+\t\t\t\t\t<...></...>
+
+\t\t\t\t</filhos>
+
+\t\t\t\t<...></...>
+
+\t\t\t</item>
+
+\t\t\t<...></...>
+
+\t\t</filhos>
+
+\t\t<...></...>
+
+\t</item>
+
+\t<...></...>
+
+</root>"

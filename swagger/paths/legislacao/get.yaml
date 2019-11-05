@@ -24,6 +24,29 @@ parameters:
 responses:
   200:
     description: Lista todos os documentos legislativos
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/LegislacaoSimplesLista'
+      json:
+        schema:
+          $ref: '#/components/schemas/LegislacaoSimplesLista'
+      application/xml:
+        examples:
+          xml:
+            $ref: '#/components/examples/LegislacoesXML'
+      xml:
+        examples:
+          xml:
+            $ref: '#/components/examples/LegislacoesXML'
+      text/csv:
+        examples:
+          csv:
+            $ref: '#/components/examples/LegislacoesCSV'
+      csv:
+        examples:
+          csv:
+            $ref: '#/components/examples/LegislacoesCSV'
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:

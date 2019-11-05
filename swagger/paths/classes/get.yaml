@@ -53,6 +53,61 @@ parameters:
 responses:
   200:
     description: Devolve as classes em vários formatos podendo ser filtradas por nível
+    content:
+      application/json:
+        schema:
+          oneOf:
+            - $ref: '#/components/schemas/ClasseSimplesArvore'
+            - $ref: '#/components/schemas/ClasseSimplesLista'
+            - $ref: '#/components/schemas/ClasseCompletaArvore'
+            - $ref: '#/components/schemas/ClasseCompletaLista'
+      json:
+        schema:
+          oneOf:
+            - $ref: '#/components/schemas/ClasseSimplesArvore'
+            - $ref: '#/components/schemas/ClasseSimplesLista'
+            - $ref: '#/components/schemas/ClasseCompletaArvore'
+            - $ref: '#/components/schemas/ClasseCompletaLista'
+      application/xml:
+        examples:
+          xmlClassesSimplesArvore:
+            $ref: '#/components/examples/ClassesSimplesArvoreXML'
+          xmlClassesSimplesLista:
+            $ref: '#/components/examples/ClassesSimplesListaXML'
+          xmlClassesCompletaArvore:
+            $ref: '#/components/examples/ClassesCompletaArvoreXML'
+          xmlClassesCompletaLista:
+            $ref: '#/components/examples/ClassesCompletaListaXML'
+      xml:
+        examples:
+          xmlClassesSimplesArvore:
+            $ref: '#/components/examples/ClassesSimplesArvoreXML'
+          xmlClassesSimplesLista:
+            $ref: '#/components/examples/ClassesSimplesListaXML'
+          xmlClassesCompletaArvore:
+            $ref: '#/components/examples/ClassesCompletaArvoreXML'
+          xmlClassesCompletaLista:
+            $ref: '#/components/examples/ClassesCompletaListaXML'
+      text/csv:
+        examples:
+          csvClassesSimplesArvore:
+            $ref: '#/components/examples/ClassesSimplesArvoreCSV'
+          csvClassesSimplesLista:
+            $ref: '#/components/examples/ClassesSimplesListaCSV'
+          csvClassesCompletaArvore:
+            $ref: '#/components/examples/ClassesCompletaArvoreCSV'
+          csvClassesCompletaLista:
+            $ref: '#/components/examples/ClassesCompletaListaCSV'
+      csv:
+        examples:
+          csvClassesSimplesArvore:
+            $ref: '#/components/examples/ClassesSimplesArvoreCSV'
+          csvClassesSimplesLista:
+            $ref: '#/components/examples/ClassesSimplesListaCSV'
+          csvClassesCompletaArvore:
+            $ref: '#/components/examples/ClassesCompletaArvoreCSV'
+          csvClassesCompletaLista:
+            $ref: '#/components/examples/ClassesCompletaListaCSV'
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:

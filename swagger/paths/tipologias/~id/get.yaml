@@ -24,6 +24,29 @@ parameters:
 responses:
   200:
     description: Consulta de uma tipologia
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/TipologiaSimples'
+      json:
+        schema:
+          $ref: '#/components/schemas/TipologiaSimples'
+      application/xml:
+        examples:
+          xml:
+            $ref: '#/components/examples/TipologiaXML'
+      xml:
+        examples:
+          xml:
+            $ref: '#/components/examples/TipologiaXML'
+      text/csv:
+        examples:
+          csv:
+            $ref: '#/components/examples/TipologiaCSV'
+      csv:
+        examples:
+          csv:
+            $ref: '#/components/examples/TipologiaCSV'
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:

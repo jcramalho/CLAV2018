@@ -1,0 +1,27 @@
+type: array
+items:
+  allOf:
+    - $ref: '#/components/schemas/ClasseSimples'
+    - properties:
+        filhos:
+          type: array
+          items:
+            allOf:
+              - $ref: '#/components/schemas/ClasseSimples'
+              - properties:
+                  filhos:
+                    type: array
+                    items:
+                      allOf:
+                        - $ref: '#/components/schemas/ClasseSimples'
+                        - properties:
+                            filhos:
+                              type: array
+                              items:
+                                $ref: '#/components/schemas/ClasseSimples'
+                          required:
+                            - filhos
+                required:
+                  - filhos
+      required:
+        - filhos

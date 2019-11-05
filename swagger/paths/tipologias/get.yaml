@@ -31,6 +31,29 @@ parameters:
 responses:
   200:
     description: Lista todas as tipologias
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/TipologiaSimplesLista'
+      json:
+        schema:
+          $ref: '#/components/schemas/TipologiaSimplesLista'
+      application/xml:
+        examples:
+          xml:
+            $ref: '#/components/examples/TipologiasXML'
+      xml:
+        examples:
+          xml:
+            $ref: '#/components/examples/TipologiasXML'
+      text/csv:
+        examples:
+          csv:
+            $ref: '#/components/examples/TipologiasCSV'
+      csv:
+        examples:
+          csv:
+            $ref: '#/components/examples/TipologiasCSV'
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:

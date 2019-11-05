@@ -1,0 +1,27 @@
+type: array
+items:
+  allOf:
+    - $ref: '#/components/schemas/ClasseCompleta'
+    - properties:
+        filhos:
+          type: array
+          items:
+            allOf:
+              - $ref: '#/components/schemas/ClasseCompleta'
+              - properties:
+                  filhos:
+                    type: array
+                    items:
+                      allOf:
+                        - $ref: '#/components/schemas/ClasseCompleta'
+                        - properties:
+                            filhos:
+                              type: array
+                              items:
+                                $ref: '#/components/schemas/ClasseCompleta'
+                          required:
+                            - filhos
+                required:
+                  - filhos
+      required:
+        - filhos

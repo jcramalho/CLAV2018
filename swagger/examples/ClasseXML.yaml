@@ -1,0 +1,987 @@
+value: "<?xml version=\"1.0\" encoding=\"utf-8\"?>
+
+<root>
+
+\t<nivel type=\"number\">3</nivel>
+
+\t<pai type=\"object\">
+
+\t\t<codigo type=\"string\">200.10</codigo>
+
+\t\t<titulo type=\"string\">Definição de políticas conjuntas e de instrumentos de regulação</titulo>
+
+\t</pai>
+
+\t<codigo type=\"string\">200.10.100</codigo>
+
+\t<titulo type=\"string\">Reivindicação do cumprimento de instrumentos ratificados por Portugal</titulo>
+
+\t<descricao type=\"string\">Ações de reclamação ou queixa junto de organizações internacionais, por parte de Portugal, países terceiros e organizações internacionais, respeitante ao não cumprimento de instrumentos normativos\ta que Portugal se encontra vinculado.Inicia com uma reclamação ou queixa respeitante ao não cumprimento de instrumentos em que Portugal é parte e termina com a consequente resposta ao órgão decisor.Inclui a análise da reclamação, recolha de informação sobre a matéria em causa.</descricao>
+
+\t<filhos type=\"array\">
+
+\t</filhos>
+
+\t<notasAp type=\"array\">
+
+\t\t<item index=\"0\">
+
+\t\t\t<idNota type=\"string\">http://jcr.di.uminho.pt/m51-clav#na_c200.10.100_J3ECJysUBlnm3J5XbncYl</idNota>
+
+\t\t\t<nota type=\"string\">Violação de normas internacionais ratificadas por Portugal</nota>
+
+\t\t</item>
+
+\t\t<item index=\"1\">
+
+\t\t\t<idNota type=\"string\">http://jcr.di.uminho.pt/m51-clav#na_c200.10.100_0QmKsSZwxzr10UJ2Mmrq6</idNota>
+
+\t\t\t<nota type=\"string\">Incumprimento de convenções, protocolos, regulamentos, ou outros instrumentos normativos internacionais ratificados por Portugal</nota>
+
+\t\t</item>
+
+\t</notasAp>
+
+\t<exemplosNotasAp type=\"array\">
+
+\t</exemplosNotasAp>
+
+\t<notasEx type=\"array\">
+
+\t</notasEx>
+
+\t<termosInd type=\"array\">
+
+\t\t<item index=\"0\">
+
+\t\t\t<idTI type=\"string\">http://jcr.di.uminho.pt/m51-clav#ti_1Tgs5WDaZ7KGGdORbBCeV</idTI>
+
+\t\t\t<termo type=\"string\">Contestação do incumprimento de instrumento ratificado por Portugal</termo>
+
+\t\t</item>
+
+\t\t<item index=\"1\">
+
+\t\t\t<idTI type=\"string\">http://jcr.di.uminho.pt/m51-clav#ti_ii0Z42m9yIqqrTpJeSDcu</idTI>
+
+\t\t\t<termo type=\"string\">Acordo internacional (denúncia de incumprimento)</termo>
+
+\t\t</item>
+
+\t\t<item index=\"2\">
+
+\t\t\t<idTI type=\"string\">http://jcr.di.uminho.pt/m51-clav#ti_i47kOwCameqav18ajjFJO</idTI>
+
+\t\t\t<termo type=\"string\">Instrumento normativo internacional (denúncia de incumprimento)</termo>
+
+\t\t</item>
+
+\t</termosInd>
+
+\t<temSubclasses4Nivel type=\"boolean\">false</temSubclasses4Nivel>
+
+\t<temSubclasses4NivelPCA type=\"boolean\">false</temSubclasses4NivelPCA>
+
+\t<temSubclasses4NivelDF type=\"boolean\">false</temSubclasses4NivelDF>
+
+\t<subdivisao4Nivel01Sintetiza02 type=\"boolean\">true</subdivisao4Nivel01Sintetiza02>
+
+\t<tipoProc type=\"string\">Processo Comum</tipoProc>
+
+\t<procTrans type=\"string\">S</procTrans>
+
+\t<donos type=\"array\">
+
+\t\t<item index=\"0\">
+
+\t\t\t<tipo type=\"string\">http://jcr.di.uminho.pt/m51-clav#Entidade</tipo>
+
+\t\t\t<sigla type=\"string\">ACT</sigla>
+
+\t\t\t<idDono type=\"string\">ent_ACT</idDono>
+
+\t\t\t<idTipo type=\"string\">Entidade</idTipo>
+
+\t\t\t<designacao type=\"string\">Autoridade para as Condições de Trabalho</designacao>
+
+\t\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#ent_ACT</id>
+
+\t\t</item>
+
+\t\t<item index=\"1\">
+
+\t\t\t<tipo type=\"string\">http://jcr.di.uminho.pt/m51-clav#Entidade</tipo>
+
+\t\t\t<sigla type=\"string\">CGA</sigla>
+
+\t\t\t<idDono type=\"string\">ent_CGA</idDono>
+
+\t\t\t<idTipo type=\"string\">Entidade</idTipo>
+
+\t\t\t<designacao type=\"string\">Caixa Geral de Aposentações, IP</designacao>
+
+\t\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#ent_CGA</id>
+
+\t\t</item>
+
+\t\t<item index=\"2\">
+
+\t\t\t<tipo type=\"string\">http://jcr.di.uminho.pt/m51-clav#Entidade</tipo>
+
+\t\t\t<sigla type=\"string\">CPL</sigla>
+
+\t\t\t<idDono type=\"string\">ent_CPL</idDono>
+
+\t\t\t<idTipo type=\"string\">Entidade</idTipo>
+
+\t\t\t<designacao type=\"string\">Casa Pia de Lisboa, IP</designacao>
+
+\t\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#ent_CPL</id>
+
+\t\t</item>
+
+\t\t<item index=\"3\">
+
+\t\t\t<tipo type=\"string\">http://jcr.di.uminho.pt/m51-clav#Entidade</tipo>
+
+\t\t\t<sigla type=\"string\">CNPDPCJ</sigla>
+
+\t\t\t<idDono type=\"string\">ent_CNPDPCJ</idDono>
+
+\t\t\t<idTipo type=\"string\">Entidade</idTipo>
+
+\t\t\t<designacao type=\"string\">Comissão Nacional de Promoção dos Direitos e Proteção das Crianças e Jovens</designacao>
+
+\t\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#ent_CNPDPCJ</id>
+
+\t\t</item>
+
+\t\t<item index=\"4\">
+
+\t\t\t<tipo type=\"string\">http://jcr.di.uminho.pt/m51-clav#Entidade</tipo>
+
+\t\t\t<sigla type=\"string\">DGSS</sigla>
+
+\t\t\t<idDono type=\"string\">ent_DGSS</idDono>
+
+\t\t\t<idTipo type=\"string\">Entidade</idTipo>
+
+\t\t\t<designacao type=\"string\">Direção-Geral da Segurança Social</designacao>
+
+\t\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#ent_DGSS</id>
+
+\t\t</item>
+
+\t\t<item index=\"5\">
+
+\t\t\t<tipo type=\"string\">http://jcr.di.uminho.pt/m51-clav#Entidade</tipo>
+
+\t\t\t<sigla type=\"string\">DGPE</sigla>
+
+\t\t\t<idDono type=\"string\">ent_DGPE</idDono>
+
+\t\t\t<idTipo type=\"string\">Entidade</idTipo>
+
+\t\t\t<designacao type=\"string\">Direção-Geral de Política Externa</designacao>
+
+\t\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#ent_DGPE</id>
+
+\t\t</item>
+
+\t\t<item index=\"6\">
+
+\t\t\t<tipo type=\"string\">http://jcr.di.uminho.pt/m51-clav#Entidade</tipo>
+
+\t\t\t<sigla type=\"string\">DGERT</sigla>
+
+\t\t\t<idDono type=\"string\">ent_DGERT</idDono>
+
+\t\t\t<idTipo type=\"string\">Entidade</idTipo>
+
+\t\t\t<designacao type=\"string\">Direção-Geral do Emprego e das Relações de Trabalho</designacao>
+
+\t\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#ent_DGERT</id>
+
+\t\t</item>
+
+\t\t<item index=\"7\">
+
+\t\t\t<tipo type=\"string\">http://jcr.di.uminho.pt/m51-clav#Entidade</tipo>
+
+\t\t\t<sigla type=\"string\">DGAEu</sigla>
+
+\t\t\t<idDono type=\"string\">ent_DGAEu</idDono>
+
+\t\t\t<idTipo type=\"string\">Entidade</idTipo>
+
+\t\t\t<designacao type=\"string\">Direção-Geral dos Assuntos Europeus</designacao>
+
+\t\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#ent_DGAEu</id>
+
+\t\t</item>
+
+\t\t<item index=\"8\">
+
+\t\t\t<tipo type=\"string\">http://jcr.di.uminho.pt/m51-clav#Entidade</tipo>
+
+\t\t\t<sigla type=\"string\">IGMTSSS</sigla>
+
+\t\t\t<idDono type=\"string\">ent_IGMTSSS</idDono>
+
+\t\t\t<idTipo type=\"string\">Entidade</idTipo>
+
+\t\t\t<designacao type=\"string\">Inspeção-Geral do Ministério do Trabalho, Solidariedade e Segurança Social</designacao>
+
+\t\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#ent_IGMTSSS</id>
+
+\t\t</item>
+
+\t\t<item index=\"9\">
+
+\t\t\t<tipo type=\"string\">http://jcr.di.uminho.pt/m51-clav#Entidade</tipo>
+
+\t\t\t<sigla type=\"string\">ISS</sigla>
+
+\t\t\t<idDono type=\"string\">ent_ISS</idDono>
+
+\t\t\t<idTipo type=\"string\">Entidade</idTipo>
+
+\t\t\t<designacao type=\"string\">Instituto da Segurança Social, IP</designacao>
+
+\t\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#ent_ISS</id>
+
+\t\t</item>
+
+\t\t<item index=\"10\">
+
+\t\t\t<tipo type=\"string\">http://jcr.di.uminho.pt/m51-clav#Entidade</tipo>
+
+\t\t\t<sigla type=\"string\">IGFCSS</sigla>
+
+\t\t\t<idDono type=\"string\">ent_IGFCSS</idDono>
+
+\t\t\t<idTipo type=\"string\">Entidade</idTipo>
+
+\t\t\t<designacao type=\"string\">Instituto de Gestão de Fundos de Capitalização da Segurança Social, IP</designacao>
+
+\t\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#ent_IGFCSS</id>
+
+\t\t</item>
+
+\t\t<item index=\"11\">
+
+\t\t\t<tipo type=\"string\">http://jcr.di.uminho.pt/m51-clav#Entidade</tipo>
+
+\t\t\t<sigla type=\"string\">IGFSS</sigla>
+
+\t\t\t<idDono type=\"string\">ent_IGFSS</idDono>
+
+\t\t\t<idTipo type=\"string\">Entidade</idTipo>
+
+\t\t\t<designacao type=\"string\">Instituto de Gestão Financeira da Segurança Social, IP</designacao>
+
+\t\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#ent_IGFSS</id>
+
+\t\t</item>
+
+\t\t<item index=\"12\">
+
+\t\t\t<tipo type=\"string\">http://jcr.di.uminho.pt/m51-clav#Entidade</tipo>
+
+\t\t\t<sigla type=\"string\">IEFP</sigla>
+
+\t\t\t<idDono type=\"string\">ent_IEFP</idDono>
+
+\t\t\t<idTipo type=\"string\">Entidade</idTipo>
+
+\t\t\t<designacao type=\"string\">Instituto do Emprego e Formação Profissional, IP</designacao>
+
+\t\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#ent_IEFP</id>
+
+\t\t</item>
+
+\t\t<item index=\"13\">
+
+\t\t\t<tipo type=\"string\">http://jcr.di.uminho.pt/m51-clav#Entidade</tipo>
+
+\t\t\t<sigla type=\"string\">II</sigla>
+
+\t\t\t<idDono type=\"string\">ent_II</idDono>
+
+\t\t\t<idTipo type=\"string\">Entidade</idTipo>
+
+\t\t\t<designacao type=\"string\">Instituto de Informática, IP</designacao>
+
+\t\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#ent_II</id>
+
+\t\t</item>
+
+\t\t<item index=\"14\">
+
+\t\t\t<tipo type=\"string\">http://jcr.di.uminho.pt/m51-clav#Entidade</tipo>
+
+\t\t\t<sigla type=\"string\">INR</sigla>
+
+\t\t\t<idDono type=\"string\">ent_INR</idDono>
+
+\t\t\t<idTipo type=\"string\">Entidade</idTipo>
+
+\t\t\t<designacao type=\"string\">Instituto Nacional para a Reabilitação, IP</designacao>
+
+\t\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#ent_INR</id>
+
+\t\t</item>
+
+\t\t<item index=\"15\">
+
+\t\t\t<tipo type=\"string\">http://jcr.di.uminho.pt/m51-clav#Entidade</tipo>
+
+\t\t\t<sigla type=\"string\">SGMTSSS</sigla>
+
+\t\t\t<idDono type=\"string\">ent_SGMTSSS</idDono>
+
+\t\t\t<idTipo type=\"string\">Entidade</idTipo>
+
+\t\t\t<designacao type=\"string\">Secretaria Geral do Ministério do Trabalho, Solidariedade e Segurança Social</designacao>
+
+\t\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#ent_SGMTSSS</id>
+
+\t\t</item>
+
+\t\t<item index=\"16\">
+
+\t\t\t<tipo type=\"string\">http://jcr.di.uminho.pt/m51-clav#Entidade</tipo>
+
+\t\t\t<sigla type=\"string\">CASES</sigla>
+
+\t\t\t<idDono type=\"string\">ent_CASES</idDono>
+
+\t\t\t<idTipo type=\"string\">Entidade</idTipo>
+
+\t\t\t<designacao type=\"string\">Cooperativa António Sérgio para a Economia Social</designacao>
+
+\t\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#ent_CASES</id>
+
+\t\t</item>
+
+\t\t<item index=\"17\">
+
+\t\t\t<tipo type=\"string\">http://jcr.di.uminho.pt/m51-clav#Entidade</tipo>
+
+\t\t\t<sigla type=\"string\">CITE</sigla>
+
+\t\t\t<idDono type=\"string\">ent_CITE</idDono>
+
+\t\t\t<idTipo type=\"string\">Entidade</idTipo>
+
+\t\t\t<designacao type=\"string\">Comissão para a Igualdade no Trabalho e no Emprego</designacao>
+
+\t\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#ent_CITE</id>
+
+\t\t</item>
+
+\t\t<item index=\"18\">
+
+\t\t\t<tipo type=\"string\">http://jcr.di.uminho.pt/m51-clav#Entidade</tipo>
+
+\t\t\t<sigla type=\"string\">CRL</sigla>
+
+\t\t\t<idDono type=\"string\">ent_CRL</idDono>
+
+\t\t\t<idTipo type=\"string\">Entidade</idTipo>
+
+\t\t\t<designacao type=\"string\">Centro de Relações Laborais</designacao>
+
+\t\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#ent_CRL</id>
+
+\t\t</item>
+
+\t\t<item index=\"19\">
+
+\t\t\t<tipo type=\"string\">http://jcr.di.uminho.pt/m51-clav#Entidade</tipo>
+
+\t\t\t<sigla type=\"string\">GEP</sigla>
+
+\t\t\t<idDono type=\"string\">ent_GEP</idDono>
+
+\t\t\t<idTipo type=\"string\">Entidade</idTipo>
+
+\t\t\t<designacao type=\"string\">Gabinete de Estratégia e Planeamento</designacao>
+
+\t\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#ent_GEP</id>
+
+\t\t</item>
+
+\t\t<item index=\"20\">
+
+\t\t\t<tipo type=\"string\">http://jcr.di.uminho.pt/m51-clav#Entidade</tipo>
+
+\t\t\t<sigla type=\"string\">OIT</sigla>
+
+\t\t\t<idDono type=\"string\">ent_OIT</idDono>
+
+\t\t\t<idTipo type=\"string\">Entidade</idTipo>
+
+\t\t\t<designacao type=\"string\">Organização Internacional do Trabalho - Lisboa</designacao>
+
+\t\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#ent_OIT</id>
+
+\t\t</item>
+
+\t\t<item index=\"21\">
+
+\t\t\t<tipo type=\"string\">http://jcr.di.uminho.pt/m51-clav#Entidade</tipo>
+
+\t\t\t<sigla type=\"string\">POISE</sigla>
+
+\t\t\t<idDono type=\"string\">ent_POISE</idDono>
+
+\t\t\t<idTipo type=\"string\">Entidade</idTipo>
+
+\t\t\t<designacao type=\"string\">Programa Operacional da Inclusão Social e Emprego</designacao>
+
+\t\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#ent_POISE</id>
+
+\t\t</item>
+
+\t\t<item index=\"22\">
+
+\t\t\t<tipo type=\"string\">http://jcr.di.uminho.pt/m51-clav#TipologiaEntidade</tipo>
+
+\t\t\t<sigla type=\"string\">AP</sigla>
+
+\t\t\t<idDono type=\"string\">tip_AP</idDono>
+
+\t\t\t<idTipo type=\"string\">TipologiaEntidade</idTipo>
+
+\t\t\t<designacao type=\"string\">Administração Pública</designacao>
+
+\t\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#tip_AP</id>
+
+\t\t</item>
+
+\t</donos>
+
+\t<participantes type=\"array\">
+
+\t\t<item index=\"0\">
+
+\t\t\t<participLabel type=\"string\">Apreciador</participLabel>
+
+\t\t\t<sigla type=\"string\">ACT</sigla>
+
+\t\t\t<designacao type=\"string\">Autoridade para as Condições de Trabalho</designacao>
+
+\t\t\t<idTipo type=\"string\">Entidade</idTipo>
+
+\t\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#ent_ACT</id>
+
+\t\t\t<idParticipante type=\"string\">ent_ACT</idParticipante>
+
+\t\t</item>
+
+\t\t<item index=\"1\">
+
+\t\t\t<participLabel type=\"string\">Apreciador</participLabel>
+
+\t\t\t<sigla type=\"string\">CASES</sigla>
+
+\t\t\t<designacao type=\"string\">Cooperativa António Sérgio para a Economia Social</designacao>
+
+\t\t\t<idTipo type=\"string\">Entidade</idTipo>
+
+\t\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#ent_CASES</id>
+
+\t\t\t<idParticipante type=\"string\">ent_CASES</idParticipante>
+
+\t\t</item>
+
+\t\t<item index=\"2\">
+
+\t\t\t<participLabel type=\"string\">Apreciador</participLabel>
+
+\t\t\t<sigla type=\"string\">CGA</sigla>
+
+\t\t\t<designacao type=\"string\">Caixa Geral de Aposentações, IP</designacao>
+
+\t\t\t<idTipo type=\"string\">Entidade</idTipo>
+
+\t\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#ent_CGA</id>
+
+\t\t\t<idParticipante type=\"string\">ent_CGA</idParticipante>
+
+\t\t</item>
+
+\t\t<item index=\"3\">
+
+\t\t\t<participLabel type=\"string\">Apreciador</participLabel>
+
+\t\t\t<sigla type=\"string\">CITE</sigla>
+
+\t\t\t<designacao type=\"string\">Comissão para a Igualdade no Trabalho e no Emprego</designacao>
+
+\t\t\t<idTipo type=\"string\">Entidade</idTipo>
+
+\t\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#ent_CITE</id>
+
+\t\t\t<idParticipante type=\"string\">ent_CITE</idParticipante>
+
+\t\t</item>
+
+\t\t<item index=\"4\">
+
+\t\t\t<participLabel type=\"string\">Apreciador</participLabel>
+
+\t\t\t<sigla type=\"string\">CNPDPCJ</sigla>
+
+\t\t\t<designacao type=\"string\">Comissão Nacional de Promoção dos Direitos e Proteção das Crianças e Jovens</designacao>
+
+\t\t\t<idTipo type=\"string\">Entidade</idTipo>
+
+\t\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#ent_CNPDPCJ</id>
+
+\t\t\t<idParticipante type=\"string\">ent_CNPDPCJ</idParticipante>
+
+\t\t</item>
+
+\t\t<item index=\"5\">
+
+\t\t\t<participLabel type=\"string\">Apreciador</participLabel>
+
+\t\t\t<sigla type=\"string\">CPL</sigla>
+
+\t\t\t<designacao type=\"string\">Casa Pia de Lisboa, IP</designacao>
+
+\t\t\t<idTipo type=\"string\">Entidade</idTipo>
+
+\t\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#ent_CPL</id>
+
+\t\t\t<idParticipante type=\"string\">ent_CPL</idParticipante>
+
+\t\t</item>
+
+\t\t<item index=\"6\">
+
+\t\t\t<participLabel type=\"string\">Apreciador</participLabel>
+
+\t\t\t<sigla type=\"string\">CRL</sigla>
+
+\t\t\t<designacao type=\"string\">Centro de Relações Laborais</designacao>
+
+\t\t\t<idTipo type=\"string\">Entidade</idTipo>
+
+\t\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#ent_CRL</id>
+
+\t\t\t<idParticipante type=\"string\">ent_CRL</idParticipante>
+
+\t\t</item>
+
+\t\t<item index=\"7\">
+
+\t\t\t<participLabel type=\"string\">Apreciador</participLabel>
+
+\t\t\t<sigla type=\"string\">DGACCP</sigla>
+
+\t\t\t<designacao type=\"string\">Direção-Geral dos Assuntos Consulares e das Comunidades Portuguesas</designacao>
+
+\t\t\t<idTipo type=\"string\">Entidade</idTipo>
+
+\t\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#ent_DGACCP</id>
+
+\t\t\t<idParticipante type=\"string\">ent_DGACCP</idParticipante>
+
+\t\t</item>
+
+\t\t<item index=\"8\">
+
+\t\t\t<participLabel type=\"string\">Apreciador</participLabel>
+
+\t\t\t<sigla type=\"string\">DGERT</sigla>
+
+\t\t\t<designacao type=\"string\">Direção-Geral do Emprego e das Relações de Trabalho</designacao>
+
+\t\t\t<idTipo type=\"string\">Entidade</idTipo>
+
+\t\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#ent_DGERT</id>
+
+\t\t\t<idParticipante type=\"string\">ent_DGERT</idParticipante>
+
+\t\t</item>
+
+\t\t<item index=\"9\">
+
+\t\t\t<participLabel type=\"string\">Apreciador</participLabel>
+
+\t\t\t<sigla type=\"string\">DGSS</sigla>
+
+\t\t\t<designacao type=\"string\">Direção-Geral da Segurança Social</designacao>
+
+\t\t\t<idTipo type=\"string\">Entidade</idTipo>
+
+\t\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#ent_DGSS</id>
+
+\t\t\t<idParticipante type=\"string\">ent_DGSS</idParticipante>
+
+\t\t</item>
+
+\t\t<item index=\"10\">
+
+\t\t\t<participLabel type=\"string\">Apreciador</participLabel>
+
+\t\t\t<sigla type=\"string\">GEP</sigla>
+
+\t\t\t<designacao type=\"string\">Gabinete de Estratégia e Planeamento</designacao>
+
+\t\t\t<idTipo type=\"string\">Entidade</idTipo>
+
+\t\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#ent_GEP</id>
+
+\t\t\t<idParticipante type=\"string\">ent_GEP</idParticipante>
+
+\t\t</item>
+
+\t\t<item index=\"11\">
+
+\t\t\t<participLabel type=\"string\">Apreciador</participLabel>
+
+\t\t\t<sigla type=\"string\">IEFP</sigla>
+
+\t\t\t<designacao type=\"string\">Instituto do Emprego e Formação Profissional, IP</designacao>
+
+\t\t\t<idTipo type=\"string\">Entidade</idTipo>
+
+\t\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#ent_IEFP</id>
+
+\t\t\t<idParticipante type=\"string\">ent_IEFP</idParticipante>
+
+\t\t</item>
+
+\t\t<item index=\"12\">
+
+\t\t\t<participLabel type=\"string\">Apreciador</participLabel>
+
+\t\t\t<sigla type=\"string\">IGFCSS</sigla>
+
+\t\t\t<designacao type=\"string\">Instituto de Gestão de Fundos de Capitalização da Segurança Social, IP</designacao>
+
+\t\t\t<idTipo type=\"string\">Entidade</idTipo>
+
+\t\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#ent_IGFCSS</id>
+
+\t\t\t<idParticipante type=\"string\">ent_IGFCSS</idParticipante>
+
+\t\t</item>
+
+\t\t<item index=\"13\">
+
+\t\t\t<participLabel type=\"string\">Apreciador</participLabel>
+
+\t\t\t<sigla type=\"string\">IGFSS</sigla>
+
+\t\t\t<designacao type=\"string\">Instituto de Gestão Financeira da Segurança Social, IP</designacao>
+
+\t\t\t<idTipo type=\"string\">Entidade</idTipo>
+
+\t\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#ent_IGFSS</id>
+
+\t\t\t<idParticipante type=\"string\">ent_IGFSS</idParticipante>
+
+\t\t</item>
+
+\t\t<item index=\"14\">
+
+\t\t\t<participLabel type=\"string\">Apreciador</participLabel>
+
+\t\t\t<sigla type=\"string\">IGMTSSS</sigla>
+
+\t\t\t<designacao type=\"string\">Inspeção-Geral do Ministério do Trabalho, Solidariedade e Segurança Social</designacao>
+
+\t\t\t<idTipo type=\"string\">Entidade</idTipo>
+
+\t\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#ent_IGMTSSS</id>
+
+\t\t\t<idParticipante type=\"string\">ent_IGMTSSS</idParticipante>
+
+\t\t</item>
+
+\t\t<item index=\"15\">
+
+\t\t\t<participLabel type=\"string\">Apreciador</participLabel>
+
+\t\t\t<sigla type=\"string\">II</sigla>
+
+\t\t\t<designacao type=\"string\">Instituto de Informática, IP</designacao>
+
+\t\t\t<idTipo type=\"string\">Entidade</idTipo>
+
+\t\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#ent_II</id>
+
+\t\t\t<idParticipante type=\"string\">ent_II</idParticipante>
+
+\t\t</item>
+
+\t\t<item index=\"16\">
+
+\t\t\t<participLabel type=\"string\">Apreciador</participLabel>
+
+\t\t\t<sigla type=\"string\">IMT</sigla>
+
+\t\t\t<designacao type=\"string\">Instituto de Mobilidade e dos Transportes, IP</designacao>
+
+\t\t\t<idTipo type=\"string\">Entidade</idTipo>
+
+\t\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#ent_IMT</id>
+
+\t\t\t<idParticipante type=\"string\">ent_IMT</idParticipante>
+
+\t\t</item>
+
+\t\t<item index=\"17\">
+
+\t\t\t<participLabel type=\"string\">Apreciador</participLabel>
+
+\t\t\t<sigla type=\"string\">INR</sigla>
+
+\t\t\t<designacao type=\"string\">Instituto Nacional para a Reabilitação, IP</designacao>
+
+\t\t\t<idTipo type=\"string\">Entidade</idTipo>
+
+\t\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#ent_INR</id>
+
+\t\t\t<idParticipante type=\"string\">ent_INR</idParticipante>
+
+\t\t</item>
+
+\t\t<item index=\"18\">
+
+\t\t\t<participLabel type=\"string\">Apreciador</participLabel>
+
+\t\t\t<sigla type=\"string\">ISS</sigla>
+
+\t\t\t<designacao type=\"string\">Instituto da Segurança Social, IP</designacao>
+
+\t\t\t<idTipo type=\"string\">Entidade</idTipo>
+
+\t\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#ent_ISS</id>
+
+\t\t\t<idParticipante type=\"string\">ent_ISS</idParticipante>
+
+\t\t</item>
+
+\t\t<item index=\"19\">
+
+\t\t\t<participLabel type=\"string\">Apreciador</participLabel>
+
+\t\t\t<sigla type=\"string\">OIT</sigla>
+
+\t\t\t<designacao type=\"string\">Organização Internacional do Trabalho - Lisboa</designacao>
+
+\t\t\t<idTipo type=\"string\">Entidade</idTipo>
+
+\t\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#ent_OIT</id>
+
+\t\t\t<idParticipante type=\"string\">ent_OIT</idParticipante>
+
+\t\t</item>
+
+\t\t<item index=\"20\">
+
+\t\t\t<participLabel type=\"string\">Apreciador</participLabel>
+
+\t\t\t<sigla type=\"string\">POISE</sigla>
+
+\t\t\t<designacao type=\"string\">Programa Operacional da Inclusão Social e Emprego</designacao>
+
+\t\t\t<idTipo type=\"string\">Entidade</idTipo>
+
+\t\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#ent_POISE</id>
+
+\t\t\t<idParticipante type=\"string\">ent_POISE</idParticipante>
+
+\t\t</item>
+
+\t\t<item index=\"21\">
+
+\t\t\t<participLabel type=\"string\">Apreciador</participLabel>
+
+\t\t\t<sigla type=\"string\">SGMTSSS</sigla>
+
+\t\t\t<designacao type=\"string\">Secretaria Geral do Ministério do Trabalho, Solidariedade e Segurança Social</designacao>
+
+\t\t\t<idTipo type=\"string\">Entidade</idTipo>
+
+\t\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#ent_SGMTSSS</id>
+
+\t\t\t<idParticipante type=\"string\">ent_SGMTSSS</idParticipante>
+
+\t\t</item>
+
+\t\t<item index=\"22\">
+
+\t\t\t<participLabel type=\"string\">Apreciador</participLabel>
+
+\t\t\t<sigla type=\"string\">AP</sigla>
+
+\t\t\t<designacao type=\"string\">Administração Pública</designacao>
+
+\t\t\t<idTipo type=\"string\">TipologiaEntidade</idTipo>
+
+\t\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#tip_AP</id>
+
+\t\t\t<idParticipante type=\"string\">tip_AP</idParticipante>
+
+\t\t</item>
+
+\t</participantes>
+
+\t<processosRelacionados type=\"array\">
+
+\t\t<item index=\"0\">
+
+\t\t\t<codigo type=\"string\">100.10.002</codigo>
+
+\t\t\t<tipoRel type=\"string\">http://jcr.di.uminho.pt/m51-clav#eSucessorDe</tipoRel>
+
+\t\t\t<idRel type=\"string\">eSucessorDe</idRel>
+
+\t\t\t<titulo type=\"string\">Aprovação e comunicação de convenções internacionais</titulo>
+
+\t\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#c100.10.002</id>
+
+\t\t</item>
+
+\t\t<item index=\"1\">
+
+\t\t\t<codigo type=\"string\">200.10.800</codigo>
+
+\t\t\t<tipoRel type=\"string\">http://jcr.di.uminho.pt/m51-clav#eSucessorDe</tipoRel>
+
+\t\t\t<idRel type=\"string\">eSucessorDe</idRel>
+
+\t\t\t<titulo type=\"string\">Celebração de acordos e outros atos internacionais</titulo>
+
+\t\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#c200.10.800</id>
+
+\t\t</item>
+
+\t</processosRelacionados>
+
+\t<legislacao type=\"array\">
+
+\t\t<item index=\"0\">
+
+\t\t\t<tipo type=\"string\">Lei Constitucional</tipo>
+
+\t\t\t<sumario type=\"string\">Sétima revisão constitucional</sumario>
+
+\t\t\t<numero type=\"string\">1/2005</numero>
+
+\t\t\t<idLeg type=\"string\">leg_3TcY4FXMxvTmO5x5x-5wQ</idLeg>
+
+\t\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#leg_3TcY4FXMxvTmO5x5x-5wQ</id>
+
+\t\t</item>
+
+\t</legislacao>
+
+\t<pca type=\"object\">
+
+\t\t<formaContagem type=\"string\">Data de conclusão do procedimento</formaContagem>
+
+\t\t<idPCA type=\"string\">http://jcr.di.uminho.pt/m51-clav#pca_c200.10.100</idPCA>
+
+\t\t<idJust type=\"string\">just_pca_c200.10.100</idJust>
+
+\t\t<notas type=\"string\">
+
+\t\t</notas>
+
+\t\t<valores type=\"string\">10</valores>
+
+\t\t<justificacao type=\"array\">
+
+\t\t\t<item index=\"0\">
+
+\t\t\t\t<tipoId type=\"string\">CriterioJustificacaoLegal</tipoId>
+
+\t\t\t\t<conteudo type=\"string\">[Lei 98/97], art.º 70º, nº 1 - Prazo prescricional da responsabilidade financeira reintegratória.</conteudo>
+
+\t\t\t\t<criterio type=\"string\">http://jcr.di.uminho.pt/m51-clav#crit_just_pca_c200.10.100_1</criterio>
+
+\t\t\t\t<processos type=\"array\">
+
+\t\t\t\t</processos>
+
+\t\t\t\t<legislacao type=\"array\">
+
+\t\t\t\t\t<item index=\"0\">
+
+\t\t\t\t\t\t<legId type=\"string\">leg_MfUF1vbWPl7gQ44U2Pow4</legId>
+
+\t\t\t\t\t</item>
+
+\t\t\t\t</legislacao>
+
+\t\t\t</item>
+
+\t\t\t<item index=\"1\">
+
+\t\t\t\t<tipoId type=\"string\">CriterioJustificacaoUtilidadeAdministrativa</tipoId>
+
+\t\t\t\t<conteudo type=\"string\">Prazo decorrente da necessidade de consulta deste PN para apuramento de responsabilidade em sede do PN 500.10.001 - Realização de auditorias (no que diz respeito à atuação da Administração).</conteudo>
+
+\t\t\t\t<criterio type=\"string\">http://jcr.di.uminho.pt/m51-clav#crit_just_pca_c200.10.100_2</criterio>
+
+\t\t\t\t<processos type=\"array\">
+
+\t\t\t\t\t<item index=\"0\">
+
+\t\t\t\t\t\t<procId type=\"string\">c500.10.001</procId>
+
+\t\t\t\t\t</item>
+
+\t\t\t\t</processos>
+
+\t\t\t\t<legislacao type=\"array\">
+
+\t\t\t\t</legislacao>
+
+\t\t\t</item>
+
+\t\t</justificacao>
+
+\t</pca>
+
+\t<df type=\"object\">
+
+\t\t<idJust type=\"string\">just_df_c200.10.100</idJust>
+
+\t\t<valor type=\"string\">C</valor>
+
+\t\t<idDF type=\"string\">http://jcr.di.uminho.pt/m51-clav#df_c200.10.100</idDF>
+
+\t\t<justificacao type=\"array\">
+
+\t\t\t<item index=\"0\">
+
+\t\t\t\t<tipoId type=\"string\">CriterioJustificacaoDensidadeInfo</tipoId>
+
+\t\t\t\t<conteudo type=\"string\"> A informação não é recuperável noutro PN.</conteudo>
+
+\t\t\t\t<criterio type=\"string\">http://jcr.di.uminho.pt/m51-clav#crit_just_df_c200.10.100_1</criterio>
+
+\t\t\t\t<processos type=\"array\">
+
+\t\t\t\t</processos>
+
+\t\t\t\t<legislacao type=\"array\">
+
+\t\t\t\t</legislacao>
+
+\t\t\t</item>
+
+\t\t</justificacao>
+
+\t</df>
+
+</root>"

@@ -12,11 +12,7 @@ properties:
   estado:
     type: string
     enum: [Ativa, Inativa, Harmonização]
-  tipologiasSel:
-    type: array
-    items:
-      type: string
-  codigo:
+  id:
     type: string
     description: "'ent_' concatenado com o valor de sigla"
 required:
@@ -24,6 +20,5 @@ required:
   - internacional
   - sioe
   - estado
-  - tipologiasSel
   - sigla
-  - codigo
+  - id

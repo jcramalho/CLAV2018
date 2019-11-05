@@ -25,6 +25,41 @@ parameters:
 responses:
   200:
     description: "Retorna toda a informação relativa a uma classe ou a uma subarvore de classes com raiz na classe com id igual a 'id'"
+    content:
+      application/json:
+        schema:
+          oneOf:
+            - $ref: '#/components/schemas/ClasseCompletaSubArvore'
+            - $ref: '#/components/schemas/ClasseCompleta'
+      json:
+        schema:
+          oneOf:
+            - $ref: '#/components/schemas/ClasseCompletaSubArvore'
+            - $ref: '#/components/schemas/ClasseCompleta'
+      application/xml:
+        examples:
+          xmlClasse:
+            $ref: '#/components/examples/ClasseXML'
+          xmlSubarvore:
+            $ref: '#/components/examples/ClasseSubarvoreXML'
+      xml:
+        examples:
+          xmlClasse:
+            $ref: '#/components/examples/ClasseXML'
+          xmlSubarvore:
+            $ref: '#/components/examples/ClasseSubarvoreXML'
+      text/csv:
+        examples:
+          csvClasse:
+            $ref: '#/components/examples/ClasseCSV'
+          csvSubarvore:
+            $ref: '#/components/examples/ClasseSubarvoreCSV'
+      csv:
+        examples:
+          csvClasse:
+            $ref: '#/components/examples/ClasseCSV'
+          csvSubarvore:
+            $ref: '#/components/examples/ClasseSubarvoreCSV'
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:

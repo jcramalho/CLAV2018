@@ -1,0 +1,227 @@
+value: "<?xml version=\"1.0\" encoding=\"utf-8\"?>
+
+<root>
+
+\t<item index=\"0\">
+
+\t\t<codigo type=\"string\">100</codigo>
+
+\t\t<titulo type=\"string\">ORDENAMENTO JURÍDICO E NORMATIVO</titulo>
+
+\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#c100</id>
+
+\t</item>
+
+\t<item index=\"1\">
+
+\t\t<codigo type=\"string\">150</codigo>
+
+\t\t<titulo type=\"string\">PLANEAMENTO E GESTÃO ESTRATÉGICA</titulo>
+
+\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#c150</id>
+
+\t</item>
+
+\t<item index=\"2\">
+
+\t\t<codigo type=\"string\">200</codigo>
+
+\t\t<titulo type=\"string\">EXECUÇÃO DA POLÍTICA EXTERNA</titulo>
+
+\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#c200</id>
+
+\t</item>
+
+\t<item index=\"3\">
+
+\t\t<codigo type=\"string\">250</codigo>
+
+\t\t<titulo type=\"string\">ADMINISTRAÇÃO DE RELAÇÕES DE TRABALHO</titulo>
+
+\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#c250</id>
+
+\t</item>
+
+\t<item index=\"4\">
+
+\t\t<codigo type=\"string\">300</codigo>
+
+\t\t<titulo type=\"string\">ADMINISTRAÇÃO DE DIREITOS, BENS E SERVIÇOS</titulo>
+
+\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#c300</id>
+
+\t</item>
+
+\t<item index=\"5\">
+
+\t\t<codigo type=\"string\">350</codigo>
+
+\t\t<titulo type=\"string\">ADMINISTRAÇÃO FINANCEIRA</titulo>
+
+\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#c350</id>
+
+\t</item>
+
+\t<item index=\"6\">
+
+\t\t<codigo type=\"string\">400</codigo>
+
+\t\t<titulo type=\"string\">PRESTAÇÃO DE SERVIÇOS DE IDENTIFICAÇÃO E REGISTO</titulo>
+
+\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#c400</id>
+
+\t</item>
+
+\t<item index=\"7\">
+
+\t\t<codigo type=\"string\">450</codigo>
+
+\t\t<titulo type=\"string\">RECONHECIMENTOS E PERMISSÕES</titulo>
+
+\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#c450</id>
+
+\t</item>
+
+\t<item index=\"8\">
+
+\t\t<codigo type=\"string\">500</codigo>
+
+\t\t<titulo type=\"string\">SUPERVISÃO, CONTROLO E RESPONSABILIZAÇÃO</titulo>
+
+\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#c500</id>
+
+\t</item>
+
+\t<item index=\"9\">
+
+\t\t<codigo type=\"string\">550</codigo>
+
+\t\t<titulo type=\"string\">EXECUÇÃO DE OPERAÇÕES DE SEGURANÇA, PROTEÇÃO OU DEFESA</titulo>
+
+\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#c550</id>
+
+\t</item>
+
+\t<item index=\"10\">
+
+\t\t<codigo type=\"string\">600</codigo>
+
+\t\t<titulo type=\"string\">ADMINISTRAÇÃO DA JUSTIÇA</titulo>
+
+\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#c600</id>
+
+\t</item>
+
+\t<item index=\"11\">
+
+\t\t<codigo type=\"string\">650</codigo>
+
+\t\t<titulo type=\"string\">PRESTAÇÃO DE SERVIÇOS DE PROTEÇÃO E INCLUSÃO SOCIAL</titulo>
+
+\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#c650</id>
+
+\t</item>
+
+\t<item index=\"12\">
+
+\t\t<codigo type=\"string\">700</codigo>
+
+\t\t<titulo type=\"string\">PRESTAÇÃO DE CUIDADOS DE SAÚDE</titulo>
+
+\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#c700</id>
+
+\t</item>
+
+\t<item index=\"13\">
+
+\t\t<codigo type=\"string\">710</codigo>
+
+\t\t<titulo type=\"string\">PRESTAÇÃO DE SERVIÇOS DE HIGIENE E SALUBRIDADE PÚBLICAS</titulo>
+
+\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#c710</id>
+
+\t</item>
+
+\t<item index=\"14\">
+
+\t\t<codigo type=\"string\">750</codigo>
+
+\t\t<titulo type=\"string\">PRESTAÇÃO DE SERVIÇOS DE ENSINO E FORMAÇÃO</titulo>
+
+\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#c750</id>
+
+\t</item>
+
+\t<item index=\"15\">
+
+\t\t<codigo type=\"string\">800</codigo>
+
+\t\t<titulo type=\"string\">PRESTAÇÃO DE SERVIÇOS TÉCNICOS E CIENTÍFICOS, INVESTIGAÇÃO E DESENVOLVIMENTO</titulo>
+
+\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#c800</id>
+
+\t</item>
+
+\t<item index=\"16\">
+
+\t\t<codigo type=\"string\">850</codigo>
+
+\t\t<titulo type=\"string\">EXECUÇÃO DE PROGRAMAS E DE AÇÕES DE INCENTIVO</titulo>
+
+\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#c850</id>
+
+\t</item>
+
+\t<item index=\"17\">
+
+\t\t<codigo type=\"string\">900</codigo>
+
+\t\t<titulo type=\"string\">PROTOCOLO, DINAMIZAÇÃO E COMUNICAÇÃO INSTITUCIONAL</titulo>
+
+\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#c900</id>
+
+\t</item>
+
+\t<item index=\"18\">
+
+\t\t<codigo type=\"string\">950</codigo>
+
+\t\t<titulo type=\"string\">ADMINISTRAÇÃO DA PARTICIPAÇÃO CÍVICA</titulo>
+
+\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#c950</id>
+
+\t</item>
+
+\t<item index=\"19\">
+
+\t\t<codigo type=\"string\">100.10</codigo>
+
+\t\t<titulo type=\"string\">Elaboração de diplomas jurídico-normativos e de normas técnicas</titulo>
+
+\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#c100.10</id>
+
+\t</item>
+
+\t<item index=\"20\">
+
+\t\t<codigo type=\"string\">100.20</codigo>
+
+\t\t<titulo type=\"string\">Interpretação da legislação e das normas</titulo>
+
+\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#c100.20</id>
+
+\t</item>
+
+\t<item index=\"21\">
+
+\t\t<codigo type=\"string\">150.10</codigo>
+
+\t\t<titulo type=\"string\">Definição e avaliação de políticas</titulo>
+
+\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#c150.10</id>
+
+\t</item>
+
+\t<...></...>
+
+</root>"

@@ -1,0 +1,51 @@
+value: "<?xml version=\"1.0\" encoding=\"utf-8\"?>
+
+<root>
+
+\t<item index=\"0\">
+
+\t\t<id type=\"string\">leg_v7iPIkYXD1Z0qge4vg1jH</id>
+
+\t\t<data type=\"string\">2018/28/05</data>
+
+\t\t<numero type=\"string\">152/2018</numero>
+
+\t\t<tipo type=\"string\">Portaria</tipo>
+
+\t\t<sumario type=\"string\">Estabelece as condições e os procedimentos aplicáveis à atribuição, em 2018, de um subsídio, no âmbito do auxílio de minimis ao setor da pesca que corresponde a uma redução no preço final da gasolina consumida na pequena pesca artesanal e costeira, equivalente ao que resulta da redução da taxa aplicável ao gasóleo consumido na pesca</sumario>
+
+\t\t<estado type=\"string\">Ativo</estado>
+
+\t\t<link type=\"string\">https://dre.pt/application/conteudo/115397196</link>
+
+\t\t<entidades type=\"array\">
+
+\t\t</entidades>
+
+\t</item>
+
+\t<item index=\"1\">
+
+\t\t<id type=\"string\">leg_eRVdM1AAh3D8x2OFwYuVR</id>
+
+\t\t<data type=\"string\">2018/28/02</data>
+
+\t\t<numero type=\"string\">14/2018</numero>
+
+\t\t<tipo type=\"string\">DL</tipo>
+
+\t\t<sumario type=\"string\">Altera o Regulamento Consular, transpondo a Diretiva (UE) 2015/637.</sumario>
+
+\t\t<estado type=\"string\">Ativo</estado>
+
+\t\t<link type=\"string\">https://dre.pt/application/conteudo/114778985</link>
+
+\t\t<entidades type=\"array\">
+
+\t\t</entidades>
+
+\t</item>
+
+\t<...></...>
+
+</root>"

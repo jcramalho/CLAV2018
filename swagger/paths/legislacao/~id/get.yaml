@@ -18,6 +18,29 @@ parameters:
 responses:
   200:
     description: Consulta de um documento legislativo
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/LegislacaoSimples'
+      json:
+        schema:
+          $ref: '#/components/schemas/LegislacaoSimples'
+      application/xml:
+        examples:
+          xml:
+            $ref: '#/components/examples/LegislacaoXML'
+      xml:
+        examples:
+          xml:
+            $ref: '#/components/examples/LegislacaoXML'
+      text/csv:
+        examples:
+          csv:
+            $ref: '#/components/examples/LegislacaoCSV'
+      csv:
+        examples:
+          csv:
+            $ref: '#/components/examples/LegislacaoCSV'
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:

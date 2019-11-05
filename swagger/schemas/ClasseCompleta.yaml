@@ -1,0 +1,277 @@
+type: object
+properties:
+  nivel:
+    type: string
+  pai:
+    type: object
+    properties:
+      codigo:
+        type: string
+      titulo:
+        type: string
+    required:
+      - codigo
+      - titulo
+  codigo:
+    type: string
+  titulo:
+    type: string
+  descricao:
+    type: string
+  termosInd:
+    type: array
+    items:
+      properties:
+        idTI:
+          type: string
+        termo:
+          type: string
+      required:
+        - idTI
+        - termo
+  processosRelacionados:
+    type: array
+    items:
+      properties:
+        codigo:
+          type: string
+        tipoRel:
+          type: string
+        idRel:
+          type: string
+        titulo:
+          type: string
+        id:
+          type: string
+      required:
+        - codigo
+        - tipoRel
+        - idRel
+        - titulo
+        - id
+  legislacao:
+    type: array
+    items:
+      properties:
+        tipo:
+          type: string
+        numero:
+          type: string
+          pattern: '\d{1,6}/\d{1,4}'
+        sumario:
+          type: string
+        idLeg:
+          type: string
+          description: "'leg_' concatenado com valor aleatório"
+        id:
+          type: string
+      required:
+        - tipo
+        - numero
+        - sumario
+        - idLeg
+        - id
+  pca:
+    type: object
+    properties:
+      formaContagem:
+        type: string
+      idPCA:
+        type: string
+      idJust:
+        type: string
+      notas:
+        type: string
+      valores:
+        type: string     
+      justificacao:
+        type: array
+        items:
+          properties:
+            tipoId:
+              type: string
+            conteudo:
+              type: string
+            criterio:
+              type: string
+            processos:
+              type: array
+              items:
+                properties:
+                  procId:
+                    type: string
+                required:
+                  - procId
+            legislacao:
+              type: array
+              items:
+                properties:
+                  legId:
+                    type: string
+                required:
+                  - legId
+          required:
+            - tipoId
+            - conteudo
+            - criterio
+            - processos
+            - legislacao
+    required:
+      - formaContagem
+      - idPCA
+      - idJust
+      - valores
+      - justificacao
+  df:
+    type: object
+    properties:
+      idDF:
+        type: string
+      idJust:
+        type: string
+      nota:
+        type: string
+      valor:
+        type: string     
+      justificacao:
+        type: array
+        items:
+          properties:
+            tipoId:
+              type: string
+            conteudo:
+              type: string
+            criterio:
+              type: string
+            processos:
+              type: array
+              items:
+                properties:
+                  procId:
+                    type: string
+                required:
+                  - procId
+            legislacao:
+              type: array
+              items:
+                properties:
+                  legId:
+                    type: string
+                required:
+                  - legId
+          required:
+            - tipoId
+            - conteudo
+            - criterio
+            - processos
+            - legislacao
+    required:
+      - idDF
+      - idJust
+      - justificacao
+  notasAp:
+    type: array
+    items:
+      type: object
+      properties:
+        idNota:
+          type: string
+        nota:
+          type: string
+      required:
+        - idNota
+        - nota
+  exemplosNotasAp:
+   type: array
+   items:
+      type: object
+      properties:
+        idExemplo:
+          type: string
+        exemplo:
+          type: string
+      required:
+        - idExemplo
+        - exemplo
+  notasEx:
+   type: array
+   items:
+     type: array
+     items:
+       type: object
+       properties:
+         idNota:
+           type: string
+         nota:
+           type: string
+       required:
+         - idNota
+         - nota
+  temSubclasses4Nivel:
+    type: boolean
+  temSubclasses4NivelPCA:
+    type: boolean
+  temSubclasses4NivelDF:
+    type: boolean
+  subdivisao4Nivel01Sintetiza02:
+    type: boolean
+  tipoProc:
+    type: string
+  procTrans:
+    type: string
+  donos:
+    type: array
+    items:
+      properties:
+        idDono:
+          type: string
+          description: "'ent_' concatenado com o valor de sigla"
+        tipo:
+          type: string
+        idTipo:
+          type: string
+        designacao:
+          type: string
+        sigla:
+          type: string
+        id:
+          type: string
+  participantes:
+    type: array
+    items:
+      properties:
+        participLabel:
+          type: string
+        idTipo:
+          type: string
+        designacao:
+          type: string
+        sigla:
+          type: string
+        idParticipante:
+          type: string
+          description: "'ent_' concatenado com o valor de sigla"
+        id:
+          type: string
+required:
+  - nivel
+  - pai
+  - codigo
+  - titulo
+  - descricao
+  - termosInd
+  - processosRelacionados
+  - legislacao
+  - pca
+  - df
+  - notasAp
+  - exemplosNotasAp
+  - notasEx
+  - temSubclasses4Nivel
+  - temSubclasses4NivelPCA
+  - temSubclasses4NivelDF
+  - subdivisao4Nivel01Sintetiza02
+  - tipoProc
+  - procTrans
+  - donos
+  - participantes

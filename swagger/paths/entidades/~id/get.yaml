@@ -24,6 +24,29 @@ parameters:
 responses:
   200:
     description: Consulta de uma entidade
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/EntidadeSimples'
+      json:
+        schema:
+          $ref: '#/components/schemas/EntidadeSimples'
+      application/xml:
+        examples:
+          xml:
+            $ref: '#/components/examples/EntidadeXML'
+      xml:
+        examples:
+          xml:
+            $ref: '#/components/examples/EntidadeXML'
+      text/csv:
+        examples:
+          csv:
+            $ref: '#/components/examples/EntidadeCSV'
+      csv:
+        examples:
+          csv:
+            $ref: '#/components/examples/EntidadeCSV'
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:

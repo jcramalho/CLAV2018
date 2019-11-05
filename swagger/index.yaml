@@ -101,3 +101,4 @@ components:
         type: string
         enum: [application/json, json, application/xml, xml, text/csv, csv]
       description: "Formato de saída do resultado"
+  examples: !!inc/dir [ 'examples', excludeTopLevelDirSeparator: true ]

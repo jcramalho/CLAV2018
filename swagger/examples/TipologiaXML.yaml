@@ -1,0 +1,11 @@
+value: "<?xml version=\"1.0\" encoding=\"utf-8\"?>
+
+<root>
+
+\t<estado type=\"string\">Ativa</estado>
+
+\t<sigla type=\"string\">AAC</sigla>
+
+\t<designacao type=\"string\">Autoridades Administrativas Civis</designacao>
+
+</root>"

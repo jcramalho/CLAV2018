@@ -1,0 +1,53 @@
+value: "<?xml version=\"1.0\" encoding=\"utf-8\"?>
+
+<root>
+
+\t<item index=\"0\">
+
+\t\t<codigo type=\"string\">100</codigo>
+
+\t\t<titulo type=\"string\">ORDENAMENTO JURÍDICO E NORMATIVO</titulo>
+
+\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#c100</id>
+
+\t\t<filhos type=\"array\">
+
+\t\t\t<item index=\"0\">
+
+\t\t\t\t<codigo type=\"string\">100.10</codigo>
+
+\t\t\t\t<titulo type=\"string\">Elaboração de diplomas jurídico-normativos e de normas técnicas</titulo>
+
+\t\t\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#c100.10</id>
+
+\t\t\t\t<filhos type=\"array\">
+
+\t\t\t\t\t<item index=\"0\">
+
+\t\t\t\t\t\t<codigo type=\"string\">100.10.001</codigo>
+
+\t\t\t\t\t\t<titulo type=\"string\">Produção e comunicação de atos legislativos</titulo>
+
+\t\t\t\t\t\t<id type=\"string\">http://jcr.di.uminho.pt/m51-clav#c100.10.001</id>
+
+\t\t\t\t\t\t<filhos type=\"array\">
+
+\t\t\t\t\t\t</filhos>
+
+\t\t\t\t\t</item>
+
+\t\t\t\t\t<...></...>
+
+\t\t\t\t</filhos>
+
+\t\t\t</item>
+
+\t\t\t<...></...>
+
+\t\t</filhos>
+
+\t</item>
+
+\t<...></...>
+
+</root>"

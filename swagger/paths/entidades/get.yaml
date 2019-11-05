@@ -57,6 +57,29 @@ parameters:
 responses:
   200:
     description: Lista todas as entidades
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/EntidadeSimplesLista'
+      json:
+        schema:
+          $ref: '#/components/schemas/EntidadeSimplesLista'
+      application/xml:
+        examples:
+          xml:
+            $ref: '#/components/examples/EntidadesXML'
+      xml:
+        examples:
+          xml:
+            $ref: '#/components/examples/EntidadesXML'
+      text/csv:
+        examples:
+          csv:
+            $ref: '#/components/examples/EntidadesCSV'
+      csv:
+        examples:
+          csv:
+            $ref: '#/components/examples/EntidadesCSV'
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:
