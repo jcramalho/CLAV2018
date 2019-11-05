@@ -23,6 +23,8 @@ servers:
 tags:
   - name: auth
     description:
+  - name: calls
+    description:
   - name: chaves
     description:
   - name: classes
