@@ -1,3 +1,5 @@
+var separator = ';'
+
 function protect(string){
     if(string != null){
         if(typeof string === 'string'){
@@ -16,7 +18,7 @@ function joinLines(csvLines){
     var len = csvLines.length
 
     for(var i=0; i<len; i++){
-        csvLines[i] = csvLines[i].join(',')
+        csvLines[i] = csvLines[i].join(separator)
     }
 
     var csv = csvLines.join('\n')
