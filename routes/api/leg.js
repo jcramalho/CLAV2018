@@ -37,6 +37,16 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
 		} catch (erro) {
             res.status(500).send(`Erro na listagem dos diplomas sem PNs associados: ${erro}`)
         }
+	}
+	// api/legislacao?fonte=XXXX
+	if (queryData.fonte) {
+		try {
+			res.locals.dados = await Leg.listarFonte(queryData.fonte)
+			res.locals.tipo = "legislacoes"
+			next()
+		} catch (erro) {
+			res.status(500).send(`Erro na listagem de legislações com fonte ${queryData.fonte}: ${erro}`)
+		}
 	} else {
         try{
             res.locals.dados = await Leg.listar()
