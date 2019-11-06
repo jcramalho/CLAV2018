@@ -289,7 +289,7 @@ Leg.listarFonte = (fonte) => {
              clav:diplomaSumario ?sumario;
              clav:diplomaEstado "Ativo";
              clav:diplomaLink ?link;
-             clav:diplomaFonte ${fonte}.
+             clav:diplomaFonte "${fonte}".
         OPTIONAL {
             ?uri clav:temEntidadeResponsavel ?ent.
             ?ent clav:entSigla ?entidades;
