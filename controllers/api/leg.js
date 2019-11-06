@@ -270,6 +270,48 @@ Leg.portarias = () => {
         .then(response => normalize(response));
 };
 
+
+/**
+ * Lista as meta informações de todas as legislações no sistema, de acordo com
+ * a fonte especificada.
+ * 
+ * @param {Object} fonte objeto com os campos para filtrar. Se o valor de um
+ * campo for `undefined` esse campo é ignorado. TODO: ainda por implementar
+ * @return {Promise<[Legislacao] | Error>} promessa que quando cumprida contém a
+ * lista das legislacoes existentes que respeitam a fonte dada
+ */
+Leg.listarFonte = (fonte) => {
+    const query = `SELECT ?id ?data ?numero ?tipo ?sumario ?estado ?entidades ?link WHERE {
+        ?uri rdf:type clav:Legislacao;
+             clav:diplomaData ?data;
+             clav:diplomaNumero ?numero;
+             clav:diplomaTipo ?tipo;
+             clav:diplomaSumario ?sumario;
+             clav:diplomaEstado ?estado;
+             clav:diplomaLink ?link;
+             clav:diplomaFonte ${fonte}.
+        OPTIONAL {
+            ?uri clav:temEntidadeResponsavel ?ent.
+            ?ent clav:entSigla ?entidades;
+        }
+        BIND(STRAFTER(STR(?uri), 'clav#') AS ?id).
+    } ORDER BY DESC (?data)`;
+    const campos = ["id", "data", "numero", "tipo", "sumario", "estado", "link"];
+    const agrupar = ["entidades"];
+
+    return execQuery("query", query)
+        .then(response => {
+            let legs = projection(normalize(response), campos, agrupar);
+            
+            for (leg of legs) {
+                leg.entidades = leg.entidades.map(ent => ({ id: `ent_${ent}`, sigla: ent }));
+            }
+        
+            return legs;
+        });
+};
+
+
 //Criar controller para inserir na base de dados, depois do pedido aprovado!!
 /*const query = `INSERT DATA {
         clav:${id} rdf:type owl:NamedIndividual , clav:Legislacao ;
