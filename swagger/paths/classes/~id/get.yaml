@@ -60,6 +60,12 @@ responses:
             $ref: '#/components/examples/ClasseCSV'
           csvSubarvore:
             $ref: '#/components/examples/ClasseSubarvoreCSV'
+      excel/csv:
+        examples:
+          csvClasse:
+            $ref: '#/components/examples/ClasseExcelCSV'
+          csvSubarvore:
+            $ref: '#/components/examples/ClasseSubarvoreExcelCSV'
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:

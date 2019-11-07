@@ -108,6 +108,16 @@ responses:
             $ref: '#/components/examples/ClassesCompletaArvoreCSV'
           csvClassesCompletaLista:
             $ref: '#/components/examples/ClassesCompletaListaCSV'
+      excel/csv:
+        examples:
+          csvClassesSimplesArvore:
+            $ref: '#/components/examples/ClassesSimplesArvoreExcelCSV'
+          csvClassesSimplesLista:
+            $ref: '#/components/examples/ClassesSimplesListaExcelCSV'
+          csvClassesCompletaArvore:
+            $ref: '#/components/examples/ClassesCompletaArvoreExcelCSV'
+          csvClassesCompletaLista:
+            $ref: '#/components/examples/ClassesCompletaListaExcelCSV'
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:

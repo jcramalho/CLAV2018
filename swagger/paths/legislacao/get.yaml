@@ -47,6 +47,10 @@ responses:
         examples:
           csv:
             $ref: '#/components/examples/LegislacoesCSV'
+      excel/csv:
+        examples:
+          csv:
+            $ref: '#/components/examples/LegislacoesExcelCSV'
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:

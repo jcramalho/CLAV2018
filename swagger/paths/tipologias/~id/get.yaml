@@ -19,7 +19,7 @@ parameters:
     required: false
     schema:
       type: string
-      enum: [application/json, json, application/xml, xml, text/csv, csv]
+      enum: [application/json, json, application/xml, xml, text/csv, csv, excel/csv]
     description: "Formato de saída do resultado. O resultado no formato CSV possui toda a informação da tipologia"
 responses:
   200:
@@ -47,6 +47,10 @@ responses:
         examples:
           csv:
             $ref: '#/components/examples/TipologiaCSV'
+      excel/csv:
+        examples:
+          csv:
+            $ref: '#/components/examples/TipologiaExcelCSV'
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:
