@@ -1,12 +1,12 @@
-value: "\"Sigla\",\"Designação\",\"Estado\",\"Dono no processo\",\"Participante no processo\",\"Tipo de intervenção no processo\"
+value: "\"Sigla\";\"Designação\";\"Estado\";\"Dono no processo\";\"Participante no processo\";\"Tipo de intervenção no processo\"
 
-\"AAC\",\"Autoridades Administrativas Civis\",\"Ativa\",\"550.20.501\",\"\",\"\"
+\"AAC\";\"Autoridades Administrativas Civis\";\"Ativa\";\"550.20.501\";\"\";\"\"
 
-\"AADR\",\"Assembleias de apuramento distrital de resultados\",\"Ativa\",\"\",\"950.10.600\",\"temParticipanteExecutor\"
+\"AADR\";\"Assembleias de apuramento distrital de resultados\";\"Ativa\";\"\";\"950.10.600\";\"temParticipanteExecutor\"
 
-\"AAGR\",\"Assembleias de apuramento geral dos resultados\",\"Ativa\",\"\",\"400.10.032\",\"temParticipanteComunicador\"
+\"AAGR\";\"Assembleias de apuramento geral dos resultados\";\"Ativa\";\"\";\"400.10.032\";\"temParticipanteComunicador\"
 
-\"ACE\",\"Administração Central do Estado\",\"Ativa\",\"\",\"150.10.400#
+\"ACE\";\"Administração Central do Estado\";\"Ativa\";\"\";\"150.10.400#
 
 200.10.200#
 
@@ -22,7 +22,7 @@ value: "\"Sigla\",\"Designação\",\"Estado\",\"Dono no processo\",\"Participant
 
 200.10.700#
 
-350.10.508\",\"temParticipanteApreciador#
+350.10.508\";\"temParticipanteApreciador#
 
 temParticipanteApreciador#
 
