@@ -105,6 +105,7 @@ module.exports.outputFormat = async (req, res, next) => {
                 res.send(json2xml(res.locals.dados))
                 break
             case 'text/csv':
+            case 'excel/csv':
             case 'csv':
                 if(res.locals.tipo){
                     try{
@@ -125,8 +126,12 @@ module.exports.outputFormat = async (req, res, next) => {
                                 break
                         }
 
-                        res.setHeader('content-type', 'text/csv');
-                        res.send(json2csv(res.locals.dados, res.locals.tipo))
+                        res.setHeader('content-type', 'text/csv')
+                        var csv = json2csv(res.locals.dados, res.locals.tipo)
+                        if(outF == 'excel/csv'){
+                            csv = csv.replace(/#\n/g,"#")
+                        }
+                        res.send(csv)
                     }catch(e){
                         res.status(406).send(notSup)
                     }
