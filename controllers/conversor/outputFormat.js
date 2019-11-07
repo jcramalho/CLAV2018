@@ -3,6 +3,7 @@ const { json2csv } = require('./json2csv.js')
 const request = require('./../api/utils.js').request
 var Entidades = require('./../api/entidades.js')
 var Tipologias = require('./../api/tipologias.js')
+var path = require("path")
 
 const notSup = "Esta rota não suporta exportação para CSV. Contudo pode exportar para JSON (application/json ou json) ou XML (application/xml ou xml) nesta rota."
 
@@ -90,17 +91,19 @@ async function getAllTipologiasInfo(tips){
     }
 }
 
-module.exports.outputFormat = async (req, res, next) => {
+module.exports.outputFormat = async (req, res) => {
 	if (res.locals.dados) {
 	    const outF = req.query.OF || req.headers.accept
 
         switch (outF) {
             case 'application/json':
             case 'json':
-                res.json(res.locals.dados)
+                res.jsonp(res.locals.dados)
                 break
             case 'application/xml':
             case 'xml':
+                //var filename = path.basename(req.originalUrl.replace(/\/?\?.*$/g,''))
+                //res.setHeader("content-disposition","attachment; filename=" + filename + '.xml')
                 res.setHeader('content-type', 'application/xml')
                 res.send(json2xml(res.locals.dados))
                 break
@@ -126,11 +129,15 @@ module.exports.outputFormat = async (req, res, next) => {
                                 break
                         }
 
+                        //var filename = path.basename(req.originalUrl.replace(/\/?\?.*$/g,''))
+                        //res.setHeader("content-disposition","attachment; filename=" + filename + '.csv')
                         res.setHeader('content-type', 'text/csv')
                         var csv = json2csv(res.locals.dados, res.locals.tipo)
+
                         if(outF == 'excel/csv'){
                             csv = csv.replace(/#\n/g,"#")
                         }
+
                         res.send(csv)
                     }catch(e){
                         res.status(406).send(notSup)
@@ -140,7 +147,7 @@ module.exports.outputFormat = async (req, res, next) => {
                 }
                 break
             default:
-                res.json(res.locals.dados)
+                res.jsonp(res.locals.dados)
                 break
         }
     }
