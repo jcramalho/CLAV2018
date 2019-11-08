@@ -2,6 +2,7 @@
 var express = require('express'),
     app = express();
 
+var cors = require('cors')
 app.use(cors())
 
 // Logging na consola do admin
