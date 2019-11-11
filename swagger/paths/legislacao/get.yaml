@@ -15,6 +15,12 @@ parameters:
       enum: [A]
     description: No caso de ser definido lista os documentos legislativos no estado A. Este parâmetro sobrepõe os seguintes, ou seja, caso este parâmetro seja definido os restantes são ignorados.
   - in: query
+    name: fonte
+    schema:
+      type: string
+      enum: [PGD, PGD/LC, RADA]
+    description: No caso de ser definido lista os documentos legislativos de acordo com a fonte especificada.
+  - in: query
     name: processos
     schema:
       type: string
