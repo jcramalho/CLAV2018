@@ -55,7 +55,6 @@ app.use(bodyParser.urlencoded({
 
 //authentication dependencies
 var cookieParser = require('cookie-parser');
-var expressValidator = require('express-validator');
 var passport = require('passport');
 
 //MongoDB session setup
@@ -85,24 +84,6 @@ app.use(session({
 // Passport init
 app.use(passport.initialize());
 app.use(passport.session());
-
-// Express Validator
-app.use(expressValidator({
-    errorFormatter: function (param, msg, value) {
-        var namespace = param.split('.')
-            , root = namespace.shift()
-            , formParam = root;
-
-        while (namespace.length) {
-            formParam += '[' + namespace.shift() + ']';
-        }
-        return {
-            param: formParam,
-            msg: msg,
-            value: value
-        };
-    }
-}));
 
 // Logging middleware
 app.use(logger('dev'))
