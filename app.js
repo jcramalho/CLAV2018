@@ -34,15 +34,6 @@ app.use((req, res, next) => {
     next();
 });
 
-// Para permitir pedidos à API vindos de outros serviços internos
-//app.use(function(req, res, next) {
-//    res.header('Access-Control-Allow-Origin', '*');
-//    res.header('Access-Control-Allow-Credentials', true);
-//    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-//    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With, Origin, Accept, api_key');
-//    next();
-//});
-
 //body parser for post requests
 var bodyParser = require('body-parser')
 app.use(bodyParser.json({limit: '50mb'}));         // to support JSON-encoded bodies
