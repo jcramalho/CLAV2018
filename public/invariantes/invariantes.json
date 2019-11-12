@@ -83,6 +83,12 @@
             "desc": "Invariantes sobre os PNs (Classe 3)",
             "invs": [
                 {
+                    "idInv": "inv_1_0",
+                    "desc": "Um processo não transversal não pode ter participantes",
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nselect * where {\n\t?p rdf:type :Classe_N3 .\n\t?p :processoTransversal ?valor.\n\tFILTER (?valor != 'S').\n\t?p :temParticipante ?participante\n}",
+                    "checked": true
+                },
+                {
                     "idInv": "inv_1_1",
                     "desc": "A relação eCruzadoCom é simétrica",
                     "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c1 ?c1_titulo ?c2 ?c2_titulo  where {\n\t ?c1 :eCruzadoCom ?c2 .\n\t?c1 :titulo ?c1_titulo .\n\t?c2 :titulo ?c2_titulo.\n\tFILTER (NOT EXISTS { ?c2 :eCruzadoCom ?c1 . })\n}",
