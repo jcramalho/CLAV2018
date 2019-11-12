@@ -3,7 +3,6 @@ const { json2csv } = require('./json2csv.js')
 const request = require('./../api/utils.js').request
 var Entidades = require('./../api/entidades.js')
 var Tipologias = require('./../api/tipologias.js')
-var path = require("path")
 
 const notSup = "Esta rota não suporta exportação para CSV. Contudo pode exportar para JSON (application/json ou json) ou XML (application/xml ou xml) nesta rota."
 
@@ -102,8 +101,6 @@ module.exports.outputFormat = async (req, res) => {
                 break
             case 'application/xml':
             case 'xml':
-                //var filename = path.basename(req.originalUrl.replace(/\/?\?.*$/g,''))
-                //res.setHeader("content-disposition","attachment; filename=" + filename + '.xml')
                 res.setHeader('content-type', 'application/xml')
                 res.send(json2xml(res.locals.dados))
                 break
@@ -129,8 +126,6 @@ module.exports.outputFormat = async (req, res) => {
                                 break
                         }
 
-                        //var filename = path.basename(req.originalUrl.replace(/\/?\?.*$/g,''))
-                        //res.setHeader("content-disposition","attachment; filename=" + filename + '.csv')
                         res.setHeader('content-type', 'text/csv')
                         var csv = json2csv(res.locals.dados, res.locals.tipo)
 
