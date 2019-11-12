@@ -90,7 +90,7 @@ async function getAllTipologiasInfo(tips){
     }
 }
 
-module.exports.outputFormat = async (req, res) => {
+module.exports.outputFormat = async (req, res, next) => {
 	if (res.locals.dados) {
 	    const outF = req.query.OF || req.headers.accept
 
@@ -145,5 +145,7 @@ module.exports.outputFormat = async (req, res) => {
                 res.jsonp(res.locals.dados)
                 break
         }
+    }else{
+        next()
     }
 }
