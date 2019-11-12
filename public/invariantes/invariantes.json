@@ -85,7 +85,7 @@
                 {
                     "idInv": "inv_1_0",
                     "desc": "Um processo não transversal não pode ter participantes",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nPREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\nselect * where {\n\t?p rdf:type :Classe_N3 .\n\t?p :processoTransversal ?valor.\n\tFILTER (?valor != 'S').\n\t?p :temParticipante ?participante\n}",
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect * where {\n\t?p rdf:type :Classe_N3 .\n\t?p :processoTransversal ?valor.\n\tFILTER (?valor != 'S').\n\t?p :temParticipante ?participante\n}",
                     "checked": true
                 },
                 {
