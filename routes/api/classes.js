@@ -8,26 +8,8 @@ var router = express.Router();
 // Devolve as classes em vários formatos podendo ser filtradas por nível 
 router.get('/', Auth.isLoggedInKey, async (req, res, next) => { 
     try {
-        if(req.query.formato == "arvore"){
-            if(req.query.info == "completa"){
-                res.locals.dados = await State.getAllClassesInfo()
-            }else{
-                res.locals.dados = await State.getAllClasses()
-            }
-            res.locals.tipo = "classes"
-            next()
-        }
-        else if(req.query.formato == "lista"){
-            if(req.query.info == "completa"){
-                res.locals.dados = await State.getClassesInfoFlatList()
-            }else{
-                res.locals.dados = await State.getClassesFlatList()
-            }
-            res.locals.tipo = "classes"
-            next()
-        }
         // Devolve a lista dos processos comuns
-        else if(req.query.tipo == "comum"){
+        if(req.query.tipo == "comum"){
             if(req.query.info == "completa"){
                 res.locals.dados = await State.getProcessosComunsInfo()
             }else{
@@ -108,7 +90,28 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
                         res.status(500).send(`Erro na listagem geral das classes de nível 4: ${err}`)
                         break
                     }
+                default:
+                    res.status(500).send(`Este nível não existe! Os níveis presents são o 1, 2, 3 e 4.`)
+                    break
             }
+        }
+        else if(req.query.formato == "arvore"){
+            if(req.query.info == "completa"){
+                res.locals.dados = await State.getAllClassesInfo()
+            }else{
+                res.locals.dados = await State.getAllClasses()
+            }
+            res.locals.tipo = "classes"
+            next()
+        }
+        else if(req.query.formato == "lista"){
+            if(req.query.info == "completa"){
+                res.locals.dados = await State.getClassesInfoFlatList()
+            }else{
+                res.locals.dados = await State.getClassesFlatList()
+            }
+            res.locals.tipo = "classes"
+            next()
         }
         else{
             if(req.query.info == "completa"){
