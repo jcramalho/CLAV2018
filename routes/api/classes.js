@@ -91,7 +91,7 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
                         break
                     }
                 default:
-                    res.status(500).send(`Este nível não existe! Os níveis presents são o 1, 2, 3 e 4.`)
+                    res.status(500).send(`O nível '${req.query.nivel}' não existe! Os níveis possíveis são o '1', '2', '3' e '4'.`)
                     break
             }
         }
