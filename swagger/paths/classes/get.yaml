@@ -14,7 +14,7 @@ parameters:
       type: string
       enum: [arvore, lista]
       default: arvore
-    description: Formato de saída. Pode ser em árvore ou em lista. Quanto nenhum parâmetro é definido (formato, tipo e nivel) o formato de saída em arvore é o predefinido.
+    description: Formato da estrutura de saída. Pode ser em árvore ou em lista. Quanto nenhum parâmetro é definido (formato, tipo e nivel) o formato de saída em arvore é o predefinido.
     required: false
   - in: query
     name: tipo
@@ -47,7 +47,7 @@ parameters:
     schema:
       type: string
       enum: [completa]
-    description: "Caso seja um valor que não 'completa' devolve apenas o código e o título das classes. Caso o valor seja 'completa' devolve toda a informação de cada classe."
+    description: "Caso seja um valor que não 'completa' devolve apenas o código, a descrição e o título das classes. Caso o valor seja 'completa' devolve toda a informação de cada classe."
     required: false
   - $ref: '#/components/parameters/OutputFormatWithCSV'
 responses:
