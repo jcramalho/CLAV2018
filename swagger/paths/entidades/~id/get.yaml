@@ -15,12 +15,13 @@ parameters:
       type: string
     required: true
   - in: query
-    name: OF
-    required: false
+    name: info
     schema:
       type: string
-      enum: [application/json, json, application/xml, xml, text/csv, csv, excel/csv]
-    description: "Formato de saída do resultado. O resultado no formato CSV possui toda a informação da entidade"
+      enum: [completa]
+    description: "Caso seja um valor que não 'completa' devolve apenas parte da informação da entidade. Caso o valor seja 'completa' devolve toda a informação da entidade."
+    required: false
+  - $ref: '#/components/parameters/OutputFormatWithCSV'
 responses:
   200:
     description: Consulta de uma entidade

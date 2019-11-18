@@ -1,5 +1,6 @@
 const execQuery = require('../../controllers/api/utils').execQuery
 const normalize = require('../../controllers/api/utils').normalize
+const request = require('../../controllers/api/utils').request
 const Tipologias = module.exports
 
 /**
@@ -39,30 +40,59 @@ Tipologias.listar = (filtro) => {
 	return execQuery('query', query).then((response) => normalize(response))
 }
 
-//Lista donos de todas as tipologias. O formato devolvido está pronto ao ser usado na exportação CSV
-Tipologias.listarDonos = () => {
+//Lista donos de todas as tipologias
+Tipologias.listarDonos = async () => {
 	const query = `SELECT ?sigla
-                        (GROUP_CONCAT(DISTINCT ?donoCodigo; SEPARATOR="#\\n") AS ?dono){
+                        (GROUP_CONCAT(DISTINCT ?donoCodigo; SEPARATOR="#") AS ?dc)
+                        (GROUP_CONCAT(DISTINCT ?donoTitulo; SEPARATOR="#") AS ?dt){
         ?uri rdf:type clav:TipologiaEntidade ;
             clav:tipSigla ?sigla .
 
         OPTIONAL{
             ?uriD clav:temDono ?uri ;
                 clav:codigo ?donoCodigo ;
+                clav:titulo ?donoTitulo ;
                 clav:pertenceLC clav:lc1;
                 clav:classeStatus "A" .
         }
     }
     group by ?sigla`
 
-	return execQuery('query', query).then((response) => normalize(response))
+    try{
+	    var response = await execQuery('query', query)
+        var res = normalize(response)
+
+        for(var i = 0; i < res.length; i++){
+            res[i].dono = []
+            if(res[i].dc != ''){
+                var codigos = res[i].dc.split("#")
+                var titulos = res[i].dt.split("#")
+
+                for(var j = 0; j < codigos.length; j++){
+                    res[i].dono.push({
+                        codigo: codigos[j],
+                        titulo: titulos[j],
+                        id: 'c' + codigos[j]
+                    })
+                }
+            }
+
+            delete res[i].dc
+            delete res[i].dt
+        }
+
+        return res
+    }catch(erro){
+        throw(erro)
+    }
 }
 
-//Lista participantes de todas as tipologias. O formato devolvido está pronto ao ser usado na exportação CSV
-Tipologias.listarParticipantes = () => {
+//Lista participantes de todas as tipologias
+Tipologias.listarParticipantes = async () => {
     const query = `SELECT ?sigla
-                        (GROUP_CONCAT(?parCodigo; SEPARATOR="#\\n") AS ?participante)
-                        (GROUP_CONCAT(?tipoP; SEPARATOR="#\\n") AS ?tipoPar){
+                        (GROUP_CONCAT(?parCodigo; SEPARATOR="#") AS ?pc)
+                        (GROUP_CONCAT(?parTitulo; SEPARATOR="#") AS ?pt)
+                        (GROUP_CONCAT(?tipoP; SEPARATOR="#") AS ?tp){
         ?uri rdf:type clav:TipologiaEntidade ;
             clav:tipSigla ?sigla .
 
@@ -70,6 +100,7 @@ Tipologias.listarParticipantes = () => {
             ?uriP clav:temParticipante ?uri ;
                 ?tipoParURI ?uri ;
                 clav:codigo ?parCodigo ;
+                clav:titulo ?parTitulo ;
                 clav:pertenceLC clav:lc1 ;
                 clav:classeStatus "A" .
 
@@ -79,7 +110,36 @@ Tipologias.listarParticipantes = () => {
     }
     group by ?sigla`
 
-	return execQuery('query', query).then((response) => normalize(response))
+    try{
+	    var response = await execQuery('query', query)
+        var res = normalize(response)
+
+        for(var i = 0; i < res.length; i++){
+            res[i].participante = []
+            if(res[i].pc != ''){
+                var codigos = res[i].pc.split("#")
+                var titulos = res[i].pt.split("#")
+                var tiposPar = res[i].tp.split("#")
+
+                for(var j = 0; j < codigos.length; j++){
+                    res[i].participante.push({
+                        tipoPar: tiposPar[j],
+                        codigo: codigos[j],
+                        titulo: titulos[j],
+                        id: 'c' + codigos[j]
+                    })
+                }
+            }
+
+            delete res[i].pc
+            delete res[i].pt
+            delete res[i].tp
+        }
+
+        return res
+    }catch(erro){
+        throw(erro)
+    }
 }
 
 /**
@@ -349,4 +409,42 @@ Tipologias.updateTipologia = function(dataObj) {
 	return execQuery('update', updateQuery)
 		.then((response) => Promise.resolve(response))
 		.catch((error) => console.error('Error in update:\n' + error))
+}
+
+//Obtém o resto da info das Tipologias
+Tipologias.moreInfoList = async (tips) => {
+    //obtém os donos para todas as entidades
+    var data = await Tipologias.listarDonos()
+    var donos = []
+
+    for(var i = 0; i < data.length; i++){
+        donos[data[i].sigla] = {
+            dono: data[i].dono
+        }
+    }
+
+    //obtém os participantes e o tipo de participação para todas as entidades
+    data = await Tipologias.listarParticipantes()
+    var parts = []
+
+    for(i = 0; i < data.length; i++){
+        parts[data[i].sigla] = {
+            participante: data[i].participante,
+            tipoPar: data[i].tipoPar
+        }
+    }
+
+    for(i = 0; i < tips.length; i++){
+        tips[i].dono = donos[tips[i].sigla].dono
+        tips[i].participante = parts[tips[i].sigla].participante
+        tips[i].tipoPar = parts[tips[i].sigla].tipoPar
+    }
+}
+
+//Obtém o resto da info da Tipologia
+Tipologias.moreInfo = async (tip) => {
+    var id = 'tip_' + tip.sigla
+
+    tip.dono = await Tipologias.dono(id)
+    tip.participante = await Tipologias.participante(id)
 }

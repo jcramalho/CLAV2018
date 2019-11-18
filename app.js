@@ -139,7 +139,7 @@ var options = {
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(null, options));
 
 //formatar o resultado consoante a querystring OF
-const { outputFormat } = require('./controllers/conversor/outputFormat.js')
+const { outputFormat } = require('./routes/outputFormat.js')
 
 //routes and API
 app.use('/api/entidades',require('./routes/api/entidades'), outputFormat);

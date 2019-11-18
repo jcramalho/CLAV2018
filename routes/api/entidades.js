@@ -12,7 +12,12 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
     // api/entidades?processos=com
     if (queryData.processos && queryData.processos == 'com') {
         try{
-		    res.locals.dados = await Entidades.listarComPNs()
+            res.locals.dados = await Entidades.listarComPNs()
+
+            if(req.query.info == "completa"){
+                await Entidades.moreInfoList(res.locals.dados)
+            }
+
             res.locals.tipo = "entidades"
             next()
 		}catch(erro){
@@ -23,6 +28,11 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
     else if (queryData.processos && queryData.processos == 'sem') {
         try{
             res.locals.dados = await Entidades.listarSemPNs()
+
+            if(req.query.info == "completa"){
+                await Entidades.moreInfoList(res.locals.dados)
+            }
+
             res.locals.tipo = "entidades"
             next()
 		}catch(erro){
@@ -31,6 +41,11 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
 	} else {
         try{
 		    res.locals.dados = await Entidades.listar(req.query)
+
+            if(req.query.info == "completa"){
+                await Entidades.moreInfoList(res.locals.dados)
+            }
+
             res.locals.tipo = "entidades"
             next()
 		}catch(erro){
@@ -43,8 +58,12 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
 router.get('/:id', Auth.isLoggedInKey, async (req, res, next) => {
     try{
         res.locals.dados = await Entidades.consultar(req.params.id)
-        res.locals.tipo = "entidade"
+
+        if(req.query.info == "completa"){
+            await Entidades.moreInfo(res.locals.dados)
+        }
         
+        res.locals.tipo = "entidade"
         res.locals.dados ? next() : res.status(404).send(`Erro. A entidade '${req.params.id}' não existe`)
 	} catch(erro) {
         res.status(500).send(`Erro na consulta da entidade '${req.params.id}': ${erro}`)

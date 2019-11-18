@@ -13,6 +13,11 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
 
     try{
         res.locals.dados = await Tipologias.listar(filtro)
+
+        if(req.query.info == "completa"){
+            await Tipologias.moreInfoList(res.locals.dados)
+        }
+
         res.locals.tipo = "tipologias"
         next()
 	} catch(erro) {
@@ -24,6 +29,11 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
 router.get('/:id', Auth.isLoggedInKey, async (req, res, next) => {
     try{
         res.locals.dados = await Tipologias.consultar(req.params.id)
+
+        if(req.query.info == "completa"){
+            await Tipologias.moreInfo(res.locals.dados)
+        }
+
         res.locals.tipo = "tipologia"
 
 		res.locals.dados ? next() : res.status(404).send(`Erro. A tipologia '${req.params.id}' não existe`)

@@ -1,5 +1,6 @@
 const execQuery = require('../../controllers/api/utils').execQuery
 const normalize = require('../../controllers/api/utils').normalize
+const request = require('../../controllers/api/utils').request
 const Entidades = module.exports
 
 /**
@@ -39,7 +40,7 @@ Entidades.listar = (filtro) => {
         BIND(CONCAT('ent_', ?sigla) AS ?id).
 
         FILTER (${Object.entries(filtro)
-			.filter(([k, v]) => v !== undefined && k != 'token' && k != 'apikey' && k != 'OF')
+			.filter(([k, v]) => v !== undefined && k != 'token' && k != 'apikey' && k != 'OF' && k != 'info')
 			.map(([k, v]) => `?${k} = "${v}"`)
 			.concat(['True'])
 			.join(' && ')})
@@ -48,11 +49,13 @@ Entidades.listar = (filtro) => {
 	return execQuery('query', query).then((response) => normalize(response))
 }
 
-//Lista tipologias e donos de todas as entidades. O formato devolvido está pronto ao ser usado na exportação CSV
-Entidades.listarTipsDonos = () => {
+//Lista tipologias e donos de todas as entidades
+Entidades.listarTipsDonos = async () => {
     const query = `SELECT ?sigla
-                        (GROUP_CONCAT(DISTINCT ?tipologiaSigla; SEPARATOR="#\\n") AS ?tipologias)
-                        (GROUP_CONCAT(DISTINCT ?donoCodigo; SEPARATOR="#\\n") AS ?dono) {
+                        (GROUP_CONCAT(DISTINCT ?tipSigla; SEPARATOR="#") AS ?ts)
+                        (GROUP_CONCAT(DISTINCT ?tipDesignacao; SEPARATOR="#") AS ?td)
+                        (GROUP_CONCAT(DISTINCT ?donoCodigo; SEPARATOR="#") AS ?dc)
+                        (GROUP_CONCAT(DISTINCT ?donoTitulo; SEPARATOR="#") AS ?dt) {
 
         ?uri rdf:type clav:Entidade ;
             clav:entSigla ?sigla .
@@ -60,26 +63,73 @@ Entidades.listarTipsDonos = () => {
     	OPTIONAL {
         	?uri clav:pertenceTipologiaEnt ?uriT .
         	?uriT clav:tipEstado "Ativa";
-            	clav:tipSigla ?tipologiaSigla.
+            	clav:tipSigla ?tipSigla;
+                clav:tipDesignacao ?tipDesignacao.
     	}
 
     	OPTIONAL{
         	?do clav:temDono ?uri;
             	clav:codigo ?donoCodigo ;
+                clav:titulo ?donoTitulo ;
             	clav:pertenceLC clav:lc1 ;
             	clav:classeStatus "A" .
     	}
     }
     group by ?sigla`
 
-	return execQuery('query', query).then((response) => normalize(response))
+    try{
+	    var response = await execQuery('query', query)
+        var res = normalize(response)
+
+        for(var i = 0; i < res.length; i++){
+            res[i].tipologias = []
+            res[i].dono = []
+
+            if(res[i].ts != ''){
+                var siglas = res[i].ts.split("#")
+                var desigs = res[i].td.split("#")
+
+                for(var j = 0; j < siglas.length; j++){
+                    res[i].tipologias.push({
+                        sigla: siglas[j],
+                        designacao: desigs[j],
+                        id: 'tip_' + siglas[j]
+                    })
+                }
+            }
+
+            if(res[i].dc != ''){
+                var codigos = res[i].dc.split("#")
+                var titulos = res[i].dt.split("#")
+
+                for(var j = 0; j < codigos.length; j++){
+                    res[i].dono.push({
+                        codigo: codigos[j],
+                        titulo: titulos[j],
+                        id: 'c' + codigos[j]
+                    })
+                }
+            }
+
+            delete res[i].ts
+            delete res[i].td
+
+            delete res[i].dc
+            delete res[i].dt
+        }
+
+        return res
+    }catch(erro){
+        throw(erro)
+    }
 }
 
-//Lista participantes de todas as entidades. O formato devolvido está pronto ao ser usado na exportação CSV
-Entidades.listarParticipantes = () => {
+//Lista participantes de todas as entidades
+Entidades.listarParticipantes = async () => {
     const query = `SELECT ?sigla
-                        (GROUP_CONCAT(?partCodigo; SEPARATOR="#\\n") AS ?participante)
-                        (GROUP_CONCAT(?tipoP; SEPARATOR="#\\n") AS ?tipoPar) {
+                        (GROUP_CONCAT(?parCodigo; SEPARATOR="#") AS ?pc)
+                        (GROUP_CONCAT(?parTitulo; SEPARATOR="#") AS ?pt)
+                        (GROUP_CONCAT(?tipoP; SEPARATOR="#") AS ?tp) {
 
         ?uri rdf:type clav:Entidade ;
     		clav:entSigla ?sigla .
@@ -87,7 +137,8 @@ Entidades.listarParticipantes = () => {
     	OPTIONAL{
         	?uriP clav:temParticipante ?uri;
         	    ?tipoParURI ?uri ;
-        	    clav:codigo ?partCodigo ;
+        	    clav:codigo ?parCodigo ;
+                clav:titulo ?parTitulo ;
         	    clav:pertenceLC clav:lc1 ;
         	    clav:classeStatus "A" .
   	     	BIND (STRAFTER(STR(?tipoParURI), 'clav#') AS ?tipoP).
@@ -96,7 +147,36 @@ Entidades.listarParticipantes = () => {
     }
     group by ?sigla`
 
-	return execQuery('query', query).then((response) => normalize(response))
+    try{
+	    var response = await execQuery('query', query)
+        var res = normalize(response)
+
+        for(var i = 0; i < res.length; i++){
+            res[i].participante = []
+            if(res[i].pc != ''){
+                var codigos = res[i].pc.split("#")
+                var titulos = res[i].pt.split("#")
+                var tiposPar = res[i].tp.split("#")
+
+                for(var j = 0; j < codigos.length; j++){
+                    res[i].participante.push({
+                        tipoPar: tiposPar[j],
+                        codigo: codigos[j],
+                        titulo: titulos[j],
+                        id: 'c' + codigos[j]
+                    })
+                }
+            }
+
+            delete res[i].pc
+            delete res[i].pt
+            delete res[i].tp
+        }
+
+        return res
+    }catch(erro){
+        throw(erro)
+    }
 }
 
 // Lista todas as entidades com PNs associados (como Dono ou como Participante)
@@ -280,6 +360,47 @@ Entidades.participante = (id) => {
     }`
 
 	return execQuery('query', query).then((response) => normalize(response))
+}
+
+//Obtém o resto da info das Entidades
+Entidades.moreInfoList = async (ents) => {
+        //obtém as tipologias e os donos para todas as entidades
+    var data = await Entidades.listarTipsDonos()
+    var tipsDonos = []
+
+    for(var i = 0; i < data.length; i++){
+        tipsDonos[data[i].sigla] = {
+            tipologias: data[i].tipologias,
+            dono: data[i].dono
+        }
+    }
+
+    //obtém os participantes e o tipo de participação para todas as entidades
+    data = await Entidades.listarParticipantes()
+    var parts = []
+
+    for(i = 0; i < data.length; i++){
+        parts[data[i].sigla] = {
+            participante: data[i].participante,
+            tipoPar: data[i].tipoPar
+        }
+    }
+
+    for(i = 0; i < ents.length; i++){
+        ents[i].tipologias = tipsDonos[ents[i].sigla].tipologias
+        ents[i].dono = tipsDonos[ents[i].sigla].dono
+        ents[i].participante = parts[ents[i].sigla].participante
+        ents[i].tipoPar = parts[ents[i].sigla].tipoPar
+    }
+}
+
+//Obtém o resto da info da Entidade
+Entidades.moreInfo = async (ent) => {
+    var id = 'ent_' + ent.sigla
+
+    ent.tipologias = await Entidades.tipologias(id)
+    ent.dono = await Entidades.dono(id)
+    ent.participante = await Entidades.participante(id)
 }
 
 //Criar controller para inserir na base de dados, depois do pedido aprovado!!
