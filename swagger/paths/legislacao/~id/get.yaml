@@ -14,6 +14,13 @@ parameters:
     schema:
       type: string
     required: true
+  - in: query
+    name: info
+    schema:
+      type: string
+      enum: [completa]
+    description: "Caso seja um valor que não 'completa' devolve apenas parte da informação do documento legislativo. Caso o valor seja 'completa' devolve toda a informação do documento legislativo."
+    required: false
   - $ref: '#/components/parameters/OutputFormatWithCSV'
 responses:
   200:

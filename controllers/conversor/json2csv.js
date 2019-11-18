@@ -241,33 +241,17 @@ function convertObject(json, type){
     }
 
     csvLines[0].push(protect("Dono no processo"))
-    if(json.dono instanceof Array){
-        csvLines[1].push(protect(join(json.dono.map(p => p.codigo))))
-    }else{
-        csvLines[1].push(protect(json.dono))
-    }
+    csvLines[1].push(protect(join(json.dono.map(p => p.codigo))))
 
     csvLines[0].push(protect("Participante no processo"))
-    if(json.dono instanceof Array){
-        csvLines[1].push(protect(join(json.participante.map(p => p.codigo))))
-    }else{
-        csvLines[1].push(protect(json.participante))
-    }
+    csvLines[1].push(protect(join(json.participante.map(p => p.codigo))))
 
     csvLines[0].push(protect("Tipo de intervenção no processo"))
-    if(json.dono instanceof Array){
     csvLines[1].push(protect(join(json.participante.map(p => p.tipoPar))))
-    }else{
-        csvLines[1].push(protect(json.tipoPar))
-    }
 
     if(type == "entidade" || type == "entidades"){
         csvLines[0].push(protect("Tipologias da entidade"))
-        if(json.dono instanceof Array){
-            csvLines[1].push(protect(join(json.tipologias.map(t => t.sigla))))
-        }else{
-            csvLines[1].push(protect(json.tipologias))
-        }
+        csvLines[1].push(protect(join(json.tipologias.map(t => t.sigla))))
     }
 
     return csvLines
@@ -297,6 +281,9 @@ function convertLegislacao(json, type){
     }else if(type == "legislacao"){
         csvLines[1].push(protect(join(json.entidades)))
     }
+
+    csvLines[0].push(protect("Regula processo"))
+    csvLines[1].push(protect(join(json.regula.map(p => p.codigo))))
 
     return csvLines
 }

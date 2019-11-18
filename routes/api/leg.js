@@ -12,6 +12,11 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
 	if (queryData.estado && queryData.estado == 'A') {
         try{
 		    res.locals.dados = await Leg.listarAtivos()
+
+            if(req.query.info == "completa"){
+                await Leg.moreInfoList(res.locals.dados)
+            }
+
             res.locals.tipo = "legislacoes"
             next()
 		} catch(erro) {
@@ -22,6 +27,11 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
 	if (queryData.processos && queryData.processos == 'com') {
         try{
             res.locals.dados = await Leg.listarComPNs()
+
+            if(req.query.info == "completa"){
+                await Leg.moreInfoList(res.locals.dados)
+            }
+
             res.locals.tipo = "legislacoes"
             next()
 		} catch (erro) {
@@ -32,6 +42,11 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
 	if (queryData.processos && queryData.processos == 'sem') {
         try{
 		    res.locals.dados = await Leg.listarSemPNs()
+
+            if(req.query.info == "completa"){
+                await Leg.moreInfoList(res.locals.dados)
+            }
+
             res.locals.tipo = "legislacoes"
             next()
 		} catch (erro) {
@@ -42,6 +57,11 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
 	if (queryData.fonte) {
 		try {
 			res.locals.dados = await Leg.listarFonte(queryData.fonte)
+
+            if(req.query.info == "completa"){
+                await Leg.moreInfoList(res.locals.dados)
+            }
+
 			res.locals.tipo = "legislacoes"
 			next()
 		} catch (erro) {
@@ -50,6 +70,11 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
 	} else {
         try{
             res.locals.dados = await Leg.listar()
+
+            if(req.query.info == "completa"){
+                await Leg.moreInfoList(res.locals.dados)
+            }
+
             res.locals.tipo = "legislacoes"
             next()
 		} catch (erro) {
@@ -69,6 +94,12 @@ router.get('/portarias', Auth.isLoggedInKey, (req, res) => {
 router.get('/:id', Auth.isLoggedInKey, async (req, res, next) => {
     try{
         res.locals.dados = await Leg.consultar(req.params.id)
+
+        if(req.query.info == "completa"){
+            res.locals.dados.id = req.params.id
+            await Leg.moreInfo(res.locals.dados)
+        }
+
         res.locals.tipo = "legislacao"
         res.locals.dados ? next() : res.status(404).send(`Erro. A legislação '${req.params.id}' não existe`)
 	} catch (erro) {

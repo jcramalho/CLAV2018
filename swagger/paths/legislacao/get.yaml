@@ -26,6 +26,13 @@ parameters:
       type: string
       enum: [com, sem]
     description: No caso de ser escolhido \"com\" é listado os documentos legislativos com PNs associados. Já no caso de ser escolhido \"sem\" é listado os documentos legislativos sem PNs associados. Só funciona caso o parâmetro estado não seja definido.
+  - in: query
+    name: info
+    schema:
+      type: string
+      enum: [completa]
+    description: "Caso seja um valor que não 'completa' devolve apenas parte da informação de cada documento legislativo. Caso o valor seja 'completa' devolve toda a informação de cada documento legislativo."
+    required: false
   - $ref: '#/components/parameters/OutputFormatWithCSV'
 responses:
   200:

@@ -1,6 +1,7 @@
 const execQuery = require('../../controllers/api/utils').execQuery
 const normalize = require('../../controllers/api/utils').normalize;
 const projection = require('../../controllers/api/utils').projection;
+const request = require('../../controllers/api/utils').request
 const Leg = module.exports;
 
 /**
@@ -156,6 +157,66 @@ Leg.listarSemPNs = () => {
         });
 };
 
+//Lista processos regulados de todas as legislacoes
+Leg.listarRegulados = async () => {
+    const query = `SELECT ?id
+                        (GROUP_CONCAT(?regCodigo; SEPARATOR="#") AS ?rc)
+                        (GROUP_CONCAT(?regTitulo; SEPARATOR="#") AS ?rt) {
+        ?uri rdf:type clav:Legislacao.
+
+        OPTIONAL{
+            {
+                ?uriP clav:temLegislacao ?uri;
+            }
+            UNION {
+                ?crit clav:temLegislacao ?uri.
+                ?just clav:temCriterio ?crit .
+                ?aval clav:temJustificacao ?just .
+
+                {
+                    ?uriP clav:temPCA ?aval ;
+                }
+                UNION {
+                    ?uriP clav:temDF ?aval ;
+                }
+            }
+            ?uriP clav:codigo ?regCodigo;
+                clav:titulo ?regTitulo;
+                clav:classeStatus 'A'.
+        }
+
+        BIND(STRAFTER(STR(?uri), 'clav#') AS ?id)
+    }
+    group by ?id`
+
+    try{
+	    var response = await execQuery('query', query)
+        var res = normalize(response)
+
+        for(var i = 0; i < res.length; i++){
+            res[i].regula = []
+            if(res[i].rc != ''){
+                var codigos = res[i].rc.split("#")
+                var titulos = res[i].rt.split("#")
+
+                for(var j = 0; j < codigos.length; j++){
+                    res[i].regula.push({
+                        codigo: codigos[j],
+                        titulo: titulos[j],
+                        id: 'c' + codigos[j]
+                    })
+                }
+            }
+
+            delete res[i].rc
+            delete res[i].rt
+        }
+
+        return res
+    }catch(erro){
+        throw(erro)
+    }
+}
 
 /**
  * Consulta a meta informação relativa a uma legislação
@@ -180,10 +241,10 @@ Leg.consultar = id => {
             ?ent clav:entSigla ?entidades;
         }
      }`;
-     const campos = ["id", "data", "numero", "tipo", "sumario", "link", "estado"];
-     const agrupar = ["entidades"];
+    const campos = ["id", "data", "numero", "tipo", "sumario", "link", "estado"];
+    const agrupar = ["entidades"];
 
-     return execQuery("query", query)
+    return execQuery("query", query)
         .then(response => projection(normalize(response), campos, agrupar)[0]);
 };
 
@@ -311,6 +372,25 @@ Leg.listarFonte = (fonte) => {
         });
 };
 
+//Obtém o resto da info das Legislacoes
+Leg.moreInfoList = async (legs) => {
+    //obtém os processos regulados para todas as legislações
+    var data = await Leg.listarRegulados()
+    var regulados = []
+
+    for(var i = 0; i < data.length; i++){
+        regulados[data[i].id] = data[i].regula
+    }
+
+    for(i = 0; i < legs.length; i++){
+        legs[i].regula = regulados[legs[i].id]
+    }
+}
+
+//Obtém o resto da info da Legislacao
+Leg.moreInfo = async (leg) => {
+    leg.regula = await Leg.regula(leg.id)
+}
 
 //Criar controller para inserir na base de dados, depois do pedido aprovado!!
 /*const query = `INSERT DATA {
