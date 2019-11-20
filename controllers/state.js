@@ -187,20 +187,34 @@ exports.subarvore = async id => {
     return classTreeInfo
 }
 
-exports.getEsqueleto = async () => {
+exports.getEsqueleto = () => {
+    var classTreeInfo = JSON.parse(fs.readFileSync('./public/classes/classesInfo.json'))
     var ret = []
 
-    var classes = await this.getLevel3ClassesInfo()
-    
-    classes.forEach(c => {
-        ret.push({
-            codigo: c.codigo,
-            titulo: c.titulo,
-            descricao: c.descricao,
-            dono: "",
-            participante: "",
-            pca: "",
-            df: ""
+    classTreeInfo.forEach(c1 => {
+        c1.filhos.forEach(c2 => {
+            c2.filhos.forEach(c3 => {
+                ret.push({
+                    codigo: c3.codigo,
+                    titulo: c3.titulo,
+                    descricao: c3.descricao,
+                    dono: "",
+                    participante: "",
+                    pca: "",
+                    df: ""
+                })
+                c3.filhos.forEach(c4 => {
+                    ret.push({
+                        codigo: c4.codigo,
+                        titulo: c4.titulo,
+                        descricao: c4.descricao,
+                        dono: "",
+                        participante: "",
+                        pca: "",
+                        df: ""
+                    })
+                })
+            })
         })
     })
 
