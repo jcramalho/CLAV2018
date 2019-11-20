@@ -46,8 +46,8 @@ parameters:
     name: info
     schema:
       type: string
-      enum: [completa]
-    description: "Caso seja um valor que não 'completa' devolve apenas o código, a descrição e o título das classes. Caso o valor seja 'completa' devolve toda a informação de cada classe."
+      enum: [completa, esqueleto]
+    description: "Caso seja um valor que não 'completa' e 'esqueleto' devolve apenas o código, a descrição e o título das classes. Caso o valor seja 'completa' devolve toda a informação de cada classe. Caso o valor seja 'esqueleto' devolve num formato pronto a ser preenchido para a criação de uma Tabela de Seleção."
     required: false
   - $ref: '#/components/parameters/OutputFormatWithCSV'
 responses:

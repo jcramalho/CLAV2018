@@ -8,8 +8,13 @@ var router = express.Router();
 // Devolve as classes em vários formatos podendo ser filtradas por nível 
 router.get('/', Auth.isLoggedInKey, async (req, res, next) => { 
     try {
+        if(req.query.info == "esqueleto"){
+            res.locals.dados = await State.getEsqueleto()
+            res.locals.tipo = "classes"
+            next()
+        }
         // Devolve a lista dos processos comuns
-        if(req.query.tipo == "comum"){
+        else if(req.query.tipo == "comum"){
             if(req.query.info == "completa"){
                 res.locals.dados = await State.getProcessosComunsInfo()
             }else{

@@ -187,6 +187,26 @@ exports.subarvore = async id => {
     return classTreeInfo
 }
 
+exports.getEsqueleto = async () => {
+    var ret = []
+
+    var classes = await this.getLevel3ClassesInfo()
+    
+    classes.forEach(c => {
+        ret.push({
+            codigo: c.codigo,
+            titulo: c.titulo,
+            descricao: c.descricao,
+            dono: "",
+            participante: "",
+            pca: "",
+            df: ""
+        })
+    })
+
+    return ret
+}
+
 exports.getIndicePesquisa = async () => { return indicePesquisa }
 
 // Verifica a existência do código de uma classe: true == existe, false == não existe

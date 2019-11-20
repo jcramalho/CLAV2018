@@ -144,46 +144,56 @@ function convertClasse(json){
         }else{
             switch(key){
                 case 'pca':
-                    csvLines[0].push("Prazo de conservação administrativa")
-                    csvLines[0].push('Nota ao PCA')
-                    csvLines[0].push('Forma de contagem do PCA')
-                    csvLines[0].push('Sub Forma de contagem do PCA')
+                    if(json[key] == ""){ //caso do esqueleto
+                        csvLines[0].push(protect('PCA'))
+                        csvLines[1].push(protect(json[key]))
+                    }else{
+                        csvLines[0].push("Prazo de conservação administrativa")
+                        csvLines[0].push('Nota ao PCA')
+                        csvLines[0].push('Forma de contagem do PCA')
+                        csvLines[0].push('Sub Forma de contagem do PCA')
 
-                    var index = csvLines[1].length
-                    csvLines[1] = csvLines[1].concat(["", "", "", ""])
+                        var index = csvLines[1].length
+                        csvLines[1] = csvLines[1].concat(["", "", "", ""])
 
-                    for(var k in json[key]){
-                        if(k == 'valores'){
-                            csvLines[1][index] = protect(json[key][k])
-                        }else if(k == 'notas'){
-                            csvLines[1][index + 1] = protect(json[key][k])
-                        }else if(k == 'formaContagem'){
-                            csvLines[1][index + 2] = protect(json[key][k])
-                        }else if(k == 'subFormaContagem'){
-                            csvLines[1][index + 3] = protect(json[key][k])
-                        }else if(k == 'justificacao'){
-                            addJustificacao(csvLines, json, key, k)
+                        for(var k in json[key]){
+                            if(k == 'valores'){
+                                csvLines[1][index] = protect(json[key][k])
+                            }else if(k == 'notas'){
+                                csvLines[1][index + 1] = protect(json[key][k])
+                            }else if(k == 'formaContagem'){
+                                csvLines[1][index + 2] = protect(json[key][k])
+                            }else if(k == 'subFormaContagem'){
+                                csvLines[1][index + 3] = protect(json[key][k])
+                            }else if(k == 'justificacao'){
+                                addJustificacao(csvLines, json, key, k)
+                            }
                         }
                     }
                     break
                 case 'df':
-                    csvLines[0].push("Destino final")
-                    csvLines[0].push('Notas ao DF')
+                    if(json[key] == ""){ //caso do esqueleto
+                        csvLines[0].push(protect('DF'))
+                        csvLines[1].push(protect(json[key]))
+                    }else{
+                        csvLines[0].push("Destino final")
+                        csvLines[0].push('Notas ao DF')
 
-                    var index = csvLines[1].length
-                    csvLines[1] = csvLines[1].concat(["", ""])
+                        var index = csvLines[1].length
+                        csvLines[1] = csvLines[1].concat(["", ""])
 
-                    for(var k in json[key]){
-                        if(k == 'valor'){
-                            if(json[key][k] == "NE"){
-                                csvLines[1][index] = protect("")
-                            }else{
-                                csvLines[1][index] = protect(json[key][k])
+                        for(var k in json[key]){
+                            if(k == 'valor'){
+                                if(json[key][k] == "NE"){
+                                    csvLines[1][index] = protect("")
+                                }else{
+                                    csvLines[1][index] = protect(json[key][k])
+                                }
+                            }else if(k == 'notas'){
+                                csvLines[1][index + 1] = protect(json[key][k])
+                            }else if(k == 'justificacao'){
+                                addJustificacao(csvLines, json, key, k)
                             }
-                        }else if(k == 'notas'){
-                            csvLines[1][index + 1] = protect(json[key][k])
-                        }else if(k == 'justificacao'){
-                            addJustificacao(csvLines, json, key, k)
                         }
                     }
                     break
@@ -205,6 +215,14 @@ function convertClasse(json){
                     break
                 case 'procTrans':
                     csvLines[0].push(protect('Processo transversal (S/N)'))
+                    csvLines[1].push(protect(json[key]))
+                    break
+                case 'dono': //caso do esqueleto
+                    csvLines[0].push(protect('Dono'))
+                    csvLines[1].push(protect(json[key]))
+                    break
+                case 'participante': //caso do esqueleto
+                    csvLines[0].push(protect('Participante'))
                     csvLines[1].push(protect(json[key]))
                     break
                 default:
@@ -240,16 +258,20 @@ function convertObject(json, type){
         }
     }
 
-    csvLines[0].push(protect("Dono no processo"))
-    csvLines[1].push(protect(join(json.dono.map(p => p.codigo))))
+    if(json.dono){
+        csvLines[0].push(protect("Dono no processo"))
+        csvLines[1].push(protect(join(json.dono.map(p => p.codigo))))
+    }
 
-    csvLines[0].push(protect("Participante no processo"))
-    csvLines[1].push(protect(join(json.participante.map(p => p.codigo))))
+    if(json.participante){
+        csvLines[0].push(protect("Participante no processo"))
+        csvLines[1].push(protect(join(json.participante.map(p => p.codigo))))
 
-    csvLines[0].push(protect("Tipo de intervenção no processo"))
-    csvLines[1].push(protect(join(json.participante.map(p => p.tipoPar))))
+        csvLines[0].push(protect("Tipo de intervenção no processo"))
+        csvLines[1].push(protect(join(json.participante.map(p => p.tipoPar))))
+    }
 
-    if(type == "entidade" || type == "entidades"){
+    if((type == "entidade" || type == "entidades") && json.tipologias){
         csvLines[0].push(protect("Tipologias da entidade"))
         csvLines[1].push(protect(join(json.tipologias.map(t => t.sigla))))
     }
@@ -282,8 +304,10 @@ function convertLegislacao(json, type){
         csvLines[1].push(protect(join(json.entidades)))
     }
 
-    csvLines[0].push(protect("Regula processo"))
-    csvLines[1].push(protect(join(json.regula.map(p => p.codigo))))
+    if(json.regula){
+        csvLines[0].push(protect("Regula processo"))
+        csvLines[1].push(protect(join(json.regula.map(p => p.codigo))))
+    }
 
     return csvLines
 }
