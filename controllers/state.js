@@ -200,8 +200,8 @@ exports.getEsqueleto = () => {
                     descricao: c3.descricao,
                     dono: "",
                     participante: "",
-                    pca: "",
-                    df: ""
+                    pca: c3.pca.valores,
+                    df: c3.df.valor
                 })
                 c3.filhos.forEach(c4 => {
                     ret.push({
@@ -210,8 +210,8 @@ exports.getEsqueleto = () => {
                         descricao: c4.descricao,
                         dono: "",
                         participante: "",
-                        pca: "",
-                        df: ""
+                        pca: c4.pca.valores,
+                        df: c4.df.valor
                     })
                 })
             })

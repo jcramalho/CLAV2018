@@ -144,7 +144,7 @@ function convertClasse(json){
         }else{
             switch(key){
                 case 'pca':
-                    if(json[key] == ""){ //caso do esqueleto
+                    if(typeof json[key] == "string"){ //caso do esqueleto
                         csvLines[0].push(protect('PCA'))
                         csvLines[1].push(protect(json[key]))
                     }else{
@@ -172,7 +172,7 @@ function convertClasse(json){
                     }
                     break
                 case 'df':
-                    if(json[key] == ""){ //caso do esqueleto
+                    if(typeof json[key] == "string"){ //caso do esqueleto
                         csvLines[0].push(protect('DF'))
                         csvLines[1].push(protect(json[key]))
                     }else{
