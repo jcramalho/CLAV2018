@@ -7,11 +7,7 @@ var router = express.Router();
 router.get('/', Auth.isLoggedInKey, (req, res) => {
     var format = req.query.formato || req.headers.accept
     Ontologia.exportar(req.query.inferir, format, 7)
-        .then(dados => {
-            res.setHeader("content-disposition","attachment; filename=clav." + dados[2])
-            res.setHeader('content-type', dados[1])
-            res.send(dados[0])
-        })
+        .then(dados => res.download(dados[0], "clav." + dados[1]))
         .catch(erro => res.status(500).send(`Erro: ${erro}`))
 })
 

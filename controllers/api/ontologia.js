@@ -104,16 +104,11 @@ function fileEndsWith(files, eW){
  */
 Ontologia.exportar = async function(infer, format, days){
     var url = urlGraphDB + "/statements?infer="
-    var response
+    var folder = './public/ontologia/'
+    var path
     var ae = getAcceptExtension(format)
     var accept = ae[0]
     var extension = ae[1]
-
-    var headers = {
-        headers: {
-            'Accept': accept
-        }
-    }
 
     switch(infer){
         case "true":
@@ -124,12 +119,11 @@ Ontologia.exportar = async function(infer, format, days){
     }
 
     try{
-        var files = fs.readdirSync('./public/ontologia')
+        var files = fs.readdirSync(folder)
     }catch(erro){
         throw(erro)
     }
 
-    var date = currentDate()
     var prevDate = currentDateMinusDays(days)
 
     var endsWith = '-' + infer + '.' + extension
@@ -142,19 +136,18 @@ Ontologia.exportar = async function(infer, format, days){
     }
 
     if(findedDate && Date.parse(prevDate) < Date.parse(findedDate)){
-        try{
-            var fileContent = fs.readFileSync('./public/ontologia/' + findedFile)
-        }catch(erro){
-            throw(erro)
-        }
-
-        return [fileContent, accept, extension]
+        path = folder + findedFile
+        return [path, extension]
     }else{
         try{
-            response = await axios.get(url + infer, headers)
+            var response = await axios.get(url + infer, {
+                headers: {
+                    'Accept': accept
+                }
+            })
 
             if(findedFile){
-                fs.unlinkSync('./public/ontologia/' + findedFile)
+                fs.unlinkSync(folder + findedFile)
             }
 
             var dados
@@ -164,12 +157,14 @@ Ontologia.exportar = async function(infer, format, days){
                 dados = response.data
             }
 
+            var date = currentDate()
             var file = 'clav-' + date + endsWith
-            fs.writeFileSync('./public/ontologia/' + file, dados)
+            path = folder + file
+            fs.writeFileSync(path, dados)
         }catch(error){
             throw(error)
         }
 
-        return [dados, accept, extension]
+        return [path, extension]
     }
 }
