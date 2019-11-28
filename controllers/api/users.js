@@ -97,8 +97,10 @@ Users.listar = function(req, callback){
                     listaNormalizada.push(item);
                 }
                 callback(null, listaNormalizada);
-            }else
-            callback(null, users);
+            }else{
+                users.map(u => delete u._doc.local);
+                callback(null, users);
+            }
         }
     })
 }

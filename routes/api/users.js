@@ -43,6 +43,7 @@ router.get('/listarToken/:id', Auth.isLoggedInUser, async function(req,res){
                     if(err){
                         res.status(500).send(err);
                     }else{
+                        delete result._doc.local;
                         res.send(result);
                     }
                 });
@@ -251,6 +252,7 @@ router.get('/:id', Auth.isLoggedInUser, (req, res) => {
             if(err){
                 return res.status(500).send(`Erro: ${err}`);
             }else{
+                delete result._doc.local;
                 return res.json(result);
             }
         });
