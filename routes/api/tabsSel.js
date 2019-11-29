@@ -115,7 +115,7 @@ router.post('/CSV', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]
                             res.status(415).json(`Erro ao importar CSV/Excel: o ficheiro tem de estar no formato CSV ou Excel (.xlsx)`)
                         }
                     }else{
-                        res.status(500).json(`Erro ao importar CSV/Excel: O FormData deve possuir quatro campos: um ficheiro em file, um email em email, a sigla da entidade do utilizador em entidade_user e o tipo de TS em tipo_ts. Caso o tipo de TS seja 'TS Organizacional' deve possuir outro campo: a sigla da entidade da TS em entidade_ts.`)
+                        res.status(500).json(`Erro ao importar CSV/Excel: O FormData deve possuir dois campos: um ficheiro em file e o tipo de TS em tipo_ts. Caso o tipo de TS seja 'TS Organizacional' deve possuir outro campo: a sigla da entidade da TS em entidade_ts.`)
                     }
                 }else{
                     res.status(500).json(`Erro ao importar CSV/Excel: ${error}`)
