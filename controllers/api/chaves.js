@@ -12,7 +12,6 @@ Chaves.listar = function(callback){
         }else {
             for(var i = 0; i < keys.length; i++) {
                 item = {}
-                console.log(keys[i])
                 jwt.verify(keys[i].key, secretKey.apiKey, function(err, decoded){
                     if(!err){
                         item["expiration"] = new Date(decoded.exp*1000).toLocaleString();
