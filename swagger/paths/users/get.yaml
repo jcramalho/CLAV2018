@@ -1,5 +1,5 @@
 summary: Devolve a lista utilizadores
-description: Devolve a lista utilizadores. Para cada utilizador devolve a informação do id, name, email, entidade, internal, level, password and nCalls
+description: Devolve a lista utilizadores. Para cada utilizador devolve a informação do id, name, email, entidade, internal, level e nCalls
 security:
   - userQuery: []
   - userAuth: []
