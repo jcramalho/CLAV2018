@@ -28,8 +28,6 @@ properties:
     type: string
     enum: [Criação, Alteração, Remoção]
 required:
-  - dataCriacao
-  - dataAtualizacao
   - numInterv
   - criadoPor
   - tipo
