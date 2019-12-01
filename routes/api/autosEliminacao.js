@@ -6,6 +6,7 @@ var excel2Json = require('../../controllers/conversor/xslx2json')
 
 var express = require('express');
 var router = express.Router();
+var formidable = require("formidable")
 
 router.get('/', Auth.isLoggedInKey, (req, res) => {
     AutosEliminacao.listar()
@@ -55,24 +56,31 @@ router.post('/:tipo', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 
 
 //Importar um AE (Inserir ficheiro diretamente pelo Servidor)
 router.post('/:tipo/importar', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), (req, res) => {
-    excel2Json(req.body.file, req.params.tipo)
-        .then(data => {
-            var tipo = req.params.tipo
-            if(tipo==="PGD") tipo = "AE PGD"
-            else if(tipo === "RADA") tipo = "AE RADA"
-            else tipo = "AE PGD/LC"
-            User.getUserById(req.user.id, function (err, user) {
-                if(err ) res.status(500).json(`Erro na consulta de utilizador para importação do AE: ${err}`)
-                else {
-                    AutosEliminacao.importar(data.auto, tipo, user.name, user.email)
-                        .then(dados => {
-                            res.jsonp(tipo+" adicionado aos pedidos com sucesso com codigo: "+dados.codigo)
-                        })
-                        .catch(erro => res.status(500).json(`Erro na adição do AE: ${erro}`))
-                }
-            });
-        })
-        .catch(err => res.status(500).send("ERRO:"+err))
+    var form = new formidable.IncomingForm()
+    form.parse(req, async (error, fields, formData) => {
+        if(error) res.status(500).send(`Erro ao importar Auto de Eliminação: ${error}`)
+        else if(!formData.file || !formData.file.path) res.status(500).send(`Erro ao importar Auto de Eliminação: É necessário o campo file`)
+        else if(formData.file.type=="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
+            excel2Json(formData.file.path, req.params.tipo)
+                .then(data => {
+                    var tipo = req.params.tipo
+                    if(tipo==="PGD") tipo = "AE PGD"
+                    else if(tipo === "RADA") tipo = "AE RADA"
+                    else tipo = "AE PGD/LC"
+                    User.getUserById(req.user.id, function (err, user) {
+                        if(err ) res.status(500).json(`Erro na consulta de utilizador para importação do AE: ${err}`)
+                        else {
+                            AutosEliminacao.importar(data.auto, tipo, user.name, user.email)
+                                .then(dados => {
+                                    res.jsonp(tipo+" adicionado aos pedidos com sucesso com codigo: "+dados.codigo)
+                                })
+                                .catch(erro => res.status(500).json(`Erro na adição do AE: ${erro}`))
+                        }
+                    });
+                })
+                .catch(err => res.status(500).send("ERRO:"+err))
+        } else res.status(500).send(`Erro ao importar Auto de Eliminação: O ficheiro deve terminar em .xlsx`)
+    })
 })
  
 module.exports = router;
