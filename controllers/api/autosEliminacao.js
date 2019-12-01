@@ -381,7 +381,6 @@ AutosEliminacao.importar = async (auto, tipo, userName, userEmail) => {
         if(resultEnt.length > 0) {
           if(resultFundo.length > 0) {
             auto.responsavel = userName
-            console.log("1")
             var pedido = {
                 tipoPedido: "Importação",
                 tipoObjeto: tipo,
@@ -394,7 +393,7 @@ AutosEliminacao.importar = async (auto, tipo, userName, userEmail) => {
                 entidade: resultEnt[0].ent.split("#")[1]
             }
             var pedido = await Pedidos.criar(pedido)
-            return {codigo: pedido, auto: auto }
+            return {codigo: pedido.codigo, auto: auto }
           }
           else throw(`Entidade responsável pelo Fundo, "${auto.fundo}", não encontrada no sistema.`)
         }
@@ -446,7 +445,7 @@ AutosEliminacao.criar = async (auto, userName, userEmail) => {
                 entidade: resultEnt[0].ent.split("#")[1]
             }
             var pedido = await Pedidos.criar(pedido)
-            return {codigo: pedido, auto: auto }
+            return {codigo: pedido.codigo, auto: auto }
           }
           else throw(`Entidade responsável pelo Fundo, "${auto.fundo}", não encontrada no sistema.`)
         }
