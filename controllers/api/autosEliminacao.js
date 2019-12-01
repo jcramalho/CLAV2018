@@ -381,6 +381,7 @@ AutosEliminacao.importar = async (auto, tipo, userName, userEmail) => {
         if(resultEnt.length > 0) {
           if(resultFundo.length > 0) {
             auto.responsavel = userName
+            console.log("1")
             var pedido = {
                 tipoPedido: "Importação",
                 tipoObjeto: tipo,
@@ -398,7 +399,7 @@ AutosEliminacao.importar = async (auto, tipo, userName, userEmail) => {
           else throw(`Entidade responsável pelo Fundo, "${auto.fundo}", não encontrada no sistema.`)
         }
         else throw(`Entidade ${auto.entidade} não encontrada no sistema.`)
-    }  catch(erro) { throw(`Erro no servidor`) }
+    }  catch(erro) { throw(erro) }
 };
 
 /**
