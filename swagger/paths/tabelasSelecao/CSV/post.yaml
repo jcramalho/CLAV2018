@@ -12,10 +12,10 @@ description: |
 
   * Possuir uma sheet em que na 1º coluna tenha como header 'Código' e por baixo os códigos dos processos
   * Na mesma linha da header 'Código' possuir:
-    * Possuir no máximo uma coluna 'Título'
+    * No máximo uma coluna 'Título'
     * Pelo menos uma coluna começada por 'Dono' ou 'Participante', no máximo uma de cada (TS Organizacional)
     * Pelo menos uma coluna do tipo 'Entidade Dono' ou 'Entidade Participante', no máximo uma de cada para cada entidade (TS Pluriorganizacional)
-    * Por baixo de cada coluna deve estar:
+  * Por baixo de cada coluna (exceto a coluna 'Título' e 'Código') deve estar:
       * x ou X os processos selecionados
       * Nada para os processos não selecionados
 security:
@@ -24,7 +24,7 @@ security:
 tags:
   - tabelasSelecao
 requestBody:
-  description: 'FormData com o ficheiro (file), o email (email), a sigla da entidade do utilizador que criou o pedido (entidade_user), o tipo de TS a criar (tipo_ts) e, caso o tipo de TS seja "TS Organizacional", a sigla da entidade da TS (entidade_ts)'
+  description: 'FormData com o ficheiro (file), o tipo de TS a criar (tipo_ts) e, caso o tipo de TS seja "TS Organizacional", a sigla da entidade da TS (entidade_ts)'
   required: true
   content:
     multipart/form-data:
@@ -34,11 +34,6 @@ requestBody:
           file:
             type: string
             format: binary
-          email:
-            type: string
-            format: email
-          entidade_user:
-            type: string
           tipo_ts:
             type: string
             enum: ['TS Organizacional', 'TS Pluriorganizacional']
