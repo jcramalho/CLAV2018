@@ -1,5 +1,5 @@
-summary: Cria um pedido de importação de um auto de eliminação
-description: Cria um pedido de importação de um auto de eliminação
+summary: Cria um pedido de importação de um auto de eliminação a partir de um ficheiro
+description: Cria um pedido de importação de um auto de eliminação a partir de um ficheiro
 tags:
   - autosEliminacao
 security:
