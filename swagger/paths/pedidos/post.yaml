@@ -37,11 +37,15 @@ requestBody:
                 type: string
             required:
               - email
+          entidade:
+            type: string
+            description: "'ent_' concatenado com a sigla da entidade do utilizador"
         required:
           - tipoPedido
           - tipoObjeto
           - novoObjeto
           - user
+          - entidade
 responses:
   200:
     description: Criação de um pedido
