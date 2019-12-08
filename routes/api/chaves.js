@@ -63,16 +63,6 @@ router.get('/clavToken', (req, res) => {
     }
 })
 
-router.get('/verificaTokenRenovar/:id', async function(req,res){
-    await jwt.verify(req.params.id, secretKey.emailKey, async function(err, decoded){
-        if(!err){
-            res.send({id: decoded.id});
-        }else{
-            res.status(500).send("Link de renovação Expirou! Se pretende renovar a chave API peça uma nova renovação.");
-        }
-    });
-});
-
 router.get('/listarToken/:id', Auth.isLoggedInUser, Auth.checkLevel(7), async function(req,res){
     await jwt.verify(req.params.id, secretKey.apiKey, async function(err, decoded){
         if(!err){
@@ -139,29 +129,26 @@ router.delete('/eliminar/:id', Auth.isLoggedInUser, Auth.checkLevel(7), function
 });
 
 router.put('/renovar', function(req, res) {
-    Chaves.listarPorEmail(req.body.email, function(err, chave){
-        if(err || !chave){
-            res.status(500).send("Não existe nenhuma chave API associada neste email!");
-        }else{
-            var token = Auth.generateTokenKeyRenovar(chave);
-            Mailer.sendEmailRenovacaoAPI(chave.contactInfo, req.body.url.split('/renovar')[0]+'/alteracaoChaveApi?jwt='+token);
-            res.send('Email enviado com sucesso!');
-        }
-    });
-});
-
-router.put('/atualizarChave/:id', function(req, res) {
-    Chaves.renovar(req.params.id, function(err, chave){
+    Chaves.listarPorEmail(req.body.email, (err, chave) => {
         if(err){
             return res.status(500).send(`Erro: ${err}`);
         }else{
-            Mailer.sendEmailRenovadoAPI(chave.contactInfo, chave.key);
-            res.send('Chave API renovada com sucesso!');
+            if(!chave){
+                return res.status(404).send(`Erro: Chave API não encontrada!`);
+            }else{
+                Chaves.renovar(chave._id, function(err, chaveRen){
+                    if(err){
+                        return res.status(500).send(`Erro: ${err}`);
+                    }else{
+                        res.jsonp({apikey: chaveRen.key});
+                    }
+                });
+            }      
         }
-    });
+    })
 });
 
-router.put('/atualizarMultiplos/:id', Auth.isLoggedInUser, Auth.checkLevel(7), function (req, res) {
+router.put('/atualizar/:id', Auth.isLoggedInUser, Auth.checkLevel(7), function (req, res) {
     Chaves.listarPorEmail(req.body.contactInfo, function(err, chave){
         if(chave && req.params.id != chave._id){
             res.status(500).send('Já existe uma chave API registada com esse email!');
