@@ -360,45 +360,21 @@ AutosEliminacao.adicionarRADA = async function (auto) {
  * @return {Promise<Pedido | Error>} promessa que quando cumprida possui o
  * pedido gerado para a criação da nova classe
  */
-AutosEliminacao.importar = async (auto, tipo, userName, userEmail) => {
-    var queryEnt = `
-        SELECT ?ent WHERE {
-            ?ent a clav:Entidade ;
-                 clav:entDesignacao "${auto.entidade}" .
-        }
-    `
-    var queryFundo = `
-        SELECT ?ent WHERE {
-            ?ent a clav:Entidade ;
-                clav:entDesignacao "${auto.fundo}" .
-        }
-    `
-    try {
-        let resultEnt = await execQuery("query", queryEnt);
-        let resultFundo = await execQuery("query",queryFundo);
-        resultEnt = normalize(resultEnt)
-        resultFundo = normalize(resultFundo)
-        if(resultEnt.length > 0) {
-          if(resultFundo.length > 0) {
-            auto.responsavel = userName
-            var pedido = {
-                tipoPedido: "Importação",
-                tipoObjeto: tipo,
-                novoObjeto: {
-                    ae: auto
-                },
-                user: {
-                    email: userEmail
-                },
-                entidade: resultEnt[0].ent.split("#")[1]
-            }
-            var pedido = await Pedidos.criar(pedido)
-            return {codigo: pedido.codigo, auto: auto }
-          }
-          else throw(`Entidade responsável pelo Fundo, "${auto.fundo}", não encontrada no sistema.`)
-        }
-        else throw(`Entidade ${auto.entidade} não encontrada no sistema.`)
-    }  catch(erro) { throw(erro) }
+AutosEliminacao.importar = async (auto, tipo, userName, userEmail) => {    
+    auto.responsavel = userName
+    var pedido = {
+        tipoPedido: "Importação",
+        tipoObjeto: tipo,
+        novoObjeto: {
+            ae: auto
+        },
+        user: {
+            email: userEmail
+        },
+        entidade: auto.entidade
+    }
+    var pedido = await Pedidos.criar(pedido)
+    return {codigo: pedido.codigo, auto: auto }
 };
 
 /**
