@@ -27,27 +27,3 @@ Mailer.sendEmailRegistoAPI = function(destination, jwt){
   };
   mailer.send(msg);
 }
-
-Mailer.sendEmailRenovacaoAPI = function(destination, link){
-  const msg = {
-      from: 'api@clav.dglab.gov.pt',
-      to: destination,
-      templateId: 'd-0f179960befa48e4925a31a565d053bc',
-      dynamic_template_data: {
-        url: link
-      }
-  };
-  mailer.send(msg);
-}
-
-Mailer.sendEmailRenovadoAPI = function(destination, jwt){
-  const msg = {
-      from: 'api@clav.dglab.gov.pt',
-      to: destination,
-      templateId: 'd-ca711210ec224fc5b840ee7584c8ce45',
-      dynamic_template_data: {
-        key: jwt
-      }
-  };
-  mailer.send(msg);
-}

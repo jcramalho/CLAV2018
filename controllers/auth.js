@@ -32,12 +32,6 @@ Auth.checkLevel = function (clearance) {
     }
 }
 
-Auth.generateTokenKeyRenovar = function (user) {
-    var token = jwt.sign({id: user._id}, secretKey.emailKey, {expiresIn: '30m'});
-
-    return token
-}
-
 Auth.generateTokenUserRecuperar = function (user) {
     var token = jwt.sign({id: user._id, name: user.name}, secretKey.userKey, {expiresIn: '30m'});
 
