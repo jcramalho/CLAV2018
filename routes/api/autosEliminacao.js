@@ -104,7 +104,7 @@ router.post('/:tipo/importar', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 
                 })
             }
             else res.status(500).send(xmlDoc.validationErrors)
-        } else res.status(500).send(`Erro ao importar Auto de Eliminação: O ficheiro deve terminar em .xlsx`)
+        } else res.status(500).send(`Erro ao importar Auto de Eliminação: O ficheiro deve terminar em .xml`)
     })
 })
  
