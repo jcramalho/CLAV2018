@@ -85,7 +85,7 @@
                 {
                     "idInv": "inv_0",
                     "desc": "Um processo sem desdobramento ao 4º nível tem de ter uma justificação associada ao PCA",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect * where {\n\t?p rdf:type :Classe_N3 .\nminus {\n\t?s :temPCA ?pca .\n\t?pca :temJustificacao ?j\n}\nminus{\n\t?x :temPai ?s\n}\n}",
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect * where {\n\t?s rdf:type :Classe_N3 .\nminus {\n\t?s :temPCA ?pca .\n\t?pca :temJustificacao ?j\n}\nminus{\n\t?x :temPai ?s\n}\n}",
                     "checked": true
                 },
                 {
