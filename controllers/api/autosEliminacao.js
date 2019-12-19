@@ -360,8 +360,9 @@ AutosEliminacao.adicionarRADA = async function (auto) {
  * @return {Promise<Pedido | Error>} promessa que quando cumprida possui o
  * pedido gerado para a criação da nova classe
  */
-AutosEliminacao.importar = async (auto, tipo, userName, userEmail) => {    
-    auto.responsavel = userName
+AutosEliminacao.importar = async (auto, tipo, user) => {    
+    auto.entidade = user.entidade
+    auto.responsavel = user.name
     var pedido = {
         tipoPedido: "Importação",
         tipoObjeto: tipo,
@@ -369,9 +370,9 @@ AutosEliminacao.importar = async (auto, tipo, userName, userEmail) => {
             ae: auto
         },
         user: {
-            email: userEmail
+            email: user.email
         },
-        entidade: auto.entidade
+        entidade: user.entidade
     }
     var pedido = await Pedidos.criar(pedido)
     return {codigo: pedido.codigo, auto: auto }
