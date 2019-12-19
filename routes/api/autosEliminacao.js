@@ -48,7 +48,7 @@ router.post('/:tipo', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 
     User.getUserById(req.user.id, function (err, user) {
         if(err ) res.status(500).json(`Erro na consulta de utilizador para adição do AE: ${err}`)
         else {
-            AutosEliminacao.importar(req.body.auto, tipo, user.name, user.email)
+            AutosEliminacao.importar(req.body.auto, tipo, user)
             .then(dados => {
                 res.jsonp(tipo+" adicionado aos pedidos com sucesso com codigo: "+dados.codigo)
             })
@@ -65,7 +65,7 @@ router.post('/:tipo/importar', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 
         if(error) res.status(500).send(`Erro ao importar Auto de Eliminação: ${error}`)
         else if(!formData.file || !formData.file.path) res.status(500).send(`Erro ao importar Auto de Eliminação: É necessário o campo file`)
         else if(formData.file.type=="application/xml") {
-            var schemaPath = __dirname+"/../../public/schema/autoEliminacao.xsl"
+            var schemaPath = __dirname+"/../../public/schema/autoEliminacao.xsd"
             var schema = await fs.readFileSync(schemaPath)
             var xsl = xml.parseXml(schema)
             var doc = await fs.readFileSync(formData.file.path)
@@ -88,8 +88,7 @@ router.post('/:tipo/importar', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 
                                         User.getUserById(req.user.id, function (err, user) {
                                             if(err ) res.status(500).json(`Erro na consulta de utilizador para importação do AE: ${err}`)
                                             else {
-                                                data.auto.entidade = user.entidade
-                                                AutosEliminacao.importar(data.auto, tipo, user.name, user.email)
+                                                AutosEliminacao.importar(data.auto, tipo, user)
                                                     .then(dados => {
                                                         res.jsonp(tipo+" adicionado aos pedidos com sucesso com codigo: "+dados.codigo)
                                                     })
@@ -104,7 +103,7 @@ router.post('/:tipo/importar', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 
                 })
             }
             else res.status(500).send(xmlDoc.validationErrors)
-        } else res.status(500).send(`Erro ao importar Auto de Eliminação: O ficheiro deve terminar em .xlsx`)
+        } else res.status(500).send(`Erro ao importar Auto de Eliminação: O ficheiro deve terminar em .xml`)
     })
 })
  

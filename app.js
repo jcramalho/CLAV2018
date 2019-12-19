@@ -45,7 +45,6 @@ app.use(bodyParser.urlencoded({
 }));
 
 //authentication dependencies
-var cookieParser = require('cookie-parser');
 var passport = require('passport');
 
 //MongoDB session setup
