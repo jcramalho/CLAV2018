@@ -70,7 +70,7 @@ function json2xmlRec(json, nTabs){
 
                 xml += ' '.repeat(nTabs * sizeTab)
                 xml += '<' + protectKey(key) + ' type="' + type + '">'
-                xml += aux + '</' + key + '>\n'
+                xml += aux + '</' + protectKey(key) + '>\n'
             }
         }
     }else if(type === 'string'){
