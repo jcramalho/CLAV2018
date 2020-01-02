@@ -20,20 +20,18 @@ function json2xmlArray(array, nTabs){
     var len = array.length
     var type
     
-    if(len){
-        for(var i=0; i<len; i++){
-            type = typeof array[i]
-            xml += ' '.repeat(nTabs * sizeTab) + '<item index="' + i + '" type="' + type + '">'
+    for(var i=0; i<len; i++){
+        type = typeof array[i]
+        xml += ' '.repeat(nTabs * sizeTab) + '<item index="' + i + '" type="' + type + '">'
 
-            if(type === 'object'){
-                xml += json2xmlRec(array[i], nTabs + 1)
-                xml += ' '.repeat(nTabs * sizeTab)
-            }else if(type === 'string' || type === 'boolean' || type === 'number'){
-                xml += json2xmlRec(array[i], 0)
-            }
-
-            xml += '</item>\n'
+        if(type === 'object' || type === 'string' || type === 'boolean' || type === 'number'){
+            xml += json2xmlRec(array[i], nTabs + 1)
         }
+
+        if(type === 'object'){
+            xml += ' '.repeat(nTabs * sizeTab)
+        }
+        xml += '</item>\n'
     }
 
     return xml
@@ -47,7 +45,7 @@ function json2xmlRec(json, nTabs){
         xml = '\n'
 
         if(json instanceof Array){
-            xml = json2xmlArray(json, nTabs)
+            xml += json2xmlArray(json, nTabs)
         }else{
             var aux
 
@@ -76,9 +74,9 @@ function json2xmlRec(json, nTabs){
             }
         }
     }else if(type === 'string'){
-        xml = ' '.repeat(nTabs * sizeTab) + protectForXml(json)
+        xml = protectForXml(json)
     }else if(type === 'boolean' || type === 'number'){
-        xml = ' '.repeat(nTabs * sizeTab) + json
+        xml = json
     }
     return xml
 }
