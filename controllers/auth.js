@@ -64,7 +64,7 @@ Auth.isLoggedInKey = async function (req, res, next) {
             }else if(resp.length==0){
                 res.status(401).send('A sua chave API não se encontra na base de dados.');
             }else{
-                await jwt.verify(key, secretKey.apiKey, async function(err, decoded){
+                await jwt.verify(key, secretKey.apiKey, { algorithms: ['HS256'] }, async function(err, decoded){
                     if(err){
                         res.status(401).send('A sua chave API é inválida ou expirou.');
                     }else{
