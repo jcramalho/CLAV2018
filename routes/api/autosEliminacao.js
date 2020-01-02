@@ -48,7 +48,7 @@ router.post('/:tipo', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 
     User.getUserById(req.user.id, function (err, user) {
         if(err ) res.status(500).json(`Erro na consulta de utilizador para adição do AE: ${err}`)
         else {
-            AutosEliminacao.importar(req.body.auto, tipo, user.name, user.email)
+            AutosEliminacao.importar(req.body.auto, tipo, user)
             .then(dados => {
                 res.jsonp(tipo+" adicionado aos pedidos com sucesso com codigo: "+dados.codigo)
             })
@@ -88,8 +88,7 @@ router.post('/:tipo/importar', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 
                                         User.getUserById(req.user.id, function (err, user) {
                                             if(err ) res.status(500).json(`Erro na consulta de utilizador para importação do AE: ${err}`)
                                             else {
-                                                data.auto.entidade = user.entidade
-                                                AutosEliminacao.importar(data.auto, tipo, user.name, user.email)
+                                                AutosEliminacao.importar(data.auto, tipo, user)
                                                     .then(dados => {
                                                         res.jsonp(tipo+" adicionado aos pedidos com sucesso com codigo: "+dados.codigo)
                                                     })
