@@ -23,7 +23,7 @@ servers:
 tags:
   - name: auth
     description:
-  - name: calls
+  - name: logs
     description:
   - name: chaves
     description:
@@ -49,8 +49,6 @@ tags:
     description:
   - name: travessia
     description:
-  - name: utils
-    description:
   - name: vocabularios
     description:
   - name: users
@@ -58,6 +56,8 @@ tags:
   - name: ontologia
     description:
   - name: autosEliminacao
+    description:
+  - name: diversos
     description:
 paths: !!inc/dir [ 'paths' ] 
 components: 
@@ -95,7 +95,7 @@ components:
   parameters:
     OutputFormatWithCSV:
       in: query
-      name: OF
+      name: fs
       required: false
       schema:
         type: string
