@@ -26,13 +26,6 @@ router.get('/quantos', Auth.isLoggedInKey, function(req, res) {
 		.catch((erro) => res.status(500).send(`Erro na contagem dos termos de índice: ${erro}`))
 })
 
-// Devolve a lista dos termos de índice associados a uma determinada classe
-router.get('/classe/:classe', Auth.isLoggedInKey, function(req, res) {
-	TermosIndice.assocClasse(req.params.classe)
-		.then((dados) => res.jsonp(dados))
-		.catch((erro) => res.status(500).send(`Erro na listagem dos termos de índice de uma classe: ${erro}`))
-})
-
 // Verifica a existência do termo: true == existe, false == não existe
 router.post('/verificarTermo', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), async (req, res) => {
 	try {

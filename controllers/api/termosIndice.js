@@ -47,19 +47,6 @@ TermosIndice.existe = (termoIndice) => {
 	})
 }
 
-TermosIndice.assocClasse = (classe) => {
-	let query = `
-        SELECT ?id ?termo WHERE { 
-            ?idTI rdf:type clav:TermoIndice ;
-                clav:termo ?termo ;
-                clav:estaAssocClasse clav:${classe} .
-            BIND (STRAFTER(STR(?idTI), 'clav#') AS ?id).
-        }
-        ORDER BY ?termo`
-
-	return execQuery('query', query).then((response) => normalize(response))
-}
-
 TermosIndice.lastID = function() {
 	let fetchQuery = `
         SELECT * WHERE { 

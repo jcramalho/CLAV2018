@@ -5,7 +5,7 @@ const notSup = "Esta rota não suporta exportação para CSV. Contudo pode expor
 
 module.exports.outputFormat = async (req, res, next) => {
 	if (res.locals.dados) {
-	    const outF = req.query.OF || req.headers.accept
+	    const outF = req.query.fs || req.headers.accept
 
         switch (outF) {
             case 'application/json':

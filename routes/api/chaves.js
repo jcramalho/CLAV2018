@@ -6,6 +6,7 @@ var interfaceHosts = require('./../../config/database').interfaceHosts
 var Auth = require('../../controllers/auth');
 var Chaves = require('../../controllers/api/chaves');
 var Mailer = require('../../controllers/api/mailer');
+const url = require('url');
 
 router.get('/listagem', Auth.isLoggedInUser, Auth.checkLevel(6), (req, res) => {
     Chaves.listar(function(err, result){
@@ -63,7 +64,7 @@ router.get('/clavToken', (req, res) => {
     }
 })
 
-router.get('/listarToken/:id', Auth.isLoggedInUser, Auth.checkLevel(7), async function(req,res){
+router.get('/:id', Auth.isLoggedInUser, Auth.checkLevel(7), async function(req,res){
     await jwt.verify(req.params.id, secretKey.apiKey, async function(err, decoded){
         if(!err){
             await Chaves.listarPorId(decoded.id,function(err, result){
@@ -79,7 +80,7 @@ router.get('/listarToken/:id', Auth.isLoggedInUser, Auth.checkLevel(7), async fu
     });
 });
 
-router.post('/registar', (req, res) => {
+router.post('/', (req, res) => {
     Chaves.listarPorEmail(req.body.email, function (err, chave) {
         if (err) 
             return res.status(500).send(`Erro: ${err}`);
@@ -98,7 +99,7 @@ router.post('/registar', (req, res) => {
     });
 });
 
-router.put('/desativar/:id', Auth.isLoggedInUser, Auth.checkLevel(7), function(req, res) {
+router.put('/:id/desativar', Auth.isLoggedInUser, Auth.checkLevel(7), function(req, res) {
     Chaves.desativar(req.params.id, function(err, cb){
         if(err){
             return res.status(500).send(`Erro: ${err}`);
@@ -108,7 +109,7 @@ router.put('/desativar/:id', Auth.isLoggedInUser, Auth.checkLevel(7), function(r
     });
 });
 
-router.put('/ativar/:id', Auth.isLoggedInUser, Auth.checkLevel(7), function(req, res) {
+router.put('/:id/ativar', Auth.isLoggedInUser, Auth.checkLevel(7), function(req, res) {
     Chaves.ativar(req.params.id, function(err, cb){
         if(err){
             return res.status(500).send(`Erro: ${err}`);
@@ -118,7 +119,7 @@ router.put('/ativar/:id', Auth.isLoggedInUser, Auth.checkLevel(7), function(req,
     });
 });
 
-router.delete('/eliminar/:id', Auth.isLoggedInUser, Auth.checkLevel(7), function(req, res) {
+router.delete('/:id', Auth.isLoggedInUser, Auth.checkLevel(7), function(req, res) {
     Chaves.eliminar(req.params.id, function(err, cb){
         if(err){
             return res.status(500).send(`Erro: ${err}`);
@@ -128,7 +129,9 @@ router.delete('/eliminar/:id', Auth.isLoggedInUser, Auth.checkLevel(7), function
     });
 });
 
+//
 router.put('/renovar', function(req, res) {
+    
     Chaves.listarPorEmail(req.body.email, (err, chave) => {
         if(err){
             return res.status(500).send(`Erro: ${err}`);
@@ -148,7 +151,7 @@ router.put('/renovar', function(req, res) {
     })
 });
 
-router.put('/atualizar/:id', Auth.isLoggedInUser, Auth.checkLevel(7), function (req, res) {
+router.put('/:id/atualizar', Auth.isLoggedInUser, Auth.checkLevel(7), function (req, res) {
     Chaves.listarPorEmail(req.body.contactInfo, function(err, chave){
         if(chave && req.params.id != chave._id){
             res.status(500).send('Já existe uma chave API registada com esse email!');

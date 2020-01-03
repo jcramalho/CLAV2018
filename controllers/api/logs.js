@@ -1,4 +1,4 @@
-var Call = require('./../../models/call');
+var Call = require('../../models/log');
 var Calls = module.exports
 
 Calls.getRoute = function(req){

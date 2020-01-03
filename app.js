@@ -10,7 +10,7 @@ var logger = require('morgan')
 
 //Funcao auxiliar para contar numero de GET e POST
 var apiStats = require('./models/api')
-var Calls = require('./controllers/api/calls')
+var Calls = require('./controllers/api/logs')
 
 function getRoute(req){
     const route = req.route ? req.route.path : '' // check if the handler exist
@@ -156,14 +156,13 @@ app.use('/api/pedidos',require('./routes/api/pedidos'));
 app.use('/api/pendentes',require('./routes/api/pendentes'));
 app.use('/api/users',require('./routes/api/users'));
 app.use('/api/chaves',require('./routes/api/chaves'));
-app.use('/api/utils', require('./routes/api/utils'));
-app.use('/api/stats', require('./routes/api/stats'))
+app.use('/api/stats', require('./routes/api/stats'));
 app.use('/api/travessia',require('./routes/api/travessia'));
 app.use('/api/invariantes',require('./routes/api/invariantes'));
 app.use('/api/auth', require('./routes/api/auth'));
 app.use('/api/ontologia', require('./routes/api/ontologia'));
 app.use('/api/reload', require('./routes/api/reload'));
-app.use('/api/calls', require('./routes/api/calls'));
+app.use('/api/logs', require('./routes/api/logs'));
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

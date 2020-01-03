@@ -108,7 +108,7 @@ router.get('/:id', Auth.isLoggedInKey, async (req, res, next) => {
 })
 
 // Devolve a lista de processos regulados pelo documento: id, codigo, titulo
-router.get('/:id/regula', Auth.isLoggedInKey, function(req, res) {
+router.get('/:id/processos', Auth.isLoggedInKey, function(req, res) {
 	return Leg.regula(req.params.id)
 		.then((dados) => res.jsonp(dados))
 		.catch((erro) => res.status(500).send(`Erro na consulta dos processos regulados por ${req.params.id}: ${erro}`))
