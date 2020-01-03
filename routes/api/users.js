@@ -21,21 +21,7 @@ router.get('/', Auth.isLoggedInUser, Auth.checkLevel(5), (req, res) => {
     });
 });
 
-router.get('/listarEmail/:id', Auth.isLoggedInUser, function(req, res) {
-    if(req.params.id == req.user.id || req.user.level >= 7){
-        Users.listarEmail(req.params.id,function(err, email){
-            if(err){
-                return res.status(500).send(`Erro: ${err}`);
-            }else{
-                return res.json(email);
-            }
-        });
-    }else{
-        return res.status(403).send("Não tem permissões para aceder à informação de outro utilizador!")
-    }
-});
-
-router.get('/listarToken/:id', Auth.isLoggedInUser, async function(req,res){
+router.get('/:id/token', Auth.isLoggedInUser, async function(req,res){
     await jwt.verify(req.params.id, secretKey.userKey, async function(err, decoded){
         if(!err){
             if(decoded.id == req.user.id || req.user.level == 7){
@@ -56,7 +42,7 @@ router.get('/listarToken/:id', Auth.isLoggedInUser, async function(req,res){
     });
 });
 
-router.get('/verificaToken', Auth.isLoggedInUser, async function(req,res){
+router.get('/token', Auth.isLoggedInUser, async function(req,res){
     res.send(req.user);
 });
 
@@ -66,7 +52,7 @@ router.post('/registar', Auth.isLoggedInUser, Auth.checkLevel(5), function (req,
         _id: mongoose.Types.ObjectId(),
         name: req.body.name,
         email: req.body.email,
-        entidade: 'ent_'+req.body.entidade,
+        entidade: 'ent_' + req.body.entidade,
         internal: internal,
         level: req.body.type,
         local: {
@@ -141,7 +127,7 @@ router.post('/recuperar', function (req, res) {
     });
 });
 
-router.put('/desativar/:id', Auth.isLoggedInUser, Auth.checkLevel(5), async function(req, res) {
+router.put('/:id/desativar', Auth.isLoggedInUser, Auth.checkLevel(5), async function(req, res) {
     if(req.user.id != req.params.id){
         Users.desativar(req.params.id, function(err, user){
             if(err){
@@ -155,7 +141,7 @@ router.put('/desativar/:id', Auth.isLoggedInUser, Auth.checkLevel(5), async func
     }
 });
 
-router.delete('/eliminar/:id', Auth.isLoggedInUser, Auth.checkLevel(7), async function(req, res) {
+router.delete('/:id', Auth.isLoggedInUser, Auth.checkLevel(7), async function(req, res) {
     if(req.user.id != req.params.id){
         Users.eliminar(req.params.id, function(err, user){
             if(err){
@@ -170,7 +156,7 @@ router.delete('/eliminar/:id', Auth.isLoggedInUser, Auth.checkLevel(7), async fu
 });
 
 //Funcoes de alteracao de utilizador
-router.put('/alterarNivel/:id', Auth.isLoggedInUser, function (req, res) {
+router.put('/:id/alterarNivel', Auth.isLoggedInUser, function (req, res) {
     if(req.params.id == req.user.id || req.user.level >= 5){
         Users.atualizarNivel(req.params.id, req.body.level, function (err, cb) {
             if (err) 
@@ -184,7 +170,7 @@ router.put('/alterarNivel/:id', Auth.isLoggedInUser, function (req, res) {
     }
 });
 
-router.put('/alterarNome/:id', Auth.isLoggedInUser, function (req, res) {
+router.put('/:id/alterarNome', Auth.isLoggedInUser, function (req, res) {
     if(req.params.id == req.user.id || req.user.level >= 5){
         Users.atualizarNome(req.params.id, req.body.nome, function (err, cb) {
             if (err) 
@@ -198,7 +184,7 @@ router.put('/alterarNome/:id', Auth.isLoggedInUser, function (req, res) {
     }
 });
 
-router.put('/alterarEmail/:id', Auth.isLoggedInUser, function (req, res) {
+router.put('/:id/alterarEmail', Auth.isLoggedInUser, function (req, res) {
     if(req.params.id == req.user.id || req.user.level >= 5){
         Users.atualizarEmail(req.params.id, req.body.email, function (err, cb) {
             if (err) 
@@ -212,7 +198,7 @@ router.put('/alterarEmail/:id', Auth.isLoggedInUser, function (req, res) {
     }
 });
 
-router.put('/alterarPassword/:id', Auth.isLoggedInUser, function (req, res) {
+router.put('/:id/alterarPassword', Auth.isLoggedInUser, function (req, res) {
     if(req.params.id == req.user.id || req.user.level >= 6){
         Users.atualizarPassword(req.params.id, req.body.password, function (err, cb) {
             if (err) 
@@ -226,7 +212,7 @@ router.put('/alterarPassword/:id', Auth.isLoggedInUser, function (req, res) {
     }
 });
 
-router.put('/atualizarMultiplos/:id', Auth.isLoggedInUser, function (req, res) {
+router.put('/:id', Auth.isLoggedInUser, function (req, res) {
     if(req.params.id == req.user.id || req.user.level >= 5){
         Users.getUserByEmail(req.body.email, function(err,user){
             if(user && req.params.id != user._id){

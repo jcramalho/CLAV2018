@@ -1,5 +1,5 @@
-summary: Cria um pedido de importação de um auto de eliminação
-description: Cria um pedido de importação de um auto de eliminação
+summary: Cria um pedido de importação de um auto de eliminação a partir de um ficheiro XML
+description: Cria um pedido de importação de um auto de eliminação a partir de um ficheiro XML
 tags:
   - autosEliminacao
 security:
@@ -7,7 +7,7 @@ security:
   - userAuth: []
 parameters:
   - name: tipo
-    in: path
+    in: query
     description: 'Tipo do auto de eliminação'
     schema:
       type: string
@@ -17,11 +17,13 @@ requestBody:
   description: 'Auto de eliminação'
   required: true
   content:
-    application/json:
+    multipart/form-data:
       schema:
+        type: object
         properties:
-          auto:
-            $ref: '#/components/schemas/AutosEliminacao'
+          file:
+            type: string
+            format: binary
 responses:
   200:
     description: Criado um pedido para a importação de uma auto de eliminação

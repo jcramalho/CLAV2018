@@ -32,7 +32,7 @@ router.get('/:id/classes', Auth.isLoggedInKey, function (req, res) {
 })
 
 router.get('/:id/classes/:parent/descendencia', Auth.isLoggedInKey, function (req, res) {
-    SelTabs.classChildren(req.params.parent,req.params.id)
+    SelTabs.classChildren(req.params.parent, req.params.id)
         .then(list => res.send(list))
         .catch(function (error) {
             console.error(error);
@@ -47,7 +47,7 @@ router.get('/:id', Auth.isLoggedInKey, function (req, res) {
         });
 })
 
-router.post('/CSV', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), async function (req, res){
+router.post('/importar', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), async function (req, res){
     var form = new formidable.IncomingForm()
     
     Users.getUserById(req.user.id, function(err, user) {

@@ -5,6 +5,14 @@ tags:
 security:
   - userQuery: []
   - userAuth: []
+parameters:
+  - name: tipo
+    in: query
+    description: 'Tipo do auto de eliminação'
+    schema:
+      type: string
+      enum: [PGD, RADA, PGD/LC]
+    required: false
 requestBody:
   description: 'Auto de eliminação'
   required: true

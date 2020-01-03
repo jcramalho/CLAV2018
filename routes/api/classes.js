@@ -100,7 +100,7 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
                     break
             }
         }
-        else if(req.query.formato == "arvore"){
+        else if(req.query.estrutura == "arvore"){
             if(req.query.info == "completa"){
                 res.locals.dados = await State.getAllClassesInfo()
             }else{
@@ -109,7 +109,7 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
             res.locals.tipo = "classes"
             next()
         }
-        else if(req.query.formato == "lista"){
+        else if(req.query.estrutura == "lista"){
             if(req.query.info == "completa"){
                 res.locals.dados = await State.getClassesInfoFlatList()
             }else{

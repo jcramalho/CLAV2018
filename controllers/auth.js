@@ -4,7 +4,7 @@ var ExtractJWT = require("passport-jwt").ExtractJwt;
 var jwt = require('jsonwebtoken');
 var Key = require('../models/chave');
 var secretKey = require('./../config/app');
-var Calls = require('./api/calls')
+var Calls = require('./api/logs')
 
 //WARNING: correr primeiro isLoggedInUser e só depois correr esta função como middleware
 //clearance se for um número, permite o acesso a todos os utilizadores com nivel igual ou superior; se for uma lista de números, apenas permite ao acesso aos níveis presentes nessa lista.
