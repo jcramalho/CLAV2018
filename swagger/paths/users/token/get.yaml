@@ -1,5 +1,5 @@
-summary: Verifica o token para um utilizador
-description: Verifica o token para um utilizador devolvendo o id do utilizador, iat e exp.
+summary: Verifica o token para um utilizador que está ativo
+description: Verifica o token para um utilizador que está ativo devolvendo o id do utilizador, iat e exp.
 security:
   - userQuery: []
   - userAuth: []

@@ -2,17 +2,13 @@ summary: Renova a chave API
 description: Renova a chave API
 tags:
   - chaves
-requestBody:
-  description: Para renovar a chave API é necessário fornecer o email associado à chave API
-  required: true
-  content:
-    application/json:
-      schema:
-        properties:
-          email:
-            type: string
-        required:
-          - email
+parameters:
+  - name: email
+    in: query
+    required: true
+    description: Email associado à chave API
+    schema:
+      type: string
 responses:
   200:
     description: Chave API renovada

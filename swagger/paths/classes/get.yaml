@@ -9,19 +9,19 @@ tags:
 description: "Devolve as classes em vários formatos podendo ser filtradas por nível e por tipo. Existe uma hierarquia nestas possibilidades. Caso a info seja 'esqueleto' as query string tipo, nivel e formato não são consideradas. Caso o tipo seja definido as query strings nivel e formato não são consideradas. Caso tipo não seja definido e o nível seja definido (logo a query string considerada), a query string formato não é considerada. Por fim se não for definido tipo nem nivel e for definido formato esta é a query string considerada."
 parameters:
   - in: query
-    name: formato
+    name: estrutura
     schema:
       type: string
       enum: [arvore, lista]
       default: arvore
-    description: Formato da estrutura de saída. Pode ser em árvore ou em lista. Quanto nenhum parâmetro é definido (formato, tipo e nivel) o formato de saída em arvore é o predefinido.
+    description: Estrutura. Pode ser em árvore ou em lista. Quanto nenhum parâmetro é definido (formato, tipo e nivel) o formato de saída em arvore é o predefinido.
     required: false
   - in: query
     name: tipo
     schema:
       type: string
       enum: [comum, especifico]
-    description: Que tipo de processos são devolvidos numa lista. Podem ser comuns ou especificos.
+    description: Devolve as classes de nível 3 (processos) filtrando pelo tipo de processo (comuns ou especificos).
     required: false
   - in: query
     name: nivel
@@ -47,7 +47,7 @@ parameters:
     schema:
       type: string
       enum: [completa, esqueleto]
-    description: "Caso seja um valor que não 'completa' e 'esqueleto' devolve apenas o código, a descrição e o título das classes. Caso o valor seja 'completa' devolve toda a informação de cada classe. Caso o valor seja 'esqueleto' devolve num formato pronto a ser preenchido para a criação de uma Tabela de Seleção."
+    description: "Caso seja um valor que não 'completa' e 'esqueleto' devolve apenas o código, a descrição e o título das classes. Caso o valor seja 'completa' devolve toda a informação de cada classe. Caso o valor seja 'esqueleto' devolve num formato pronto a ser preenchido para a criação de uma Tabela de Seleção, devolve os campos: código, título, descrição, PCA, DF donoi (a ser preenchido pelo utilizador) e participante (a ser preenchido pelo utilizador)."
     required: false
   - $ref: '#/components/parameters/OutputFormatWithCSV'
 responses:
