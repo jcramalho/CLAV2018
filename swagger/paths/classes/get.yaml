@@ -34,20 +34,20 @@ parameters:
     name: ents
     schema:
       type: string
-    description: Obtém os processos especificos destas entidades. Este parâmetro só deve ser usado quando o tipo é especifico.
+    description: "Obtém os processos especificos destas entidades. Este parâmetro só deve ser usado quando o tipo é especifico. Exemplo de input: 'ent_AAN,ent_SEF'"
     required: false
   - in: query
     name: tips
     schema:
       type: string
-    description: Obtém os processos especificos destas tipologias. Este parâmetro só deve ser usado quando o tipo é especifico.
+    description: "Obtém os processos especificos destas tipologias. Este parâmetro só deve ser usado quando o tipo é especifico. Exemplo de input: 'tip_AAC,tip_AF'"
     required: false
   - in: query
     name: info
     schema:
       type: string
       enum: [completa, esqueleto]
-    description: "Caso seja um valor que não 'completa' e 'esqueleto' devolve apenas o código, a descrição e o título das classes. Caso o valor seja 'completa' devolve toda a informação de cada classe. Caso o valor seja 'esqueleto' devolve num formato pronto a ser preenchido para a criação de uma Tabela de Seleção, devolve os campos: código, título, descrição, PCA, DF donoi (a ser preenchido pelo utilizador) e participante (a ser preenchido pelo utilizador)."
+    description: "Caso seja um valor que não 'completa' e 'esqueleto' devolve apenas o código, a descrição e o título das classes. Caso o valor seja 'completa' devolve toda a informação de cada classe. Caso o valor seja 'esqueleto' devolve numa estrutura pronta a ser preenchida para a criação de uma Tabela de Seleção, devolve os campos: código, título, descrição, PCA, DF dono (a ser preenchido pelo utilizador) e participante (a ser preenchido pelo utilizador)."
     required: false
   - $ref: '#/components/parameters/OutputFormatWithCSV'
 responses:
