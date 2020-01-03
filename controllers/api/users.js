@@ -115,57 +115,6 @@ Users.listarPorId = function(id, callback){
     });
 }
 
-Users.atualizarNivel = function(id, level, callback){
-    Users.getUserById(id, function(err, user){
-		if (err) {	
-            callback(err, null);
-		} else {
-            user.level = level;
-            user.save(function(err) {
-                if (err) {
-		            callback(err, null);
-                }else{
-		            callback(null, user);
-                }
-            });
-        }
-    });
-}
-
-Users.atualizarNome = function(id, name, callback){
-    Users.getUserById(id, function(err, user){
-		if (err) {	
-            callback(err, null);
-		} else {
-            user.name = name;
-            user.save(function(err) {
-                if (err) {
-		            callback(err, null);
-                }else{
-		            callback(null, user);
-                }
-            });
-        }
-    });
-}
-
-Users.atualizarEmail = function(id, email, callback){
-    Users.getUserById(id, function(err, user){
-		if (err) {	
-            callback(err, null);
-		} else {
-            user.email = email;
-            user.save(function(err) {
-                if (err) {
-		            callback(err, null);
-                }else{
-		            callback(null, user);
-                }
-            });
-        }
-    });
-}
-
 Users.atualizarMultiplosCampos = function(id, nome, email, entidade, level, callback){
     Users.getUserById(id, function(err, user){
 		if (err) {	

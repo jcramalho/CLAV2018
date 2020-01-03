@@ -113,7 +113,31 @@ router.post("/", (req, res) => {
   });
 });
 
-router.put("/desativar/:id", Auth.isLoggedInUser, Auth.checkLevel(7), function(
+router.put("/renovar", function(req, res) {
+  if (req.query.email) {
+    Chaves.listarPorEmail(req.query.email, (err, chave) => {
+      if (err) {
+        return res.status(500).send(`Erro: ${err}`);
+      } else {
+        if (!chave) {
+          return res.status(404).send(`Erro: Chave API não encontrada!`);
+        } else {
+          Chaves.renovar(chave._id, function(err, chaveRen) {
+            if (err) {
+              return res.status(500).send(`Erro: ${err}`);
+            } else {
+              res.jsonp({ apikey: chaveRen.key });
+            }
+          });
+        }
+      }
+    });
+  } else {
+    return res.status(404).send(`Erro: O email é obrigatório`);
+  }
+});
+
+router.put("/:id/desativar", Auth.isLoggedInUser, Auth.checkLevel(7), function(
   req,
   res
 ) {
@@ -126,7 +150,7 @@ router.put("/desativar/:id", Auth.isLoggedInUser, Auth.checkLevel(7), function(
   });
 });
 
-router.put("/ativar/:id", Auth.isLoggedInUser, Auth.checkLevel(7), function(
+router.put("/:id/ativar", Auth.isLoggedInUser, Auth.checkLevel(7), function(
   req,
   res
 ) {
@@ -152,31 +176,7 @@ router.delete("/:id", Auth.isLoggedInUser, Auth.checkLevel(7), function(
   });
 });
 
-router.put("/renovar", function(req, res) {
-  if (req.query.email) {
-    Chaves.listarPorEmail(req.query.email, (err, chave) => {
-      if (err) {
-        return res.status(500).send(`Erro: ${err}`);
-      } else {
-        if (!chave) {
-          return res.status(404).send(`Erro: Chave API não encontrada!`);
-        } else {
-          Chaves.renovar(chave._id, function(err, chaveRen) {
-            if (err) {
-              return res.status(500).send(`Erro: ${err}`);
-            } else {
-              res.jsonp({ apikey: chaveRen.key });
-            }
-          });
-        }
-      }
-    });
-  } else {
-    return res.status(404).send(`Erro: O email é obrigatório`);
-  }
-});
-
-router.put("/atualizar/:id", Auth.isLoggedInUser, Auth.checkLevel(7), function(
+router.put("/:id/atualizar", Auth.isLoggedInUser, Auth.checkLevel(7), function(
   req,
   res
 ) {

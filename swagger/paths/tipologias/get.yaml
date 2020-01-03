@@ -19,7 +19,7 @@ parameters:
     name: designacao
     schema:
       type: string
-    description: Permite filtrar as tipologias que contém a designacao igual a este valor. (ex: Autoridades Administrativas Civis)
+    description: "Permite filtrar as tipologias que contém a designacao igual a este valor. (ex: Autoridades Administrativas Civis)"
     required: false
   - in: query
     name: info

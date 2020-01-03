@@ -31,14 +31,6 @@ router.get('/:id/classes', Auth.isLoggedInKey, function (req, res) {
         });
 })
 
-router.get('/:id/classes/:parent/descendencia', Auth.isLoggedInKey, function (req, res) {
-    SelTabs.classChildren(req.params.parent, req.params.id)
-        .then(list => res.send(list))
-        .catch(function (error) {
-            console.error(error);
-        });
-})
-
 router.get('/:id', Auth.isLoggedInKey, function (req, res) {
     SelTabs.stats(req.params.id)
         .then(result => res.send(result))

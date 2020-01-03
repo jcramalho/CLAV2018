@@ -156,49 +156,7 @@ router.delete('/:id', Auth.isLoggedInUser, Auth.checkLevel(7), async function(re
 });
 
 //Funcoes de alteracao de utilizador
-router.put('/:id/alterarNivel', Auth.isLoggedInUser, function (req, res) {
-    if(req.params.id == req.user.id || req.user.level >= 5){
-        Users.atualizarNivel(req.params.id, req.body.level, function (err, cb) {
-            if (err) 
-                return res.status(500).send(`Erro: ${err}`);
-            else {
-                res.send('Nivel atualizado com sucesso!')
-            }
-        });
-    }else{
-        return res.status(403).send("Não tem permissões para alterar a informação de outro utilizador!")
-    }
-});
-
-router.put('/:id/alterarNome', Auth.isLoggedInUser, function (req, res) {
-    if(req.params.id == req.user.id || req.user.level >= 5){
-        Users.atualizarNome(req.params.id, req.body.nome, function (err, cb) {
-            if (err) 
-                return res.status(500).send(`Erro: ${err}`);
-            else {
-                res.send('Nome atualizado com sucesso!')
-            }
-        });
-    }else{
-        return res.status(403).send("Não tem permissões para alterar a informação de outro utilizador!")
-    }
-});
-
-router.put('/:id/alterarEmail', Auth.isLoggedInUser, function (req, res) {
-    if(req.params.id == req.user.id || req.user.level >= 5){
-        Users.atualizarEmail(req.params.id, req.body.email, function (err, cb) {
-            if (err) 
-                return res.status(500).send(`Erro: ${err}`);
-            else {
-                res.send('Email atualizado com sucesso!')
-            }
-        });
-    }else{
-        return res.status(403).send("Não tem permissões para alterar a informação de outro utilizador!")
-    }
-});
-
-router.put('/:id/alterarPassword', Auth.isLoggedInUser, function (req, res) {
+router.put('/:id/password', Auth.isLoggedInUser, function (req, res) {
     if(req.params.id == req.user.id || req.user.level >= 6){
         Users.atualizarPassword(req.params.id, req.body.password, function (err, cb) {
             if (err) 
