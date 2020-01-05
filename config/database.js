@@ -15,7 +15,7 @@ module.exports.prefixes = `
 
 module.exports.host = 'http://'+ip+':'+port
 
-module.exports.swaggerURL = process.env.SWAGGER_URL || this.host /*'http://clav-api.dglab.gov.pt'*/
+module.exports.swaggerURL = process.env.SWAGGER_URL || /*this.host*/ 'http://clav-api.dglab.gov.pt'
 
 module.exports.userDB = process.env.MONGODB ? 'mongodb://' + process.env.MONGODB + '/m51-clav' : 'mongodb://localhost/m51-clav'
 
