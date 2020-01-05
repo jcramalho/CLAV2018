@@ -40,7 +40,7 @@ Entidades.listar = (filtro) => {
         BIND(CONCAT('ent_', ?sigla) AS ?id).
 
         FILTER (${Object.entries(filtro)
-			.filter(([k, v]) => v !== undefined && k != 'token' && k != 'apikey' && k != 'OF' && k != 'info')
+			.filter(([k, v]) => v !== undefined && k != 'token' && k != 'apikey' && k != 'fs' && k != 'info')
 			.map(([k, v]) => `?${k} = "${v}"`)
 			.concat(['True'])
 			.join(' && ')})

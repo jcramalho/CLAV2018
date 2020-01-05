@@ -137,7 +137,7 @@ var options = {
 
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(null, options));
 
-//formatar o resultado consoante a querystring OF
+//formatar o resultado consoante a querystring fs
 const { outputFormat } = require('./routes/outputFormat.js')
 
 //routes and API

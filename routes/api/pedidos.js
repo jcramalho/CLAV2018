@@ -13,7 +13,7 @@ router.get('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), (
     if(!isEmpty(req.query)){
         const entries = Object.entries(req.query)
         for (const [key, value] of entries) {
-            if(key != "token" && key != "apikey" && key != "OF")
+            if(key != "token" && key != "apikey" && key != "fs")
                 filtro[key] = value
         }
     }
