@@ -107,6 +107,7 @@ Classes.retrieve = async id => {
             codigo: "",
             titulo: "",
             descricao: "",
+            status: "",
             filhos: [],
             notasAp: [],
             exemplosNotasAp: [],
@@ -164,6 +165,7 @@ Classes.retrieve = async id => {
         classe.pai.titulo = base[0].tituloPai
         classe.titulo = base[0].titulo
         classe.descricao = base[0].desc
+        classe.status = base[0].status
         classe.tipoProc = base[0].procTipo || ""
         classe.procTrans = base[0].procTrans || ""
 
