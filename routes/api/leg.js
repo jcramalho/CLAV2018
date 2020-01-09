@@ -8,10 +8,10 @@ var router = express.Router()
 // Lista todos os documentos legislativos: id, data, numero, tipo, sumario, entidades
 router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
 	var queryData = url.parse(req.url, true).query
-	// api/legislacao?estado=A
-	if (queryData.estado && queryData.estado == 'A') {
+	// api/legislacao?estado=
+	if (queryData.estado && (queryData.estado == 'Ativo' || queryData.estado == 'Revogado')) {
         try{
-		    res.locals.dados = await Leg.listarAtivos()
+		    res.locals.dados = await Leg.listarPorEstado(queryData.estado)
 
             if(req.query.info == "completa"){
                 await Leg.moreInfoList(res.locals.dados)
@@ -24,7 +24,7 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
         }
 	}
 	// api/legislacao?processos=com
-	if (queryData.processos && queryData.processos == 'com') {
+    else if (queryData.processos && queryData.processos == 'com') {
         try{
             res.locals.dados = await Leg.listarComPNs()
 
@@ -39,7 +39,7 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
         }
 	}
 	// api/legislacao?processos=sem
-	if (queryData.processos && queryData.processos == 'sem') {
+    else if (queryData.processos && queryData.processos == 'sem') {
         try{
 		    res.locals.dados = await Leg.listarSemPNs()
 
@@ -54,7 +54,7 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
         }
 	}
 	// api/legislacao?fonte=XXXX
-	if (queryData.fonte) {
+    else if (queryData.fonte) {
 		try {
 			res.locals.dados = await Leg.listarFonte(queryData.fonte)
 

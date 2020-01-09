@@ -294,6 +294,9 @@ function convertLegislacao(json, type){
     csvLines[0].push(protect("Sumário"))
     csvLines[1].push(protect(json.sumario))
 
+    csvLines[0].push(protect("Fonte"))
+    csvLines[1].push(protect(json.fonte))
+
     csvLines[0].push(protect("Link"))
     csvLines[1].push(protect(json.link))
 

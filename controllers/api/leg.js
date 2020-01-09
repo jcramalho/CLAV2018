@@ -25,13 +25,14 @@ const Leg = module.exports;
  * lista das legislacoes existentes que respeitam o filtro dado
  */
 Leg.listar = () => {
-    const query = `SELECT ?id ?data ?numero ?tipo ?sumario ?estado ?entidades ?link WHERE {
+    const query = `SELECT ?id ?data ?numero ?tipo ?sumario ?estado ?entidades ?fonte ?link WHERE {
         ?uri rdf:type clav:Legislacao;
              clav:diplomaData ?data;
              clav:diplomaNumero ?numero;
              clav:diplomaTipo ?tipo;
              clav:diplomaSumario ?sumario;
              clav:diplomaEstado ?estado;
+             clav:diplomaFonte ?fonte;
              clav:diplomaLink ?link.
         OPTIONAL {
             ?uri clav:temEntidadeResponsavel ?ent.
@@ -39,7 +40,7 @@ Leg.listar = () => {
         }
         BIND(STRAFTER(STR(?uri), 'clav#') AS ?id).
     } ORDER BY DESC (?data)`;
-    const campos = ["id", "data", "numero", "tipo", "sumario", "estado", "link"];
+    const campos = ["id", "data", "numero", "tipo", "sumario", "estado", "fonte", "link"];
     const agrupar = ["entidades"];
 
     return execQuery("query", query)
@@ -54,15 +55,16 @@ Leg.listar = () => {
         });
 };
 
-//Lista todas as legislações com o estado "Ativo"
-Leg.listarAtivos = () => {
-    const query = `SELECT ?id ?data ?numero ?tipo ?estado ?sumario ?entidades ?link WHERE {
+//Lista todas as legislações consoante o estado
+Leg.listarPorEstado = (estado) => {
+    const query = `SELECT ?id ?data ?numero ?tipo ?sumario ?entidades ?fonte ?link WHERE {
         ?uri rdf:type clav:Legislacao;
              clav:diplomaData ?data;
              clav:diplomaNumero ?numero;
              clav:diplomaTipo ?tipo;
              clav:diplomaSumario ?sumario;
-             clav:diplomaEstado ?estado;
+             clav:diplomaEstado "${estado}";
+             clav:diplomaFonte ?fonte;
              clav:diplomaLink ?link.
         OPTIONAL {
             ?uri clav:temEntidadeResponsavel ?ent.
@@ -70,9 +72,8 @@ Leg.listarAtivos = () => {
         }
         BIND(STRAFTER(STR(?uri), 'clav#') AS ?id).
 
-        FILTER (?estado = "Ativo")
     } ORDER BY DESC (?data)`;
-    const campos = ["id", "data", "numero", "tipo", "sumario", "estado", "link"];
+    const campos = ["id", "data", "numero", "tipo", "sumario", "fonte", "link"];
     const agrupar = ["entidades"];
 
     return execQuery("query", query)
@@ -81,6 +82,7 @@ Leg.listarAtivos = () => {
             
             for (leg of legs) {
                 leg.entidades = leg.entidades.map(ent => ({ id: `ent_${ent}`, sigla: ent }));
+                leg.estado = estado
             }
         
             return legs;
@@ -89,13 +91,14 @@ Leg.listarAtivos = () => {
 
 // Lista todas as legislações com PNs associados
 Leg.listarComPNs = () => {
-    const query = `SELECT ?id ?data ?numero ?tipo ?sumario ?estado ?entidades ?link WHERE {
+    const query = `SELECT ?id ?data ?numero ?tipo ?sumario ?estado ?entidades ?fonte ?link WHERE {
         ?uri rdf:type clav:Legislacao;
              clav:diplomaData ?data;
              clav:diplomaNumero ?numero;
              clav:diplomaTipo ?tipo;
              clav:diplomaSumario ?sumario;
              clav:diplomaEstado ?estado;
+             clav:diplomaFonte ?fonte;
              clav:diplomaLink ?link.
              
         OPTIONAL {
@@ -107,7 +110,7 @@ Leg.listarComPNs = () => {
 
         FILTER (?estado = "Ativo")
     } ORDER BY DESC (?data)`;
-    const campos = ["id", "data", "numero", "tipo", "sumario", "estado", "link"];
+    const campos = ["id", "data", "numero", "tipo", "sumario", "estado", "fonte", "link"];
     const agrupar = ["entidades"];
 
     return execQuery("query", query)
@@ -124,13 +127,14 @@ Leg.listarComPNs = () => {
 
 // Lista todas as legislações sem PNs associados
 Leg.listarSemPNs = () => {
-    const query = `SELECT ?id ?data ?numero ?tipo ?sumario ?estado ?entidades ?link WHERE {
+    const query = `SELECT ?id ?data ?numero ?tipo ?sumario ?estado ?entidades ?fonte ?link WHERE {
         ?uri rdf:type clav:Legislacao;
              clav:diplomaData ?data;
              clav:diplomaNumero ?numero;
              clav:diplomaTipo ?tipo;
              clav:diplomaSumario ?sumario;
              clav:diplomaEstado ?estado;
+             clav:diplomaFonte ?fonte;
              clav:diplomaLink ?link .
              
         OPTIONAL {
@@ -142,7 +146,7 @@ Leg.listarSemPNs = () => {
 
         FILTER (?estado = "Ativo")
     } ORDER BY DESC (?data)`;
-    const campos = ["id", "data", "numero", "tipo", "sumario", "estado", "link"];
+    const campos = ["id", "data", "numero", "tipo", "sumario", "estado", "fonte", "link"];
     const agrupar = ["entidades"];
 
     return execQuery("query", query)
@@ -228,12 +232,13 @@ Leg.listarRegulados = async () => {
  * então a promessa conterá o valor `undefined`
  */
 Leg.consultar = id => {
-    const query = `SELECT ?tipo ?data ?numero ?sumario ?link ?estado ?entidades WHERE { 
+    const query = `SELECT ?tipo ?data ?numero ?sumario ?link ?estado ?fonte ?entidades WHERE { 
         clav:${id} a clav:Legislacao;
             clav:diplomaData ?data;
             clav:diplomaNumero ?numero;
             clav:diplomaTipo ?tipo;
             clav:diplomaSumario ?sumario;
+            clav:diplomaFonte ?fonte;
             clav:diplomaLink ?link;
             clav:diplomaEstado ?estado.
         OPTIONAL {
@@ -241,7 +246,7 @@ Leg.consultar = id => {
             ?ent clav:entSigla ?entidades;
         }
      }`;
-    const campos = ["id", "data", "numero", "tipo", "sumario", "link", "estado"];
+    const campos = ["id", "data", "numero", "tipo", "sumario", "link", "estado", "fonte"];
     const agrupar = ["entidades"];
 
     return execQuery("query", query)
@@ -366,6 +371,7 @@ Leg.listarFonte = (fonte) => {
             
             for (leg of legs) {
                 leg.entidades = leg.entidades.map(ent => ({ id: `ent_${ent}`, sigla: ent }));
+                leg.fonte = fonte
             }
         
             return legs;
