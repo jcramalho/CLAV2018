@@ -32,8 +32,10 @@ Leg.listar = () => {
              clav:diplomaTipo ?tipo;
              clav:diplomaSumario ?sumario;
              clav:diplomaEstado ?estado;
-             clav:diplomaFonte ?fonte;
              clav:diplomaLink ?link.
+        OPTIONAL {
+        	?uri clav:diplomaFonte ?fonte.
+    	}
         OPTIONAL {
             ?uri clav:temEntidadeResponsavel ?ent.
             ?ent clav:entSigla ?entidades;
@@ -64,8 +66,10 @@ Leg.listarPorEstado = (estado) => {
              clav:diplomaTipo ?tipo;
              clav:diplomaSumario ?sumario;
              clav:diplomaEstado "${estado}";
-             clav:diplomaFonte ?fonte;
              clav:diplomaLink ?link.
+        OPTIONAL {
+        	?uri clav:diplomaFonte ?fonte.
+    	}
         OPTIONAL {
             ?uri clav:temEntidadeResponsavel ?ent.
             ?ent clav:entSigla ?entidades;
@@ -98,9 +102,10 @@ Leg.listarComPNs = () => {
              clav:diplomaTipo ?tipo;
              clav:diplomaSumario ?sumario;
              clav:diplomaEstado ?estado;
-             clav:diplomaFonte ?fonte;
              clav:diplomaLink ?link.
-             
+        OPTIONAL {
+        	?uri clav:diplomaFonte ?fonte.
+    	} 
         OPTIONAL {
             ?uri clav:temEntidadeResponsavel ?ent.
             ?ent clav:entSigla ?entidades;
@@ -134,9 +139,10 @@ Leg.listarSemPNs = () => {
              clav:diplomaTipo ?tipo;
              clav:diplomaSumario ?sumario;
              clav:diplomaEstado ?estado;
-             clav:diplomaFonte ?fonte;
              clav:diplomaLink ?link .
-             
+        OPTIONAL {
+        	?uri clav:diplomaFonte ?fonte.
+    	} 
         OPTIONAL {
             ?uri clav:temEntidadeResponsavel ?ent.
             ?ent clav:entSigla ?entidades;
@@ -238,9 +244,11 @@ Leg.consultar = id => {
             clav:diplomaNumero ?numero;
             clav:diplomaTipo ?tipo;
             clav:diplomaSumario ?sumario;
-            clav:diplomaFonte ?fonte;
             clav:diplomaLink ?link;
             clav:diplomaEstado ?estado.
+        OPTIONAL {
+        	clav:${id} clav:diplomaFonte ?fonte.
+    	}
         OPTIONAL {
             clav:${id} clav:temEntidadeResponsavel ?ent.
             ?ent clav:entSigla ?entidades;
