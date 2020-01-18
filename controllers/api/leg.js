@@ -35,7 +35,7 @@ Leg.listar = () => {
              clav:diplomaLink ?link.
         OPTIONAL {
         	?uri clav:diplomaFonte ?fonte.
-    	}
+        }
         OPTIONAL {
             ?uri clav:temEntidadeResponsavel ?ent.
             ?ent clav:entSigla ?entidades;
@@ -69,7 +69,7 @@ Leg.listarPorEstado = (estado) => {
              clav:diplomaLink ?link.
         OPTIONAL {
         	?uri clav:diplomaFonte ?fonte.
-    	}
+        }
         OPTIONAL {
             ?uri clav:temEntidadeResponsavel ?ent.
             ?ent clav:entSigla ?entidades;
@@ -105,7 +105,7 @@ Leg.listarComPNs = () => {
              clav:diplomaLink ?link.
         OPTIONAL {
         	?uri clav:diplomaFonte ?fonte.
-    	} 
+        } 
         OPTIONAL {
             ?uri clav:temEntidadeResponsavel ?ent.
             ?ent clav:entSigla ?entidades;
@@ -142,7 +142,7 @@ Leg.listarSemPNs = () => {
              clav:diplomaLink ?link .
         OPTIONAL {
         	?uri clav:diplomaFonte ?fonte.
-    	} 
+        } 
         OPTIONAL {
             ?uri clav:temEntidadeResponsavel ?ent.
             ?ent clav:entSigla ?entidades;
@@ -248,7 +248,7 @@ Leg.consultar = id => {
             clav:diplomaEstado ?estado.
         OPTIONAL {
         	clav:${id} clav:diplomaFonte ?fonte.
-    	}
+        }
         OPTIONAL {
             clav:${id} clav:temEntidadeResponsavel ?ent.
             ?ent clav:entSigla ?entidades;
@@ -337,7 +337,7 @@ Leg.portarias = () => {
              clav:diplomaTipo "Portaria" ;
              clav:diplomaNumero ?numero ;
              clav:diplomaSumario ?sumario ;
-             clav:diplomaEstado ?estado
+             clav:diplomaEstado ?estado .
     }`;
 
     return execQuery("query", query)

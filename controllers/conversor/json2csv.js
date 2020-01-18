@@ -106,7 +106,7 @@ function leg_titulos(value){
 function entidades(value){
     var v = value
 
-    if(value[0] && value[0].sigla)
+    if(value.length && "sigla" in value[0])
         v = value.map(t => t.sigla)
 
     return join(v)
@@ -181,8 +181,7 @@ function joinLines(csvLines){
     for(var i=0; i<len; i++)
         csvLines[i] = csvLines[i].join(separator)
 
-    var csv = csvLines.join('\n')
-    return csv
+    return csvLines.join('\n')
 }
 
 //Convert one object of type
@@ -206,7 +205,7 @@ function convertOne(json, type){
                 csvLines[0].push(protect(header))
                 csvLines[1].push(protect(value))
             }
-        }else if(type == "pca" || type == "df"){
+        }else if(type == "pca" || type == "df" || k == "fonte"){
             csvLines[0].push(protect(header))
             csvLines[1].push(protect(""))
         }
