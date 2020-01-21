@@ -109,4 +109,15 @@ router.post('/verificarDesignacao', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 
 	}
 })
 
+// Insere uma entidade na BD
+router.post('/', Auth.isLoggedInUser, Auth.checkLevel(4), (req, res) => {
+    if(req.body && req.body.sigla && req.body.estado && req.body.sioe && req.body.designacao && req.body.internacional != null && req.body.tipologias){
+        Entidades.criar(req.body)
+            .then(dados => res.jsonp(dados))
+	        .catch(err => res.status(500).send(`Erro na inserção de uma entidade: ${err}`))
+    }else{
+	    res.status(500).send("O seu pedido não possui todos os parâmetros necessários (sigla, estado, sioe, designacao, internacional e tipologias(lista)).")
+    }
+})
+
 module.exports = router

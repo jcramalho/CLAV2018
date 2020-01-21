@@ -1,0 +1,54 @@
+summary: Cria uma entidade
+description: Cria uma entidade a partir da informação enviada no pedido
+tags:
+  - entidades
+security:
+  - userQuery: []
+  - userAuth: []
+requestBody:
+  description: 'sigla da entidade a verificar'
+  required: true
+  content:
+    application/json:
+      schema:
+        properties:
+          sigla:
+            type: string
+          designacao:
+            type: string
+          estado:
+            type: string
+            enum: [Ativa, Inativa, Harmonização]
+          sioe:
+            type: string
+          internacional:
+            type: string
+            enum: ["", "Sim"]
+          tipologias:
+            type: array
+            items:
+              type: string
+              description: "Sigla da Tipologia"
+        required:
+          - sigla
+          - designacao
+          - estado
+          - sioe
+          - internacional
+          - tipologias
+        example:
+          sigla: MdP
+          designacao: "Metro do Porto, SA"
+          estado: Ativa
+          sioe: "770000329"
+          internacional: ""
+          tipologias: ["SPE"]
+responses:
+  200:
+    description: Entidade criada
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro

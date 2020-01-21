@@ -403,15 +403,31 @@ Entidades.moreInfo = async (ent) => {
     ent.participante = await Entidades.participante(id)
 }
 
-//Criar controller para inserir na base de dados, depois do pedido aprovado!!
-/*const query = `INSERT DATA {
-    clav:ent_${entidade.sigla} rdf:type owl:NamedIndividual , clav:Entidade ;
-        clav:entDesignacao '${entidade.designacao}' ;
-        clav:entSigla '${entidade.sigla}' ;
-        clav:entInternacional '${entidade.internacional}' ;
-        clav:entSIOE '${entidade.sioe}';
+//Criar entidade
+Entidades.criar = async (ent) => {
+    const queryEnt = `{ 
+        clav:ent_${ent.sigla} rdf:type owl:NamedIndividual, clav:Entidade ;
+            clav:entEstado "${ent.estado}";
+            clav:entSIOE "${ent.sioe}";
+            clav:entSigla "${ent.sigla}";
+            clav:entDesignacao "${ent.designacao}";
+            ${ent.tipologias.map(tip => "clav:pertenceTipologiaEnt clav:tip_" + tip.split("_").pop() + ";").join("\n")}
+            clav:entInternacional "${ent.internacional}".
+    }`
+    const query = "INSERT DATA " + queryEnt
+    const ask = "ASK " + queryEnt
 
-        ${entidade.tipologias.map(tipologia => `clav:pertenceTipologiaEnt clav:${tipologia} ;`).join('\n')}
-        clav:entEstado 'Harmonização' .
-}`;
-*/
+    if(await Entidades.existeSigla(ent.sigla) || await Entidades.existeDesignacao(ent.designacao)){
+        throw "Entidade já existe, sigla ou designação já em uso."
+    }else{
+        return execQuery('update', query)
+            .then(res => execQuery('query', ask)
+                .then(result => { 
+                    if(result.boolean)
+                        return "Sucesso na inserção da entidade"
+                    else
+                        throw "Insucesso na inserção da entidade"
+                })
+            )
+    }
+}
