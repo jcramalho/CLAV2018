@@ -47,12 +47,13 @@ router.get('/token', Auth.isLoggedInUser, async function(req,res){
 });
 
 router.post('/registar', Auth.isLoggedInUser, Auth.checkLevel(5), function (req, res) {
+    var ent = req.body.entidade.split("_").pop()
     var internal = (req.body.type > 1);
     var newUser = new User({
         _id: mongoose.Types.ObjectId(),
         name: req.body.name,
         email: req.body.email,
-        entidade: 'ent_' + req.body.entidade,
+        entidade: 'ent_' + ent,
         internal: internal,
         level: req.body.type,
         local: {
@@ -166,28 +167,42 @@ router.put('/:id/password', Auth.isLoggedInUser, function (req, res) {
             }
         });
     }else{
-        return res.status(403).send("Não tem permissões para alterar a informação de outro utilizador!")
+        return res.status(403).send("Não tem permissões para alterar a password de outro utilizador!")
     }
 });
 
-router.put('/:id', Auth.isLoggedInUser, function (req, res) {
-    if(req.params.id == req.user.id || req.user.level >= 5){
-        Users.getUserByEmail(req.body.email, function(err,user){
-            if(user && req.params.id != user._id){
-                res.status(500).send('Já existe utilizador registado com esse email!');
-            }else{
-                Users.atualizarMultiplosCampos(req.params.id, req.body.nome, req.body.email, req.body.entidade, req.body.level, function (err, cb) {
-                    if (err) 
-                        return res.status(500).send(`Erro: ${err}`);
-                    else {
-                        res.send('Utilizador atualizado com sucesso!')
-                    }
-                });
-            }
-        });
+router.put('/:id/nic', Auth.isLoggedInUser, Auth.checkLevel(7), function (req, res) {
+    if(req.params.id != req.user.id){
+        if(req.body.nic){
+            Users.atualizarNIC(req.params.id, req.body.nic, function (err, u) {
+                if (err) 
+                    return res.status(500).send(`Erro: ${err}`);
+                else {
+                    res.send('NIC do utilizador atualizado com sucesso!')
+                }
+            });
+        }else{
+            return res.status(500).send("Por forma a atualizar o NIC precisa de enviar o campo nic com o novo valor!")
+        }
     }else{
-        return res.status(403).send("Não tem permissões para alterar a informação de outro utilizador!")
+        return res.status(403).send("Não pode alterar o seu próprio NIC!")
     }
+});
+
+router.put('/:id', Auth.isLoggedInUser, Auth.checkLevel(5), function (req, res) {
+    Users.getUserByEmail(req.body.email, function(err,user){
+        if(user && req.params.id != user._id){
+            res.status(500).send('Já existe utilizador registado com esse email!');
+        }else{
+            Users.atualizarMultiplosCampos(req.params.id, req.body.nome, req.body.email, req.body.entidade, req.body.level, function (err, cb) {
+                if (err) 
+                    return res.status(500).send(`Erro: ${err}`);
+                else {
+                    res.send('Utilizador atualizado com sucesso!')
+                }
+            });
+        }
+    });
 });
 
 router.get('/:id', Auth.isLoggedInUser, (req, res) => {

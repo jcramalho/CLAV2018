@@ -29,13 +29,18 @@ Users.getUserByCC = function (nic, callback) {
 Users.getUserById = function (id, callback) {
 	Users.getUserByCC(id, function(err, user1){
         if(err || !user1){
-            Users.getUserById(mongoose.Types.ObjectId(id), function(err, user2){
-                if(err || !user2){
-                    callback(err, null);
-                }else{
-                    callback(null, user2);
-                }
-            })
+            try{
+                id = mongoose.Types.ObjectId(id)
+                Users.getUserById(id, function(err, user2){
+                    if(err || !user2){
+                        callback(err, null);
+                    }else{
+                        callback(null, user2);
+                    }
+                })
+            }catch(e){
+                callback("Utilizador não existe", null)
+            }
         }else{
             callback(null, user1);
         }
@@ -157,6 +162,46 @@ Users.atualizarPassword = function(id, password, callback){
     });
 }
 
+Users.atualizarNIC = function(id, nic, callback){
+    Users.getUserByCC(nic, function(err, userNIC){
+        if (err) {	
+            callback(err,null)
+        } else if (!userNIC) {
+            Users.eliminar(id, function(err, user){
+                if (err) {	
+                    callback(err,null)
+                } else if(user) {
+                    newUser = new User({
+                        _id: nic,
+                        name: user.name,
+                        email: user.email,
+                        entidade: user.entidade,
+                        internal: user.internal,
+                        level: user.level
+                    })
+
+                    if("local" in user){
+                        newUser.local = {
+                            password: user.local.password
+                        }
+                    }
+                    newUser.save(function(err) {
+                        if (err) {
+                            callback(err, null);
+                        }else{
+                            callback(null, user)
+                        }
+                    });
+                } else {
+                    callback("Utilizador não existe", null)
+                }
+            });
+        } else {
+            callback("Já existe um utilizador com esse NIC", null)
+        }
+    });
+}
+
 Users.desativar = function(id, callback){
     Users.getUserById(id, function(err, user){
         if (err) {	
@@ -179,13 +224,18 @@ Users.eliminar = function(id, callback){
         if (err) {	
             callback(err, null);
         } else if(!user){
-            User.findOneAndRemove({_id: mongoose.Types.ObjectId(id)}, function(err2, user2){
-                if(err2){
-                    callback(err2, null);
-                }else{
-                    callback(null, user2);
-                }
-            })
+            try{
+                id = mongoose.Types.ObjectId(id)
+                User.findOneAndRemove({_id: id}, function(err2, user2){
+                    if(err2){
+                        callback(err2, null);
+                    }else{
+                        callback(null, user2);
+                    }
+                })
+            }catch(e){
+                callback("Utilizador não existe", null)
+            }
         } else {
 		    callback(null, user);
         }

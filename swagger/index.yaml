@@ -12,6 +12,8 @@ info:
     Já um token de utilizador tem de ser obtido através do login de um utilizador (POST /users/login devolve um token) tendo acesso a todas as rotas que as chaves API conseguem aceder mais algumas rotas GET, POST, PUT e DELETE que dependem do nível do utilizador. Por forma a usar este tipo de autenticação use o método de autenticação userQuery ou userAuth.
 
     Se tiver um token de um utilizador não necessita de indicar uma chave API para aceder aos GET's que a chave API dá acesso.
+    
+    **Última alteração: 24/01/2020**
   version: 2.0.0
   title: CLAV API
   contact:
@@ -60,6 +62,8 @@ tags:
   - name: autosEliminacao
     description:
   - name: diversos
+    description:
+  - name: Indicadores Estáticos
     description:
 paths: !!inc/dir [ 'paths' ] 
 components: 
