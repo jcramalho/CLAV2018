@@ -9,7 +9,7 @@ tags:
 description: Número total de classes de nível 3
 responses:
   200:
-    description:
+    description: Número total de classes de nível 3
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:

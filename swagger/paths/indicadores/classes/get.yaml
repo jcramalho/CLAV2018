@@ -9,7 +9,7 @@ tags:
 description: Número total de classes
 responses:
   200:
-    description:
+    description: Número total de classes
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:
