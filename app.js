@@ -163,6 +163,7 @@ app.use('/api/auth', require('./routes/api/auth'));
 app.use('/api/ontologia', require('./routes/api/ontologia'));
 app.use('/api/reload', require('./routes/api/reload'));
 app.use('/api/logs', require('./routes/api/logs'));
+app.use('/api/indicadores', require('./routes/api/indicadores'));
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

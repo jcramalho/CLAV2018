@@ -63,7 +63,7 @@ tags:
     description:
   - name: diversos
     description:
-  - name: Indicadores Estáticos
+  - name: Indicadores Estatísticos
     description:
 paths: !!inc/dir [ 'paths' ] 
 components: 

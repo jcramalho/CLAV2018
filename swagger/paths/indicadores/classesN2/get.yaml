@@ -1,0 +1,18 @@
+summary: Número total de classes de nível 2
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Indicadores Estatísticos
+description: Número total de classes de nível 2
+responses:
+  200:
+    description:
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  500:
+    description: Erro
