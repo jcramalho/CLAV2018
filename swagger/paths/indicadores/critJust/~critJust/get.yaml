@@ -1,0 +1,26 @@
+summary: Número total de Critérios de Justificação 'critJust'
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Indicadores Estatísticos
+description: Número total de Critérios de Justificação 'critJust' (legal, gestionario, utilidadeAdministrativa, densidadeInfo ou complementaridadeInfo)
+parameters: 
+  - name: critJust
+    in: path
+    description: "Critério de Justificação"
+    schema:
+      type: string
+      enum: [legal, gestionario, utilidadeAdministrativa, densidadeInfo, complementaridadeInfo]
+    required: true
+responses:
+  200:
+    description: Número total de Critérios de Justificação 'critJust'
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  500:
+    description: Erro

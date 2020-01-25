@@ -1,0 +1,26 @@
+summary: Número total de PNs com destino final igual a C, CP ou E
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Indicadores Estatísticos
+description: Número total de PNs com destino final igual a C (Conservação), CP (Conservação Parcial) ou E (Eliminação)
+parameters: 
+  - name: df
+    in: path
+    description: "Destino Final"
+    schema:
+      type: string
+      enum: [C, CP, E]
+    required: true
+responses:
+  200:
+    description: Número total de PNs com destino final igual a C, CP ou E
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  500:
+    description: Erro

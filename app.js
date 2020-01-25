@@ -123,10 +123,10 @@ var options = {
             var a_path = a.get("path")
             var b_path = b.get("path")
 
-            result = a_path.length - b_path.length
+            result = a_path.localeCompare(b_path)
 
             if(result == 0){
-                result = a_path.localeCompare(b_path)
+                result = a_path.length - b_path.length
             }
         }
 

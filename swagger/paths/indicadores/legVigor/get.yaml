@@ -1,0 +1,18 @@
+summary: Número total de diplomas legislativos em vigor
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Indicadores Estatísticos
+description: Número total de diplomas legislativos em vigor
+responses:
+  200:
+    description: Número total de diplomas legislativos em vigor
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  500:
+    description: Erro
