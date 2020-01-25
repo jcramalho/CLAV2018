@@ -1,6 +1,7 @@
 var Auth = require('../../controllers/auth.js')
 var Leg = require('../../controllers/api/leg.js')
 var url = require('url')
+var State = require('../../controllers/state.js')
 
 var express = require('express')
 var router = express.Router()
@@ -93,7 +94,9 @@ router.get('/portarias', Auth.isLoggedInKey, (req, res) => {
 // Devolve a informação associada a um documento legislativo: tipo data numero sumario link entidades
 router.get('/:id', Auth.isLoggedInKey, async (req, res, next) => {
     try{
-        res.locals.dados = await Leg.consultar(req.params.id)
+        //res.locals.dados = await Leg.consultar(req.params.id)
+
+        res.locals.dados = State.getLegislacao(req.params.id)
 
         if(req.query.info == "completa"){
             res.locals.dados.id = req.params.id

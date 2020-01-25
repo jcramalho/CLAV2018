@@ -5,6 +5,7 @@ var fs = require('fs')
  *   - vai permitir acelerar as querys e todas as operações de consulta
  */
 var Classes = require('./api/classes.js')
+var Legs = require('./api/leg.js')
 var NotasAp = require('./api/notasAp.js')
 var ExemplosNotasAp = require('./api/exemplosNotasAp.js')
 var TermosIndice = require('./api/termosIndice.js')
@@ -20,6 +21,8 @@ var notasAplicacao = []
 var exemplosNotasAplicacao = []
 var termosInd = []
 
+var legislacao = []
+
 // Índice de pesquisa para v-trees: 
 var indicePesquisa = []
 
@@ -29,6 +32,9 @@ exports.reset = async () => {
         classTree = await loadClasses();
         classList = level1Classes.concat(level2Classes, level3Classes, level4Classes)
         console.debug("Terminei de carregar as classes.")
+        console.debug("A carregar a legislação da BD para a cache...")
+        legislacao = await loadLegs();
+        console.debug("Terminei de carregar a legislação.")
         console.debug("A criar o índice de pesquisa...")
         indicePesquisa = await criaIndicePesquisa()
         console.debug("Índice de pesquisa criado com " + indicePesquisa.length + " entradas.")
@@ -49,9 +55,15 @@ exports.reload = async () => {
         exemplosNotasAplicacao = []
         termosInd = []
 
+        legislacao = []
+
         classTree = await loadClasses();
         classList = level1Classes.concat(level2Classes, level3Classes, level4Classes)
         console.debug("Informação base das classes carregada...")
+
+        console.debug("A carregar a legislação da BD para a cache...")
+        legislacao = await loadLegs();
+        console.debug("Terminei de carregar a legislação.")
 
         console.debug("A criar o índice de pesquisa...")
         indicePesquisa = await criaIndicePesquisa()
@@ -223,6 +235,15 @@ exports.getEsqueleto = () => {
 
 exports.getIndicePesquisa = async () => { return indicePesquisa }
 
+exports.getLegislacao = (id) => {
+    let res = legislacao.filter(l => l.id == id)
+    if (res.length > 0) {
+        return res[0]
+    }
+    else
+        return null
+}
+
 // Verifica a existência do código de uma classe: true == existe, false == não existe
 exports.verificaCodigo = async (cod) => {
     var nivel = cod.split('.').length
@@ -361,6 +382,18 @@ async function criaIndicePesquisa(){
     }) 
     
     return indice
+}
+
+// Carrega o catálogo legislativo na cache
+
+async function loadLegs() {
+    try{
+        let legs = await Legs.listar()
+        return legs
+    }
+    catch(err) {
+        throw err;
+    }
 }
 
 async function loadClasses() {
