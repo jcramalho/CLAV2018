@@ -46,30 +46,10 @@ app.use(bodyParser.urlencoded({
 
 //authentication dependencies
 var passport = require('passport');
-
-//MongoDB session setup
-var session = require('express-session');
-var MongoStore = require('connect-mongo')(session);
-var dataBases = require('./config/database');
-var mongoose = require('mongoose');
-
 require('./config/passport')(passport);
 
 //config
 app.use(express.static(__dirname + '/public'));
-
-// MongoDB Express Session
-app.use(session({
-    secret: 'DBK8R6L3Y0QQS3KKVI0QG5W0',
-    saveUninitialized: true,
-    resave: true,
-    autoRemove: 'interval',
-    autoRemoveInterval: 15, //minutes
-    store: new MongoStore({
-      url: dataBases.userDB,
-      ttl: 1800 //seconds
-    })
-}));
 
 // Passport init
 app.use(passport.initialize());
@@ -79,6 +59,8 @@ app.use(passport.session());
 app.use(logger('dev'))
 
 // Connect mongo and mongoose
+var dataBases = require('./config/database');
+var mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 mongoose.connect(dataBases.userDB, {useMongoClient: true, poolSize: 100 /*max number of connections (default is 5)*/})
     .then(()=> console.log('Mongo ready: ' + mongoose.connection.readyState))
