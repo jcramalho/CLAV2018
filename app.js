@@ -96,45 +96,8 @@ var travessia = require('./controllers/travessia.js')
 travessia.reset()
 
 //Swagger
-var fs = require('fs')
 const swaggerUi = require('swagger-ui-express');
-var yaml = require('js-yaml')
-var yamlinc = require('yaml-include')
-var src = fs.readFileSync("./swagger/index.yaml")
-
-process.chdir(__dirname + '/swagger');
-var swaggerDoc = yaml.load(src, { schema: yamlinc.YAML_INCLUDE_SCHEMA });
-process.chdir(__dirname);
-
-swaggerDoc.servers[0].url = dataBases.swaggerURL + '/api'
-fs.writeFileSync("./public/clav.yaml", yaml.dump(swaggerDoc))
-
-var options = {
-  explorer: true,
-  customSiteTitle: 'CLAV API',
-  swaggerOptions: {
-    url: dataBases.swaggerURL + '/clav.yaml',
-    tagsSorter: 'alpha',
-    operationsSorter: (a, b) => {
-        var methods = ["get", "post", "put", "delete", "patch", "options", "trace"]
-        var result = methods.indexOf(a.get("method")) - methods.indexOf(b.get("method"))
-
-        if(result == 0){
-            var a_path = a.get("path")
-            var b_path = b.get("path")
-
-            result = a_path.localeCompare(b_path)
-
-            if(result == 0){
-                result = a_path.length - b_path.length
-            }
-        }
-
-        return result
-    }
-  }
-};
-
+const options = require('./config/swagger').options
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(null, options));
 
 //formatar o resultado consoante a querystring fs
