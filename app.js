@@ -61,21 +61,56 @@ app.use(logger('dev'))
 // Connect mongo and mongoose
 var dataBases = require('./config/database');
 var mongoose = require('mongoose');
+var ontologia = require('./controllers/api/ontologia');
 mongoose.Promise = global.Promise;
-mongoose.connect(dataBases.userDB, {useMongoClient: true, poolSize: 100 /*max number of connections (default is 5)*/})
-    .then(()=> console.log('Mongo ready: ' + mongoose.connection.readyState))
-    .catch(()=> console.log('Mongo: erro na conexão...'))
 
-var db = mongoose.connection;
-db.on('error', console.error.bind(console, 'Mongo erro na conexão: '));
+//Como o emit não funciona (devolve false) caso não haja já um listener
+//voltasse a tentar de 1 em 1 segundo por forma a avisar que o servidor
+//já pode escutar visto que já está pronto
+function emit(){
+    if(!app.emit('ready')){
+        setTimeout(emit(), 1000)
+    }
+}
 
-//loads APP State
-var State = require('./controllers/state.js')
-State.reset()
+mongoose.connect(dataBases.userDB, {
+    useMongoClient: true,
+    poolSize: 100 //max number of connections (default is 5)
+})
+    .then(async () => {
+        var Mstate = mongoose.connection.readyState
 
-//loads APP travessia
-var travessia = require('./controllers/travessia.js')
-travessia.reset()
+        if(Mstate == 1){
+            mongoose.connection.on('error', console.error.bind(console, 'MongoDB: erro na conexão: '));
+
+            console.log('MongoDB: pronto. Status: ' + Mstate)
+            try{
+                var data = await ontologia.data()
+                console.log('GraphDB: pronto. Data da ontologia: ' + data)
+            }catch(e){
+                console.error("GraphDB: não foi possível aceder.")
+                process.exit(1)
+            }
+
+            //loads APP State
+            var State = require('./controllers/state.js')
+            State.reset()
+
+            //loads APP travessia
+            var travessia = require('./controllers/travessia.js')
+            travessia.reset()
+
+            //avisa que o servidor está pronto a receber pedidos
+            emit()
+        }else{
+            console.error("MongoDB: não foi possível aceder.")
+            process.exit(1)
+        }
+    })
+    .catch(() => {
+        console.error('MongoDB: não foi possível aceder.')
+        process.exit(1)
+    })
 
 //Swagger
 const swaggerUi = require('swagger-ui-express');
