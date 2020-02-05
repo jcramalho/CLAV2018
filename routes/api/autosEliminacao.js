@@ -58,8 +58,12 @@ router.post('/importar', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 
         form.parse(req, async (error, fields, formData) => {
             if(error) res.status(500).send(`Erro ao importar Auto de Eliminação: ${error}`)
             else if(!formData.file || !formData.file.path) res.status(500).send(`Erro ao importar Auto de Eliminação: É necessário o campo file`)
-            else if(formData.file.type=="application/xml") {
-                var schemaPath = __dirname+"/../../public/schema/autoEliminacao.xsd"
+            else if(formData.file.type) {
+                var tipo = req.query.tipo
+                if(tipo==="PGD_LC") {
+                    var schemaPath = __dirname+"/../../public/schema/autoEliminacao.xsd"
+                }
+                else var schemaPath = __dirname+"/../../public/schema/autoEliminacao_s_lc.xsd"
                 var schema = await fs.readFileSync(schemaPath)
                 var xsl = xml.parseXml(schema)
                 var doc = await fs.readFileSync(formData.file.path)
@@ -72,16 +76,15 @@ router.post('/importar', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 
                             User.getUserById(req.user.id, function (err, user) {
                                 if(err ) res.status(500).json(`Erro na consulta de utilizador para importação do AE: ${err}`)
                                 else {
-                                    xml2Json(result.auto)
+                                    xml2Json(result.auto,tipo)
                                         .then(data =>{
-                                            var tipo = req.query.tipo
-                                            if(tipo==="PGD") tipo = "AE PGD"
-                                            else if(tipo === "RADA") tipo = "AE RADA"
-                                            else if(tipo==="PGD_LC") tipo = "AE PGD/LC"
-                                            else res.status(500).send("Erro: Verifique o tipo de importação")
                                             User.getUserById(req.user.id, function (err, user) {
                                                 if(err ) res.status(500).json(`Erro na consulta de utilizador para importação do AE: ${err}`)
                                                 else {
+                                                    if(tipo==="PGD_LC") tipo = "AE PGD/LC"
+                                                    else if(tipo === "RADA") tipo = "AE RADA"
+                                                    else if(tipo==="PGD") tipo = "AE PGD"
+                                                    else res.status(500).send("Erro: Verifique o tipo de importação")
                                                     AutosEliminacao.importar(data.auto, tipo, user)
                                                         .then(dados => {
                                                             res.jsonp(tipo+" adicionado aos pedidos com sucesso com codigo: "+dados.codigo)
