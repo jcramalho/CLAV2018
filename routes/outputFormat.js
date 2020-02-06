@@ -92,16 +92,18 @@ module.exports.outputFormat = async (req, res, next) => {
 	    const outF = req.query.fs || req.headers.accept
 
         if(res.locals.tipo == "classes"){
-            //se não for utilizador ou se for com nível inferior a 3.5
-            if(res.locals.idType != "User" || req.user.level < 3.5){
+            var isEsqueleto = "info" in req.query && req.query.info == "esqueleto"
+
+            //se não for utilizador ou se for com nível inferior a 3.5 ou ainda se for o esqueleto para a criação de uma TS
+            if(res.locals.idType != "User" || req.user.level < 3.5 || isEsqueleto){
                 res.locals.dados = filterClasses(res.locals.dados, res.locals.dados)
             }
-        }
 
-        // remove o status do esqueleto
-        if(req.query.info == "esqueleto"){
-            for(var i=0; i < res.locals.dados.length; i++){
-                delete res.locals.dados[i].status
+            // remove o status do esqueleto
+            if(isEsqueleto){
+                for(var i=0; i < res.locals.dados.length; i++){
+                    delete res.locals.dados[i].status
+                }
             }
         }
 
