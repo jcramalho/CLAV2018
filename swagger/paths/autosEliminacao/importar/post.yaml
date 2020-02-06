@@ -22,8 +22,11 @@ requestBody:
         type: object
         properties:
           file:
-            type: string
-            format: binary
+            type: object
+            properties: {}
+      encoding:
+        file:
+          contentType: application/xml; charset=utf-8
 responses:
   200:
     description: Criado um pedido para a importação de uma auto de eliminação
