@@ -22,8 +22,8 @@ requestBody:
         type: object
         properties:
           file:
-            type: object
-            properties: {}
+            type: string
+            format: binary
       encoding:
         file:
           contentType: application/xml; charset=utf-8
