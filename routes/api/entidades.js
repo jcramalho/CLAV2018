@@ -111,7 +111,7 @@ router.post('/verificarDesignacao', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 
 
 // Insere uma entidade na BD
 router.post('/', Auth.isLoggedInUser, Auth.checkLevel(4), (req, res) => {
-    if(req.body && req.body.sigla && req.body.estado && req.body.sioe && req.body.designacao && req.body.internacional != null && req.body.tipologias){
+    if(req.body && req.body.sigla && req.body.estado && req.body.sioe && req.body.designacao && req.body.internacional != null && req.body.tipologias && req.body.dataCriacao){
         Entidades.criar(req.body)
             .then(dados => res.jsonp(dados))
 	        .catch(err => res.status(500).send(`Erro na inserção de uma entidade: ${err}`))

@@ -412,7 +412,8 @@ Entidades.criar = async (ent) => {
             clav:entSigla "${ent.sigla}";
             clav:entDesignacao "${ent.designacao}";
             ${ent.tipologias.map(tip => "clav:pertenceTipologiaEnt clav:tip_" + tip.split("_").pop() + ";").join("\n")}
-            clav:entInternacional "${ent.internacional}".
+            clav:entInternacional "${ent.internacional}";
+            clav:entDataCriacao "${ent.dataCriacao}".
     }`
     const query = "INSERT DATA " + queryEnt
     const ask = "ASK " + queryEnt

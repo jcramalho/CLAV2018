@@ -29,6 +29,8 @@ requestBody:
             items:
               type: string
               description: "Sigla da Tipologia"
+          dataCriacao:
+            type: string
         required:
           - sigla
           - designacao
@@ -36,6 +38,7 @@ requestBody:
           - sioe
           - internacional
           - tipologias
+          - dataCriacao
         example:
           sigla: MdP
           designacao: "Metro do Porto, SA"
@@ -43,6 +46,7 @@ requestBody:
           sioe: "770000329"
           internacional: ""
           tipologias: ["SPE"]
+          dataCriacao: "2020/02/02"
 responses:
   200:
     description: Entidade criada
