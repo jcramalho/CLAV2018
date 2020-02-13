@@ -405,16 +405,29 @@ Entidades.moreInfo = async (ent) => {
 
 //Criar entidade
 Entidades.criar = async (ent) => {
-    const queryEnt = `{ 
+    var queryEnt = `{ 
         clav:ent_${ent.sigla} rdf:type owl:NamedIndividual, clav:Entidade ;
             clav:entEstado "${ent.estado}";
-            clav:entSIOE "${ent.sioe}";
             clav:entSigla "${ent.sigla}";
-            clav:entDesignacao "${ent.designacao}";
-            ${ent.tipologias.map(tip => "clav:pertenceTipologiaEnt clav:tip_" + tip.split("_").pop() + ";").join("\n")}
-            clav:entInternacional "${ent.internacional}";
-            clav:entDataCriacao "${ent.dataCriacao}".
-    }`
+            clav:entDesignacao "${ent.designacao}"`
+
+    if (ent.sioe) 
+        queryEnt += `;\n\tclav:entSIOE "${ent.sioe}"`
+
+    if (ent.tipologias && ent.tipologias instanceof Array && ent.tipologias.length > 0)
+        queryEnt += `;\n\tclav:pertenceTipologiaEnt ${ent.tipologias.map(tip => "clav:tip_" + tip.split("_").pop()).join(", ")}`
+
+    if (ent.internacional != null){
+        ent.internacional = ent.internacional == "" ? "Não" : ent.internacional
+    } else {
+        ent.internacional = "Não"
+    }
+    queryEnt += `;\n\tclav:entInternacional "${ent.internacional}"`
+
+    if (ent.dataCriacao)
+        queryEnt += `;\n\tclav:entDataCriacao "${ent.dataCriacao}"`
+    
+    queryEnt += "}"
     const query = "INSERT DATA " + queryEnt
     const ask = "ASK " + queryEnt
 

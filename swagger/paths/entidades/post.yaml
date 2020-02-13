@@ -23,7 +23,8 @@ requestBody:
             type: string
           internacional:
             type: string
-            enum: ["", "Sim"]
+            default: "Não"
+            enum: ["Não", "Sim"]
           tipologias:
             type: array
             items:
@@ -35,16 +36,12 @@ requestBody:
           - sigla
           - designacao
           - estado
-          - sioe
-          - internacional
-          - tipologias
-          - dataCriacao
         example:
           sigla: MdP
           designacao: "Metro do Porto, SA"
           estado: Ativa
           sioe: "770000329"
-          internacional: ""
+          internacional: "Não"
           tipologias: ["SPE"]
           dataCriacao: "2020/02/02"
 responses:
