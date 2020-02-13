@@ -1,0 +1,36 @@
+summary: Extingue uma entidade
+description: Extingue uma entidade, dada uma data de Extinção
+tags:
+  - entidades
+security:
+  - userQuery: []
+  - userAuth: []
+parameters:
+  - name: id
+    in: path
+    description: 'Identificador de uma entidade (exemplo: ent_AAN)'
+    schema:
+      type: string
+    required: true
+requestBody:
+  description: 'Data de extinção da entidade'
+  required: true
+  content:
+    application/json:
+      schema:
+        properties:
+          dataExtincao:
+            type: string
+        required:
+          - dataExtincao
+        example:
+          dataExtincao: "2020/02/02"
+responses:
+  200:
+    description: Entidade extinta
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro

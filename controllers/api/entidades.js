@@ -445,3 +445,26 @@ Entidades.criar = async (ent) => {
             )
     }
 }
+
+//Extinguir entidade
+Entidades.extinguir = (id, dataExtincao) => {
+    var deleteEnt = `{
+        clav:${id} clav:entEstado ?o.
+    }`
+    var queryEnt = `{ 
+        clav:${id} clav:entDataExtincao "${dataExtincao}";
+            clav:entEstado "Inativa".
+    }`
+    const query = "DELETE " + deleteEnt + " INSERT " + queryEnt + "WHERE " + deleteEnt
+    const ask = "ASK " + queryEnt
+
+    return execQuery('update', query)
+        .then(res => execQuery('query', ask)
+            .then(result => { 
+                if(result.boolean)
+                    return "Entidade extinta"
+                else
+                    throw "Não foi possível extinguir a entidade"
+            })
+        )
+}

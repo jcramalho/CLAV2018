@@ -120,4 +120,15 @@ router.post('/', Auth.isLoggedInUser, Auth.checkLevel(4), (req, res) => {
     }
 })
 
+// Extinguir uma entidade na BD
+router.put('/:id/extinguir', Auth.isLoggedInUser, Auth.checkLevel(4), (req, res) => {
+    if(req.body && req.body.dataExtincao){
+        Entidades.extinguir(req.params.id, req.body.dataExtincao)
+            .then(dados => res.jsonp(dados))
+	        .catch(err => res.status(500).send(`Erro na inserção de uma entidade: ${err}`))
+    }else{
+	    res.status(500).send("O seu pedido não possui o parâmetro necessário, a data de extinção da entidade (dataExtincao).")
+    }
+})
+
 module.exports = router
