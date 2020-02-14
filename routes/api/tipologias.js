@@ -6,23 +6,45 @@ var router = express.Router()
 
 // Lista todas as tipologias: id, sigla, designacao
 router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
-	const filtro = {
-		estado: req.query.estado ? req.query.estado : 'Ativa',
-		designacao: req.query.designacao
-	}
-
-    try{
-        res.locals.dados = await Tipologias.listar(filtro)
-
-        if(req.query.info == "completa"){
-            await Tipologias.moreInfoList(res.locals.dados)
+    if(req.query.existeSigla || req.query.existeDesignacao){
+        var ret = false
+        
+        if(req.query.existeSigla) {
+            try {
+                ret = ret || await Tipologias.existeSigla(req.query.existeSigla)
+            } catch (err) {
+                return res.status(500).send(`Erro na verificação da sigla: ${err}`)
+            }
         }
 
-        res.locals.tipo = "tipologias"
-        next()
-	} catch(erro) {
-        res.status(500).send(`Erro na listagem das tipologias: ${erro}`)
-    }
+        if(req.query.existeDesignacao){
+            try {
+                ret = ret || await Tipologias.existeDesignacao(req.query.existeDesignacao)
+            } catch (err) {
+                return res.status(500).send(`Erro na verificação da designação: ${err}`)
+            }
+        }
+
+        res.jsonp(ret)
+    }else{
+        const filtro = {
+            estado: req.query.estado ? req.query.estado : 'Ativa',
+            designacao: req.query.designacao
+        }
+
+        try{
+            res.locals.dados = await Tipologias.listar(filtro)
+
+            if(req.query.info == "completa"){
+                await Tipologias.moreInfoList(res.locals.dados)
+            }
+
+            res.locals.tipo = "tipologias"
+            next()
+        } catch(erro) {
+            res.status(500).send(`Erro na listagem das tipologias: ${erro}`)
+        }
+    }   
 })
 
 // Consulta de uma tipologia: sigla, designacao, estado
@@ -61,24 +83,6 @@ router.get('/:id/intervencao/participante', Auth.isLoggedInKey, (req, res) => {
 	return Tipologias.participante(req.params.id)
 		.then((dados) => res.jsonp(dados))
 		.catch((erro) => res.status(500).send(`Erro na query sobre as participações da entidade '${req.params.id}': ${erro}`))
-})
-
-// Verifica a existência da sigla de uma tipologia: true == existe, false == não existe
-router.post('/verificarSigla', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), async (req, res) => {
-	try {
-		res.jsonp(await Tipologias.existeSigla(req.body.sigla))
-	} catch (err) {
-		res.status(500).send(`Erro na verificação da sigla: ${err}`)
-	}
-})
-
-// Verifica a existência da designação de uma tipologia: true == existe, false == não existe
-router.post('/verificarDesignacao', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), async (req, res) => {
-	try {
-		res.jsonp(await Tipologias.existeDesignacao(req.body.designacao))
-	} catch (err) {
-		res.status(500).send(`Erro na verificação da designação: ${err}`)
-	}
 })
 
 module.exports = router

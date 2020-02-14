@@ -1,5 +1,5 @@
 summary: Devolve a lista dos termos de índice ou verifica se um determinado termo índice existe
-description: Devolve a lista dos termos de índice (para cada termo índice devolve a informação do id, termo, estado, idClasse e tituloClasse) ou verifica se um determinado termo índice existe (true or false)
+description: Devolve a lista dos termos de índice (para cada termo índice devolve a informação do id, termo, estado, idClasse e tituloClasse) ou verifica se um determinado termo índice existe através do parâmetro 'existe'
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []
@@ -12,7 +12,7 @@ parameters:
     name: existe
     schema:
       type: string
-    description: 'nome do termo índice (exemplo: ADSE, receção de cartão da)'
+    description: 'nome do termo índice a verificar se existe (exemplo: ADSE, receção de cartão da)'
     required: false
 responses:
   200:

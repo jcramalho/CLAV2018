@@ -9,8 +9,29 @@ var router = express.Router()
 router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
 	var queryData = url.parse(req.url, true).query
 
+    if(queryData.existeSigla || queryData.existeDesignacao){
+        var ret = false
+
+        if(queryData.existeSigla) {
+            try {
+                ret = ret || await Entidades.existeSigla(queryData.existeSigla)
+            } catch (err) {
+                return res.status(500).send(`Erro na verificação da sigla: ${err}`)
+            }
+        }
+
+        if(queryData.existeDesignacao){
+            try {
+                ret = ret || await Entidades.existeDesignacao(queryData.existeDesignacao)
+            } catch (err) {
+                return res.status(500).send(`Erro na verificação da designação: ${err}`)
+            }
+        }
+
+        res.jsonp(ret)
+    }
     // api/entidades?processos=com
-    if (queryData.processos && queryData.processos == 'com') {
+    else if (queryData.processos && queryData.processos == 'com') {
         try{
             res.locals.dados = await Entidades.listarComPNs()
 
@@ -89,24 +110,6 @@ router.get('/:id/intervencao/participante', Auth.isLoggedInKey, (req, res) => {
 	return Entidades.participante(req.params.id)
 		.then((dados) => res.jsonp(dados))
 		.catch((erro) => res.status(500).send(`Erro na query sobre as participações da entidade '${req.params.id}': ${erro}`))
-})
-
-// Verifica a existência da sigla de uma entidade: true == existe, false == não existe
-router.post('/verificarSigla', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), async (req, res) => {
-	try {
-		res.jsonp(await Entidades.existeSigla(req.body.sigla))
-	} catch (err) {
-		res.status(500).send(`Erro na verificação da sigla: ${err}`)
-	}
-})
-
-// Verifica a existência da designação de uma entidade: true == existe, false == não existe
-router.post('/verificarDesignacao', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), async (req, res) => {
-	try {
-		res.jsonp(await Entidades.existeDesignacao(req.body.designacao))
-	} catch (err) {
-		res.status(500).send(`Erro na verificação da designação: ${err}`)
-	}
 })
 
 // Insere uma entidade na BD

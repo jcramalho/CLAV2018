@@ -1,5 +1,5 @@
-summary: Lista todas as tipologias podendo a lista ser filtrada
-description: Lista todas as tipologias podendo a lista ser filtrada. Para cada tipologia devolve a informação do id, sigla, designação e estado
+summary: Lista todas as tipologias podendo a lista ser filtrada ou verifica se uma sigla ou designação já está atribuida a uma tipologia
+description: Lista todas as tipologias podendo a lista ser filtrada. Para cada tipologia devolve a informação do id, sigla, designação e estado. Para além disso, ao usar-se os parâmetros existeSigla ou/e existeDesignacao verifica se a sigla e/ou a designação já está presente numa tipologia
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []
@@ -8,6 +8,18 @@ security:
 tags:
   - tipologias
 parameters:
+  - in: query
+    name: existeSigla
+    schema:
+      type: string
+    description: 'Sigla da tipologia a verificar se já está presente (exemplo: AAC)'
+    required: false
+  - in: query
+    name: existeDesignacao
+    schema:
+      type: string
+    description: 'Designação da tipologia a verificar se já está presente (exemplo: Autoridades Administrativas Civis)'
+    required: false
   - in: query
     name: estado
     schema:
@@ -31,7 +43,7 @@ parameters:
   - $ref: '#/components/parameters/OutputFormatWithCSV'
 responses:
   200:
-    description: Lista todas as tipologias
+    description: Lista todas as tipologias ou verifica se a sigla e/ou a designação existe numa entidade
     content:
       application/json:
         schema:
