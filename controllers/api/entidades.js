@@ -116,6 +116,8 @@ Entidades.listarTipsDonos = async () => {
 
             delete res[i].dc
             delete res[i].dt
+
+            res[i].dono.sort((p1, p2) => p1.codigo.localeCompare(p2.codigo))
         }
 
         return res
@@ -171,6 +173,7 @@ Entidades.listarParticipantes = async () => {
             delete res[i].pc
             delete res[i].pt
             delete res[i].tp
+            res[i].participante.sort((p1, p2) => p1.codigo.localeCompare(p2.codigo))
         }
 
         return res
@@ -334,7 +337,7 @@ Entidades.dono = (id) => {
             clav:titulo ?titulo ;
             clav:pertenceLC clav:lc1 ;
             clav:classeStatus "A" .
-    }`
+    }ORDER BY ?codigo`
 
 	return execQuery('query', query).then((response) => normalize(response))
 }
@@ -357,7 +360,7 @@ Entidades.participante = (id) => {
             clav:classeStatus "A" .
         BIND (STRAFTER(STR(?tipoParURI), 'clav#') AS ?tipoPar).
         FILTER (?tipoParURI != clav:temParticipante && ?tipoParURI != clav:temDono)
-    }`
+    }ORDER BY ?codigo`
 
 	return execQuery('query', query).then((response) => normalize(response))
 }
