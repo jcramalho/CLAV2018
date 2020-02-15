@@ -12,10 +12,8 @@ var TermosIndice = require('./api/termosIndice.js')
 
 var classTree = []
 var classList = []
-var level1Classes = []
-var level2Classes = []
-var level3Classes = []
-var level4Classes = []
+//level 1, 2, 3, 4
+var levelClasses = [[],[],[],[]]
 
 var notasAplicacao = []
 var exemplosNotasAplicacao = []
@@ -30,7 +28,7 @@ exports.reset = async () => {
     try {
         console.debug("A carregar as classes da BD para a cache...")
         classTree = await loadClasses();
-        classList = level1Classes.concat(level2Classes, level3Classes, level4Classes)
+        classList = [].concat.apply([], levelClasses)
         console.debug("Terminei de carregar as classes.")
         console.debug("A carregar a legislação da BD para a cache...")
         legislacao = await loadLegs();
@@ -46,10 +44,7 @@ exports.reset = async () => {
 exports.reload = async () => { 
     try {
         console.debug("A carregar as classes da BD para a cache...")
-        level1Classes = []
-        level2Classes = []
-        level3Classes = []
-        level4Classes = []
+        levelClasses = [[],[],[],[]]
 
         notasAplicacao = []
         exemplosNotasAplicacao = []
@@ -58,7 +53,7 @@ exports.reload = async () => {
         legislacao = []
 
         classTree = await loadClasses();
-        classList = level1Classes.concat(level2Classes, level3Classes, level4Classes)
+        classList = [].concat.apply([], levelClasses)
         console.debug("Informação base das classes carregada...")
 
         console.debug("A carregar a legislação da BD para a cache...")
@@ -81,10 +76,15 @@ exports.reload = async () => {
 
 exports.getAllClasses = async () => { return classTree }
 exports.getClassesFlatList = async () => { return classList }
-exports.getLevel1Classes = async () => { return level1Classes }
-exports.getLevel2Classes = async () => { return level2Classes }
-exports.getLevel3Classes = async () => { return level3Classes }
-exports.getLevel4Classes = async () => { return level4Classes }
+exports.getLevelClasses = async (nivel) => {
+    var ret = []
+
+    if(nivel >= 1 && nivel <= 4){
+        ret = levelClasses[nivel-1] 
+    }
+
+    return ret
+}
 
 exports.getAllClassesInfo = async () => {
     return JSON.parse(fs.readFileSync('./public/classes/classesInfo.json'))
@@ -106,58 +106,28 @@ exports.getClassesInfoFlatList = async () => {
     return classTreeInfo
 }
 
-exports.getLevel1ClassesInfo = async () => {
-    var classTreeInfo = JSON.parse(fs.readFileSync('./public/classes/classesInfo.json'))
-
-    for(var i = 0; i < classTreeInfo.length; i++){
-        delete classTreeInfo[i].filhos
-    }
-
-    return classTreeInfo
-}
-
-exports.getLevel2ClassesInfo = async () => {
+exports.getLevelClassesInfo = (nivel) => {
     var classTreeInfo = JSON.parse(fs.readFileSync('./public/classes/classesInfo.json'))
     var ret = []
 
-    for(var i = 0; i < classTreeInfo.length; i++){
-        for(var j = 0; j < classTreeInfo[i].filhos.length; j++){
-            delete classTreeInfo[i].filhos[j].filhos
-            ret.push(classTreeInfo[i].filhos[j])
-        }
+    if(nivel >= 1 && nivel <= 4){
+        ret = getLevelClassesInfoRec(nivel-1, classTreeInfo)
     }
 
     return ret
 }
 
-exports.getLevel3ClassesInfo = async () => {
-    var classTreeInfo = JSON.parse(fs.readFileSync('./public/classes/classesInfo.json'))
+function getLevelClassesInfoRec(nivel, classes) {
     var ret = []
 
-    for(var i = 0; i < classTreeInfo.length; i++){
-        for(var j = 0; j < classTreeInfo[i].filhos.length; j++){
-            for(var k = 0; k < classTreeInfo[i].filhos[j].filhos.length; k++){
-                delete classTreeInfo[i].filhos[j].filhos[k].filhos
-                ret.push(classTreeInfo[i].filhos[j].filhos[k])
-            }
+    if(nivel == 0){
+        for(var i = 0; i < classes.length; i++){
+            delete classes[i].filhos
+            ret.push(classes[i])
         }
-    }
-
-    return ret
-}
-
-exports.getLevel4ClassesInfo = async () => {
-    var classTreeInfo = JSON.parse(fs.readFileSync('./public/classes/classesInfo.json'))
-    var ret = []
-
-    for(var i = 0; i < classTreeInfo.length; i++){
-        for(var j = 0; j < classTreeInfo[i].filhos.length; j++){
-            for(var k = 0; k < classTreeInfo[i].filhos[j].filhos.length; k++){
-                for(var l = 0; l < classTreeInfo[i].filhos[j].filhos[k].filhos.length; l++){
-                    delete classTreeInfo[i].filhos[j].filhos[k].filhos[l].filhos
-                    ret.push(classTreeInfo[i].filhos[j].filhos[k].filhos[l])
-                }
-            }
+    }else{
+        for(var i = 0; i < classes.length; i++){
+            ret = ret.concat(getLevelClassesInfoRec(nivel-1, classes[i].filhos))
         }
     }
 
@@ -251,13 +221,13 @@ exports.verificaCodigo = async (cod) => {
     var nivel = cod.split('.').length
     var r = false
     switch(nivel){
-        case 1: r = await level1Classes.filter(c => c.codigo == cod).length != 0
+        case 1: r = await levelClasses[0].filter(c => c.codigo == cod).length != 0
                 break
-        case 2: r = await level2Classes.filter(c => c.codigo == cod).length != 0
+        case 2: r = await levelClasses[1].filter(c => c.codigo == cod).length != 0
                 break
-        case 3: r = await level3Classes.filter(c => c.codigo == cod).length != 0
+        case 3: r = await levelClasses[2].filter(c => c.codigo == cod).length != 0
                 break
-        case 4: r = await level4Classes.filter(c => c.codigo == cod).length != 0
+        case 4: r = await levelClasses[3].filter(c => c.codigo == cod).length != 0
                 break
         default: console.log('Classe de nível inexistente: ' + cod)
     }
@@ -401,13 +371,13 @@ async function loadLegs() {
 async function loadClasses() {
         try {
             let classes = await Classes.listar(null);
-            level1Classes = JSON.parse(JSON.stringify(classes))
+            levelClasses[0] = JSON.parse(JSON.stringify(classes))
             // Carregamento da informação das classes de nível 1
             for(var i = 0; i < classes.length; i++){
                 classes[i].drop = false
                 let cid = classes[i].id.split('#')[1]
                 let desc = await Classes.descendencia(cid)
-                level2Classes = level2Classes.concat(JSON.parse(JSON.stringify(desc)))
+                levelClasses[1] = levelClasses[1].concat(JSON.parse(JSON.stringify(desc)))
 
                 let na = await Classes.notasAp(cid)
                 notasAplicacao = notasAplicacao.concat(JSON.parse(JSON.stringify(na.map(n => n.nota))))
@@ -419,7 +389,7 @@ async function loadClasses() {
                     let cid2 = desc[j].id.split('#')[1]
                     desc[j].drop = false
                     let desc2 = await Classes.descendencia(cid2)
-                    level3Classes = level3Classes.concat(JSON.parse(JSON.stringify(desc2)))
+                    levelClasses[2] = levelClasses[2].concat(JSON.parse(JSON.stringify(desc2)))
 
                     let na = await Classes.notasAp(cid2)
                     notasAplicacao = notasAplicacao.concat(JSON.parse(JSON.stringify(na.map(n => n.nota))))
@@ -431,7 +401,7 @@ async function loadClasses() {
                         desc2[k].drop = false
                         let cid3 = desc2[k].id.split('#')[1]
                         let desc3 = await Classes.descendencia(cid3)
-                        level4Classes = level4Classes.concat(JSON.parse(JSON.stringify(desc3)))
+                        levelClasses[3] = levelClasses[3].concat(JSON.parse(JSON.stringify(desc3)))
 
                         let na = await Classes.notasAp(cid3)
                         notasAplicacao = notasAplicacao.concat(JSON.parse(JSON.stringify(na.map(n => n.nota))))

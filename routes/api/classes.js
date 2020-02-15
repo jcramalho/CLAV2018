@@ -38,62 +38,26 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
             }else{
                 res.locals.dados = await State.getProcessosEspecificos(ents, tips)
             }
-            else if(req.query.nivel){
-                switch(req.query.nivel){
-                    case '1': try {
-                            if(req.query.info == "completa"){
-                                res.locals.dados = await State.getLevel1ClassesInfo()
-                            }else{
-                                res.locals.dados = await State.getLevel1Classes()
-                            }
-                            res.locals.tipo = "classes"
-                            next()
-                            break  
-                        } catch(err) {
-                            res.status(500).send(`Erro na listagem geral das classes de nível 1: ${err}`)
-                            break
+            res.locals.tipo = "classes"
+            next()
+        }
+        else if(req.query.nivel){
+            switch(req.query.nivel){
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                    try {
+                        if(req.query.info == "completa"){
+                            res.locals.dados = await State.getLevelClassesInfo(req.query.nivel)
+                        }else{
+                            res.locals.dados = await State.getLevelClasses(req.query.nivel)
                         }
-                    case '2': try {
-                            if(req.query.info == "completa"){
-                                res.locals.dados = await State.getLevel2ClassesInfo()
-                            }else{
-                                res.locals.dados = await State.getLevel2Classes()
-                            }
-                            res.locals.tipo = "classes"
-                            next()
-                            break
-                        } catch(err) {
-                            res.status(500).send(`Erro na listagem geral das classes de nível 2: ${err}`)
-                            break
-                        }  
-                    case '3': try {
-                            if(req.query.info == "completa"){
-                                res.locals.dados = await State.getLevel3ClassesInfo()
-                            }else{
-                                res.locals.dados = await State.getLevel3Classes()
-                            }
-                            res.locals.tipo = "classes"
-                            next()
-                            break 
-                        } catch(err) {
-                            res.status(500).send(`Erro na listagem geral das classes de nível 3: ${err}`)
-                            break
-                        }
-                    case '4': try {
-                            if(req.query.info == "completa"){
-                                res.locals.dados = await State.getLevel4ClassesInfo()
-                            }else{
-                                res.locals.dados = await State.getLevel4Classes()
-                            }
-                            res.locals.tipo = "classes"
-                            next()
-                            break 
-                        } catch(err) {
-                            res.status(500).send(`Erro na listagem geral das classes de nível 4: ${err}`)
-                            break
-                        }
-                    default:
-                        res.status(500).send(`O nível '${req.query.nivel}' não existe! Os níveis possíveis são o '1', '2', '3' e '4'.`)
+                        res.locals.tipo = "classes"
+                        next()
+                        break
+                    } catch(err) {
+                        res.status(500).send(`Erro na listagem geral das classes de nível ${req.query.nivel}: ${err}`)
                         break
                     }
                 default:
