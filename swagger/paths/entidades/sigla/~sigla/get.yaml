@@ -1,0 +1,25 @@
+summary: Verifica se uma sigla já está atribuida a uma entidade
+description: Verifica se a sigla já está presente numa entidade
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
+tags:
+  - entidades
+parameters:
+  - in: path
+    name: sigla
+    schema:
+      type: string
+    description: 'Sigla da entidade a verificar se já está presente (exemplo: DGLAB)'
+    required: true
+responses:
+  200:
+    description: Verifica se a sigla existe numa entidade
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  500:
+    description: Erro

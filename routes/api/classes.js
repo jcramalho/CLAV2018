@@ -7,62 +7,36 @@ var router = express.Router();
 
 // Devolve as classes em vários formatos podendo ser filtradas por nível 
 router.get('/', Auth.isLoggedInKey, async (req, res, next) => { 
-    if(req.query.existeTitulo || req.query.existeCodigo){
-        var ret = false
-
-        if(req.query.existeTitulo){
-            try {
-                // Verifica se um determinado título de classe já existe
-                ret = ret || await State.verificaTitulo(req.query.existeTitulo)
-            } catch(err) {
-                return res.status(500).send(`Erro na verificação do título: ${err}`)
-            }
+    try {
+        if(req.query.info == "esqueleto"){
+            res.locals.dados = await State.getEsqueleto()
+            res.locals.tipo = "classes"
+            next()
         }
-
-        if(req.query.existeCodigo){
-            try {
-                // Verifica se um determinado código de classe já existe
-                ret = ret || await State.verificaCodigo(req.query.existeCodigo)
-            } catch(err) {
-                return res.status(500).send(`Erro na verificação de um código: ${err}`)
+        // Devolve a lista dos processos comuns
+        else if(req.query.tipo == "comum"){
+            if(req.query.info == "completa"){
+                res.locals.dados = await State.getProcessosComunsInfo()
+            }else{
+                res.locals.dados = await State.getProcessosComuns()
             }
+
+            res.locals.tipo = "classes"
+            next()
         }
-
-        res.jsonp(ret)
-    }else{
-        try {
-            if(req.query.info == "esqueleto"){
-                res.locals.dados = await State.getEsqueleto()
-                res.locals.tipo = "classes"
-                next()
+        // Devolve a lista dos processos especificos
+        else if(req.query.tipo == "especifico"){
+            if( req.query.ents ){
+                var ents = req.query.ents.split(',');
             }
-            // Devolve a lista dos processos comuns
-            else if(req.query.tipo == "comum"){
-                if(req.query.info == "completa"){
-                    res.locals.dados = await State.getProcessosComunsInfo()
-                }else{
-                    res.locals.dados = await State.getProcessosComuns()
-                }
-
-                res.locals.tipo = "classes"
-                next()
+            if( req.query.tips ) {
+                var tips = req.query.tips.split(',');
             }
-            // Devolve a lista dos processos especificos
-            else if(req.query.tipo == "especifico"){
-                if( req.query.ents ){
-                    var ents = req.query.ents.split(',');
-                }
-                if( req.query.tips ) {
-                    var tips = req.query.tips.split(',');
-                }
 
-                if(req.query.info == "completa"){
-                    res.locals.dados = await State.getProcessosEspecificosInfo(ents, tips)
-                }else{
-                    res.locals.dados = await State.getProcessosEspecificos(ents, tips)
-                }
-                res.locals.tipo = "classes"
-                next()
+            if(req.query.info == "completa"){
+                res.locals.dados = await State.getProcessosEspecificosInfo(ents, tips)
+            }else{
+                res.locals.dados = await State.getProcessosEspecificos(ents, tips)
             }
             else if(req.query.nivel){
                 switch(req.query.nivel){
@@ -121,39 +95,56 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
                     default:
                         res.status(500).send(`O nível '${req.query.nivel}' não existe! Os níveis possíveis são o '1', '2', '3' e '4'.`)
                         break
-                }
+                    }
+                default:
+                    res.status(500).send(`O nível '${req.query.nivel}' não existe! Os níveis possíveis são o '1', '2', '3' e '4'.`)
+                    break
             }
-            else if(req.query.estrutura == "arvore"){
-                if(req.query.info == "completa"){
-                    res.locals.dados = await State.getAllClassesInfo()
-                }else{
-                    res.locals.dados = await State.getAllClasses()
-                }
-                res.locals.tipo = "classes"
-                next()
-            }
-            else if(req.query.estrutura == "lista"){
-                if(req.query.info == "completa"){
-                    res.locals.dados = await State.getClassesInfoFlatList()
-                }else{
-                    res.locals.dados = await State.getClassesFlatList()
-                }
-                res.locals.tipo = "classes"
-                next()
-            }
-            else{
-                if(req.query.info == "completa"){
-                    res.locals.dados = await State.getAllClassesInfo()
-                }else{
-                    res.locals.dados = await State.getAllClasses()
-                }
-                res.locals.tipo = "classes"
-                next()
-            }
-        } catch(err) {
-            res.status(500).send(`Erro na listagem geral das classes: ${err}`)
         }
+        else if(req.query.estrutura == "arvore"){
+            if(req.query.info == "completa"){
+                res.locals.dados = await State.getAllClassesInfo()
+            }else{
+                res.locals.dados = await State.getAllClasses()
+            }
+            res.locals.tipo = "classes"
+            next()
+        }
+        else if(req.query.estrutura == "lista"){
+            if(req.query.info == "completa"){
+                res.locals.dados = await State.getClassesInfoFlatList()
+            }else{
+                res.locals.dados = await State.getClassesFlatList()
+            }
+            res.locals.tipo = "classes"
+            next()
+        }
+        else{
+            if(req.query.info == "completa"){
+                res.locals.dados = await State.getAllClassesInfo()
+            }else{
+                res.locals.dados = await State.getAllClasses()
+            }
+            res.locals.tipo = "classes"
+            next()
+        }
+    } catch(err) {
+        res.status(500).send(`Erro na listagem geral das classes: ${err}`)
     }
+})
+
+// Verifica se um determinado título de classe já existe
+router.get('/titulo/:titulo', Auth.isLoggedInKey, function (req, res) {
+    State.verificaTitulo(req.params.titulo)
+        .then(data => res.jsonp(data))
+        .catch(err => res.status(500).send(`Erro na verificação do título: ${err}`))
+})
+
+// Verifica se um determinado código de classe já existe
+router.get('/codigo/:codigo', Auth.isLoggedInKey, function (req, res) {
+    State.verificaCodigo(req.params.codigo)
+        .then(data => res.jsonp(data))
+        .catch(err => res.status(500).send(`Erro na verificação de um código: ${err}`))
 })
 
 // Devolve a informação de uma classe

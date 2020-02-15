@@ -1,0 +1,25 @@
+summary: Verifica se uma sigla já está atribuida a uma tipologia
+description: Verifica se a sigla já está presente numa tipologia
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
+tags:
+  - tipologias
+parameters:
+  - in: path
+    name: sigla
+    schema:
+      type: string
+    description: 'Sigla da tipologia a verificar se já está presente (exemplo: AAC)'
+    required: true
+responses:
+  200:
+    description: Verifica se a sigla existe numa tipologia
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  500:
+    description: Erro

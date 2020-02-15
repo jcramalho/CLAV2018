@@ -9,16 +9,9 @@ var router = express.Router()
 // Lista todos os documentos legislativos: id, data, numero, tipo, sumario, entidades
 router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
 	var queryData = url.parse(req.url, true).query
-    // Verifica a existência do número de um diploma/legislacao
-    if (queryData.existeNumero){
-        try {
-            res.jsonp(await Leg.existe(queryData.existeNumero))
-        } catch (err) {
-            res.status(500).send(`Erro na verificação do número do diploma: ${err}`)
-        }
-    }
-	// api/legislacao?estado=
-    else if (queryData.estado && (queryData.estado == 'Ativo' || queryData.estado == 'Revogado')) {
+
+    // api/legislacao?estado=
+    if (queryData.estado && (queryData.estado == 'Ativo' || queryData.estado == 'Revogado')) {
         try{
 		    res.locals.dados = await Leg.listarPorEstado(queryData.estado)
 
@@ -90,6 +83,13 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
             res.status(500).send(`Erro na listagem dos diplomas legislativos: ${erro}`)
         }
 	}
+})
+
+// Verifica a existência do número de um diploma/legislacao
+router.get('/numero/:numero', Auth.isLoggedInKey, (req, res, next) => {
+    Leg.existe(req.params.numero)
+        .then((dados) => res.jsonp(dados))
+        .catch(err => res.status(500).send(`Erro na verificação do número do diploma: ${err}`))
 })
 
 // Devolve a lista de legislações do tipo Portaria

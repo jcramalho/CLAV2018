@@ -1,0 +1,25 @@
+summary: Verifica se um código já está atribuido a uma classe
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
+tags:
+  - classes
+description: Verifica se o código já está presente numa classe
+parameters:
+  - in: path
+    name: codigo
+    schema:
+      type: string
+    description: 'Código da classe a verificar se já está presente (exemplo: 200.10.100)'
+    required: true
+responses:
+  200:
+    description: Verifica se um determinado código existe numa classe
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  500:
+    description: Erro

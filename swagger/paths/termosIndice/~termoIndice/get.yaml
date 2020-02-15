@@ -1,0 +1,25 @@
+summary: Verifica se um determinado termo índice existe
+description: Verifica se um determinado termo índice existe
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
+tags:
+  - termosIndice
+parameters:
+  - in: path
+    name: termoIndice
+    schema:
+      type: string
+    description: 'nome do termo índice a verificar se existe (exemplo: ADSE, receção de cartão da)'
+    required: true
+responses:
+  200:
+    description: Verifica se um determinado termo índice existe
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  500:
+    description: Erro

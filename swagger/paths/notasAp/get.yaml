@@ -1,22 +1,15 @@
-summary: Devolve a lista de todos as notas de aplicação ou verifica se uma determinada nota de aplicação existe
-description: Devolve a lista de todas as notas de aplicação. Para cada exemplo de nota de aplicação devolve idNota, nota, cProc e tituloProc ou verifica se uma determinada nota de aplicação existe através do parâmetro 'existe'
+summary: Devolve a lista de todos as notas de aplicação
+description: Devolve a lista de todas as notas de aplicação. Para cada exemplo de nota de aplicação devolve idNota, nota, cProc e tituloProc
 tags:
-  - diversos
+  - Notas de Aplicação
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []
   - userQuery: []
   - userAuth: []
-parameters:
-  - in: query
-    name: existe
-    schema:
-      type: string
-    description: 'nome da nota de aplicação a verificar se existe (exemplo: Violação de normas internacionais ratificadas por Portugal)'
-    required: false
 responses:
   200:
-    description: Devolve a lista de todas as notas de aplicação ou verifica se uma determinada nota de aplicação existe
+    description: Devolve a lista de todas as notas de aplicação
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:

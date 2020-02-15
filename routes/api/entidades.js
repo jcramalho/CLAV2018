@@ -9,29 +9,8 @@ var router = express.Router()
 router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
 	var queryData = url.parse(req.url, true).query
 
-    if(queryData.existeSigla || queryData.existeDesignacao){
-        var ret = false
-
-        if(queryData.existeSigla) {
-            try {
-                ret = ret || await Entidades.existeSigla(queryData.existeSigla)
-            } catch (err) {
-                return res.status(500).send(`Erro na verificação da sigla: ${err}`)
-            }
-        }
-
-        if(queryData.existeDesignacao){
-            try {
-                ret = ret || await Entidades.existeDesignacao(queryData.existeDesignacao)
-            } catch (err) {
-                return res.status(500).send(`Erro na verificação da designação: ${err}`)
-            }
-        }
-
-        res.jsonp(ret)
-    }
     // api/entidades?processos=com
-    else if (queryData.processos && queryData.processos == 'com') {
+    if (queryData.processos && queryData.processos == 'com') {
         try{
             res.locals.dados = await Entidades.listarComPNs()
 
@@ -73,6 +52,20 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
             res.status(500).send(`Erro na listagem das entidades: ${erro}`)
         }
 	}
+})
+
+// Verifica se a sigla já existe numa entidade
+router.get('/sigla/:sigla', Auth.isLoggedInKey, (req, res) => {
+    Entidades.existeSigla(req.params.sigla)
+        .then(dados => res.jsonp(dados))
+        .catch(err => res.status(500).send(`Erro na verificação da sigla: ${err}`))
+})
+
+// Verifica se a designação já existe numa entidade
+router.get('/designacao/:designacao', Auth.isLoggedInKey, (req, res) => {
+    Entidades.existeDesignacao(req.params.designacao)
+        .then(dados => res.jsonp(dados))
+        .catch(err => res.status(500).send(`Erro na verificação da designação: ${err}`))
 })
 
 // Consulta de uma entidade: sigla, designacao, estado, internacional

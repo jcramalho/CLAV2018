@@ -1,5 +1,5 @@
-summary: Lista todas as entidades ou verifica se uma sigla ou designação já está atribuida a uma entidade
-description: Lista todas as entidades. Para cada entidade será devolvida a informação do id, sigla, designacao, sioe, estado e internacional. Para além disso, ao usar-se os parâmetros existeSigla ou/e existeDesignacao verifica se a sigla e/ou a designação já está presente numa entidade
+summary: Lista todas as entidades
+description: Lista todas as entidades. Para cada entidade será devolvida a informação do id, sigla, designacao, sioe, estado e internacional
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []
@@ -8,18 +8,6 @@ security:
 tags:
   - entidades
 parameters:
-  - in: query
-    name: existeSigla
-    schema:
-      type: string
-    description: 'Sigla da entidade a verificar se já está presente (exemplo: DGLAB)'
-    required: false
-  - in: query
-    name: existeDesignacao
-    schema:
-      type: string
-    description: 'Designação da entidade a verificar se já está presente (exemplo: Agência de Avaliação e Acreditação do Ensino Superior)'
-    required: false
   - in: query
     name: processos
     schema:
@@ -69,7 +57,7 @@ parameters:
   - $ref: '#/components/parameters/OutputFormatWithCSV'
 responses:
   200:
-    description: Lista todas as entidades ou verifica se a sigla e/ou a designação existe numa entidade
+    description: Lista todas as entidades
     content:
       application/json:
         schema:

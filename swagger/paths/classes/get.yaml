@@ -1,4 +1,4 @@
-summary: Devolve as classes em vários formatos podendo ser filtradas por nível e por tipo ou verifica se um código e/ou título já está atribuido a uma classe.
+summary: Devolve as classes em vários formatos podendo ser filtradas por nível e por tipo
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []
@@ -6,20 +6,8 @@ security:
   - userAuth: []
 tags:
   - classes
-description: "Devolve as classes em vários formatos podendo ser filtradas por nível e por tipo. Existe uma hierarquia nestas possibilidades. Caso a info seja 'esqueleto' as query string tipo, nivel e formato não são consideradas. Caso o tipo seja definido as query strings nivel e formato não são consideradas. Caso tipo não seja definido e o nível seja definido (logo a query string considerada), a query string formato não é considerada. Por fim se não for definido tipo nem nivel e for definido formato esta é a query string considerada. Além disso, ao usar-se o parâmetro 'existeCodigo' e/ou 'existeTitulo' verifica se o código e/ou título já está presente numa classe"
+description: "Devolve as classes em vários formatos podendo ser filtradas por nível e por tipo. Existe uma hierarquia nestas possibilidades. Caso a info seja 'esqueleto' as query string tipo, nivel e formato não são consideradas. Caso o tipo seja definido as query strings nivel e formato não são consideradas. Caso tipo não seja definido e o nível seja definido (logo a query string considerada), a query string formato não é considerada. Por fim se não for definido tipo nem nivel e for definido formato esta é a query string considerada."
 parameters:
-  - in: query
-    name: existeCodigo
-    schema:
-      type: string
-    description: 'Código da classe a verificar se já está presente (exemplo: 200.10.100)'
-    required: false
-  - in: query
-    name: existeTitulo
-    schema:
-      type: string
-    description: 'Título da classe a verificar se já está presente (exemplo: Definição de políticas conjuntas e de instrumentos de regulação)'
-    required: false
   - in: query
     name: estrutura
     schema:
@@ -64,7 +52,7 @@ parameters:
   - $ref: '#/components/parameters/OutputFormatWithCSV'
 responses:
   200:
-    description: Devolve as classes em vários formatos podendo ser filtradas por nível ou verifica se um determinado código e/ou título existe numa classe
+    description: Devolve as classes em vários formatos podendo ser filtradas por nível
     content:
       application/json:
         schema:

@@ -6,45 +6,37 @@ var router = express.Router()
 
 // Lista todas as tipologias: id, sigla, designacao
 router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
-    if(req.query.existeSigla || req.query.existeDesignacao){
-        var ret = false
-        
-        if(req.query.existeSigla) {
-            try {
-                ret = ret || await Tipologias.existeSigla(req.query.existeSigla)
-            } catch (err) {
-                return res.status(500).send(`Erro na verificação da sigla: ${err}`)
-            }
+    const filtro = {
+        estado: req.query.estado ? req.query.estado : 'Ativa',
+        designacao: req.query.designacao
+    }
+
+    try{
+        res.locals.dados = await Tipologias.listar(filtro)
+
+        if(req.query.info == "completa"){
+            await Tipologias.moreInfoList(res.locals.dados)
         }
 
-        if(req.query.existeDesignacao){
-            try {
-                ret = ret || await Tipologias.existeDesignacao(req.query.existeDesignacao)
-            } catch (err) {
-                return res.status(500).send(`Erro na verificação da designação: ${err}`)
-            }
-        }
+        res.locals.tipo = "tipologias"
+        next()
+    } catch(erro) {
+        res.status(500).send(`Erro na listagem das tipologias: ${erro}`)
+    }
+})
 
-        res.jsonp(ret)
-    }else{
-        const filtro = {
-            estado: req.query.estado ? req.query.estado : 'Ativa',
-            designacao: req.query.designacao
-        }
+// Verifica se a sigla já existe numa entidade
+router.get('/sigla/:sigla', Auth.isLoggedInKey, (req, res) => {
+    Tipologias.existeSigla(req.params.sigla)
+        .then(dados => res.jsonp(dados))
+        .catch(err => res.status(500).send(`Erro na verificação da sigla: ${err}`))
+})
 
-        try{
-            res.locals.dados = await Tipologias.listar(filtro)
-
-            if(req.query.info == "completa"){
-                await Tipologias.moreInfoList(res.locals.dados)
-            }
-
-            res.locals.tipo = "tipologias"
-            next()
-        } catch(erro) {
-            res.status(500).send(`Erro na listagem das tipologias: ${erro}`)
-        }
-    }   
+// Verifica se a designação já existe numa entidade
+router.get('/designacao/:designacao', Auth.isLoggedInKey, (req, res) => {
+    Tipologias.existeDesignacao(req.params.designacao)
+        .then(dados => res.jsonp(dados))
+        .catch(err => res.status(500).send(`Erro na verificação da designação: ${err}`))
 })
 
 // Consulta de uma tipologia: sigla, designacao, estado

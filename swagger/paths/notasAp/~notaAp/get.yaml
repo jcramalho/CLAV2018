@@ -1,0 +1,25 @@
+summary: Verifica se uma determinada nota de aplicação existe
+description: Verifica se uma determinada nota de aplicação existe
+tags:
+  - Notas de Aplicação
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
+parameters:
+  - in: path
+    name: notaAp
+    schema:
+      type: string
+    description: 'nome da nota de aplicação a verificar se existe (exemplo: Violação de normas internacionais ratificadas por Portugal)'
+    required: true
+responses:
+  200:
+    description: Verifica se uma determinada nota de aplicação existe
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  500:
+    description: Erro
