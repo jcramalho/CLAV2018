@@ -220,17 +220,13 @@ exports.getLegislacao = (id) => {
 exports.verificaCodigo = async (cod) => {
     var nivel = cod.split('.').length
     var r = false
-    switch(nivel){
-        case 1: r = await levelClasses[0].filter(c => c.codigo == cod).length != 0
-                break
-        case 2: r = await levelClasses[1].filter(c => c.codigo == cod).length != 0
-                break
-        case 3: r = await levelClasses[2].filter(c => c.codigo == cod).length != 0
-                break
-        case 4: r = await levelClasses[3].filter(c => c.codigo == cod).length != 0
-                break
-        default: console.log('Classe de nível inexistente: ' + cod)
+
+    if(nivel >= 1 && nivel <= 4){
+        r = await levelClasses[nivel-1].filter(c => c.codigo == cod).length != 0
+    }else{
+        console.log('Classe de nível inexistente: ' + cod)
     }
+
     return r
 }
 
