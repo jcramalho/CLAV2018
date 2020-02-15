@@ -26,10 +26,10 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
         }
         // Devolve a lista dos processos especificos
         else if(req.query.tipo == "especifico"){
-            if( req.query.ents ){
+            if(req.query.ents){
                 var ents = req.query.ents.split(',');
             }
-            if( req.query.tips ) {
+            if(req.query.tips){
                 var tips = req.query.tips.split(',');
             }
 
