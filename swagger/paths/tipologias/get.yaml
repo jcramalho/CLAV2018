@@ -9,6 +9,12 @@ tags:
   - tipologias
 parameters:
   - in: query
+    name: tips
+    schema:
+      type: string
+    description: "Devolve a informação destas tipologias. Exemplo de input: 'tip_AAC,tip_AF'"
+    required: false
+  - in: query
     name: estado
     schema:
       type: string

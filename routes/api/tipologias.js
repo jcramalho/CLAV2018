@@ -6,10 +6,11 @@ var router = express.Router()
 
 // Lista todas as tipologias: id, sigla, designacao
 router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
-    const filtro = {
-        estado: req.query.estado ? req.query.estado : 'Ativa',
-        designacao: req.query.designacao
-    }
+    var filtro = [
+        `?estado = "${req.query.estado ? req.query.estado : "Ativa"}"`,
+        req.query.designacao ? `?designacao = "${req.query.designacao}"` : undefined,
+        req.query.tips ? `?uri IN (${req.query.tips.split(",").map(t => `clav:${t}`).join(",")})` : undefined
+    ].filter(v => v !== undefined).join(" && ")
 
     try{
         res.locals.dados = await Tipologias.listar(filtro)

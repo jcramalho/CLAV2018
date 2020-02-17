@@ -31,10 +31,7 @@ Tipologias.listar = (filtro) => {
             clav:tipSigla ?sigla .
         BIND(STRAFTER(STR(?uri), 'clav#') AS ?id)
 
-        FILTER (${Object.entries(filtro)
-			.filter(([k, v]) => v !== undefined)
-			.map(([k, v]) => `?${k} = "${v}"`)
-			.join(' && ')} )
+        FILTER (${filtro})
     }`
 
 	return execQuery('query', query).then((response) => normalize(response))

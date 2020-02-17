@@ -7,12 +7,20 @@ var router = express.Router()
 
 // Lista todas as entidades: id, sigla, designacao, internacional
 router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
+    var validKeys = ["sigla", "designacao", "internacional", "sioe", "estado"]
 	var queryData = url.parse(req.url, true).query
+
+    var ents = queryData.ents ? `?uri IN (${queryData.ents.split(",").map(t => `clav:${t}`).join(",")})` : "True"
+    var filtro = Object.entries(queryData)
+        .filter(([k,v]) => v !== undefined && validKeys.includes(k))
+        .map(([k,v]) => `?${k} = "${v}"`)
+        .concat([ents])
+        .join(" && ")
 
     // api/entidades?processos=com
     if (queryData.processos && queryData.processos == 'com') {
         try{
-            res.locals.dados = await Entidades.listarComPNs()
+            res.locals.dados = await Entidades.listarComPNs(filtro)
 
             if(req.query.info == "completa"){
                 await Entidades.moreInfoList(res.locals.dados)
@@ -27,7 +35,7 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
 	// api/entidades?processos=sem
     else if (queryData.processos && queryData.processos == 'sem') {
         try{
-            res.locals.dados = await Entidades.listarSemPNs()
+            res.locals.dados = await Entidades.listarSemPNs(filtro)
 
             if(req.query.info == "completa"){
                 await Entidades.moreInfoList(res.locals.dados)
@@ -40,7 +48,7 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
         }
 	} else {
         try{
-		    res.locals.dados = await Entidades.listar(req.query)
+		    res.locals.dados = await Entidades.listar(filtro)
 
             if(req.query.info == "completa"){
                 await Entidades.moreInfoList(res.locals.dados)
