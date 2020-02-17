@@ -1,4 +1,4 @@
-summary: Devolve as classes em vários formatos podendo ser filtradas por nível e por tipo
+summary: Devolve as classes em vários formatos podendo ser filtradas por nível, por tipo e se uma entidade/tipologia é dona/participante da classe
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []
@@ -6,7 +6,7 @@ security:
   - userAuth: []
 tags:
   - classes
-description: "Devolve as classes em vários formatos podendo ser filtradas por nível e por tipo. Existe uma hierarquia nestas possibilidades. Caso a info seja 'esqueleto' as query string tipo, nivel e formato não são consideradas. Caso o tipo seja definido as query strings nivel e formato não são consideradas. Caso tipo não seja definido e o nível seja definido (logo a query string considerada), a query string formato não é considerada. Por fim se não for definido tipo nem nivel e for definido formato esta é a query string considerada."
+description: "Devolve as classes em vários formatos podendo ser filtradas por nível, por tipo e se uma entidade/tipologia é dona/participante da classe. Existe uma hierarquia nestas possibilidades. Caso a info seja 'esqueleto' as query string tipo, nivel, formato, ents e tips não são consideradas. Caso o tipo seja definido as query strings nivel, formato, ents e tips não são consideradas. Caso tipo não seja definido mas ents ou tips seja, é devolvido os processos que tem como donos ou participantes as entidade e/ou tipologias selecionadas. Caso tipo não seja definido, nem ents e nem tips e o nível seja definido, a query string formato não é considerada. Por fim se não for definido tipo, nem ents, nem tips e nem nivel e for definido formato esta é a query string considerada."
 parameters:
   - in: query
     name: estrutura
@@ -34,13 +34,13 @@ parameters:
     name: ents
     schema:
       type: string
-    description: "Obtém os processos especificos destas entidades. Este parâmetro só deve ser usado quando o tipo é especifico. Exemplo de input: 'ent_AAN,ent_SEF'"
+    description: "Obtém os processos destas entidades. Quando usado em conjunto com o parâmetro tipo com valor igual a especifico devolve os processos especificos destas entidades. Exemplo de input: 'ent_AAN,ent_SEF'"
     required: false
   - in: query
     name: tips
     schema:
       type: string
-    description: "Obtém os processos especificos destas tipologias. Este parâmetro só deve ser usado quando o tipo é especifico. Exemplo de input: 'tip_AAC,tip_AF'"
+    description: "Obtém os processos destas tipologias. Quando usado em conjunto com o parâmetro tipo com valor igual a especifico devolve os processos especificos destas tipologias. Exemplo de input: 'tip_AAC,tip_AF'"
     required: false
   - in: query
     name: info
@@ -52,7 +52,7 @@ parameters:
   - $ref: '#/components/parameters/OutputFormatWithCSV'
 responses:
   200:
-    description: Devolve as classes em vários formatos podendo ser filtradas por nível
+    description: Devolve as classes
     content:
       application/json:
         schema:

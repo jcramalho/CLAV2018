@@ -25,7 +25,7 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
             next()
         }
         // Devolve a lista dos processos especificos
-        else if(req.query.tipo == "especifico"){
+        else if(req.query.tipo == "especifico" || req.query.ents || req.query.tips){
             if(req.query.ents){
                 var ents = req.query.ents.split(',');
             }
@@ -33,15 +33,20 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
                 var tips = req.query.tips.split(',');
             }
 
-            if(req.query.info == "completa"){
-                res.locals.dados = await State.getProcessosEspecificosInfo(ents, tips)
+            var allInfo = req.query.info == "completa"
+            if(req.query.tipo == "especifico"){
+                if(allInfo){
+                    res.locals.dados = await State.getProcessosEspecificosInfo(ents, tips)
+                }else{
+                    res.locals.dados = await State.getProcessosEspecificos(ents, tips)
+                }
             }else{
-                res.locals.dados = await State.getProcessosEspecificos(ents, tips)
+                res.locals.dados = State.getProcEntsTips(ents, tips, allInfo)
             }
+
             res.locals.tipo = "classes"
             next()
-        }
-        else if(req.query.nivel){
+        } else if(req.query.nivel){
             switch(req.query.nivel){
                 case '1':
                 case '2':

@@ -169,6 +169,7 @@ exports.subarvore = async id => {
     return classTreeInfo
 }
 
+//Devolve o esqueleto que serve de formulário para a criação de uma TS
 exports.getEsqueleto = () => {
     var classTreeInfo = JSON.parse(fs.readFileSync('./public/classes/classesInfo.json'))
     var ret = []
@@ -278,7 +279,8 @@ exports.getProcessosEspecificos = async (entidades, tipologias) => {
     return PE;
 }
 
-function filterEntsTips(classe, ent_tip){
+//devolve se uma classe é um processo especifico e se tem como dona ou participante uma das entidades/tipologias selecionadas
+function filterEspEntsTips(classe, ent_tip){
     var ret = classe.tipoProc == "Processo Específico"
 
     if(ret && ent_tip.length > 0){
@@ -298,9 +300,58 @@ exports.getProcessosEspecificosInfo = async (entidades, tipologias) => {
     var classListInfo = await this.getClassesInfoFlatList()
 
     let ent_tip = entidades.concat(tipologias)
-    let PE = classListInfo.filter(c => filterEntsTips(c, ent_tip))
+    let PE = classListInfo.filter(c => filterEspEntsTips(c, ent_tip))
 
     return PE;
+}
+
+//devolve se uma classe tem como dona ou participante uma das entidades/tipologias selecionadas
+function filterEntsTips(classe, ent_tip){
+    var donos = classe.donos.filter(d => ent_tip.includes(d.idDono))
+    var parts = classe.participantes.filter(p => ent_tip.includes(p.idParticipante)) 
+    return donos.length > 0 || parts.length > 0
+}
+
+//Função auxiliar recursiva para getProcEntsTips
+function getProcEntsTipsRec(classes, ent_tip, allInfo){
+    var ret = []
+
+    for(var i = 0; i < classes.length; i++){
+        classes[i].filhos = getProcEntsTipsRec(classes[i].filhos, ent_tip, allInfo)
+        
+        if(filterEntsTips(classes[i], ent_tip) || (classes[i].filhos && classes[i].filhos.length > 0)){
+            if(allInfo){
+                ret.push(classes[i])
+            }else{
+                var classe = {
+                    id: classes[i].id,
+                    codigo: classes[i].codigo,
+                    titulo: classes[i].titulo,
+                    status: classes[i].status,
+                    filhos: classes[i].filhos
+                }
+                ret.push(classe)
+            }
+        }
+    }
+
+    return ret
+}
+
+//Devolve a lista dos processos das entidades (mantendo os niveis a qual pertence) em causa e das tipologias a que este pertence
+exports.getProcEntsTips = (entidades, tipologias, allInfo) => {
+    entidades = entidades || []
+    tipologias = tipologias || []
+    let ent_tip = entidades.concat(tipologias)
+    var classTreeInfo = JSON.parse(fs.readFileSync('./public/classes/classesInfo.json'))
+
+    if(ent_tip.length > 0){
+        classTreeInfo = getProcEntsTipsRec(classTreeInfo, ent_tip, allInfo)
+    }else{
+        classTreeInfo = []
+    }
+
+    return classTreeInfo;
 }
 
 async function criaIndicePesquisa(){

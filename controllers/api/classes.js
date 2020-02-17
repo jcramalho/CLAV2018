@@ -163,6 +163,7 @@ Classes.retrieve = async id => {
         };
 
         let base = await Classes.consultar(id)
+        classe.id = base[0].id
         classe.nivel = base[0].codigo.split('.').length
         classe.codigo = base[0].codigo
         classe.pai.codigo = base[0].codigoPai
@@ -226,6 +227,8 @@ Classes.consultar = async id => {
                     clav:codigo ?codigo;
                     clav:classeStatus ?status;
                     clav:descricao ?desc.
+
+                ?id clav:codigo ?codigo .
 
                 OPTIONAL {
                     clav:${id} clav:temPai ?pai.
