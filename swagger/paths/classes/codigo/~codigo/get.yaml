@@ -5,7 +5,7 @@ security:
   - userQuery: []
   - userAuth: []
 tags:
-  - classes
+  - Classes
 description: Verifica se o código já está presente numa classe
 parameters:
   - in: path

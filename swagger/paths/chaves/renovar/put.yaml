@@ -1,7 +1,7 @@
 summary: Renova a chave API
 description: Renova a chave API
 tags:
-  - chaves
+  - Chaves
 parameters:
   - name: email
     in: query

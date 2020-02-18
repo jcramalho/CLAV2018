@@ -6,7 +6,7 @@ security:
   - userQuery: []
   - userAuth: []
 tags:
-  - legislacao
+  - Legislação
 parameters:
   - in: path
     name: numero

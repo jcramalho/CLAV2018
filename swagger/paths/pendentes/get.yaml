@@ -4,7 +4,7 @@ security:
   - userQuery: []
   - userAuth: []
 tags:
-  - pendentes
+  - Pendentes
 responses:
   200:
     description: Listagem dos trabalhos pendentes

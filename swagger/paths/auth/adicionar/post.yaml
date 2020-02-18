@@ -1,7 +1,7 @@
 summary: Adicionar localização de um novo pedido SAML
 description: Adicionar localização de um novo pedido SAML
 tags:
-  - auth
+  - Auth
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

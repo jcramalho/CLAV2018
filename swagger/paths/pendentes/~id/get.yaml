@@ -4,7 +4,7 @@ security:
   - userQuery: []
   - userAuth: []
 tags:
-  - pendentes
+  - Pendentes
 parameters:
   - name: id
     in: path

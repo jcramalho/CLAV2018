@@ -4,7 +4,7 @@ security:
   - userQuery: []
   - userAuth: []
 tags:
-  - pedidos
+  - Pedidos
 requestBody:
   description: 'Dados. No campo novoObjeto é colocado os dados com o qual se pretende realizar o pedido. Pode ser um objeto Classe, TS Organizacional, TS Pluriorganizacional, Entidade, Tipologia, Legislação, Termo de Indice ou Autos de Eliminação'
   required: true

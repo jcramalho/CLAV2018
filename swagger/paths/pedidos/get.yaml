@@ -4,7 +4,7 @@ security:
   - userQuery: []
   - userAuth: []
 tags:
-  - pedidos
+  - Pedidos
 parameters:
   - in: query
     name: criadoPor

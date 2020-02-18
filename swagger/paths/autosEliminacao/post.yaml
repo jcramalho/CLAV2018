@@ -1,7 +1,7 @@
 summary: Cria um pedido de criação de um auto de eliminação
 description: Cria um pedido de criação de um auto de eliminação
 tags:
-  - autosEliminacao
+  - Autos de Eliminação
 security:
   - userQuery: []
   - userAuth: []

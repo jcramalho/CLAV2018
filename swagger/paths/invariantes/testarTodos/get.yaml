@@ -4,7 +4,7 @@ security:
   - userQuery: []
   - userAuth: []
 tags:
-  - invariantes
+  - Invariantes
 responses:
   200:
     description: Devolve os erros dos invariantes

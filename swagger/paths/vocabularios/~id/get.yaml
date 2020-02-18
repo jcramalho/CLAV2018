@@ -6,7 +6,7 @@ security:
   - userQuery: []
   - userAuth: []
 tags:
-  - vocabularios
+  - Vocabulários
 parameters:
   - name: id
     in: path

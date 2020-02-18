@@ -6,7 +6,7 @@ security:
   - userQuery: []
   - userAuth: []
 tags:
-  - entidades
+  - Entidades
 parameters:
   - in: path
     name: sigla

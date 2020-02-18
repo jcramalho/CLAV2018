@@ -6,7 +6,7 @@ security:
   - userQuery: []
   - userAuth: []
 tags:
-  - termosIndice
+  - Termos de Indice
 parameters:
   - in: path
     name: termoIndice

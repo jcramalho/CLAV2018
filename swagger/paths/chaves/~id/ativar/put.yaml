@@ -4,7 +4,7 @@ security:
   - userQuery: []
   - userAuth: []
 tags:
-  - chaves
+  - Chaves
 parameters:
   - name: id
     in: path

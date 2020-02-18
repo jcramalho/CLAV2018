@@ -13,7 +13,7 @@ info:
 
     Se tiver um token de um utilizador não necessita de indicar uma chave API para aceder aos GET's que a chave API dá acesso.
     
-    **Última alteração: 15/02/2020**
+    **Última alteração: 18/02/2020**
   version: 2.0.0
   title: CLAV API
   contact:
@@ -25,50 +25,52 @@ servers:
   - url: http://clav-test.di.uminho.pt/api
     description: Server for testing
 tags:
-  - name: auth
-    description:
-  - name: logs
-    description:
-  - name: chaves
-    description:
-  - name: classes
-    description:
-  - name: entidades
-    description:
-  - name: invariantes
-    description:
-  - name: legislacao
-    description:
-  - name: pedidos
-    description:
-  - name: pendentes
-    description:
-  - name: stats
-    description:
-  - name: tabelasSelecao
-    description:
-  - name: termosIndice
-    description:
-  - name: tipologias
-    description:
-  - name: travessia
-    description:
-  - name: vocabularios
-    description:
-  - name: users
-    description:
-  - name: ontologia
-    description:
-  - name: autosEliminacao
-    description:
-  - name: diversos
-    description:
+  - name: Auth
+    description: "Guarda de onde foram feitos os pedidos de autenticação."
+  - name: Logs
+    description: "Registo de acesso dos vários utilizadores e chaves API da plataforma CLAV."
+  - name: Chaves
+    description: "Chaves API presentes na plataforma CLAV."
+  - name: Classes
+    description: "Estrutura hierárquica de classes que representam as funções e atividades executadas pela Administração Pública. Os processos de negócio são representados como classes de 3º nível, enquadrados em funções (classes de 1º nível) e subfunções (2º nível). As classes são constituídas por elementos informativos, agrupados por zonas, que as identificam e descrevem. Nas classes de 3º e 4º nível (subdivisão do processo de negócio para efeitos de avaliação), estes elementos destinam-se também a contextualizar e avaliar a informação."
+  - name: Entidades
+    description: "Entidades públicas que intervêm nos processos de negócio (classes de 3º nível) da Lista Consolidada. Podem integrar uma ou mais tipologias de entidades."
+  - name: Invariantes
+    description: "Conjunto de invariantes que testam situações de erro e identificam os PNs onde estas ocorrem."
+  - name: Legislação
+    description: "Legislação que regula os processos de negócio e enquadra os respetivos prazos de conservação administrativa (PCA) e destino final (DF)."
+  - name: Pedidos
+    description: "Pedidos de alteração ou de criação de novas instâncias que deram entrada na plataforma."
+  - name: Pendentes
+    description: "Trabalhos em curso guardados para mais tarde terem continuidade: criação e alteração de instâncias."
+  - name: Stats
+    description: "Dados Estatísticos dos acessos às rotas da API."
+  - name: Tabelas de Seleção
+    description: "Uma tabela de seleção é um instrumento utilizado pelas entidades para a gestão da informação. Permite organizar e estruturar a informação desde o momento da sua produção, através da atribuição de um código de classificação. A esse código de classificação estão associadas as decisões de avaliação, i.e., o período de tempo que deve manter a informação (prazo de conservação administrativa), o destino a aplicar findo esse prazo (conservação permanente ou eliminação) e a responsabilização pela guarda da informação de conservação permanente.
+
+    As tabelas de seleção podem ser organizacionais (de uma entidade ou de uma tipologia de entidades) ou pluriorganizacionais (de um conjunto de entidades, por exemplo de âmbito ministerial). Constituem as fontes de legitimação para a eliminação da informação pública."
+  - name: Termos de Indice
+    description: "Termos que detalham o âmbito de aplicação dos processos de negócio e apoiam a recuperação da informação."
+  - name: Tipologias
+    description: "Forma de agrupamento de entidades que intervêm nos processos de negócio (classes de 3º nível) da Lista Consolidada."
+  - name: Travessias
+    description: "Fecho transitivo das classes considerando as ligações entre as classes que não se pode 'partir'."
+  - name: Vocabulários
+    description: "Vocabulários Controlados utilizados na plataforma."
+  - name: Utilizadores
+    description: "Utilizadores presentes na plataforma CLAV."
+  - name: Ontologia
+    description: "Informação acerca da ontologia da plataforma CLAV."
+  - name: Autos de Eliminação
+    description: "Autos de eliminação produzidos ao abrigo de tabela de seleção inserida em Portaria de gestão de documentos ou Relatório de avaliação de documentação acumulada e submetida à DGLAB para verificação de conformidade."
+  - name: Diversos
+    description: "Rotas que não se enquadram nos restantes grupos de rotas"
   - name: Indicadores Estatísticos
-    description:
+    description: "Indicadores (dados) Estatísticos da plataforma CLAV."
   - name: Notas de Aplicação
-    description:
+    description: "Informação que especifica o âmbito de aplicação da classe. Aplica-se às classes de 1º, 2º e 3º nível."
   - name: Exemplos de Notas de Aplicação
-    description:
+    description: "Informação que exemplifica o âmbito de aplicação da classe. Aplica-se às classes de 1º, 2º e 3º nível."
 paths: !!inc/dir [ 'paths' ] 
 components: 
   schemas: !!inc/dir [ 'schemas', excludeTopLevelDirSeparator: true ]

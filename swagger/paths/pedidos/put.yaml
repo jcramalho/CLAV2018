@@ -4,7 +4,7 @@ security:
   - userQuery: []
   - userAuth: []
 tags:
-  - pedidos
+  - Pedidos
 requestBody:
   description: 'Dados'
   required: true

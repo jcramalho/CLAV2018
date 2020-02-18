@@ -6,7 +6,7 @@ security:
   - userQuery: []
   - userAuth: []
 tags:
-  - tipologias
+  - Tipologias
 parameters:
   - in: path
     name: sigla

@@ -4,7 +4,7 @@ security:
   - userQuery: []
   - userAuth: []
 tags:
-  - pendentes
+  - Pendentes
 requestBody:
   description: 'Dados a alterar. No campo objeto é colocado o objeto a guardar. Pode ser um objeto Classe, TS Organizacional, TS Pluriorganizacional, Entidade, Tipologia, Legislação, Termo de Indice ou Autos de Eliminação'
   required: true

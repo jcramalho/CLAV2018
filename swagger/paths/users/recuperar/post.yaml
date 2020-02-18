@@ -1,7 +1,7 @@
 summary: Envia um email ao utilizador de forma a puder recuperar a conta
 description: Envia um email ao utilizador de forma a puder recuperar a conta
 tags:
-  - users
+  - Utilizadores
 requestBody:
   description: 'De forma a puder recuperar a conta de um utilizador é necessário email e url'
   required: true

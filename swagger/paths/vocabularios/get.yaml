@@ -6,7 +6,7 @@ security:
   - userQuery: []
   - userAuth: []
 tags:
-  - vocabularios
+  - Vocabulários
 responses:
   200:
     description: Devolve a lista de todos os vocabularios
