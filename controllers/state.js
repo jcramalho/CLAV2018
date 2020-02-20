@@ -97,9 +97,6 @@ exports.getLevelClasses = async (nivel) => {
 }
 
 exports.getAllClassesInfo = async () => {
-    var classT = JSON.parse(fs.readFileSync('./public/classes/classesInfo.json'))
-    var b = JSON.stringify(classTreeInfo) === JSON.stringify(classT)
-    console.log("Equal? " + b)
     return classTreeInfo
 }
 
