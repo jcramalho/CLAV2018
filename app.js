@@ -2,8 +2,26 @@
 var express = require('express'),
     app = express();
 
+//body parser for post requests
+var bodyParser = require('body-parser')
+app.use(bodyParser.json({limit: '50mb'}));         // to support JSON-encoded bodies
+app.use(bodyParser.urlencoded({
+    limit : '50mb',
+    // to support URL-encoded bodies
+    extended: true,
+    parameterLimit:50000
+}));
+
+//CORS
 var cors = require('cors')
-app.use(cors())
+const corsOpts = {
+    origin: '*',
+    credentials: true,
+    methods: ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Accept', 'Authorization', 'Cache-Control', 'Content-Type', 'DNT', 'If-Modified-Since', 'Keep-Alive', 'Origin', 'User-Agent', 'X-Requested-With', 'Content-Length']
+}
+app.use(cors(corsOpts))
+app.options('*', cors(corsOpts))
 
 // Logging na consola do admin
 var logger = require('morgan')
@@ -33,16 +51,6 @@ app.use((req, res, next) => {
     });
     next();
 });
-
-//body parser for post requests
-var bodyParser = require('body-parser')
-app.use(bodyParser.json({limit: '50mb'}));         // to support JSON-encoded bodies
-app.use(bodyParser.urlencoded({
-    limit : '50mb',
-    // to support URL-encoded bodies
-    extended: true,
-    parameterLimit:50000
-}));
 
 //authentication dependencies
 var passport = require('passport');
