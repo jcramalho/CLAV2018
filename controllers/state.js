@@ -14,6 +14,7 @@ var classTree = []
 var classList = []
 //level 1, 2, 3, 4
 var levelClasses = [[],[],[],[]]
+var classTreeInfo = []
 
 var notasAplicacao = []
 var exemplosNotasAplicacao = []
@@ -30,9 +31,15 @@ exports.reset = async () => {
         classTree = await loadClasses();
         classList = [].concat.apply([], levelClasses)
         console.debug("Terminei de carregar as classes.")
+
+        console.debug("A carregar a informação completa das classes para a cache a partir do ficheiro...")
+        classTreeInfo = JSON.parse(fs.readFileSync('./public/classes/classesInfo.json'))
+        console.debug("Terminei de carregar a informação completa das classes.")
+
         console.debug("A carregar a legislação da BD para a cache...")
         legislacao = await loadLegs();
         console.debug("Terminei de carregar a legislação.")
+
         console.debug("A criar o índice de pesquisa...")
         indicePesquisa = await criaIndicePesquisa()
         console.debug("Índice de pesquisa criado com " + indicePesquisa.length + " entradas.")
@@ -56,6 +63,8 @@ exports.reload = async () => {
         classList = [].concat.apply([], levelClasses)
         console.debug("Informação base das classes carregada...")
 
+
+
         console.debug("A carregar a legislação da BD para a cache...")
         legislacao = await loadLegs();
         console.debug("Terminei de carregar a legislação.")
@@ -65,10 +74,11 @@ exports.reload = async () => {
         console.debug("Índice de pesquisa criado com " + indicePesquisa.length + " entradas.")
 
         //Carrega a info completa de todas as classes de forma assincrona
-        console.debug("A obter a informação completa das classes e a guardar a mesma num ficheiro...")
-        var data = await loadClassesInfo()
-        fs.writeFileSync('./public/classes/classesInfo.json', JSON.stringify(data, null, 4))
-        console.debug("Terminei de carregar as classes.")
+        console.debug("A obter a informação completa das classes...")
+        classTreeInfo = await loadClassesInfo()
+        console.debug("a guardar a informação num ficheiro...")
+        fs.writeFileSync('./public/classes/classesInfo.json', JSON.stringify(classTreeInfo, null, 4))
+        console.debug("Terminei de carregar a informação completa das classes.")
     } catch(err) {
         throw err
     }
@@ -87,27 +97,29 @@ exports.getLevelClasses = async (nivel) => {
 }
 
 exports.getAllClassesInfo = async () => {
-    return JSON.parse(fs.readFileSync('./public/classes/classesInfo.json'))
-}
-
-exports.getClassesInfoFlatList = async () => { 
-    var classTreeInfo = JSON.parse(fs.readFileSync('./public/classes/classesInfo.json'))
-    
-    var len = classTreeInfo.length
-    for(var i = 0; i < len; i++){
-        classTreeInfo[i].filhos.forEach(c => {
-            classTreeInfo.push(c)
-            len++
-        })
-
-        delete classTreeInfo[i].filhos
-    }
-
+    var classT = JSON.parse(fs.readFileSync('./public/classes/classesInfo.json'))
+    var b = JSON.stringify(classTreeInfo) === JSON.stringify(classT)
+    console.log("Equal? " + b)
     return classTreeInfo
 }
 
+exports.getClassesInfoFlatList = async () => { 
+    var ret = JSON.parse(JSON.stringify(classTreeInfo))
+    
+    var len = ret.length
+    for(var i = 0; i < len; i++){
+        ret[i].filhos.forEach(c => {
+            ret.push(c)
+            len++
+        })
+
+        delete ret[i].filhos
+    }
+
+    return ret
+}
+
 exports.getLevelClassesInfo = (nivel) => {
-    var classTreeInfo = JSON.parse(fs.readFileSync('./public/classes/classesInfo.json'))
     var ret = []
 
     if(nivel >= 1 && nivel <= 4){
@@ -122,8 +134,9 @@ function getLevelClassesInfoRec(nivel, classes) {
 
     if(nivel == 0){
         for(var i = 0; i < classes.length; i++){
-            delete classes[i].filhos
-            ret.push(classes[i])
+            var classe = JSON.parse(JSON.stringify(classes[i]))
+            delete classe.filhos
+            ret.push(classe)
         }
     }else{
         for(var i = 0; i < classes.length; i++){
@@ -136,42 +149,39 @@ function getLevelClassesInfoRec(nivel, classes) {
 
 //Devolve a informação das classes da subárvore com raiz na classe com o id 'id'
 exports.subarvore = async id => {
-    var classTreeInfo = JSON.parse(fs.readFileSync('./public/classes/classesInfo.json'))
+    var ret = JSON.parse(JSON.stringify(classTreeInfo))
     var finded = null;
 
     var codigo = id.split('c')[1]
     codigos = codigo.split('.')
     var nivel = codigos.length
-    var len
     var found
 
     for(var i = 0; i < nivel; i++){
-        len = classTreeInfo.length
         found = false
         testCodigo = codigos.slice(0, i + 1).join('.') 
 
-        for(var j = 0; j < len && !found; j++){
-            if(classTreeInfo[j].codigo == testCodigo){
+        for(var j = 0; j < ret.length && !found; j++){
+            if(ret[j].codigo == testCodigo){
                 if(nivel == i + 1){
-                    classTreeInfo = classTreeInfo[j]
+                    ret = ret[j]
                 }else{
-                    classTreeInfo = classTreeInfo[j].filhos
+                    ret = ret[j].filhos
                 }
                 found = true
             }
         }
 
         if(!found){
-            classTreeInfo = []
+            ret = []
         }
     }
 
-    return classTreeInfo
+    return ret
 }
 
 //Devolve o esqueleto que serve de formulário para a criação de uma TS
 exports.getEsqueleto = () => {
-    var classTreeInfo = JSON.parse(fs.readFileSync('./public/classes/classesInfo.json'))
     var ret = []
 
     classTreeInfo.forEach(c1 => {
@@ -317,21 +327,23 @@ function getProcEntsTipsRec(classes, ent_tip, allInfo){
     var ret = []
 
     for(var i = 0; i < classes.length; i++){
-        classes[i].filhos = getProcEntsTipsRec(classes[i].filhos, ent_tip, allInfo)
+        var filhos = getProcEntsTipsRec(classes[i].filhos, ent_tip, allInfo)
         
-        if(filterEntsTips(classes[i], ent_tip) || (classes[i].filhos && classes[i].filhos.length > 0)){
+        if(filterEntsTips(classes[i], ent_tip) || (filhos && filhos.length > 0)){
+            var classe
             if(allInfo){
-                ret.push(classes[i])
+                classe = JSON.parse(JSON.stringify(classes[i]))
+                classe.filhos = filhos
             }else{
-                var classe = {
+                classe = {
                     id: classes[i].id,
                     codigo: classes[i].codigo,
                     titulo: classes[i].titulo,
                     status: classes[i].status,
-                    filhos: classes[i].filhos
+                    filhos: filhos
                 }
-                ret.push(classe)
             }
+            ret.push(classe)
         }
     }
 
@@ -343,15 +355,13 @@ exports.getProcEntsTips = (entidades, tipologias, allInfo) => {
     entidades = entidades || []
     tipologias = tipologias || []
     let ent_tip = entidades.concat(tipologias)
-    var classTreeInfo = JSON.parse(fs.readFileSync('./public/classes/classesInfo.json'))
+    var ret = []
 
     if(ent_tip.length > 0){
-        classTreeInfo = getProcEntsTipsRec(classTreeInfo, ent_tip, allInfo)
-    }else{
-        classTreeInfo = []
+        ret = getProcEntsTipsRec(classTreeInfo, ent_tip, allInfo)
     }
 
-    return classTreeInfo;
+    return ret;
 }
 
 async function criaIndicePesquisa(){
