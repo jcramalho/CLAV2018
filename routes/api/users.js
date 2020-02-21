@@ -29,7 +29,7 @@ router.get('/:id/token', Auth.isLoggedInUser, async function(req,res){
                     if(err){
                         res.status(500).send(err);
                     }else{
-                        delete result._doc.local;
+                        result._doc.local = result._doc.local.password ? true : false
                         res.send(result);
                     }
                 });
@@ -161,10 +161,21 @@ router.put('/:id/password', Auth.isLoggedInUser, function (req, res) {
     if(req.user.level >= 6){
         //Se enviou a password atual e é a sua conta
         if(req.body.atualPassword && req.body.novaPassword && req.params.id == req.user.id){
-            Users.atualizarPasswordComVerificacao(req.params.id, req.body.atualPassword, req.body.novaPassword, function (err, cb) {
-                if (err) res.status(500).send(`Erro: ${err}`);
-                else res.send('Password atualizada com sucesso!')
-            });
+            Users.getUserById(req.params.id, function(err, user) {
+                if(err)
+                    res.status(500).send(`Erro: ${err}`);
+                if(user.local.password != undefined){
+                    Users.atualizarPasswordComVerificacao(req.params.id, req.body.atualPassword, req.body.novaPassword, function (err, cb) {
+                        if (err) res.status(500).send(`Erro: ${err}`);
+                        else res.send('Password atualizada com sucesso!')
+                    });
+                }else{
+                    Users.atualizarPassword(req.params.id, req.body.novaPassword, function (err, cb) {
+                        if (err) res.status(500).send(`Erro: ${err}`);
+                        else res.send('Password atualizada com sucesso!')
+                    });
+                }
+            })
         //se não enviou a password atual ou não é a sua conta
         }else if(req.body.novaPassword){
             Users.atualizarPassword(req.params.id, req.body.novaPassword, function (err, cb) {
@@ -181,13 +192,30 @@ router.put('/:id/password', Auth.isLoggedInUser, function (req, res) {
                 if (err) res.status(500).send(`Erro: ${err}`);
                 else res.send('Password atualizada com sucesso!')
             });
-        } else if(req.body.atualPassword && req.body.novaPassword){
-            Users.atualizarPasswordComVerificacao(req.params.id, req.body.atualPassword, req.body.novaPassword, function (err, cb) {
-                if (err) res.status(500).send(`Erro: ${err}`);
-                else res.send('Password atualizada com sucesso!')
-            });
-        }else{
-            res.status(500).send("Faltam campos para puder atualizar a password: atualPassword e/ou novaPassword!")
+        } else {
+            Users.getUserById(req.params.id, function(err, user) {
+                if(err)
+                    res.status(500).send(`Erro: ${err}`);
+                if(user.local.password != undefined){
+                    if(req.body.atualPassword && req.body.novaPassword){
+                        Users.atualizarPasswordComVerificacao(req.params.id, req.body.atualPassword, req.body.novaPassword, function (err, cb) {
+                            if (err) res.status(500).send(`Erro: ${err}`);
+                            else res.send('Password atualizada com sucesso!')
+                        });
+                    }else{
+                        res.status(500).send("Faltam campos para puder atualizar a password: atualPassword e/ou novaPassword!")
+                    }
+                }else{
+                    if (req.body.novaPassword){
+                        Users.atualizarPassword(req.params.id, req.body.novaPassword, function (err, cb) {
+                            if (err) res.status(500).send(`Erro: ${err}`);
+                            else res.send('Password atualizada com sucesso!')
+                        });
+                    }else{
+                        res.status(500).send("Faltam campos para puder atualizar a password: atualPassword e/ou novaPassword!")
+                    }
+                }
+            })
         }
     }else{
         res.status(403).send("Não tem permissões para alterar a password de outro utilizador!")
@@ -234,7 +262,7 @@ router.get('/:id', Auth.isLoggedInUser, (req, res) => {
             if(err){
                 return res.status(500).send(`Erro: ${err}`);
             }else{
-                delete result._doc.local;
+                result._doc.local = result._doc.local.password ? true : false
                 return res.json(result);
             }
         });
