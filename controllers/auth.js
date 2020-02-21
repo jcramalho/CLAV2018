@@ -33,7 +33,7 @@ Auth.checkLevel = function (clearance) {
 }
 
 Auth.generateTokenUserRecuperar = function (user) {
-    var token = jwt.sign({id: user._id, name: user.name}, secretKey.userKey, {expiresIn: '30m'});
+    var token = jwt.sign({id: user._id, name: user.name, level: 0, entidade: user.entidade}, secretKey.userKey, {expiresIn: '30m'});
 
     return token
 }

@@ -4,11 +4,12 @@ var bcrypt = require('bcryptjs');
 var xml2js = require('xml2js');
 var mongoose = require('mongoose');
 const request = require('../../controllers/api/utils').request
+const salt = 14
 
 var Users = module.exports
 
 Users.createUser = function (newUser, callback) {
-	bcrypt.genSalt(14, function (err, salt) {
+	bcrypt.genSalt(salt, function (err, salt) {
 		bcrypt.hash(newUser.local.password, salt, function (err, hash) {
 			newUser.local.password = hash;
 			newUser.save(callback);
@@ -146,7 +147,7 @@ Users.atualizarPassword = function(id, password, callback){
 		if (err) {
             callback(err, null);
 		} else {
-            bcrypt.genSalt(14, function (err, salt) {
+            bcrypt.genSalt(salt, function (err, salt) {
                 bcrypt.hash(password, salt, function (err, hash) {
                     user.local.password = hash;
                     user.save(function(err) {
@@ -158,6 +159,37 @@ Users.atualizarPassword = function(id, password, callback){
                     });
                 });
             });
+        }
+    });
+}
+
+Users.atualizarPasswordComVerificacao = function(id, atualPassword, novaPassword, callback){
+    Users.getUserById(id, function(err, user){
+		if (err) {
+            callback(err, null);
+		} else {
+            Users.comparePassword(atualPassword, user.local.password, function(err, isMatch) {
+                if (err) {
+                    callback(err, null);
+                }else{
+                    if(isMatch){
+                        bcrypt.genSalt(salt, function (err, salt) {
+                            bcrypt.hash(novaPassword, salt, function (err, hash) {
+                                user.local.password = hash;
+                                user.save(function(err) {
+                                    if (err) {
+                                        callback(err, null);
+                                    }else{
+                                        callback(null, user);
+                                    }
+                                });
+                            });
+                        });
+                    }else{
+                        callback("Credenciais inválidas", null)
+                    }
+                }
+            })
         }
     });
 }

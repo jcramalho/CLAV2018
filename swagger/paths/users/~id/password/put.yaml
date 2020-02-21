@@ -13,14 +13,18 @@ parameters:
       type: string
     required: true
 requestBody:
-  description: 'De forma a alterar a password de uma conta de um utilizador é necessário a nova password'
+  description: 'De forma a alterar a password de uma conta de um utilizador é necessário a nova password. Caso o utilizador não tenha permissões suficientes, também necessita de colocar a password atual.'
   required: true
   content:
     application/json:
       schema:
         properties:
-          password:
+          atualPassword:
             type: string
+          novaPassword:
+            type: string
+        required:
+          - novaPassword
 responses:
   200:
     description: Alterado a password da conta de um utilizador

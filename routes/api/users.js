@@ -158,16 +158,39 @@ router.delete('/:id', Auth.isLoggedInUser, Auth.checkLevel(7), async function(re
 
 //Funcoes de alteracao de utilizador
 router.put('/:id/password', Auth.isLoggedInUser, function (req, res) {
-    if(req.params.id == req.user.id || req.user.level >= 6){
-        Users.atualizarPassword(req.params.id, req.body.password, function (err, cb) {
-            if (err) 
-                return res.status(500).send(`Erro: ${err}`);
-            else {
-                res.send('Password atualizada com sucesso!')
-            }
-        });
+    if(req.user.level >= 6){
+        //Se enviou a password atual e é a sua conta
+        if(req.body.atualPassword && req.body.novaPassword && req.params.id == req.user.id){
+            Users.atualizarPasswordComVerificacao(req.params.id, req.body.atualPassword, req.body.novaPassword, function (err, cb) {
+                if (err) res.status(500).send(`Erro: ${err}`);
+                else res.send('Password atualizada com sucesso!')
+            });
+        //se não enviou a password atual ou não é a sua conta
+        }else if(req.body.novaPassword){
+            Users.atualizarPassword(req.params.id, req.body.novaPassword, function (err, cb) {
+                if (err) res.status(500).send(`Erro: ${err}`);
+                else res.send('Password atualizada com sucesso!')
+            });
+        }else{
+            res.status(500).send("Faltam campos para puder atualizar a password: atualPassword e/ou novaPassword!")
+        }
+    }else if(req.params.id == req.user.id){
+        //Utilizador a recuperar a conta
+        if(req.user.level == 0 && req.body.novaPassword){
+            Users.atualizarPassword(req.params.id, req.body.novaPassword, function (err, cb) {
+                if (err) res.status(500).send(`Erro: ${err}`);
+                else res.send('Password atualizada com sucesso!')
+            });
+        } else if(req.body.atualPassword && req.body.novaPassword){
+            Users.atualizarPasswordComVerificacao(req.params.id, req.body.atualPassword, req.body.novaPassword, function (err, cb) {
+                if (err) res.status(500).send(`Erro: ${err}`);
+                else res.send('Password atualizada com sucesso!')
+            });
+        }else{
+            res.status(500).send("Faltam campos para puder atualizar a password: atualPassword e/ou novaPassword!")
+        }
     }else{
-        return res.status(403).send("Não tem permissões para alterar a password de outro utilizador!")
+        res.status(403).send("Não tem permissões para alterar a password de outro utilizador!")
     }
 });
 
