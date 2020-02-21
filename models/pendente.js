@@ -38,7 +38,7 @@ const PendenteSchema = new mongoose.Schema({
   },
   acao: {
     type: String,
-    enum: ["Criação", "Alteração", "Remoção", "Extinção", "Revogação"],
+    enum: ["Criação", "Alteração", "Remoção"],
     required: true
   }
 });
