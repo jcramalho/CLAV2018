@@ -8,8 +8,8 @@ tags:
   - Classes
 description: Verifica se o título já está presente numa classe
 parameters:
-  - in: path
-    name: titulo
+  - in: query
+    name: valor
     schema:
       type: string
     description: 'Título da classe a verificar se já está presente (exemplo: Definição de políticas conjuntas e de instrumentos de regulação)'

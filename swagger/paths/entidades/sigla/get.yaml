@@ -8,8 +8,8 @@ security:
 tags:
   - Entidades
 parameters:
-  - in: path
-    name: sigla
+  - in: query
+    name: valor
     schema:
       type: string
     description: 'Sigla da entidade a verificar se já está presente (exemplo: DGLAB)'

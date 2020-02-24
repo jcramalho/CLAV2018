@@ -19,8 +19,8 @@ router.get('/quantos', Auth.isLoggedInKey, function(req, res) {
 })
 
 // Verifica se termo indice existe
-router.get('/:termoIndice', Auth.isLoggedInKey, function(req, res) {
-    TermosIndice.existe(req.params.termoIndice)
+router.get('/termoIndice', Auth.isLoggedInKey, function(req, res) {
+    TermosIndice.existe(req.query.valor)
         .then((dados) => res.jsonp(dados))
         .catch((erro) => res.status(500).send(`Erro ao verificar se um TI existe: ${erro}`))
 })

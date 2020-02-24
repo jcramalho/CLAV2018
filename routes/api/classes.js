@@ -103,15 +103,15 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
 })
 
 // Verifica se um determinado título de classe já existe
-router.get('/titulo/:titulo', Auth.isLoggedInKey, function (req, res) {
-    State.verificaTitulo(req.params.titulo)
+router.get('/titulo', Auth.isLoggedInKey, function (req, res) {
+    State.verificaTitulo(req.query.valor)
         .then(data => res.jsonp(data))
         .catch(err => res.status(500).send(`Erro na verificação do título: ${err}`))
 })
 
 // Verifica se um determinado código de classe já existe
-router.get('/codigo/:codigo', Auth.isLoggedInKey, function (req, res) {
-    State.verificaCodigo(req.params.codigo)
+router.get('/codigo', Auth.isLoggedInKey, function (req, res) {
+    State.verificaCodigo(req.query.valor)
         .then(data => res.jsonp(data))
         .catch(err => res.status(500).send(`Erro na verificação de um código: ${err}`))
 })

@@ -8,8 +8,8 @@ security:
 tags:
   - Legislação
 parameters:
-  - in: path
-    name: numero
+  - in: query
+    name: valor
     schema:
       type: string
     description: 'Número do documento legislativo a verificar se já existe (exemplo: 14/2018)'

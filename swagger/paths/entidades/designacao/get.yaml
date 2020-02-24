@@ -8,8 +8,8 @@ security:
 tags:
   - Entidades
 parameters:
-  - in: path
-    name: designacao
+  - in: query
+    name: valor
     schema:
       type: string
     description: 'Designação da entidade a verificar se já está presente (exemplo: Agência de Avaliação e Acreditação do Ensino Superior)'

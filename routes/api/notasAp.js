@@ -6,8 +6,8 @@ var express = require('express');
 var router = express.Router();
 
 // Verifica se uma determinada notaAplicação já existe
-router.get('/:notaAp', Auth.isLoggedInKey, (req, res) => {
-    State.verificaNA(req.params.notaAp)
+router.get('/notaAp', Auth.isLoggedInKey, (req, res) => {
+    State.verificaNA(req.query.valor)
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na verificação de uma nota de aplicação: ${erro}`))
 })

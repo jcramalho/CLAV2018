@@ -63,15 +63,15 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
 })
 
 // Verifica se a sigla já existe numa entidade
-router.get('/sigla/:sigla', Auth.isLoggedInKey, (req, res) => {
-    Entidades.existeSigla(req.params.sigla)
+router.get('/sigla', Auth.isLoggedInKey, (req, res) => {
+    Entidades.existeSigla(req.query.valor)
         .then(dados => res.jsonp(dados))
         .catch(err => res.status(500).send(`Erro na verificação da sigla: ${err}`))
 })
 
 // Verifica se a designação já existe numa entidade
-router.get('/designacao/:designacao', Auth.isLoggedInKey, (req, res) => {
-    Entidades.existeDesignacao(req.params.designacao)
+router.get('/designacao', Auth.isLoggedInKey, (req, res) => {
+    Entidades.existeDesignacao(req.query.valor)
         .then(dados => res.jsonp(dados))
         .catch(err => res.status(500).send(`Erro na verificação da designação: ${err}`))
 })

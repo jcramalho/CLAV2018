@@ -86,8 +86,8 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
 })
 
 // Verifica a existência do número de um diploma/legislacao
-router.get('/numero/:numero', Auth.isLoggedInKey, (req, res, next) => {
-    Leg.existe(req.params.numero)
+router.get('/numero', Auth.isLoggedInKey, (req, res, next) => {
+    Leg.existe(req.query.valor)
         .then((dados) => res.jsonp(dados))
         .catch(err => res.status(500).send(`Erro na verificação do número do diploma: ${err}`))
 })

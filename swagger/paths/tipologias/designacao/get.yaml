@@ -8,8 +8,8 @@ security:
 tags:
   - Tipologias
 parameters:
-  - in: path
-    name: designacao
+  - in: query
+    name: valor
     schema:
       type: string
     description: 'Designação da tipologia a verificar se já está presente (exemplo: Autoridades Administrativas Civis)'

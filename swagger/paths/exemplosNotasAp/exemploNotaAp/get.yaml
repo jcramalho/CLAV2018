@@ -8,8 +8,8 @@ security:
   - userQuery: []
   - userAuth: []
 parameters:
-  - in: path
-    name: exemploNotaAp
+  - in: query
+    name: valor
     schema:
       type: string
     description: 'nome do exemplo de nota de aplicação a verificar se existe (exemplo: Código da Estrada)'

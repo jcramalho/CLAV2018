@@ -8,8 +8,8 @@ tags:
   - Classes
 description: Verifica se o código já está presente numa classe
 parameters:
-  - in: path
-    name: codigo
+  - in: query
+    name: valor
     schema:
       type: string
     description: 'Código da classe a verificar se já está presente (exemplo: 200.10.100)'

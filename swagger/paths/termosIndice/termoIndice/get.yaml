@@ -8,8 +8,8 @@ security:
 tags:
   - Termos de Indice
 parameters:
-  - in: path
-    name: termoIndice
+  - in: query
+    name: valor
     schema:
       type: string
     description: 'nome do termo índice a verificar se existe (exemplo: ADSE, receção de cartão da)'
