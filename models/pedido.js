@@ -57,7 +57,7 @@ const PedidoSchema = new mongoose.Schema({
     {
       estado: {
         type: String,
-        enum: ["Submetido", "Distribuído", "Apreciado", "Validado"],
+        enum: ["Submetido", "Distribuído", "Apreciado", "Validado", "Devolvido"],
         required: true
       },
       responsavel: {
