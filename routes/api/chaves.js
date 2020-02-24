@@ -10,9 +10,10 @@ var Mailer = require("../../controllers/api/mailer");
 router.get("/", Auth.isLoggedInUser, Auth.checkLevel(6), (req, res) => {
   Chaves.listar(function(err, result) {
     if (err) {
-      return res.status(500).send(`Erro: ${err}`);
+      //res.status(500).send(`Erro: ${err}`);
+      res.status(500).send("Não foi possível obter as Chaves API!");
     } else {
-      return res.send(result);
+      res.send(result);
     }
   });
 });
@@ -21,7 +22,8 @@ router.get("/clavToken", (req, res) => {
   if (interfaceHosts.includes(req.headers.origin)) {
     Chaves.listarPorEmail("interface_clav@dglab.pt", function(err, chave) {
       if (err) {
-        res.status(500).send(`Erro: ${err}`);
+        //res.status(500).send(`Erro: ${err}`);
+        res.status(500).send("Erro ao obter o token da CLAV!")
       } else if (!chave) {
         Chaves.criarChave(
           "clav_interface",
@@ -29,11 +31,13 @@ router.get("/clavToken", (req, res) => {
           "ent_DGLAB",
           function(err, chave) {
             if (err) {
-              res.status(500).send(err);
+              //res.status(500).send(err);
+              res.status(500).send("Erro ao obter o token da CLAV!")
             } else {
               jwt.verify(chave.key, secretKey.apiKey, function(err, decoded) {
                 if (err) {
-                  res.status(500).send(err);
+                  //res.status(500).send(err);
+                  res.status(500).send("Erro ao obter o token da CLAV!")
                 } else {
                   res.send({ token: chave.key, exp: decoded.exp });
                 }
@@ -46,11 +50,13 @@ router.get("/clavToken", (req, res) => {
           if (err) {
             Chaves.renovar(chave.id, function(err, chave) {
               if (err) {
-                res.status(500).send(err);
+                //res.status(500).send(err);
+                res.status(500).send("Erro ao obter o token da CLAV!")
               } else {
                 jwt.verify(chave.key, secretKey.apiKey, function(err, decoded) {
                   if (err) {
-                    res.status(500).send(err);
+                    //res.status(500).send(err);
+                    res.status(500).send("Erro ao obter o token da CLAV!")
                   } else {
                     res.send({ token: chave.key, exp: decoded.exp });
                   }
@@ -79,20 +85,26 @@ router.get("/:id", Auth.isLoggedInUser, Auth.checkLevel(7), async function(
     if (!err) {
       await Chaves.listarPorId(decoded.id, function(err, result) {
         if (err) {
-          res.status(403).send(err);
+          //res.status(403).send(err);
+          res.status(500).send("Não foi possível obter a Chave API!")
         } else {
           res.send(result);
         }
       });
     } else {
-      res.status(403).send(err);
+      //res.status(403).send(err);
+      res.status(500).send("Não foi possível obter a Chave API!")
     }
   });
 });
 
 router.post("/", (req, res) => {
   Chaves.listarPorEmail(req.body.email, function(err, chave) {
-    if (err) return res.status(500).send(`Erro: ${err}`);
+    if (err) {
+      //return res.status(500).send(`Erro: ${err}`);
+      return res.status(500).send("Não foi possível registar a Chave API!");
+    }
+
     if (!chave) {
       Chaves.criarChave(
         req.body.name,
@@ -100,7 +112,8 @@ router.post("/", (req, res) => {
         req.body.entidade,
         function(err, result) {
           if (err) {
-            return res.status(500).send(`Erro: ${err}`);
+            //return res.status(500).send(`Erro: ${err}`);
+            return res.status(500).send("Não foi possível registar a Chave API!");
           } else {
             Mailer.sendEmailRegistoAPI(req.body.email, result.ops[0].key);
             res.send("Chave API registada com sucesso!");
@@ -108,7 +121,9 @@ router.post("/", (req, res) => {
         }
       );
     } else {
-      res.status(500).send("Email já em uso!");
+      //Email já em uso
+      //Por forma a não divulgar que emails estão já usados, será devolvido que foi enviado um email com sucesso
+      res.send("Chave API registada com sucesso!");
     }
   });
 });
@@ -117,14 +132,18 @@ router.put("/renovar", function(req, res) {
   if (req.query.email) {
     Chaves.listarPorEmail(req.query.email, (err, chave) => {
       if (err) {
-        return res.status(500).send(`Erro: ${err}`);
+        //res.status(500).send(`Erro: ${err}`);
+        res.status(500).send("Não foi possível renovar a Chave API!");
       } else {
         if (!chave) {
-          return res.status(404).send(`Erro: Chave API não encontrada!`);
+          //Chave API não encontrada (404)
+          //Por forma a não divulgar que emails estão já usados
+          res.status(500).send("Não foi possível renovar a Chave API!");
         } else {
           Chaves.renovar(chave._id, function(err, chaveRen) {
             if (err) {
-              return res.status(500).send(`Erro: ${err}`);
+              //res.status(500).send(`Erro: ${err}`);
+              res.status(500).send(`Não foi possível renovar a Chave API!`);
             } else {
               res.jsonp({ apikey: chaveRen.key });
             }
@@ -133,7 +152,7 @@ router.put("/renovar", function(req, res) {
       }
     });
   } else {
-    return res.status(404).send(`Erro: O email é obrigatório`);
+    res.status(404).send("Erro: O email é obrigatório");
   }
 });
 
@@ -143,7 +162,8 @@ router.put("/:id/desativar", Auth.isLoggedInUser, Auth.checkLevel(7), function(
 ) {
   Chaves.desativar(req.params.id, function(err, cb) {
     if (err) {
-      return res.status(500).send(`Erro: ${err}`);
+      //res.status(500).send(`Erro: ${err}`);
+      res.status(500).send("Não foi possível desativar a Chave API!");
     } else {
       res.send("Chave API desativada com sucesso!");
     }
@@ -156,7 +176,8 @@ router.put("/:id/ativar", Auth.isLoggedInUser, Auth.checkLevel(7), function(
 ) {
   Chaves.ativar(req.params.id, function(err, cb) {
     if (err) {
-      return res.status(500).send(`Erro: ${err}`);
+      //res.status(500).send(`Erro: ${err}`);
+      res.status(500).send("Não foi possível ativar a Chave API!");
     } else {
       res.send("Chave API ativada com sucesso!");
     }
@@ -169,7 +190,8 @@ router.delete("/:id", Auth.isLoggedInUser, Auth.checkLevel(7), function(
 ) {
   Chaves.eliminar(req.params.id, function(err, cb) {
     if (err) {
-      return res.status(500).send(`Erro: ${err}`);
+      //res.status(500).send(`Erro: ${err}`);
+      res.status(500).send("Não foi possível eliminar a Chave API!");
     } else {
       res.send("Chave API eliminada com sucesso!");
     }
@@ -182,7 +204,9 @@ router.put("/:id/atualizar", Auth.isLoggedInUser, Auth.checkLevel(7), function(
 ) {
   Chaves.listarPorEmail(req.body.contactInfo, function(err, chave) {
     if (chave && req.params.id != chave._id) {
-      res.status(500).send("Já existe uma chave API registada com esse email!");
+      //Já existe uma chave API registada com esse email
+      //Por forma a não divulgar que emails estão já usados
+      res.status(500).send("Não foi possível atualizar a Chave API!");
     } else {
       Chaves.atualizarMultiplosCampos(
         req.params.id,
@@ -190,8 +214,10 @@ router.put("/:id/atualizar", Auth.isLoggedInUser, Auth.checkLevel(7), function(
         req.body.contactInfo,
         req.body.entity,
         function(err, cb) {
-          if (err) return res.status(500).send(`Erro: ${err}`);
-          else {
+          if (err) {
+            //res.status(500).send(`Erro: ${err}`);
+            res.status(500).send("Não foi possível atualizar a Chave API!");
+          } else {
             res.send("Chave API atualizada com sucesso!");
           }
         }
