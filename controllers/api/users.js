@@ -10,9 +10,14 @@ var Users = module.exports
 
 Users.createUser = function (newUser, callback) {
 	bcrypt.genSalt(salt, function (err, salt) {
-		bcrypt.hash(newUser.local.password, salt, function (err, hash) {
+		bcrypt.hash(newUser.local.password, salt, async function (err, hash) {
 			newUser.local.password = hash;
-			newUser.save(callback);
+            try{
+			    newUser = await newUser.save()
+                callback(null, newUser)
+            }catch(err){
+                callback(err, null)
+            }
 		});
 	});
 }
@@ -122,7 +127,7 @@ Users.listarPorId = function(id, callback){
 }
 
 Users.atualizarMultiplosCampos = function(id, nome, email, entidade, level, callback){
-    Users.getUserById(id, function(err, user){
+    Users.getUserById(id, async function(err, user){
 		if (err) {	
             callback(err, null);
 		} else {
@@ -131,13 +136,12 @@ Users.atualizarMultiplosCampos = function(id, nome, email, entidade, level, call
             user.email = email;
             user.level = level;
             user.entidade = entidade;
-            user.save(function(err) {
-                if (err) {
-		            callback(err, null);
-                }else{
-		            callback(null, user);
-                }
-            });
+            try{
+                user = await user.save()
+                callback(null, user);
+            }catch(err){
+		        callback(err, null);
+            }
         }
     });
 }
@@ -148,15 +152,14 @@ Users.atualizarPassword = function(id, password, callback){
             callback(err, null);
 		} else {
             bcrypt.genSalt(salt, function (err, salt) {
-                bcrypt.hash(password, salt, function (err, hash) {
+                bcrypt.hash(password, salt, async function (err, hash) {
                     user.local.password = hash;
-                    user.save(function(err) {
-                        if (err) {
-                            callback(err, null);
-                        }else{
-                            callback(null, user);
-                        }
-                    });
+                    try{
+                        user = await user.save()
+                        callback(null, user)
+                    }catch(err){
+                        callback(err, null)
+                    }
                 });
             });
         }
@@ -174,15 +177,14 @@ Users.atualizarPasswordComVerificacao = function(id, atualPassword, novaPassword
                 }else{
                     if(isMatch){
                         bcrypt.genSalt(salt, function (err, salt) {
-                            bcrypt.hash(novaPassword, salt, function (err, hash) {
+                            bcrypt.hash(novaPassword, salt, async function (err, hash) {
                                 user.local.password = hash;
-                                user.save(function(err) {
-                                    if (err) {
-                                        callback(err, null);
-                                    }else{
-                                        callback(null, user);
-                                    }
-                                });
+                                try{
+                                    user = await user.save()
+                                    callback(null, user)
+                                }catch(err){
+                                    callback(err, null)
+                                }
                             });
                         });
                     }else{
@@ -199,7 +201,7 @@ Users.atualizarNIC = function(id, nic, callback){
         if (err) {	
             callback(err,null)
         } else if (!userNIC) {
-            Users.eliminar(id, function(err, user){
+            Users.eliminar(id, async function(err, user){
                 if (err) {	
                     callback(err,null)
                 } else if(user) {
@@ -217,13 +219,12 @@ Users.atualizarNIC = function(id, nic, callback){
                             password: user.local.password
                         }
                     }
-                    newUser.save(function(err) {
-                        if (err) {
-                            callback(err, null);
-                        }else{
-                            callback(null, user)
-                        }
-                    });
+                    try{
+                        user = await newUser.save()
+                        callback(null, user)
+                    }catch(err){
+                        callback(err, null)
+                    }
                 } else {
                     callback("Utilizador não existe", null)
                 }
@@ -235,18 +236,17 @@ Users.atualizarNIC = function(id, nic, callback){
 }
 
 Users.desativar = function(id, callback){
-    Users.getUserById(id, function(err, user){
+    Users.getUserById(id, async function(err, user){
         if (err) {	
             callback(err,null)
         } else {
             user.level = -1;
-            user.save(function(err) {
-                if (err) {
-		            callback(err, null);
-                }else{
-		            callback(null, user);
-                }
-            });
+            try{
+                user = await user.save()
+                callback(null, user)
+            }catch(err){
+                callback(err, null)
+            }
         }
     });
 }

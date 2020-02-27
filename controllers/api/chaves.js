@@ -65,7 +65,7 @@ Chaves.criarChave = function(name, email, entidade, callback){
         entity: ent
     });
 
-	Chave.collection.insert(newKey, function(err, key) {
+	Chave.collection.insertOne(newKey, function(err, key) {
 		if (err) {
 			callback(err, null);
 		} else {
@@ -75,35 +75,33 @@ Chaves.criarChave = function(name, email, entidade, callback){
 };
 
 Chaves.desativar = function(id, callback){
-    Chave.findById(id, function(err, key){
+    Chave.findById(id, async function(err, key){
         if (err) {	
             callback(err, null);
         } else {
 			key.active = false;
- 			key.save(function(err) {
-				if (err) {
-					callback(err, null);
-				} else {
-					callback(null, key);
-				}
-			});
+            try{
+ 			    key = await key.save()
+                callback(null, key)
+			}catch(err){
+                callback(err, null)
+            }
 		}
     });
 };
 
 Chaves.ativar = function(id,callback){
-    Chave.findById(id, function(err, key){
+    Chave.findById(id, async function(err, key){
         if (err) {	
             callback(err, null);
         } else {
 			key.active = true;
-			key.save(function(err) {
-				if (err) {
-					callback(err, null);
-				} else {
-					callback(null, key);
-				}
-			});
+            try{
+ 			    key = await key.save()
+                callback(null, key)
+			}catch(err){
+                callback(err, null)
+            }
 		}
     });
 };
@@ -119,7 +117,7 @@ Chaves.eliminar = function(id, callback){
 };
 
 Chaves.renovar = function(id, callback){
-	Chave.findById(id, function(err, key){
+	Chave.findById(id, async function(err, key){
 		if(err || !key){
 			callback(err, null);
 		}else{
@@ -127,32 +125,30 @@ Chaves.renovar = function(id, callback){
             key.created = Date.now();
             key.nCalls = 0;
             key.lastUsed = null;
- 			key.save(function(err) {
-				if (err) {
-					callback(err, null);
-				} else {
-					callback(null, key);
-				}
-			});
+            try{
+ 			    key = await key.save()
+                callback(null, key)
+			}catch(err){
+                callback(err, null)
+            }
 		}
 	});
 };
 
 Chaves.atualizarMultiplosCampos = function(id, name, email, entidade, callback){
-    Chave.findById(id, function(err, chave){
+    Chave.findById(id, async function(err, chave){
 		if (err) {	
             callback(err, null);
 		} else {
             chave.name = name;
             chave.contactInfo = email;
             chave.entity = entidade;
-            chave.save(function(err) {
-                if (err) {
-		            callback(err, null);
-                }else{
-		            callback(null, chave);
-                }
-            });
+            try{
+ 			    chave = await chave.save()
+                callback(null, chave)
+			}catch(err){
+                callback(err, null)
+            }
         }
     });
 };

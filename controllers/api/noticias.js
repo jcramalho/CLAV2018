@@ -24,16 +24,14 @@ Noticias.consultar = (id) => {
  * @param pedido novo pedido a inserir no sistema.
  * @return {Pedido} pedido criado.
  */
-Noticias.criar = function(n){
+Noticias.criar = async function(n){
     var newNoticia = new Noticia(n);
 
-    return newNoticia.save(function (err) {
-        if (err) {
-            console.log(err);
-            return ('Ocorreu um erro a submeter a notícia! Tente novamente mais tarde');
-        }
-        else{
-            return(newNoticia._id);
-        }
-    });
+    try{
+        newNoticia = await newNoticia.save()
+        return newNoticia._id
+    }catch(err) {
+        console.log(err)
+        return 'Ocorreu um erro a submeter a notícia! Tente novamente mais tarde'
+    }
 }

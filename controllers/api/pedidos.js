@@ -44,7 +44,7 @@ Pedidos.consultar = (codigo) => {
  * @param pedido novo pedido a inserir no sistema.
  * @return {Pedido} pedido criado.
  */
-Pedidos.criar = function(pedidoParams){
+Pedidos.criar = async function(pedidoParams){
     var pedido = {
         estado: "Submetido",
         criadoPor: pedidoParams.user.email,
@@ -70,15 +70,13 @@ Pedidos.criar = function(pedidoParams){
 
     var newPedido = new Pedido(pedido);
 
-    return newPedido.save(function (err) {
-        if (err) {
-            console.log(err);
-            return ('Ocorreu um erro a submeter o pedido! Tente novamente mais tarde');
-        }
-        else{
-            return(newPedido.codigo);
-        }
-    });
+    try{
+        newPedido = await newPedido.save()
+        return newPedido.codigo
+    }catch(err){
+        console.log(err)
+        return 'Ocorreu um erro a submeter o pedido! Tente novamente mais tarde'
+    }
 }
 
 /**
@@ -89,23 +87,20 @@ Pedidos.criar = function(pedidoParams){
  */
 Pedidos.atualizar = async function(id, pedidoParams){
     try{
-        Pedido.findByIdAndRemove(id, function(error){
+        Pedido.findByIdAndRemove(id, async function(error){
             if(error){
                 return error
             }
             else{
                 var novoPedido = new Pedido(pedidoParams.pedido)
                 novoPedido.distribuicao.push(pedidoParams.distribuicao)
-
-                return novoPedido.save(function (err, pedidoGravado) {
-                    if (err) {
-                        console.log(err);
-                        return err
-                    }
-                    else{
-                        return pedidoGravado
-                    }
-                })
+                
+                try{
+                    return await novoPedido.save()
+                }catch(err){
+                    console.log(err)
+                    return err
+                }
             }
         })
     }
