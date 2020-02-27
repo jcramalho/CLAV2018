@@ -81,7 +81,7 @@ const PedidoSchema = new mongoose.Schema({
 
 PedidoSchema.pre("validate", async function(next) {
   if (!this.codigo) {
-    let count = await mongoose.model("Pedido").count();
+    let count = await mongoose.model("Pedido").estimatedDocumentCount();
     this.codigo = `${new Date().getFullYear()}-${count}`;
   }
   next();

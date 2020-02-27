@@ -82,7 +82,10 @@ function emit(){
 }
 
 mongoose.connect(dataBases.userDB, {
-    useMongoClient: true,
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
+    useFindAndModify: false,
     poolSize: 100 //max number of connections (default is 5)
 })
     .then(async () => {

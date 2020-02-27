@@ -71,7 +71,7 @@ Auth.isLoggedInKey = async function (req, res, next) {
                         res.status(401).send('A sua chave API é inválida ou expirou.');
                     }else{
                         if(resp[0].active==true){
-                            await Key.update({_id: resp[0]._id}, {nCalls: resp[0].nCalls+1, lastUsed: Date.now()}, function(err, affected, resp2) {
+                            await Key.updateOne({_id: resp[0]._id}, {nCalls: resp[0].nCalls+1, lastUsed: Date.now()}, function(err, affected, resp2) {
                                 if(err){
                                     res.status(500).send('Ocorreu um erro ao atualizar a Chave API.');
                                 }else{
