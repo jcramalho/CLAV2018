@@ -20,10 +20,19 @@ info:
     name: CLAV
     email: clav@dglab.gov.pt
 servers:
-  - url: http://localhost:7779/api
-    description: Main API server
-  - url: http://clav-test.di.uminho.pt/api
-    description: Server for testing
+  - url: "{dominio}/{versao}/api"
+    variables:
+      dominio:
+        default: "http://localhost:7779"
+        description: Domínio
+        enum:
+          - "http://localhost:7779"
+          - "http://clav-test.di.uminho.pt"
+      versao:
+        description: Versão da API
+        default: "v2"
+        enum:
+          - "v2"
 tags:
   - name: Auth
     description: "Guarda de onde foram feitos os pedidos de autenticação."

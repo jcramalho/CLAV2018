@@ -10,7 +10,10 @@ var src = fs.readFileSync(yamlinc.basefile)
 var swaggerDoc = yaml.load(src, { schema: yamlinc.YAML_INCLUDE_SCHEMA })
 
 //mudar url principal na secção dos servidores do Swagger
-swaggerDoc.servers[0].url = dataBases.swaggerURL + '/api'
+swaggerDoc.servers[0].variables.versao.default = dataBases.apiVersion
+swaggerDoc.servers[0].variables.versao.enum[0] = dataBases.apiVersion
+swaggerDoc.servers[0].variables.dominio.default = dataBases.swaggerURL
+swaggerDoc.servers[0].variables.dominio.enum[0] = dataBases.swaggerURL
 //Escrever o ficheiro final da especificação OpenAPI
 fs.writeFileSync("./public/clav.yaml", yaml.dump(swaggerDoc))
 
@@ -19,7 +22,7 @@ module.exports.options = {
   explorer: true,
   customSiteTitle: 'CLAV API',
   swaggerOptions: {
-    url: dataBases.swaggerURL + '/clav.yaml',
+    url: '/clav.yaml',
     tagsSorter: 'alpha',
     operationsSorter: (a, b) => {
         var methods = ["get", "post", "put", "delete", "patch", "options", "trace"]

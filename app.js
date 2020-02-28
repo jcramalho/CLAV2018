@@ -123,38 +123,44 @@ mongoose.connect(dataBases.userDB, {
         process.exit(1)
     })
 
+var mainRouter = express.Router()
+var apiRouter = express.Router()
+
 //Swagger
 const swaggerUi = require('swagger-ui-express');
 const options = require('./config/swagger').options
-app.use('/docs', swaggerUi.serve, swaggerUi.setup(null, options));
+mainRouter.use('/docs', swaggerUi.serve, swaggerUi.setup(null, options));
 
 //formatar o resultado consoante a querystring fs
 const { outputFormat } = require('./routes/outputFormat.js')
 
 //routes and API
-app.use('/api/entidades',require('./routes/api/entidades'), outputFormat);
-app.use('/api/tipologias',require('./routes/api/tipologias'), outputFormat);
-app.use('/api/legislacao',require('./routes/api/leg'), outputFormat);
-app.use('/api/classes',require('./routes/api/classes'), outputFormat);
-app.use('/api/notasAp',require('./routes/api/notasAp'));
-app.use('/api/exemplosNotasAp',require('./routes/api/exemplosNotasAp'));
-app.use('/api/indicePesquisa',require('./routes/api/indicePesquisa'));
-app.use('/api/tabelasSelecao',require('./routes/api/tabsSel'));
-app.use('/api/termosIndice',require('./routes/api/termosIndice'));
-app.use('/api/vocabularios',require('./routes/api/vocabularios'));
-app.use('/api/autosEliminacao',require('./routes/api/autosEliminacao'));
-app.use('/api/pedidos',require('./routes/api/pedidos'));
-app.use('/api/pendentes',require('./routes/api/pendentes'));
-app.use('/api/users',require('./routes/api/users'));
-app.use('/api/chaves',require('./routes/api/chaves'));
-app.use('/api/stats', require('./routes/api/stats'));
-app.use('/api/travessia',require('./routes/api/travessia'));
-app.use('/api/invariantes',require('./routes/api/invariantes'));
-app.use('/api/auth', require('./routes/api/auth'));
-app.use('/api/ontologia', require('./routes/api/ontologia'));
-app.use('/api/reload', require('./routes/api/reload'));
-app.use('/api/logs', require('./routes/api/logs'));
-app.use('/api/indicadores', require('./routes/api/indicadores'));
+apiRouter.use('/entidades',require('./routes/api/entidades'), outputFormat);
+apiRouter.use('/tipologias',require('./routes/api/tipologias'), outputFormat);
+apiRouter.use('/legislacao',require('./routes/api/leg'), outputFormat);
+apiRouter.use('/classes',require('./routes/api/classes'), outputFormat);
+apiRouter.use('/notasAp',require('./routes/api/notasAp'));
+apiRouter.use('/exemplosNotasAp',require('./routes/api/exemplosNotasAp'));
+apiRouter.use('/indicePesquisa',require('./routes/api/indicePesquisa'));
+apiRouter.use('/tabelasSelecao',require('./routes/api/tabsSel'));
+apiRouter.use('/termosIndice',require('./routes/api/termosIndice'));
+apiRouter.use('/vocabularios',require('./routes/api/vocabularios'));
+apiRouter.use('/autosEliminacao',require('./routes/api/autosEliminacao'));
+apiRouter.use('/pedidos',require('./routes/api/pedidos'));
+apiRouter.use('/pendentes',require('./routes/api/pendentes'));
+apiRouter.use('/users',require('./routes/api/users'));
+apiRouter.use('/chaves',require('./routes/api/chaves'));
+apiRouter.use('/stats', require('./routes/api/stats'));
+apiRouter.use('/travessia',require('./routes/api/travessia'));
+apiRouter.use('/invariantes',require('./routes/api/invariantes'));
+apiRouter.use('/auth', require('./routes/api/auth'));
+apiRouter.use('/ontologia', require('./routes/api/ontologia'));
+apiRouter.use('/reload', require('./routes/api/reload'));
+apiRouter.use('/logs', require('./routes/api/logs'));
+apiRouter.use('/indicadores', require('./routes/api/indicadores'));
+
+mainRouter.use('/api', apiRouter);
+app.use('/' + dataBases.apiVersion, mainRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -169,7 +175,7 @@ app.use(function (err, req, res, next) {
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-    res.status(err.status || 500).send(`Erro: ${err.message}`);
+    res.status(err.status || 500).send(`${err.message}`);
 });
 
 module.exports = app; 
