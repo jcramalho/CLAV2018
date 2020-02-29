@@ -1,8 +1,11 @@
 var Call = require('../../models/log');
+var dataBases = require('../../config/database');
 var Calls = module.exports
 
 Calls.getRoute = function(req){
-    return req.originalUrl.replace(/\?.*$/,"")
+    var route = req.originalUrl.replace(/\?.*$/,"")
+    route = route.replace("/" + dataBases.apiVersion, "")
+    return route
 }
 
 Calls.newCall = async function(route, method, id, type, httpStatus){

@@ -29,6 +29,7 @@ var logger = require('morgan')
 //Funcao auxiliar para contar numero de GET e POST
 var apiStats = require('./models/api')
 var Calls = require('./controllers/api/logs')
+var dataBases = require('./config/database');
 
 function getRoute(req){
     const route = req.route ? req.route.path : '' // check if the handler exist
@@ -69,7 +70,6 @@ app.use(passport.session());
 app.use(logger('dev'))
 
 // Connect mongo and mongoose
-var dataBases = require('./config/database');
 var mongoose = require('mongoose');
 var ontologia = require('./controllers/api/ontologia');
 mongoose.Promise = global.Promise;

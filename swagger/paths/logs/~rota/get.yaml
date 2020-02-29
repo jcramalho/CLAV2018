@@ -19,7 +19,7 @@ parameters:
     description: Caminho da rota
     schema:
       type: string
-      example: "/v2/tipologias"
+      example: "/tipologias"
 responses:
   200:
     description: Pedidos realizados (log)
