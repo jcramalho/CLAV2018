@@ -32,16 +32,18 @@ var Calls = require('./controllers/api/logs')
 
 function getRoute(req){
     const route = req.route ? req.route.path : '' // check if the handler exist
-    const baseUrl = req.baseUrl ? req.baseUrl : '' // adding the base url if the handler is a child of another handler
+    var baseUrl = req.baseUrl ? req.baseUrl : '' // adding the base url if the handler is a child of another handler
  
     // return route ? `${baseUrl === '/' ? '' : baseUrl}${route}` : 'unknown route'
+    // remove API version from url
+    baseUrl = baseUrl ? baseUrl.split(dataBases.apiVersion)[1] : baseUrl
     return route ? `${baseUrl === '/' ? '' : baseUrl}` : 'unknown route'
 }
 
 app.use((req, res, next) => {
     res.on('finish', async () => {
         //console.log('_DEBUG_:' + `${req.method} ${getRoute(req)} ${res.statusCode}`) 
-        if(getRoute(req).includes('/api/')){
+        if(getRoute(req).includes('/' + dataBases.apiVersion + '/')){
             apiStats.addUsage(req.method, getRoute(req));
         }
 
@@ -124,7 +126,6 @@ mongoose.connect(dataBases.userDB, {
     })
 
 var mainRouter = express.Router()
-var apiRouter = express.Router()
 
 //Swagger
 const swaggerUi = require('swagger-ui-express');
@@ -135,31 +136,30 @@ mainRouter.use('/docs', swaggerUi.serve, swaggerUi.setup(null, options));
 const { outputFormat } = require('./routes/outputFormat.js')
 
 //routes and API
-apiRouter.use('/entidades',require('./routes/api/entidades'), outputFormat);
-apiRouter.use('/tipologias',require('./routes/api/tipologias'), outputFormat);
-apiRouter.use('/legislacao',require('./routes/api/leg'), outputFormat);
-apiRouter.use('/classes',require('./routes/api/classes'), outputFormat);
-apiRouter.use('/notasAp',require('./routes/api/notasAp'));
-apiRouter.use('/exemplosNotasAp',require('./routes/api/exemplosNotasAp'));
-apiRouter.use('/indicePesquisa',require('./routes/api/indicePesquisa'));
-apiRouter.use('/tabelasSelecao',require('./routes/api/tabsSel'));
-apiRouter.use('/termosIndice',require('./routes/api/termosIndice'));
-apiRouter.use('/vocabularios',require('./routes/api/vocabularios'));
-apiRouter.use('/autosEliminacao',require('./routes/api/autosEliminacao'));
-apiRouter.use('/pedidos',require('./routes/api/pedidos'));
-apiRouter.use('/pendentes',require('./routes/api/pendentes'));
-apiRouter.use('/users',require('./routes/api/users'));
-apiRouter.use('/chaves',require('./routes/api/chaves'));
-apiRouter.use('/stats', require('./routes/api/stats'));
-apiRouter.use('/travessia',require('./routes/api/travessia'));
-apiRouter.use('/invariantes',require('./routes/api/invariantes'));
-apiRouter.use('/auth', require('./routes/api/auth'));
-apiRouter.use('/ontologia', require('./routes/api/ontologia'));
-apiRouter.use('/reload', require('./routes/api/reload'));
-apiRouter.use('/logs', require('./routes/api/logs'));
-apiRouter.use('/indicadores', require('./routes/api/indicadores'));
+mainRouter.use('/entidades',require('./routes/api/entidades'), outputFormat);
+mainRouter.use('/tipologias',require('./routes/api/tipologias'), outputFormat);
+mainRouter.use('/legislacao',require('./routes/api/leg'), outputFormat);
+mainRouter.use('/classes',require('./routes/api/classes'), outputFormat);
+mainRouter.use('/notasAp',require('./routes/api/notasAp'));
+mainRouter.use('/exemplosNotasAp',require('./routes/api/exemplosNotasAp'));
+mainRouter.use('/indicePesquisa',require('./routes/api/indicePesquisa'));
+mainRouter.use('/tabelasSelecao',require('./routes/api/tabsSel'));
+mainRouter.use('/termosIndice',require('./routes/api/termosIndice'));
+mainRouter.use('/vocabularios',require('./routes/api/vocabularios'));
+mainRouter.use('/autosEliminacao',require('./routes/api/autosEliminacao'));
+mainRouter.use('/pedidos',require('./routes/api/pedidos'));
+mainRouter.use('/pendentes',require('./routes/api/pendentes'));
+mainRouter.use('/users',require('./routes/api/users'));
+mainRouter.use('/chaves',require('./routes/api/chaves'));
+mainRouter.use('/stats', require('./routes/api/stats'));
+mainRouter.use('/travessia',require('./routes/api/travessia'));
+mainRouter.use('/invariantes',require('./routes/api/invariantes'));
+mainRouter.use('/auth', require('./routes/api/auth'));
+mainRouter.use('/ontologia', require('./routes/api/ontologia'));
+mainRouter.use('/reload', require('./routes/api/reload'));
+mainRouter.use('/logs', require('./routes/api/logs'));
+mainRouter.use('/indicadores', require('./routes/api/indicadores'));
 
-mainRouter.use('/api', apiRouter);
 app.use('/' + dataBases.apiVersion, mainRouter);
 
 // catch 404 and forward to error handler

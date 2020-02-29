@@ -20,7 +20,7 @@ info:
     name: CLAV
     email: clav@dglab.gov.pt
 servers:
-  - url: "{dominio}/{versao}/api"
+  - url: "{dominio}/{versao}"
     variables:
       dominio:
         default: "http://localhost:7779"

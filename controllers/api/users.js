@@ -325,7 +325,7 @@ Users.registarParaEntidade = async function(req, entidade, users){
 
     //validar se entidade existe
     try{
-        await request.get(req, '/api/entidades/' + ent)
+        await request.get(req, '/entidades/' + ent)
     } catch (e) {
         if(e.response.status == 404){
             throw('Entidade não existe! Nenhum utilizador foi registado. Tente novamente.')
