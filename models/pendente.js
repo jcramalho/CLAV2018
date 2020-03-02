@@ -32,7 +32,8 @@ const PendenteSchema = new mongoose.Schema({
       "Tipologia",
       "Legislação",
       "Termo de Indice",
-      "Auto de Eliminação"
+      "Auto de Eliminação",
+      "RADA"
     ],
     required: true
   },
