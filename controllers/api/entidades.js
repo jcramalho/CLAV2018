@@ -39,11 +39,7 @@ Entidades.listar = (filtro) => {
         }
         BIND(CONCAT('ent_', ?sigla) AS ?id).
 
-        FILTER (${Object.entries(filtro)
-			.filter(([k, v]) => v !== undefined && k != 'token' && k != 'apikey' && k != 'fs' && k != 'info')
-			.map(([k, v]) => `?${k} = "${v}"`)
-			.concat(['True'])
-			.join(' && ')})
+        FILTER (${filtro})
     } ORDER BY ?sigla`
 
 	return execQuery('query', query).then((response) => normalize(response))
@@ -183,7 +179,7 @@ Entidades.listarParticipantes = async () => {
 }
 
 // Lista todas as entidades com PNs associados (como Dono ou como Participante)
-Entidades.listarComPNs = () => {
+Entidades.listarComPNs = (filtro) => {
 	const query = `SELECT ?id ?sigla ?designacao ?internacional ?sioe ?estado 
     WHERE { 
             ?uri rdf:type clav:Entidade ;
@@ -209,13 +205,14 @@ Entidades.listarComPNs = () => {
         FILTER NOT EXISTS { ?pn clav:temParticipante ?uri. }
             }
         } BIND(CONCAT('ent_', ?sigla) AS ?id).
+        FILTER (${filtro})
     } ORDER BY ?sigla`
 
 	return execQuery('query', query).then((response) => normalize(response))
 }
 
 // Lista todas as entidades sem PNs associados (como Dono ou como Participante)
-Entidades.listarSemPNs = () => {
+Entidades.listarSemPNs = (filtro) => {
 	const query = `SELECT ?id ?sigla ?designacao ?internacional ?sioe ?estado {
             ?uri rdf:type clav:Entidade ;
                 clav:entEstado ?estado;
@@ -228,7 +225,7 @@ Entidades.listarSemPNs = () => {
         FILTER NOT EXISTS {?pn clav:temDono ?uri.}
         FILTER NOT EXISTS {?pn clav:temParticipante ?uri.}
             BIND(CONCAT('ent_', ?sigla) AS ?id).
-
+        FILTER (${filtro})
         } ORDER BY ?sigla`
 
 	return execQuery('query', query).then((response) => normalize(response))

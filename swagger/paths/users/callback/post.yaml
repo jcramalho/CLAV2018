@@ -1,7 +1,7 @@
 summary: 'callback após login através de autenticação.gov'
 description: callback após login através de autenticação.gov
 tags:
-  - users
+  - Utilizadores
 requestBody:
   description: 'SAML response'
   required: true

@@ -6,7 +6,7 @@ security:
   - userQuery: []
   - userAuth: []
 tags:
-  - legislacao
+  - Legislação
 responses:
   200:
     description: Lista todos os documentos legislativos

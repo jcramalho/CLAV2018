@@ -6,7 +6,7 @@ security:
   - userQuery: []
   - userAuth: []
 tags:
-  - autosEliminacao
+  - Autos de Eliminação
 parameters:
   - name: id
     in: path

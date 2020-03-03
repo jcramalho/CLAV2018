@@ -4,14 +4,20 @@ var bcrypt = require('bcryptjs');
 var xml2js = require('xml2js');
 var mongoose = require('mongoose');
 const request = require('../../controllers/api/utils').request
+const salt = 14
 
 var Users = module.exports
 
 Users.createUser = function (newUser, callback) {
-	bcrypt.genSalt(14, function (err, salt) {
-		bcrypt.hash(newUser.local.password, salt, function (err, hash) {
+	bcrypt.genSalt(salt, function (err, salt) {
+		bcrypt.hash(newUser.local.password, salt, async function (err, hash) {
 			newUser.local.password = hash;
-			newUser.save(callback);
+            try{
+			    newUser = await newUser.save()
+                callback(null, newUser)
+            }catch(err){
+                callback(err, null)
+            }
 		});
 	});
 }
@@ -121,7 +127,7 @@ Users.listarPorId = function(id, callback){
 }
 
 Users.atualizarMultiplosCampos = function(id, nome, email, entidade, level, callback){
-    Users.getUserById(id, function(err, user){
+    Users.getUserById(id, async function(err, user){
 		if (err) {	
             callback(err, null);
 		} else {
@@ -130,13 +136,12 @@ Users.atualizarMultiplosCampos = function(id, nome, email, entidade, level, call
             user.email = email;
             user.level = level;
             user.entidade = entidade;
-            user.save(function(err) {
-                if (err) {
-		            callback(err, null);
-                }else{
-		            callback(null, user);
-                }
-            });
+            try{
+                user = await user.save()
+                callback(null, user);
+            }catch(err){
+		        callback(err, null);
+            }
         }
     });
 }
@@ -146,18 +151,47 @@ Users.atualizarPassword = function(id, password, callback){
 		if (err) {
             callback(err, null);
 		} else {
-            bcrypt.genSalt(14, function (err, salt) {
-                bcrypt.hash(password, salt, function (err, hash) {
+            bcrypt.genSalt(salt, function (err, salt) {
+                bcrypt.hash(password, salt, async function (err, hash) {
                     user.local.password = hash;
-                    user.save(function(err) {
-                        if (err) {
-                            callback(err, null);
-                        }else{
-                            callback(null, user);
-                        }
-                    });
+                    try{
+                        user = await user.save()
+                        callback(null, user)
+                    }catch(err){
+                        callback(err, null)
+                    }
                 });
             });
+        }
+    });
+}
+
+Users.atualizarPasswordComVerificacao = function(id, atualPassword, novaPassword, callback){
+    Users.getUserById(id, function(err, user){
+		if (err) {
+            callback(err, null);
+		} else {
+            Users.comparePassword(atualPassword, user.local.password, function(err, isMatch) {
+                if (err) {
+                    callback(err, null);
+                }else{
+                    if(isMatch){
+                        bcrypt.genSalt(salt, function (err, salt) {
+                            bcrypt.hash(novaPassword, salt, async function (err, hash) {
+                                user.local.password = hash;
+                                try{
+                                    user = await user.save()
+                                    callback(null, user)
+                                }catch(err){
+                                    callback(err, null)
+                                }
+                            });
+                        });
+                    }else{
+                        callback("Credenciais inválidas", null)
+                    }
+                }
+            })
         }
     });
 }
@@ -167,7 +201,7 @@ Users.atualizarNIC = function(id, nic, callback){
         if (err) {	
             callback(err,null)
         } else if (!userNIC) {
-            Users.eliminar(id, function(err, user){
+            Users.eliminar(id, async function(err, user){
                 if (err) {	
                     callback(err,null)
                 } else if(user) {
@@ -185,13 +219,12 @@ Users.atualizarNIC = function(id, nic, callback){
                             password: user.local.password
                         }
                     }
-                    newUser.save(function(err) {
-                        if (err) {
-                            callback(err, null);
-                        }else{
-                            callback(null, user)
-                        }
-                    });
+                    try{
+                        user = await newUser.save()
+                        callback(null, user)
+                    }catch(err){
+                        callback(err, null)
+                    }
                 } else {
                     callback("Utilizador não existe", null)
                 }
@@ -203,18 +236,17 @@ Users.atualizarNIC = function(id, nic, callback){
 }
 
 Users.desativar = function(id, callback){
-    Users.getUserById(id, function(err, user){
+    Users.getUserById(id, async function(err, user){
         if (err) {	
             callback(err,null)
         } else {
             user.level = -1;
-            user.save(function(err) {
-                if (err) {
-		            callback(err, null);
-                }else{
-		            callback(null, user);
-                }
-            });
+            try{
+                user = await user.save()
+                callback(null, user)
+            }catch(err){
+                callback(err, null)
+            }
         }
     });
 }
@@ -293,7 +325,7 @@ Users.registarParaEntidade = async function(req, entidade, users){
 
     //validar se entidade existe
     try{
-        await request.get(req, '/api/entidades/' + ent)
+        await request.get(req, '/entidades/' + ent)
     } catch (e) {
         if(e.response.status == 404){
             throw('Entidade não existe! Nenhum utilizador foi registado. Tente novamente.')
@@ -354,7 +386,7 @@ Users.registarParaEntidade = async function(req, entidade, users){
                 })
             })
         } catch (err) {
-            throw(`Erro ao verificar se utilizador já existe: ${err}`);
+            throw(`Erro ao verificar se utilizador no índice ${i} já existe.`);
         }
 
         if (!user) {
@@ -366,14 +398,16 @@ Users.registarParaEntidade = async function(req, entidade, users){
                     })
                 })
             } catch(err) {
-                throw(`Erro ao verificar se email já existe: ${err}`);
+                throw(`Erro ao verificar se email do utilizador no índice ${i} já existe.`);
             }
 
             if (user) {
-                throw('Email do utilizador no índice ' + i + ' já em uso! Nenhum utilizador foi registado. Tente novamente.');
+                //throw('Email do utilizador no índice ' + i + ' já em uso! Nenhum utilizador foi registado. Tente novamente.');
+                throw(`Verifique os valores do utilizador no índice ${i}! Nenhum utilizador foi registado. Tente novamente.`);
             }
         } else {
-            throw('Utilizador no indíce ' + i + ' já se encontra registado ou possui um NIC errado! Nenhum utilizador foi registado. Tente novamente.');
+            //throw('Utilizador no indíce ' + i + ' já se encontra registado ou possui um NIC errado! Nenhum utilizador foi registado. Tente novamente.');
+            throw(`Verifique os valores do utilizador no índice ${i}! Nenhum utilizador foi registado. Tente novamente.`);
         }
     }
 

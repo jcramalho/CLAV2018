@@ -1,7 +1,7 @@
 summary: Extingue uma entidade
 description: Extingue uma entidade, dada uma data de Extinção
 tags:
-  - entidades
+  - Entidades
 security:
   - userQuery: []
   - userAuth: []

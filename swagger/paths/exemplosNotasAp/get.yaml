@@ -1,7 +1,7 @@
 summary: Devolve a lista de todos os exemplos de notas de aplicação
-description: Devolve a lista de todas os exemplos de notas de aplicação. Para cada exemplo de nota de aplicação devolve idExemplo, exemplo, cProc e tituloProc.
+description: Devolve a lista de todas os exemplos de notas de aplicação. Para cada exemplo de nota de aplicação devolve idExemplo, exemplo, cProc e tituloProc
 tags:
-  - diversos
+  - Exemplos de Notas de Aplicação
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

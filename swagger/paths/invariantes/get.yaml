@@ -9,7 +9,7 @@ security:
   - userQuery: []
   - userAuth: []
 tags:
-  - invariantes
+  - Invariantes
 parameters:
   - in: query
     name: idRel

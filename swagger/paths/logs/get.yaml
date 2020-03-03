@@ -1,0 +1,32 @@
+summary: Devolve todos os pedidos realizados (log) ou para um utilizador ou chave API
+description: Devolve todos os pedidos realizados (log) por utilizadores ou chaves API. Caso seja enviado o tipo e o id devolve os pedidos realizados (log) para um utilizador ou chave API. Cada entrada no log tem o seu id (_id), o caminho da rota, o método, o tipo de acesso (User ou Chave), o id do utilizador ou da chave API, o status HTTP do pedido e a altura quando foi realizado o pedido.
+tags:
+  - Logs
+security:
+  - userQuery: []
+  - userAuth: []
+parameters:
+  - name: tipo
+    in: query
+    description: Tipo de acesso
+    schema:
+      type: string
+      enum: [User, Chave]
+  - name: id
+    in: query
+    description: Id do utilizador ou da chave API
+    schema:
+      type: string
+responses:
+  200:
+    description: Pedidos realizados (log)
+    content:
+      application/json:
+        schema:
+          type: string
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro

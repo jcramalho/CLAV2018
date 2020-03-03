@@ -4,7 +4,7 @@ security:
   - userQuery: []
   - userAuth: []
 tags:
-  - users
+  - Utilizadores
 requestBody:
   description: 'De forma a registar um utilizador através de CC é necessário nic, name, email, entidade (sigla) e type (level)'
   required: true

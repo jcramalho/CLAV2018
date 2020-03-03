@@ -1,0 +1,25 @@
+summary: Verifica se um título já está atribuido a uma classe
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Classes
+description: Verifica se o título já está presente numa classe
+parameters:
+  - in: query
+    name: valor
+    schema:
+      type: string
+    description: 'Título da classe a verificar se já está presente (exemplo: Definição de políticas conjuntas e de instrumentos de regulação)'
+    required: true
+responses:
+  200:
+    description: Verifica se um determinado título existe numa classe
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  500:
+    description: Erro

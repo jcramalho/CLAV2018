@@ -10,7 +10,9 @@ module.exports = function(passport) {
             Users.getUserByEmail(email, function (err, user) {
                 if (err) done(err);
                 if (!user) {
-                    return done(null, false, { message: 'Email não reconhecido' });
+                    //return done(null, false, { message: 'Email não reconhecido' });
+                    //Evitar que se perceba que emails já estão presentes
+                    return done(null, false, { message: 'Ocorreu um erro ao realizar o login! Por favor verifique as suas credenciais.' });
                 }
 
                 Users.comparePassword(password, user.local.password, function (err, isMatch) {

@@ -4,7 +4,7 @@ security:
   - userQuery: []
   - userAuth: []
 tags:
-  - users
+  - Utilizadores
 parameters:
   - name: id
     in: path

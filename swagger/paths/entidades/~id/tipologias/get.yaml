@@ -6,7 +6,7 @@ security:
   - userQuery: []
   - userAuth: []
 tags:
-  - entidades
+  - Entidades
 parameters:
   - name: id
     in: path

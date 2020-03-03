@@ -2,38 +2,6 @@
 var express = require('express'),
     app = express();
 
-var cors = require('cors')
-app.use(cors())
-
-// Logging na consola do admin
-var logger = require('morgan')
-
-//Funcao auxiliar para contar numero de GET e POST
-var apiStats = require('./models/api')
-var Calls = require('./controllers/api/logs')
-
-function getRoute(req){
-    const route = req.route ? req.route.path : '' // check if the handler exist
-    const baseUrl = req.baseUrl ? req.baseUrl : '' // adding the base url if the handler is a child of another handler
- 
-    // return route ? `${baseUrl === '/' ? '' : baseUrl}${route}` : 'unknown route'
-    return route ? `${baseUrl === '/' ? '' : baseUrl}` : 'unknown route'
-}
-
-app.use((req, res, next) => {
-    res.on('finish', async () => {
-        //console.log('_DEBUG_:' + `${req.method} ${getRoute(req)} ${res.statusCode}`) 
-        if(getRoute(req).includes('/api/')){
-            apiStats.addUsage(req.method, getRoute(req));
-        }
-
-        if(res.locals.id && res.locals.idType){
-            Calls.newCall(Calls.getRoute(req), req.method, res.locals.id, res.locals.idType, res.statusCode)
-        }
-    });
-    next();
-});
-
 //body parser for post requests
 var bodyParser = require('body-parser')
 app.use(bodyParser.json({limit: '50mb'}));         // to support JSON-encoded bodies
@@ -43,6 +11,49 @@ app.use(bodyParser.urlencoded({
     extended: true,
     parameterLimit:50000
 }));
+
+//CORS
+var cors = require('cors')
+const corsOpts = {
+    origin: '*',
+    credentials: true,
+    methods: ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Accept', 'Authorization', 'Cache-Control', 'Content-Type', 'DNT', 'If-Modified-Since', 'Keep-Alive', 'Origin', 'User-Agent', 'X-Requested-With', 'Content-Length']
+}
+app.use(cors(corsOpts))
+app.options('*', cors(corsOpts))
+
+// Logging na consola do admin
+var logger = require('morgan')
+
+//Funcao auxiliar para contar numero de GET e POST
+var apiStats = require('./models/api')
+var Calls = require('./controllers/api/logs')
+var dataBases = require('./config/database');
+
+function getRoute(req){
+    const route = req.route ? req.route.path : '' // check if the handler exist
+    var baseUrl = req.baseUrl ? req.baseUrl : '' // adding the base url if the handler is a child of another handler
+ 
+    // return route ? `${baseUrl === '/' ? '' : baseUrl}${route}` : 'unknown route'
+    // remove API version from url
+    baseUrl = baseUrl ? baseUrl.split(dataBases.apiVersion)[1] : baseUrl
+    return route ? `${baseUrl === '/' ? '' : baseUrl}` : 'unknown route'
+}
+
+app.use((req, res, next) => {
+    res.on('finish', async () => {
+        //console.log('_DEBUG_:' + `${req.method} ${getRoute(req)} ${res.statusCode}`) 
+        if(getRoute(req).includes('/' + dataBases.apiVersion + '/')){
+            apiStats.addUsage(req.method, getRoute(req));
+        }
+
+        if(res.locals.id && res.locals.idType){
+            Calls.newCall(Calls.getRoute(req), req.method, res.locals.id, res.locals.idType, res.statusCode)
+        }
+    });
+    next();
+});
 
 //authentication dependencies
 var passport = require('passport');
@@ -59,7 +70,6 @@ app.use(passport.session());
 app.use(logger('dev'))
 
 // Connect mongo and mongoose
-var dataBases = require('./config/database');
 var mongoose = require('mongoose');
 var ontologia = require('./controllers/api/ontologia');
 mongoose.Promise = global.Promise;
@@ -74,7 +84,10 @@ function emit(){
 }
 
 mongoose.connect(dataBases.userDB, {
-    useMongoClient: true,
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
+    useFindAndModify: false,
     poolSize: 100 //max number of connections (default is 5)
 })
     .then(async () => {
@@ -112,10 +125,12 @@ mongoose.connect(dataBases.userDB, {
         process.exit(1)
     })
 
+var mainRouter = express.Router()
+
 //Swagger
 const swaggerUi = require('swagger-ui-express');
 const options = require('./config/swagger').options
-app.use('/docs', swaggerUi.serve, swaggerUi.setup(null, options));
+mainRouter.use('/docs', swaggerUi.serve, swaggerUi.setup(null, options));
 
 // Cors init
 var cors = require('cors')
@@ -133,29 +148,31 @@ app.use(cors({
 const { outputFormat } = require('./routes/outputFormat.js')
 
 //routes and API
-app.use('/api/entidades',require('./routes/api/entidades'), outputFormat);
-app.use('/api/tipologias',require('./routes/api/tipologias'), outputFormat);
-app.use('/api/legislacao',require('./routes/api/leg'), outputFormat);
-app.use('/api/classes',require('./routes/api/classes'), outputFormat);
-app.use('/api/notasAp',require('./routes/api/notasAp'));
-app.use('/api/exemplosNotasAp',require('./routes/api/exemplosNotasAp'));
-app.use('/api/indicePesquisa',require('./routes/api/indicePesquisa'));
-app.use('/api/tabelasSelecao',require('./routes/api/tabsSel'));
-app.use('/api/termosIndice',require('./routes/api/termosIndice'));
-app.use('/api/vocabularios',require('./routes/api/vocabularios'));
-app.use('/api/autosEliminacao',require('./routes/api/autosEliminacao'));
-app.use('/api/pedidos',require('./routes/api/pedidos'));
-app.use('/api/pendentes',require('./routes/api/pendentes'));
-app.use('/api/users',require('./routes/api/users'));
-app.use('/api/chaves',require('./routes/api/chaves'));
-app.use('/api/stats', require('./routes/api/stats'));
-app.use('/api/travessia',require('./routes/api/travessia'));
-app.use('/api/invariantes',require('./routes/api/invariantes'));
-app.use('/api/auth', require('./routes/api/auth'));
-app.use('/api/ontologia', require('./routes/api/ontologia'));
-app.use('/api/reload', require('./routes/api/reload'));
-app.use('/api/logs', require('./routes/api/logs'));
-app.use('/api/indicadores', require('./routes/api/indicadores'));
+mainRouter.use('/entidades',require('./routes/api/entidades'), outputFormat);
+mainRouter.use('/tipologias',require('./routes/api/tipologias'), outputFormat);
+mainRouter.use('/legislacao',require('./routes/api/leg'), outputFormat);
+mainRouter.use('/classes',require('./routes/api/classes'), outputFormat);
+mainRouter.use('/notasAp',require('./routes/api/notasAp'));
+mainRouter.use('/exemplosNotasAp',require('./routes/api/exemplosNotasAp'));
+mainRouter.use('/indicePesquisa',require('./routes/api/indicePesquisa'));
+mainRouter.use('/tabelasSelecao',require('./routes/api/tabsSel'));
+mainRouter.use('/termosIndice',require('./routes/api/termosIndice'));
+mainRouter.use('/vocabularios',require('./routes/api/vocabularios'));
+mainRouter.use('/autosEliminacao',require('./routes/api/autosEliminacao'));
+mainRouter.use('/pedidos',require('./routes/api/pedidos'));
+mainRouter.use('/pendentes',require('./routes/api/pendentes'));
+mainRouter.use('/users',require('./routes/api/users'));
+mainRouter.use('/chaves',require('./routes/api/chaves'));
+mainRouter.use('/stats', require('./routes/api/stats'));
+mainRouter.use('/travessia',require('./routes/api/travessia'));
+mainRouter.use('/invariantes',require('./routes/api/invariantes'));
+mainRouter.use('/auth', require('./routes/api/auth'));
+mainRouter.use('/ontologia', require('./routes/api/ontologia'));
+mainRouter.use('/reload', require('./routes/api/reload'));
+mainRouter.use('/logs', require('./routes/api/logs'));
+mainRouter.use('/indicadores', require('./routes/api/indicadores'));
+
+app.use('/' + dataBases.apiVersion, mainRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -170,7 +187,7 @@ app.use(function (err, req, res, next) {
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-    res.status(err.status || 500).send(`Erro: ${err.message}`);
+    res.status(err.status || 500).send(`${err.message}`);
 });
 
 module.exports = app; 

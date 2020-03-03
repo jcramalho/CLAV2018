@@ -1,22 +1,15 @@
-summary: Devolve a lista dos termos de índice ou verifica se um determinado termo índice existe
-description: Devolve a lista dos termos de índice (para cada termo índice devolve a informação do id, termo, estado, idClasse e tituloClasse) ou verifica se um determinado termo índice existe (true or false)
+summary: Devolve a lista dos termos de índice
+description: Devolve a lista dos termos de índice (para cada termo índice devolve a informação do id, termo, estado, idClasse e tituloClasse)
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []
   - userQuery: []
   - userAuth: []
 tags:
-  - termosIndice
-parameters:
-  - in: query
-    name: existe
-    schema:
-      type: string
-    description: 'nome do termo índice (exemplo: ADSE, receção de cartão da)'
-    required: false
+  - Termos de Indice
 responses:
   200:
-    description: Devolve a lista dos termos de índice ou verifica se um determinado termo índice existe
+    description: Devolve a lista dos termos de índice
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:

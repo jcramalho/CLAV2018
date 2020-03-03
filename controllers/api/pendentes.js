@@ -21,15 +21,15 @@ Pendentes.listar = (filtro) => {
 };
 
 Pendentes.listarTodos = () => {
-    return Pendente.find().sort({data: -1});
+    return Pendente.find().sort({ data: -1 });
 };
 
 // Recupera a lista de trabalhos pendentes de determinado tipo
 
-Pendentes.getByTipo = function(tipo){
+Pendentes.getByTipo = function (tipo) {
     return Pendente
-        .find({tipo: tipo})
-        .sort({data: -1})
+        .find({ tipo: tipo })
+        .sort({ data: -1 })
         .exec()
 }
 
@@ -50,18 +50,15 @@ Pendentes.consultar = (id) => {
  * @param pendente novo a inserir no sistema.
  * @return {Pendente} pendente criado.
  */
-Pendentes.criar = function(pendente){
+Pendentes.criar = async function (pendente) {
     var newPendente = new Pendente(pendente);
 
-    return newPendente.save(function (err) {
-        if (err) {
-            console.log(err);
-            return ('Ocorreu um erro a submeter o pedido! Tente novamente mais tarde');
-        }
-        else{
-            return(newPendente);
-        }
-    });
+    try {
+        return await newPendente.save()
+    } catch (err) {
+        console.log(err)
+        return 'Ocorreu um erro a submeter o pedido! Tente novamente mais tarde'
+    }
 }
 
 
@@ -71,24 +68,27 @@ Pendentes.criar = function(pendente){
  * @param pendente a atualizar no sistema.
  * @return {Pendente} pendente atualizado.
  */
-Pendentes.atualizar = async function(pendente){
-    try{
-        var oldPendente = await Pendente.findOne({_id: pendente._id})
+Pendentes.atualizar = async function (pendente) {
+    try {
+        var oldPendente = await Pendente.findOne({ _id: pendente._id })
         oldPendente.objeto = pendente.objeto
-        oldPendente.numInterv = pendente.numInterv
-        oldPendente.dataAtualizacao = pendente.dataAtualizacao
 
-        return oldPendente.save(function (err, updatedPendente) {
-            if (err) {
-                console.log(err);
-                return err
-            }
-            else{
-                return(updatedPendente);
-            }
-        })
+        if (pendente.numInterv != undefined) {
+            oldPendente.numInterv = pendente.numInterv
+        } else {
+            oldPendente.numInterv = oldPendente.numInterv + 1
+        }
+
+        oldPendente.dataAtualizacao = Date.now()
+
+        try {
+            return await oldPendente.save()
+        } catch (err) {
+            console.log(err)
+            return err
+        }
     }
-    catch(err){
+    catch (err) {
         return err
     }
 }
@@ -99,9 +99,9 @@ Pendentes.atualizar = async function(pendente){
  * @param pendente a apagar no sistema.
  * @return {Pendente} pendente atualizado.
  */
-Pendentes.apagar = async function(pendente){
+Pendentes.apagar = async function (pendente) {
     try {
-        Pendente.findByIdAndRemove({ _id: pendente}, function(err, updatedPendente){
+        Pendente.findByIdAndRemove({ _id: pendente }, function (err, updatedPendente) {
             if (err) {
                 return err;
             } else {

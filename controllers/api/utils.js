@@ -1,5 +1,5 @@
 var axios = require('axios')
-const myhost = require('../../config/database').host
+var dataBases = require('../../config/database')
 var ExtractJWT = require("passport-jwt").ExtractJwt;
 const urlGraphDB = require('../../config/database').onthology
 const prefixes = require('../../config/database').prefixes
@@ -32,7 +32,7 @@ function prepare(req, path, data, config){
   config = config || null;
   data = data || null;
   var authToken = getAuthToken(req);
-  var url = myhost + path;
+  var url = dataBases.host + '/' + dataBases.apiVersion + path;
 
   if (config == null) {
     config = { headers: { Authorization: authToken } };

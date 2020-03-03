@@ -21,7 +21,7 @@ var ApiStats = module.exports = mongoose.model('ApiStats', ApiStatsSchema, 'apis
 
 module.exports.addUsage = function (method, route) {
 
-    ApiStats.findById(route,function(err, stats){
+    ApiStats.findById(route, async function(err, stats){
         if(err || stats==null){
 
             var newStats = new ApiStats({
@@ -38,7 +38,7 @@ module.exports.addUsage = function (method, route) {
             else if(method=='PUT')
                 newStats.nCallsPut=1;
 
-            ApiStats.collection.insert(newStats, function(err) {
+            ApiStats.collection.insertOne(newStats, function(err) {
                 if (err) {
                     throw err;
                 } else {
@@ -54,14 +54,12 @@ module.exports.addUsage = function (method, route) {
             else if(method=='PUT')
                 stats.nCallsPut+=1;
 
-            stats.save(function(err) {
-                if (err) {
-                    throw err;
-                } 
-                else {
-                    console.log("Incrementei " + method +" da rota " + route);
-                }
-            });
+            try{
+                stats = await stats.save()
+                console.log("Incrementei " + method +" da rota " + route)
+            }catch(err){
+                throw err
+            } 
         }
     })
 }

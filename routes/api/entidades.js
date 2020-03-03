@@ -7,12 +7,20 @@ var router = express.Router()
 
 // Lista todas as entidades: id, sigla, designacao, internacional
 router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
+    var validKeys = ["sigla", "designacao", "internacional", "sioe", "estado"]
 	var queryData = url.parse(req.url, true).query
+
+    var ents = queryData.ents ? `?uri IN (${queryData.ents.split(",").map(t => `clav:${t}`).join(",")})` : "True"
+    var filtro = Object.entries(queryData)
+        .filter(([k,v]) => v !== undefined && validKeys.includes(k))
+        .map(([k,v]) => `?${k} = "${v}"`)
+        .concat([ents])
+        .join(" && ")
 
     // api/entidades?processos=com
     if (queryData.processos && queryData.processos == 'com') {
         try{
-            res.locals.dados = await Entidades.listarComPNs()
+            res.locals.dados = await Entidades.listarComPNs(filtro)
 
             if(req.query.info == "completa"){
                 await Entidades.moreInfoList(res.locals.dados)
@@ -27,7 +35,7 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
 	// api/entidades?processos=sem
     else if (queryData.processos && queryData.processos == 'sem') {
         try{
-            res.locals.dados = await Entidades.listarSemPNs()
+            res.locals.dados = await Entidades.listarSemPNs(filtro)
 
             if(req.query.info == "completa"){
                 await Entidades.moreInfoList(res.locals.dados)
@@ -40,7 +48,7 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
         }
 	} else {
         try{
-		    res.locals.dados = await Entidades.listar(req.query)
+		    res.locals.dados = await Entidades.listar(filtro)
 
             if(req.query.info == "completa"){
                 await Entidades.moreInfoList(res.locals.dados)
@@ -52,6 +60,20 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
             res.status(500).send(`Erro na listagem das entidades: ${erro}`)
         }
 	}
+})
+
+// Verifica se a sigla já existe numa entidade
+router.get('/sigla', Auth.isLoggedInKey, (req, res) => {
+    Entidades.existeSigla(req.query.valor)
+        .then(dados => res.jsonp(dados))
+        .catch(err => res.status(500).send(`Erro na verificação da sigla: ${err}`))
+})
+
+// Verifica se a designação já existe numa entidade
+router.get('/designacao', Auth.isLoggedInKey, (req, res) => {
+    Entidades.existeDesignacao(req.query.valor)
+        .then(dados => res.jsonp(dados))
+        .catch(err => res.status(500).send(`Erro na verificação da designação: ${err}`))
 })
 
 // Consulta de uma entidade: sigla, designacao, estado, internacional
@@ -89,24 +111,6 @@ router.get('/:id/intervencao/participante', Auth.isLoggedInKey, (req, res) => {
 	return Entidades.participante(req.params.id)
 		.then((dados) => res.jsonp(dados))
 		.catch((erro) => res.status(500).send(`Erro na query sobre as participações da entidade '${req.params.id}': ${erro}`))
-})
-
-// Verifica a existência da sigla de uma entidade: true == existe, false == não existe
-router.post('/verificarSigla', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), async (req, res) => {
-	try {
-		res.jsonp(await Entidades.existeSigla(req.body.sigla))
-	} catch (err) {
-		res.status(500).send(`Erro na verificação da sigla: ${err}`)
-	}
-})
-
-// Verifica a existência da designação de uma entidade: true == existe, false == não existe
-router.post('/verificarDesignacao', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), async (req, res) => {
-	try {
-		res.jsonp(await Entidades.existeDesignacao(req.body.designacao))
-	} catch (err) {
-		res.status(500).send(`Erro na verificação da designação: ${err}`)
-	}
 })
 
 // Insere uma entidade na BD

@@ -6,7 +6,7 @@ security:
   - userQuery: []
   - userAuth: []
 tags:
-  - tabelasSelecao
+  - Tabelas de Seleção
 parameters:
   - name: id
     in: path

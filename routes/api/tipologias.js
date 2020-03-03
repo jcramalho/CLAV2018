@@ -6,10 +6,11 @@ var router = express.Router()
 
 // Lista todas as tipologias: id, sigla, designacao
 router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
-	const filtro = {
-		estado: req.query.estado ? req.query.estado : 'Ativa',
-		designacao: req.query.designacao
-	}
+    var filtro = [
+        `?estado = "${req.query.estado ? req.query.estado : "Ativa"}"`,
+        req.query.designacao ? `?designacao = "${req.query.designacao}"` : undefined,
+        req.query.tips ? `?uri IN (${req.query.tips.split(",").map(t => `clav:${t}`).join(",")})` : undefined
+    ].filter(v => v !== undefined).join(" && ")
 
     try{
         res.locals.dados = await Tipologias.listar(filtro)
@@ -20,9 +21,23 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
 
         res.locals.tipo = "tipologias"
         next()
-	} catch(erro) {
+    } catch(erro) {
         res.status(500).send(`Erro na listagem das tipologias: ${erro}`)
     }
+})
+
+// Verifica se a sigla já existe numa entidade
+router.get('/sigla', Auth.isLoggedInKey, (req, res) => {
+    Tipologias.existeSigla(req.query.valor)
+        .then(dados => res.jsonp(dados))
+        .catch(err => res.status(500).send(`Erro na verificação da sigla: ${err}`))
+})
+
+// Verifica se a designação já existe numa entidade
+router.get('/designacao', Auth.isLoggedInKey, (req, res) => {
+    Tipologias.existeDesignacao(req.query.valor)
+        .then(dados => res.jsonp(dados))
+        .catch(err => res.status(500).send(`Erro na verificação da designação: ${err}`))
 })
 
 // Consulta de uma tipologia: sigla, designacao, estado
@@ -61,24 +76,6 @@ router.get('/:id/intervencao/participante', Auth.isLoggedInKey, (req, res) => {
 	return Tipologias.participante(req.params.id)
 		.then((dados) => res.jsonp(dados))
 		.catch((erro) => res.status(500).send(`Erro na query sobre as participações da entidade '${req.params.id}': ${erro}`))
-})
-
-// Verifica a existência da sigla de uma tipologia: true == existe, false == não existe
-router.post('/verificarSigla', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), async (req, res) => {
-	try {
-		res.jsonp(await Tipologias.existeSigla(req.body.sigla))
-	} catch (err) {
-		res.status(500).send(`Erro na verificação da sigla: ${err}`)
-	}
-})
-
-// Verifica a existência da designação de uma tipologia: true == existe, false == não existe
-router.post('/verificarDesignacao', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), async (req, res) => {
-	try {
-		res.jsonp(await Tipologias.existeDesignacao(req.body.designacao))
-	} catch (err) {
-		res.status(500).send(`Erro na verificação da designação: ${err}`)
-	}
 })
 
 module.exports = router

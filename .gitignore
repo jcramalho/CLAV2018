@@ -1,6 +1,7 @@
 initUserDB.bat
 node_modules/
-logs/
+/logs/
+/config/logs/
 misc/
 sessions/
 package-lock.json

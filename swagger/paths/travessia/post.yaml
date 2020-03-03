@@ -4,7 +4,7 @@ security:
   - userQuery: []
   - userAuth: []
 tags:
-  - travessia
+  - Travessias
 requestBody:
   description: 'Lista de objetos onde em cada objeto no processo deve ser colocado o código do processo e na travessia uma lista de códigos de processos'
   required: true

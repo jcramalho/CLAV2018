@@ -22,7 +22,7 @@ security:
   - userQuery: []
   - userAuth: []
 tags:
-  - tabelasSelecao
+  - Tabelas de Seleção
 requestBody:
   description: 'FormData com o ficheiro (file), o tipo de TS a criar (tipo_ts) e, caso o tipo de TS seja "TS Organizacional", a sigla da entidade da TS (entidade_ts)'
   required: true

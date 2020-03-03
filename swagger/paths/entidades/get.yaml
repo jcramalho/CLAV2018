@@ -6,46 +6,52 @@ security:
   - userQuery: []
   - userAuth: []
 tags:
-  - entidades
+  - Entidades
 parameters:
+  - in: query
+    name: ents
+    schema:
+        type: string
+    description: "Devolve a informação destas entidades. Exemplo de input: 'ent_AAN,ent_SEF'"
+    required: false
   - in: query
     name: processos
     schema:
       type: string
       enum: [com, sem]
-    description: No caso de ser escolhido \"com\" é listado as entidades com PNs associados. Já no caso de ser escolhido \"sem\" é listado as entidades sem PNs associados. Este parâmetro sobrepõe os seguintes, ou seja, caso este parâmetro seja definido os restantes são ignorados.
+    description: No caso de ser escolhido \"com\" é listado as entidades com PNs associados. Já no caso de ser escolhido \"sem\" é listado as entidades sem PNs associados.
     required: false
   - in: query
     name: sigla
     schema:
       type: string
-    description: 'Permite filtrar as entidades que contém a sigla igual a este valor. Só funciona caso o parâmetro processos não seja definido. (ex: AR)'
+    description: 'Permite filtrar as entidades que contém a sigla igual a este valor. (ex: AR)'
     required: false
   - in: query
     name: designacao
     schema:
       type: string
-    description: 'Permite filtrar as entidades que contém a designacao igual a este valor. Só funciona caso o parâmetro processos não seja definido. (ex: Assembleia da República)'
+    description: 'Permite filtrar as entidades que contém a designacao igual a este valor. (ex: Assembleia da República)'
     required: false
   - in: query
     name: internacional
     schema:
       type: string
       enum: [Sim, Não]
-    description: Permite filtrar as entidades que contém internacional igual a este valor. Só funciona caso o parâmetro processos não seja definido.
+    description: Permite filtrar as entidades que contém internacional igual a este valor.
     required: false
   - in: query
     name: sioe
     schema:
       type: string
-    description: 'Permite filtrar as entidades que contém sioe igual a este valor. Só funciona caso o parâmetro processos não seja definido. (ex: 875780390)'
+    description: 'Permite filtrar as entidades que contém sioe igual a este valor. (ex: 875780390)'
     required: false
   - in: query
     name: estado
     schema:
       type: string
       enum: [Ativa, Inativa, Harmonização]
-    description: Permite filtrar as entidades que contém o estado igual a este valor. Só funciona caso o parâmetro processos não seja definido.
+    description: Permite filtrar as entidades que contém o estado igual a este valor.
     required: false
   - in: query
     name: info

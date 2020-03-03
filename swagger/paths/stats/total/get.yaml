@@ -4,7 +4,7 @@ security:
   - userQuery: []
   - userAuth: []
 tags:
-  - stats
+  - Stats
 responses:
   200:
     description: Devolve o número total de acessos às rotas

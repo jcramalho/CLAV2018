@@ -4,7 +4,7 @@ security:
   - userQuery: []
   - userAuth: []
 tags:
-  - travessia
+  - Travessias
 responses:
   200:
     description: Obtém as travessias

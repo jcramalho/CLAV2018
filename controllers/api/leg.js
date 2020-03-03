@@ -267,9 +267,9 @@ Leg.consultar = id => {
  * @param {Legislacao} legislacao
  * @return {Promise<boolean | Error>}
  */
-Leg.existe = (legislacao) => {
+Leg.existe = (numero) => {
     const query = `ASK {
-            ?e clav:diplomaNumero '${legislacao.numero}'
+            ?e clav:diplomaNumero '${numero}'
         }`;
 
     return execQuery("query", query)

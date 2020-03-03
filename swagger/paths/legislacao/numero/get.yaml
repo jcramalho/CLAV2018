@@ -1,0 +1,25 @@
+summary: Verifica a existência do número de um documento legislativo
+description: Verifica a existência do número de um documento legislativo
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Legislação
+parameters:
+  - in: query
+    name: valor
+    schema:
+      type: string
+    description: 'Número do documento legislativo a verificar se já existe (exemplo: 14/2018)'
+    required: true
+responses:
+  200:
+    description: Verifica se existe o número de um documento legislativo
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  500:
+    description: Erro

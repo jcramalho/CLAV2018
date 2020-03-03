@@ -6,7 +6,7 @@ security:
   - userQuery: []
   - userAuth: []
 tags:
-  - ontologia
+  - Ontologia
 parameters:
   - in: query
     name: inferencia

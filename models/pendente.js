@@ -32,13 +32,14 @@ const PendenteSchema = new mongoose.Schema({
       "Tipologia",
       "Legislação",
       "Termo de Indice",
-      "Auto de Eliminação"
+      "Auto de Eliminação",
+      "RADA"
     ],
     required: true
   },
   acao: {
     type: String,
-    enum: ["Criação", "Alteração", "Remoção", "Extinção"],
+    enum: ["Criação", "Alteração", "Remoção"],
     required: true
   }
 });

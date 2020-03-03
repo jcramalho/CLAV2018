@@ -34,9 +34,11 @@ Classes.listarPNsComuns = () => {
 			?id
             ?codigo 
             ?titulo 
+            ?status
             ?transversal
         Where {
-            ?id clav:processoTipoVC clav:vc_processoTipo_pc  .
+            ?id clav:processoTipoVC clav:vc_processoTipo_pc .
+            ?id clav:classeStatus ?status .
             ?id clav:codigo ?codigo .
             ?id clav:titulo ?titulo .
             ?id clav:processoTransversal ?transversal.
@@ -54,9 +56,11 @@ Classes.listarPNsEspecificos = async (entidades, tipologias) => {
             ?id
             ?codigo
             ?titulo
+            ?status
             ?transversal
         Where {
             ?id clav:processoTipoVC clav:vc_processoTipo_pe .
+            ?id clav:classeStatus ?status .
         `
     if (entidades) {
         query += `
@@ -88,7 +92,7 @@ Classes.listarPNsEspecificos = async (entidades, tipologias) => {
         ?id clav:titulo ?titulo .
         ?id clav:processoTransversal ?transversal.
         }
-        Group by ?codigo ?titulo ?id ?transversal
+        Group by ?codigo ?titulo ?id ?status ?transversal
         Order by ?codigo
     `
 
@@ -159,6 +163,7 @@ Classes.retrieve = async id => {
         };
 
         let base = await Classes.consultar(id)
+        classe.id = base[0].id
         classe.nivel = base[0].codigo.split('.').length
         classe.codigo = base[0].codigo
         classe.pai.codigo = base[0].codigoPai
@@ -222,6 +227,8 @@ Classes.consultar = async id => {
                     clav:codigo ?codigo;
                     clav:classeStatus ?status;
                     clav:descricao ?desc.
+
+                ?id clav:codigo ?codigo .
 
                 OPTIONAL {
                     clav:${id} clav:temPai ?pai.

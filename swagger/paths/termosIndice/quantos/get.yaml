@@ -6,7 +6,7 @@ security:
   - userQuery: []
   - userAuth: []
 tags:
-  - termosIndice
+  - Termos de Indice
 responses:
   200:
     description: Devolve o número de termos

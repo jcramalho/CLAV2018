@@ -6,7 +6,7 @@ security:
   - userQuery: []
   - userAuth: []
 tags:
-  - autosEliminacao
+  - Autos de Eliminação
 responses:
   200:
     description: Devolve a lista de todos os autos de eliminação

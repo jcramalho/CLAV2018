@@ -49,7 +49,7 @@ const PedidoSchema = new mongoose.Schema({
     },
     acao: {
       type: String,
-      enum: ["Criação", "Alteração", "Remoção", "Importação", "Extinção"],
+      enum: ["Criação", "Alteração", "Remoção", "Importação"],
       required: true
     }
   },
@@ -57,7 +57,7 @@ const PedidoSchema = new mongoose.Schema({
     {
       estado: {
         type: String,
-        enum: ["Submetido", "Distribuído", "Apreciado", "Validado"],
+        enum: ["Submetido", "Distribuído", "Apreciado", "Validado", "Devolvido"],
         required: true
       },
       responsavel: {
@@ -81,7 +81,7 @@ const PedidoSchema = new mongoose.Schema({
 
 PedidoSchema.pre("validate", async function(next) {
   if (!this.codigo) {
-    let count = await mongoose.model("Pedido").count();
+    let count = await mongoose.model("Pedido").estimatedDocumentCount();
     this.codigo = `${new Date().getFullYear()}-${count}`;
   }
   next();

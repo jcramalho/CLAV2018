@@ -12,10 +12,9 @@ var TermosIndice = require('./api/termosIndice.js')
 
 var classTree = []
 var classList = []
-var level1Classes = []
-var level2Classes = []
-var level3Classes = []
-var level4Classes = []
+//level 1, 2, 3, 4
+var levelClasses = [[],[],[],[]]
+var classTreeInfo = []
 
 var notasAplicacao = []
 var exemplosNotasAplicacao = []
@@ -30,11 +29,17 @@ exports.reset = async () => {
     try {
         console.debug("A carregar as classes da BD para a cache...")
         classTree = await loadClasses();
-        classList = level1Classes.concat(level2Classes, level3Classes, level4Classes)
+        classList = [].concat.apply([], levelClasses)
         console.debug("Terminei de carregar as classes.")
+
+        console.debug("A carregar a informação completa das classes para a cache a partir do ficheiro...")
+        classTreeInfo = JSON.parse(fs.readFileSync('./public/classes/classesInfo.json'))
+        console.debug("Terminei de carregar a informação completa das classes.")
+
         console.debug("A carregar a legislação da BD para a cache...")
         legislacao = await loadLegs();
         console.debug("Terminei de carregar a legislação.")
+
         console.debug("A criar o índice de pesquisa...")
         indicePesquisa = await criaIndicePesquisa()
         console.debug("Índice de pesquisa criado com " + indicePesquisa.length + " entradas.")
@@ -46,10 +51,7 @@ exports.reset = async () => {
 exports.reload = async () => { 
     try {
         console.debug("A carregar as classes da BD para a cache...")
-        level1Classes = []
-        level2Classes = []
-        level3Classes = []
-        level4Classes = []
+        levelClasses = [[],[],[],[]]
 
         notasAplicacao = []
         exemplosNotasAplicacao = []
@@ -58,8 +60,10 @@ exports.reload = async () => {
         legislacao = []
 
         classTree = await loadClasses();
-        classList = level1Classes.concat(level2Classes, level3Classes, level4Classes)
+        classList = [].concat.apply([], levelClasses)
         console.debug("Informação base das classes carregada...")
+
+
 
         console.debug("A carregar a legislação da BD para a cache...")
         legislacao = await loadLegs();
@@ -70,10 +74,11 @@ exports.reload = async () => {
         console.debug("Índice de pesquisa criado com " + indicePesquisa.length + " entradas.")
 
         //Carrega a info completa de todas as classes de forma assincrona
-        console.debug("A obter a informação completa das classes e a guardar a mesma num ficheiro...")
-        var data = await loadClassesInfo()
-        fs.writeFileSync('./public/classes/classesInfo.json', JSON.stringify(data, null, 4))
-        console.debug("Terminei de carregar as classes.")
+        console.debug("A obter a informação completa das classes...")
+        classTreeInfo = await loadClassesInfo()
+        console.debug("a guardar a informação num ficheiro...")
+        fs.writeFileSync('./public/classes/classesInfo.json', JSON.stringify(classTreeInfo, null, 4))
+        console.debug("Terminei de carregar a informação completa das classes.")
     } catch(err) {
         throw err
     }
@@ -81,83 +86,58 @@ exports.reload = async () => {
 
 exports.getAllClasses = async () => { return classTree }
 exports.getClassesFlatList = async () => { return classList }
-exports.getLevel1Classes = async () => { return level1Classes }
-exports.getLevel2Classes = async () => { return level2Classes }
-exports.getLevel3Classes = async () => { return level3Classes }
-exports.getLevel4Classes = async () => { return level4Classes }
+exports.getLevelClasses = async (nivel) => {
+    var ret = []
+
+    if(nivel >= 1 && nivel <= 4){
+        ret = levelClasses[nivel-1] 
+    }
+
+    return ret
+}
 
 exports.getAllClassesInfo = async () => {
-    return JSON.parse(fs.readFileSync('./public/classes/classesInfo.json'))
+    return classTreeInfo
 }
 
 exports.getClassesInfoFlatList = async () => { 
-    var classTreeInfo = JSON.parse(fs.readFileSync('./public/classes/classesInfo.json'))
+    var ret = JSON.parse(JSON.stringify(classTreeInfo))
     
-    var len = classTreeInfo.length
+    var len = ret.length
     for(var i = 0; i < len; i++){
-        classTreeInfo[i].filhos.forEach(c => {
-            classTreeInfo.push(c)
+        ret[i].filhos.forEach(c => {
+            ret.push(c)
             len++
         })
 
-        delete classTreeInfo[i].filhos
-    }
-
-    return classTreeInfo
-}
-
-exports.getLevel1ClassesInfo = async () => {
-    var classTreeInfo = JSON.parse(fs.readFileSync('./public/classes/classesInfo.json'))
-
-    for(var i = 0; i < classTreeInfo.length; i++){
-        delete classTreeInfo[i].filhos
-    }
-
-    return classTreeInfo
-}
-
-exports.getLevel2ClassesInfo = async () => {
-    var classTreeInfo = JSON.parse(fs.readFileSync('./public/classes/classesInfo.json'))
-    var ret = []
-
-    for(var i = 0; i < classTreeInfo.length; i++){
-        for(var j = 0; j < classTreeInfo[i].filhos.length; j++){
-            delete classTreeInfo[i].filhos[j].filhos
-            ret.push(classTreeInfo[i].filhos[j])
-        }
+        delete ret[i].filhos
     }
 
     return ret
 }
 
-exports.getLevel3ClassesInfo = async () => {
-    var classTreeInfo = JSON.parse(fs.readFileSync('./public/classes/classesInfo.json'))
+exports.getLevelClassesInfo = (nivel) => {
     var ret = []
 
-    for(var i = 0; i < classTreeInfo.length; i++){
-        for(var j = 0; j < classTreeInfo[i].filhos.length; j++){
-            for(var k = 0; k < classTreeInfo[i].filhos[j].filhos.length; k++){
-                delete classTreeInfo[i].filhos[j].filhos[k].filhos
-                ret.push(classTreeInfo[i].filhos[j].filhos[k])
-            }
-        }
+    if(nivel >= 1 && nivel <= 4){
+        ret = getLevelClassesInfoRec(nivel-1, classTreeInfo)
     }
 
     return ret
 }
 
-exports.getLevel4ClassesInfo = async () => {
-    var classTreeInfo = JSON.parse(fs.readFileSync('./public/classes/classesInfo.json'))
+function getLevelClassesInfoRec(nivel, classes) {
     var ret = []
 
-    for(var i = 0; i < classTreeInfo.length; i++){
-        for(var j = 0; j < classTreeInfo[i].filhos.length; j++){
-            for(var k = 0; k < classTreeInfo[i].filhos[j].filhos.length; k++){
-                for(var l = 0; l < classTreeInfo[i].filhos[j].filhos[k].filhos.length; l++){
-                    delete classTreeInfo[i].filhos[j].filhos[k].filhos[l].filhos
-                    ret.push(classTreeInfo[i].filhos[j].filhos[k].filhos[l])
-                }
-            }
+    if(nivel == 0){
+        for(var i = 0; i < classes.length; i++){
+            var classe = JSON.parse(JSON.stringify(classes[i]))
+            delete classe.filhos
+            ret.push(classe)
+        }
+    }else{
+        for(var i = 0; i < classes.length; i++){
+            ret = ret.concat(getLevelClassesInfoRec(nivel-1, classes[i].filhos))
         }
     }
 
@@ -166,41 +146,39 @@ exports.getLevel4ClassesInfo = async () => {
 
 //Devolve a informação das classes da subárvore com raiz na classe com o id 'id'
 exports.subarvore = async id => {
-    var classTreeInfo = JSON.parse(fs.readFileSync('./public/classes/classesInfo.json'))
+    var ret = JSON.parse(JSON.stringify(classTreeInfo))
     var finded = null;
 
     var codigo = id.split('c')[1]
     codigos = codigo.split('.')
     var nivel = codigos.length
-    var len
     var found
 
     for(var i = 0; i < nivel; i++){
-        len = classTreeInfo.length
         found = false
         testCodigo = codigos.slice(0, i + 1).join('.') 
 
-        for(var j = 0; j < len && !found; j++){
-            if(classTreeInfo[j].codigo == testCodigo){
+        for(var j = 0; j < ret.length && !found; j++){
+            if(ret[j].codigo == testCodigo){
                 if(nivel == i + 1){
-                    classTreeInfo = classTreeInfo[j]
+                    ret = ret[j]
                 }else{
-                    classTreeInfo = classTreeInfo[j].filhos
+                    ret = ret[j].filhos
                 }
                 found = true
             }
         }
 
         if(!found){
-            classTreeInfo = []
+            ret = []
         }
     }
 
-    return classTreeInfo
+    return ret
 }
 
+//Devolve o esqueleto que serve de formulário para a criação de uma TS
 exports.getEsqueleto = () => {
-    var classTreeInfo = JSON.parse(fs.readFileSync('./public/classes/classesInfo.json'))
     var ret = []
 
     classTreeInfo.forEach(c1 => {
@@ -250,17 +228,13 @@ exports.getLegislacao = (id) => {
 exports.verificaCodigo = async (cod) => {
     var nivel = cod.split('.').length
     var r = false
-    switch(nivel){
-        case 1: r = await level1Classes.filter(c => c.codigo == cod).length != 0
-                break
-        case 2: r = await level2Classes.filter(c => c.codigo == cod).length != 0
-                break
-        case 3: r = await level3Classes.filter(c => c.codigo == cod).length != 0
-                break
-        case 4: r = await level4Classes.filter(c => c.codigo == cod).length != 0
-                break
-        default: console.log('Classe de nível inexistente: ' + cod)
+
+    if(nivel >= 1 && nivel <= 4){
+        r = await levelClasses[nivel-1].filter(c => c.codigo == cod).length != 0
+    }else{
+        console.log('Classe de nível inexistente: ' + cod)
     }
+
     return r
 }
 
@@ -312,7 +286,8 @@ exports.getProcessosEspecificos = async (entidades, tipologias) => {
     return PE;
 }
 
-function filterEntsTips(classe, ent_tip){
+//devolve se uma classe é um processo especifico e se tem como dona ou participante uma das entidades/tipologias selecionadas
+function filterEspEntsTips(classe, ent_tip){
     var ret = classe.tipoProc == "Processo Específico"
 
     if(ret && ent_tip.length > 0){
@@ -332,9 +307,58 @@ exports.getProcessosEspecificosInfo = async (entidades, tipologias) => {
     var classListInfo = await this.getClassesInfoFlatList()
 
     let ent_tip = entidades.concat(tipologias)
-    let PE = classListInfo.filter(c => filterEntsTips(c, ent_tip))
+    let PE = classListInfo.filter(c => filterEspEntsTips(c, ent_tip))
 
     return PE;
+}
+
+//devolve se uma classe tem como dona ou participante uma das entidades/tipologias selecionadas
+function filterEntsTips(classe, ent_tip){
+    var donos = classe.donos.filter(d => ent_tip.includes(d.idDono))
+    var parts = classe.participantes.filter(p => ent_tip.includes(p.idParticipante)) 
+    return donos.length > 0 || parts.length > 0
+}
+
+//Função auxiliar recursiva para getProcEntsTips
+function getProcEntsTipsRec(classes, ent_tip, allInfo){
+    var ret = []
+
+    for(var i = 0; i < classes.length; i++){
+        var filhos = getProcEntsTipsRec(classes[i].filhos, ent_tip, allInfo)
+        
+        if(filterEntsTips(classes[i], ent_tip) || (filhos && filhos.length > 0)){
+            var classe
+            if(allInfo){
+                classe = JSON.parse(JSON.stringify(classes[i]))
+                classe.filhos = filhos
+            }else{
+                classe = {
+                    id: classes[i].id,
+                    codigo: classes[i].codigo,
+                    titulo: classes[i].titulo,
+                    status: classes[i].status,
+                    filhos: filhos
+                }
+            }
+            ret.push(classe)
+        }
+    }
+
+    return ret
+}
+
+//Devolve a lista dos processos das entidades (mantendo os niveis a qual pertence) em causa e das tipologias a que este pertence
+exports.getProcEntsTips = (entidades, tipologias, allInfo) => {
+    entidades = entidades || []
+    tipologias = tipologias || []
+    let ent_tip = entidades.concat(tipologias)
+    var ret = []
+
+    if(ent_tip.length > 0){
+        ret = getProcEntsTipsRec(classTreeInfo, ent_tip, allInfo)
+    }
+
+    return ret;
 }
 
 async function criaIndicePesquisa(){
@@ -401,13 +425,13 @@ async function loadLegs() {
 async function loadClasses() {
         try {
             let classes = await Classes.listar(null);
-            level1Classes = JSON.parse(JSON.stringify(classes))
+            levelClasses[0] = JSON.parse(JSON.stringify(classes))
             // Carregamento da informação das classes de nível 1
             for(var i = 0; i < classes.length; i++){
                 classes[i].drop = false
                 let cid = classes[i].id.split('#')[1]
                 let desc = await Classes.descendencia(cid)
-                level2Classes = level2Classes.concat(JSON.parse(JSON.stringify(desc)))
+                levelClasses[1] = levelClasses[1].concat(JSON.parse(JSON.stringify(desc)))
 
                 let na = await Classes.notasAp(cid)
                 notasAplicacao = notasAplicacao.concat(JSON.parse(JSON.stringify(na.map(n => n.nota))))
@@ -419,7 +443,7 @@ async function loadClasses() {
                     let cid2 = desc[j].id.split('#')[1]
                     desc[j].drop = false
                     let desc2 = await Classes.descendencia(cid2)
-                    level3Classes = level3Classes.concat(JSON.parse(JSON.stringify(desc2)))
+                    levelClasses[2] = levelClasses[2].concat(JSON.parse(JSON.stringify(desc2)))
 
                     let na = await Classes.notasAp(cid2)
                     notasAplicacao = notasAplicacao.concat(JSON.parse(JSON.stringify(na.map(n => n.nota))))
@@ -431,7 +455,7 @@ async function loadClasses() {
                         desc2[k].drop = false
                         let cid3 = desc2[k].id.split('#')[1]
                         let desc3 = await Classes.descendencia(cid3)
-                        level4Classes = level4Classes.concat(JSON.parse(JSON.stringify(desc3)))
+                        levelClasses[3] = levelClasses[3].concat(JSON.parse(JSON.stringify(desc3)))
 
                         let na = await Classes.notasAp(cid3)
                         notasAplicacao = notasAplicacao.concat(JSON.parse(JSON.stringify(na.map(n => n.nota))))

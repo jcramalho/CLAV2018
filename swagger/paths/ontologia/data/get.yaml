@@ -6,7 +6,7 @@ security:
   - userQuery: []
   - userAuth: []
 tags:
-  - ontologia
+  - Ontologia
 responses:
   200:
     description: Data da ontologia

@@ -25,74 +25,44 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
             next()
         }
         // Devolve a lista dos processos especificos
-        else if(req.query.tipo == "especifico"){
-            if( req.query.ents ){
+        else if(req.query.tipo == "especifico" || req.query.ents || req.query.tips){
+            if(req.query.ents){
                 var ents = req.query.ents.split(',');
             }
-            if( req.query.tips ) {
+            if(req.query.tips){
                 var tips = req.query.tips.split(',');
             }
 
-            if(req.query.info == "completa"){
-                res.locals.dados = await State.getProcessosEspecificosInfo(ents, tips)
+            var allInfo = req.query.info == "completa"
+            if(req.query.tipo == "especifico"){
+                if(allInfo){
+                    res.locals.dados = await State.getProcessosEspecificosInfo(ents, tips)
+                }else{
+                    res.locals.dados = await State.getProcessosEspecificos(ents, tips)
+                }
             }else{
-                res.locals.dados = await State.getProcessosEspecificos(ents, tips)
+                res.locals.dados = State.getProcEntsTips(ents, tips, allInfo)
             }
+
             res.locals.tipo = "classes"
             next()
-        }
-        else if(req.query.nivel){
+        } else if(req.query.nivel){
             switch(req.query.nivel){
-                case '1': try {
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                    try {
                         if(req.query.info == "completa"){
-                            res.locals.dados = await State.getLevel1ClassesInfo()
+                            res.locals.dados = await State.getLevelClassesInfo(req.query.nivel)
                         }else{
-                            res.locals.dados = await State.getLevel1Classes()
-                        }
-                        res.locals.tipo = "classes"
-                        next()
-                        break  
-                    } catch(err) {
-                        res.status(500).send(`Erro na listagem geral das classes de nível 1: ${err}`)
-                        break
-                    }
-                case '2': try {
-                        if(req.query.info == "completa"){
-                            res.locals.dados = await State.getLevel2ClassesInfo()
-                        }else{
-                            res.locals.dados = await State.getLevel2Classes()
+                            res.locals.dados = await State.getLevelClasses(req.query.nivel)
                         }
                         res.locals.tipo = "classes"
                         next()
                         break
                     } catch(err) {
-                        res.status(500).send(`Erro na listagem geral das classes de nível 2: ${err}`)
-                        break
-                    }  
-                case '3': try {
-                        if(req.query.info == "completa"){
-                            res.locals.dados = await State.getLevel3ClassesInfo()
-                        }else{
-                            res.locals.dados = await State.getLevel3Classes()
-                        }
-                        res.locals.tipo = "classes"
-                        next()
-                        break 
-                    } catch(err) {
-                        res.status(500).send(`Erro na listagem geral das classes de nível 3: ${err}`)
-                        break
-                    }
-                case '4': try {
-                        if(req.query.info == "completa"){
-                            res.locals.dados = await State.getLevel4ClassesInfo()
-                        }else{
-                            res.locals.dados = await State.getLevel4Classes()
-                        }
-                        res.locals.tipo = "classes"
-                        next()
-                        break 
-                    } catch(err) {
-                        res.status(500).send(`Erro na listagem geral das classes de nível 4: ${err}`)
+                        res.status(500).send(`Erro na listagem geral das classes de nível ${req.query.nivel}: ${err}`)
                         break
                     }
                 default:
@@ -132,6 +102,20 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
     }
 })
 
+// Verifica se um determinado título de classe já existe
+router.get('/titulo', Auth.isLoggedInKey, function (req, res) {
+    State.verificaTitulo(req.query.valor)
+        .then(data => res.jsonp(data))
+        .catch(err => res.status(500).send(`Erro na verificação do título: ${err}`))
+})
+
+// Verifica se um determinado código de classe já existe
+router.get('/codigo', Auth.isLoggedInKey, function (req, res) {
+    State.verificaCodigo(req.query.valor)
+        .then(data => res.jsonp(data))
+        .catch(err => res.status(500).send(`Erro na verificação de um código: ${err}`))
+})
+
 // Devolve a informação de uma classe
 router.get('/:id', Auth.isLoggedInKey, async function (req, res, next) {
     try {
@@ -146,15 +130,6 @@ router.get('/:id', Auth.isLoggedInKey, async function (req, res, next) {
         }
     } catch(err) {
         res.status(500).send(`Erro na recuperação da classe ` + req.params.id + `: ${err}`)
-    }
-})
-
-// Verifica se um determinado código de classe já existe
-router.get('/verificar/:codigo', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), async (req, res) => {
-    try {
-        res.jsonp(await State.verificaCodigo(req.params.codigo)) 
-    } catch(err) {
-        res.status(500).send(`Erro na verificação de um código: ${err}`)
     }
 })
 
@@ -254,42 +229,6 @@ router.get('/:id/df', Auth.isLoggedInKey, (req, res) => {
     Classes.df(req.params.id)
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na consulta do DF associado à classe ${req.params.id}: ${erro}`))
-})
-
-// Verifica se um determinado título de classe já existe
-router.post('/verificarTitulo', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), async (req, res) => {
-    try {
-        res.jsonp(await State.verificaTitulo(req.body.titulo))
-    } catch(err) {
-        res.status(500).send(`Erro na verificação de um título: ${err}`)
-    }
-})
-
-// Verifica se uma determinada notaAplicação já existe
-router.post('/verificarNA', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), async (req, res) => {
-    try {
-        res.jsonp(await State.verificaNA(req.body.na))
-    } catch(err) {
-        res.status(500).send(`Erro na verificação de uma nota de aplicação: ${err}`)
-    }
-})
-
-// Verifica se um determinado exemplo de nota de aplicação já existe
-router.post('/verificarExemploNA', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), async (req, res) => {
-    try {
-        res.jsonp(await State.verificaExemploNA(req.body.exemplo))
-    } catch(err) {
-        res.status(500).send(`Erro na verificação de um exemplo de nota de aplicação: ${err}`)
-    }
-})
-
-// Verifica se um determinado termo de índice já existe
-router.post('/verificarTI', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), async (req, res) => {
-    try {
-        res.jsonp(await State.verificaTI(req.body.ti))
-    } catch(err) {
-        res.status(500).send(`Erro na verificação de um termo de índice: ${err}`)
-    }
 })
 
 module.exports = router;

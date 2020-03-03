@@ -14,9 +14,10 @@ var mongoose = require('mongoose');
 router.get('/', Auth.isLoggedInUser, Auth.checkLevel(5), (req, res) => {
     Users.listar(req,function(err, result){
         if(err){
-            return res.status(500).send(`Erro: ${err}`);
+            //res.status(500).send(`Erro: ${err}`);
+            res.status(500).send("Não foi possível obter os utilizadores!");
         }else{
-            return res.json(result);
+            res.json(result);
         }
     });
 });
@@ -27,17 +28,20 @@ router.get('/:id/token', Auth.isLoggedInUser, async function(req,res){
             if(decoded.id == req.user.id || req.user.level == 7){
                 await Users.listarPorId(decoded.id, function(err, result){
                     if(err){
-                        res.status(500).send(err);
+                        //res.status(500).send(err);
+                        res.status(500).send("Não foi possível obter o utilizador!");
                     }else{
-                        delete result._doc.local;
+                        result._doc.local = result._doc.local.password ? true : false
                         res.send(result);
                     }
                 });
             }else{
-                res.status(403).send("Não tem permissões para aceder à informação de outro utilizador!")
+                //Não tem permissões para aceder à informação de outro utilizador
+                res.status(403).send("Não tem permissões suficientes!")
             }
         }else{
-            res.status(403).send(err);
+            //res.status(403).send(err);
+            res.status(500).send("Não foi possível obter o utilizador!");
         }
     });
 });
@@ -62,16 +66,22 @@ router.post('/registar', Auth.isLoggedInUser, Auth.checkLevel(5), function (req,
     });
     
     Users.getUserByEmail(req.body.email, async function (err, user) {
-        if (err) 
-            return res.status(500).send(`Erro: ${err}`);
+        if (err) {
+            //return res.status(500).send(`Erro: ${err}`);
+            return res.status(500).send('Não foi possível registar o utilizador! Verifique se os valores estão corretos ou se falta algum valor.');
+        }
+
         if (!user) {
             await Users.createUser(newUser, function (err, user) {
-                if (err) return res.status(500).send(`Erro: ${err}`);
+                if (err) {
+                    //return res.status(500).send(`Erro: ${err}`);
+                    return res.status(500).send('Não foi possível registar o utilizador! Verifique se os valores estão corretos ou se falta algum valor.');
+                }
             });
             res.send('Utilizador registado com sucesso!');
-        }
-        else {
-            res.status(500).send('Email já em uso!');
+        } else {
+            //Email já em uso
+            res.status(500).send('Não foi possível registar o utilizador! Verifique se os valores estão corretos ou se falta algum valor.');
         }
     });
 });
@@ -89,7 +99,8 @@ router.post('/registarParaEntidade', Auth.isLoggedInUser, Auth.checkLevel(5), fu
 router.post("/login", (req, res, next) => {
     passport.authenticate('login', (err, user, info) => {
         if (err)
-            res.status(500).send(err)
+            //res.status(500).send(err)
+            res.status(500).send("Não foi possível proceder a autenticação!")
         if (!user)
             res.status(401).send('Credenciais inválidas')
         else{
@@ -109,19 +120,25 @@ router.post("/login", (req, res, next) => {
 router.post('/recuperar', function (req, res) {
     Users.getUserByEmail(req.body.email, function (err, user) {
         if (err) 
-            return res.status(500).send(`Erro: ${err}`);
+            //return res.status(500).send(`Erro: ${err}`);
+            return res.status(500).send("Não foi possível recuperar a conta!");
         if (!user)
-            res.status(500).send('Não existe nenhum utilizador registado com esse email!');
+            //Não existe nenhum utilizador registado com esse email
+            //Por forma a não divulgar que emails estão já usados, será devolvido que foi enviado um email com sucesso
+            res.send('Email enviado com sucesso!');
         else{
             Users.getUserById(user._id, function(err, user){
                 if(err) 
-                    return res.status(500).send(`Erro: ${err}`);
+                    //return res.status(500).send(`Erro: ${err}`);
+                    return res.status(500).send("Não foi possível recuperar a conta!");
                 if(user.local.password != undefined){
                     var token = Auth.generateTokenUserRecuperar(user);
                     Mailer.sendEmailRecuperacao(req.body.email, req.body.url.split('/recuperacao')[0]+'/alteracaoPasswordRecuperacao?jwt='+token);
                     res.send('Email enviado com sucesso!')
                 }else{
-                    res.status(500).send('Este utilizador foi registado na plataforma CLAV através do Cartão de Cidadão, não existindo uma password para o mesmo!')
+                    //Este utilizador foi registado na plataforma CLAV através do Cartão de Cidadão, não existindo uma password para o mesmo
+                    //Por forma a não divulgar que emails estão já usados, será devolvido que foi enviado um email com sucesso
+                    res.send('Email enviado com sucesso!');
                 }
             })
         }
@@ -132,7 +149,8 @@ router.put('/:id/desativar', Auth.isLoggedInUser, Auth.checkLevel(5), async func
     if(req.user.id != req.params.id){
         Users.desativar(req.params.id, function(err, user){
             if(err){
-                return res.status(500).send(`Erro: ${err}`);
+                //res.status(500).send(`Erro: ${err}`);
+                res.status(500).send("Não foi possível desativar o utilizador!");
             }else{
                 res.send('Utilizador desativado com sucesso!');
             }
@@ -146,7 +164,8 @@ router.delete('/:id', Auth.isLoggedInUser, Auth.checkLevel(7), async function(re
     if(req.user.id != req.params.id){
         Users.eliminar(req.params.id, function(err, user){
             if(err){
-                return res.status(500).send(`Erro: ${err}`);
+                //res.status(500).send(`Erro: ${err}`);
+                res.status(500).send("Não foi possível eliminar o utilizador!");
             }else{
                 res.send('Utilizador eliminado com sucesso!');
             }
@@ -158,16 +177,86 @@ router.delete('/:id', Auth.isLoggedInUser, Auth.checkLevel(7), async function(re
 
 //Funcoes de alteracao de utilizador
 router.put('/:id/password', Auth.isLoggedInUser, function (req, res) {
-    if(req.params.id == req.user.id || req.user.level >= 6){
-        Users.atualizarPassword(req.params.id, req.body.password, function (err, cb) {
-            if (err) 
-                return res.status(500).send(`Erro: ${err}`);
-            else {
-                res.send('Password atualizada com sucesso!')
-            }
-        });
+    if(req.user.level >= 6){
+        //Se enviou a password atual e é a sua conta
+        if(req.body.atualPassword && req.body.novaPassword && req.params.id == req.user.id){
+            Users.getUserById(req.params.id, function(err, user) {
+                if(err) {
+                    //return res.status(500).send(`Erro: ${err}`);
+                    return res.status(500).send("Não foi possível atualizar a password do utilizador!");
+                }
+
+                if(user.local.password != undefined){
+                    Users.atualizarPasswordComVerificacao(req.params.id, req.body.atualPassword, req.body.novaPassword, function (err, cb) {
+                        if (err) {
+                            //res.status(500).send(`Erro: ${err}`);
+                            res.status(500).send("Não foi possível atualizar a password do utilizador!");
+                        } else res.send('Password atualizada com sucesso!')
+                    });
+                }else{
+                    Users.atualizarPassword(req.params.id, req.body.novaPassword, function (err, cb) {
+                        if (err) {
+                            //res.status(500).send(`Erro: ${err}`);
+                            res.status(500).send("Não foi possível atualizar a password do utilizador!");
+                        } else res.send('Password atualizada com sucesso!')
+                    });
+                }
+            })
+        //se não enviou a password atual ou não é a sua conta
+        }else if(req.body.novaPassword){
+            Users.atualizarPassword(req.params.id, req.body.novaPassword, function (err, cb) {
+                if (err) {
+                    //res.status(500).send(`Erro: ${err}`);
+                    res.status(500).send("Não foi possível atualizar a password do utilizador!");
+                } else res.send('Password atualizada com sucesso!')
+            });
+        }else{
+            res.status(500).send("Faltam campos para puder atualizar a password: atualPassword e/ou novaPassword!")
+        }
+    }else if(req.params.id == req.user.id){
+        //Utilizador a recuperar a conta
+        if(req.user.level == 0 && req.body.novaPassword){
+            Users.atualizarPassword(req.params.id, req.body.novaPassword, function (err, cb) {
+                if (err) {
+                    //res.status(500).send(`Erro: ${err}`);
+                    res.status(500).send("Não foi possível atualizar a password do utilizador!");
+                } else res.send('Password atualizada com sucesso!')
+            });
+        } else {
+            Users.getUserById(req.params.id, function(err, user) {
+                if(err) {
+                    //return res.status(500).send(`Erro: ${err}`);
+                    return res.status(500).send("Não foi possível atualizar a password do utilizador!");
+                }
+
+                if(user.local.password != undefined){
+                    if(req.body.atualPassword && req.body.novaPassword){
+                        Users.atualizarPasswordComVerificacao(req.params.id, req.body.atualPassword, req.body.novaPassword, function (err, cb) {
+                            if (err) {
+                                //res.status(500).send(`Erro: ${err}`);
+                                res.status(500).send("Não foi possível atualizar a password do utilizador!");
+                            } else res.send('Password atualizada com sucesso!')
+                        });
+                    }else{
+                        res.status(500).send("Faltam campos para puder atualizar a password: atualPassword e/ou novaPassword!")
+                    }
+                }else{
+                    if (req.body.novaPassword){
+                        Users.atualizarPassword(req.params.id, req.body.novaPassword, function (err, cb) {
+                            if (err) {
+                                //res.status(500).send(`Erro: ${err}`);
+                                res.status(500).send("Não foi possível atualizar a password do utilizador!");
+                            } else res.send('Password atualizada com sucesso!')
+                        });
+                    }else{
+                        res.status(500).send("Faltam campos para puder atualizar a password: atualPassword e/ou novaPassword!")
+                    }
+                }
+            })
+        }
     }else{
-        return res.status(403).send("Não tem permissões para alterar a password de outro utilizador!")
+        //Não tem permissões para alterar a password de outro utilizador
+        res.status(403).send("Não tem permissões suficientes!")
     }
 });
 
@@ -175,29 +264,32 @@ router.put('/:id/nic', Auth.isLoggedInUser, Auth.checkLevel(7), function (req, r
     if(req.params.id != req.user.id){
         if(req.body.nic){
             Users.atualizarNIC(req.params.id, req.body.nic, function (err, u) {
-                if (err) 
-                    return res.status(500).send(`Erro: ${err}`);
-                else {
+                if (err) { 
+                    //res.status(500).send(`Erro: ${err}`);
+                    res.status(500).send("Não foi possível atualizar o NIC do utilizador! Verifique os valores usados.");
+                } else {
                     res.send('NIC do utilizador atualizado com sucesso!')
                 }
             });
         }else{
-            return res.status(500).send("Por forma a atualizar o NIC precisa de enviar o campo nic com o novo valor!")
+            res.status(500).send("Por forma a atualizar o NIC precisa de enviar o campo nic com o novo valor!")
         }
     }else{
-        return res.status(403).send("Não pode alterar o seu próprio NIC!")
+        res.status(403).send("Não pode alterar o seu próprio NIC!")
     }
 });
 
 router.put('/:id', Auth.isLoggedInUser, Auth.checkLevel(5), function (req, res) {
     Users.getUserByEmail(req.body.email, function(err,user){
         if(user && req.params.id != user._id){
-            res.status(500).send('Já existe utilizador registado com esse email!');
+            //Já existe utilizador registado com esse email
+            res.status(500).send('Não foi possível atualizar o utilizador! Verifique se os valores estão corretos ou se falta algum valor.');
         }else{
             Users.atualizarMultiplosCampos(req.params.id, req.body.nome, req.body.email, req.body.entidade, req.body.level, function (err, cb) {
-                if (err) 
-                    return res.status(500).send(`Erro: ${err}`);
-                else {
+                if (err) { 
+                    //res.status(500).send(`Erro: ${err}`);
+                    res.status(500).send('Não foi possível atualizar o utilizador! Verifique se os valores estão corretos ou se falta algum valor.');
+                } else {
                     res.send('Utilizador atualizado com sucesso!')
                 }
             });
@@ -209,14 +301,16 @@ router.get('/:id', Auth.isLoggedInUser, (req, res) => {
     if(req.params.id == req.user.id || req.user.level >= 5){
         Users.listarPorId(req.params.id,function(err, result){
             if(err){
-                return res.status(500).send(`Erro: ${err}`);
+                //res.status(500).send(`Erro: ${err}`);
+                res.status(500).send("Não foi possível obter o utilizador!");
             }else{
-                delete result._doc.local;
-                return res.json(result);
+                result._doc.local = result._doc.local.password ? true : false
+                res.json(result);
             }
         });
     }else{
-        return res.status(403).send("Não tem permissões para aceder à informação de outro utilizador!")
+        //Não tem permissões para aceder à informação de outro utilizador
+        res.status(403).send("Não tem permissões suficientes!")
     }
 });
 
@@ -266,25 +360,35 @@ router.post('/registarCC', Auth.isLoggedInUser, Auth.checkLevel(5), function (re
     });
     
     Users.getUserByCC(req.body.nic, function (err, user) {
-        if (err) 
-            return res.status(500).send(`Erro: ${err}`);
+        if (err) { 
+            //return res.status(500).send(`Erro: ${err}`);
+            return res.status(500).send('Não foi possível registar o utilizador! Verifique se os valores estão corretos ou se falta algum valor.');
+        }
+
         if (!user) {
             Users.getUserByEmail(req.body.email, function(err, user){
-                if (err) 
-                    return res.status(500).send(`Erro: ${err}`);
+                if (err) {
+                    //return res.status(500).send(`Erro: ${err}`);
+                    return res.status(500).send('Não foi possível registar o utilizador! Verifique se os valores estão corretos ou se falta algum valor.');
+                }
+
                 if (!user) {
                     Users.createUser(newUser, function (err, user) {
                         Logging.logger.info('Utilizador ' + user._id + ' registado.');
-                        if (err) return res.status(500).send(`Erro: ${err}`);
+                        if (err) {
+                            //return res.status(500).send(`Erro: ${err}`);
+                            return res.status(500).send('Não foi possível registar o utilizador! Verifique se os valores estão corretos ou se falta algum valor.');
+                        }
                     });
                     res.send('Utilizador registado com sucesso!');
                 }else{
-                    res.status(500).send('Email já em uso!');
+                    //Email já em uso
+                    res.status(500).send('Não foi possível registar o utilizador! Verifique se os valores estão corretos ou se falta algum valor.');
                 }
             })
-        }
-        else {
-            res.status(500).send('Utilizador já registado!');
+        } else {
+            //Utilizador já registado
+            res.status(500).send('Não foi possível registar o utilizador! Verifique se os valores estão corretos ou se falta algum valor.');
         }
     });
 });

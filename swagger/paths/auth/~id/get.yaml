@@ -1,7 +1,7 @@
 summary: Devolve o URL de um pedido SAML
 description: Devolve o URL de um pedido SAML
 tags:
-  - auth
+  - Auth
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

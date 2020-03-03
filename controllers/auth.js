@@ -33,7 +33,7 @@ Auth.checkLevel = function (clearance) {
 }
 
 Auth.generateTokenUserRecuperar = function (user) {
-    var token = jwt.sign({id: user._id, name: user.name}, secretKey.userKey, {expiresIn: '30m'});
+    var token = jwt.sign({id: user._id, name: user.name, level: 0, entidade: user.entidade}, secretKey.userKey, {expiresIn: '30m'});
 
     return token
 }
@@ -60,18 +60,20 @@ Auth.isLoggedInKey = async function (req, res, next) {
     if(key){
         await Key.find({key: key}, async function(err, resp){
             if(err){
-                throw err;
+                //throw err;
+                res.status(401).send('A sua chave API é inválida ou expirou.');
             }else if(resp.length==0){
-                res.status(401).send('A sua chave API não se encontra na base de dados.');
+                //A sua chave API não se encontra na base de dados
+                res.status(401).send('A sua chave API é inválida ou expirou.');
             }else{
                 await jwt.verify(key, secretKey.apiKey, { algorithms: ['HS256'] }, async function(err, decoded){
                     if(err){
                         res.status(401).send('A sua chave API é inválida ou expirou.');
                     }else{
                         if(resp[0].active==true){
-                            await Key.update({_id: resp[0]._id}, {nCalls: resp[0].nCalls+1, lastUsed: Date.now()}, function(err, affected, resp2) {
+                            await Key.updateOne({_id: resp[0]._id}, {nCalls: resp[0].nCalls+1, lastUsed: Date.now()}, function(err, affected, resp2) {
                                 if(err){
-                                    res.status(500).send('Ocorreu um erro ao atualizar chave API.');
+                                    res.status(500).send('Ocorreu um erro ao atualizar a Chave API.');
                                 }else{
                                     res.locals.id = resp[0]._id
                                     res.locals.idType = "Chave"

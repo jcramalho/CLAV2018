@@ -1,0 +1,25 @@
+summary: Verifica se um determinado exemplo de nota de aplicação existe
+description: Verifica se um determinado exemplo de nota de aplicação existe
+tags:
+  - Exemplos de Notas de Aplicação
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
+parameters:
+  - in: query
+    name: valor
+    schema:
+      type: string
+    description: 'nome do exemplo de nota de aplicação a verificar se existe (exemplo: Código da Estrada)'
+    required: true
+responses:
+  200:
+    description: Verifica se um determinado exemplo de nota de aplicação existe
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  500:
+    description: Erro

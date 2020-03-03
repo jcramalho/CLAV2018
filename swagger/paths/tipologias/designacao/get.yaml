@@ -1,0 +1,25 @@
+summary: Verifica se uma designação já está atribuida a uma tipologia
+description: Verifica se a designação já está presente numa tipologia
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Tipologias
+parameters:
+  - in: query
+    name: valor
+    schema:
+      type: string
+    description: 'Designação da tipologia a verificar se já está presente (exemplo: Autoridades Administrativas Civis)'
+    required: true
+responses:
+  200:
+    description: Verifica se a designação existe numa tipologia
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  500:
+    description: Erro

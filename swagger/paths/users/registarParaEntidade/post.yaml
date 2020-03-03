@@ -4,7 +4,7 @@ security:
   - userQuery: []
   - userAuth: []
 tags:
-  - users
+  - Utilizadores
 requestBody:
   description: 'De forma a registar os utilizadores é necessário a entidade(sigla) e o nic, name, email e type (level) para cada um deles'
   required: true

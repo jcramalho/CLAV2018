@@ -1,8 +1,13 @@
 var AuthCall = require('../../models/auth');
 var AuthCalls = module.exports
 
-AuthCalls.addRedirectUrl = function (redirect, callback) {
-	redirect.save(callback);
+AuthCalls.addRedirectUrl = async function (redirect, callback) {
+    try{
+        redirect = await redirect.save()
+        callback(null, redirect)
+    }catch(err){
+        callback(err, null)
+    }
 }
 
 AuthCalls.get = function(id, callback){
