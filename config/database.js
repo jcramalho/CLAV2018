@@ -1,5 +1,5 @@
 // const ip = '192.168.85.197'
-const ip = process.env.IP || '192.168.85.197' //'localhost'
+const ip = process.env.IP || 'localhost'
 const port = process.env.PORT || '7779'
 
 module.exports.onthology = process.env.GRAPHDB ? 'http://' + process.env.GRAPHDB +'/repositories/CLAV' : 'http://'+ip+':7200/repositories/CLAV'
