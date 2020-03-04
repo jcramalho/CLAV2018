@@ -25,7 +25,7 @@ var ChaveSchema = mongoose.Schema({
     },
     created: {
         type: Date,
-        default: Date.now()
+        default: Date.now
     },
     active: {
         type: Boolean,

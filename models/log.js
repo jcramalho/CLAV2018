@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 
-var CallSchema = new mongoose.Schema({
+var LogSchema = new mongoose.Schema({
     route: {
         type: String,
         required: true
@@ -25,9 +25,9 @@ var CallSchema = new mongoose.Schema({
     },
     accessDate: {
         type: Date,
-        default: Date.now(),
+        default: Date.now,
         required: true
     }
 });
 
-module.exports = mongoose.model('Call', CallSchema, 'calls');
+module.exports = mongoose.model('Log', LogSchema, 'logs');
