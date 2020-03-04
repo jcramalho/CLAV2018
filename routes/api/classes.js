@@ -13,6 +13,11 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
             res.locals.tipo = "classes"
             next()
         }
+        else if(req.query.info == "pesquisa"){
+            res.locals.dados = await State.getClassesParaPesquisa()
+            res.locals.tipo = "pesquisaClasses"
+            next()
+        }
         // Devolve a lista dos processos comuns
         else if(req.query.tipo == "comum"){
             if(req.query.info == "completa"){

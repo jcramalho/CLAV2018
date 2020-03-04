@@ -46,8 +46,8 @@ parameters:
     name: info
     schema:
       type: string
-      enum: [completa, esqueleto]
-    description: "Caso seja um valor que não 'completa' e 'esqueleto' devolve apenas o código, a descrição e o título das classes. Caso o valor seja 'completa' devolve toda a informação de cada classe. Caso o valor seja 'esqueleto' devolve numa estrutura pronta a ser preenchida para a criação de uma Tabela de Seleção, devolve os campos: código, título, descrição, PCA, DF dono (a ser preenchido pelo utilizador) e participante (a ser preenchido pelo utilizador)."
+      enum: [completa, esqueleto, pesquisa]
+    description: "Caso seja um valor que não 'completa' e 'esqueleto' devolve apenas o código, a descrição e o título das classes. Caso o valor seja 'completa' devolve toda a informação de cada classe. Caso o valor seja 'esqueleto' devolve numa estrutura pronta a ser preenchida para a criação de uma Tabela de Seleção, devolve os campos: código, título, descrição, PCA, DF dono (a ser preenchido pelo utilizador) e participante (a ser preenchido pelo utilizador). Caso o valor seja 'pesquisa', devolve todas as classes num formato pronto a ser usado para a pesquisa avançada da interface CLAV."
     required: false
   - $ref: '#/components/parameters/OutputFormatWithCSV'
 responses:

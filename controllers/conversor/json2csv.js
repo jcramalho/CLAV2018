@@ -1,7 +1,7 @@
 //CSV separator to use
 const separator = ';'
 //Entity types that is possible to convert to CSV
-const types = ["classes", "classe", "entidades", "entidade", "tipologias", "tipologia",  "legislacoes", "legislacao"]
+const types = ["classes", "classe", "pesquisaClasses", "entidades", "entidade", "tipologias", "tipologia",  "legislacoes", "legislacao"]
 //How is converted each field of each entities, format:
 // entity : {
 //      field: [title_to_use, func_to_aplicate to field value],
@@ -30,7 +30,24 @@ const convert_to = {
         "legislacao_titulos": ["Diplomas jurídico-administrativos REF Títulos", leg_titulos],
         "pca": ["", pca_df("pca")],
         "df": ["", pca_df("df")],
-        "filhos": [null, filhos]
+        "filhos": [null, filhos("classe")]
+    },
+    "pesquisaClasse": {
+        "id": ["Código", v => v],
+        "titulo": ["Título", v => v],
+        "na": ["Notas de aplicação", v => v],
+        "exemploNa": ["Exemplos de NA", v => v],
+        "ne": ["Notas de exclusão", v => v],
+        "ti": ["Termos Indice", v => v],
+        "pca": ["Prazo de conservação administrativa", v => v],
+        "fc_pca": ["Forma de contagem do PCA", v => v],
+        "sfc_pca": ["Sub Forma de contagem do PCA", v => v],
+        "crit_pca": ["Critério PCA", join],
+        "df": ["Destino final", destino_final],
+        "crit_df": ["Critério DF", join],
+        "donos": ["Donos do processo", join],
+        "participantes": ["Participantes do processo", join],
+        "filhos": [null, filhos("pesquisaClasse")]
     },
     "entidade": {
         "sigla": ["Sigla", v => v],
@@ -152,16 +169,18 @@ function pca_df(key){
 }
 
 //parse filhos (children) of a classe
-function filhos(value){
-    var csvLines = []
+function filhos(type){
+    return function(value){
+        var csvLines = []
 
-    value.forEach(classe => {
-        var aux = convertOne(classe, "classe")
-        aux.splice(0, 1)
-        csvLines = csvLines.concat(aux)
-    })
+        value.forEach(classe => {
+            var aux = convertOne(classe, type)
+            aux.splice(0, 1)
+            csvLines = csvLines.concat(aux)
+        })
 
-    return csvLines
+        return csvLines
+    }
 }
 
 //protect value to put in CSV
