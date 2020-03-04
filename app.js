@@ -28,7 +28,7 @@ var logger = require('morgan')
 
 //Funcao auxiliar para contar numero de GET e POST
 var apiStats = require('./models/api')
-var Calls = require('./controllers/api/logs')
+var Logs = require('./controllers/api/logs')
 var dataBases = require('./config/database');
 
 function getRoute(req){
@@ -49,7 +49,7 @@ app.use((req, res, next) => {
         }
 
         if(res.locals.id && res.locals.idType){
-            Calls.newCall(Calls.getRoute(req), req.method, res.locals.id, res.locals.idType, res.statusCode)
+            Logs.newLog(Logs.getRoute(req), req.method, res.locals.id, res.locals.idType, res.statusCode)
         }
     });
     next();
@@ -112,6 +112,11 @@ mongoose.connect(dataBases.userDB, {
             //loads APP travessia
             var travessia = require('./controllers/travessia.js')
             travessia.reset()
+
+            //clean old logs
+            Logs.removeOldLogs()
+            //clean old logs periodically
+            Logs.removeOldLogsPeriodically()
 
             //avisa que o servidor está pronto a receber pedidos
             emit()
