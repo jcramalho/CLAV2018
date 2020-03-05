@@ -1,5 +1,5 @@
-summary: Devolve os pedidos realizados (log) para uma determinada rota
-description: Devolve os pedidos realizados (log) para uma determinada rota. Cada entrada no log tem o seu id (_id), o caminho da rota, o método, o tipo de acesso (User ou Chave), o id do utilizador ou da chave API, o status HTTP do pedido e a altura quando foi realizado o pedido.
+summary: Devolve os pedidos realizados (log) nos últimos 30 dias para uma determinada rota
+description: Devolve os pedidos realizados (log) nos últimos 30 dias para uma determinada rota. Cada entrada no log tem o seu id (_id), o caminho da rota, o método, o tipo de acesso (User ou Chave), o id do utilizador ou da chave API, o status HTTP do pedido e a altura quando foi realizado o pedido.
 tags:
   - Logs
 security:

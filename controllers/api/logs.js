@@ -1,15 +1,26 @@
-var Call = require('../../models/log');
+var Log = require('../../models/log');
 var dataBases = require('../../config/database');
-var Calls = module.exports
+var Logs = module.exports
+const deleteBefore = 30 //days
+const repeatPeriod = 1 //days
 
-Calls.getRoute = function(req){
+Logs.getRoute = function(req){
     var route = req.originalUrl.replace(/\?.*$/,"")
     route = route.replace("/" + dataBases.apiVersion, "")
     return route
 }
 
-Calls.newCall = async function(route, method, id, type, httpStatus){
-    return Call.create({
+Logs.removeOldLogs = function(){
+    const dateDaysAgo = new Date(new Date().setDate(new Date().getDate()-deleteBefore))
+    return Log.deleteMany({accessDate: {$lte: dateDaysAgo}})
+}
+
+Logs.removeOldLogsPeriodically = function(){
+    setInterval(function(){Logs.removeOldLogs()}, repeatPeriod*24*60*60*1000)
+}
+
+Logs.newLog = function(route, method, id, type, httpStatus){
+    return Log.create({
         route: route,
         method: method,
         type: type,
@@ -19,14 +30,14 @@ Calls.newCall = async function(route, method, id, type, httpStatus){
     })
 }
 
-Calls.getAllCalls = function(){
-    return Call.find({})
+Logs.getAllLogs = function(){
+    return Log.find({})
 }
 
-Calls.getRouteCalls = function(route, method){
-    return Call.find({route: route, method: method})
+Logs.getRouteLogs = function(route, method){
+    return Log.find({route: route, method: method})
 }
 
-Calls.getUserCalls = async function(id, type){
-    return Call.find({id: id, type: type})
+Logs.getUserLogs = function(id, type){
+    return Log.find({id: id, type: type})
 }

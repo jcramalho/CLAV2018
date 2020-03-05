@@ -28,7 +28,8 @@ var logger = require('morgan')
 
 //Funcao auxiliar para contar numero de GET e POST
 var apiStats = require('./models/api')
-var Calls = require('./controllers/api/logs')
+var Logs = require('./controllers/api/logs')
+var aggregateLogs = require('./controllers/api/aggregateLogs')
 var dataBases = require('./config/database');
 
 function getRoute(req){
@@ -49,7 +50,12 @@ app.use((req, res, next) => {
         }
 
         if(res.locals.id && res.locals.idType){
-            Calls.newCall(Calls.getRoute(req), req.method, res.locals.id, res.locals.idType, res.statusCode)
+            Logs.newLog(Logs.getRoute(req), req.method, res.locals.id, res.locals.idType, res.statusCode)
+            try{
+                aggregateLogs.newAggregateLog(req.method, res.locals.id, res.locals.idType)      
+            }catch(err){
+                console.log("Erro ao criar/atualizar o log agregado.")
+            }
         }
     });
     next();
@@ -113,6 +119,11 @@ mongoose.connect(dataBases.userDB, {
             var travessia = require('./controllers/travessia.js')
             travessia.reset()
 
+            //clean old logs
+            Logs.removeOldLogs()
+            //clean old logs periodically
+            Logs.removeOldLogsPeriodically()
+
             //avisa que o servidor está pronto a receber pedidos
             emit()
         }else{
@@ -169,8 +180,10 @@ mainRouter.use('/invariantes',require('./routes/api/invariantes'));
 mainRouter.use('/auth', require('./routes/api/auth'));
 mainRouter.use('/ontologia', require('./routes/api/ontologia'));
 mainRouter.use('/reload', require('./routes/api/reload'));
+mainRouter.use('/logsAgregados', require('./routes/api/aggregateLogs'));
 mainRouter.use('/logs', require('./routes/api/logs'));
 mainRouter.use('/indicadores', require('./routes/api/indicadores'));
+mainRouter.use('/notificacoes', require('./routes/api/notificacoes'));
 
 app.use('/' + dataBases.apiVersion, mainRouter);
 
