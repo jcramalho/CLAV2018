@@ -15,15 +15,15 @@ module.exports.prefixes = `
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 `
 
-module.exports.host = 'http://'+ip+':'+this.portHTTPS
+module.exports.host = 'https://'+ip+':'+this.portHTTPS
 
-module.exports.swaggerURL = process.env.SWAGGER_URL || /*this.host*/ 'http://clav-api.dglab.gov.pt'
+module.exports.swaggerURL = process.env.SWAGGER_URL || /*this.host*/ 'https://clav-api.dglab.gov.pt'
 
 module.exports.userDB = process.env.MONGODB ? 'mongodb://' + process.env.MONGODB + '/m51-clav' : 'mongodb://localhost/m51-clav'
 
 module.exports.interfaceHosts = [
-    "http://localhost:8080",
-    "http://clav.dglab.gov.pt",
-    "http://epl.di.uminho.pt:7780",
-    "http://epl.di.uminho.pt:7781"
+    "https://localhost:8080",
+    "https://clav.dglab.gov.pt",
+    "https://epl.di.uminho.pt:7780",
+    "https://epl.di.uminho.pt:7781"
 ]

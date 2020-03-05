@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info: 
   description: |
-    Esta é a API do projeto CLAV. Pode encontrar mais informação sobre o CLAV em [http://clav.dglab.gov.pt](http://clav.dglab.gov.pt).
+    Esta é a API do projeto CLAV. Pode encontrar mais informação sobre o CLAV em [http://clav.dglab.gov.pt](https://clav.dglab.gov.pt).
 
     Por forma a usar esta API necessita em grande parte dos pedidos de usar um método de autenticação (Chaves API ou Token de um utilizador).
 
@@ -23,11 +23,11 @@ servers:
   - url: "{dominio}/{versao}"
     variables:
       dominio:
-        default: "http://localhost:7779"
+        default: "https://localhost:7779"
         description: Domínio
         enum:
-          - "http://localhost:7779"
-          - "http://clav-test.di.uminho.pt"
+          - "https://localhost:7779"
+          - "https://clav-test.di.uminho.pt"
       versao:
         description: Versão da API
         default: "v2"

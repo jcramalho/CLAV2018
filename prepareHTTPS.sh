@@ -1,3 +1,4 @@
+#!/bin/bash
 #Used acme.sh script from https://github.com/acmesh-official/acme.sh
 
 NAME=acme.sh
@@ -34,14 +35,14 @@ getCertificate() {
 }
 
 installCertificate() {
-    if [ ! -d ./ssl/$DOMAINS ]; then
-        mkdir -p ./ssl/$DOMAINS
+    if [ ! -d ./ssl ]; then
+        mkdir -p ./ssl
     fi
 
     $EXEC --install-cert -d $DOMAINS \
-        --cert-file ./ssl/$DOMAINS/cert.pem \
-        --key-file ./ssl/$DOMAINS/key.pem \
-        --fullchain-file ./ssl/$DOMAINS/fullchain.pem \
+        --cert-file ./ssl/cert.pem \
+        --key-file ./ssl/key.pem \
+        --fullchain-file ./ssl/fullchain.pem \
         --reloadcmd "pkill npm && npm start"
 }
 
