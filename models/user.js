@@ -2,9 +2,6 @@ var mongoose = require('mongoose');
 
 // User Schema
 var UserSchema = mongoose.Schema({
-	_id: {
-		
-	},
 	internal: {
 		type: Boolean,
 	},
