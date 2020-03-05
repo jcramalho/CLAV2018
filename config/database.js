@@ -1,5 +1,5 @@
 // const ip = '192.168.85.197'
-const ip = process.env.IP || '192.168.85.197' //'localhost'
+const ip = process.env.IP ||  'localhost' // '192.168.85.197'
 const port = process.env.PORT || '7779'
 module.exports.apiVersion = process.env.API_VERSION || 'v2'
 
