@@ -23,6 +23,17 @@ const corsOpts = {
 app.use(cors(corsOpts))
 app.options('*', cors(corsOpts))
 
+//helmet (sets various HTTP headers to help protect the app)
+var helmet = require('helmet')
+app.use(helmet({
+    //HSTS recommended config
+    hsts: {
+        maxAge: 31536000,
+        includeSubDomains: true,
+        preload: true
+    }
+}))
+
 // Logging na consola do admin
 var logger = require('morgan')
 
@@ -66,7 +77,7 @@ var passport = require('passport');
 require('./config/passport')(passport);
 
 //config
-app.use(express.static(__dirname + '/public'));
+app.use(express.static(__dirname + '/public', { dotfiles:'allow' }));
 
 // Passport init
 app.use(passport.initialize());

@@ -7,19 +7,37 @@
 var app = require('../app');
 var debug = require('debug')('M51-CLAV_WEB:server');
 var http = require('http');
+var https = require('https');
+var fs = require('fs');
+var databases = require('../config/database')
 
 /**
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '7779');
-app.set('port', port);
+var portHTTP = normalizePort(databases.portHTTP);
+var portHTTPS = normalizePort(databases.portHTTPS);
+app.set('port', portHTTPS);
 
 /**
- * Create HTTP server.
+ * Create HTTP and HTTPS server.
  */
 
-var server = http.createServer(app);
+var HTTPserver = http.createServer((req, res) => {
+    //Redirect HTTP to HTTPS
+    res.statusCode = 301;
+    var domain = req.headers.host.replace(/:[0-9]+$/g,`:${portHTTPS}`)
+    res.setHeader('Location', `https://${domain}${req.url}`);
+    res.end();
+});
+
+var options = {
+    key: fs.readFileSync("./ssl/key.pem"),
+    cert: fs.readFileSync("./ssl/cert.pem"),
+    ca: fs.readFileSync("./ssl/fullchain.pem")
+}
+
+var HTTPSserver = https.createServer(options, app);
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -29,10 +47,15 @@ var server = http.createServer(app);
 //ao MongoDB e GraphDB foram confirmadas e que o carregamento para cache
 //da informação foi iniciado
 app.once('ready', () => {
-    server.listen(port);
-    server.on('error', onError);
-    server.on('listening', onListening);
-    console.log(`Servidor à escuta na porta ${port}...`);
+    HTTPserver.listen(portHTTP);
+    HTTPserver.on('error', onError(portHTTP));
+    HTTPserver.on('listening', onListening(HTTPserver));
+    console.log(`Servidor HTTP à escuta na porta ${portHTTP}...`);
+
+    HTTPSserver.listen(portHTTPS);
+    HTTPSserver.on('error', onError(portHTTPS));
+    HTTPSserver.on('listening', onListening(HTTPSserver));
+    console.log(`Servidor HTTPS à escuta na porta ${portHTTPS}...`);
 })
 /**
  * Normalize a port into a number, string, or false.
@@ -58,27 +81,29 @@ function normalizePort(val) {
  * Event listener for HTTP server "error" event.
  */
 
-function onError(error) {
-    if (error.syscall !== 'listen') {
-        throw error;
-    }
-
-    var bind = typeof port === 'string'
-        ? 'Pipe ' + port
-        : 'Port ' + port;
-
-    // handle specific listen errors with friendly messages
-    switch (error.code) {
-        case 'EACCES':
-            console.error(bind + ' requires elevated privileges');
-            process.exit(1);
-            break;
-        case 'EADDRINUSE':
-            console.error(bind + ' is already in use');
-            process.exit(1);
-            break;
-        default:
+function onError(port) {
+    return function (error) {
+        if (error.syscall !== 'listen') {
             throw error;
+        }
+
+        var bind = typeof port === 'string'
+            ? 'Pipe ' + port
+            : 'Port ' + port;
+
+        // handle specific listen errors with friendly messages
+        switch (error.code) {
+            case 'EACCES':
+                console.error(bind + ' requires elevated privileges');
+                process.exit(1);
+                break;
+            case 'EADDRINUSE':
+                console.error(bind + ' is already in use');
+                process.exit(1);
+                break;
+            default:
+                throw error;
+        }
     }
 }
 
@@ -86,10 +111,12 @@ function onError(error) {
  * Event listener for HTTP server "listening" event.
  */
 
-function onListening() {
-    var addr = server.address();
-    var bind = typeof addr === 'string'
-        ? 'pipe ' + addr
-        : 'port ' + addr.port;
-    debug('Listening on ' + bind);
+function onListening(server) {
+    return function() {
+        var addr = server.address();
+        var bind = typeof addr === 'string'
+            ? 'pipe ' + addr
+            : 'port ' + addr.port;
+        debug('Listening on ' + bind);
+    }
 }
