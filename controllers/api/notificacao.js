@@ -11,6 +11,7 @@ Notificacoes.criar = async function(n){
 
     try{
         newNotificacao = await newNotificacao.save();
+        console.log("ID: " + newNotificacao._id);
         await User.updateMany(
             { entidade: newNotificacao.entidade },
             { $push: { notificacoes: newNotificacao._id } }
@@ -23,17 +24,19 @@ Notificacoes.criar = async function(n){
 }
 
 Notificacoes.getByUser = async function(idUser){
-    var notificacoes = [];
 
-	ids = await User.findOne({ _id: idUser}, {_id: 0, notificacoes: 1});
-    console.log("Notificacoes: " + ids);
+    ids = await User.findOne({ _id: idUser}, {_id: 0, notificacoes: 1});
+
     try{
-        ids.notificacoes.forEach(async function(idNotificacao) {
-            var query = { _id: idNotificacao };
+        var notificacoesRes = [];
+        for(i = 0; i < ids.notificacoes.length; i++){
+            var query = { _id: ids.notificacoes[i] };
             var newNotificacao = await Notificacao.findOne(query);
-            notificacoes.push( newNotificacao );
-        });
-        return notificacoes;
+            console.log("NewNotificacao: " + newNotificacao);
+            notificacoesRes.push( newNotificacao );
+
+        };
+        return notificacoesRes;
     }catch(err) {
         console.log(err)
         return 'Ocorreu um erro a obter as notificacoes do utilizador! Tente novamente mais tarde'

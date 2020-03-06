@@ -42,11 +42,8 @@ var UserSchema = mongoose.Schema({
 			type: String
 		}
 	},
-	notificacoes: [
-		{
-			notificacao: {
-				type: String
-			}
+	notificacoes: [{
+			type: String
 		}
 	]
 });
