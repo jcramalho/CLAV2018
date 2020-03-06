@@ -1,7 +1,7 @@
-const execQuery = require('../../controllers/api/utils').execQuery
-const normalize = require('../../controllers/api/utils').normalize;
-const projection = require('../../controllers/api/utils').projection;
-const request = require('../../controllers/api/utils').request
+const execQuery = require("../../controllers/api/utils").execQuery;
+const normalize = require("../../controllers/api/utils").normalize;
+const projection = require("../../controllers/api/utils").projection;
+const request = require("../../controllers/api/utils").request;
 const Leg = module.exports;
 
 /**
@@ -18,14 +18,14 @@ const Leg = module.exports;
 /**
  * Lista as meta informações de todas as legislações no sistema, de acordo com
  * o filtro especificado.
- * 
+ *
  * @param {Object} filtro objeto com os campos para filtrar. Se o valor de um
  * campo for `undefined` esse campo é ignorado. TODO: ainda por implementar
  * @return {Promise<[Legislacao] | Error>} promessa que quando cumprida contém a
  * lista das legislacoes existentes que respeitam o filtro dado
  */
 Leg.listar = () => {
-    const query = `SELECT ?id ?data ?numero ?tipo ?sumario ?estado ?entidades ?fonte ?link WHERE {
+  const query = `SELECT ?id ?data ?numero ?tipo ?sumario ?estado ?entidades ?fonte ?link WHERE {
         ?uri rdf:type clav:Legislacao;
              clav:diplomaData ?data;
              clav:diplomaNumero ?numero;
@@ -42,24 +42,35 @@ Leg.listar = () => {
         }
         BIND(STRAFTER(STR(?uri), 'clav#') AS ?id).
     } ORDER BY DESC (?data)`;
-    const campos = ["id", "data", "numero", "tipo", "sumario", "estado", "fonte", "link"];
-    const agrupar = ["entidades"];
+  const campos = [
+    "id",
+    "data",
+    "numero",
+    "tipo",
+    "sumario",
+    "estado",
+    "fonte",
+    "link"
+  ];
+  const agrupar = ["entidades"];
 
-    return execQuery("query", query)
-        .then(response => {
-            let legs = projection(normalize(response), campos, agrupar);
-            
-            for (leg of legs) {
-                leg.entidades = leg.entidades.map(ent => ({ id: `ent_${ent}`, sigla: ent }));
-            }
-        
-            return legs;
-        });
+  return execQuery("query", query).then(response => {
+    let legs = projection(normalize(response), campos, agrupar);
+
+    for (leg of legs) {
+      leg.entidades = leg.entidades.map(ent => ({
+        id: `ent_${ent}`,
+        sigla: ent
+      }));
+    }
+
+    return legs;
+  });
 };
 
 //Lista todas as legislações consoante o estado
-Leg.listarPorEstado = (estado) => {
-    const query = `SELECT ?id ?data ?numero ?tipo ?sumario ?entidades ?fonte ?link WHERE {
+Leg.listarPorEstado = estado => {
+  const query = `SELECT ?id ?data ?numero ?tipo ?sumario ?entidades ?fonte ?link WHERE {
         ?uri rdf:type clav:Legislacao;
              clav:diplomaData ?data;
              clav:diplomaNumero ?numero;
@@ -77,25 +88,27 @@ Leg.listarPorEstado = (estado) => {
         BIND(STRAFTER(STR(?uri), 'clav#') AS ?id).
 
     } ORDER BY DESC (?data)`;
-    const campos = ["id", "data", "numero", "tipo", "sumario", "fonte", "link"];
-    const agrupar = ["entidades"];
+  const campos = ["id", "data", "numero", "tipo", "sumario", "fonte", "link"];
+  const agrupar = ["entidades"];
 
-    return execQuery("query", query)
-        .then(response => {
-            let legs = projection(normalize(response), campos, agrupar);
-            
-            for (leg of legs) {
-                leg.entidades = leg.entidades.map(ent => ({ id: `ent_${ent}`, sigla: ent }));
-                leg.estado = estado
-            }
-        
-            return legs;
-        });
+  return execQuery("query", query).then(response => {
+    let legs = projection(normalize(response), campos, agrupar);
+
+    for (leg of legs) {
+      leg.entidades = leg.entidades.map(ent => ({
+        id: `ent_${ent}`,
+        sigla: ent
+      }));
+      leg.estado = estado;
+    }
+
+    return legs;
+  });
 };
 
 // Lista todas as legislações com PNs associados
 Leg.listarComPNs = () => {
-    const query = `SELECT ?id ?data ?numero ?tipo ?sumario ?estado ?entidades ?fonte ?link WHERE {
+  const query = `SELECT ?id ?data ?numero ?tipo ?sumario ?estado ?entidades ?fonte ?link WHERE {
         ?uri rdf:type clav:Legislacao;
              clav:diplomaData ?data;
              clav:diplomaNumero ?numero;
@@ -115,24 +128,35 @@ Leg.listarComPNs = () => {
 
         FILTER (?estado = "Ativo")
     } ORDER BY DESC (?data)`;
-    const campos = ["id", "data", "numero", "tipo", "sumario", "estado", "fonte", "link"];
-    const agrupar = ["entidades"];
+  const campos = [
+    "id",
+    "data",
+    "numero",
+    "tipo",
+    "sumario",
+    "estado",
+    "fonte",
+    "link"
+  ];
+  const agrupar = ["entidades"];
 
-    return execQuery("query", query)
-        .then(response => {
-            let legs = projection(normalize(response), campos, agrupar);
-            
-            for (leg of legs) {
-                leg.entidades = leg.entidades.map(ent => ({ id: `ent_${ent}`, sigla: ent }));
-            }
-        
-            return legs;
-        });
+  return execQuery("query", query).then(response => {
+    let legs = projection(normalize(response), campos, agrupar);
+
+    for (leg of legs) {
+      leg.entidades = leg.entidades.map(ent => ({
+        id: `ent_${ent}`,
+        sigla: ent
+      }));
+    }
+
+    return legs;
+  });
 };
 
 // Lista todas as legislações sem PNs associados
 Leg.listarSemPNs = () => {
-    const query = `SELECT ?id ?data ?numero ?tipo ?sumario ?estado ?entidades ?fonte ?link WHERE {
+  const query = `SELECT ?id ?data ?numero ?tipo ?sumario ?estado ?entidades ?fonte ?link WHERE {
         ?uri rdf:type clav:Legislacao;
              clav:diplomaData ?data;
              clav:diplomaNumero ?numero;
@@ -152,24 +176,35 @@ Leg.listarSemPNs = () => {
 
         FILTER (?estado = "Ativo")
     } ORDER BY DESC (?data)`;
-    const campos = ["id", "data", "numero", "tipo", "sumario", "estado", "fonte", "link"];
-    const agrupar = ["entidades"];
+  const campos = [
+    "id",
+    "data",
+    "numero",
+    "tipo",
+    "sumario",
+    "estado",
+    "fonte",
+    "link"
+  ];
+  const agrupar = ["entidades"];
 
-    return execQuery("query", query)
-        .then(response => {
-            let legs = projection(normalize(response), campos, agrupar);
-            
-            for (leg of legs) {
-                leg.entidades = leg.entidades.map(ent => ({ id: `ent_${ent}`, sigla: ent }));
-            }
-        
-            return legs;
-        });
+  return execQuery("query", query).then(response => {
+    let legs = projection(normalize(response), campos, agrupar);
+
+    for (leg of legs) {
+      leg.entidades = leg.entidades.map(ent => ({
+        id: `ent_${ent}`,
+        sigla: ent
+      }));
+    }
+
+    return legs;
+  });
 };
 
 //Lista processos regulados de todas as legislacoes
 Leg.listarRegulados = async () => {
-    const query = `SELECT ?id
+  const query = `SELECT ?id
                         (GROUP_CONCAT(?regCodigo; SEPARATOR="#") AS ?rc)
                         (GROUP_CONCAT(?regTitulo; SEPARATOR="#") AS ?rt) {
         ?uri rdf:type clav:Legislacao.
@@ -197,36 +232,36 @@ Leg.listarRegulados = async () => {
 
         BIND(STRAFTER(STR(?uri), 'clav#') AS ?id)
     }
-    group by ?id`
+    group by ?id`;
 
-    try{
-	    var response = await execQuery('query', query)
-        var res = normalize(response)
+  try {
+    var response = await execQuery("query", query);
+    var res = normalize(response);
 
-        for(var i = 0; i < res.length; i++){
-            res[i].regula = []
-            if(res[i].rc != ''){
-                var codigos = res[i].rc.split("#")
-                var titulos = res[i].rt.split("#")
+    for (var i = 0; i < res.length; i++) {
+      res[i].regula = [];
+      if (res[i].rc != "") {
+        var codigos = res[i].rc.split("#");
+        var titulos = res[i].rt.split("#");
 
-                for(var j = 0; j < codigos.length; j++){
-                    res[i].regula.push({
-                        codigo: codigos[j],
-                        titulo: titulos[j],
-                        id: 'c' + codigos[j]
-                    })
-                }
-            }
-
-            delete res[i].rc
-            delete res[i].rt
+        for (var j = 0; j < codigos.length; j++) {
+          res[i].regula.push({
+            codigo: codigos[j],
+            titulo: titulos[j],
+            id: "c" + codigos[j]
+          });
         }
+      }
 
-        return res
-    }catch(erro){
-        throw(erro)
+      delete res[i].rc;
+      delete res[i].rt;
     }
-}
+
+    return res;
+  } catch (erro) {
+    throw erro;
+  }
+};
 
 /**
  * Consulta a meta informação relativa a uma legislação
@@ -238,7 +273,7 @@ Leg.listarRegulados = async () => {
  * então a promessa conterá o valor `undefined`
  */
 Leg.consultar = id => {
-    const query = `SELECT ?tipo ?data ?numero ?sumario ?link ?estado ?fonte ?entidades WHERE { 
+  const query = `SELECT ?tipo ?data ?numero ?sumario ?link ?estado ?fonte ?entidades WHERE { 
         clav:${id} a clav:Legislacao;
             clav:diplomaData ?data;
             clav:diplomaNumero ?numero;
@@ -254,46 +289,54 @@ Leg.consultar = id => {
             ?ent clav:entSigla ?entidades;
         }
      }`;
-    const campos = ["id", "data", "numero", "tipo", "sumario", "link", "estado", "fonte"];
-    const agrupar = ["entidades"];
+  const campos = [
+    "id",
+    "data",
+    "numero",
+    "tipo",
+    "sumario",
+    "link",
+    "estado",
+    "fonte"
+  ];
+  const agrupar = ["entidades"];
 
-    return execQuery("query", query)
-        .then(response => projection(normalize(response), campos, agrupar)[0]);
+  return execQuery("query", query).then(
+    response => projection(normalize(response), campos, agrupar)[0]
+  );
 };
 
 /**
  * Verifica se um determinado numero de legislação existe no sistema.
- * 
+ *
  * @param {Legislacao} legislacao
  * @return {Promise<boolean | Error>}
  */
-Leg.existe = (numero) => {
-    const query = `ASK {
+Leg.existe = numero => {
+  const query = `ASK {
             ?e clav:diplomaNumero '${numero}'
         }`;
 
-    return execQuery("query", query)
-        .then(response => response.boolean);
+  return execQuery("query", query).then(response => response.boolean);
 };
 
 /**
  * Verifica se uma determinada legislação tem PNs associados.
- * 
+ *
  * @param {Legislacao} legislacao
  * @return {Promise<boolean | Error>}
  */
-Leg.temPNs = (legislacao) => {
-    const query = `ASK {
+Leg.temPNs = legislacao => {
+  const query = `ASK {
         ?e clav:temLegislacao clav:'${legislacao.id}'
         }`;
 
-    return execQuery("query", query)
-        .then(response => response.boolean);
+  return execQuery("query", query).then(response => response.boolean);
 };
 
 // Devolve a lista de processos regulados pelo documento: id, codigo, titulo
 Leg.regula = id => {
-    var query = `
+  var query = `
         SELECT DISTINCT ?id ?codigo ?titulo WHERE { 
             {
                 ?uri clav:temLegislacao clav:${id};
@@ -317,21 +360,19 @@ Leg.regula = id => {
             BIND(STRAFTER(STR(?uri), 'clav#') AS ?id)
                 
         } ORDER BY ?codigo
-    `
-    return execQuery("query", query)
-        .then(response => normalize(response));
+    `;
+  return execQuery("query", query).then(response => normalize(response));
 };
-
 
 /**
  * Verifica se um determinado numero de legislação existe no sistema.
- * 
+ *
  * @param {Legislacao} legislacao
  * @return {Promise<[Legislacao] | Error>} promessa que quando cumprida contém a
  * lista das legislacoes que são do Tipo "Portaria"
  */
 Leg.portarias = () => {
-    const query = `
+  const query = `
     SELECT * WHERE {
         ?legislacao a clav:Legislacao ;
              clav:diplomaTipo "Portaria" ;
@@ -340,22 +381,20 @@ Leg.portarias = () => {
              clav:diplomaEstado ?estado .
     }`;
 
-    return execQuery("query", query)
-        .then(response => normalize(response));
+  return execQuery("query", query).then(response => normalize(response));
 };
-
 
 /**
  * Lista as meta informações de todas as legislações no sistema, de acordo com
  * a fonte especificada.
- * 
+ *
  * @param {Object} fonte objeto com os campos para filtrar. Se o valor de um
  * campo for `undefined` esse campo é ignorado. TODO: ainda por implementar
  * @return {Promise<[Legislacao] | Error>} promessa que quando cumprida contém a
  * lista das legislacoes existentes que respeitam a fonte dada
  */
-Leg.listarFonte = (fonte) => {
-    const query = `SELECT ?id ?data ?numero ?tipo ?sumario ?entidades ?link WHERE {
+Leg.listarFonte = fonte => {
+  const query = `SELECT ?id ?data ?numero ?tipo ?sumario ?entidades ?link WHERE {
         ?uri rdf:type clav:Legislacao;
              clav:diplomaData ?data;
              clav:diplomaNumero ?numero;
@@ -370,56 +409,106 @@ Leg.listarFonte = (fonte) => {
         }
         BIND(STRAFTER(STR(?uri), 'clav#') AS ?id).
     } ORDER BY DESC (?data)`;
-    const campos = ["id", "data", "numero", "tipo", "sumario", "link"];
-    const agrupar = ["entidades"];
+  const campos = ["id", "data", "numero", "tipo", "sumario", "link"];
+  const agrupar = ["entidades"];
 
-    return execQuery("query", query)
-        .then(response => {
-            let legs = projection(normalize(response), campos, agrupar);
-            
-            for (leg of legs) {
-                leg.entidades = leg.entidades.map(ent => ({ id: `ent_${ent}`, sigla: ent }));
-                leg.fonte = fonte
-            }
-        
-            return legs;
-        });
+  return execQuery("query", query).then(response => {
+    let legs = projection(normalize(response), campos, agrupar);
+
+    for (leg of legs) {
+      leg.entidades = leg.entidades.map(ent => ({
+        id: `ent_${ent}`,
+        sigla: ent
+      }));
+      leg.fonte = fonte;
+    }
+
+    return legs;
+  });
 };
 
 //Obtém o resto da info das Legislacoes
-Leg.moreInfoList = async (legs) => {
-    //obtém os processos regulados para todas as legislações
-    var data = await Leg.listarRegulados()
-    var regulados = []
+Leg.moreInfoList = async legs => {
+  //obtém os processos regulados para todas as legislações
+  var data = await Leg.listarRegulados();
+  var regulados = [];
 
-    for(var i = 0; i < data.length; i++){
-        regulados[data[i].id] = data[i].regula
-    }
+  for (var i = 0; i < data.length; i++) {
+    regulados[data[i].id] = data[i].regula;
+  }
 
-    for(i = 0; i < legs.length; i++){
-        legs[i].regula = regulados[legs[i].id]
-    }
-}
+  for (i = 0; i < legs.length; i++) {
+    legs[i].regula = regulados[legs[i].id];
+  }
+};
 
 //Obtém o resto da info da Legislacao
-Leg.moreInfo = async (leg) => {
-    leg.regula = await Leg.regula(leg.id)
-}
+Leg.moreInfo = async leg => {
+  leg.regula = await Leg.regula(leg.id);
+};
+
+//Criar legislação
+Leg.criar = async leg => {
+  let baseQuery = `{
+    clav:${leg.codigo} rdf:type owl:NamedIndividual , clav:Legislacao ;
+            clav:diplomaData '${leg.data}' ;
+            clav:diplomaNumero '${leg.numero}' ;
+            clav:diplomaTipo '${leg.tipo}' ;
+            clav:diplomaSumario '${leg.sumario}' ;
+            clav:diplomaEstado 'Ativo' `;
+
+  if (leg.link) baseQuery += `;\n\tclav:diplomaLink"${leg.link}" ;`;
+
+  if (
+    leg.entidadesSel &&
+    leg.entidadesSel instanceof Array &&
+    leg.entidadesSel.length > 0
+  ) {
+    `${leg.entidadesSel
+      .map(
+        entidade =>
+          `;\n\tclav:${leg.codigo} clav:temEntidadeResponsavel clav:${entidade.id}.`
+      )
+      .join("\n")}
+      }`;
+  }
+
+  baseQuery += ".\n}";
+
+  const query = "INSERT DATA " + baseQuery;
+
+  const ask = "ASK " + baseQuery;
+
+  if (await Leg.existe(leg.numero)) {
+    throw "Legislação já existe, número já em uso.";
+  } else {
+    return execQuery("update", query).then(res =>
+      execQuery("query", ask).then(result => {
+        if (result.boolean) return "Sucesso na inserção da legislação";
+        else throw "Insucesso na inserção da legislação";
+      })
+    );
+  }
+};
 
 //Criar controller para inserir na base de dados, depois do pedido aprovado!!
-/*const query = `INSERT DATA {
-        clav:${id} rdf:type owl:NamedIndividual , clav:Legislacao ;
-            clav:diplomaData '${legislacao.data}' ;
-            clav:diplomaNumero '${legislacao.numero}' ;
-            clav:diplomaTipo '${legislacao.tipo}' ;
-            clav:diplomaSumario '${legislacao.sumario}' ;
-            clav:diplomaLink '${legislacao.link}' ;
-            clav:diplomaEstado 'Harmonização' .
+// const query = `INSERT DATA {
+//         clav:${id} rdf:type owl:NamedIndividual , clav:Legislacao ;
+//             clav:diplomaData '${legislacao.data}' ;
+//             clav:diplomaNumero '${legislacao.numero}' ;
+//             clav:diplomaTipo '${legislacao.tipo}' ;
+//             clav:diplomaSumario '${legislacao.sumario}' ;
+//             clav:diplomaLink '${legislacao.link}' ;
+//             clav:diplomaEstado 'Harmonização' .
 
-        ${legislacao.entidades.map(entidade => `clav:${id} clav:temEntidadeResponsavel clav:${entidade}.`).join('\n')}
+//         ${legislacao.entidades
+//           .map(
+//             entidade =>
+//               `clav:${id} clav:temEntidadeResponsavel clav:${entidade}.`
+//           )
+//           .join("\n")}
 
-    }`;
-*/
+//     }`;
 
 /*
 Leg.updateDoc = function (dataObj) {
