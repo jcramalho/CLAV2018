@@ -25,6 +25,8 @@ Notificacoes.criar = async function(n){
 
 Notificacoes.getByUser = async function(idUser){
 
+    console.log("ID: " + idUser);
+
     ids = await User.findOne({ _id: idUser}, {_id: 0, notificacoes: 1});
 
     try{
@@ -32,7 +34,6 @@ Notificacoes.getByUser = async function(idUser){
         for(i = 0; i < ids.notificacoes.length; i++){
             var query = { _id: ids.notificacoes[i] };
             var newNotificacao = await Notificacao.findOne(query);
-            console.log("NewNotificacao: " + newNotificacao);
             notificacoesRes.push( newNotificacao );
 
         };
