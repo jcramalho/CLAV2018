@@ -4,8 +4,8 @@
   "description": "Arquivo Digital: Plataforma Modular para a Classificação e a Avaliação da Informação Pública",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "./prepareHTTPS.sh && node ./bin/www",
-    "nodemon": "./prepareHTTPS.sh && nodemon ./bin/www"
+    "start": "node ./bin/www",
+    "nodemon": "nodemon ./bin/www"
   },
   "repository": {
     "type": "git",

@@ -6,6 +6,7 @@ misc/
 sessions/
 package-lock.json
 public/clav.yaml
+public_ssl/
 ssl/
 
 yarn.lock

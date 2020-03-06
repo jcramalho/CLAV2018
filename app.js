@@ -77,7 +77,7 @@ var passport = require('passport');
 require('./config/passport')(passport);
 
 //config
-app.use(express.static(__dirname + '/public', { dotfiles:'allow' }));
+app.use(express.static(__dirname + '/public'));
 
 // Passport init
 app.use(passport.initialize());

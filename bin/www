@@ -4,12 +4,13 @@
  * Module dependencies.
  */
 
-var app = require('../app');
+var appHTTPS = require('../app');
 var debug = require('debug')('M51-CLAV_WEB:server');
 var http = require('http');
 var https = require('https');
 var fs = require('fs');
 var databases = require('../config/database')
+var certsFolder = './ssl/'
 
 /**
  * Get port from environment and store in Express.
@@ -17,27 +18,58 @@ var databases = require('../config/database')
 
 var portHTTP = normalizePort(databases.portHTTP);
 var portHTTPS = normalizePort(databases.portHTTPS);
-app.set('port', portHTTPS);
+appHTTPS.set('port', portHTTPS);
 
 /**
  * Create HTTP and HTTPS server.
  */
 
-var HTTPserver = http.createServer((req, res) => {
+var express = require('express')
+var appHTTP = express()
+
+appHTTP.use(express.static(__dirname + '/public_ssl'));
+appHTTP.use((req, res) => {
     //Redirect HTTP to HTTPS
     res.statusCode = 301;
     var domain = req.headers.host.replace(/:[0-9]+$/g,`:${portHTTPS}`)
     res.setHeader('Location', `https://${domain}${req.url}`);
     res.end();
-});
+})
 
-var options = {
-    key: fs.readFileSync("./ssl/key.pem"),
-    cert: fs.readFileSync("./ssl/cert.pem"),
-    ca: fs.readFileSync("./ssl/fullchain.pem")
+var HTTPserver = http.createServer(appHTTP);
+
+//create options object for https, reading the cert files. If one cert file does not exist returns an empty object
+function getCert(){
+    var options
+    try{
+        options = {
+            key: fs.readFileSync(certsFolder + "key.pem"),
+            cert: fs.readFileSync(certsFolder + "cert.pem"),
+            ca: fs.readFileSync(certsFolder + "fullchain.pem")
+        }
+    }catch(err){
+        options = {}
+    }
+    return options
 }
 
-var HTTPSserver = https.createServer(options, app);
+var HTTPSserver = https.createServer(getCert(), appHTTPS);
+
+//checks if certFolder exists and create it if not
+if(!fs.existsSync(certsFolder)){
+    fs.mkdirSync(certsFolder)
+}
+
+//reload certificate without reloading server
+var timeout
+//checks when files changes (renewed certificate)
+fs.watch(certsFolder, () => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+        //reloads options object
+        HTTPSserver.setSecureContext(getCert())
+    }, 1000);
+})
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -46,7 +78,7 @@ var HTTPSserver = https.createServer(options, app);
 //Garante que o servidor só começa a aceitar pedidos quando as conexões
 //ao MongoDB e GraphDB foram confirmadas e que o carregamento para cache
 //da informação foi iniciado
-app.once('ready', () => {
+appHTTPS.once('ready', () => {
     HTTPserver.listen(portHTTP);
     HTTPserver.on('error', onError(portHTTP));
     HTTPserver.on('listening', onListening(HTTPserver));

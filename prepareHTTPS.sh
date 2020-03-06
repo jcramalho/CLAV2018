@@ -6,6 +6,8 @@ NAME=acme.sh
 FOLDER=~/.acme.sh
 EXEC=$FOLDER/$NAME
 DOMAINS=('clav-api.dglab.gov.pt' 'clav-test.di.uminho.pt')
+WEBDIR=./public_ssl
+CERT_FOLDER=./ssl
 
 function join_by {
     local d=$1
@@ -76,20 +78,25 @@ getCertificate() {
     #Check if certificate does not exists
     if [ ! -d "$FOLDER/$DOMAINS" ]; then
         local domains="-d $(join_by ' -d ' ${DOMAINS[@]})"
-        $EXEC --staging --issue $domains -w ./public
+        
+        if [ ! -d $WEBDIR ]; then
+            mkdir $WEBDIR
+        fi
+
+        $EXEC --staging --issue $domains -w $WEBDIR
     fi
 }
 
 installCertificate() {
-    if [ ! -d ./ssl ]; then
-        mkdir -p ./ssl
+    if [ ! -d $CERT_FOLDER ]; then
+        mkdir -p $CERT_FOLDER
     fi
 
     $EXEC --install-cert -d $DOMAINS \
-        --cert-file ./ssl/cert.pem \
-        --key-file ./ssl/key.pem \
-        --fullchain-file ./ssl/fullchain.pem \
-        --reloadcmd "pkill npm && npm start"
+        --cert-file $CERT_FOLDER/cert.pem \
+        --key-file $CERT_FOLDER/key.pem \
+        --fullchain-file $CERT_FOLDER/fullchain.pem #\
+       #--reloadcmd "(pkill npm || pkill node) && npm start"
 }
 
 downloadInstallScript
