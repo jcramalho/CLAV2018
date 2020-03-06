@@ -11,11 +11,11 @@ Notificacoes.criar = async function(n){
 
     try{
         newNotificacao = await newNotificacao.save();
-        await User.update(
+        await User.updateMany(
             { entidade: newNotificacao.entidade },
             { $push: { notificacoes: newNotificacao._id } }
          );
-        return newNotificacao
+        return newNotificacao;
     }catch(err) {
         console.log(err)
         return 'Ocorreu um erro a submeter a notificacao! Tente novamente mais tarde'
@@ -25,13 +25,12 @@ Notificacoes.criar = async function(n){
 Notificacoes.getByUser = async function(idUser){
     var notificacoes = [];
 
-    queryUser = { _id: idUser };
-	ids = await User.findOne(queryUser, {_id: 0, notificacoes: 1});
-
+	ids = await User.findOne({ _id: idUser}, {_id: 0, notificacoes: 1});
+    console.log("Notificacoes: " + ids);
     try{
-        ids.forEach(async function(idNotificacao) {
+        ids.notificacoes.forEach(async function(idNotificacao) {
             var query = { _id: idNotificacao };
-            var newNotificacao = await Notificacao.findOne(query)
+            var newNotificacao = await Notificacao.findOne(query);
             notificacoes.push( newNotificacao );
         });
         return notificacoes;
