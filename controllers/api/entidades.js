@@ -261,7 +261,7 @@ Entidades.tipologias = (id) => {
  * então a promessa conterá o valor `undefined`
  */
 Entidades.consultar = (id) => {
-	const query = `SELECT ?sigla ?designacao ?estado ?internacional ?sioe WHERE {
+	const query = `SELECT ?sigla ?designacao ?estado ?internacional ?sioe ?dataCriacao ?dataExtincao WHERE {
         clav:${id} rdf:type clav:Entidade ;
             clav:entDesignacao ?designacao ;
             clav:entSigla ?sigla ;
@@ -269,6 +269,12 @@ Entidades.consultar = (id) => {
             clav:entInternacional ?internacional .
         OPTIONAL {
             clav:${id} clav:entSIOE ?sioe
+        }
+        OPTIONAL {
+            clav:${id} clav:entDataCriacao ?dataCriacao
+        }
+        OPTIONAL {
+            clav:${id} clav:entDataExtincao ?dataExtincao
         }
     }`
 
