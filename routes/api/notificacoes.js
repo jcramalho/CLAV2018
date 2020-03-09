@@ -26,4 +26,10 @@ router.post('/', (req, res) => {
         .catch(erro => res.status(500).send(`Erro na criação da notificação: ${erro}`))
 })
 
+router.delete('/:idUser/:idNotificacao', (req, res) => {
+    Notificacao.vista(req.params.idUser, req.params.idNotificacao)  
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.status(500).send(`Erro na remoção da notificação: ${erro}`))
+})
+
 module.exports = router;

@@ -44,3 +44,16 @@ Notificacoes.criar = async function(n){
         return 'Ocorreu um erro a submeter a notificacao! Tente novamente mais tarde'
     }
 }
+
+Notificacoes.vista = async function(idUser, idNotificacao){
+    try{
+        await User.update(
+            { _id: idUser },
+            { $pull: { notificacoes: idNotificacao } }
+        );
+        return User.findOne({ _id : idUser });
+    }catch(err){
+        console.log(err)
+        return 'Ocorreu um erro a remover a notificacao! Tente novamente mais tarde'
+    }
+}
