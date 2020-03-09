@@ -75,16 +75,13 @@ downloadInstallScript() {
 }
 
 getCertificate() {
-    #Check if certificate does not exists
-    if [ ! -d "$FOLDER/$DOMAINS" ]; then
-        local domains="-d $(join_by ' -d ' ${DOMAINS[@]})"
-        
-        if [ ! -d $WEBDIR ]; then
-            mkdir $WEBDIR
-        fi
-
-        $EXEC --staging --issue $domains -w $WEBDIR
+    local domains="-d $(join_by ' -d ' ${DOMAINS[@]})"
+    
+    if [ ! -d $WEBDIR ]; then
+        mkdir $WEBDIR
     fi
+
+    $EXEC --issue $domains -w $WEBDIR
 }
 
 installCertificate() {

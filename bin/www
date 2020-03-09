@@ -27,7 +27,7 @@ appHTTPS.set('port', portHTTPS);
 var express = require('express')
 var appHTTP = express()
 
-appHTTP.use(express.static(__dirname + '/public_ssl'));
+appHTTP.use(express.static(__dirname + '/../public_ssl'));
 appHTTP.use((req, res) => {
     //Redirect HTTP to HTTPS
     res.statusCode = 301;
@@ -67,6 +67,7 @@ fs.watch(certsFolder, () => {
     clearTimeout(timeout);
     timeout = setTimeout(() => {
         //reloads options object
+        //WARNING: needs nodejs v11
         HTTPSserver.setSecureContext(getCert())
     }, 1000);
 })
