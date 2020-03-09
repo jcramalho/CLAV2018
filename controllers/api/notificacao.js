@@ -2,26 +2,9 @@ const Notificacao = require('../../models/notificacao');
 const User = require('../../models/user');
 const Notificacoes = module.exports;
 
-Notificacoes.consultar = (id) => {
-    return Notificacao.findOne({ _id: id });
+Notificacoes.listar = () => {
+    return Notificacao.find();
 };
-
-Notificacoes.criar = async function(n){
-    var newNotificacao = new Notificacao(n);
-
-    try{
-        newNotificacao = await newNotificacao.save();
-        console.log("ID: " + newNotificacao._id);
-        await User.updateMany(
-            { entidade: newNotificacao.entidade },
-            { $push: { notificacoes: newNotificacao._id } }
-         );
-        return newNotificacao;
-    }catch(err) {
-        console.log(err)
-        return 'Ocorreu um erro a submeter a notificacao! Tente novamente mais tarde'
-    }
-}
 
 Notificacoes.getByUser = async function(idUser){
 
@@ -43,4 +26,21 @@ Notificacoes.getByUser = async function(idUser){
         return 'Ocorreu um erro a obter as notificacoes do utilizador! Tente novamente mais tarde'
     }
 
+}
+
+Notificacoes.criar = async function(n){
+    var newNotificacao = new Notificacao(n);
+
+    try{
+        newNotificacao = await newNotificacao.save();
+        console.log("ID: " + newNotificacao._id);
+        await User.updateMany(
+            { entidade: newNotificacao.entidade },
+            { $push: { notificacoes: newNotificacao._id } }
+         );
+        return newNotificacao;
+    }catch(err) {
+        console.log(err)
+        return 'Ocorreu um erro a submeter a notificacao! Tente novamente mais tarde'
+    }
 }
