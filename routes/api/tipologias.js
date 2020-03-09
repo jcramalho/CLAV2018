@@ -113,7 +113,7 @@ router.get("/:id/intervencao/participante", Auth.isLoggedInKey, (req, res) => {
 
 // Insere uma tipologia na BD
 router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), (req, res) => {
-  if (req.body && req.body.sigla && req.body.designacao) {
+  if (req.body && req.body.sigla && req.body.designacao && req.body.estado) {
     Tipologias.criar(req.body)
       .then(dados => res.jsonp(dados))
       .catch(err =>
@@ -125,7 +125,7 @@ router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), (req, res) => {
     res
       .status(500)
       .send(
-        "O seu pedido não possui todos os parâmetros necessários (sigla e designacao)."
+        "O seu pedido não possui todos os parâmetros necessários (sigla, designacao e estado)."
       );
   }
 });

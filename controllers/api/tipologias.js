@@ -486,8 +486,6 @@ Tipologias.criar = async tip => {
   const query = "INSERT DATA " + queryPart;
   const ask = "ASK " + queryPart;
 
-  console.log("query :", query);
-
   if (
     (await Tipologias.existeSigla(tip.sigla)) ||
     (await Tipologias.existeDesignacao(tip.designacao))
