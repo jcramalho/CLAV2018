@@ -31,7 +31,7 @@ appHTTP.use(express.static(__dirname + '/../public_ssl'));
 appHTTP.use((req, res) => {
     //Redirect HTTP to HTTPS
     res.statusCode = 301;
-    var domain = req.headers.host.replace(/:[0-9]+$/g,`:${portHTTPS}`)
+    var domain = req.headers.host ? req.headers.host.replace(/:[0-9]+$/g,`:${portHTTPS}`) : ""
     res.setHeader('Location', `https://${domain}${req.url}`);
     res.end();
 })
