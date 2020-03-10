@@ -468,7 +468,7 @@ Tipologias.moreInfo = async tip => {
 //Criar tipologia
 Tipologias.criar = async tip => {
   var queryPart = `{ 
-    clav:tip_${tip.sigla} rdf:type owl:NamedIndividual, clav:TipologiaEntidade;
+    clav:tip_${tip.sigla} rdf:type owl:NamedIndividual, clav:TipologiaEntidade ;
         clav:tipSigla "${tip.sigla}" ;
         clav:tipDesignacao "${tip.designacao}" ;
         clav:tipEstado "${tip.estado}"`;
@@ -479,12 +479,14 @@ Tipologias.criar = async tip => {
     tip.entidadesSel.length > 0
   )
     queryPart += ` ;\n\tclav:pertenceTipologiaEnt ${tip.entidadesSel
-      .map(ent => "clav:ent_" + ent.sigla)
+      .map(ent => `clav:ent_${ent.sigla}`)
       .join(", ")}`;
 
   queryPart += " .\n}";
   const query = "INSERT DATA " + queryPart;
   const ask = "ASK " + queryPart;
+
+  console.log("query :", query);
 
   if (
     (await Tipologias.existeSigla(tip.sigla)) ||

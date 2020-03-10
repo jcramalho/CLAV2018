@@ -449,35 +449,48 @@ Leg.moreInfo = async leg => {
 
 //Criar legislação
 Leg.criar = async leg => {
+  console.log("leg :", leg);
   let baseQuery = `{
-    clav:${leg.codigo} rdf:type owl:NamedIndividual , clav:Legislacao ;
-            clav:diplomaData '${leg.data}' ;
-            clav:diplomaNumero '${leg.numero}' ;
-            clav:diplomaTipo '${leg.tipo}' ;
-            clav:diplomaSumario '${leg.sumario}' ;
-            clav:diplomaEstado 'Ativo' `;
+    clav:${leg.codigo} rdf:type owl:NamedIndividual, clav:Legislacao ;
+        clav:rdfs:label "Leg.: ${leg.tipo} ${leg.numero}" ;
+        clav:diplomaData "${leg.data}" ;
+        clav:diplomaNumero "${leg.numero}" ;
+        clav:diplomaTipo "${leg.tipo}" ;
+        clav:diplomaSumario "${leg.sumario}" ;
+        clav:diplomaEstado "${leg.estado}"`;
 
-  if (leg.link) baseQuery += `;\n\tclav:diplomaLink"${leg.link}" ;`;
+  if (leg.diplomaFonte)
+    baseQuery += ` ;\n\tclav:diplomaFonte "${leg.diplomaFonte}"`;
+
+  if (leg.link) baseQuery += ` ;\n\tclav:diplomaLink "${leg.link}"`;
 
   if (
     leg.entidadesSel &&
     leg.entidadesSel instanceof Array &&
     leg.entidadesSel.length > 0
   ) {
-    `${leg.entidadesSel
-      .map(
-        entidade =>
-          `;\n\tclav:${leg.codigo} clav:temEntidadeResponsavel clav:${entidade.id}.`
-      )
-      .join("\n")}
-      }`;
+    baseQuery += ` ;\n\tclav:temEntidadeResponsavel ${leg.entidadesSel
+      .map(ent => `clav:ent_${ent.sigla}`)
+      .join(", ")}`;
   }
 
-  baseQuery += ".\n}";
+  if (
+    leg.processosSel &&
+    leg.processosSel instanceof Array &&
+    leg.processosSel.length > 0
+  ) {
+    baseQuery += ` ;\n\tclav:estaAssoc ${leg.processosSel
+      .map(proc => `clav:c${proc.codigo}`)
+      .join(", ")}`;
+  }
+
+  baseQuery += " .\n}";
 
   const query = "INSERT DATA " + baseQuery;
 
   const ask = "ASK " + baseQuery;
+
+  console.log("query :", query);
 
   if (await Leg.existe(leg.numero)) {
     throw "Legislação já existe, número já em uso.";
@@ -490,25 +503,6 @@ Leg.criar = async leg => {
     );
   }
 };
-
-//Criar controller para inserir na base de dados, depois do pedido aprovado!!
-// const query = `INSERT DATA {
-//         clav:${id} rdf:type owl:NamedIndividual , clav:Legislacao ;
-//             clav:diplomaData '${legislacao.data}' ;
-//             clav:diplomaNumero '${legislacao.numero}' ;
-//             clav:diplomaTipo '${legislacao.tipo}' ;
-//             clav:diplomaSumario '${legislacao.sumario}' ;
-//             clav:diplomaLink '${legislacao.link}' ;
-//             clav:diplomaEstado 'Harmonização' .
-
-//         ${legislacao.entidades
-//           .map(
-//             entidade =>
-//               `clav:${id} clav:temEntidadeResponsavel clav:${entidade}.`
-//           )
-//           .join("\n")}
-
-//     }`;
 
 /*
 Leg.updateDoc = function (dataObj) {
