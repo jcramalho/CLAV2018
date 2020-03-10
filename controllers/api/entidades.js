@@ -419,15 +419,6 @@ Entidades.criar = async ent => {
 
   if (ent.sioe) queryEnt += ` ;\n\tclav:entSIOE "${ent.sioe}"`;
 
-  if (
-    ent.tipologiasSel &&
-    ent.tipologiasSel instanceof Array &&
-    ent.tipologiasSel.length > 0
-  )
-    queryEnt += ` ;\n\tclav:pertenceTipologiaEnt ${ent.tipologiasSel
-      .map(tip => "clav:tip_" + tip.sigla)
-      .join(", ")}`;
-
   if (ent.internacional !== null && ent.internacional !== undefined) {
     ent.internacional = ent.internacional === "" ? "Não" : ent.internacional;
   } else {
@@ -437,6 +428,15 @@ Entidades.criar = async ent => {
 
   if (ent.dataCriacao)
     queryEnt += ` ;\n\tclav:entDataCriacao "${ent.dataCriacao}"`;
+
+  if (
+    ent.tipologiasSel &&
+    ent.tipologiasSel instanceof Array &&
+    ent.tipologiasSel.length > 0
+  )
+    queryEnt += ` ;\n\tclav:pertenceTipologiaEnt ${ent.tipologiasSel
+      .map(tip => `clav:tip_${tip.sigla}`)
+      .join(", ")}`;
 
   queryEnt += " .\n}";
   const query = "INSERT DATA " + queryEnt;

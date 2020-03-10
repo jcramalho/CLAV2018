@@ -170,7 +170,7 @@ router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), (req, res) => {
     res
       .status(500)
       .send(
-        "O seu pedido não possui todos os parâmetros necessários (data, número, tipo, sumário)."
+        "O seu pedido não possui todos os parâmetros necessários (data, número, tipo ou sumário)."
       );
   }
 });
