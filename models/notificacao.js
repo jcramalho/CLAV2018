@@ -20,6 +20,10 @@ const NotificacaoSchema = new mongoose.Schema({
     novoEstado: {
         type: String,
         required: true
+    },
+    responsavel: { // Email do técnico responsável pelo pedido no novo estado
+        type:String,
+        required: true
     }
 })
 

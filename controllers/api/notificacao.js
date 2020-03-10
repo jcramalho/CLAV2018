@@ -2,10 +2,6 @@ const Notificacao = require('../../models/notificacao');
 const User = require('../../models/user');
 const Notificacoes = module.exports;
 
-Notificacoes.listar = () => {
-    return Notificacao.find();
-};
-
 Notificacoes.getByUser = async function(idUser){
 
     console.log("ID: " + idUser);
@@ -33,7 +29,6 @@ Notificacoes.criar = async function(n){
 
     try{
         newNotificacao = await newNotificacao.save();
-        console.log("ID: " + newNotificacao._id);
         await User.updateMany(
             { entidade: newNotificacao.entidade },
             { $push: { notificacoes: newNotificacao._id } }
