@@ -442,8 +442,6 @@ Entidades.criar = async ent => {
   const query = "INSERT DATA " + queryEnt;
   const ask = "ASK " + queryEnt;
 
-  console.log("query :", query);
-
   if (
     (await Entidades.existeSigla(ent.sigla)) ||
     (await Entidades.existeDesignacao(ent.designacao))

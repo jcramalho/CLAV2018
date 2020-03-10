@@ -449,7 +449,6 @@ Leg.moreInfo = async leg => {
 
 //Criar legislação
 Leg.criar = async leg => {
-  console.log("leg :", leg);
   let baseQuery = `{
     clav:${leg.codigo} rdf:type owl:NamedIndividual, clav:Legislacao ;
         clav:rdfs:label "Leg.: ${leg.tipo} ${leg.numero}" ;
@@ -489,8 +488,6 @@ Leg.criar = async leg => {
   const query = "INSERT DATA " + baseQuery;
 
   const ask = "ASK " + baseQuery;
-
-  console.log("query :", query);
 
   if (await Leg.existe(leg.numero)) {
     throw "Legislação já existe, número já em uso.";
