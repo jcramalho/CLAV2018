@@ -158,6 +158,12 @@
                     "desc": "Um PN não pode ter em simultâneo relações de 'éSínteseDe' e 'éSintetizadoPor' com outros PNs",
                     "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect distinct ?s ?s_titulo where {\n\t?s :eSinteseDe ?o .\n\t?s :eSintetizadoPor ?r.\n\t?s :titulo ?s_titulo .\n}", 
                     "checked":true
+                },
+                {
+                    "idInv": "inv_12",
+                    "desc": "Um diploma legislativo referenciado num critério de justicação tem de estar associado na zona de contexto do processo que tem essa justificação",
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nSELECT ?proc ?tipo ?num WHERE {\n\t?crit rdf:type :CriterioJustificacaoLegal.\n\t?crit :critTemLegAssoc ?leg .\n\t?leg :diplomaTipo ?tipo.\n\t?leg :diplomaNumero ?num.\n\t?just :temCriterio ?crit.\n\t{\n\t\t{\n\t\t\t?df :temJustificacao ?just.\n\t\t\t?proc :temDF ?df.\n\t\t} union {\n\t\t\t?pca :temJustificacao ?just.\n\t\t\t?proc :temPCA ?pca.\n\t\t}\n\t} MINUS {\n\t\t?proc :temLegislacao ?leg\n\t}\n}", 
+                    "checked":true
                 }
             ]
         },

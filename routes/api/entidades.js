@@ -158,7 +158,7 @@ router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), (req, res) => {
     res
       .status(500)
       .send(
-        "O seu pedido não possui todos os parâmetros necessários (sigla, estado e designacao)."
+        "O seu pedido não possui todos os parâmetros necessários (sigla, estado ou designacao)."
       );
   }
 });
