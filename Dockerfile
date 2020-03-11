@@ -6,4 +6,4 @@ WORKDIR /server
 
 RUN npm install
 
-CMD ["npm", "start"]
+CMD sh -c '(npm start &) && ./prepareHTTPS.sh && tail -f /dev/null'

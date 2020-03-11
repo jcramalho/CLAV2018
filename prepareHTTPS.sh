@@ -85,12 +85,14 @@ getCertificate() {
 }
 
 installCertificate() {
+    #gen dhparam
+    openssl dhparam -out $CERT_FOLDER/dhparam.pem 2048
+
     if [ ! -d $CERT_FOLDER ]; then
         mkdir -p $CERT_FOLDER
     fi
 
     $EXEC --install-cert -d $DOMAINS \
-        --cert-file $CERT_FOLDER/cert.pem \
         --key-file $CERT_FOLDER/key.pem \
         --fullchain-file $CERT_FOLDER/fullchain.pem #\
        #--reloadcmd "(pkill npm || pkill node) && npm start"

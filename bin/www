@@ -44,8 +44,8 @@ function getCert(){
     try{
         options = {
             key: fs.readFileSync(certsFolder + "key.pem"),
-            cert: fs.readFileSync(certsFolder + "cert.pem"),
-            ca: fs.readFileSync(certsFolder + "fullchain.pem")
+            cert: fs.readFileSync(certsFolder + "fullchain.pem"),
+            dhparam: fs.readFileSync(certsFolder + "dhparam.pem")
         }
     }catch(err){
         options = {}
