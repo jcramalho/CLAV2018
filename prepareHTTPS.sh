@@ -85,12 +85,12 @@ getCertificate() {
 }
 
 installCertificate() {
-    #gen dhparam
-    openssl dhparam -out $CERT_FOLDER/dhparam.pem 2048
-
     if [ ! -d $CERT_FOLDER ]; then
         mkdir -p $CERT_FOLDER
     fi
+
+    #gen dhparam
+    openssl dhparam -out $CERT_FOLDER/dhparam.pem 2048
 
     $EXEC --install-cert -d $DOMAINS \
         --key-file $CERT_FOLDER/key.pem \
