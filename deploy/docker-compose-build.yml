@@ -27,7 +27,7 @@ services:
     restart: always
     environment:
       - NODE_ENV=production
-      - SWAGGER_URL=${DOMAINS[0]}
+      - SWAGGER_URL=${SWAGGER_URL}
       - GRAPHDB=graphdb:7200
       - MONGODB=mongo
       - API_VERSION=${API_VERSION}
@@ -46,7 +46,7 @@ services:
     command: /bin/bash -c "/beforeStart.sh ${CERT_FOLDER} \
                 && envsubst '$$SERVER_URL $$CERTS' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf \
                 && (nginx -g 'daemon off;') \
-                && /afterStart.sh -c ${CERT_FOLDER} -a ${ACME_FOLDER} ${DOMAINS[@]} \
+                && /afterStart.sh -c ${CERT_FOLDER} -a ${ACME_FOLDER} ${DOMAINS} \
                 && tail -f /dev/null"
     ports:
       - "80:7777"
