@@ -37,12 +37,12 @@ router.post('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), 
         .then(dados => {
             
             var notificacao = {
-                entidade : dados.entidade,
-                pedido: dados.codigo,
-                acao: dados.objeto.acao,
-                tipo: dados.objeto.tipo,
-                novoEstado: dados.distribuicao.estado,
-                responsavel: dados.distribuicao.estado
+                entidade : req.body.entidade,
+                pedido: req.body.novoObjeto.codigo,
+                acao: req.body.tipoPedido,
+                tipo: req.body.tipoObjeto,
+                novoEstado: "Submetido",
+                responsavel: req.body.user.email
 
             }
             Notificacao.criar(notificacao);
@@ -58,13 +58,13 @@ router.put('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), (
         .then(dados => {
 
             var notificacao = {
-                entidade : dados.entidade,
-                pedido: dados.codigo,
-                acao: dados.objeto.acao,
-                tipo: dados.objeto.tipo,
-                novoEstado: dados.distribuicao.estado,
-                responsavel: dados.distribuicao.estado
-
+                entidade : req.body.pedido.entidade,
+                pedido: req.body.pedido.objeto.codigo,
+                acao: req.body.pedido.objeto.acao,
+                tipo: req.body.pedido.objeto.tipo,
+                novoEstado: req.body.pedido.estado,
+                responsavel: req.body.pedido.distribuicao[0].responsavel
+ 
             }
             Notificacao.criar(notificacao);
 

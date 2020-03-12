@@ -6,7 +6,7 @@ Notificacoes.getByUser = async function(ccUser){
 
     console.log("CC: " + ccUser);
 
-    ids = await User.findOne({ _id: ccUser }, {cc: 0, notificacoes: 1});
+    ids = await User.findOne({ _id: ccUser }, { _id: 0, notificacoes: 1 });
 
     try{
         var notificacoesRes = [];
