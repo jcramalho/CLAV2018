@@ -158,6 +158,12 @@
                     "desc": "Um PN não pode ter em simultâneo relações de 'éSínteseDe' e 'éSintetizadoPor' com outros PNs",
                     "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect distinct ?s ?s_titulo where {\n\t?s :eSinteseDe ?o .\n\t?s :eSintetizadoPor ?r.\n\t?s :titulo ?s_titulo .\n}", 
                     "checked":true
+                },
+                {
+                    "idInv": "inv_12",
+                    "desc": "Um diploma legislativo referenciado num critério de justicação tem de estar associado na zona de contexto do processo que tem essa justificação",
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nSELECT ?proc ?tipo ?num WHERE {\n\t{\n\t\t?crit rdf:type :CriterioJustificacaoLegal.\n\t\t?crit :critTemLegAssoc ?leg .\n\t\t?leg :diplomaTipo ?tipo.\n\t\t?leg :diplomaNumero ?num.\n\t\t?just :temCriterio ?crit.\n\t\t?proc rdf:type :Classe_N3 .\n\t\t{\n\t\t\t{\n\t\t\t\t?df :temJustificacao ?just.\n\t\t\t\t?proc :temDF ?df.\n\t\t\t} union {\n\t\t\t\t?pca :temJustificacao ?just.\n\t\t\t\t?proc :temPCA ?pca.\n\t\t\t}\n\t\t} MINUS {\n\t\t\t?proc :temLegislacao ?leg\n\t\t}\n\t}union{\n\t\t?crit rdf:type :CriterioJustificacaoLegal.\n\t\t?crit :critTemLegAssoc ?leg .\n\t\t?leg :diplomaTipo ?tipo.\n\t\t?leg :diplomaNumero ?num.\n\t\t?just :temCriterio ?crit.\n\t\t?proc rdf:type :Classe_N4 .\n\t\t?proc :temPai ?pai.\n\t\t{\n\t\t\t{\n\t\t\t\t?df :temJustificacao ?just.\n\t\t\t\t?proc :temDF ?df.\n\t\t\t} union {\n\t\t\t\t?pca :temJustificacao ?just.\n\t\t\t\t?proc :temPCA ?pca.\n\t\t\t}\n\t\t} MINUS {\n\t\t\t?pai :temLegislacao ?leg\n\t\t}\n\t}\n}",
+                    "checked":true
                 }
             ]
         },
