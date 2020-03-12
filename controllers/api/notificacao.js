@@ -25,9 +25,8 @@ Notificacoes.getByUser = async function(idUser){
 }
 
 Notificacoes.criar = async function(n){
-    var newNotificacao = new Notificacao(n);
-
-    try{
+    try{    
+        var newNotificacao = new Notificacao(n);
         newNotificacao = await newNotificacao.save();
         await User.updateMany(
             { entidade: newNotificacao.entidade },
