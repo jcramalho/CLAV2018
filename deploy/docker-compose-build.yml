@@ -1,0 +1,63 @@
+version: '3.5'
+services:
+  mongo:
+    image: mongo
+    container_name: clav_mongo
+    restart: always
+    volumes:
+      - mongodb-data:/data/db
+  graphdb:
+    image: ${GRAPHDB_IMG}
+    container_name: clav_graphdb
+    build:
+      context: ./graphdb
+      dockerfile: ./graphdb/Dockerfile
+      args:
+        - version=${GRAPHDB_VERSION}
+        - dataFile=${GRAPHDB_DATA_FILE}
+    restart: always
+    volumes:
+      - graphdb-data:/opt/graphdb/home/data/repositories
+  server:
+    image: ${SERVER_IMG}
+    container_name: clav_server
+    build:
+      context: ../
+      dockerfile: ../Dockerfile
+    restart: always
+    environment:
+      - NODE_ENV=production
+      - SWAGGER_URL=${DOMAINS[0]}
+      - GRAPHDB=graphdb:7200
+      - MONGODB=mongo
+      - API_VERSION=${API_VERSION}
+  nginx:
+    image: nginx
+    container_name: clav_nginx
+    restart: always
+    environment:
+      - SERVER_URL=http://server:7779
+      - CERTS=${CERT_FOLDER}
+    volumes:
+      - ${PWD}/nginx-template.conf:/etc/nginx/nginx.conf.template
+      - ${PWD}/beforeStart.sh:/beforeStart.sh
+      - ${PWD}/afterStart.sh:/afterStart.sh
+      - acme-data:${ACME_FOLDER}
+    command: /bin/bash -c "/beforeStart.sh ${CERT_FOLDER} \
+                && envsubst '$$SERVER_URL $$CERTS' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf \
+                && (nginx -g 'daemon off;') \
+                && /afterStart.sh -c ${CERT_FOLDER} -a ${ACME_FOLDER} ${DOMAINS[@]} \
+                && tail -f /dev/null"
+    ports:
+      - "80:7777"
+      - "443:7778"
+volumes:
+  mongodb-data:
+    external: false
+    name: clav-mongodb-data
+  graphdb-data:
+    external: false
+    name: clav-graphdb-data
+  acme-data:
+    external: false
+    name: certificate-data

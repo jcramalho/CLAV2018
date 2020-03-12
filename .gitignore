@@ -6,5 +6,6 @@ misc/
 sessions/
 package-lock.json
 public/clav.yaml
+graphdb-*-dist.zip
 
 yarn.lock
