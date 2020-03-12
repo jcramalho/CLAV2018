@@ -1,4 +1,5 @@
 var Auth = require('../../controllers/auth.js');
+var Notificacao = require('../../controllers/api/notificacao.js')
 var Pedidos = require('../../controllers/api/pedidos');
 var express = require('express');
 var router = express.Router();
@@ -33,14 +34,42 @@ router.get('/:codigo', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6,
 // Criação de um pedido
 router.post('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), (req, res) => {
     Pedidos.criar(req.body)
-        .then(dados => res.jsonp(dados))
+        .then(dados => {
+            
+            var notificacao = {
+                entidade : dados.entidade,
+                pedido: dados.codigo,
+                acao: dados.objeto.acao,
+                tipo: dados.objeto.tipo,
+                novoEstado: dados.distribuicao.estado,
+                responsavel: dados.distribuicao.estado
+
+            }
+            Notificacao.criar(notificacao);
+
+            res.jsonp(dados);
+        })
         .catch(erro => res.status(500).send(`Erro na criação do pedido: ${erro}`));
 })
 
 // Atualização de um pedido: mais uma etapa na distribuição
 router.put('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), (req, res) => {
     Pedidos.atualizar(req.body.pedido._id, req.body)
-        .then(dados => res.jsonp(dados))
+        .then(dados => {
+
+            var notificacao = {
+                entidade : dados.entidade,
+                pedido: dados.codigo,
+                acao: dados.objeto.acao,
+                tipo: dados.objeto.tipo,
+                novoEstado: dados.distribuicao.estado,
+                responsavel: dados.distribuicao.estado
+
+            }
+            Notificacao.criar(notificacao);
+
+            res.jsonp(dados);
+        })
         .catch(erro => res.status(500).send(`Erro na atualização do pedido: ${erro}`));
 })
 
