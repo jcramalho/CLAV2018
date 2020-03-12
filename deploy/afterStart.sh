@@ -88,6 +88,7 @@ downloadInstallScript() {
 
     #Check if script not exists
     if [ ! -f "$EXEC" ]; then
+        sudo touch /var/spool/cron/crontabs/root
         curl -O https://raw.githubusercontent.com/Neilpang/acme.sh/master/acme.sh
         chmod +x $NAME
         ./$NAME --install

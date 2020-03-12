@@ -11,7 +11,7 @@ services:
     container_name: clav_graphdb
     build:
       context: ./graphdb
-      dockerfile: ./graphdb/Dockerfile
+      dockerfile: Dockerfile
       args:
         - version=${GRAPHDB_VERSION}
         - dataFile=${GRAPHDB_DATA_FILE}
@@ -23,7 +23,7 @@ services:
     container_name: clav_server
     build:
       context: ../
-      dockerfile: ../Dockerfile
+      dockerfile: Dockerfile
     restart: always
     environment:
       - NODE_ENV=production
@@ -39,15 +39,12 @@ services:
       - SERVER_URL=http://server:7779
       - CERTS=${CERT_FOLDER}
     volumes:
-      - ${PWD}/nginx-template.conf:/etc/nginx/nginx.conf.template
+      - ${PWD}/nginx.conf.template:/etc/nginx/nginx.conf.template
       - ${PWD}/beforeStart.sh:/beforeStart.sh
       - ${PWD}/afterStart.sh:/afterStart.sh
       - acme-data:${ACME_FOLDER}
-    command: /bin/bash -c "/beforeStart.sh ${CERT_FOLDER} \
-                && envsubst '$$SERVER_URL $$CERTS' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf \
-                && (nginx -g 'daemon off;') \
-                && /afterStart.sh -c ${CERT_FOLDER} -a ${ACME_FOLDER} ${DOMAINS} \
-                && tail -f /dev/null"
+      - cronjob:/var/spool/cron/crontabs/root
+    command: /bin/bash -c "/beforeStart.sh ${CERT_FOLDER} && envsubst '$$SERVER_URL $$CERTS' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && (nginx -g 'daemon off;' &) && /afterStart.sh -c ${CERT_FOLDER} -a ${ACME_FOLDER} ${DOMAINS} && tail -f /dev/null"
     ports:
       - "80:7777"
       - "443:7778"
@@ -60,4 +57,7 @@ volumes:
     name: clav-graphdb-data
   acme-data:
     external: false
-    name: certificate-data
+    name: acme-data
+  cronjob:
+    external: false
+    name: cronjob
