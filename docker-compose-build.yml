@@ -1,0 +1,26 @@
+version: '3.5'
+services:
+  server:
+    image: jcm300/clav_api:1.0.7
+    container_name: clav_server
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      - NODE_ENV=production
+      - SWAGGER_URL=https://clav.dglab.gov.pt
+      - GRAPHDB=graphdb:7200
+      - MONGODB=mongo
+      - API_VERSION=v2
+    ports:
+      - "7779:7779"
+  nginx:
+    image: jcm300/clav_nginx:1.0.7
+    container_name: clav_nginx
+    build:
+      dockerfile: Dockerfile_nginx
+    restart: always
+    ports:
+      - "80:7777"
+      - "443:7778"
