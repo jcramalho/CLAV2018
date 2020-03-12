@@ -19,6 +19,7 @@ services:
     image: jcm300/clav_nginx:1.0.7
     container_name: clav_nginx
     build:
+      context: ./
       dockerfile: Dockerfile_nginx
     restart: always
     ports:
