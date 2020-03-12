@@ -1,7 +1,6 @@
 // const ip = '192.168.85.197'
 const ip = process.env.IP || '192.168.85.197' //'localhost'
-module.exports.portHTTP = process.env.PORT_HTTP || '7778'
-module.exports.portHTTPS = process.env.PORT_HTTPS || '7779'
+module.exports.portHTTP = process.env.PORT || '7779'
 module.exports.apiVersion = process.env.API_VERSION || 'v2'
 
 module.exports.onthology = process.env.GRAPHDB ? 'http://' + process.env.GRAPHDB +'/repositories/CLAV' : 'http://'+ip+':7200/repositories/CLAV'
@@ -15,14 +14,14 @@ module.exports.prefixes = `
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 `
 
-module.exports.host = 'https://'+ip+':'+this.portHTTPS
+module.exports.host = 'http://'+ip+':'+this.port
 
 module.exports.swaggerURL = process.env.SWAGGER_URL || /*this.host*/ 'https://clav-api.dglab.gov.pt'
 
 module.exports.userDB = process.env.MONGODB ? 'mongodb://' + process.env.MONGODB + '/m51-clav' : 'mongodb://localhost/m51-clav'
 
 module.exports.interfaceHosts = [
-    "https://localhost:8080",
+    "http://localhost:8080",
     "https://clav.dglab.gov.pt",
     "https://epl.di.uminho.pt:7780",
     "https://epl.di.uminho.pt:7781"

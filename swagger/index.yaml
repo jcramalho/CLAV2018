@@ -23,10 +23,10 @@ servers:
   - url: "{dominio}/{versao}"
     variables:
       dominio:
-        default: "https://localhost:7779"
+        default: "http://localhost:7779"
         description: Domínio
         enum:
-          - "https://localhost:7779"
+          - "http://localhost:7779"
           - "https://clav-test.di.uminho.pt"
       versao:
         description: Versão da API

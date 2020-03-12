@@ -6,8 +6,8 @@ NAME=acme.sh
 FOLDER=~/.acme.sh
 EXEC=$FOLDER/$NAME
 DOMAINS=('clav-api.dglab.gov.pt' 'clav-test.di.uminho.pt')
-WEBDIR=./public_ssl
-CERT_FOLDER=./ssl
+WEBDIR=/var/www/html
+CERT_FOLDER=/etc/nginx/acme.sh
 
 function join_by {
     local d=$1
@@ -94,8 +94,8 @@ installCertificate() {
 
     $EXEC --install-cert -d $DOMAINS \
         --key-file $CERT_FOLDER/key.pem \
-        --fullchain-file $CERT_FOLDER/fullchain.pem #\
-       #--reloadcmd "(pkill npm || pkill node) && npm start"
+        --fullchain-file $CERT_FOLDER/fullchain.pem \
+        --reloadcmd "nginx -s reload"
 }
 
 downloadInstallScript

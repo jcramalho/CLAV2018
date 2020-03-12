@@ -4,73 +4,23 @@
  * Module dependencies.
  */
 
-var appHTTPS = require('../app');
+var app = require('../app');
 var debug = require('debug')('M51-CLAV_WEB:server');
 var http = require('http');
-var https = require('https');
-var fs = require('fs');
 var databases = require('../config/database')
-var certsFolder = './ssl/'
 
 /**
  * Get port from environment and store in Express.
  */
 
-var portHTTP = normalizePort(databases.portHTTP);
-var portHTTPS = normalizePort(databases.portHTTPS);
-appHTTPS.set('port', portHTTPS);
+var port = normalizePort(databases.port);
+app.set('port', port);
 
 /**
- * Create HTTP and HTTPS server.
+ * Create HTTP server.
  */
 
-var express = require('express')
-var appHTTP = express()
-
-appHTTP.use(express.static(__dirname + '/../public_ssl'));
-appHTTP.use((req, res) => {
-    //Redirect HTTP to HTTPS
-    res.statusCode = 301;
-    var domain = req.headers.host ? req.headers.host.replace(/:[0-9]+$/g,`:${portHTTPS}`) : ""
-    res.setHeader('Location', `https://${domain}${req.url}`);
-    res.end();
-})
-
-var HTTPserver = http.createServer(appHTTP);
-
-//create options object for https, reading the cert files. If one cert file does not exist returns an empty object
-function getCert(){
-    var options
-    try{
-        options = {
-            key: fs.readFileSync(certsFolder + "key.pem"),
-            cert: fs.readFileSync(certsFolder + "fullchain.pem"),
-            dhparam: fs.readFileSync(certsFolder + "dhparam.pem")
-        }
-    }catch(err){
-        options = {}
-    }
-    return options
-}
-
-var HTTPSserver = https.createServer(getCert(), appHTTPS);
-
-//checks if certFolder exists and create it if not
-if(!fs.existsSync(certsFolder)){
-    fs.mkdirSync(certsFolder)
-}
-
-//reload certificate without reloading server
-var timeout
-//checks when files changes (renewed certificate)
-fs.watch(certsFolder, () => {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => {
-        //reloads options object
-        //WARNING: needs nodejs v11
-        HTTPSserver.setSecureContext(getCert())
-    }, 1000);
-})
+var server = http.createServer(app);
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -79,16 +29,11 @@ fs.watch(certsFolder, () => {
 //Garante que o servidor só começa a aceitar pedidos quando as conexões
 //ao MongoDB e GraphDB foram confirmadas e que o carregamento para cache
 //da informação foi iniciado
-appHTTPS.once('ready', () => {
-    HTTPserver.listen(portHTTP);
-    HTTPserver.on('error', onError(portHTTP));
-    HTTPserver.on('listening', onListening(HTTPserver));
-    console.log(`Servidor HTTP à escuta na porta ${portHTTP}...`);
-
-    HTTPSserver.listen(portHTTPS);
-    HTTPSserver.on('error', onError(portHTTPS));
-    HTTPSserver.on('listening', onListening(HTTPSserver));
-    console.log(`Servidor HTTPS à escuta na porta ${portHTTPS}...`);
+app.once('ready', () => {
+    server.listen(port);
+    server.on('error', onError);
+    server.on('listening', onListening);
+    console.log(`Servidor à escuta na porta ${port}...`);
 })
 /**
  * Normalize a port into a number, string, or false.
@@ -114,29 +59,27 @@ function normalizePort(val) {
  * Event listener for HTTP server "error" event.
  */
 
-function onError(port) {
-    return function (error) {
-        if (error.syscall !== 'listen') {
+function onError(error) {
+    if (error.syscall !== 'listen') {
+        throw error;
+    }
+
+    var bind = typeof port === 'string'
+        ? 'Pipe ' + port
+        : 'Port ' + port;
+
+    // handle specific listen errors with friendly messages
+    switch (error.code) {
+        case 'EACCES':
+            console.error(bind + ' requires elevated privileges');
+            process.exit(1);
+            break;
+        case 'EADDRINUSE':
+            console.error(bind + ' is already in use');
+            process.exit(1);
+            break;
+        default:
             throw error;
-        }
-
-        var bind = typeof port === 'string'
-            ? 'Pipe ' + port
-            : 'Port ' + port;
-
-        // handle specific listen errors with friendly messages
-        switch (error.code) {
-            case 'EACCES':
-                console.error(bind + ' requires elevated privileges');
-                process.exit(1);
-                break;
-            case 'EADDRINUSE':
-                console.error(bind + ' is already in use');
-                process.exit(1);
-                break;
-            default:
-                throw error;
-        }
     }
 }
 
@@ -144,12 +87,10 @@ function onError(port) {
  * Event listener for HTTP server "listening" event.
  */
 
-function onListening(server) {
-    return function() {
-        var addr = server.address();
-        var bind = typeof addr === 'string'
-            ? 'pipe ' + addr
-            : 'port ' + addr.port;
-        debug('Listening on ' + bind);
-    }
+function onListening() {
+    var addr = server.address();
+    var bind = typeof addr === 'string'
+        ? 'pipe ' + addr
+        : 'port ' + addr.port;
+    debug('Listening on ' + bind);
 }
