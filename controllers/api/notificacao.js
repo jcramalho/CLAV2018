@@ -2,11 +2,11 @@ const Notificacao = require('../../models/notificacao');
 const User = require('../../models/user');
 const Notificacoes = module.exports;
 
-Notificacoes.getByUser = async function(idUser){
+Notificacoes.getByUser = async function(ccUser){
 
-    console.log("ID: " + idUser);
+    console.log("CC: " + ccUser);
 
-    ids = await User.findOne({ _id: idUser}, {_id: 0, notificacoes: 1});
+    ids = await User.findOne({ _id: ccUser }, {cc: 0, notificacoes: 1});
 
     try{
         var notificacoesRes = [];
@@ -25,9 +25,8 @@ Notificacoes.getByUser = async function(idUser){
 }
 
 Notificacoes.criar = async function(n){
-    var newNotificacao = new Notificacao(n);
-
-    try{
+    try{    
+        var newNotificacao = new Notificacao(n);
         newNotificacao = await newNotificacao.save();
         await User.updateMany(
             { entidade: newNotificacao.entidade },

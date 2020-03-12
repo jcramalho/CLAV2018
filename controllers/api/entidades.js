@@ -1,7 +1,7 @@
-const execQuery = require('../../controllers/api/utils').execQuery
-const normalize = require('../../controllers/api/utils').normalize
-const request = require('../../controllers/api/utils').request
-const Entidades = module.exports
+const execQuery = require("../../controllers/api/utils").execQuery;
+const normalize = require("../../controllers/api/utils").normalize;
+const request = require("../../controllers/api/utils").request;
+const Entidades = module.exports;
 
 /**
  * @typedef {Object} Entidade
@@ -27,8 +27,8 @@ const Entidades = module.exports
  * @return {Promise<[Entidade] | Error>} promessa que quando cumprida contém a
  * lista das entidades existentes que respeitam o filtro dado
  */
-Entidades.listar = (filtro) => {
-	const query = `SELECT ?id ?sigla ?designacao ?internacional ?sioe ?estado {
+Entidades.listar = filtro => {
+  const query = `SELECT ?id ?sigla ?designacao ?internacional ?sioe ?estado {
         ?uri rdf:type clav:Entidade ;
             clav:entEstado ?estado;
             clav:entDesignacao ?designacao ;
@@ -40,14 +40,14 @@ Entidades.listar = (filtro) => {
         BIND(CONCAT('ent_', ?sigla) AS ?id).
 
         FILTER (${filtro})
-    } ORDER BY ?sigla`
+    } ORDER BY ?sigla`;
 
-	return execQuery('query', query).then((response) => normalize(response))
-}
+  return execQuery("query", query).then(response => normalize(response));
+};
 
 //Lista tipologias e donos de todas as entidades
 Entidades.listarTipsDonos = async () => {
-    const query = `SELECT ?sigla
+  const query = `SELECT ?sigla
                         (GROUP_CONCAT(DISTINCT ?tipSigla; SEPARATOR="#") AS ?ts)
                         (GROUP_CONCAT(DISTINCT ?tipDesignacao; SEPARATOR="#") AS ?td)
                         (GROUP_CONCAT(DISTINCT ?donoCodigo; SEPARATOR="#") AS ?dc)
@@ -71,60 +71,60 @@ Entidades.listarTipsDonos = async () => {
             	clav:classeStatus "A" .
     	}
     }
-    group by ?sigla`
+    group by ?sigla`;
 
-    try{
-	    var response = await execQuery('query', query)
-        var res = normalize(response)
+  try {
+    var response = await execQuery("query", query);
+    var res = normalize(response);
 
-        for(var i = 0; i < res.length; i++){
-            res[i].tipologias = []
-            res[i].dono = []
+    for (var i = 0; i < res.length; i++) {
+      res[i].tipologias = [];
+      res[i].dono = [];
 
-            if(res[i].ts != ''){
-                var siglas = res[i].ts.split("#")
-                var desigs = res[i].td.split("#")
+      if (res[i].ts != "") {
+        var siglas = res[i].ts.split("#");
+        var desigs = res[i].td.split("#");
 
-                for(var j = 0; j < siglas.length; j++){
-                    res[i].tipologias.push({
-                        sigla: siglas[j],
-                        designacao: desigs[j],
-                        id: 'tip_' + siglas[j]
-                    })
-                }
-            }
-
-            if(res[i].dc != ''){
-                var codigos = res[i].dc.split("#")
-                var titulos = res[i].dt.split("#")
-
-                for(var j = 0; j < codigos.length; j++){
-                    res[i].dono.push({
-                        codigo: codigos[j],
-                        titulo: titulos[j],
-                        id: 'c' + codigos[j]
-                    })
-                }
-            }
-
-            delete res[i].ts
-            delete res[i].td
-
-            delete res[i].dc
-            delete res[i].dt
-
-            res[i].dono.sort((p1, p2) => p1.codigo.localeCompare(p2.codigo))
+        for (var j = 0; j < siglas.length; j++) {
+          res[i].tipologias.push({
+            sigla: siglas[j],
+            designacao: desigs[j],
+            id: "tip_" + siglas[j]
+          });
         }
+      }
 
-        return res
-    }catch(erro){
-        throw(erro)
+      if (res[i].dc != "") {
+        var codigos = res[i].dc.split("#");
+        var titulos = res[i].dt.split("#");
+
+        for (var j = 0; j < codigos.length; j++) {
+          res[i].dono.push({
+            codigo: codigos[j],
+            titulo: titulos[j],
+            id: "c" + codigos[j]
+          });
+        }
+      }
+
+      delete res[i].ts;
+      delete res[i].td;
+
+      delete res[i].dc;
+      delete res[i].dt;
+
+      res[i].dono.sort((p1, p2) => p1.codigo.localeCompare(p2.codigo));
     }
-}
+
+    return res;
+  } catch (erro) {
+    throw erro;
+  }
+};
 
 //Lista participantes de todas as entidades
 Entidades.listarParticipantes = async () => {
-    const query = `SELECT ?sigla
+  const query = `SELECT ?sigla
                         (GROUP_CONCAT(?parCodigo; SEPARATOR="#") AS ?pc)
                         (GROUP_CONCAT(?parTitulo; SEPARATOR="#") AS ?pt)
                         (GROUP_CONCAT(?tipoP; SEPARATOR="#") AS ?tp) {
@@ -143,44 +143,44 @@ Entidades.listarParticipantes = async () => {
     	   	FILTER (?tipoParURI != clav:temParticipante && ?tipoParURI != clav:temDono)
     	}
     }
-    group by ?sigla`
+    group by ?sigla`;
 
-    try{
-	    var response = await execQuery('query', query)
-        var res = normalize(response)
+  try {
+    var response = await execQuery("query", query);
+    var res = normalize(response);
 
-        for(var i = 0; i < res.length; i++){
-            res[i].participante = []
-            if(res[i].pc != ''){
-                var codigos = res[i].pc.split("#")
-                var titulos = res[i].pt.split("#")
-                var tiposPar = res[i].tp.split("#")
+    for (var i = 0; i < res.length; i++) {
+      res[i].participante = [];
+      if (res[i].pc != "") {
+        var codigos = res[i].pc.split("#");
+        var titulos = res[i].pt.split("#");
+        var tiposPar = res[i].tp.split("#");
 
-                for(var j = 0; j < codigos.length; j++){
-                    res[i].participante.push({
-                        tipoPar: tiposPar[j],
-                        codigo: codigos[j],
-                        titulo: titulos[j],
-                        id: 'c' + codigos[j]
-                    })
-                }
-            }
-
-            delete res[i].pc
-            delete res[i].pt
-            delete res[i].tp
-            res[i].participante.sort((p1, p2) => p1.codigo.localeCompare(p2.codigo))
+        for (var j = 0; j < codigos.length; j++) {
+          res[i].participante.push({
+            tipoPar: tiposPar[j],
+            codigo: codigos[j],
+            titulo: titulos[j],
+            id: "c" + codigos[j]
+          });
         }
+      }
 
-        return res
-    }catch(erro){
-        throw(erro)
+      delete res[i].pc;
+      delete res[i].pt;
+      delete res[i].tp;
+      res[i].participante.sort((p1, p2) => p1.codigo.localeCompare(p2.codigo));
     }
-}
+
+    return res;
+  } catch (erro) {
+    throw erro;
+  }
+};
 
 // Lista todas as entidades com PNs associados (como Dono ou como Participante)
-Entidades.listarComPNs = (filtro) => {
-	const query = `SELECT ?id ?sigla ?designacao ?internacional ?sioe ?estado 
+Entidades.listarComPNs = filtro => {
+  const query = `SELECT ?id ?sigla ?designacao ?internacional ?sioe ?estado 
     WHERE { 
             ?uri rdf:type clav:Entidade ;
                 clav:entEstado ?estado;
@@ -206,14 +206,14 @@ Entidades.listarComPNs = (filtro) => {
             }
         } BIND(CONCAT('ent_', ?sigla) AS ?id).
         FILTER (${filtro})
-    } ORDER BY ?sigla`
+    } ORDER BY ?sigla`;
 
-	return execQuery('query', query).then((response) => normalize(response))
-}
+  return execQuery("query", query).then(response => normalize(response));
+};
 
 // Lista todas as entidades sem PNs associados (como Dono ou como Participante)
-Entidades.listarSemPNs = (filtro) => {
-	const query = `SELECT ?id ?sigla ?designacao ?internacional ?sioe ?estado {
+Entidades.listarSemPNs = filtro => {
+  const query = `SELECT ?id ?sigla ?designacao ?internacional ?sioe ?estado {
             ?uri rdf:type clav:Entidade ;
                 clav:entEstado ?estado;
                 clav:entDesignacao ?designacao ;
@@ -226,10 +226,10 @@ Entidades.listarSemPNs = (filtro) => {
         FILTER NOT EXISTS {?pn clav:temParticipante ?uri.}
             BIND(CONCAT('ent_', ?sigla) AS ?id).
         FILTER (${filtro})
-        } ORDER BY ?sigla`
+        } ORDER BY ?sigla`;
 
-	return execQuery('query', query).then((response) => normalize(response))
-}
+  return execQuery("query", query).then(response => normalize(response));
+};
 
 /**
  * Devolve a lista das tipologias às quais uma entidade pertence.
@@ -239,17 +239,17 @@ Entidades.listarSemPNs = (filtro) => {
  * que quando cumprida contém uma lista das siglas e designações das tipologias
  * às quais a entidade pertence
  */
-Entidades.tipologias = (id) => {
-	const query = `SELECT ?id ?sigla ?designacao WHERE {
+Entidades.tipologias = id => {
+  const query = `SELECT ?id ?sigla ?designacao WHERE {
         clav:${id} clav:pertenceTipologiaEnt ?uri .
         ?uri clav:tipEstado "Ativa";
             clav:tipSigla ?sigla;
             clav:tipDesignacao ?designacao.
         BIND (CONCAT('tip_', ?sigla) AS ?id)
-    }`
+    }`;
 
-	return execQuery('query', query).then((response) => normalize(response))
-}
+  return execQuery("query", query).then(response => normalize(response));
+};
 
 /**
  * Consulta a meta informação relativa a uma entidade (sigla, designação,
@@ -260,8 +260,8 @@ Entidades.tipologias = (id) => {
  * entidade que corresponde ao identificador dado. Se a entidade não existir
  * então a promessa conterá o valor `undefined`
  */
-Entidades.consultar = (id) => {
-	const query = `SELECT ?sigla ?designacao ?estado ?internacional ?sioe WHERE {
+Entidades.consultar = id => {
+  const query = `SELECT ?sigla ?designacao ?estado ?internacional ?sioe ?dataCriacao ?dataExtincao WHERE {
         clav:${id} rdf:type clav:Entidade ;
             clav:entDesignacao ?designacao ;
             clav:entSigla ?sigla ;
@@ -270,10 +270,16 @@ Entidades.consultar = (id) => {
         OPTIONAL {
             clav:${id} clav:entSIOE ?sioe
         }
-    }`
+        OPTIONAL {
+            clav:${id} clav:entDataCriacao ?dataCriacao
+        }
+        OPTIONAL {
+            clav:${id} clav:entDataExtincao ?dataExtincao
+        }
+    }`;
 
-	return execQuery('query', query).then((response) => normalize(response)[0])
-}
+  return execQuery("query", query).then(response => normalize(response)[0]);
+};
 
 /**
  * Verifica se uma determinada entidade existe no sistema.
@@ -281,15 +287,15 @@ Entidades.consultar = (id) => {
  * @param {Entidade} entidade
  * @return {Promise<boolean | Error>}
  */
-Entidades.existe = (entidade) => {
-	const query = `ASK {
+Entidades.existe = entidade => {
+  const query = `ASK {
         { ?e clav:entDesignacao|clav:tipDesignacao '${entidade.designacao}' }
         UNION
         { ?s clav:entSigla|clav:tipSigla '${entidade.sigla}' }
-    }`
+    }`;
 
-	return execQuery('query', query).then((response) => response.boolean)
-}
+  return execQuery("query", query).then(response => response.boolean);
+};
 
 /**
  * Verifica se uma determinada sigla de entidade existe no sistema.
@@ -297,13 +303,13 @@ Entidades.existe = (entidade) => {
  * @param {Sigla} sigla
  * @return {Promise<boolean | Error>}
  */
-Entidades.existeSigla = (sigla) => {
-	const query = `ASK {
+Entidades.existeSigla = sigla => {
+  const query = `ASK {
       ?s clav:entSigla|clav:tipSigla '${sigla}' 
-  }`
+  }`;
 
-	return execQuery('query', query).then((response) => response.boolean)
-}
+  return execQuery("query", query).then(response => response.boolean);
+};
 
 /**
  * Verifica se uma determinada designacao de entidade existe no sistema.
@@ -311,13 +317,13 @@ Entidades.existeSigla = (sigla) => {
  * @param {Designacao} designacao
  * @return {Promise<boolean | Error>}
  */
-Entidades.existeDesignacao = (designacao) => {
-	const query = `ASK {
+Entidades.existeDesignacao = designacao => {
+  const query = `ASK {
       ?e clav:entDesignacao|clav:tipDesignacao '${designacao}' 
-  }`
+  }`;
 
-	return execQuery('query', query).then((response) => response.boolean)
-}
+  return execQuery("query", query).then(response => response.boolean);
+};
 
 /**
  * Lista os processos em que uma entidade intervem como dona.
@@ -327,17 +333,17 @@ Entidades.existeDesignacao = (designacao) => {
  * quando cumprida contém os códigos e títulos dos processos onde a entidade
  * participa como dona
  */
-Entidades.dono = (id) => {
-	const query = `SELECT ?codigo ?titulo WHERE {
+Entidades.dono = id => {
+  const query = `SELECT ?codigo ?titulo WHERE {
         ?id clav:temDono clav:${id} ;
             clav:codigo ?codigo ;
             clav:titulo ?titulo ;
             clav:pertenceLC clav:lc1 ;
             clav:classeStatus "A" .
-    }ORDER BY ?codigo`
+    }ORDER BY ?codigo`;
 
-	return execQuery('query', query).then((response) => normalize(response))
-}
+  return execQuery("query", query).then(response => normalize(response));
+};
 
 /**
  * Lista os processos em que uma entidade intervem como participante.
@@ -347,8 +353,8 @@ Entidades.dono = (id) => {
  * quando cumprida contém os códigos e títulos dos processos onde a entidade
  * participa
  */
-Entidades.participante = (id) => {
-	const query = `SELECT ?tipoPar ?codigo ?titulo WHERE { 
+Entidades.participante = id => {
+  const query = `SELECT ?tipoPar ?codigo ?titulo WHERE { 
         ?uri clav:temParticipante clav:${id} ;
             ?tipoParURI clav:${id} ;
             clav:titulo ?titulo ;
@@ -357,114 +363,117 @@ Entidades.participante = (id) => {
             clav:classeStatus "A" .
         BIND (STRAFTER(STR(?tipoParURI), 'clav#') AS ?tipoPar).
         FILTER (?tipoParURI != clav:temParticipante && ?tipoParURI != clav:temDono)
-    }ORDER BY ?codigo`
+    }ORDER BY ?codigo`;
 
-	return execQuery('query', query).then((response) => normalize(response))
-}
+  return execQuery("query", query).then(response => normalize(response));
+};
 
 //Obtém o resto da info das Entidades
-Entidades.moreInfoList = async (ents) => {
-        //obtém as tipologias e os donos para todas as entidades
-    var data = await Entidades.listarTipsDonos()
-    var tipsDonos = []
+Entidades.moreInfoList = async ents => {
+  //obtém as tipologias e os donos para todas as entidades
+  var data = await Entidades.listarTipsDonos();
+  var tipsDonos = [];
 
-    for(var i = 0; i < data.length; i++){
-        tipsDonos[data[i].sigla] = {
-            tipologias: data[i].tipologias,
-            dono: data[i].dono
-        }
-    }
+  for (var i = 0; i < data.length; i++) {
+    tipsDonos[data[i].sigla] = {
+      tipologias: data[i].tipologias,
+      dono: data[i].dono
+    };
+  }
 
-    //obtém os participantes e o tipo de participação para todas as entidades
-    data = await Entidades.listarParticipantes()
-    var parts = []
+  //obtém os participantes e o tipo de participação para todas as entidades
+  data = await Entidades.listarParticipantes();
+  var parts = [];
 
-    for(i = 0; i < data.length; i++){
-        parts[data[i].sigla] = {
-            participante: data[i].participante,
-            tipoPar: data[i].tipoPar
-        }
-    }
+  for (i = 0; i < data.length; i++) {
+    parts[data[i].sigla] = {
+      participante: data[i].participante,
+      tipoPar: data[i].tipoPar
+    };
+  }
 
-    for(i = 0; i < ents.length; i++){
-        ents[i].tipologias = tipsDonos[ents[i].sigla].tipologias
-        ents[i].dono = tipsDonos[ents[i].sigla].dono
-        ents[i].participante = parts[ents[i].sigla].participante
-        ents[i].tipoPar = parts[ents[i].sigla].tipoPar
-    }
-}
+  for (i = 0; i < ents.length; i++) {
+    ents[i].tipologias = tipsDonos[ents[i].sigla].tipologias;
+    ents[i].dono = tipsDonos[ents[i].sigla].dono;
+    ents[i].participante = parts[ents[i].sigla].participante;
+    ents[i].tipoPar = parts[ents[i].sigla].tipoPar;
+  }
+};
 
 //Obtém o resto da info da Entidade
-Entidades.moreInfo = async (ent) => {
-    var id = 'ent_' + ent.sigla
+Entidades.moreInfo = async ent => {
+  var id = "ent_" + ent.sigla;
 
-    ent.tipologias = await Entidades.tipologias(id)
-    ent.dono = await Entidades.dono(id)
-    ent.participante = await Entidades.participante(id)
-}
+  ent.tipologias = await Entidades.tipologias(id);
+  ent.dono = await Entidades.dono(id);
+  ent.participante = await Entidades.participante(id);
+};
 
 //Criar entidade
-Entidades.criar = async (ent) => {
-    var queryEnt = `{ 
-        clav:ent_${ent.sigla} rdf:type owl:NamedIndividual, clav:Entidade ;
-            clav:entEstado "${ent.estado}";
-            clav:entSigla "${ent.sigla}";
-            clav:entDesignacao "${ent.designacao}"`
+Entidades.criar = async ent => {
+  var queryEnt = `{ 
+    clav:ent_${ent.sigla} rdf:type owl:NamedIndividual, clav:Entidade ;
+        clav:entEstado "${ent.estado}" ;
+        clav:entSigla "${ent.sigla}" ;
+        clav:entDesignacao "${ent.designacao}"`;
 
-    if (ent.sioe) 
-        queryEnt += `;\n\tclav:entSIOE "${ent.sioe}"`
+  if (ent.sioe) queryEnt += ` ;\n\tclav:entSIOE "${ent.sioe}"`;
 
-    if (ent.tipologias && ent.tipologias instanceof Array && ent.tipologias.length > 0)
-        queryEnt += `;\n\tclav:pertenceTipologiaEnt ${ent.tipologias.map(tip => "clav:tip_" + tip.split("_").pop()).join(", ")}`
+  if (ent.internacional !== null && ent.internacional !== undefined) {
+    ent.internacional = ent.internacional === "" ? "Não" : ent.internacional;
+  } else {
+    ent.internacional = "Não";
+  }
+  queryEnt += ` ;\n\tclav:entInternacional "${ent.internacional}"`;
 
-    if (ent.internacional != null){
-        ent.internacional = ent.internacional == "" ? "Não" : ent.internacional
-    } else {
-        ent.internacional = "Não"
-    }
-    queryEnt += `;\n\tclav:entInternacional "${ent.internacional}"`
+  if (ent.dataCriacao)
+    queryEnt += ` ;\n\tclav:entDataCriacao "${ent.dataCriacao}"`;
 
-    if (ent.dataCriacao)
-        queryEnt += `;\n\tclav:entDataCriacao "${ent.dataCriacao}"`
-    
-    queryEnt += "}"
-    const query = "INSERT DATA " + queryEnt
-    const ask = "ASK " + queryEnt
+  if (
+    ent.tipologiasSel &&
+    ent.tipologiasSel instanceof Array &&
+    ent.tipologiasSel.length > 0
+  )
+    queryEnt += ` ;\n\tclav:pertenceTipologiaEnt ${ent.tipologiasSel
+      .map(tip => `clav:tip_${tip.sigla}`)
+      .join(", ")}`;
 
-    if(await Entidades.existeSigla(ent.sigla) || await Entidades.existeDesignacao(ent.designacao)){
-        throw "Entidade já existe, sigla ou designação já em uso."
-    }else{
-        return execQuery('update', query)
-            .then(res => execQuery('query', ask)
-                .then(result => { 
-                    if(result.boolean)
-                        return "Sucesso na inserção da entidade"
-                    else
-                        throw "Insucesso na inserção da entidade"
-                })
-            )
-    }
-}
+  queryEnt += " .\n}";
+  const query = "INSERT DATA " + queryEnt;
+  const ask = "ASK " + queryEnt;
+
+  if (
+    (await Entidades.existeSigla(ent.sigla)) ||
+    (await Entidades.existeDesignacao(ent.designacao))
+  ) {
+    throw "Entidade já existe, sigla ou designação já em uso.";
+  } else {
+    return execQuery("update", query).then(res =>
+      execQuery("query", ask).then(result => {
+        if (result.boolean) return "Sucesso na inserção da entidade";
+        else throw "Insucesso na inserção da entidade";
+      })
+    );
+  }
+};
 
 //Extinguir entidade
 Entidades.extinguir = (id, dataExtincao) => {
-    var deleteEnt = `{
+  var deleteEnt = `{
         clav:${id} clav:entEstado ?o.
-    }`
-    var queryEnt = `{ 
+    }`;
+  var queryEnt = `{ 
         clav:${id} clav:entDataExtincao "${dataExtincao}";
             clav:entEstado "Inativa".
-    }`
-    const query = "DELETE " + deleteEnt + " INSERT " + queryEnt + "WHERE " + deleteEnt
-    const ask = "ASK " + queryEnt
+    }`;
+  const query =
+    "DELETE " + deleteEnt + " INSERT " + queryEnt + "WHERE " + deleteEnt;
+  const ask = "ASK " + queryEnt;
 
-    return execQuery('update', query)
-        .then(res => execQuery('query', ask)
-            .then(result => { 
-                if(result.boolean)
-                    return "Entidade extinta"
-                else
-                    throw "Não foi possível extinguir a entidade"
-            })
-        )
-}
+  return execQuery("update", query).then(res =>
+    execQuery("query", ask).then(result => {
+      if (result.boolean) return "Entidade extinta";
+      else throw "Não foi possível extinguir a entidade";
+    })
+  );
+};
