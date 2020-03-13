@@ -9,21 +9,12 @@ services:
   graphdb:
     image: ${GRAPHDB_IMG}
     container_name: clav_graphdb
-    build:
-      context: ./graphdb
-      dockerfile: Dockerfile
-      args:
-        - version=${GRAPHDB_VERSION}
-        - dataFile=${GRAPHDB_DATA_FILE}
     restart: always
     volumes:
       - graphdb-data:/opt/graphdb/home/data/repositories
   server:
     image: ${SERVER_IMG}
     container_name: clav_server
-    build:
-      context: ../
-      dockerfile: Dockerfile
     restart: always
     environment:
       - NODE_ENV=production
