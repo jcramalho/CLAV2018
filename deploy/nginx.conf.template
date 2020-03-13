@@ -57,6 +57,7 @@ http {
 
     location / {
         proxy_pass $SERVER_URL;
+        proxy_set_header Origin $scheme://$http_host;
     }
 
     error_page   500 502 503 504  /50x.html;

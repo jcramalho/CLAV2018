@@ -31,8 +31,23 @@ app.use(helmet({
         maxAge: 31536000,
         includeSubDomains: true,
         preload: true
+    },
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'none'"]
+        }
     }
 }))
+
+//CSP to use in /docs route
+var cspForDocs = helmet.contentSecurityPolicy({
+    directives: {
+        defaultSrc: ["'self'"],
+        imgSrc: ["'self'", "https://validator.swagger.io", "data:"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        scriptSrc: ["'self'", "'unsafe-inline'"]
+    }
+})
 
 // Logging na consola do admin
 var logger = require('morgan')
@@ -152,7 +167,7 @@ var mainRouter = express.Router()
 //Swagger
 const swaggerUi = require('swagger-ui-express');
 const options = require('./config/swagger').options
-mainRouter.use('/docs', swaggerUi.serve, swaggerUi.setup(null, options));
+mainRouter.use('/docs', cspForDocs, swaggerUi.serve, swaggerUi.setup(null, options));
 
 //formatar o resultado consoante a querystring fs
 const { outputFormat } = require('./routes/outputFormat.js')

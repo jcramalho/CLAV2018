@@ -31,6 +31,7 @@ services:
       - GRAPHDB=graphdb:7200
       - MONGODB=mongo
       - API_VERSION=${API_VERSION}
+      - INTERFACE_HOSTS=${INTERFACE_HOSTS}
   nginx:
     image: nginx
     container_name: clav_nginx
