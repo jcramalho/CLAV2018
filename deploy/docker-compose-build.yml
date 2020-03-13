@@ -43,7 +43,7 @@ services:
       - ${PWD}/beforeStart.sh:/beforeStart.sh
       - ${PWD}/afterStart.sh:/afterStart.sh
       - acme-data:${ACME_FOLDER}
-      - cronjob:/var/spool/cron/crontabs/root
+      - crontabs:/var/spool/cron/crontabs/
     command: /bin/bash -c "/beforeStart.sh ${CERT_FOLDER} && envsubst '$$SERVER_URL $$CERTS' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && (nginx -g 'daemon off;' &) && /afterStart.sh -c ${CERT_FOLDER} -a ${ACME_FOLDER} ${DOMAINS} && tail -f /dev/null"
     ports:
       - "80:7777"
@@ -58,6 +58,6 @@ volumes:
   acme-data:
     external: false
     name: acme-data
-  cronjob:
+  crontabs:
     external: false
-    name: cronjob
+    name: crontabs
