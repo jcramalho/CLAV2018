@@ -39,13 +39,14 @@ app.use(helmet({
     }
 }))
 
+var swaggerURLs = require('./config/swagger').urls
 //CSP to use in /docs route
 var cspForDocs = helmet.contentSecurityPolicy({
     directives: {
-        defaultSrc: ["'self'"],
-        imgSrc: ["'self'", "https://validator.swagger.io", "data:"],
-        styleSrc: ["'self'", "'unsafe-inline'"],
-        scriptSrc: ["'self'", "'unsafe-inline'"]
+        defaultSrc: ["'self'"].concat(swaggerURLs),
+        imgSrc: ["'self'", "https://validator.swagger.io", "data:"].concat(swaggerURLs),
+        styleSrc: ["'self'", "'unsafe-inline'"].concat(swaggerURLs),
+        scriptSrc: ["'self'", "'unsafe-inline'"].concat(swaggerURLs)
     }
 })
 
