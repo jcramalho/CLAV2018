@@ -1,0 +1,30 @@
+summary: Atualiza uma notícia
+description: Atualiza uma notícia a partir da informação enviada no pedido
+tags:
+  - Notícias
+security:
+  - userQuery: []
+  - userAuth: []
+parameters:
+  - name: id
+    in: path
+    description: 'Identificador de uma notícia'
+    schema:
+      type: string
+    required: true
+requestBody:
+  description: 'Notícia a atualizar'
+  required: true
+  content:
+    application/json:
+      schema:
+        $ref: '#/components/schemas/Noticia'
+responses:
+  200:
+    description: Notícia atualizada
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  404:
+    description: Erro

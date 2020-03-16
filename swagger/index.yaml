@@ -80,6 +80,8 @@ tags:
     description: "Informação que especifica o âmbito de aplicação da classe. Aplica-se às classes de 1º, 2º e 3º nível."
   - name: Exemplos de Notas de Aplicação
     description: "Informação que exemplifica o âmbito de aplicação da classe. Aplica-se às classes de 1º, 2º e 3º nível."
+  - name: Notícias
+    description: "Notícias da plataforma CLAV"
 paths: !!inc/dir [ 'paths' ] 
 components: 
   schemas: !!inc/dir [ 'schemas', excludeTopLevelDirSeparator: true ]

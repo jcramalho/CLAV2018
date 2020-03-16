@@ -1,0 +1,38 @@
+summary: Cria uma notícia
+description: Cria uma notícia a partir da informação enviada no pedido, por defeito o estado é ativa aquando da inserção
+tags:
+  - Notícias
+security:
+  - userQuery: []
+  - userAuth: []
+requestBody:
+  description: 'Notícia a criar'
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          titulo:
+            type: string
+          desc:
+            type: string
+          data:
+            type: string
+        required:
+          - titulo
+          - desc
+          - data
+        example:
+          titulo: "Sessão técnica sobre a Plataforma CLAV: 4 de dezembro de 2019"
+          desc: "Convite aberto para sessão técnica sobre a Plataforma para a classificação e a avaliação da informação pública ([http://clav.dglab.gov.pt](\"http://clav.dglab.gov.pt\")), a realizar no edifício da Torre do Tombo, no dia 4 de dezembro de 2019, entre as 14 e as 17 horas.\n\n   **Destinatários**: Todas as empresas fornecedoras de software e de consultoria na área da gestão documental.\n\n   Entrada sujeita a confirmação de presença, até 29 de novembro para o mail clav@dglab.gov.pt, com a indicação do nome e contacto dos colaboradores presentes (máximo de 2)."
+          data: "2019-12-04"
+responses:
+  200:
+    description: Notícia criada
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  404:
+    description: Erro
