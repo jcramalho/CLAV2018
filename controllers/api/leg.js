@@ -31,8 +31,10 @@ Leg.listar = () => {
              clav:diplomaNumero ?numero;
              clav:diplomaTipo ?tipo;
              clav:diplomaSumario ?sumario;
-             clav:diplomaEstado ?estado;
-             clav:diplomaLink ?link.
+             clav:diplomaEstado ?estado.
+        OPTIONAL {
+          ?uri clav:diplomaLink ?link.
+        }
         OPTIONAL {
         	?uri clav:diplomaFonte ?fonte.
         }
