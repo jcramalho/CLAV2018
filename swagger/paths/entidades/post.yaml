@@ -6,7 +6,7 @@ security:
   - userQuery: []
   - userAuth: []
 requestBody:
-  description: 'sigla da entidade a verificar'
+  description: 'Entidade a criar'
   required: true
   content:
     application/json:

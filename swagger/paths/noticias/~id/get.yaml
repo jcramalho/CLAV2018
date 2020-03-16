@@ -1,0 +1,27 @@
+summary: Devolve a informação de uma notícia
+description: Devolve a informação de uma notícia. Devolve a informação do título, data e descrição da notícia
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Notícias
+parameters:
+  - name: id
+    in: path
+    description: 'Identificador de uma notícia'
+    schema:
+      type: string
+    required: true
+responses:
+  200:
+    description: Devolvida a informação de uma notícia
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  404:
+    description: A notícia não existe
+  500:
+    description: Erro
