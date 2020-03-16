@@ -1,0 +1,50 @@
+summary: Devolve todas as notícias
+description: Devolve todas as notícias ordenadas pela data (da mais recente para a mais antiga).
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Notícias
+parameters:
+  - in: query
+    name: recentes
+    schema:
+      type: string
+      enum: [sim]
+    description: Devolve as 3 notícias mais recentes. As restantes query strings são ignoradas.
+    required: false
+  - in: query
+    name: titulo
+    schema:
+      type: string
+    description: Permite filtrar as notícias pelo título
+    required: false
+  - in: query
+    name: desc
+    schema:
+      type: string
+    description: Permite filtrar as notícias pela descrição
+    required: false
+  - in: query
+    name: data
+    schema:
+      type: string
+    description: "Permite filtrar as notícias pela data (exemplo: '2019-12-04')"
+    required: false
+  - in: query
+    name: ativa
+    schema:
+      type: boolean
+    description: Permite filtrar as notícias pelo seu estado (se está ou não ativa)
+    required: false
+responses:
+  200:
+    description: Lista todas as notícias
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  500:
+    description: Erro

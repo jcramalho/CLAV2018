@@ -13,7 +13,7 @@ info:
 
     Se tiver um token de um utilizador não necessita de indicar uma chave API para aceder aos GET's que a chave API dá acesso.
     
-    **Última alteração: 04/03/2020**
+    **Última alteração: 16/03/2020**
   version: 2.0.0
   title: CLAV API
   contact:
@@ -80,6 +80,8 @@ tags:
     description: "Informação que especifica o âmbito de aplicação da classe. Aplica-se às classes de 1º, 2º e 3º nível."
   - name: Exemplos de Notas de Aplicação
     description: "Informação que exemplifica o âmbito de aplicação da classe. Aplica-se às classes de 1º, 2º e 3º nível."
+  - name: Notícias
+    description: "Notícias da plataforma CLAV"
 paths: !!inc/dir [ 'paths' ] 
 components: 
   schemas: !!inc/dir [ 'schemas', excludeTopLevelDirSeparator: true ]
