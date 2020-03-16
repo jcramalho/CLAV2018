@@ -236,6 +236,8 @@ function getClassesParaPesquisaRec(classes){
             nome: classes[i].codigo + " - " + classes[i].titulo,
             titulo: classes[i].titulo,
             status: classes[i].status,
+            tp: ternaryOp(classes[i].tipoProc, ""),
+            pt: ternaryOp(classes[i].procTrans, ""),
             na: mapJoin(classes[i].notasAp, "nota"),
             exemploNa: mapJoin(classes[i].exemplosNotasAp, "exemplo"),
             ne: mapJoin(classes[i].notasEx, "nota"),
