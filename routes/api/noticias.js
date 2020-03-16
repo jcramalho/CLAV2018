@@ -6,54 +6,27 @@ var express = require('express')
 var router = express.Router()
 
 // Lista todas as noticias: data, titulo, desc
-router.get('/', async (req, res, next) => {
+router.get('/', Auth.isLoggedInKey, (req, res) => {
     filtro = {}  
     var queryData = url.parse(req.url, true).query
 
     // api/noticias?recentes=sim
     if (queryData.recentes && queryData.recentes == 'sim') {
-        try{
-            res.locals.dados = await Noticias.recentes()
-
-            if(req.query.info == "completa"){
-                await Entidades.moreInfoList(res.locals.dados)
-            }
-
-            res.locals.tipo = "noticias"
-            next()
-		}catch(erro){
-            res.status(500).send(`Erro na listagem das noticias recentes: ${erro}`)
-        }
+        Noticias.recentes()
+            .then(dados => res.jsonp(dados))
+		    .catch(erro => res.status(500).send(`Erro na listagem das noticias recentes: ${erro}`))
 	} else {
-        try{
-            res.locals.dados = await Noticias.listar(filtro)
-            if(req.query.info == "completa"){
-                await Noticias.moreInfoList(res.locals.dados)
-            }
-    
-            res.locals.tipo = "noticias"
-            next()
-        } catch(erro) {
-            res.status(500).send(`Erro na listagem das noticias: ${erro}`)
-        }
+        Noticias.listar(filtro)
+            .then(dados => res.jsonp(dados))
+            .catch(erro => res.status(500).send(`Erro na listagem das noticias: ${erro}`))
     }
 })
 
 // Consulta de uma noticia: titulo, data, desc
-router.get('/:id', async (req, res, next) => {
-    try{
-        res.locals.dados = await Noticias.consultar(req.params.id)
-
-        if(req.query.info == "completa"){
-            await Noticias.moreInfo(res.locals.dados)
-        }
-
-        res.locals.tipo = "noticia"
-
-		res.locals.dados ? next() : res.status(404).send(`Erro. A noticia '${req.params.id}' não existe`)
-	} catch(erro) {
-        res.status(500).send(`Erro na consulta da noticia '${req.params.id}': ${erro}`)
-    }
+router.get('/:id', Auth.isLoggedInKey, (req, res) => {
+    Noticias.consultar(req.params.id)
+        .then(dados => dados ? res.jsonp(dados) : res.status(404).send(`Erro. A noticia '${req.params.id}' não existe`))
+	    .catch(erro => res.status(500).send(`Erro na consulta da noticia '${req.params.id}': ${erro}`))
 })
 
 // Update de uma Noticia
