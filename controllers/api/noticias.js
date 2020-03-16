@@ -1,9 +1,18 @@
 const Noticia = require('../../models/noticia');
 const Noticias = module.exports;
+var mongoose = require('mongoose');
 
 Noticias.listar = (filtro) => {
-    return Pedido.find(filtro);
+    return Noticia.find(filtro).sort({data : -1});
 };
+
+Noticias.recentes = () => {
+    return Noticia.aggregate([
+        { $match: { ativa: true }},
+        { $sort : {data : -1}},
+        { $limit : 3 }
+    ]).exec();
+}
 
 // Recupera a lista de notícias depois de determinada data
 
@@ -18,20 +27,26 @@ Noticias.consultar = (id) => {
     return Noticia.findOne({ _id: id });
 };
 
-/**
- * Cria um novo pedido no sistema.
- * 
- * @param pedido novo pedido a inserir no sistema.
- * @return {Pedido} pedido criado.
- */
-Noticias.criar = async function(n){
+
+Noticias.update = function(id, tit, descri,date, state){
+    return Noticia
+        .update({_id : id}, {$set : {titulo : tit, desc : descri,data:date, ativa : state}})
+        .exec()
+}
+
+Noticias.criar = n => {
+    n._id = mongoose.Types.ObjectId()
+    n.ativa = true
     var newNoticia = new Noticia(n);
 
-    try{
-        newNoticia = await newNoticia.save()
-        return newNoticia._id
-    }catch(err) {
-        console.log(err)
-        return 'Ocorreu um erro a submeter a notícia! Tente novamente mais tarde'
-    }
+    /*return newNoticia.save(function (err) {
+        if (err) {
+            console.log(err);
+            return ('Ocorreu um erro a submeter a notícia! Tente novamente mais tarde');
+        }
+        else{
+            return(newNoticia._id);
+        }
+    }); */
+    return newNoticia.save(); 
 }

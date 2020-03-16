@@ -12,6 +12,10 @@ const NoticiaSchema = new mongoose.Schema({
     desc: {
         type: String,
         required: true
+    },
+    ativa : {
+        type : Boolean, 
+        required : true
     }
 })
 
