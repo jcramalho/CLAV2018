@@ -7,9 +7,14 @@ var router = express.Router()
 
 // Lista todas as noticias: data, titulo, desc
 router.get('/', Auth.isLoggedInKey, (req, res) => {
-    filtro = {}  
-    var queryData = url.parse(req.url, true).query
+    var validKeys = ["titulo", "desc", "data", "ativa"];
+    var queryData = url.parse(req.url, true).query;
+    
+    var filtro = Object.entries(queryData)
+        .filter(([k, v]) => v !== undefined && validKeys.includes(k))
 
+    filtro = Object.assign({}, ...Array.from(filtro, ([k, v]) => ({[k]: v}) ));
+    
     // api/noticias?recentes=sim
     if (queryData.recentes && queryData.recentes == 'sim') {
         Noticias.recentes()
