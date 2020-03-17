@@ -80,8 +80,7 @@ router.post('/registar', Auth.isLoggedInUser, Auth.checkLevel(5), function (req,
             });
             res.send('Utilizador registado com sucesso!');
         } else {
-            //Email já em uso
-            res.status(500).send('Não foi possível registar o utilizador! Verifique se os valores estão corretos ou se falta algum valor.');
+            res.status(500).send('Não foi possível registar o utilizador! O email já se encontra em uso.');
         }
     });
 });
@@ -282,8 +281,7 @@ router.put('/:id/nic', Auth.isLoggedInUser, Auth.checkLevel(7), function (req, r
 router.put('/:id', Auth.isLoggedInUser, Auth.checkLevel(5), function (req, res) {
     Users.getUserByEmail(req.body.email, function(err,user){
         if(user && req.params.id != user._id){
-            //Já existe utilizador registado com esse email
-            res.status(500).send('Não foi possível atualizar o utilizador! Verifique se os valores estão corretos ou se falta algum valor.');
+            res.status(500).send('Não foi possível atualizar o utilizador! O email já se encontra em uso por outro utilizador.');
         }else{
             Users.atualizarMultiplosCampos(req.params.id, req.body.nome, req.body.email, req.body.entidade, req.body.level, function (err, cb) {
                 if (err) { 
@@ -382,13 +380,11 @@ router.post('/registarCC', Auth.isLoggedInUser, Auth.checkLevel(5), function (re
                     });
                     res.send('Utilizador registado com sucesso!');
                 }else{
-                    //Email já em uso
-                    res.status(500).send('Não foi possível registar o utilizador! Verifique se os valores estão corretos ou se falta algum valor.');
+                    res.status(500).send('Não foi possível registar o utilizador! O email já se encontra em uso.');
                 }
             })
         } else {
-            //Utilizador já registado
-            res.status(500).send('Não foi possível registar o utilizador! Verifique se os valores estão corretos ou se falta algum valor.');
+            res.status(500).send('O utilizador já se encontra registado!');
         }
     });
 });
