@@ -402,12 +402,10 @@ Users.registarParaEntidade = async function(req, entidade, users){
             }
 
             if (user) {
-                //throw('Email do utilizador no índice ' + i + ' já em uso! Nenhum utilizador foi registado. Tente novamente.');
-                throw(`Verifique os valores do utilizador no índice ${i}! Nenhum utilizador foi registado. Tente novamente.`);
+                throw('Email do utilizador no índice ' + i + ' já em uso! Nenhum utilizador foi registado. Tente novamente.');
             }
         } else {
-            //throw('Utilizador no indíce ' + i + ' já se encontra registado ou possui um NIC errado! Nenhum utilizador foi registado. Tente novamente.');
-            throw(`Verifique os valores do utilizador no índice ${i}! Nenhum utilizador foi registado. Tente novamente.`);
+            throw('Utilizador no indíce ' + i + ' já se encontra registado ou possui um NIC errado! Nenhum utilizador foi registado. Tente novamente.');
         }
     }
 
