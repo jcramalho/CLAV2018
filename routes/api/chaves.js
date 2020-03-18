@@ -204,9 +204,7 @@ router.put("/:id/atualizar", Auth.isLoggedInUser, Auth.checkLevel(7), function(
 ) {
   Chaves.listarPorEmail(req.body.contactInfo, function(err, chave) {
     if (chave && req.params.id != chave._id) {
-      //Já existe uma chave API registada com esse email
-      //Por forma a não divulgar que emails estão já usados
-      res.status(500).send("Não foi possível atualizar a Chave API!");
+      res.status(500).send("Não foi possível atualizar a Chave API! Já existe uma chave API registada com esse email!");
     } else {
       Chaves.atualizarMultiplosCampos(
         req.params.id,
