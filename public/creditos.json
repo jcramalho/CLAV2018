@@ -1,0 +1,73 @@
+[
+    {
+        "nome": "José Carlos Leite Ramalho",
+        "filiacao": "DI/UM - professor/investigador",
+        "funcao": "Gestor técnico, analista e programador"
+    },
+    {
+        "nome": "Tomás Ferreira",
+        "filiacao": "DI/UM - aluno de mestrado",
+        "funcao": "Analista e programador",
+        "desc": "Desenvolveu a primeira versão da plataforma."
+    },
+    {
+        "nome": "Octávio Maia",
+        "filiacao": "DI/UM - aluno de mestrado",
+        "funcao": "Analista e programador",
+        "desc": "Desenvolveu a primeira versão do componente de autenticação e de ligação ao Authentication.gov."
+    },
+    {
+        "nome": "Alfredo Gomes",
+        "filiacao": "DI/UM - aluno de mestrado",
+        "funcao": "Analista e programador",
+        "desc": "Desenvolveu o componente de criação e gestão de Tabelas de Seleção."
+    },
+    {
+        "nome": "Cláudia Marques",
+        "filiacao": "DI/UM - aluno de mestrado",
+        "funcao": "Analista e programador",
+        "desc": "Desenvolveu os XML Schema para a informação base do CLAV, especificou os ivariantes dos modelos em Schematron."
+    },
+    {
+        "nome": "João Vieira",
+        "filiacao": "DI/UM - aluno de mestrado",
+        "funcao": "Analista e programador",
+        "desc": "Desenvolveu algum trabalho e testes para disponibilização da plataforma em cenários de alto desempenho."
+    },
+    {
+        "nome": "José Carlos Martins",
+        "filiacao": "DI/UM - aluno de mestrado",
+        "funcao": "Analista e programador",
+        "desc": "Desenvolveu a versão 2 da API, consolidou todo o backend da platforma, optimizou uma série de processos, acrescentou e desenvolveu novas funcionalidades na cache da plataforma para acelerar o desempenho, implementou o HTTPS, e implementou a chave móvel digital."
+    },
+    {
+        "nome": "Alexandre Teixeira",
+        "filiacao": "DI/UM - aluno de mestrado",
+        "funcao": "Analista e programador",
+        "desc": "Desenvolveu o compoenente para gestão, criação e importação de Autos de Eliminação."
+    },
+    {
+        "nome": "Frederico Pinto",
+        "filiacao": "DI/UM - aluno de mestrado",
+        "funcao": "Analista e programador",
+        "desc": "Desenvolveu o componente para gestão, criação, importação de Relatórios de Avaliação de Documentação Acumulada (RADA)."
+    },
+    {
+        "nome": "Rui Araújo",
+        "filiacao": "DI/UM - aluno de mestrado",
+        "funcao": "Analista e programador",
+        "desc": "Especificou e implementou a gestão dos worflows suportados na plataforma."
+    },
+    {
+        "nome": "João Pimentel",
+        "filiacao": "DI/UM - aluno de mestrado",
+        "funcao": "Analista e programador",
+        "desc": "Especificou e implementou o componente de notícias, o componente da documentação técnica e o componente para a submissão de fontes de legitimação em PDF."
+    },
+    {
+        "nome": "Carlos Barbosa",
+        "filiacao": "DI/UM - aluno de mestrado",
+        "funcao": "Analista e programador",
+        "desc": "Especificou e implementou o componente de notícias, o componente da documentação técnica e o componente para a submissão de fontes de legitimação em PDF."
+    }
+]
