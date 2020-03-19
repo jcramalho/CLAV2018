@@ -55,8 +55,9 @@ router.post('/', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), (req, res) 
     var titulo = req.body.titulo
     var desc = req.body.desc
     var data = req.body.data
-    if(typeof titulo !== "undefined" && typeof desc !== "undefined" && typeof data !== "undefined") {
-        Noticias.criar({titulo,data, desc})
+    var ativa = req.body.ativa
+    if(typeof titulo !== "undefined" && typeof desc !== "undefined" && typeof data !== "undefined" && typeof ativa !== "undefined") {
+        Noticias.criar({titulo,data, desc, ativa})
             .then(dados => {
                 if(dados) res.jsonp("Noticia adicionada com sucesso")
                 else res.status(404).jsonp("Erro na adição da Noticia " + req.body.titulo)
@@ -64,5 +65,15 @@ router.post('/', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), (req, res) 
             .catch(erro => res.status(404).jsonp("Erro na adição da Noticia "+req.body.titulo+": " + erro))
     } else res.status(404).jsonp("Erro na adição da Noticia: Campos em falta ")
 })
+
+router.delete('/:id', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), async function(req, res) {
+    Noticias.eliminar(req.params.id, function(err, user){
+        if(err){
+            res.status(500).send("Não foi possível eliminar a notícia!");
+        }else{
+            res.send('Notícia eliminada com sucesso!');
+        }
+    })
+});
 
 module.exports = router;

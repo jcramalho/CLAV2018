@@ -1,5 +1,5 @@
-summary: Devolve todos os pedidos realizados (log) nos últimos 30 dias ou para um utilizador ou chave API
-description: Devolve todos os pedidos realizados (log) nos últimos 30 dias por utilizadores ou chaves API. Caso seja enviado o tipo e o id devolve os pedidos realizados (log) nos últimos 30 dias para um utilizador ou chave API. Cada entrada no log tem o seu id (_id), o caminho da rota, o método, o tipo de acesso (User ou Chave), o id do utilizador ou da chave API, o status HTTP do pedido e a altura quando foi realizado o pedido.
+summary: Devolve os pedidos realizados (log) nos últimos 30 dias de forma paginada ou para um utilizador ou chave API
+description: Devolve os pedidos realizados (log) nos últimos 30 dias por utilizadores ou chaves API de forma paginada. Neste caso o resultado é uma lista items (página pedida) e o total de logs da API. Caso seja enviado o tipo e o id devolve os pedidos realizados (log) nos últimos 30 dias para um utilizador ou chave API. Cada entrada no log tem o seu id (_id), o caminho da rota, o método, o tipo de acesso (User ou Chave), o id do utilizador ou da chave API, o status HTTP do pedido e a altura quando foi realizado o pedido.
 tags:
   - Logs
 security:
@@ -8,15 +8,21 @@ security:
 parameters:
   - name: tipo
     in: query
-    description: Tipo de acesso
+    description: Tipo de acesso. Considerado apenas se 'id' também for inserido
     schema:
       type: string
       enum: [User, Chave]
   - name: id
     in: query
-    description: Id do utilizador ou da chave API
+    description: Id do utilizador ou da chave API. Considerado apenas se 'tipo' também for inserido
     schema:
       type: string
+  - name: pagina
+    in: query
+    description: Página a apresentar (paginação dos logs, cada página possui 2500 logs). Este parâmetro apenas é considerado se 'tipo' ou 'id' não for inserido
+    schema:
+      type: integer
+      minimum: 0
 responses:
   200:
     description: Pedidos realizados (log)

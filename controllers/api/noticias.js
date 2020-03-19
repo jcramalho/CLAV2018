@@ -36,7 +36,6 @@ Noticias.update = function(id, tit, descri,date, state){
 
 Noticias.criar = n => {
     n._id = mongoose.Types.ObjectId()
-    n.ativa = true
     var newNoticia = new Noticia(n);
 
     /*return newNoticia.save(function (err) {
@@ -49,4 +48,27 @@ Noticias.criar = n => {
         }
     }); */
     return newNoticia.save(); 
+}
+
+Noticias.eliminar = function(id, callback){
+    Noticia.findOneAndRemove({_id: id}, function(err, noticia){
+        if (err) {	
+            callback(err, null);
+        } else if(!noticia){
+            try{
+                id = mongoose.Types.ObjectId(id)
+                Noticia.findOneAndRemove({_id: id}, function(err2, noticia2){
+                    if(err2){
+                        callback(err2, null);
+                    }else{
+                        callback(null, noticia2);
+                    }
+                })
+            }catch(e){
+                callback("Notícia não existe", null)
+            }
+        } else {
+		    callback(null, noticia);
+        }
+    });
 }

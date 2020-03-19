@@ -13,7 +13,7 @@ info:
 
     Se tiver um token de um utilizador não necessita de indicar uma chave API para aceder aos GET's que a chave API dá acesso.
     
-    **Última alteração: 16/03/2020**
+    **Última alteração: 19/03/2020**
   version: 2.0.0
   title: CLAV API
   contact:
