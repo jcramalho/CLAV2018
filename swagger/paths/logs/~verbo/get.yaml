@@ -7,14 +7,14 @@ security:
   - userAuth: []
 parameters:
   - name: verbo
-    in: query
+    in: path
     required: true
     description: Método (verbo) da rota
     schema:
       type: string
       enum: [GET, POST, PUT, DELETE]
   - name: rota
-    in: path
+    in: query
     required: true
     description: Caminho da rota
     schema:
