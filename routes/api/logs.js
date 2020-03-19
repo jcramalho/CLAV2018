@@ -12,7 +12,8 @@ router.get('/', Auth.isLoggedInUser, Auth.checkLevel(6), async (req, res) => {
             .then(data => res.jsonp(data))
             .catch(error => res.status(500).send(`Erro ao obter os logs de ${req.query.tipo} com o id ${req.query.id}: ${error}`))
     } else {
-        Logs.getAllLogs()
+        var page = req.query.pagina ? req.query.pagina : 0
+        Logs.getAllLogs(page)
             .then(data => res.jsonp(data))
             .catch(error => res.status(500).send(`Erro ao obter os logs: ${error}`))
     }
