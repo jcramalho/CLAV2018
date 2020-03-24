@@ -41,6 +41,7 @@ Invariantes.getErros = async (idRel,idInv) => {
             var res = {}
             res.descRel = rel.desc
             res.descInv = inv.desc
+            res.isFixable = "queryFix" in inv && inv.queryFix
             var results = await execQuery("query", inv.query)
             res.results = normalizeOrdered(results)
             return res    
@@ -66,8 +67,11 @@ Invariantes.getTodosErros = async () => {
             results = normalizeOrdered(results)
             if(results.length!=0){
                 res[n] = {}
+                res[n].idRel = invs[i].idRel
+                res[n].idInv = invs[i].invs[j].idInv
                 res[n].descRel = invs[i].desc
                 res[n].descInv = invs[i].invs[j].desc
+                res[n].isFixable = "queryFix" in invs[i].invs[j] && invs[i].invs[j].queryFix
                 res[n].results = results
                 n++    
             }
