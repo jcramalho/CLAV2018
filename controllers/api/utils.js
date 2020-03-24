@@ -77,20 +77,20 @@ exports.request = {
  * @param query a query a executar
  */
 exports.execQuery = async function(method, query){
-    var getLink = urlGraphDB + "?query="
+    var getLink = urlGraphDB
     var postLink = urlGraphDB + "/statements"
     var encoded = encodeURIComponent(prefixes + query)
     var response
     try{
         switch(method) {
             case "query":
-                response = await axios.get(getLink + encoded)
+                response = await axios.post(getLink, `query=${encoded}`)
                 break;
             case "update":
                 response = await axios.post(postLink, `update=${encoded}`)
                 break;
             default:
-                response = await axios.get(getLink + encoded)
+                response = await axios.post(getLink, `query=${encoded}`)
                 break;
         }
         return response.data

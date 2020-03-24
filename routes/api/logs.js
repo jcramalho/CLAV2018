@@ -19,13 +19,13 @@ router.get('/', Auth.isLoggedInUser, Auth.checkLevel(6), async (req, res) => {
     }
 })
 
-router.get('/:rota', Auth.isLoggedInUser, Auth.checkLevel(6), async (req, res) => {
-    if(req.query.verbo){
-        Logs.getRouteLogs(decodeURIComponent(req.params.rota), req.query.verbo)
+router.get('/:verbo', Auth.isLoggedInUser, Auth.checkLevel(6), async (req, res) => {
+    if(req.query.rota){
+        Logs.getRouteLogs(decodeURIComponent(req.query.rota), req.params.verbo)
             .then(data => res.jsonp(data))
-            .catch(error => res.status(500).send(`Erro ao obter os logs da rota ${decodeURIComponent(req.params.rota)} com o método ${req.query.verbo}: ${error}`))
+            .catch(error => res.status(500).send(`Erro ao obter os logs da rota ${decodeURIComponent(req.query.rota)} com o método ${req.params.verbo}: ${error}`))
     }else{
-        res.status(500).send(`Erro ao obter os logs: precisa de indicar o verbo da rota (GET, POST, PUT ou DELETE) na query string 'verbo'.`)
+        res.status(500).send(`Erro ao obter os logs: precisa de indicar a rota na query string 'rota'.`)
     }   
 })
 

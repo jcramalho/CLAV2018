@@ -1,0 +1,31 @@
+summary: Corrige os erros de um invariante
+description: Corrige os erros de um invariante, contudo nem todos os invariantes tem esta possibilidade 
+security:
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Invariantes
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        properties:
+          idRel:
+            type: string
+            description: identificador de um grupo de invariantes 
+          idInv:
+            type: string
+            description: identificador do invariante dentro do grupo anteriormente identificado 
+        example:
+          idRel: rel_2
+          idInv: inv_1
+responses:
+  200:
+    description: Corrigido os erros de um invariante
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro
