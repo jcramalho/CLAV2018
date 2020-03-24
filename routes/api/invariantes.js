@@ -30,4 +30,16 @@ router.get('/', Auth.isLoggedInUser, Auth.checkLevel(6), async function (req, re
     }
 })
 
+router.post('/', Auth.isLoggedInUser, Auth.checkLevel(6), async function (req, res) {
+
+    if(req.body.idRel!=null && req.body.idInv!=null){
+        try{
+            var dados = await Invariantes.fixErros(req.body.idRel, req.body.idInv)
+            res.jsonp(dados)
+        }catch(erro){
+            res.status(500).send(`Erro ao tentar corrigir os erros do invariante (idRel = ${req.body.idRel}, idInv = ${req.body.idInv}): ${erro}`)
+        }
+    }
+})
+
 module.exports = router;
