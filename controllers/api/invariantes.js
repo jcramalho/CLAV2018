@@ -98,10 +98,12 @@ Invariantes.fixErros = async (idRel, idInv) => {
                 }`
 
                 await execQuery("update", insertQuery)
-                result = await execQuery("query", askQuery)
+                return "Erros do invariante corrigidos"
+                //Quando inclui muitas queries o pedido é bastante pesado
+                //result = await execQuery("query", askQuery)
 
-                if(result.boolean) return "Erros do invariante corrigidos"
-                else throw("Ocorreu um erro ao corrigir os erros dos invariantes")
+                //if(result.boolean) return "Erros do invariante corrigidos"
+                //else throw("Ocorreu um erro ao corrigir os erros dos invariantes")
             }catch(erro){
                 throw(erro)
             }
