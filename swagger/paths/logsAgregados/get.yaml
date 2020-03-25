@@ -24,13 +24,13 @@ responses:
       application/json:
         schema:
           oneOf:
-            - $ref: '#/components/schemas/logsAgregados'
-            - $ref: '#/components/schemas/logAgregado'
+            - $ref: '#/components/schemas/LogsAgregados'
+            - $ref: '#/components/schemas/LogAgregado'
         examples:
           todos:
-            $ref: '#/components/examples/response_logsAgregados_get_all'
+            $ref: '#/components/examples/logsAgregados_get_all'
           um:
-            $ref: '#/components/examples/response_logsAgregados_get_one'
+            $ref: '#/components/examples/logsAgregados_get_one'
   401:
     $ref: '#/components/responses/UnauthorizedUser'
   403:

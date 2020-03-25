@@ -5,10 +5,10 @@ const { query, validationResult } = require('express-validator');
 var express = require('express');
 var router = express.Router();
 
-router.get('/',
-    Auth.isLoggedInUser, Auth.checkLevel(6), //Auth validation
-    query('tipo').isIn(['User', 'Chave']), query('id').exists({checkNull: true, checkFalsy: true}), //parameters validation
-(req, res) => {
+router.get('/', Auth.isLoggedInUser, Auth.checkLevel(6), [
+    query('tipo').isIn(['User', 'Chave']),
+    query('id').exists({checkNull: true, checkFalsy: true})
+], (req, res) => {
     
     try {
         validationResult(req).throw() //throw error if parameters isn't valid

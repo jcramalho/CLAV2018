@@ -24,7 +24,7 @@ properties:
     type: integer
     minimum: 0
 example:
-  $ref: '#/components/examples/response_logsAgregados_get_one'
+  $ref: '#/components/examples/logsAgregados_get_one'
 required:
   - _id
   - type

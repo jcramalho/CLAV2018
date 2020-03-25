@@ -1,0 +1,5 @@
+type: array
+items:
+  $ref: '#/components/schemas/LogAgregado'
+example:
+  $ref: '#/components/examples/logsAgregados_get_all'
