@@ -1,5 +1,6 @@
 const execQuery = require('../../controllers/api/utils').execQuery
 const normalizeOrdered = require('../../controllers/api/utils').normalizeOrdered
+const Ontologia = require('../../controllers/api/ontologia')
 const Invariantes = module.exports
 const fs = require('fs')
 const invsFile = fs.readFileSync('public/invariantes/invariantes.json')
@@ -102,6 +103,7 @@ Invariantes.fixErros = async (idRel, idInv) => {
                 }`
 
                 await execQuery("update", insertQuery)
+                await Ontologia.atualizaData()
                 return "Erros do invariante corrigidos"
                 //Quando inclui muitas queries o pedido é bastante pesado
                 //result = await execQuery("query", askQuery)

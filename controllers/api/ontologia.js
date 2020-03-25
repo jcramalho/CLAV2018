@@ -168,3 +168,34 @@ Ontologia.exportar = async function(infer, format, days){
         return [path, extension]
     }
 }
+
+//Atualiza data da ultima alteração
+Ontologia.atualizaData = async function() {
+    try{
+        var date = await Ontologia.data()
+    }catch(erro){
+        throw(erro)
+    }
+
+    var cDate = currentDate()
+    if(date != cDate){
+        console.log("AQUI")
+        const deleteQuery = `DELETE DATA {
+            <http://jcr.di.uminho.pt/m51-clav> <http://purl.org/dc/elements/1.1#date> "${date}" .
+        }`
+        const insertQuery = `INSERT DATA {
+            <http://jcr.di.uminho.pt/m51-clav> <http://purl.org/dc/elements/1.1#date> "${cDate}" .
+        }`
+
+        try{
+            await execQuery("update", deleteQuery)
+            await execQuery("update", insertQuery)
+        }catch(erro){
+            throw(erro)
+        }
+
+        return "Data atualizada com sucesso"
+    }else{
+        return "Data já está atualizada"
+    }
+}
