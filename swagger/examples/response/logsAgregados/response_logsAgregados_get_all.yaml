@@ -1,0 +1,26 @@
+value:
+  - nGETs: 1415
+    nPOSTs: 32
+    nPUTs: 2
+    nDELETEs: 2
+    _id: "5e5ed9084906e36ebc0f7cfa"
+    type: "User"
+    id: "5e2adcfdc38aef5caa90efc7"
+    lastAccess: "2020-03-24T17:44:56.511Z"
+  - nGETs: 2072
+    nPOSTs: 19
+    nPUTs: 0
+    nDELETEs: 0
+    _id: "5e5ed9264906e36ebc0f7d10"
+    type: "Chave"
+    id: "5e2adec179993a5dba6e254e"
+    lastAccess: "2020-03-24T11:29:09.917Z"
+  - nGETs: 110
+    nPOSTs: 0
+    nPUTs: 0
+    nDELETEs: 0
+    _id: "5e73ee0b3df16707a99f163e"
+    type: "User"
+    id: "5d9f6d279d712735a95e5dff"
+    lastAccess": "2020-03-19T23:10:06.269Z"
+summary: Exemplo de todos os pedidos realizados agregados por utilizador e chave API

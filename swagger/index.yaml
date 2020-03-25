@@ -84,7 +84,7 @@ tags:
     description: "Notícias da plataforma CLAV"
 paths: !!inc/dir [ 'paths' ] 
 components: 
-  schemas: !!inc/dir [ 'schemas', excludeTopLevelDirSeparator: true ]
+  schemas: !!inc/dir [ 'schemas', { excludeTopLevelDirSeparator: true, recursive: false }]
   securitySchemes:
     apiKeyQuery:
       type: apiKey
@@ -124,4 +124,4 @@ components:
         type: string
         enum: [application/json, json, application/xml, xml, text/csv, csv, excel/csv]
       description: "Formato de saída do resultado"
-  examples: !!inc/dir [ 'examples', excludeTopLevelDirSeparator: true ]
+  examples: !!inc/dir [ 'examples', { excludeTopLevelDirSeparator: true, recursive: false }]
