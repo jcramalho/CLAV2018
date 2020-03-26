@@ -4,6 +4,7 @@ var Auth = require('../../controllers/auth.js');
 var AuthCall = require('../../models/auth')
 var AuthCalls = require('../../controllers/api/auth');
 const { body, validationResult } = require('express-validator');
+const { existe } = require('../validation')
 
 router.get('/:id', Auth.isLoggedInKey, (req, res) => {
     AuthCalls.get(req.params.id,function(err, call){
@@ -16,8 +17,8 @@ router.get('/:id', Auth.isLoggedInKey, (req, res) => {
 })
 
 router.post('/adicionar', Auth.isLoggedInKey, [
-    body('id').exists({checkNull: true, checkFalsy: true}),
-    body('url').isURL({require_tld: false})
+    existe('body', 'id'),
+    body('url', 'Valor não é um URL').isURL({require_tld: false})
 ], (req, res) => {
     const errors = validationResult(req)
     if(!errors.isEmpty()){

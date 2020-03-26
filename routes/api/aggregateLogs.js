@@ -1,13 +1,14 @@
 var Auth = require('../../controllers/auth.js');
 var AggregateLogs = require('../../controllers/api/aggregateLogs.js');
-const { query, validationResult } = require('express-validator');
+const { validationResult } = require('express-validator');
+const { existe, estaEm } = require('../validation')
 
 var express = require('express');
 var router = express.Router();
 
 router.get('/', Auth.isLoggedInUser, Auth.checkLevel(6), [
-    query('tipo').isIn(['User', 'Chave']),
-    query('id').exists({checkNull: true, checkFalsy: true})
+    estaEm('query', 'tipo', ['User', 'Chave']),
+    existe('query', 'id')
 ], (req, res) => {
     
     try {
