@@ -81,6 +81,8 @@ Chaves.desativar = function(id, callback){
     Chave.findById(id, async function(err, key){
         if (err) {	
             callback(err, null);
+        }else if(!key){
+            callback("Chave API não existe", null);
         } else {
 			key.active = false;
             try{
@@ -97,6 +99,8 @@ Chaves.ativar = function(id,callback){
     Chave.findById(id, async function(err, key){
         if (err) {	
             callback(err, null);
+        }else if(!key){
+            callback("Chave API não existe", null);
         } else {
 			key.active = true;
             try{
@@ -113,6 +117,8 @@ Chaves.eliminar = function(id, callback){
 	Chave.findByIdAndRemove(id, function(err, key){
 		if(err){
 			callback(err, null);
+        }else if(!key){
+            callback("Chave API não existe", null);
 		}else{
 			callback(null, key);
 		}
@@ -121,8 +127,10 @@ Chaves.eliminar = function(id, callback){
 
 Chaves.renovar = function(id, callback){
 	Chave.findById(id, async function(err, key){
-		if(err || !key){
+		if(err){
 			callback(err, null);
+        }else if(!key){
+            callback("Chave API não existe", null);
 		}else{
             key.key = Auth.generateTokenKey(key._id);
             key.created = Date.now();
@@ -142,6 +150,8 @@ Chaves.atualizarMultiplosCampos = function(id, name, email, entidade, callback){
     Chave.findById(id, async function(err, chave){
 		if (err) {	
             callback(err, null);
+        }else if(!chave){
+            callback("Chave API não existe", null);
 		} else {
             chave.name = name;
             chave.contactInfo = email;
