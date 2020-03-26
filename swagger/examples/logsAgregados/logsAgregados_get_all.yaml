@@ -22,5 +22,5 @@ value:
     _id: "5e73ee0b3df16707a99f163e"
     type: "User"
     id: "5d9f6d279d712735a95e5dff"
-    lastAccess": "2020-03-19T23:10:06.269Z"
+    lastAccess: "2020-03-19T23:10:06.269Z"
 summary: Exemplo de todos os pedidos realizados agregados por utilizador e chave API

@@ -1,0 +1,12 @@
+value:
+  - entidade: "ent_A3ES"
+    legislacao: "Portaria 11/2019"
+    fundo: "Secretaria Geral do Ministério dos Negócios Estrangeiros"
+    id: "ae_xddYpNN8ztyKGTjOU0Mbb"
+    data: "2020-03-24"
+  - entidade: "ent_A3ES"
+    legislacao: "Portaria 39/2019"
+    fundo: "Administração Central do Sistema de Saúde, IP"
+    id: "ae_xjGYpNN8ztyKGTjOU0MWJ"
+    data: "2020-03-19"
+summary: Exemplo de todos os autos de eliminação

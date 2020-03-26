@@ -1,9 +1,13 @@
 type: object
 properties:
-  tipo:
+  id:
     type: string
-    enum: [PGD, RADA, PGD/LC]
+  data:
+    type: string
+    format: date
   entidade:
+    type: string
+  responsavel:
     type: string
   fundo:
     type: string
@@ -19,12 +23,6 @@ properties:
         referencia:
           type: string
           description: Apenas presente caso o tipo seja RADA
-        titulo:
-          type: string
-        prazoConservacao:
-          type: string
-        destino:
-          type: string
         ni:
           type: string
           enum: [Dono, Participante]
@@ -34,13 +32,7 @@ properties:
           type: string
         dataFim:
           type: string
-        uiPapel:
-          type: string
-        uiDigital:
-          type: string
-        uiOutros:
-          type: string
-        agregacoes:
+        ag:
           type: array
           items:
             type: object
@@ -61,17 +53,16 @@ properties:
       required:
         - codigo
         - titulo
-        - prazoConservacao
-        - destino
         - dataInicio
         - dataFim
-        - uiPapel
-        - uiDigital
-        - uiOutros
-        - agregacoes
+        - ag
 required:
-  - tipo
+  - id
+  - data
   - entidade
+  - responsavel
   - fundo
   - legislacao
   - zonaControlo
+example:
+  $ref: '#/components/examples/autosEliminacao_get_one'

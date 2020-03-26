@@ -11,7 +11,7 @@ parameters:
     description: 'Tipo do auto de eliminação'
     schema:
       type: string
-      enum: [PGD, RADA, PGD/LC]
+      enum: [PGD, RADA, PGD_LC]
     required: false
 requestBody:
   description: 'Auto de eliminação'
@@ -21,7 +21,10 @@ requestBody:
       schema:
         properties:
           auto:
-            $ref: '#/components/schemas/AutosEliminacaoS'
+            $ref: '#/components/schemas/AutosEliminacao'
+      examples:
+        exemplo:
+          $ref: '#/components/examples/AutosEliminacao'
 responses:
   200:
     description: Criado um pedido para a criação de uma auto de eliminação
@@ -29,5 +32,7 @@ responses:
     $ref: '#/components/responses/UnauthorizedUser'
   403:
     $ref: '#/components/responses/PermissionsUser'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
   404:
     description: Erro

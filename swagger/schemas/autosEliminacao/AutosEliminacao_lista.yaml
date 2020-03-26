@@ -1,0 +1,23 @@
+type: array
+items:
+  type: object
+  properties:
+    id:
+      type: string
+    data:
+      type: string
+      format: date 
+    entidade:
+      type: string
+    legislacao:
+      type: string
+    fundo:
+      type: string
+  required:
+    - id
+    - data
+    - entidade
+    - legislacao
+    - fundo
+example:
+  $ref: '#/components/examples/autosEliminacao_get_all'
