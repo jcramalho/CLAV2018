@@ -2,6 +2,7 @@ var jwt = require('jsonwebtoken');
 var Auth = require('../../controllers/auth');
 var secretKey = require('./../../config/app');
 var Chave = require('./../../models/chave');
+var mongoose = require('mongoose');
 var Chaves = module.exports
 
 Chaves.listar = function(callback){
@@ -58,8 +59,10 @@ Chaves.listarPorEmail = function (email, callback) {
 
 Chaves.criarChave = function(name, email, entidade, callback){
     var ent = entidade.split('_')[0] == 'ent' ? entidade : 'ent_' + entidade
+    var id = mongoose.Types.ObjectId()
     var newKey = new Chave({
-        key: Auth.generateTokenKey(),
+        _id: id,
+        key: Auth.generateTokenKey(id),
         name: name,
 		contactInfo: email,
         entity: ent
@@ -121,7 +124,7 @@ Chaves.renovar = function(id, callback){
 		if(err || !key){
 			callback(err, null);
 		}else{
-            key.key = Auth.generateTokenKey();
+            key.key = Auth.generateTokenKey(key._id);
             key.created = Date.now();
             key.nCalls = 0;
             key.lastUsed = null;
