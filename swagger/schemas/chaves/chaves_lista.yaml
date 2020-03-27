@@ -1,0 +1,29 @@
+type: array
+items:
+  type: object
+  properties:
+    active:
+      type: string
+      enum: [Sim, Não]
+    contactInfo:
+      type: string
+      format: email
+    created:
+      type: string
+    entity:
+      type: string
+    expiration:
+      type: string
+    id:
+      type: string
+    key:
+      type: string
+    lastUsed:
+      type: string
+    nCalls:
+      type: integer
+      minimum: 0
+    name:
+      type: string
+example:
+  $ref: '#/components/examples/chaves_get_all'

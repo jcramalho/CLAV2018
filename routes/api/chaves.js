@@ -6,6 +6,8 @@ var interfaceHosts = require("./../../config/database").interfaceHosts;
 var Auth = require("../../controllers/auth");
 var Chaves = require("../../controllers/api/chaves");
 var Mailer = require("../../controllers/api/mailer");
+const { param, header, body, query, validationResult } = require('express-validator');
+const { existe, estaEm, comecaPor, existeEnt } = require('../validation')
 
 router.get("/", Auth.isLoggedInUser, Auth.checkLevel(6), (req, res) => {
   Chaves.listar(function(err, result) {
@@ -18,18 +20,44 @@ router.get("/", Auth.isLoggedInUser, Auth.checkLevel(6), (req, res) => {
   });
 });
 
-router.get("/clavToken", (req, res) => {
-  if (interfaceHosts.includes(req.headers.origin)) {
-    Chaves.listarPorEmail("interface_clav@dglab.pt", function(err, chave) {
-      if (err) {
-        //res.status(500).send(`Erro: ${err}`);
-        res.status(500).send("Erro ao obter o token da CLAV!")
-      } else if (!chave) {
-        Chaves.criarChave(
-          "clav_interface",
-          "interface_clav@dglab.pt",
-          "ent_DGLAB",
-          function(err, chave) {
+router.get("/clavToken", [
+    header('origin', "Não pode fazer o pedido desse domínio!")
+        .custom(value => interfaceHosts.includes(value))
+], (req, res) => {
+  const errors = validationResult(req)
+  if(!errors.isEmpty()){
+      return res.status(422).jsonp(errors.array())
+  }
+  
+  Chaves.listarPorEmail("interface_clav@dglab.pt", function(err, chave) {
+    if (err) {
+      //res.status(500).send(`Erro: ${err}`);
+      res.status(500).send("Erro ao obter o token da CLAV!")
+    } else if (!chave) {
+      Chaves.criarChave(
+        "clav_interface",
+        "interface_clav@dglab.pt",
+        "ent_DGLAB",
+        function(err, chave) {
+          if (err) {
+            //res.status(500).send(err);
+            res.status(500).send("Erro ao obter o token da CLAV!")
+          } else {
+            jwt.verify(chave.key, secretKey.apiKey, function(err, decoded) {
+              if (err) {
+                //res.status(500).send(err);
+                res.status(500).send("Erro ao obter o token da CLAV!")
+              } else {
+                res.send({ token: chave.key, exp: decoded.exp });
+              }
+            });
+          }
+        }
+      );
+    } else {
+      jwt.verify(chave.key, secretKey.apiKey, function(err, decoded) {
+        if (err) {
+          Chaves.renovar(chave.id, function(err, chave) {
             if (err) {
               //res.status(500).send(err);
               res.status(500).send("Erro ao obter o token da CLAV!")
@@ -43,45 +71,24 @@ router.get("/clavToken", (req, res) => {
                 }
               });
             }
-          }
-        );
-      } else {
-        jwt.verify(chave.key, secretKey.apiKey, function(err, decoded) {
-          if (err) {
-            Chaves.renovar(chave.id, function(err, chave) {
-              if (err) {
-                //res.status(500).send(err);
-                res.status(500).send("Erro ao obter o token da CLAV!")
-              } else {
-                jwt.verify(chave.key, secretKey.apiKey, function(err, decoded) {
-                  if (err) {
-                    //res.status(500).send(err);
-                    res.status(500).send("Erro ao obter o token da CLAV!")
-                  } else {
-                    res.send({ token: chave.key, exp: decoded.exp });
-                  }
-                });
-              }
-            });
-          } else {
-            res.send({ token: chave.key, exp: decoded.exp });
-          }
-        });
-      }
-    });
-  } else {
-    res.status(403).send("Não pode fazer o pedido desse domínio!");
-  }
+          });
+        } else {
+          res.send({ token: chave.key, exp: decoded.exp });
+        }
+      });
+    }
+  });
 });
 
-router.get("/:id", Auth.isLoggedInUser, Auth.checkLevel(7), async function(
-  req,
-  res
-) {
-  await jwt.verify(req.params.id, secretKey.apiKey, async function(
-    err,
-    decoded
-  ) {
+router.get("/:id", Auth.isLoggedInUser, Auth.checkLevel(7), [
+    param('id', "A chave API não possui um formato válido").isJWT()
+], async function(req, res) {
+  const errors = validationResult(req)
+  if(!errors.isEmpty()){
+      return res.status(422).jsonp(errors.array())
+  }
+
+  await jwt.verify(req.params.id, secretKey.apiKey,async function(err, decoded){
     if (!err) {
       await Chaves.listarPorId(decoded.id, function(err, result) {
         if (err) {
@@ -98,7 +105,19 @@ router.get("/:id", Auth.isLoggedInUser, Auth.checkLevel(7), async function(
   });
 });
 
-router.post("/", (req, res) => {
+router.post("/", [
+    existe('body', 'name'),
+    body('email', "Email inválido").isEmail(),
+    comecaPor('body', 'entidade', 'ent_')
+        .bail()
+        .custom(existeEnt)
+        .withMessage("Entidade não existe na BD")
+], (req, res) => {
+  const errors = validationResult(req)
+  if(!errors.isEmpty()){
+      return res.status(422).jsonp(errors.array())
+  }
+
   Chaves.listarPorEmail(req.body.email, function(err, chave) {
     if (err) {
       //return res.status(500).send(`Erro: ${err}`);
@@ -128,38 +147,45 @@ router.post("/", (req, res) => {
   });
 });
 
-router.put("/renovar", function(req, res) {
-  if (req.query.email) {
-    Chaves.listarPorEmail(req.query.email, (err, chave) => {
-      if (err) {
-        //res.status(500).send(`Erro: ${err}`);
+router.put("/renovar", [
+    query('email', "Email inválido").isEmail()
+], function(req, res) {
+  const errors = validationResult(req)
+  if(!errors.isEmpty()){
+      return res.status(422).jsonp(errors.array())
+  }
+
+  Chaves.listarPorEmail(req.query.email, (err, chave) => {
+    if (err) {
+      //res.status(500).send(`Erro: ${err}`);
+      res.status(500).send("Não foi possível renovar a Chave API!");
+    } else {
+      if (!chave) {
+        //Chave API não encontrada (404)
+        //Por forma a não divulgar que emails estão já usados
         res.status(500).send("Não foi possível renovar a Chave API!");
       } else {
-        if (!chave) {
-          //Chave API não encontrada (404)
-          //Por forma a não divulgar que emails estão já usados
-          res.status(500).send("Não foi possível renovar a Chave API!");
-        } else {
-          Chaves.renovar(chave._id, function(err, chaveRen) {
-            if (err) {
-              //res.status(500).send(`Erro: ${err}`);
-              res.status(500).send(`Não foi possível renovar a Chave API!`);
-            } else {
-              res.jsonp({ apikey: chaveRen.key });
-            }
-          });
-        }
+        Chaves.renovar(chave._id, function(err, chaveRen) {
+          if (err) {
+            //res.status(500).send(`Erro: ${err}`);
+            res.status(500).send(`Não foi possível renovar a Chave API!`);
+          } else {
+            res.jsonp({ apikey: chaveRen.key });
+          }
+        });
       }
-    });
-  } else {
-    res.status(404).send("Erro: O email é obrigatório");
-  }
+    }
+  });
 });
 
-router.put("/:id/desativar", Auth.isLoggedInUser, Auth.checkLevel(7), function(
-  req,
-  res
-) {
+router.put("/:id/desativar", Auth.isLoggedInUser, Auth.checkLevel(7), [
+    param('id', "Formato do id inválido").isMongoId()
+], function(req, res) {
+  const errors = validationResult(req)
+  if(!errors.isEmpty()){
+      return res.status(422).jsonp(errors.array())
+  }
+
   Chaves.desativar(req.params.id, function(err, cb) {
     if (err) {
       //res.status(500).send(`Erro: ${err}`);
@@ -170,10 +196,14 @@ router.put("/:id/desativar", Auth.isLoggedInUser, Auth.checkLevel(7), function(
   });
 });
 
-router.put("/:id/ativar", Auth.isLoggedInUser, Auth.checkLevel(7), function(
-  req,
-  res
-) {
+router.put("/:id/ativar", Auth.isLoggedInUser, Auth.checkLevel(7), [
+    param('id', "Formato do id inválido").isMongoId()
+], function(req, res) {
+  const errors = validationResult(req)
+  if(!errors.isEmpty()){
+      return res.status(422).jsonp(errors.array())
+  }
+
   Chaves.ativar(req.params.id, function(err, cb) {
     if (err) {
       //res.status(500).send(`Erro: ${err}`);
@@ -184,10 +214,14 @@ router.put("/:id/ativar", Auth.isLoggedInUser, Auth.checkLevel(7), function(
   });
 });
 
-router.delete("/:id", Auth.isLoggedInUser, Auth.checkLevel(7), function(
-  req,
-  res
-) {
+router.delete("/:id", Auth.isLoggedInUser, Auth.checkLevel(7), [
+    param('id', "Formato do id inválido").isMongoId()
+], function(req, res) {
+  const errors = validationResult(req)
+  if(!errors.isEmpty()){
+      return res.status(422).jsonp(errors.array())
+  }
+
   Chaves.eliminar(req.params.id, function(err, cb) {
     if (err) {
       //res.status(500).send(`Erro: ${err}`);
@@ -198,11 +232,21 @@ router.delete("/:id", Auth.isLoggedInUser, Auth.checkLevel(7), function(
   });
 });
 
-router.put("/:id/atualizar", Auth.isLoggedInUser, Auth.checkLevel(7), function(
-  req,
-  res
-) {
-  Chaves.listarPorEmail(req.body.contactInfo, function(err, chave) {
+router.put("/:id/atualizar", Auth.isLoggedInUser, Auth.checkLevel(7), [
+    param('id', "Formato do id inválido").isMongoId(),
+    existe('body', 'name'),
+    body('contactInfo', "Email inválido").isEmail(),
+    comecaPor('body', 'entity', 'ent_')
+        .bail()
+        .custom(existeEnt)
+        .withMessage("Entidade não existe na BD")
+], function(req, res) {
+  const errors = validationResult(req)
+  if(!errors.isEmpty()){
+      return res.status(422).jsonp(errors.array())
+  }
+
+  Chaves.listarPorEmail(req.body.email, function(err, chave) {
     if (chave && req.params.id != chave._id) {
       res.status(500).send("Não foi possível atualizar a Chave API! Já existe uma chave API registada com esse email!");
     } else {

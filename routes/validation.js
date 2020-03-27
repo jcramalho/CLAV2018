@@ -1,4 +1,5 @@
 const { check, param, query, body, header, cookie } = require('express-validator');
+var Entidades = require("../controllers/api/entidades.js");
 
 const getLocation = {
     'param': param,
@@ -23,19 +24,27 @@ module.exports.estaEm = function (location, field, list){
     strList = strList.slice(0, -1).join(", ") + ' e ' + strList.slice(-1)
     const msg = "Valor diferente de " + strList
 
-    try{
-        return getLocation[location](field, msg).isIn(list)
-    }catch(err){
-        return check(field, msg).isIn(list)
-    }
+    return module.exports.existe(location, field)
+        .isIn(list)
+        .withMessage(msg)
 }
 
 module.exports.comecaPor = function (location, field, starts){
     const msg = `Valor não começa por '${starts}'`
 
-    try{
-        return getLocation[location](field, msg).exists({checkFalsy: true}).custom(value => value.startsWith(starts))
-    }catch(err){
-        return check(field, msg).exists({checkFalsy: true}).custom(value => value.startsWith(starts))
+    return module.exports.existe(location, field)
+        .bail()
+        .custom(value => value.startsWith(starts))
+        .withMessage(msg)
+}
+
+module.exports.existeEnt = async entId => {
+    var entidades = await Entidades.listar("True")
+    entidades = entidades.map(e => e.id)
+
+    if(entidades.includes(entId)){
+        return Promise.resolve()
+    }else{
+        return Promise.reject()
     }
 }
