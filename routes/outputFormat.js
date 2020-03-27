@@ -87,11 +87,57 @@ function filterClasses(classes, classesI){
     return ret
 }
 
+//Função auxiliar para getClassesParaPesquisa, devolve defaultValue se o objero for null, undefined ou vazio
+function ternaryOp(obj, defaultValue){
+    return obj ? obj : defaultValue
+}
+
+//Função auxiliar para getClassesParaPesquisa, obtém o termo 'termo' de cada objeto da lista e realiza depois o join com " ". Caso a lista seja null, undefined ou vazia devolve []
+function mapJoin(list, term){
+    return list ? list.map(e => e[term]).join(" ") : []
+}
+
+//Função auxiliar para getClassesParaPesquisa, obtém o termo 'termo' de cada objeto da lista. Caso a lista seja null, undefined ou vazia devolve []
+function ternaryMap(list, term){
+    return list ? list.map(e => e[term]) : []
+}
+
+//Devolve a informação das classes preparadas para a pesquisa avançada
+function getClassesParaPesquisa(classes){
+    var ret = []
+
+    for (var i = 0; i < classes.length; i++) {
+        ret.push({
+            id: classes[i].codigo,
+            nome: classes[i].codigo + " - " + classes[i].titulo,
+            titulo: classes[i].titulo,
+            status: classes[i].status,
+            tp: ternaryOp(classes[i].tipoProc, ""),
+            pt: ternaryOp(classes[i].procTrans, ""),
+            na: mapJoin(classes[i].notasAp, "nota"),
+            exemploNa: mapJoin(classes[i].exemplosNotasAp, "exemplo"),
+            ne: mapJoin(classes[i].notasEx, "nota"),
+            ti: mapJoin(classes[i].termosInd, "termo"),
+            pca: ternaryOp(classes[i].pca.valores, ""),
+            fc_pca: ternaryOp(classes[i].pca.formaContagem, ""),
+            sfc_pca: ternaryOp(classes[i].pca.subFormaContagem, ""),
+            crit_pca: ternaryMap(classes[i].pca.justificacao, "tipoId"),
+            df: ternaryOp(classes[i].df.valor, "NE"),
+            crit_df: ternaryMap(classes[i].df.justificacao, "tipoId"),
+            donos: ternaryMap(classes[i].donos, "idDono"),
+            participantes: ternaryMap(classes[i].participantes, "idParticipante"),
+            filhos: getClassesParaPesquisa(classes[i].filhos)
+        })
+    }
+
+    return ret
+}
+
 module.exports.outputFormat = async (req, res, next) => {
 	if (res.locals.dados) {
 	    const outF = req.query.fs || req.headers.accept
 
-        if(res.locals.tipo == "classes"){
+        if(res.locals.tipo == "classes" || res.locals.tipo == "pesquisaClasses"){
             var isEsqueleto = "info" in req.query && req.query.info == "esqueleto"
 
             //se não for utilizador ou se for com nível inferior a 3.5 ou ainda se for o esqueleto para a criação de uma TS
@@ -104,6 +150,9 @@ module.exports.outputFormat = async (req, res, next) => {
                 for(var i=0; i < res.locals.dados.length; i++){
                     delete res.locals.dados[i].status
                 }
+            }else if(res.locals.tipo == "pesquisaClasses"){
+                //transforma as classes para a pesquisa avançada
+                res.locals.dados = getClassesParaPesquisa(res.locals.dados)
             }
         }
 

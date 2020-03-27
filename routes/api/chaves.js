@@ -7,7 +7,7 @@ var Auth = require("../../controllers/auth");
 var Chaves = require("../../controllers/api/chaves");
 var Mailer = require("../../controllers/api/mailer");
 const { param, header, body, query, validationResult } = require('express-validator');
-const { existe, estaEm, comecaPor, existeEnt } = require('../validation')
+const { existe, comecaPor, existeEnt } = require('../validation')
 
 router.get("/", Auth.isLoggedInUser, Auth.checkLevel(6), (req, res) => {
   Chaves.listar(function(err, result) {

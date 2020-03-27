@@ -14,7 +14,7 @@ parameters:
       type: string
       enum: [arvore, lista]
       default: arvore
-    description: Estrutura. Pode ser em árvore ou em lista. Quanto nenhum parâmetro é definido (formato, tipo e nivel) o formato de saída em arvore é o predefinido.
+    description: Estrutura. Pode ser em árvore ou em lista. Quanto nenhum parâmetro é definido (estrutura, tipo e nivel) a estrutura de saída em arvore é a predefinida.
     required: false
   - in: query
     name: tipo

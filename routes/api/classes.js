@@ -14,7 +14,7 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
             next()
         }
         else if(req.query.info == "pesquisa"){
-            res.locals.dados = await State.getClassesParaPesquisa()
+            res.locals.dados = await State.getAllClassesInfo()
             res.locals.tipo = "pesquisaClasses"
             next()
         }
