@@ -21,8 +21,7 @@ responses:
       application/json:
         schema:
           $ref: '#/components/schemas/ClasseSimplesLista'
-        allOf:
-          - $ref: '#/components/examples/ClasseDescendencia'
+        example: !!inc/file '/examples/classes/ClasseDescendencia.yaml'
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:

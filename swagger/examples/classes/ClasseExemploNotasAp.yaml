@@ -1,7 +1,6 @@
-example:
-  - idExemplo: "http://jcr.di.uminho.pt/m51-clav#exna_c100.10.001_QGZMFqvX3jCpke7KoaJcF"
-    exemplo: "Código da Estrada"
-  - idExemplo: "http://jcr.di.uminho.pt/m51-clav#exna_c100.10.001_36x5LIqxIxtqiryYqELSq"
-    exemplo: "Regime de acesso à informação administrativa e ambiental e de reutilização dos documentos administrativos"
-  - idExemplo: "http://jcr.di.uminho.pt/m51-clav#exna_c100.10.001_JVXW-oZxy-K_4uEbKdziU"
-    exemplo: "Código Civil"
+- idExemplo: "http://jcr.di.uminho.pt/m51-clav#exna_c100.10.001_QGZMFqvX3jCpke7KoaJcF"
+  exemplo: "Código da Estrada"
+- idExemplo: "http://jcr.di.uminho.pt/m51-clav#exna_c100.10.001_36x5LIqxIxtqiryYqELSq"
+  exemplo: "Regime de acesso à informação administrativa e ambiental e de reutilização dos documentos administrativos"
+- idExemplo: "http://jcr.di.uminho.pt/m51-clav#exna_c100.10.001_JVXW-oZxy-K_4uEbKdziU"
+  exemplo: "Código Civil"

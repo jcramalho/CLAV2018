@@ -21,8 +21,7 @@ responses:
       application/json:
         schema:
           $ref: '#/components/schemas/ClasseTermosIndice'
-        allOf:
-          - $ref: '#/components/examples/ClasseTermosIndice'
+        example: !!inc/file '/examples/classes/ClasseTermosIndice.yaml'
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:

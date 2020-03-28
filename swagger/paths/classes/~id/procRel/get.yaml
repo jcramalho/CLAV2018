@@ -21,8 +21,7 @@ responses:
       application/json:
         schema:
           $ref: '#/components/schemas/ClasseProcRels'
-        allOf:
-          - $ref: '#/components/examples/ClasseProcRels'
+        example: !!inc/file '/examples/classes/ClasseProcRels.yaml'
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:

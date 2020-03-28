@@ -21,8 +21,7 @@ responses:
       application/json:
         schema:
           $ref: '#/components/schemas/ClasseLegislacao'
-        allOf:
-          - $ref: '#/components/examples/ClasseLegislacao'
+        example: !!inc/file '/examples/classes/ClasseLegislacao.yaml'
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:

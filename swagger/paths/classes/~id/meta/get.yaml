@@ -21,8 +21,7 @@ responses:
       application/json:
         schema:
           $ref: '#/components/schemas/ClasseMeta'
-        allOf:
-          - $ref: '#/components/examples/ClasseMeta'
+        example: !!inc/file '/examples/classes/ClasseMeta.yaml'
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:

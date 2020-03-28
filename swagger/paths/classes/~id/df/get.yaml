@@ -21,8 +21,7 @@ responses:
       application/json:
         schema:
           $ref: '#/components/schemas/ClasseDF'
-        allOf:
-          - $ref: '#/components/examples/ClasseDF'
+        example: !!inc/file '/examples/classes/ClasseDF.yaml'
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:

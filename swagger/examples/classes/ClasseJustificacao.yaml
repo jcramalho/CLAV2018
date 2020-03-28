@@ -1,13 +1,12 @@
-example:
-  - tipoId: "CriterioJustificacaoLegal"
-    conteudo: "[Lei 98/97], art.º 70º, nº 1 - Prazo prescricional da responsabilidade financeira reintegratória."
-    criterio: "http://jcr.di.uminho.pt/m51-clav#crit_just_pca_c200.10.100_1"
-    processos: []
-    legislacao:
-      - legId: "leg_f1pz2sTuQoxZSeQbMMy_0"
-  - tipoId: "CriterioJustificacaoUtilidadeAdministrativa"
-    conteudo: "Prazo decorrente da necessidade de consulta deste PN para apuramento de responsabilidade em sede do PN 500.10.001 - Realização de auditorias (no que diz respeito à atuação da Administração)."
-    criterio: "http://jcr.di.uminho.pt/m51-clav#crit_just_pca_c200.10.100_2"
-    processos:
-      - procId: "c500.10.001"
-    legislacao: []
+- tipoId: "CriterioJustificacaoLegal"
+  conteudo: "[Lei 98/97], art.º 70º, nº 1 - Prazo prescricional da responsabilidade financeira reintegratória."
+  criterio: "http://jcr.di.uminho.pt/m51-clav#crit_just_pca_c200.10.100_1"
+  processos: []
+  legislacao:
+    - legId: "leg_f1pz2sTuQoxZSeQbMMy_0"
+- tipoId: "CriterioJustificacaoUtilidadeAdministrativa"
+  conteudo: "Prazo decorrente da necessidade de consulta deste PN para apuramento de responsabilidade em sede do PN 500.10.001 - Realização de auditorias (no que diz respeito à atuação da Administração)."
+  criterio: "http://jcr.di.uminho.pt/m51-clav#crit_just_pca_c200.10.100_2"
+  processos:
+    - procId: "c500.10.001"
+  legislacao: []
