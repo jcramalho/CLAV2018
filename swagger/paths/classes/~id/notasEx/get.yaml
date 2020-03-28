@@ -21,8 +21,7 @@ responses:
       application/json:
         schema:
           $ref: '#/components/schemas/ClasseNotasEx'
-        allOf:
-          - $ref: '#/components/examples/ClasseNotasEx'
+        example: !!inc/file '/examples/classes/ClasseNotasEx.yaml'
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:

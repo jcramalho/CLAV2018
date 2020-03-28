@@ -19,8 +19,7 @@ responses:
       application/json:
         schema:
           $ref: '#/components/schemas/chaveAPI'
-        allOf:
-          - $ref: '#/components/examples/chaves_get_one'
+        example: !!inc/file '/examples/chaves/chaves_get_one.yaml'
   401:
     $ref: '#/components/responses/UnauthorizedUser'
   403:

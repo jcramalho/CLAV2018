@@ -22,8 +22,7 @@ requestBody:
         properties:
           auto:
             $ref: '#/components/schemas/AutosEliminacao'
-      allOf:
-        - $ref: '#/components/examples/AutosEliminacao'
+      example: !!inc/file '/examples/autosEliminacao/AutosEliminacao.yaml'
 responses:
   200:
     description: Criado um pedido para a criação de uma auto de eliminação

@@ -21,8 +21,7 @@ responses:
       application/json:
         schema:
           $ref: '#/components/schemas/ClasseDono'
-        allOf:
-          - $ref: '#/components/examples/ClasseDono'
+        example: !!inc/file '/examples/classes/ClasseDono.yaml'
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:

@@ -22,8 +22,7 @@ responses:
       application/json:
         schema:
           $ref: '#/components/schemas/AutosEliminacao_elemento'
-        allOf:
-          - $ref: '#/components/examples/autosEliminacao_get_one'
+        example: !!inc/file '/examples/autosEliminacao/autosEliminacao_get_one.yaml'
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:

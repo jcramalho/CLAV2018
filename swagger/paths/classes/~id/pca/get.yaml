@@ -21,8 +21,7 @@ responses:
       application/json:
         schema:
           $ref: '#/components/schemas/ClassePCA'
-        allOf:
-          - $ref: '#/components/examples/ClassePCA'
+        example: !!inc/file '/examples/classes/ClassePCA.yaml'
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:

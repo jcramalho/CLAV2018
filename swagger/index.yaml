@@ -130,4 +130,30 @@ components:
         type: string
         enum: [application/json, json, application/xml, xml, text/csv, csv, excel/csv]
       description: "Formato de saída do resultado"
-  examples: !!inc/dir [ 'examples', { excludeTopLevelDirSeparator: true, recursive: false }]
+  examples: !!inc/dir [ 'examples', {
+      excludeTopLevelDirSeparator: true,
+      recursive: false,
+      #Se começar a ficar grande fazer whitelist em vez de blacklist
+      #OU fazer a incluir exemplo a exemplo com inc/file e remover este inc/dir
+      blacklist: [
+        'examples/chaves/chaves_get_all.yaml',
+        'examples/chaves/chaves_get_one.yaml',
+        'examples/classes/ClasseDF.yaml',
+        'examples/classes/ClassePCA.yaml',
+        'examples/classes/ClasseDono.yaml',
+        'examples/classes/ClasseMeta.yaml',
+        'examples/classes/ClasseNotasAp.yaml',
+        'examples/classes/ClasseNotasEx.yaml',
+        'examples/classes/ClasseProcRels.yaml',
+        'examples/classes/ClasseLegislacao.yaml',
+        'examples/classes/ClasseProcRelsRel.yaml',
+        'examples/classes/ClasseDescendencia.yaml',
+        'examples/classes/ClasseJustificacao.yaml',
+        'examples/classes/ClasseParticipante.yaml',
+        'examples/classes/ClasseTermosIndice.yaml',
+        'examples/classes/ClasseExemploNotasAp.yaml',
+        'examples/autosEliminacao/AutosEliminacao.yaml',
+        'examples/autosEliminacao/autosEliminacao_get_all.yaml',
+        'examples/autosEliminacao/autosEliminacao_get_one.yaml'
+      ]
+  }]
