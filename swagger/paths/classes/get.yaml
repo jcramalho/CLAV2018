@@ -6,7 +6,7 @@ security:
   - userAuth: []
 tags:
   - Classes
-description: "Devolve as classes em vários formatos podendo ser filtradas por nível, por tipo e se uma entidade/tipologia é dona/participante da classe. Existe uma hierarquia nestas possibilidades. Caso a info seja 'esqueleto' as query string tipo, nivel, estrutura, ents e tips não são consideradas. Caso o tipo seja definido as query strings nivel, estrutura, ents e tips não são consideradas. Caso tipo não seja definido mas ents ou tips seja, é devolvido os processos que tem como donos ou participantes as entidade e/ou tipologias selecionadas. Caso tipo não seja definido, nem ents e nem tips e o nível seja definido, a query string estrutura não é considerada. Por fim se não for definido tipo, nem ents, nem tips e nem nivel e for definido estrutura esta é a query string considerada."
+description: "Devolve as classes em vários formatos podendo ser filtradas por nível, por tipo e se uma entidade/tipologia é dona/participante da classe. Existe uma hierarquia nestas possibilidades. Caso a info seja 'esqueleto' ou 'pesquisa' as query string tipo, nivel, estrutura, ents e tips não são consideradas. Caso o tipo seja definido as query strings nivel e estrutura não são consideradas. Caso tipo não seja definido mas ents e/ou tips sejam, é devolvido os processos que tem como donos ou participantes as entidade e/ou tipologias selecionadas. Caso tipo não seja definido, nem ents e nem tips e o nível seja definido, a query string estrutura não é considerada. Por fim se não for definido tipo, nem ents, nem tips e nem nivel e for definido estrutura esta é a query string considerada."
 parameters:
   - in: query
     name: estrutura
@@ -14,7 +14,7 @@ parameters:
       type: string
       enum: [arvore, lista]
       default: arvore
-    description: Estrutura. Pode ser em árvore ou em lista. Quanto nenhum parâmetro é definido (formato, tipo e nivel) o formato de saída em arvore é o predefinido.
+    description: Estrutura. Pode ser em árvore ou em lista. Quanto nenhum parâmetro é definido (estrutura, tipo e nivel) a estrutura de saída em arvore é a predefinida.
     required: false
   - in: query
     name: tipo
@@ -34,20 +34,20 @@ parameters:
     name: ents
     schema:
       type: string
-    description: "Obtém os processos destas entidades. Quando usado em conjunto com o parâmetro tipo com valor igual a especifico devolve os processos especificos destas entidades. Exemplo de input: 'ent_AAN,ent_SEF'"
+    description: "Obtém os processos destas entidades. Quando usado em conjunto com o parâmetro tipo com valor igual a especifico devolve os processos especificos destas entidades. Exemplo: 'ent_AAN,ent_SEF'"
     required: false
   - in: query
     name: tips
     schema:
       type: string
-    description: "Obtém os processos destas tipologias. Quando usado em conjunto com o parâmetro tipo com valor igual a especifico devolve os processos especificos destas tipologias. Exemplo de input: 'tip_AAC,tip_AF'"
+    description: "Obtém os processos destas tipologias. Quando usado em conjunto com o parâmetro tipo com valor igual a especifico devolve os processos especificos destas tipologias. Exemplo: 'tip_AAC,tip_AF'"
     required: false
   - in: query
     name: info
     schema:
       type: string
       enum: [completa, esqueleto, pesquisa]
-    description: "Caso seja um valor que não 'completa' e 'esqueleto' devolve apenas o código, a descrição e o título das classes. Caso o valor seja 'completa' devolve toda a informação de cada classe. Caso o valor seja 'esqueleto' devolve numa estrutura pronta a ser preenchida para a criação de uma Tabela de Seleção, devolve os campos: código, título, descrição, PCA, DF dono (a ser preenchido pelo utilizador) e participante (a ser preenchido pelo utilizador). Caso o valor seja 'pesquisa', devolve todas as classes num formato pronto a ser usado para a pesquisa avançada da interface CLAV."
+    description: "Caso seja um valor que não 'completa', 'esqueleto' e 'pesquisa' devolve apenas o código, a descrição e o título das classes. Caso o valor seja 'completa' devolve toda a informação de cada classe. Caso o valor seja 'esqueleto' devolve numa estrutura pronta a ser preenchida para a criação de uma Tabela de Seleção, devolve os campos: código, título, descrição, PCA, DF dono (a ser preenchido pelo utilizador) e participante (a ser preenchido pelo utilizador). Caso o valor seja 'pesquisa', devolve todas as classes num formato pronto a ser usado para a pesquisa avançada da interface CLAV."
     required: false
   - $ref: '#/components/parameters/OutputFormatWithCSV'
 responses:
@@ -61,6 +61,15 @@ responses:
             - $ref: '#/components/schemas/ClasseSimplesLista'
             - $ref: '#/components/schemas/ClasseCompletaArvore'
             - $ref: '#/components/schemas/ClasseCompletaLista'
+        examples:
+          jsonClassesSimplesArvore:
+            $ref: '#/components/examples/ClassesSimplesArvoreJSON'
+          jsonClassesSimplesLista:
+            $ref: '#/components/examples/ClassesSimplesListaJSON'
+          jsonClassesCompletaArvore:
+            $ref: '#/components/examples/ClassesCompletaArvoreJSON'
+          jsonClassesCompletaLista:
+            $ref: '#/components/examples/ClassesCompletaListaJSON'
       json:
         schema:
           oneOf:
@@ -68,6 +77,15 @@ responses:
             - $ref: '#/components/schemas/ClasseSimplesLista'
             - $ref: '#/components/schemas/ClasseCompletaArvore'
             - $ref: '#/components/schemas/ClasseCompletaLista'
+        examples:
+          jsonClassesSimplesArvore:
+            $ref: '#/components/examples/ClassesSimplesArvoreJSON'
+          jsonClassesSimplesLista:
+            $ref: '#/components/examples/ClassesSimplesListaJSON'
+          jsonClassesCompletaArvore:
+            $ref: '#/components/examples/ClassesCompletaArvoreJSON'
+          jsonClassesCompletaLista:
+            $ref: '#/components/examples/ClassesCompletaListaJSON'
       application/xml:
         examples:
           xmlClassesSimplesArvore:
@@ -122,5 +140,7 @@ responses:
     $ref: '#/components/responses/UnauthorizedKey'
   403:
     $ref: '#/components/responses/PermissionsKey'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
   500:
     description: Erro

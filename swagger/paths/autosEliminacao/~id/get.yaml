@@ -10,16 +10,25 @@ tags:
 parameters:
   - name: id
     in: path
-    description: 'Identificador de um auto de eliminação(exemplo: ae_xjGYpNN8ztyKGTjOU0MWJ)'
+    description: 'Identificador de um auto de eliminação'
     schema:
       type: string
+      example: ae_xjGYpNN8ztyKGTjOU0MWJ
     required: true
 responses:
   200:
     description: Devolve a informação de um auto de eliminação
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/AutosEliminacao_elemento'
+        allOf:
+          - $ref: '#/components/examples/autosEliminacao_get_one'
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:
     $ref: '#/components/responses/PermissionsKey'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
   404:
     description: Erro

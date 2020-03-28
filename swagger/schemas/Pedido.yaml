@@ -28,7 +28,6 @@ properties:
           - $ref: '#/components/schemas/TermosIndice'
           - $ref: '#/components/schemas/Tipologia'
           - $ref: '#/components/schemas/AutosEliminacao'
-          - $ref: '#/components/schemas/AutosEliminacaoS'
       tipo:
         type: string
         enum: [Classe, TS Organizacional, TS Pluriorganizacional, TS Pluriorganizacional web, Entidade, Tipologia, Legislação, Termo de Indice, AE PGD/LC, AE PGD, AE RADA]

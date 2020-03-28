@@ -13,7 +13,7 @@ info:
 
     Se tiver um token de um utilizador não necessita de indicar uma chave API para aceder aos GET's que a chave API dá acesso.
     
-    **Última alteração: 19/03/2020**
+    **Última alteração: 28/03/2020**
   version: 2.0.0
   title: CLAV API
   contact:
@@ -84,7 +84,7 @@ tags:
     description: "Notícias da plataforma CLAV"
 paths: !!inc/dir [ 'paths' ] 
 components: 
-  schemas: !!inc/dir [ 'schemas', excludeTopLevelDirSeparator: true ]
+  schemas: !!inc/dir [ 'schemas', { excludeTopLevelDirSeparator: true, recursive: false }]
   securitySchemes:
     apiKeyQuery:
       type: apiKey
@@ -115,6 +115,12 @@ components:
       description: Não tem permissões suficientes para realizar o pedido ou a sua chave API foi desativada.
     PermissionsUser:
       description: Não tem permissões suficientes para realizar o pedido.
+    ValidationParameters:
+      description: Alguns dos parâmetros são inválidos ou estão em falta.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errosParametros'
   parameters:
     OutputFormatWithCSV:
       in: query
@@ -124,4 +130,4 @@ components:
         type: string
         enum: [application/json, json, application/xml, xml, text/csv, csv, excel/csv]
       description: "Formato de saída do resultado"
-  examples: !!inc/dir [ 'examples', excludeTopLevelDirSeparator: true ]
+  examples: !!inc/dir [ 'examples', { excludeTopLevelDirSeparator: true, recursive: false }]

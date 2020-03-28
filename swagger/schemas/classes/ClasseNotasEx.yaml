@@ -1,0 +1,13 @@
+type: array
+items:
+  type: array
+  items:
+    type: object
+    properties:
+      idNota:
+        $ref: '#/components/schemas/NotaExIdCompleto'
+      nota:
+        type: string
+    required:
+      - idNota
+      - nota

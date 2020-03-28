@@ -10,16 +10,24 @@ tags:
 parameters:
   - name: id
     in: path
-    description: 'Identificador de uma justificação (exemplo: just_pca_c200.10.100)'
+    description: 'Identificador de uma justificação'
     schema:
-      type: string
+      $ref: '#/components/schemas/JustificacaoId'
     required: true
 responses:
   200:
     description: Devolve uma justificação, PCA ou DF
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/ClasseJustificacao'
+        allOf:
+          - $ref: '#/components/examples/ClasseJustificacao'
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:
     $ref: '#/components/responses/PermissionsKey'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
   500:
     description: Erro

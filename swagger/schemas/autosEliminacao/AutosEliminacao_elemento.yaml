@@ -1,0 +1,66 @@
+type: object
+properties:
+  id:
+    $ref: '#/components/schemas/AutoEliminacaoId'
+  data:
+    type: string
+    format: date
+  entidade:
+    $ref: '#/components/schemas/EntidadeId'
+  responsavel:
+    type: string
+  fundo:
+    type: string
+  legislacao:
+    type: string
+  zonaControlo:
+    type: array
+    items:
+      type: object
+      properties:
+        codigo:
+          $ref: '#/components/schemas/Codigo'
+        referencia:
+          type: string
+          description: Apenas presente caso o tipo seja RADA
+        ni:
+          type: string
+          enum: [Dono, Participante]
+        dono:
+          $ref: '#/components/schemas/EntidadeId'
+        dataInicio:
+          type: string
+        dataFim:
+          type: string
+        ag:
+          type: array
+          items:
+            type: object
+            properties:
+              codigo:
+                type: string
+              titulo:
+                type: string
+              dataContagem:
+                type: string
+              ni:
+                type: string
+                enum: [Dono, Participante]
+            required:
+              - codigo
+              - titulo
+              - dataContagem
+      required:
+        - codigo
+        - titulo
+        - dataInicio
+        - dataFim
+        - ag
+required:
+  - id
+  - data
+  - entidade
+  - responsavel
+  - fundo
+  - legislacao
+  - zonaControlo

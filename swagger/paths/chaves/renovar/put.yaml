@@ -9,8 +9,21 @@ parameters:
     description: Email associado à chave API
     schema:
       type: string
+      format: email
+      example: exemplo@exemplo.pt
 responses:
   200:
     description: Chave API renovada
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            apikey:
+              type: string
+        example:
+          apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1ODUxNzcxNDMsImV4cCI6MTU4Nzc2OTE0M30.4y50-kHf21fFaLPZdD4pecg4J8o968SclcYD5ObAA2s
+  422:
+    $ref: '#/components/responses/ValidationParameters'
   500:
     description: Erro

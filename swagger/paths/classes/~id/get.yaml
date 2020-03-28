@@ -1,4 +1,4 @@
-summary: Retorna toda a informação relativa a uma classe
+summary: Retorna toda a informação relativa a uma classe ou a subárvore de classes com raiz nesta
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []
@@ -6,13 +6,13 @@ security:
   - userAuth: []
 tags:
   - Classes
-description: Retorna toda a informação relativa a uma classe
+description: "Retorna toda a informação relativa a uma classe ou a subárvore de classes com raiz na classe com id igual a 'id'"
 parameters:
   - name: id
     in: path
-    description: 'Identificador de uma classe (exemplo: c200.10.100)'
+    description: 'Identificador de uma classe'
     schema:
-      type: string
+      $ref: '#/components/schemas/ClasseId'
     required: true
   - name: tipo
     in: query
@@ -31,11 +31,21 @@ responses:
           oneOf:
             - $ref: '#/components/schemas/ClasseCompletaSubArvore'
             - $ref: '#/components/schemas/ClasseCompleta'
+        examples:
+          jsonClasse:
+            $ref: '#/components/examples/ClasseJSON'
+          jsonSubarvore:
+            $ref: '#/components/examples/ClasseSubarvoreJSON'
       json:
         schema:
           oneOf:
             - $ref: '#/components/schemas/ClasseCompletaSubArvore'
             - $ref: '#/components/schemas/ClasseCompleta'
+        examples:
+          jsonClasse:
+            $ref: '#/components/examples/ClasseJSON'
+          jsonSubarvore:
+            $ref: '#/components/examples/ClasseSubarvoreJSON'
       application/xml:
         examples:
           xmlClasse:
@@ -70,5 +80,7 @@ responses:
     $ref: '#/components/responses/UnauthorizedKey'
   403:
     $ref: '#/components/responses/PermissionsKey'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
   500:
     description: Erro

@@ -8,6 +8,12 @@ tags:
 responses:
   200:
     description: Devolve todas as chaves API
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/chaves_lista'
+        allOf:
+          - $ref: '#/components/examples/chaves_get_all'
   401:
     $ref: '#/components/responses/UnauthorizedUser'
   403:

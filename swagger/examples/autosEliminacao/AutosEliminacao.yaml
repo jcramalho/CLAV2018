@@ -1,0 +1,22 @@
+example:
+  auto:
+    entidade: "ent_A3ES"
+    legislacao: "Portaria 11/2019"
+    fundo: "Secretaria Geral do Ministério dos Negócios Estrangeiros"
+    zonaControlo:
+      - codigo: "100.10.002"
+        titulo: "Aprovação e comunicação de convenções internacionais"
+        prazoConservacao: "5"
+        destino: "C"
+        ni: "Participante"
+        dono: "ent_A3ES"
+        dataInicio: "2010"
+        dataFim: "2011"
+        uiPapel: "11"
+        uiDigital: "12"
+        uiOutros: "150"
+        agregacoes:
+          - codigo: "ASS"
+            titulo: "AAAA"
+            dataContagem: "2010"
+            ni: "Participante"

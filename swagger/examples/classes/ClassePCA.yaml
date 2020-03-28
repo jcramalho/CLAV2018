@@ -1,0 +1,6 @@
+example:
+  formaContagem: "Data de conclusão do procedimento"
+  idPCA: "http://jcr.di.uminho.pt/m51-clav#pca_c200.10.100"
+  idJust: "just_pca_c200.10.100"
+  notas: ""
+  valores: "10"

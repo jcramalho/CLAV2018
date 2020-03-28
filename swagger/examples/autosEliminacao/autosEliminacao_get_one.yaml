@@ -1,0 +1,18 @@
+example:
+  - entidade: "ent_A3ES"
+    legislacao: "Portaria 11/2019"
+    fundo: "Secretaria Geral do Ministério dos Negócios Estrangeiros"
+    id: "ae_xddYpNN8ztyKGTjOU0Mbb"
+    data: "2020-03-24"
+    responsavel: "Maria"
+    zonaControlo:
+      - codigo: "100.10.002"
+        ni: "Participante"
+        dono: "ent_A3ES"
+        dataInicio: "2010"
+        dataFim: "2011"
+        ag:
+          - codigo: "ASS"
+            titulo: "AAAA"
+            dataContagem: "2010"
+            ni: "Participante"

@@ -29,7 +29,6 @@ requestBody:
               - $ref: '#/components/schemas/TermosIndice'
               - $ref: '#/components/schemas/Tipologia'
               - $ref: '#/components/schemas/AutosEliminacao'
-              - $ref: '#/components/schemas/AutosEliminacaoS'
           user:
             type: object
             properties:

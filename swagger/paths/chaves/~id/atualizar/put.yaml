@@ -23,12 +23,17 @@ requestBody:
             type: string
           contactInfo:
             type: string
+            format: email
           entity:
             type: string
         required:
           - name
           - contactInfo
           - entity
+      example:
+        name: exemplo
+        contactInfo: exemplo@exemplo.pt
+        entity: ent_DGLAB
 responses:
   200:
     description: Chave API atualizada
@@ -36,5 +41,7 @@ responses:
     $ref: '#/components/responses/UnauthorizedUser'
   403:
     $ref: '#/components/responses/PermissionsUser'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
   500:
     description: Erro

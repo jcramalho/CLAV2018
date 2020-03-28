@@ -1,0 +1,3 @@
+type: string
+pattern: '^just_(df|pca)_c\d{3}(\.\d{2}(\.\d{3}(\.\d{2})?)?)?$'
+example: just_pca_c200.10.100

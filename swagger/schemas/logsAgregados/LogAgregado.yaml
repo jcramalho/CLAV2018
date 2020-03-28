@@ -1,0 +1,34 @@
+type: object
+nullable: true
+properties:
+  _id:
+    type: string
+  type:
+    type: string
+    enum: ["User", "Chave"]
+  id:
+    type: string
+  lastAccess:
+    type: string
+    format: date-time
+  nGETs:
+    type: integer
+    minimum: 0
+  nPOSTs:
+    type: integer
+    minimum: 0
+  nPUTs:
+    type: integer
+    minimum: 0
+  nDELETEs:
+    type: integer
+    minimum: 0
+required:
+  - _id
+  - type
+  - id
+  - lastAccess
+  - nGETs
+  - nPOSTs
+  - nPUTs
+  - nDELETEs

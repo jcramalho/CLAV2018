@@ -1,0 +1,2 @@
+type: string
+enum: ["Decreto", "DL", "Lei", "Diretiva", "Circular", "Despacho", "Decreto Regulamentar", "Portaria", "Decreto do Governo", "Decreto Legislativo Regional"]

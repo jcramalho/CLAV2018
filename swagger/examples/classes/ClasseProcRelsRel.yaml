@@ -1,0 +1,13 @@
+example:
+  - codigo: "100.10.002"
+    tipoRel: "http://jcr.di.uminho.pt/m51-clav#eSucessorDe"
+    idRel: "eSucessorDe"
+    titulo: "Aprovação e comunicação de convenções internacionais"
+    id: "http://jcr.di.uminho.pt/m51-clav#c100.10.002"
+    status: "A"
+  - codigo: "200.10.800"
+    tipoRel: "http://jcr.di.uminho.pt/m51-clav#eSucessorDe"
+    idRel: "eSucessorDe"
+    titulo: "Celebração de acordos e outros atos internacionais"
+    id: "http://jcr.di.uminho.pt/m51-clav#c200.10.800"
+    status: "A"

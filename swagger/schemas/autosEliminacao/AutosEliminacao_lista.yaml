@@ -1,0 +1,21 @@
+type: array
+items:
+  type: object
+  properties:
+    id:
+      $ref: '#/components/schemas/AutoEliminacaoId'
+    data:
+      type: string
+      format: date 
+    entidade:
+      $ref: '#/components/schemas/EntidadeId'
+    legislacao:
+      type: string
+    fundo:
+      type: string
+  required:
+    - id
+    - data
+    - entidade
+    - legislacao
+    - fundo

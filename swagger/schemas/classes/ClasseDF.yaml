@@ -1,0 +1,12 @@
+type: object
+properties:
+  idJust:
+    $ref: '#/components/schemas/JustificacaoId'
+  valor:
+    $ref: '#/components/schemas/DFValor'
+  idDF:
+    $ref: '#/components/schemas/DFIdCompleto'
+required:
+  - idJust
+  - valor
+  - idDF

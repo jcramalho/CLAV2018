@@ -1,0 +1,10 @@
+value:
+  - codigo: "100"
+    titulo: "ORDENAMENTO JURÍDICO E NORMATIVO"
+    id: "http://jcr.di.uminho.pt/m51-clav#c100"
+    status: "A"
+  - codigo: "150"
+    titulo: "PLANEAMENTO E GESTÃO ESTRATÉGICA"
+    id: "http://jcr.di.uminho.pt/m51-clav#c150"
+    status: "A"
+summary: Exemplo de parte das classes em lista

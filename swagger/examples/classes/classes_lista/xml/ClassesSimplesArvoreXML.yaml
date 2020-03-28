@@ -1,0 +1,32 @@
+value: |
+  <?xml version="1.0" encoding="utf-8"?>
+  <root>
+    <item index="0" type="object">
+      <codigo type="string">100</codigo>
+      <titulo type="string">ORDENAMENTO JURÍDICO E NORMATIVO</titulo>
+      <id type="string">http://jcr.di.uminho.pt/m51-clav#c100</id>
+      <status type="string">A</status>
+      <drop type="boolean">false</drop>
+      <filhos type="array">
+        <item index="0" type="object">
+          <codigo type="string">100.10</codigo>
+          <titulo type="string">Elaboração de diplomas jurídico-normativos e de normas técnicas</titulo>
+          <id type="string">http://jcr.di.uminho.pt/m51-clav#c100.10</id>
+          <status type="string">A</status>
+          <drop type="boolean">false</drop>
+          <filhos type="array">
+            <item index="0" type="object">
+              <codigo type="string">100.10.001</codigo>
+              <titulo type="string">Produção e comunicação de atos legislativos</titulo>
+              <id type="string">http://jcr.di.uminho.pt/m51-clav#c100.10.001</id>
+              <status type="string">A</status>
+              <drop type="boolean">false</drop>
+              <filhos type="array">
+              </filhos>
+            </item>
+          </filhos>
+        </item>
+      </filhos>
+    </item>
+  </root>
+summary: Exemplo de parte das classes em árvore

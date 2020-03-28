@@ -15,9 +15,17 @@ parameters:
 responses:
   200:
     description: Devolve a informação de uma chave API
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/chaveAPI'
+        allOf:
+          - $ref: '#/components/examples/chaves_get_one'
   401:
     $ref: '#/components/responses/UnauthorizedUser'
   403:
     $ref: '#/components/responses/PermissionsUser'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
   500:
     description: Erro

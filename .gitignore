@@ -7,5 +7,5 @@ sessions/
 package-lock.json
 public/clav.yaml
 graphdb-*-dist.zip
-
+public/classes/classesInfo.json
 yarn.lock

@@ -1,0 +1,305 @@
+value: |
+  <?xml version="1.0" encoding="utf-8"?>
+  <root>
+    <item index="0" type="object">
+      <nivel type="number">1</nivel>
+      <pai type="object">
+      </pai>
+      <codigo type="string">100</codigo>
+      <titulo type="string">ORDENAMENTO JURÍDICO E NORMATIVO</titulo>
+      <descricao type="string">Relativo à construção e interpretação das Normas, no sentido lato do termo (com e sem caráter coercivo) - elaboração, aprovação e publicitação dos atos de caráter dispositivo e de caráter orientador que regulam as ações e relações entre os diversos atores sociais - da legislação aos regulamentos, regras internas de funcionamento, instruções procedimentais e normas técnicas.Inclui os processos de vinculação do Estado português a convenções internacionais, bem como os avisos relativos à vinculação dos restantes Estados-parte naquelas convenções.</descricao>
+      <status type="string">A</status>
+      <filhos type="array">
+        <item index="0" type="object">
+          <nivel type="number">2</nivel>
+          <pai type="object">
+            <codigo type="string">100</codigo>
+            <titulo type="string">ORDENAMENTO JURÍDICO E NORMATIVO</titulo>
+          </pai>
+          <codigo type="string">100.10</codigo>
+          <titulo type="string">Elaboração de diplomas jurídico-normativos e de normas técnicas</titulo>
+          <descricao type="string">Compreende os processos de elaboração/alteração de legislação, de regulamentos e de diretivas políticas ou operacionais portuguesas, independentemente da forma, do assunto ou do tipo de participação no processo.Inclui o depósito dos instrumentos de regulação (por exemplo, instrumentos de gestão territorial) nas entidades competentes.Abrange os diplomas jurídico-normativos da competência dos órgãos de soberania (Presidente da República, Assembleia da República, Governo e Tribunais) ou dos órgãos de poder político (regiões autónomas e autarquias), bem como os atos da Administração que têm caráter normativo.Compreende, igualmente, a elaboração ou colaboração na elaboração de normas técnicas nacionais.</descricao>
+          <status type="string">A</status>
+          <filhos type="array">
+            <item index="0" type="object">
+              <nivel type="number">3</nivel>
+              <pai type="object">
+                <codigo type="string">100.10</codigo>
+                <titulo type="string">Elaboração de diplomas jurídico-normativos e de normas técnicas</titulo>
+              </pai>
+              <codigo type="string">100.10.001</codigo>
+              <titulo type="string">Produção e comunicação de atos legislativos</titulo>
+              <descricao type="string">Elaboração ou participação na elaboração de atos legislativos conduzidos por iniciativa das autoridades competentes para a definição do regime jurídico aplicável.Inicia com a apresentação de um projeto acompanhado dos documentos que o fundamentam e justificam à entidade com competência para legislar e termina com a respetiva publicação ou publicitação.Inclui verificação jurídica, apreciação, discussão e votação conducentes à elaboração do texto final, aprovação da iniciativa, ratificação pelas entidades competentes e promulgação.</descricao>
+              <status type="string">A</status>
+              <filhos type="array">
+              </filhos>
+              <notasAp type="array">
+                <item index="0" type="object">
+                  <idNota type="string">http://jcr.di.uminho.pt/m51-clav#na_c100.10.001_PA23DYy4B8qSAd6kgb53N</idNota>
+                  <nota type="string">Iniciativa legislativa por parte de cidadãos</nota>
+                </item>
+              </notasAp>
+              <exemplosNotasAp type="array">
+                <item index="0" type="object">
+                  <idExemplo type="string">http://jcr.di.uminho.pt/m51-clav#exna_c100.10.001_DsddzaeKSxLO3hG7sKda6</idExemplo>
+                  <exemplo type="string">Código da Estrada</exemplo>
+                </item>
+              </exemplosNotasAp>
+              <notasEx type="array">
+                <item index="0" type="object">
+                  <idNota type="string">http://jcr.di.uminho.pt/m51-clav#ne_c100.10.001_m-JNjpf5UZyRevn4JmU6j</idNota>
+                  <nota type="string">O impulso legiferante, quando reveste a forma de petição pública sem apresentação de projeto de lei, deve ser considerado em 950.20.001 – Processamento de petições, reclamações e sugestões</nota>
+                </item>
+              </notasEx>
+              <termosInd type="array">
+                <item index="1" type="object">
+                  <idTI type="string">http://jcr.di.uminho.pt/m51-clav#ti_q8_3A9eljLN1ODzKwJN4-</idTI>
+                  <termo type="string">Comunicação de ato legislativo</termo>
+                </item>
+                </item>
+              </termosInd>
+              <temSubclasses4Nivel type="boolean">false</temSubclasses4Nivel>
+              <temSubclasses4NivelPCA type="boolean">false</temSubclasses4NivelPCA>
+              <temSubclasses4NivelDF type="boolean">false</temSubclasses4NivelDF>
+              <subdivisao4Nivel01Sintetiza02 type="boolean">true</subdivisao4Nivel01Sintetiza02>
+              <tipoProc type="string">Processo Comum</tipoProc>
+              <procTrans type="string">S</procTrans>
+              <donos type="array">
+                <item index="0" type="object">
+                  <tipo type="string">http://jcr.di.uminho.pt/m51-clav#Entidade</tipo>
+                  <sigla type="string">ALRAA</sigla>
+                  <idDono type="string">ent_ALRAA</idDono>
+                  <idTipo type="string">Entidade</idTipo>
+                  <designacao type="string">Assembleia Legislativa da Região Autónoma dos Açores</designacao>
+                  <id type="string">http://jcr.di.uminho.pt/m51-clav#ent_ALRAA</id>
+                </item>
+              </donos>
+              <participantes type="array">
+                <item index="0" type="object">
+                  <participLabel type="string">Assessor</participLabel>
+                  <sigla type="string">ACT</sigla>
+                  <designacao type="string">Autoridade para as Condições de Trabalho</designacao>
+                  <idTipo type="string">Entidade</idTipo>
+                  <id type="string">http://jcr.di.uminho.pt/m51-clav#ent_ACT</id>
+                  <idParticipante type="string">ent_ACT</idParticipante>
+                </item>
+              </participantes>
+              <processosRelacionados type="array">
+                <item index="0" type="object">
+                  <codigo type="string">150.10.601</codigo>
+                  <tipoRel type="string">http://jcr.di.uminho.pt/m51-clav#eAntecessorDe</tipoRel>
+                  <idRel type="string">eAntecessorDe</idRel>
+                  <titulo type="string">Caracterização de entidades para apoio à definição de políticas</titulo>
+                  <id type="string">http://jcr.di.uminho.pt/m51-clav#c150.10.601</id>
+                  <status type="string">A</status>
+                </item>
+              </processosRelacionados>
+              <legislacao type="array">
+                <item index="0" type="object">
+                  <tipo type="string">Lei</tipo>
+                  <sumario type="string">Revoga o regime especial de tributação dos pequenos contribuintes do IVA, aprovado e publicado em anexo ao Decreto-Lei n.º 257-A/96, de 31 de Dezembro</sumario>
+                  <numero type="string">4/98</numero>
+                  <idLeg type="string">leg_brizVmX0EBZkeDzCxKzEW</idLeg>
+                  <id type="string">http://jcr.di.uminho.pt/m51-clav#leg_brizVmX0EBZkeDzCxKzEW</id>
+                </item>
+              </legislacao>
+              <pca type="object">
+                <formaContagem type="string">Data de conclusão do procedimento</formaContagem>
+                <idPCA type="string">http://jcr.di.uminho.pt/m51-clav#pca_c100.10.001</idPCA>
+                <idJust type="string">just_pca_c100.10.001</idJust>
+                <notas type="string">
+                </notas>
+                <valores type="string">5</valores>
+                <justificacao type="array">
+                  <item index="0" type="object">
+                    <tipoId type="string">CriterioJustificacaoGestionario</tipoId>
+                    <conteudo type="string">Prazo para imputação de responsabilidade pela gestão estratégica, decorrente de escrutínio público (eleições).Considerou-se para a definição do prazo o tempo do mandato de maior duração - 5 anos (Presidente da República).</conteudo>
+                    <criterio type="string">http://jcr.di.uminho.pt/m51-clav#crit_just_pca_c100.10.001_1</criterio>
+                    <processos type="array">
+                    </processos>
+                    <legislacao type="array">
+                    </legislacao>
+                  </item>
+                </justificacao>
+              </pca>
+              <df type="object">
+                <idJust type="string">just_df_c100.10.001</idJust>
+                <valor type="string">C</valor>
+                <idDF type="string">http://jcr.di.uminho.pt/m51-clav#df_c100.10.001</idDF>
+                <justificacao type="array">
+                  <item index="0" type="object">
+                    <tipoId type="string">CriterioJustificacaoComplementaridadeInfo</tipoId>
+                    <conteudo type="string">É complementar dos PN 100.10.200 - Produção e comunicação de atos regulamentares gerais; PN 100.10.400 - Produção e comunicação de atos regulamentares locais; PN 100.10.600 - Produção e comunicação de regras institucionais; PN 100.20.001 - Produção de pareceres técnico-jurídicos de interpretação de diplomas jurídico-normativos; PN 100.20.200 - Produção e comunicação de instruções para aplicação de diplomas jurídico-normativos.  O texto final é publicitado no Diário da República.</conteudo>
+                    <criterio type="string">http://jcr.di.uminho.pt/m51-clav#crit_just_df_c100.10.001_1</criterio>
+                    <processos type="array">
+                      <item index="0" type="object">
+                        <procId type="string">c100.10.200</procId>
+                      </item>
+                    </processos>
+                    <legislacao type="array">
+                    </legislacao>
+                  </item>
+                </justificacao>
+              </df>
+              <id type="string">http://jcr.di.uminho.pt/m51-clav#c100.10.001</id>
+            </item>
+          </filhos>
+          <notasAp type="array">
+            <item index="0" type="object">
+              <idNota type="string">http://jcr.di.uminho.pt/m51-clav#na_c100.10_fYE1VAKlWMi4Iy-rWJYT_</idNota>
+              <nota type="string">Atos legislativos</nota>
+            </item>
+          </notasAp>
+          <exemplosNotasAp type="array">
+          </exemplosNotasAp>
+          <notasEx type="array">
+            <item index="0" type="object">
+              <idNota type="string">http://jcr.di.uminho.pt/m51-clav#ne_c100.10_rQRpMRsrB_AybFDuwB672</idNota>
+              <nota type="string">Devem ser considerados noutras áreas os procedimentos administrativos autonomizáveis do processo legislativo, bem como os trabalhos técnicos, estudos e relatórios preliminares ou acessórios à elaboração ou atualização dos diplomas jurídico-normativos. Por exemplo:- Trabalhos técnicos de comissões ou outras estruturas envolvidas na definição de políticas, planos e programas devem ser considerados em &quot;Planeamento e gestão estratégica/ Definição e avaliação de políticas&quot; (150.10)</nota>
+            </item>
+          </notasEx>
+          <termosInd type="array">
+          </termosInd>
+          <temSubclasses4Nivel type="boolean">false</temSubclasses4Nivel>
+          <temSubclasses4NivelPCA type="boolean">false</temSubclasses4NivelPCA>
+          <temSubclasses4NivelDF type="boolean">false</temSubclasses4NivelDF>
+          <subdivisao4Nivel01Sintetiza02 type="boolean">true</subdivisao4Nivel01Sintetiza02>
+          <tipoProc type="string">
+          </tipoProc>
+          <procTrans type="string">
+          </procTrans>
+          <donos type="array">
+          </donos>
+          <participantes type="array">
+          </participantes>
+          <processosRelacionados type="array">
+          </processosRelacionados>
+          <legislacao type="array">
+          </legislacao>
+          <pca type="object">
+            <valores type="string">
+            </valores>
+            <notas type="string">
+            </notas>
+            <formaContagem type="string">
+            </formaContagem>
+            <subFormaContagem type="string">
+            </subFormaContagem>
+            <justificacao type="array">
+            </justificacao>
+          </pca>
+          <df type="object">
+            <valor type="string">NE</valor>
+            <nota type="object">
+            </nota>
+            <justificacao type="array">
+            </justificacao>
+          </df>
+          <id type="string">http://jcr.di.uminho.pt/m51-clav#c100.10</id>
+        </item>
+          </filhos>
+          <notasAp type="array">
+          </notasAp>
+          <exemplosNotasAp type="array">
+          </exemplosNotasAp>
+          <notasEx type="array">
+            <item index="0" type="object">
+              <idNota type="string">http://jcr.di.uminho.pt/m51-clav#ne_c100.20_GD-Uq4U5CZKY-bqib-ejt</idNota>
+              <nota type="string">Os pareceres, obrigatórios ou facultativos, que fundamentem a evolução de um qualquer caso/processo devem ser considerados no processo a que respeitam (por exemplo, processos de elaboração de diplomas legais, processos de auditoria, processos judiciais)</nota>
+            </item>
+          </notasEx>
+          <termosInd type="array">
+          </termosInd>
+          <temSubclasses4Nivel type="boolean">false</temSubclasses4Nivel>
+          <temSubclasses4NivelPCA type="boolean">false</temSubclasses4NivelPCA>
+          <temSubclasses4NivelDF type="boolean">false</temSubclasses4NivelDF>
+          <subdivisao4Nivel01Sintetiza02 type="boolean">true</subdivisao4Nivel01Sintetiza02>
+          <tipoProc type="string">
+          </tipoProc>
+          <procTrans type="string">
+          </procTrans>
+          <donos type="array">
+          </donos>
+          <participantes type="array">
+          </participantes>
+          <processosRelacionados type="array">
+          </processosRelacionados>
+          <legislacao type="array">
+          </legislacao>
+          <pca type="object">
+            <valores type="string">
+            </valores>
+            <notas type="string">
+            </notas>
+            <formaContagem type="string">
+            </formaContagem>
+            <subFormaContagem type="string">
+            </subFormaContagem>
+            <justificacao type="array">
+            </justificacao>
+          </pca>
+          <df type="object">
+            <valor type="string">NE</valor>
+            <nota type="object">
+            </nota>
+            <justificacao type="array">
+            </justificacao>
+          </df>
+          <id type="string">http://jcr.di.uminho.pt/m51-clav#c100.20</id>
+        </item>
+      </filhos>
+      <notasAp type="array">
+        <item index="0" type="object">
+          <idNota type="string">http://jcr.di.uminho.pt/m51-clav#na_c100_p_MIa26iWePtnQIRv0PLZ</idNota>
+          <nota type="string">Os atos de caráter dispositivo podem incidir sobre a sociedade portuguesa em geral, sobre determinados setores de atividade, sobre determinadas parcelas do território ou, ainda, sobre organismos ou serviços singulares</nota>
+        </item>
+      </notasAp>
+      <exemplosNotasAp type="array">
+      </exemplosNotasAp>
+      <notasEx type="array">
+        <item index="0" type="object">
+          <idNota type="string">http://jcr.di.uminho.pt/m51-clav#ne_c100_Guuve4vRqkDHVLxGqEYDp</idNota>
+          <nota type="string">A negociação de convenções internacionais (tratados, acordos) e a participação na elaboração de normas técnicas internacionais, bem como a participação na elaboração de diretivas e de regulamentos comunitários, devem ser consideradas em &quot;Execução da política externa/ Definição de políticas conjuntas e dos instrumentos de regulação&quot; (200.10) - ou seja, na área funcional 100 devem ser considerados apenas os procedimentos de ratificação, transposição e interpretação daquelas disposições comunitárias ou internacionais</nota>
+        </item>
+      </notasEx>
+      <termosInd type="array">
+      </termosInd>
+      <temSubclasses4Nivel type="boolean">false</temSubclasses4Nivel>
+      <temSubclasses4NivelPCA type="boolean">false</temSubclasses4NivelPCA>
+      <temSubclasses4NivelDF type="boolean">false</temSubclasses4NivelDF>
+      <subdivisao4Nivel01Sintetiza02 type="boolean">true</subdivisao4Nivel01Sintetiza02>
+      <tipoProc type="string">
+      </tipoProc>
+      <procTrans type="string">
+      </procTrans>
+      <donos type="array">
+      </donos>
+      <participantes type="array">
+      </participantes>
+      <processosRelacionados type="array">
+      </processosRelacionados>
+      <legislacao type="array">
+      </legislacao>
+      <pca type="object">
+        <valores type="string">
+        </valores>
+        <notas type="string">
+        </notas>
+        <formaContagem type="string">
+        </formaContagem>
+        <subFormaContagem type="string">
+        </subFormaContagem>
+        <justificacao type="array">
+        </justificacao>
+      </pca>
+      <df type="object">
+        <valor type="string">NE</valor>
+        <nota type="object">
+        </nota>
+        <justificacao type="array">
+        </justificacao>
+      </df>
+      <id type="string">http://jcr.di.uminho.pt/m51-clav#c100</id>
+    </item>
+  </root>
+summary: Exemplo de parte das classes com toda a informação em árvore

@@ -1,0 +1,27 @@
+type: array
+items:
+  properties:
+    participLabel:
+      $ref: '#/components/schemas/TipoParticipacao'
+    idTipo:
+      type: string
+      enum: [Entidade, TipologiaEntidade]
+    designacao:
+      type: string
+    sigla:
+      type: string
+    idParticipante:
+      oneOf:
+        - $ref: '#/components/schemas/EntidadeId'
+        - $ref: '#/components/schemas/TipologiaId'
+    id:
+      oneOf:
+        - $ref: '#/components/schemas/EntidadeIdCompleto'
+        - $ref: '#/components/schemas/TipologiaIdCompleto'
+  required:
+    - participLabel
+    - idTipo
+    - designacao
+    - sigla
+    - idParticipante
+    - id
