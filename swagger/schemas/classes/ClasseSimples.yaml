@@ -1,0 +1,15 @@
+type: object
+properties:
+  codigo:
+    $ref: '#/components/schemas/Codigo'
+  status:
+    $ref: '#/components/schemas/Status'
+  titulo:
+    type: string
+  id:
+    $ref: '#/components/schemas/ClasseIdCompleto'
+required:
+  - codigo
+  - titulo
+  - id
+  - status

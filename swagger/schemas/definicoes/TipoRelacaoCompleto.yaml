@@ -1,0 +1,2 @@
+type: string
+enum: ["http://jcr.di.uminho.pt/m51-clav#eAntecessorDe", "http://jcr.di.uminho.pt/m51-clav#eComplementarDe", "http://jcr.di.uminho.pt/m51-clav#eCruzadoCom", "http://jcr.di.uminho.pt/m51-clav#eSinteseDe", "http://jcr.di.uminho.pt/m51-clav#eSintetizadoPor", "http://jcr.di.uminho.pt/m51-clav#eSucessorDe", "http://jcr.di.uminho.pt/m51-clav#eSuplementoPara", "http://jcr.di.uminho.pt/m51-clav#eSuplementoDe"]

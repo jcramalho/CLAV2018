@@ -1,0 +1,11 @@
+type: array
+items:
+  properties:
+    idTI:
+      $ref: '#/components/schemas/TermoIdCompleto'
+      type: string
+    termo:
+      type: string
+  required:
+    - idTI
+    - termo

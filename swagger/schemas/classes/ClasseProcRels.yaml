@@ -1,0 +1,22 @@
+type: array
+items:
+  properties:
+    codigo:
+      $ref: '#/components/schemas/Codigo'
+    tipoRel:
+      $ref: '#/components/schemas/TipoRelacaoCompleto'
+    idRel:
+      $ref: '#/components/schemas/TipoRelacao'
+    titulo:
+      type: string
+    id:
+      $ref: '#/components/schemas/ClasseIdCompleto'
+    status:
+      $ref: '#/components/schemas/Status'
+  required:
+    - codigo
+    - tipoRel
+    - idRel
+    - titulo
+    - id
+    - status

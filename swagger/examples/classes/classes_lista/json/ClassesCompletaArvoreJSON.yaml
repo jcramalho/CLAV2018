@@ -1,0 +1,150 @@
+value:    
+  - nivel: 1
+    pai: {}
+    codigo: "100"
+    titulo: "ORDENAMENTO JURÍDICO E NORMATIVO"
+    descricao: "Relativo à construção e interpretação das Normas, no sentido lato do termo (com e sem caráter coercivo): elaboração, aprovação e publicitação dos atos de caráter dispositivo e de caráter orientador que regulam as ações e relações entre os diversos atores sociais - da legislação aos regulamentos, regras internas de funcionamento, instruções procedimentais e normas técnicas.Inclui os processos de vinculação do Estado português a convenções internacionais, bem como os avisos relativos à vinculação dos restantes Estados-parte naquelas convenções."
+    status: "A"
+    filhos:
+      - nivel: 2
+        pai:
+          codigo: "100"
+          titulo: "ORDENAMENTO JURÍDICO E NORMATIVO"
+        codigo: "100.10"
+        titulo: "Elaboração de diplomas jurídico-normativos e de normas técnicas"
+        descricao: "Compreende os processos de elaboração/alteração de legislação, de regulamentos e de diretivas políticas ou operacionais portuguesas, independentemente da forma, do assunto ou do tipo de participação no processo.Inclui o depósito dos instrumentos de regulação (por exemplo, instrumentos de gestão territorial) nas entidades competentes.Abrange os diplomas jurídico-normativos da competência dos órgãos de soberania (Presidente da República, Assembleia da República, Governo e Tribunais) ou dos órgãos de poder político (regiões autónomas e autarquias), bem como os atos da Administração que têm caráter normativo.Compreende, igualmente, a elaboração ou colaboração na elaboração de normas técnicas nacionais."
+        status: "A"
+        filhos:
+          - nivel: 3
+            pai:
+              codigo: "100.10"
+              titulo: "Elaboração de diplomas jurídico-normativos e de normas técnicas"
+            codigo: "100.10.001"
+            titulo: "Produção e comunicação de atos legislativos"
+            descricao: "Elaboração ou participação na elaboração de atos legislativos conduzidos por iniciativa das autoridades competentes para a definição do regime jurídico aplicável.Inicia com a apresentação de um projeto acompanhado dos documentos que o fundamentam e justificam à entidade com competência para legislar e termina com a respetiva publicação ou publicitação.Inclui verificação jurídica, apreciação, discussão e votação conducentes à elaboração do texto final, aprovação da iniciativa, ratificação pelas entidades competentes e promulgação."
+            status: "A"
+            filhos: []
+            notasAp:
+              - idNota: "http://jcr.di.uminho.pt/m51-clav#na_c100.10.001_QaOq48vfl27XYmovpssJ4"
+                nota: "Transposição de diretivas da União Europeia"
+            exemplosNotasAp:
+              - idExemplo: "http://jcr.di.uminho.pt/m51-clav#exna_c100.10.001_tvkg2q9W9fto7F_xeQ-nD"
+                exemplo: "Regime de acesso à informação administrativa e ambiental e de reutilização dos documentos administrativos"
+            notasEx:
+              - idNota: "http://jcr.di.uminho.pt/m51-clav#ne_c100.10.001_2pldjH0O0d940HelCOk2_"
+                nota: "Os procedimentos administrativos, trabalhos preparatórios ou elaboração de estudos preliminares, por exemplo quando a regulamentação seja necessária para dar forma legal a instrumentos de planeamento, devem ser considerados em “Planeamento e gestão estratégica / Definição e avaliação de políticas” (150.10)"
+            termosInd:
+              - idTI: "http://jcr.di.uminho.pt/m51-clav#ti_Iv1_PN0Cr5ptVnxLpw_jA"
+                termo: "Transposição de diretiva comunitária"
+            temSubclasses4Nivel: false
+            temSubclasses4NivelPCA: false
+            temSubclasses4NivelDF: false
+            subdivisao4Nivel01Sintetiza02: true
+            tipoProc: "Processo Comum"
+            procTrans: "S"
+            donos:
+              - tipo: "http://jcr.di.uminho.pt/m51-clav#TipologiaEntidade"
+                sigla: "Gov"
+                idDono: "tip_Gov"
+                idTipo: "TipologiaEntidade"
+                designacao: "Governo"
+                id: "http://jcr.di.uminho.pt/m51-clav#tip_Gov"
+            participantes:
+              - participLabel: "Assessor"
+                sigla: "SGPCM"
+                designacao: "Secretaria Geral da Presidência do Conselho de Ministros"
+                idTipo: "Entidade"
+                id: "http://jcr.di.uminho.pt/m51-clav#ent_SGPCM"
+                idParticipante: "ent_SGPCM"
+            processosRelacionados:
+              - codigo: "200.10.200"
+                tipoRel: "http://jcr.di.uminho.pt/m51-clav#eSucessorDe"
+                idRel: "eSucessorDe"
+                titulo: "Preparação e negociação de atos legislativos vinculativos da União Europeia"
+                id: "http://jcr.di.uminho.pt/m51-clav#c200.10.200"
+                status: "A"
+            legislacao:
+              - tipo: "Resolução do Conselho de Ministros"
+                sumario: "Procede à primeira alteração à RCM n.º 29/2011, de 11 de julho, que aprova o Regimento do Conselho de Ministros do XIX Governo Constitucional e república as regras de legística a observar no processo legislativo do Governo"
+                numero: "51/2013"
+                idLeg: "leg_ygIegHT-DnvFXLzu8_Tjb"
+                id: "http://jcr.di.uminho.pt/m51-clav#leg_ygIegHT-DnvFXLzu8_Tjb"
+            pca:
+              formaContagem: "Data de conclusão do procedimento"
+              idPCA: "http://jcr.di.uminho.pt/m51-clav#pca_c100.10.001"
+              idJust: "just_pca_c100.10.001"
+              notas: ""
+              valores: "5"
+              justificacao:
+                - tipoId: "CriterioJustificacaoGestionario"
+                  conteudo: "Prazo para imputação de responsabilidade pela gestão estratégica, decorrente de escrutínio público (eleições).Considerou-se para a definição do prazo o tempo do mandato de maior duração: 5 anos (Presidente da República)."
+                  criterio: "http://jcr.di.uminho.pt/m51-clav#crit_just_pca_c100.10.001_1"
+                  processos: []
+                  legislacao: []
+            df:
+              idJust: "just_df_c100.10.001"
+              valor: "C"
+              idDF: "http://jcr.di.uminho.pt/m51-clav#df_c100.10.001"
+              justificacao:
+                - tipoId: "CriterioJustificacaoComplementaridadeInfo"
+                  conteudo: "É complementar dos PN 100.10.200 - Produção e comunicação de atos regulamentares gerais; PN 100.10.400 - Produção e comunicação de atos regulamentares locais; PN 100.10.600 - Produção e comunicação de regras institucionais; PN 100.20.001 - Produção de pareceres técnico-jurídicos de interpretação de diplomas jurídico-normativos; PN 100.20.200 - Produção e comunicação de instruções para aplicação de diplomas jurídico-normativos.  O texto final é publicitado no Diário da República."
+                  criterio: "http://jcr.di.uminho.pt/m51-clav#crit_just_df_c100.10.001_1"
+                  processos:
+                    - procId: "c100.20.200"
+                  legislacao: []
+            id: "http://jcr.di.uminho.pt/m51-clav#c100.10.001"
+        notasAp:
+          - idNota: "http://jcr.di.uminho.pt/m51-clav#na_c100.10_9pHIWPoKDhnvHFlMgF8Oc"
+            nota: "Normas informais ou recomendações técnicas emitidas por organismos de coordenação ou superintendência técnica"
+        exemplosNotasAp: []
+        notasEx:
+          - idNota: "http://jcr.di.uminho.pt/m51-clav#ne_c100.10_JljQYSnzXc2lhHy2gq8fH"
+            nota: "- Procedimentos administrativos de classificação do património cultural devem ser considerados em \"Reconhecimentos e permissões/ Classificação e declaração de interesse ou utilidade pública\" (450.20)"
+        termosInd: []
+        temSubclasses4Nivel: false
+        temSubclasses4NivelPCA: false
+        temSubclasses4NivelDF: false
+        subdivisao4Nivel01Sintetiza02: true
+        tipoProc: ""
+        procTrans: ""
+        donos: []
+        participantes: []
+        processosRelacionados: []
+        legislacao: []
+        pca:
+          valores: ""
+          notas: ""
+          formaContagem: ""
+          subFormaContagem: ""
+          justificacao: []
+        df:
+          valor: "NE"
+          nota: null
+          justificacao: []
+        id: "http://jcr.di.uminho.pt/m51-clav#c100.10"
+    notasAp: []
+    exemplosNotasAp: []
+    notasEx: []
+    termosInd: []
+    temSubclasses4Nivel: false
+    temSubclasses4NivelPCA: false
+    temSubclasses4NivelDF: false
+    subdivisao4Nivel01Sintetiza02: true
+    tipoProc: ""
+    procTrans: ""
+    donos: []
+    participantes: []
+    processosRelacionados: []
+    legislacao: []
+    pca:
+      valores: ""
+      notas: ""
+      formaContagem: ""
+      subFormaContagem: ""
+      justificacao: []
+    df:
+      valor: "NE"
+      nota: null
+      justificacao: []
+    id: "http://jcr.di.uminho.pt/m51-clav#c100"
+summary: Exemplo de parte das classes com toda a informação em árvore

@@ -1,0 +1,11 @@
+type: array
+items:
+  type: object
+  properties:
+    idExemplo:
+      $ref: '#/components/schemas/ExemploNotasApIdCompleto'
+    exemplo:
+      type: string
+  required:
+    - idExemplo
+    - exemplo

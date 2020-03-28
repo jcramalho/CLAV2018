@@ -1,0 +1,33 @@
+type: array
+items:
+  properties:
+    tipoId:
+      oneOf:
+        - $ref: '#/components/schemas/TipoJustificacaoDF'
+        - $ref: '#/components/schemas/TipoJustificacaoPCA'
+    conteudo:
+      type: string
+    criterio:
+      $ref: '#/components/schemas/CriterioIdCompleto'
+    processos:
+      type: array
+      items:
+        properties:
+          procId:
+            $ref: '#/components/schemas/ClasseId'
+        required:
+          - procId
+    legislacao:
+      type: array
+      items:
+        properties:
+          legId:
+            $ref: '#/components/schemas/LegislacaoId'
+        required:
+          - legId
+  required:
+    - tipoId
+    - conteudo
+    - criterio
+    - processos
+    - legislacao

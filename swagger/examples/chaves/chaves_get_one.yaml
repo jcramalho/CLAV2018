@@ -1,4 +1,4 @@
-value:
+example:
   _id: "5e7ce17a46ad1d7bf0112996"
   active: true
   contactInfo: "exemplo@exemplo.pt"
@@ -9,4 +9,3 @@ value:
   level: 0
   nCalls: 0
   name: "exemplo"
-summary: Exemplo de uma chave

@@ -12,9 +12,8 @@ responses:
       application/json:
         schema:
           $ref: '#/components/schemas/chaves_lista'
-        examples:
-          exemplo:
-            $ref: '#/components/examples/chaves_get_all'
+        allOf:
+          - $ref: '#/components/examples/chaves_get_all'
   401:
     $ref: '#/components/responses/UnauthorizedUser'
   403:

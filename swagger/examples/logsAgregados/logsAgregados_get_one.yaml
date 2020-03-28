@@ -1,10 +1,9 @@
 value:
-  - _id: "5e5ed9084906e36ebc0f7cfa"
-    id: "5e2adcfdc38aef5caa90efc7"
-    lastAccess: "2020-03-25T14:24:39.885Z"
-    nDELETEs: 2
-    nGETs: 1548
-    nPOSTs: 39
-    nPUTs: 2
-    type: "User"
-summary: Exemplo os pedidos realizados agregados para um utilizador (neste exemplo) ou chave API
+  _id: "5e5ed9084906e36ebc0f7cfa"
+  id: "5e2adcfdc38aef5caa90efc7"
+  lastAccess: "2020-03-25T14:24:39.885Z"
+  nDELETEs: 2
+  nGETs: 1548
+  nPOSTs: 39
+  nPUTs: 2
+  type: "User"

@@ -1,4 +1,5 @@
-const { check, param, query, body, header, cookie } = require('express-validator');
+const { oneOf, check, param, query, body, header, cookie } = require('express-validator');
+const { formats } = require("./outputFormat.js")
 var Entidades = require("../controllers/api/entidades.js");
 
 const getLocation = {
@@ -47,4 +48,11 @@ module.exports.existeEnt = async entId => {
     }else{
         return Promise.reject()
     }
+}
+
+module.exports.eFS = function(){
+    return oneOf([
+        module.exports.estaEm('query', 'fs', formats).optional(),
+        module.exports.estaEm('header', 'accept', formats).optional()
+    ])
 }

@@ -11,7 +11,7 @@ items:
     created:
       type: string
     entity:
-      type: string
+      $ref: '#/components/schemas/EntidadeId'
     expiration:
       type: string
     id:
@@ -25,5 +25,14 @@ items:
       minimum: 0
     name:
       type: string
-example:
-  $ref: '#/components/examples/chaves_get_all'
+  required:
+    - active
+    - contactInfo
+    - created
+    - entity
+    - expiration
+    - id
+    - key
+    - lastUsed
+    - nCalls
+    - name

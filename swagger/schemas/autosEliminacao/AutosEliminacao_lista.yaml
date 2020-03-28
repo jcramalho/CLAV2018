@@ -3,12 +3,12 @@ items:
   type: object
   properties:
     id:
-      type: string
+      $ref: '#/components/schemas/AutoEliminacaoId'
     data:
       type: string
       format: date 
     entidade:
-      type: string
+      $ref: '#/components/schemas/EntidadeId'
     legislacao:
       type: string
     fundo:
@@ -19,5 +19,3 @@ items:
     - entidade
     - legislacao
     - fundo
-example:
-  $ref: '#/components/examples/autosEliminacao_get_all'

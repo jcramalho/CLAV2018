@@ -17,9 +17,15 @@ parameters:
 responses:
   200:
     description: Verifica se um determinado título existe numa classe
+    content:
+      application/json:
+        schema:
+          type: boolean
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:
     $ref: '#/components/responses/PermissionsKey'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
   500:
     description: Erro

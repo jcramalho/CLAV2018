@@ -1,0 +1,116 @@
+value: |
+  <?xml version="1.0" encoding="utf-8"?>
+  <root>
+    <nivel type="number">3</nivel>
+    <pai type="object">
+      <codigo type="string">200.10</codigo>
+      <titulo type="string">Definição de políticas conjuntas e de instrumentos de regulação</titulo>
+    </pai>
+    <codigo type="string">200.10.100</codigo>
+    <titulo type="string">Reivindicação do cumprimento de instrumentos ratificados por Portugal</titulo>
+    <descricao type="string">Ações de reclamação ou queixa junto de organizações internacionais, por parte de Portugal, países terceiros e organizações internacionais, respeitante ao não cumprimento de instrumentos normativos  a que Portugal se encontra vinculado.Inicia com uma reclamação ou queixa respeitante ao não cumprimento de instrumentos em que Portugal é parte e termina com a consequente resposta ao órgão decisor.Inclui a análise da reclamação, recolha de informação sobre a matéria em causa.</descricao>
+    <status type="string">A</status>
+    <filhos type="array">
+    </filhos>
+    <notasAp type="array">
+      <item index="0" type="object">
+        <idNota type="string">http://jcr.di.uminho.pt/m51-clav#na_c200.10.100_6DRXfhzZ9h8Y-IY7PBPcb</idNota>
+        <nota type="string">Violação de normas internacionais ratificadas por Portugal</nota>
+      </item>
+    </notasAp>
+    <exemplosNotasAp type="array">
+    </exemplosNotasAp>
+    <notasEx type="array">
+    </notasEx>
+    <termosInd type="array">
+      <item index="0" type="object">
+        <idTI type="string">http://jcr.di.uminho.pt/m51-clav#ti_HdMdy15oV54_otnSomzva</idTI>
+        <termo type="string">Contestação do incumprimento de instrumento ratificado por Portugal</termo>
+      </item>
+    </termosInd>
+    <temSubclasses4Nivel type="boolean">false</temSubclasses4Nivel>
+    <temSubclasses4NivelPCA type="boolean">false</temSubclasses4NivelPCA>
+    <temSubclasses4NivelDF type="boolean">false</temSubclasses4NivelDF>
+    <subdivisao4Nivel01Sintetiza02 type="boolean">true</subdivisao4Nivel01Sintetiza02>
+    <tipoProc type="string">Processo Comum</tipoProc>
+    <procTrans type="string">S</procTrans>
+    <donos type="array">
+      <item index="0" type="object">
+        <tipo type="string">http://jcr.di.uminho.pt/m51-clav#Entidade</tipo>
+        <sigla type="string">ACT</sigla>
+        <idDono type="string">ent_ACT</idDono>
+        <idTipo type="string">Entidade</idTipo>
+        <designacao type="string">Autoridade para as Condições de Trabalho</designacao>
+        <id type="string">http://jcr.di.uminho.pt/m51-clav#ent_ACT</id>
+      </item>
+    </donos>
+    <participantes type="array">
+      <item index="0" type="object">
+        <participLabel type="string">Apreciador</participLabel>
+        <sigla type="string">ACT</sigla>
+        <designacao type="string">Autoridade para as Condições de Trabalho</designacao>
+        <idTipo type="string">Entidade</idTipo>
+        <id type="string">http://jcr.di.uminho.pt/m51-clav#ent_ACT</id>
+        <idParticipante type="string">ent_ACT</idParticipante>
+      </item>
+    </participantes>
+    <processosRelacionados type="array">
+      <item index="0" type="object">
+        <codigo type="string">100.10.002</codigo>
+        <tipoRel type="string">http://jcr.di.uminho.pt/m51-clav#eSucessorDe</tipoRel>
+        <idRel type="string">eSucessorDe</idRel>
+        <titulo type="string">Aprovação e comunicação de convenções internacionais</titulo>
+        <id type="string">http://jcr.di.uminho.pt/m51-clav#c100.10.002</id>
+        <status type="string">A</status>
+      </item>
+    </processosRelacionados>
+    <legislacao type="array">
+      <item index="0" type="object">
+        <tipo type="string">Lei Constitucional</tipo>
+        <sumario type="string">Sétima revisão constitucional</sumario>
+        <numero type="string">1/2005</numero>
+        <idLeg type="string">leg_bjA4XVgJL9coqKgo_-8gC</idLeg>
+        <id type="string">http://jcr.di.uminho.pt/m51-clav#leg_bjA4XVgJL9coqKgo_-8gC</id>
+      </item>
+    </legislacao>
+    <pca type="object">
+      <formaContagem type="string">Data de conclusão do procedimento</formaContagem>
+      <idPCA type="string">http://jcr.di.uminho.pt/m51-clav#pca_c200.10.100</idPCA>
+      <idJust type="string">just_pca_c200.10.100</idJust>
+      <notas type="string">
+      </notas>
+      <valores type="string">10</valores>
+      <justificacao type="array">
+        <item index="0" type="object">
+          <tipoId type="string">CriterioJustificacaoLegal</tipoId>
+          <conteudo type="string">[Lei 98/97], art.º 70º, nº 1 - Prazo prescricional da responsabilidade financeira reintegratória.</conteudo>
+          <criterio type="string">http://jcr.di.uminho.pt/m51-clav#crit_just_pca_c200.10.100_1</criterio>
+          <processos type="array">
+          </processos>
+          <legislacao type="array">
+            <item index="0" type="object">
+              <legId type="string">leg_KvY55PTIbsZhg-SgJL9uV</legId>
+            </item>
+          </legislacao>
+        </item>
+      </justificacao>
+    </pca>
+    <df type="object">
+      <idJust type="string">just_df_c200.10.100</idJust>
+      <valor type="string">C</valor>
+      <idDF type="string">http://jcr.di.uminho.pt/m51-clav#df_c200.10.100</idDF>
+      <justificacao type="array">
+        <item index="0" type="object">
+          <tipoId type="string">CriterioJustificacaoDensidadeInfo</tipoId>
+          <conteudo type="string"> A informação não é recuperável noutro PN.</conteudo>
+          <criterio type="string">http://jcr.di.uminho.pt/m51-clav#crit_just_df_c200.10.100_1</criterio>
+          <processos type="array">
+          </processos>
+          <legislacao type="array">
+          </legislacao>
+        </item>
+      </justificacao>
+    </df>
+    <id type="string">http://jcr.di.uminho.pt/m51-clav#c200.10.100</id>
+  </root>
+summary: Exemplo de uma classe

@@ -1,12 +1,12 @@
 type: object
 properties:
   id:
-    type: string
+    $ref: '#/components/schemas/AutoEliminacaoId'
   data:
     type: string
     format: date
   entidade:
-    type: string
+    $ref: '#/components/schemas/EntidadeId'
   responsavel:
     type: string
   fundo:
@@ -19,7 +19,7 @@ properties:
       type: object
       properties:
         codigo:
-          type: string
+          $ref: '#/components/schemas/Codigo'
         referencia:
           type: string
           description: Apenas presente caso o tipo seja RADA
@@ -27,7 +27,7 @@ properties:
           type: string
           enum: [Dono, Participante]
         dono:
-          type: string
+          $ref: '#/components/schemas/EntidadeId'
         dataInicio:
           type: string
         dataFim:
@@ -64,5 +64,3 @@ required:
   - fundo
   - legislacao
   - zonaControlo
-example:
-  $ref: '#/components/examples/autosEliminacao_get_one'

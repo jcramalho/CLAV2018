@@ -10,16 +10,24 @@ tags:
 parameters:
   - name: id
     in: path
-    description: 'Identificador de uma classe (exemplo: c200.10.100)'
+    description: 'Identificador de uma classe'
     schema:
-      type: string
+      $ref: '#/components/schemas/ClasseId'
     required: true
 responses:
   200:
     description: Devolve a(s) entidade(s) participante(s) do processo
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/ClasseParticipante'
+        allOf:
+          - $ref: '#/components/examples/ClasseParticipante'
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:
     $ref: '#/components/responses/PermissionsKey'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
   500:
     description: Erro

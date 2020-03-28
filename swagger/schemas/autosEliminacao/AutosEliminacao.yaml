@@ -1,7 +1,7 @@
 type: object
 properties:
   entidade:
-    type: string
+    $ref: '#/components/schemas/EntidadeId'
   fundo:
     type: string
   legislacao:
@@ -12,18 +12,18 @@ properties:
       type: object
       properties:
         codigo:
-          type: string
+          $ref: '#/components/schemas/Codigo'
         titulo:
           type: string
         prazoConservacao:
-          type: string
+          $ref: '#/components/schemas/PCAValor'
         destino:
-          type: string
+          $ref: '#/components/schemas/DFValor'
         ni:
           type: string
           enum: [Dono, Participante]
         dono:
-          type: string
+          $ref: '#/components/schemas/EntidadeId'
         dataInicio:
           type: string
         dataFim:

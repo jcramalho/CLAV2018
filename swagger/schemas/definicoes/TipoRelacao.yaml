@@ -1,0 +1,2 @@
+type: string
+enum: ["eAntecessorDe", "eComplementarDe", "eCruzadoCom", "eSinteseDe", "eSintetizadoPor", "eSucessorDe", "eSuplementoPara", "eSuplementoDe"]

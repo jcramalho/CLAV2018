@@ -1,4 +1,4 @@
-value:
+example:
   - active: "Sim"
     contactInfo: "interface_clav@dglab.pt"
     created: "Wed Mar 25 2020"
@@ -19,4 +19,3 @@ value:
     lastUsed: "Nunca"
     nCalls: 0
     name: "exemplo"
-summary: Exemplo de todas as chaves

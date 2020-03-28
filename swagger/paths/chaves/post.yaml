@@ -15,7 +15,7 @@ requestBody:
             type: string
             format: email
           entidade:
-            type: string
+            $ref: '#/components/schemas/EntidadeId'
       example:
         name: exemplo
         email: exemplo@exemplo.pt

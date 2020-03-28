@@ -1,32 +1,39 @@
-type: array
-items:
-  type: object
-  properties:
-    active:
-      type: boolean
-    contactInfo:
-      type: string
-      format: email
-    created:
-      type: string
-      format: date-time
-    entity:
-      type: string
-    _id:
-      type: string
-    key:
-      type: string
-    lastUsed:
-      type: string
-      nullable: true
-      format: date-time
-    level:
-      type: integer
-      minimum: 0
-    nCalls:
-      type: integer
-      minimum: 0
-    name:
-      type: string
-example:
-  $ref: '#/components/examples/chaves_get_one'
+type: object
+properties:
+  active:
+    type: boolean
+  contactInfo:
+    type: string
+    format: email
+  created:
+    type: string
+    format: date-time
+  entity:
+    $ref: '#/components/schemas/EntidadeId'
+  _id:
+    type: string
+  key:
+    type: string
+  lastUsed:
+    type: string
+    nullable: true
+    format: date-time
+  level:
+    type: integer
+    minimum: 0
+  nCalls:
+    type: integer
+    minimum: 0
+  name:
+    type: string
+required:
+  - active
+  - contactInfo
+  - created
+  - entity
+  - _id
+  - key
+  - lastUsed
+  - level
+  - nCalls
+  - name

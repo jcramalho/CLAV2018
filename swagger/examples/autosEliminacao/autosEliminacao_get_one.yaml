@@ -1,4 +1,4 @@
-value:
+example:
   - entidade: "ent_A3ES"
     legislacao: "Portaria 11/2019"
     fundo: "Secretaria Geral do Ministério dos Negócios Estrangeiros"
@@ -16,4 +16,3 @@ value:
             titulo: "AAAA"
             dataContagem: "2010"
             ni: "Participante"
-summary: Exemplo de auto de eliminação
