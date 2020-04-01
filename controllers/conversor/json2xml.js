@@ -68,9 +68,11 @@ function json2xmlRec(json, nTabs){
                     aux = json[key]
                 }
 
-                xml += ' '.repeat(nTabs * sizeTab)
-                xml += '<' + protectKey(key) + ' type="' + type + '">'
-                xml += aux + '</' + protectKey(key) + '>\n'
+                if(json[key] != undefined){
+                    xml += ' '.repeat(nTabs * sizeTab)
+                    xml += '<' + protectKey(key) + ' type="' + type + '">'
+                    xml += aux + '</' + protectKey(key) + '>\n'
+                }
             }
         }
     }else if(type === 'string'){
