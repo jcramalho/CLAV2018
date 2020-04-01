@@ -8,7 +8,7 @@ var xml2js = require('xml2js')
 var fs = require("fs")
 
 const { validationResult } = require('express-validator');
-const { existe, estaEm, comecaPor } = require('../validation')
+const { existe, estaEm, verificaAEId } = require('../validation')
 var tipoSanitizer = value => {
     if(value == "PGD_LC") value = "PGD/LC"
     return "AE " + value
@@ -25,7 +25,7 @@ router.get('/', Auth.isLoggedInKey, (req, res) => {
 })
 
 router.get('/:id', Auth.isLoggedInKey, [
-    comecaPor('param', 'id', 'ae_')
+    verificaAEId('param', 'id')
 ], function (req, res) {
     const errors = validationResult(req)
     if(!errors.isEmpty()){

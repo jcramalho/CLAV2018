@@ -28,7 +28,7 @@ const Entidades = module.exports;
  * lista das entidades existentes que respeitam o filtro dado
  */
 Entidades.listar = filtro => {
-  const query = `SELECT ?id ?sigla ?designacao ?internacional ?sioe ?estado {
+  const query = `SELECT ?id ?sigla ?designacao ?internacional ?sioe ?estado ?dataCriacao ?dataExtincao {
         ?uri rdf:type clav:Entidade ;
             clav:entEstado ?estado;
             clav:entDesignacao ?designacao ;
@@ -36,6 +36,12 @@ Entidades.listar = filtro => {
             clav:entInternacional ?internacional .
         OPTIONAL {
             ?uri clav:entSIOE ?sioe.
+        }
+        OPTIONAL {
+            ?uri clav:entDataCriacao ?dataCriacao
+        }
+        OPTIONAL {
+            ?uri clav:entDataExtincao ?dataExtincao
         }
         BIND(CONCAT('ent_', ?sigla) AS ?id).
 
@@ -334,12 +340,13 @@ Entidades.existeDesignacao = designacao => {
  * participa como dona
  */
 Entidades.dono = id => {
-  const query = `SELECT ?codigo ?titulo WHERE {
-        ?id clav:temDono clav:${id} ;
+  const query = `SELECT ?id ?codigo ?titulo WHERE {
+        ?uri clav:temDono clav:${id} ;
             clav:codigo ?codigo ;
             clav:titulo ?titulo ;
             clav:pertenceLC clav:lc1 ;
             clav:classeStatus "A" .
+        BIND(CONCAT('c', ?codigo) AS ?id).
     }ORDER BY ?codigo`;
 
   return execQuery("query", query).then(response => normalize(response));
@@ -354,13 +361,14 @@ Entidades.dono = id => {
  * participa
  */
 Entidades.participante = id => {
-  const query = `SELECT ?tipoPar ?codigo ?titulo WHERE { 
+  const query = `SELECT ?id ?tipoPar ?codigo ?titulo WHERE { 
         ?uri clav:temParticipante clav:${id} ;
             ?tipoParURI clav:${id} ;
             clav:titulo ?titulo ;
             clav:codigo ?codigo ;
             clav:pertenceLC clav:lc1 ;
             clav:classeStatus "A" .
+        BIND(CONCAT('c', ?codigo) AS ?id).
         BIND (STRAFTER(STR(?tipoParURI), 'clav#') AS ?tipoPar).
         FILTER (?tipoParURI != clav:temParticipante && ?tipoParURI != clav:temDono)
     }ORDER BY ?codigo`;
@@ -419,9 +427,7 @@ Entidades.criar = async ent => {
 
   if (ent.sioe) queryEnt += ` ;\n\tclav:entSIOE "${ent.sioe}"`;
 
-  if (ent.internacional !== null && ent.internacional !== undefined) {
-    ent.internacional = ent.internacional === "" ? "Não" : ent.internacional;
-  } else {
+  if (!ent.internacional) {
     ent.internacional = "Não";
   }
   queryEnt += ` ;\n\tclav:entInternacional "${ent.internacional}"`;
@@ -429,32 +435,22 @@ Entidades.criar = async ent => {
   if (ent.dataCriacao)
     queryEnt += ` ;\n\tclav:entDataCriacao "${ent.dataCriacao}"`;
 
-  if (
-    ent.tipologiasSel &&
-    ent.tipologiasSel instanceof Array &&
-    ent.tipologiasSel.length > 0
-  )
-    queryEnt += ` ;\n\tclav:pertenceTipologiaEnt ${ent.tipologiasSel
-      .map(tip => `clav:tip_${tip.sigla}`)
-      .join(", ")}`;
+  if (ent.tipologias && ent.tipologias.length > 0){
+    queryEnt += ` ;\n\tclav:pertenceTipologiaEnt ${
+      ent.tipologias.map(tip => `clav:${tip}`).join(", ")
+    }`;
+  }
 
   queryEnt += " .\n}";
   const query = "INSERT DATA " + queryEnt;
   const ask = "ASK " + queryEnt;
 
-  if (
-    (await Entidades.existeSigla(ent.sigla)) ||
-    (await Entidades.existeDesignacao(ent.designacao))
-  ) {
-    throw "Entidade já existe, sigla ou designação já em uso.";
-  } else {
-    return execQuery("update", query).then(res =>
-      execQuery("query", ask).then(result => {
-        if (result.boolean) return "Sucesso na inserção da entidade";
-        else throw "Insucesso na inserção da entidade";
-      })
-    );
-  }
+  return execQuery("update", query).then(res =>
+    execQuery("query", ask).then(result => {
+      if (result.boolean) return "Sucesso na inserção da entidade";
+      else throw "Insucesso na inserção da entidade";
+    })
+  );
 };
 
 //Extinguir entidade

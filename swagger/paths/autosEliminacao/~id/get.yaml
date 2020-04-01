@@ -12,8 +12,7 @@ parameters:
     in: path
     description: 'Identificador de um auto de eliminação'
     schema:
-      type: string
-      example: ae_xjGYpNN8ztyKGTjOU0MWJ
+      $ref: '#/components/schemas/AutoEliminacaoId'
     required: true
 responses:
   200:

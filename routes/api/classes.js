@@ -6,13 +6,10 @@ var express = require('express');
 var router = express.Router();
 
 const { query, validationResult } = require('express-validator');
-const { existe, estaEm, comecaPor, eFS } = require('../validation')
+const { existe, estaEm, verificaClasseId, verificaClasseCodigo, verificaJustId, eFS, verificaEnts, verificaTips } = require('../validation')
 
-function verificaId(){ 
-    return comecaPor('param', 'id', 'c')
-        .bail()
-        .matches(/^c\d{3}(\.\d{2}(\.\d{3}(\.\d{2})?)?)?$/)
-        .withMessage("Formato inválido")
+function verificaId() {
+    return verificaClasseId('param', 'id')
 }
 
 // Devolve as classes em vários formatos podendo ser filtradas por nível 
@@ -22,8 +19,8 @@ router.get('/', Auth.isLoggedInKey, [
     estaEm('query', 'estrutura', ['arvore', 'lista']).optional(),
     estaEm('query', 'tipo', ['comum', 'especifico']).optional(),
     estaEm('query', 'nivel', ["1", "2", "3", "4"]).optional(),
-    query('ents', "Valor inválido, exemplo: 'ent_AAN,ent_SEF'").optional().matches(/^ent_[^,]+(,ent_[^,]+)*$/),
-    query('tips', "Valor inválido, exemplo: 'tip_AAC,tip_AF'").optional().matches(/^tip_[^,]+(,tip_[^,]+)*$/)
+    verificaEnts("query", "ents").optional(),
+    verificaTips("query", "tips").optional()
 ], async (req, res, next) => { 
     const errors = validationResult(req)
     if(!errors.isEmpty()){
@@ -131,10 +128,7 @@ router.get('/titulo', Auth.isLoggedInKey, [
 
 // Verifica se um determinado código de classe já existe
 router.get('/codigo', Auth.isLoggedInKey, [
-    existe('query', 'valor')
-        .bail()
-        .matches(/^\d{3}(\.\d{2}(\.\d{3}(\.\d{2})?)?)?$/)
-        .withMessage("Formato inválido")
+    verificaClasseCodigo('query', 'valor')
 ], function (req, res) {
     const errors = validationResult(req)
     if(!errors.isEmpty()){
@@ -148,7 +142,8 @@ router.get('/codigo', Auth.isLoggedInKey, [
 
 // Devolve a informação de uma classe
 router.get('/:id', Auth.isLoggedInKey, [
-    verificaId()
+    verificaId(),
+    eFS()
 ], async function (req, res, next) {
     const errors = validationResult(req)
     if(!errors.isEmpty()){
@@ -341,10 +336,7 @@ router.get('/:id/pca', Auth.isLoggedInKey, [
 
 // Devolve uma justificação, PCA ou DF, que é composta por uma lista de critérios: criterio, tipoLabel, conteudo
 router.get('/justificacao/:id', Auth.isLoggedInKey, [
-    comecaPor('param', 'id', 'just_')
-        .bail()
-        .matches(/^just_(df|pca)_c\d{3}(\.\d{2}(\.\d{3}(\.\d{2})?)?)?$/)
-        .withMessage("Formato inválido")
+    verificaJustId('param', 'id')
 ], (req, res) => {
     const errors = validationResult(req)
     if(!errors.isEmpty()){

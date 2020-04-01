@@ -26,20 +26,19 @@ parameters:
   - in: query
     name: nivel
     schema:
-      type: string
-      enum: [1, 2, 3, 4]
+      $ref: '#/components/schemas/Nivel'
     description: O nível dos processos devolvidos numa lista. Podem ser de 1º, 2º, 3º e 4º nível.
     required: false
   - in: query
     name: ents
     schema:
-      type: string
+      $ref: '#/components/schemas/Ents'
     description: "Obtém os processos destas entidades. Quando usado em conjunto com o parâmetro tipo com valor igual a especifico devolve os processos especificos destas entidades. Exemplo: 'ent_AAN,ent_SEF'"
     required: false
   - in: query
     name: tips
     schema:
-      type: string
+      $ref: '#/components/schemas/Tips'
     description: "Obtém os processos destas tipologias. Quando usado em conjunto com o parâmetro tipo com valor igual a especifico devolve os processos especificos destas tipologias. Exemplo: 'tip_AAC,tip_AF'"
     required: false
   - in: query

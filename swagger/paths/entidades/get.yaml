@@ -11,7 +11,8 @@ parameters:
   - in: query
     name: ents
     schema:
-        type: string
+      type: string
+      pattern: '^ent_[^,]+(,ent_[^,]+)*$'
     description: "Devolve a informação destas entidades. Exemplo de input: 'ent_AAN,ent_SEF'"
     required: false
   - in: query
@@ -36,21 +37,19 @@ parameters:
   - in: query
     name: internacional
     schema:
-      type: string
-      enum: [Sim, Não]
+      $ref: '#/components/schemas/Internacional'
     description: Permite filtrar as entidades que contém internacional igual a este valor.
     required: false
   - in: query
     name: sioe
     schema:
-      type: string
-    description: 'Permite filtrar as entidades que contém sioe igual a este valor. (ex: 875780390)'
+      $ref: '#/components/schemas/SIOE'
+    description: Permite filtrar as entidades que contém sioe igual a este valor
     required: false
   - in: query
     name: estado
     schema:
-      type: string
-      enum: [Ativa, Inativa, Harmonização]
+      $ref: '#/components/schemas/Estado'
     description: Permite filtrar as entidades que contém o estado igual a este valor.
     required: false
   - in: query
@@ -67,33 +66,59 @@ responses:
     content:
       application/json:
         schema:
-          $ref: '#/components/schemas/EntidadeSimplesLista'
+          oneOf:
+            - $ref: '#/components/schemas/EntidadeSimplesLista'
+            - $ref: '#/components/schemas/EntidadeCompletaLista'
+        examples:
+          Exemplo de Entidades:
+            $ref: '#/components/examples/EntidadesJSON'
+          Exemplo de Entidades Completas:
+            $ref: '#/components/examples/EntidadesCompletasJSON'
       json:
         schema:
-          $ref: '#/components/schemas/EntidadeSimplesLista'
+          oneOf:
+            - $ref: '#/components/schemas/EntidadeSimplesLista'
+            - $ref: '#/components/schemas/EntidadeCompletaLista'
+        examples:
+          Exemplo de Entidades:
+            $ref: '#/components/examples/EntidadesJSON'
+          Exemplo de Entidades Completas:
+            $ref: '#/components/examples/EntidadesCompletasJSON'
       application/xml:
         examples:
-          xml:
+          Exemplo de Entidades:
             $ref: '#/components/examples/EntidadesXML'
+          Exemplo de Entidades Completas:
+            $ref: '#/components/examples/EntidadesCompletasXML'
       xml:
         examples:
-          xml:
+          Exemplo de Entidades:
             $ref: '#/components/examples/EntidadesXML'
+          Exemplo de Entidades Completas:
+            $ref: '#/components/examples/EntidadesCompletasXML'
       text/csv:
         examples:
-          csv:
+          Exemplo de Entidades:
             $ref: '#/components/examples/EntidadesCSV'
+          Exemplo de Entidades Completas:
+            $ref: '#/components/examples/EntidadesCompletasCSV'
       csv:
         examples:
-          csv:
+          Exemplo de Entidades:
             $ref: '#/components/examples/EntidadesCSV'
+          Exemplo de Entidades Completas:
+            $ref: '#/components/examples/EntidadesCompletasCSV'
       excel/csv:
         examples:
-          csv:
+          Exemplo de Entidades:
             $ref: '#/components/examples/EntidadesExcelCSV'
+          Exemplo de Entidades Completas:
+            $ref: '#/components/examples/EntidadesCompletasExcelCSV'
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:
     $ref: '#/components/responses/PermissionsKey'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
   500:
     description: Erro

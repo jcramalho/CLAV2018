@@ -10,16 +10,22 @@ tags:
 parameters:
   - name: id
     in: path
-    description: 'Identificador de uma entidade (exemplo: ent_AAN)'
+    description: Identificador de uma entidade
     schema:
-      type: string
-    required: true
+      $ref: '#/components/schemas/EntidadeId'
 responses:
   200:
     description: Lista as tipologias a que uma entidade pertence
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/EntidadeTipologias'
+        example: !!inc/file '/examples/entidades/EntidadeTipologias.yaml'
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:
     $ref: '#/components/responses/PermissionsKey'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
   500:
     description: Erro

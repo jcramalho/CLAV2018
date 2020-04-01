@@ -1,0 +1,41 @@
+value:
+  - designacao: "Tribunal de Justiça da União Europeia"
+    dono: []
+    estado: "Ativa"
+    id: "ent_TJUE"
+    internacional: "Sim"
+    participante: []
+    sigla: "TJUE"
+    sioe: ""
+    tipologias: []
+  - designacao: "Turismo de Portugal, IP"
+    dono:
+      - codigo: "450.10.064"
+        id: "c450.10.064"
+        titulo: "Licenciamento ou autorização de atividades de alojamento e de restauração"
+    estado: "Ativa"
+    id: "ent_TP"
+    internacional: ""
+    participante:
+      - codigo: "450.10.214"
+        id: "c450.10.214"
+        tipoPar: "temParticipanteApreciador"
+        titulo: "Licenciamento ou comunicação de publicidade"
+    sigla: "TP"
+    sioe: "73400000"
+    tipologias:
+      - designacao: "Administração Pública"
+        id: "tip_AP"
+        sigla: "AP"
+      - designacao: "Institutos Públicos"
+        id: "tip_IP"
+        sigla: "IP"
+  - designacao: "União Europeia"
+    dono: []
+    estado: "Ativa"
+    id: "ent_UE"
+    internacional: "Sim"
+    participante: []
+    sigla: "UE"
+    sioe: ""
+    tipologias: []
