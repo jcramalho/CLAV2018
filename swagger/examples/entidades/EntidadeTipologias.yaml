@@ -1,0 +1,6 @@
+- designacao: "Autoridades de supervisão e fiscalização"
+  id: "tip_ASF"
+  sigla: "ASF"
+- designacao: "Forças Armadas"
+  id: "tip_FA"
+  sigla: "FA"

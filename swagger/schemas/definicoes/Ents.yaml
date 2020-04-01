@@ -1,0 +1,2 @@
+type: string
+pattern: '^ent_[^,]+(,ent_[^,]+)*$'

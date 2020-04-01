@@ -1,0 +1,17 @@
+type: array
+items:
+  type: object
+  properties:
+    codigo:
+      $ref: '#/components/schemas/Codigo'
+    id:
+      $ref: '#/components/schemas/ClasseId'
+    titulo:
+      type: string
+    tipoPar:
+      $ref: '#/components/schemas/TipoParticipacaoTem'
+  required:
+    - codigo
+    - id
+    - titulo
+    - tipoPar

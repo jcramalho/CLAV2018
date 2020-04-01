@@ -5,20 +5,17 @@ properties:
   sigla:
     type: string
   internacional:
-    type: string
-    enum: [Sim, Não]
+    $ref: '#/components/schemas/Internacional'
   sioe:
-    type: string
+    $ref: '#/components/schemas/SIOE'
   estado:
-    type: string
-    enum: [Ativa, Inativa, Harmonização]
+    $ref: '#/components/schemas/Estado'
   tipologiasSel:
     type: array
     items:
       type: string
   codigo:
-    type: string
-    description: "'ent_' concatenado com o valor de sigla"
+    $ref: '#/components/schemas/EntidadeId'
 required:
   - designacao
   - internacional

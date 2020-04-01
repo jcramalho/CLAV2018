@@ -7,7 +7,7 @@ var Auth = require("../../controllers/auth");
 var Chaves = require("../../controllers/api/chaves");
 var Mailer = require("../../controllers/api/mailer");
 const { param, header, body, query, validationResult } = require('express-validator');
-const { existe, comecaPor, existeEnt } = require('../validation')
+const { existe, verificaExisteEnt } = require('../validation')
 
 router.get("/", Auth.isLoggedInUser, Auth.checkLevel(6), (req, res) => {
   Chaves.listar(function(err, result) {
@@ -108,10 +108,7 @@ router.get("/:id", Auth.isLoggedInUser, Auth.checkLevel(7), [
 router.post("/", [
     existe('body', 'name'),
     body('email', "Email inválido").isEmail(),
-    comecaPor('body', 'entidade', 'ent_')
-        .bail()
-        .custom(existeEnt)
-        .withMessage("Entidade não existe na BD")
+    verificaExisteEnt('body', 'entidade')
 ], (req, res) => {
   const errors = validationResult(req)
   if(!errors.isEmpty()){
@@ -236,10 +233,7 @@ router.put("/:id/atualizar", Auth.isLoggedInUser, Auth.checkLevel(7), [
     param('id', "Formato do id inválido").isMongoId(),
     existe('body', 'name'),
     body('contactInfo', "Email inválido").isEmail(),
-    comecaPor('body', 'entity', 'ent_')
-        .bail()
-        .custom(existeEnt)
-        .withMessage("Entidade não existe na BD")
+    verificaExisteEnt('body', 'entity')
 ], function(req, res) {
   const errors = validationResult(req)
   if(!errors.isEmpty()){

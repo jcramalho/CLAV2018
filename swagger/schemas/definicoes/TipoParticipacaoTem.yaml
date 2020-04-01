@@ -1,0 +1,2 @@
+type: string
+enum: [temParticipanteApreciador, temParticipanteAssessor, temParticipanteComunicador, temParticipanteDecisor, temParticipanteExecutor, temParticipanteIniciador]

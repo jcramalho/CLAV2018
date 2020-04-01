@@ -1,3 +1,3 @@
 type: string
-pattern: '^ent_.*?$'
+pattern: '^ent_.+$'
 example: ent_DGLAB
