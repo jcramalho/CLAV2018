@@ -7,7 +7,7 @@ var router = express.Router();
 
 var validKeys = ["sigla", "designacao", "internacional", "sioe", "estado"];
 const { query, body, validationResult } = require('express-validator');
-const { existe, estaEm, verificaEntId, eFS, verificaEnts, dataValida, existeEverificaTips } = require('../validation')
+const { existe, estaEm, verificaEntId, eFS, verificaEnts, dataValida } = require('../validation')
 
 async function naoExisteSigla(valor) {
     if(await Entidades.existeSigla(valor))
@@ -21,6 +21,28 @@ async function naoExisteDesignacao(valor) {
         return Promise.reject()
     else
         return Promise.resolve()
+}
+
+var existeEverificaTips = async tips => {
+    var valid = true
+
+    for(var i = 0; i < tips.length && valid; i++){
+        if(tips[i].id.match(/^tip_.+$/)){
+            try{
+                await module.exports.existeTip(tips[i].id)
+            }catch(e){
+                valid = false
+            }
+        }else{
+            valid = false
+        }
+    }
+
+    if(valid){
+        return Promise.resolve()
+    }else{
+        return Promise.reject()
+    }
 }
 
 // Lista todas as entidades: id, sigla, designacao, internacional
@@ -206,7 +228,7 @@ router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), [
     estaEm("body", "internacional", ["Sim", "Não"]).optional(),
     body("sioe", "Valor inválido, SIOE é um número").optional().matches(/^\d+$/),
     dataValida('body', 'dataCriacao').optional(),
-    existe("body", "tipologias")
+    existe("body", "tipologiasSel")
         .optional()
         .custom(value => value instanceof Array)
         .withMessage("Não é um array")

@@ -435,9 +435,9 @@ Entidades.criar = async ent => {
   if (ent.dataCriacao)
     queryEnt += ` ;\n\tclav:entDataCriacao "${ent.dataCriacao}"`;
 
-  if (ent.tipologias && ent.tipologias.length > 0){
+  if (ent.tipologiasSel && ent.tipologiasSel.length > 0){
     queryEnt += ` ;\n\tclav:pertenceTipologiaEnt ${
-      ent.tipologias.map(tip => `clav:${tip}`).join(", ")
+      ent.tipologiasSel.map(tip => `clav:${tip.id}`).join(", ")
     }`;
   }
 

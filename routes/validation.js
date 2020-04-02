@@ -72,28 +72,6 @@ module.exports.existeTip = async tipId => {
     }
 }
 
-module.exports.existeEverificaTips = async tips => {
-    var valid = true
-
-    for(var i = 0; i < tips.length && valid; i++){
-        if(tips[i].match(/^tip_.+$/)){
-            try{
-                await module.exports.existeTip(tips[i])
-            }catch(e){
-                valid = false
-            }
-        }else{
-            valid = false
-        }
-    }
-
-    if(valid){
-        return Promise.resolve()
-    }else{
-        return Promise.reject()
-    }
-}
-
 module.exports.verificaClasseId = function(location, field){
     return module.exports.comecaPorEMatch(
         location,

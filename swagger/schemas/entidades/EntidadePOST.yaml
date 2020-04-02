@@ -10,10 +10,13 @@ properties:
     $ref: '#/components/schemas/SIOE'
   estado:
     $ref: '#/components/schemas/Estado'
-  tipologias:
+  tipologiasSel:
     type: array
     items:
-      $ref: '#/components/schemas/TipologiaId'
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/TipologiaId'
   dataCriacao:
     $ref: '#/components/schemas/Data'
 required:
