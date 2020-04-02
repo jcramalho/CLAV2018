@@ -7,8 +7,20 @@ var dfs = ["C", "CP", "E"]
 var crits = ["legal", "gestionario", "utilidadeAdministrativa", "densidadeInfo", "complementaridadeInfo"]
 var rels = ["temRelProc", "eAntecessorDe", "eSucessorDe", "eComplementarDe", "eCruzadoCom", "eSinteseDe", "eSintetizadoPor", "eSuplementoDe", "eSuplementoPara", "dono", "participante", "temLeg"]
 
+const { query, body, validationResult } = require('express-validator');
+const { existe, estaEm, verificaEntId, eFS, verificaEnts, dataValida, existeEverificaTips } = require('../validation')
+
 function capitalizeFL(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+var relacaoSanitizer = value => {
+    if (value == "temLeg")
+        value = "temLegislacao"
+    else if(["dono", "participante"].includes(value))
+        value = "tem" + capitalizeFL(value)
+
+    return value
 }
 
 //Classes
@@ -81,39 +93,43 @@ router.get('/leg', Auth.isLoggedInKey, (req, res) => {
 
 //Relacoes
 
-router.get('/relacoes/:relacao', Auth.isLoggedInKey, (req, res) => {
-    if(rels.includes(req.params.relacao)){
-        if (req.params.relacao == "temLeg")
-            req.params.relacao = "temLegislacao"
-        else if(["dono", "participante"].includes(req.params.relacao))
-            req.params.relacao = "tem" + capitalizeFL(req.params.relacao)
-        
-        Indicadores.totalRelacoes(req.params.relacao)
-            .then(dados => res.jsonp(dados))
-            .catch(err => res.status(500).send(`Erro ao obter o número total de relações "${req.params.relacao}": ${err}`))
-    }else{
-        res.status(500).send('Envie uma relação válida: temRelProc, eAntecessorDe, eSucessorDe, eComplementarDe, eCruzadoCom, eSinteseDe, eSintetizadoPor, eSuplementoDe, eSuplementoPara, dono, participante ou temLeg.')
+router.get('/relacoes/:relacao', Auth.isLoggedInKey, [
+    estaEm('param', 'relacao', rels).customSanitizer(relacaoSanitizer)
+], (req, res) => {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
     }
+
+    Indicadores.totalRelacoes(req.params.relacao)
+        .then(dados => res.jsonp(dados))
+        .catch(err => res.status(500).send(`Erro ao obter o número total de relações "${req.params.relacao}": ${err}`))
 })
 
-router.get('/df/:df', Auth.isLoggedInKey, (req, res) => {
-    if(dfs.includes(req.params.df)){
-        Indicadores.totalDF(req.params.df)
-            .then(dados => res.jsonp(dados))
-            .catch(err => res.status(500).send(`Erro ao obter o número total de PN's com DF igual a ${req.params.df}: ${err}`))
-    }else{
-        res.status(500).send('Envie um destino final válido: C (Conservação), CP (Conservação Parcial) ou E (Eliminação).')
+router.get('/df/:df', Auth.isLoggedInKey, [
+    estaEm('param', 'df', dfs)
+], (req, res) => {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
     }
+
+    Indicadores.totalDF(req.params.df)
+        .then(dados => res.jsonp(dados))
+        .catch(err => res.status(500).send(`Erro ao obter o número total de PN's com DF igual a ${req.params.df}: ${err}`))
 })
 
-router.get('/critJust/:critJust', Auth.isLoggedInKey, (req, res) => {
-    if(crits.includes(req.params.critJust)){
-        Indicadores.totalCritJust(capitalizeFL(req.params.critJust))
-            .then(dados => res.jsonp(dados))
-            .catch(err => res.status(500).send(`Erro ao obter o número total de Critérios de Justificação do tipo "CriterioJustificacao${capitalizeFL(req.params.critJust)}": ${err}`))
-    }else{
-        res.status(500).send('Envie um Critério de Justificação válido: legal, gestionario, utilidadeAdministrativa, densidadeInfo ou complementaridadeInfo.')
+router.get('/critJust/:critJust', Auth.isLoggedInKey, [
+    estaEm('param', 'critJust', crits).customSanitizer(capitalizeFL)
+], (req, res) => {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
     }
+
+    Indicadores.totalCritJust(req.params.critJust)
+        .then(dados => res.jsonp(dados))
+        .catch(err => res.status(500).send(`Erro ao obter o número total de Critérios de Justificação do tipo "CriterioJustificacao${req.params.critJust}": ${err}`))
 })
 
 router.get('/critJust', Auth.isLoggedInKey, (req, res) => {
