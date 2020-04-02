@@ -52,7 +52,7 @@ router.post('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), 
         else {
             if(req.query.tipo) {
                 AutosEliminacao.importar(req.body.auto, req.query.tipo, user)
-                    .then(dados => res.jsonp(tipo+" adicionado aos pedidos com sucesso com codigo: "+dados.codigo))
+                    .then(dados => res.jsonp(req.query.tipo+" adicionado aos pedidos com sucesso com codigo: "+dados.codigo))
                     .catch(erro => res.status(500).json(`Erro na adição do AE: ${erro}`))
             } else {
                 AutosEliminacao.criar(req.body.auto, user)
