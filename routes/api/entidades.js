@@ -7,7 +7,7 @@ var router = express.Router();
 
 var validKeys = ["sigla", "designacao", "internacional", "sioe", "estado"];
 const { query, body, validationResult } = require('express-validator');
-const { existe, estaEm, verificaEntId, eFS, verificaEnts, dataValida } = require('../validation')
+const { existe, estaEm, verificaEntId, eFS, verificaEnts, dataValida, existeTip } = require('../validation')
 
 async function naoExisteSigla(valor) {
     if(await Entidades.existeSigla(valor))
@@ -23,13 +23,13 @@ async function naoExisteDesignacao(valor) {
         return Promise.resolve()
 }
 
-var existeEverificaTips = async tips => {
+async function existeEverificaTips(tips) {
     var valid = true
 
     for(var i = 0; i < tips.length && valid; i++){
         if(tips[i].id.match(/^tip_.+$/)){
             try{
-                await module.exports.existeTip(tips[i].id)
+                await existeTip(tips[i].id)
             }catch(e){
                 valid = false
             }
