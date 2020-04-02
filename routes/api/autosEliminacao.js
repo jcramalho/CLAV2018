@@ -11,7 +11,8 @@ const { validationResult } = require('express-validator');
 const { existe, estaEm, verificaAEId } = require('../validation')
 var tipoSanitizer = value => {
     if(value == "PGD_LC") value = "PGD/LC"
-    return "AE " + value
+    value = "AE " + value
+    return value
 }
 
 var express = require('express');
