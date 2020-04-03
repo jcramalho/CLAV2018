@@ -1,0 +1,4 @@
+type: string
+description: identificador de um grupo de invariantes
+pattern: '^rel_\d+$'
+example: rel_2

@@ -98,14 +98,14 @@ Invariantes.fixErros = async (idRel, idInv) => {
                 var insertQuery = `INSERT DATA{
                     ${triplesToInsert}
                 }`
-                var askQuery = `ASK {
-                    ${triplesToInsert}
-                }`
 
                 await execQuery("update", insertQuery)
                 await Ontologia.atualizaData()
                 return "Erros do invariante corrigidos"
                 //Quando inclui muitas queries o pedido é bastante pesado
+                //var askQuery = `ASK {
+                //    ${triplesToInsert}
+                //}`
                 //result = await execQuery("query", askQuery)
 
                 //if(result.boolean) return "Erros do invariante corrigidos"

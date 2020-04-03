@@ -1,0 +1,11 @@
+value:  
+  descRel: "Classes de 3º Nível com desdobramento"
+  descInv: "As relações temDF e temPCA, existem numa classe 3 se esta <b>não</b> tiver filhos"
+  isFixable: false
+  results:
+    - c: "http://jcr.di.uminho.pt/m51-clav#c600.30.552"
+      c_titulo: "Ação administrativa e tributária especial"
+    - c: "http://jcr.di.uminho.pt/m51-clav#c600.30.700"
+      c_titulo: "Fiscalização preventiva da constitucionalidade"
+    - c: "http://jcr.di.uminho.pt/m51-clav#c600.30.701"
+      c_titulo: "Fiscalização sucessiva da constitucionalidade"

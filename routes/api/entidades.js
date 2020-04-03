@@ -246,7 +246,7 @@ router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), [
     dataValida('body', 'dataCriacao').optional(),
     existe("body", "tipologiasSel")
         .optional()
-        .custom(value => value instanceof Array)
+        .isArray()
         .withMessage("Não é um array")
         .bail()
         .custom(existeEverificaTips)
@@ -274,7 +274,7 @@ router.put("/:id", Auth.isLoggedInUser, Auth.checkLevel(4), [
     dataValida('body', 'dataExtincao').optional(),
     existe("body", "tipologiasSel")
         .bail()
-        .custom(value => value instanceof Array)
+        .isArray()
         .withMessage("Não é um array")
         .bail()
         .custom(existeEverificaTips)

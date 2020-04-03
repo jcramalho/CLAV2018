@@ -1,0 +1,17 @@
+type: object
+properties:
+  descRel:
+    type: string
+  descInv:
+    type: string
+  isFixable:
+    type: boolean
+  results:
+    type: array
+    items:
+      type: object
+required:
+  - descRel
+  - descInv
+  - isFixable
+  - results

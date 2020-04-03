@@ -8,6 +8,11 @@ tags:
 responses:
   200:
     description: Devolve os erros dos invariantes
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/InvariantesTestarTodos'
+        example: !!inc/file '/examples/invariantes/InvariantesTestarTodos.yaml'
   401:
     $ref: '#/components/responses/UnauthorizedUser'
   403:

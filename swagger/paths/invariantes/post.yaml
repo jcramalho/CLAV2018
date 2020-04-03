@@ -12,11 +12,9 @@ requestBody:
       schema:
         properties:
           idRel:
-            type: string
-            description: identificador de um grupo de invariantes 
+            $ref: '#/components/schemas/InvarianteRelId'
           idInv:
-            type: string
-            description: identificador do invariante dentro do grupo anteriormente identificado 
+            $ref: '#/components/schemas/InvarianteInvId'
         example:
           idRel: rel_2
           idInv: inv_1
@@ -27,5 +25,7 @@ responses:
     $ref: '#/components/responses/UnauthorizedUser'
   403:
     $ref: '#/components/responses/PermissionsUser'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
   500:
     description: Erro
