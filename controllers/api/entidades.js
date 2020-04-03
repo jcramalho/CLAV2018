@@ -1,5 +1,6 @@
 const execQuery = require("../../controllers/api/utils").execQuery;
 const normalize = require("../../controllers/api/utils").normalize;
+const allTriplesFrom = require("../../controllers/api/utils").allTriplesFrom;
 const request = require("../../controllers/api/utils").request;
 const Entidades = module.exports;
 
@@ -318,6 +319,24 @@ Entidades.existeSigla = sigla => {
 };
 
 /**
+ * Verifica se uma determinada sigla de entidade existe no sistema e retorna o id dessa.
+ *
+ * @param {Sigla} sigla
+ * @return {Promise<string | Error>}
+ */
+Entidades.existeSiglaId = sigla => {
+  const query = `select ?s where {
+      ?s clav:entSigla|clav:tipSigla '${sigla}'
+  }`;
+
+  return execQuery("query", query).then(response => {
+      var res = normalize(response)[0]
+      if(res) res = res.s.split("#")[1]
+      return res
+  });
+};
+
+/**
  * Verifica se uma determinada designacao de entidade existe no sistema.
  *
  * @param {Designacao} designacao
@@ -329,6 +348,24 @@ Entidades.existeDesignacao = designacao => {
   }`;
 
   return execQuery("query", query).then(response => response.boolean);
+};
+
+/**
+ * Verifica se uma determinada designacao de entidade existe no sistema e retorna o id dessa.
+ *
+ * @param {Designacao} designacao
+ * @return {Promise<boolean | Error>}
+ */
+Entidades.existeDesignacaoId = designacao => {
+  const query = `select ?s where {
+      ?s clav:entDesignacao|clav:tipDesignacao '${designacao}'
+  }`;
+
+  return execQuery("query", query).then(response => {
+      var res = normalize(response)[0]
+      if(res) res = res.s.split("#")[1]
+      return res
+  });
 };
 
 /**
@@ -451,6 +488,47 @@ Entidades.criar = async ent => {
       else throw "Insucesso na inserção da entidade";
     })
   );
+};
+
+//Atualizar entidade
+Entidades.atualizar = async ent => {
+  const id = "ent_" + ent.sigla
+  var queryEnt = `clav:${id} rdf:type owl:NamedIndividual, clav:Entidade ;
+    clav:entEstado "${ent.estado}" ;
+    clav:entSigla "${ent.sigla}" ;
+    clav:entDesignacao "${ent.designacao}"`;
+
+  if (ent.sioe) queryEnt += ` ;\n\tclav:entSIOE "${ent.sioe}"`;
+
+  if (!ent.internacional) {
+    ent.internacional = "Não";
+  }
+  queryEnt += ` ;\n\tclav:entInternacional "${ent.internacional}"`;
+
+  if (ent.dataCriacao)
+    queryEnt += ` ;\n\tclav:entDataCriacao "${ent.dataCriacao}"`;
+
+  if (ent.dataExtincao)
+    queryEnt += ` ;\n\tclav:entDataExtincao "${ent.dataExtincao}"`;
+
+  if (ent.tipologiasSel && ent.tipologiasSel.length > 0){
+    queryEnt += ` ;\n\tclav:pertenceTipologiaEnt ${
+      ent.tipologiasSel.map(tip => `clav:${tip.id}`).join(", ")
+    }`;
+  }
+
+  queryEnt += " .";
+
+  try{
+    const triplesEnt = await allTriplesFrom(id);
+    var query = `DELETE {${triplesEnt}}`;
+    query += `INSERT {${queryEnt}}`
+    query += `WHERE {${triplesEnt}}`
+    await execQuery("update", query);
+    return "Sucesso na atualização da entidade";
+  }catch(e){
+    throw "Insucesso na atualização da entidade";
+  }
 };
 
 //Extinguir entidade

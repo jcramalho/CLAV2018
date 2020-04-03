@@ -16,8 +16,24 @@ async function naoExisteSigla(valor) {
         return Promise.resolve()
 }
 
+async function naoExisteSiglaSelf(valor, {req}) {
+    const id = await Entidades.existeSiglaId(valor)
+    if(id && id != req.params.id)
+        return Promise.reject()
+    else
+        return Promise.resolve()
+}
+
 async function naoExisteDesignacao(valor) {
     if(await Entidades.existeDesignacao(valor))
+        return Promise.reject()
+    else
+        return Promise.resolve()
+}
+
+async function naoExisteDesignacaoSelf(valor, {req}) {
+    const id = await Entidades.existeDesignacaoId(valor)
+    if(id && id != req.params.id)
         return Promise.reject()
     else
         return Promise.resolve()
@@ -244,6 +260,34 @@ router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), [
   Entidades.criar(req.body)
     .then(dados => res.jsonp(dados))
     .catch(err => res.status(500).send(`Erro na inserção de uma entidade: ${err}`));
+});
+
+// Atualiza uma entidade na BD
+router.put("/:id", Auth.isLoggedInUser, Auth.checkLevel(4), [
+    verificaEntId('param', 'id'),
+    existe('body', 'sigla').custom(naoExisteSiglaSelf).withMessage("Sigla já existe"),
+    estaEm('body', "estado", ["Ativa", "Harmonização", "Inativa"]),
+    existe('body', 'designacao').custom(naoExisteDesignacaoSelf).withMessage("Designação já existe"),
+    estaEm("body", "internacional", ["Sim", "Não"]).optional(),
+    body("sioe", "Valor inválido, SIOE é um número").optional().matches(/^\d+$/),
+    dataValida('body', 'dataCriacao').optional(),
+    dataValida('body', 'dataExtincao').optional(),
+    existe("body", "tipologiasSel")
+        .bail()
+        .custom(value => value instanceof Array)
+        .withMessage("Não é um array")
+        .bail()
+        .custom(existeEverificaTips)
+        .withMessage("Um dos elementos do array não respeita '^tip_.+$' ou não existe na BD")
+], (req, res) => {
+  const errors = validationResult(req)
+  if(!errors.isEmpty()){
+      return res.status(422).jsonp(errors.array())
+  }
+
+  Entidades.atualizar(req.body)
+    .then(dados => res.jsonp(dados))
+    .catch(err => res.status(500).send(`Erro na atualização de uma entidade: ${err}`));
 });
 
 // Extinguir uma entidade na BD
