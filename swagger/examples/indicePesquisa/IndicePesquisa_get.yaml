@@ -1,0 +1,36 @@
+- codigo: "950.10.600.02"
+  exemplos: []
+  notas: []
+  tis:
+    - "Assembleia de voto, ata de (apuramento e publicação)"
+    - "Edital de contagem de votos (apuramento e publicação)"
+    - "Escrutínio provisório, publicitação de (apuramento e publicação)"
+    - "Resultado eleitoral parcial (apuramento e publicação)"
+  titulo: "Controlo de operações de votação e apuramento parcial de resultados: apuramento e comunicação"
+- codigo: "950.10.602.01"
+  exemplos: []
+  notas: []
+  tis:
+    - "Distribuição de mandatos por lista (tratamento dos resultados)"
+    - "Lista de distribuição de mandatos (tratamento dos resultados)"
+    - "Protesto contra o apuramento geral de resultados (tratamento dos resultados)"
+    - "Reapreciação de voto nulo (tratamento dos resultados)"
+    - "Reclamação (tratamento dos resultados)"
+    - "Total de eleitores inscritos (tratamento dos resultados)"
+    - "Total de votantes (tratamento dos resultados)"
+    - "Total de votos em branco (tratamento dos resultados)"
+    - "Total de votos nulos (tratamento dos resultados)"
+    - "Total de votos obtidos por lista (tratamento dos resultados)"
+    - "Voto de emigrante (tratamento dos resultados)"
+  titulo: "Apuramento geral de resultados: tratamento dos resultados"
+- codigo: "950.10.602.02"
+  exemplos: []
+  notas: []
+  tis:
+    - "Ata de apuramento geral de resultado eleitoral (apuramento e publicação do mapa dos resultados oficiais das eleições)"
+    - "Comissão Nacional de Eleições (apuramento e publicação do mapa dos resultados oficiais das eleições)"
+    - "Edital de proclamação e publicação de resultado eleitoral (apuramento e publicação do mapa dos resultados oficiais das eleições)"
+    - "Lista de candidatos eleitos (apuramento e publicação do mapa dos resultados oficiais das eleições)"
+    - "Mapa oficial de resultado eleitoral (apuramento e publicação do mapa dos resultados oficiais das eleições)"
+    - "Publicação de resultado oficial de eleição (apuramento e publicação do mapa dos resultados oficiais das eleições)"
+  titulo: "Apuramento geral de resultados: publicitação"

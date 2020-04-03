@@ -13,6 +13,7 @@ parameters:
     description: Identificador de uma entidade
     schema:
       $ref: '#/components/schemas/EntidadeId'
+    required: true
 responses:
   200:
     description: Lista as tipologias a que uma entidade pertence
