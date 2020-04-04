@@ -1,21 +1,10 @@
 var Auth = require('../../controllers/auth.js');
 var Invariantes = require('../../controllers/api/invariantes.js');
 const { validationResult } = require('express-validator');
-const { comecaPorEMatch } = require('../validation')
+const { comecaPorEMatch, existeDep } = require('../validation')
 
 var express = require('express');
 var router = express.Router();
-
-function existe(location, fieldDep){
-    return function(v, {req}) {
-        const loc = location + (location.slice(-1) == 'y' ? "" : "s")
-        if(!req[loc][fieldDep]){
-            return Promise.reject()
-        }else{
-            return Promise.resolve()
-        }
-    }
-}
 
 function verificaId(location, field, fieldDep){
     if(field == "idRel"){
@@ -26,7 +15,7 @@ function verificaId(location, field, fieldDep){
         regex = /^inv_\d+$/
     }
     return comecaPorEMatch(location, field, starts, regex)
-        .custom(existe(location, fieldDep))
+        .custom(existeDep(location, fieldDep))
         .withMessage(`'${fieldDep}' é undefined, null ou vazio`)
 }
 

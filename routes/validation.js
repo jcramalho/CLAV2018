@@ -157,6 +157,17 @@ module.exports.dataValida = function (location, field){
         .withMessage("A data é inválida")
 }
 
+module.exports.existeDep = function (location, fieldDep){
+    return function(v, {req}) {
+        const loc = location + (location.slice(-1) == 'y' ? "" : "s")
+        if(!req[loc][fieldDep]){
+            return Promise.reject()
+        }else{
+            return Promise.resolve()
+        }
+    }
+}
+
 //Valida o formato de saida de classes, entidades, tipologias e legislação
 module.exports.eFS = function(){
     return oneOf([
