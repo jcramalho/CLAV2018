@@ -143,18 +143,6 @@ const swaggerUi = require('swagger-ui-express');
 const options = require('./config/swagger').options
 mainRouter.use('/docs', swaggerUi.serve, swaggerUi.setup(null, options));
 
-// Cors init
-var cors = require('cors')
-app.use(cors({
-    origin: [
-      "http://localhost:8080",
-      "http://localhost:8081",
-    ],
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-    credentials: true
-  })
-  );
-
 //formatar o resultado consoante a querystring fs
 const { outputFormat } = require('./routes/outputFormat.js')
 
