@@ -526,3 +526,17 @@ Classes.df = function (id) {
         .then(response => normalize(response))
 }
 
+// Devolve as estatísticas relacionais dos Processos
+Classes.relStats = async () => {
+    var query = `
+    Select 
+        ?rel (COUNT(?rel) as ?relCount)
+    WHERE {
+        ?pn a clav:Classe_N3 .
+        {?o a clav:Classe_N3} UNION {?o a clav:Entidade} UNION {?o a clav:Legislacao} .
+        ?pn ?rel ?o .
+    } Group by ?rel`
+
+    let resultado = await execQuery("query", query)
+    return normalize(resultado)
+}
