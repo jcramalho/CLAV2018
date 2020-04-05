@@ -1,0 +1,13 @@
+type: array
+items:
+  allOf:
+    - type: object
+      properties:
+        idRel:
+          $ref: '#/components/schemas/InvarianteRelId'
+        idInv:
+          $ref: '#/components/schemas/InvarianteInvId'
+      required:
+        - idRel
+        - idInv
+    - $ref: '#/components/schemas/InvarianteErros'

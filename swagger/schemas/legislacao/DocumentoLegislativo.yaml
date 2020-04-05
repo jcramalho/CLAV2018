@@ -1,20 +1,17 @@
 type: object
 properties:
   numero:
-    type: string
-    pattern: '\d{1,6}/\d{1,4}'
+    $ref: '#/components/schemas/NumeroLeg'
   sumario:
     type: string
   data:
-    type: string
-    pattern: '\d{4}/\d{2}/\d{2}'
+    $ref: '#/components/schemas/Data'
   tipo:
-    type: string
+    $ref: '#/components/schemas/TipoLegislacao'
   link:
     type: string
   estado:
-    type: string
-    enum: [Ativa, Inativa, Harmonização]
+    $ref: '#/components/schemas/EstadoLeg'
   entidades:
     type: array
     items:
@@ -24,8 +21,7 @@ properties:
     items:
       type: string
   id:
-    type: string
-    description: "'leg_' concatenado com valor aleatório"
+    $ref: '#/components/schemas/LegislacaoId'
 required:
   - numero
   - sumario
@@ -35,3 +31,4 @@ required:
   - processos
   - estado
   - entidades
+  - id

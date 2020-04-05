@@ -1,0 +1,2 @@
+type: string
+enum: [PGD, PGD/LC, RADA]

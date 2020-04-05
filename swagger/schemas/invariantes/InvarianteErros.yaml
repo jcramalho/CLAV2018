@@ -1,0 +1,18 @@
+type: object
+properties:
+  descRel:
+    type: string
+  descInv:
+    type: string
+  isFixable:
+    type: boolean
+  results:
+    type: array
+    items:
+      type: object
+      description: Objeto sem estrutura pré-definida. Possui um conjunto variável de propriedades em que o conteúdo de cada propriedade é uma string.
+required:
+  - descRel
+  - descInv
+  - isFixable
+  - results

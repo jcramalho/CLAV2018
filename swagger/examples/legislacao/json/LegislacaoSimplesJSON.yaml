@@ -1,0 +1,11 @@
+value:
+  data: "1993-02-07"
+  entidades:
+    - id: "ent_CEE"
+      sigla: "CEE"
+  estado: "Ativo"
+  id: "leg_xmK25CNT44tzLM0ADwulP"
+  link: "http://eur-lex.europa.eu/legal-content/PT/TXT/?uri=celex%3A31993R2454"
+  numero: "2454/93"
+  sumario: "Fixa determinadas disposições de aplicação do Regulamento (CEE) n° 2913/92 do Conselho que estabelece o Código Aduaneiro Comunitário"
+  tipo: "Regulamento"

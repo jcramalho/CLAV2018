@@ -1,0 +1,42 @@
+summary: Atualiza uma entidade
+description: Atualiza uma entidade a partir da informação enviada no pedido
+tags:
+  - Entidades
+security:
+  - userQuery: []
+  - userAuth: []
+parameters:
+  - name: id
+    in: path
+    description: Identificador de uma entidade
+    schema:
+      $ref: '#/components/schemas/EntidadeId'
+    required: true
+requestBody:
+  description: 'Entidade a atualizar'
+  required: true
+  content:
+    application/json:
+      schema:
+        $ref: '#/components/schemas/EntidadePUT'
+      example:
+        sigla: MdP
+        designacao: "Metro do Porto, SA"
+        estado: Ativa
+        sioe: "770000329"
+        internacional: "Não"
+        tipologiasSel:
+          - id: "tip_SPE"
+        dataCriacao: "2020-02-02"
+        dataExtincao: "2020-02-13"
+responses:
+  200:
+    description: Entidade atualizada
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
+  500:
+    description: Erro

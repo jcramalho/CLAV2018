@@ -1,0 +1,17 @@
+type: array
+items:
+  type: object
+  properties:
+    numero:
+      $ref: '#/components/schemas/NumeroLeg'
+    sumario:
+      type: string
+    estado:
+      $ref: '#/components/schemas/EstadoLeg'
+    legislacao:
+      $ref: '#/components/schemas/LegislacaoIdCompleto'
+  required:
+    - numero
+    - sumario
+    - estado
+    - legislacao

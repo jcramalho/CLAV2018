@@ -2,6 +2,7 @@ const { oneOf, check, param, query, body, header, cookie } = require('express-va
 const { formats } = require("./outputFormat.js")
 var Entidades = require("../controllers/api/entidades.js");
 var Tipologias = require("../controllers/api/tipologias.js");
+var State = require("../controllers/state.js");
 
 const getLocation = {
     'param': param,
@@ -72,22 +73,11 @@ module.exports.existeTip = async tipId => {
     }
 }
 
-module.exports.existeEverificaTips = async tips => {
-    var valid = true
+module.exports.existeClasse = async classeCodigo => {
+    var classes = await State.getClassesFlatList()
+    classes = classes.map(e => e.codigo)
 
-    for(var i = 0; i < tips.length && valid; i++){
-        if(tips[i].match(/^tip_.+$/)){
-            try{
-                await module.exports.existeTip(tips[i])
-            }catch(e){
-                valid = false
-            }
-        }else{
-            valid = false
-        }
-    }
-
-    if(valid){
+    if(classes.includes(classeCodigo)){
         return Promise.resolve()
     }else{
         return Promise.reject()
@@ -103,14 +93,27 @@ module.exports.verificaClasseId = function(location, field){
     )
 }
 
-module.exports.verificaClasseCodigo = function(location, field){
-    const regex = "^\\d{3}(\\.\\d{2}(\\.\\d{3}(\\.\\d{2})?)?)?$"
+module.exports.match = function(location, field, regex){
     const msg = `Formato Inválido. Não respeita o regex: '${regex}'`
 
     return module.exports.existe(location, field)
         .bail()
         .matches(new RegExp(regex))
         .withMessage(msg)
+}
+
+module.exports.verificaClasseCodigo = function(location, field){
+    const regex = "^\\d{3}(\\.\\d{2}(\\.\\d{3}(\\.\\d{2})?)?)?$"
+    return module.exports.match(location, field, regex)
+}
+
+module.exports.verificaNumeroLeg = function(location, field){
+    const regex = "^\\d+(-\\w)?\\/\\d+$"
+    return module.exports.match(location, field, regex)
+}
+
+module.exports.verificaLegId = function(location, field){
+    return module.exports.comecaPorEMatch(location, field, 'leg_', '^leg_.+$')
 }
 
 module.exports.verificaJustId = function(location, field){
@@ -177,6 +180,28 @@ module.exports.dataValida = function (location, field){
         .bail()
         .isISO8601({strict: true}) //garante formato(mais flexivel) e se a data é válida
         .withMessage("A data é inválida")
+}
+
+module.exports.existeDep = function (location, fieldDep){
+    return function(v, {req}) {
+        const loc = location + (location.slice(-1) == 'y' ? "" : "s")
+        if(!req[loc][fieldDep]){
+            return Promise.reject()
+        }else{
+            return Promise.resolve()
+        }
+    }
+}
+
+module.exports.verificaLista = function (location, field, func, regex){
+    const msg = `Um dos elementos do array não respeita '${regex}' ou não existe na BD`
+    return module.exports.existe(location, field)
+        .bail()
+        .isArray()
+        .withMessage("Não é um array")
+        .bail()
+        .custom(func)
+        .withMessage(msg)
 }
 
 //Valida o formato de saida de classes, entidades, tipologias e legislação

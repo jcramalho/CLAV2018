@@ -154,6 +154,11 @@ components:
         'examples/classes/ClasseExemploNotasAp.yaml',
         'examples/autosEliminacao/AutosEliminacao.yaml',
         'examples/autosEliminacao/autosEliminacao_get_all.yaml',
-        'examples/autosEliminacao/autosEliminacao_get_one.yaml'
+        'examples/autosEliminacao/autosEliminacao_get_one.yaml',
+        'examples/entidades/EntidadeDonos.yaml',
+        'examples/entidades/EntidadeTipologias.yaml',
+        'examples/entidades/EntidadeParticipantes.yaml',
+        'examples/indicePesquisa/IndicePesquisa_get.yaml',
+        'examples/exemplosNotasAp/ExemplosNotasAp_get_all.yaml'
       ]
   }]

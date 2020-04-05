@@ -4,7 +4,7 @@ items:
     tipo:
       $ref: '#/components/schemas/TipoLegislacao'
     numero:
-      $ref: '#/components/schemas/LegislacaoNumero'
+      $ref: '#/components/schemas/NumeroLeg'
     sumario:
       type: string
     idLeg:

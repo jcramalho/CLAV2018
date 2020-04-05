@@ -10,6 +10,11 @@ security:
 responses:
   200:
     description: Devolve a lista de todos os exemplos de notas de aplicação
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/ExemplosNotasAps'
+        example: !!inc/file '/examples/exemplosNotasAp/ExemplosNotasAp_get_all.yaml'
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:

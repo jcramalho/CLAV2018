@@ -7,10 +7,18 @@ var router = express.Router();
 
 var validKeys = ["sigla", "designacao", "internacional", "sioe", "estado"];
 const { query, body, validationResult } = require('express-validator');
-const { existe, estaEm, verificaEntId, eFS, verificaEnts, dataValida, existeEverificaTips } = require('../validation')
+const { existe, estaEm, verificaEntId, eFS, verificaEnts, dataValida, existeTip, verificaLista } = require('../validation')
 
 async function naoExisteSigla(valor) {
     if(await Entidades.existeSigla(valor))
+        return Promise.reject()
+    else
+        return Promise.resolve()
+}
+
+async function naoExisteSiglaSelf(valor, {req}) {
+    const id = await Entidades.existeSiglaId(valor)
+    if(id && id != req.params.id)
         return Promise.reject()
     else
         return Promise.resolve()
@@ -21,6 +29,36 @@ async function naoExisteDesignacao(valor) {
         return Promise.reject()
     else
         return Promise.resolve()
+}
+
+async function naoExisteDesignacaoSelf(valor, {req}) {
+    const id = await Entidades.existeDesignacaoId(valor)
+    if(id && id != req.params.id)
+        return Promise.reject()
+    else
+        return Promise.resolve()
+}
+
+async function existeEverificaTips(tips) {
+    var valid = true
+
+    for(var i = 0; i < tips.length && valid; i++){
+        if(tips[i].id.match(/^tip_.+$/)){
+            try{
+                await existeTip(tips[i].id)
+            }catch(e){
+                valid = false
+            }
+        }else{
+            valid = false
+        }
+    }
+
+    if(valid){
+        return Promise.resolve()
+    }else{
+        return Promise.reject()
+    }
 }
 
 // Lista todas as entidades: id, sigla, designacao, internacional
@@ -206,13 +244,7 @@ router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), [
     estaEm("body", "internacional", ["Sim", "Não"]).optional(),
     body("sioe", "Valor inválido, SIOE é um número").optional().matches(/^\d+$/),
     dataValida('body', 'dataCriacao').optional(),
-    existe("body", "tipologias")
-        .optional()
-        .custom(value => value instanceof Array)
-        .withMessage("Não é um array")
-        .bail()
-        .custom(existeEverificaTips)
-        .withMessage("Um dos elementos do array não respeita '^tip_.+$' ou não existe na BD")
+    verificaLista("body", "tipologiasSel", existeEverificaTips, '^tip_.+$').optional()
 ], (req, res) => {
   const errors = validationResult(req)
   if(!errors.isEmpty()){
@@ -222,6 +254,28 @@ router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), [
   Entidades.criar(req.body)
     .then(dados => res.jsonp(dados))
     .catch(err => res.status(500).send(`Erro na inserção de uma entidade: ${err}`));
+});
+
+// Atualiza uma entidade na BD
+router.put("/:id", Auth.isLoggedInUser, Auth.checkLevel(4), [
+    verificaEntId('param', 'id'),
+    existe('body', 'sigla').custom(naoExisteSiglaSelf).withMessage("Sigla já existe"),
+    estaEm('body', "estado", ["Ativa", "Harmonização", "Inativa"]),
+    existe('body', 'designacao').custom(naoExisteDesignacaoSelf).withMessage("Designação já existe"),
+    estaEm("body", "internacional", ["Sim", "Não"]).optional(),
+    body("sioe", "Valor inválido, SIOE é um número").optional().matches(/^\d+$/),
+    dataValida('body', 'dataCriacao').optional(),
+    dataValida('body', 'dataExtincao').optional(),
+    verificaLista("body", "tipologiasSel", existeEverificaTips, '^tip_.+$')
+], (req, res) => {
+  const errors = validationResult(req)
+  if(!errors.isEmpty()){
+      return res.status(422).jsonp(errors.array())
+  }
+
+  Entidades.atualizar(req.body)
+    .then(dados => res.jsonp(dados))
+    .catch(err => res.status(500).send(`Erro na atualização de uma entidade: ${err}`));
 });
 
 // Extinguir uma entidade na BD

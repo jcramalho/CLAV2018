@@ -1,0 +1,30 @@
+type: array
+items:
+  type: object
+  properties:
+    desc:
+      type: string
+    idRel:
+      $ref: '#/components/schemas/InvarianteRelId'
+    invs:
+      type: array
+      items:
+        type: object
+        properties:
+          checked:
+            type: boolean
+          desc:
+            type: string
+          idInv:
+            $ref: '#/components/schemas/InvarianteInvId'
+          query:
+            type: string
+        required:
+          - checked
+          - desc
+          - idInv
+          - query
+  required:
+    - desc
+    - idRel
+    - invs

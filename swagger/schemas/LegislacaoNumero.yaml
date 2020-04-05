@@ -1,3 +1,0 @@
-type: string
-pattern: '^\d{1,6}/\d{1,4}$'
-example: 98/97

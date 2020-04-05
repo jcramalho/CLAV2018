@@ -323,6 +323,24 @@ Leg.existe = numero => {
 };
 
 /**
+ * Verifica se um determinado numero de legislação existe no sistema.
+ *
+ * @param {Legislacao} legislacao
+ * @return {Promise<boolean | Error>}
+ */
+Leg.existeId = numero => {
+  const query = `select ?s where {
+            ?s clav:diplomaNumero '${numero}'
+        }`;
+
+  return execQuery("query", query).then(response => {
+      var res = normalize(response)[0]
+      if(res) res = res.s.split("#")[1]
+      return res
+  });
+};
+
+/**
  * Verifica se uma determinada legislação tem PNs associados.
  *
  * @param {Legislacao} legislacao
@@ -451,8 +469,11 @@ Leg.moreInfo = async leg => {
 
 //Criar legislação
 Leg.criar = async leg => {
+  const nanoid = require('nanoid')
+  var id = "leg_" + nanoid();
+
   let baseQuery = `{
-    clav:${leg.codigo} rdf:type owl:NamedIndividual, clav:Legislacao ;
+    clav:${id} rdf:type owl:NamedIndividual, clav:Legislacao ;
         clav:rdfs:label "Leg.: ${leg.tipo} ${leg.numero}" ;
         clav:diplomaData "${leg.data}" ;
         clav:diplomaNumero "${leg.numero}" ;
@@ -465,42 +486,29 @@ Leg.criar = async leg => {
 
   if (leg.link) baseQuery += ` ;\n\tclav:diplomaLink "${leg.link}"`;
 
-  if (
-    leg.entidadesSel &&
-    leg.entidadesSel instanceof Array &&
-    leg.entidadesSel.length > 0
-  ) {
-    baseQuery += ` ;\n\tclav:temEntidadeResponsavel ${leg.entidadesSel
-      .map(ent => `clav:ent_${ent.sigla}`)
-      .join(", ")}`;
+  if (leg.entidadesSel && leg.entidadesSel.length > 0) {
+    baseQuery += ` ;\n\tclav:temEntidadeResponsavel ${
+      leg.entidadesSel.map(ent => `clav:${ent.id}`).join(", ")
+    }`;
   }
 
-  if (
-    leg.processosSel &&
-    leg.processosSel instanceof Array &&
-    leg.processosSel.length > 0
-  ) {
-    baseQuery += ` ;\n\tclav:estaAssoc ${leg.processosSel
-      .map(proc => `clav:c${proc.codigo}`)
-      .join(", ")}`;
+  if (leg.processosSel && leg.processosSel.length > 0) {
+    baseQuery += ` ;\n\tclav:estaAssoc ${
+      leg.processosSel.map(proc => `clav:c${proc.codigo}`).join(", ")
+    }`;
   }
 
   baseQuery += " .\n}";
 
   const query = "INSERT DATA " + baseQuery;
-
   const ask = "ASK " + baseQuery;
 
-  if (await Leg.existe(leg.numero)) {
-    throw "Legislação já existe, número já em uso.";
-  } else {
-    return execQuery("update", query).then(res =>
-      execQuery("query", ask).then(result => {
-        if (result.boolean) return "Sucesso na inserção da legislação";
-        else throw "Insucesso na inserção da legislação";
-      })
-    );
-  }
+  return execQuery("update", query).then(res =>
+    execQuery("query", ask).then(result => {
+      if (result.boolean) return "Sucesso na inserção da legislação";
+      else throw "Insucesso na inserção da legislação";
+    })
+  );
 };
 
 /*

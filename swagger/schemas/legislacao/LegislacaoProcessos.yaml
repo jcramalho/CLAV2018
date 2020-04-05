@@ -1,0 +1,14 @@
+type: array
+items:
+  type: object
+  properties:
+    id:
+      $ref: '#/components/schemas/ClasseId'
+    codigo:
+      $ref: '#/components/schemas/Codigo'
+    titulo:
+      type: string
+  required:
+    - id
+    - codigo
+    - titulo

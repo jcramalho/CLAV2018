@@ -18,7 +18,8 @@ requestBody:
         estado: Ativa
         sioe: "770000329"
         internacional: "Não"
-        tipologias: ["tip_SPE"]
+        tipologiasSel:
+          - id: "tip_SPE"
         dataCriacao: "2020-02-02"
 responses:
   200:

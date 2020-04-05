@@ -100,6 +100,18 @@ exports.execQuery = async function(method, query){
 }
 
 /**
+ * Obtém todos os triplos não inferidos de um objeto (entidade, tipologia, legislação, classe, etc)
+ * @param objId id do objecto
+ */
+exports.allTriplesFrom = objId => {
+    const query = `construct FROM noInferences: where {
+        clav:${objId} ?p ?o .
+    }`
+
+    return exports.execQuery("query", query)
+}
+
+/**
  * Normaliza e simplifica os resultados de uma query SPARQL.
  * 
  * @example

@@ -10,6 +10,12 @@ description: Número total de diplomas legislativos
 responses:
   200:
     description: Número total de diplomas legislativos
+    content:
+      application/json:
+        schema:
+          type: string
+          pattern: '^\d+$'
+        example: "23"
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:
