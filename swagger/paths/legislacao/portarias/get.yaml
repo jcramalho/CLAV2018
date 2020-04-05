@@ -10,6 +10,11 @@ tags:
 responses:
   200:
     description: Lista todos os documentos legislativos
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/LegislacaoPortarias'
+        example: !!inc/file '/examples/legislacao/LegislacaoPortarias.yaml'
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:

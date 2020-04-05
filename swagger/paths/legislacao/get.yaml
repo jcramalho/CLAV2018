@@ -11,14 +11,12 @@ parameters:
   - in: query
     name: estado
     schema:
-      type: string
-      enum: [Ativo, Revogado]
+      $ref: '#/components/schemas/EstadoLeg'
     description: Os documentos legislativos tem dois estados possíveis, Ativo ou Revogado. Este parâmetro sobrepõe os seguintes, ou seja, caso este parâmetro seja definido os restantes são ignorados.
   - in: query
     name: fonte
     schema:
-      type: string
-      enum: [PGD, PGD/LC, RADA]
+      $ref: '#/components/schemas/Fonte'
     description: No caso de ser definido lista os documentos legislativos de acordo com a fonte especificada. Só funciona caso os parâmetros estado e processos não sejam definidos.
   - in: query
     name: processos
@@ -40,33 +38,59 @@ responses:
     content:
       application/json:
         schema:
-          $ref: '#/components/schemas/LegislacaoSimplesLista'
+          oneOf:
+            - $ref: '#/components/schemas/LegislacaoSimplesLista'
+            - $ref: '#/components/schemas/LegislacaoCompletaLista'
+        examples:
+          Exemplo de lista de legislação:
+            $ref: '#/components/examples/LegislacaoSimplesListaJSON'
+          Exemplo de lista de legislação completas:
+            $ref: '#/components/examples/LegislacaoCompletaListaJSON'
       json:
         schema:
-          $ref: '#/components/schemas/LegislacaoSimplesLista'
+          oneOf:
+            - $ref: '#/components/schemas/LegislacaoSimplesLista'
+            - $ref: '#/components/schemas/LegislacaoCompletaLista'
+        examples:
+          Exemplo de lista de legislação:
+            $ref: '#/components/examples/LegislacaoSimplesListaJSON'
+          Exemplo de lista de legislação completas:
+            $ref: '#/components/examples/LegislacaoCompletaListaJSON'
       application/xml:
         examples:
-          xml:
-            $ref: '#/components/examples/LegislacoesXML'
+          Exemplo de lista de legislação:
+            $ref: '#/components/examples/LegislacaoSimplesListaXML'
+          Exemplo de lista de legislação completas:
+            $ref: '#/components/examples/LegislacaoCompletaListaXML'
       xml:
         examples:
-          xml:
-            $ref: '#/components/examples/LegislacoesXML'
+          Exemplo de lista de legislação:
+            $ref: '#/components/examples/LegislacaoSimplesListaXML'
+          Exemplo de lista de legislação completas:
+            $ref: '#/components/examples/LegislacaoCompletaListaXML'
       text/csv:
         examples:
-          csv:
-            $ref: '#/components/examples/LegislacoesCSV'
+          Exemplo de lista de legislação:
+            $ref: '#/components/examples/LegislacaoSimplesListaCSV'
+          Exemplo de lista de legislação completas:
+            $ref: '#/components/examples/LegislacaoCompletaListaCSV'
       csv:
         examples:
-          csv:
-            $ref: '#/components/examples/LegislacoesCSV'
+          Exemplo de lista de legislação:
+            $ref: '#/components/examples/LegislacaoSimplesListaCSV'
+          Exemplo de lista de legislação completas:
+            $ref: '#/components/examples/LegislacaoCompletaListaCSV'
       excel/csv:
         examples:
-          csv:
-            $ref: '#/components/examples/LegislacoesExcelCSV'
+          Exemplo de lista de legislação:
+            $ref: '#/components/examples/LegislacaoSimplesListaExcelCSV'
+          Exemplo de lista de legislação completas:
+            $ref: '#/components/examples/LegislacaoCompletaListaExcelCSV'
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:
     $ref: '#/components/responses/PermissionsKey'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
   500:
     description: Erro

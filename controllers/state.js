@@ -216,7 +216,7 @@ exports.getIndicePesquisa = async () => { return indicePesquisa }
 exports.getLegislacao = (id) => {
     let res = legislacao.filter(l => l.id == id)
     if (res.length > 0) {
-        return res[0]
+        return JSON.parse(JSON.stringify(res[0]))
     }
     else
         return null

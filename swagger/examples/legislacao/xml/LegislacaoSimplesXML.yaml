@@ -1,0 +1,17 @@
+value: |
+  <?xml version="1.0" encoding="utf-8"?>
+  <root>
+      <id type="string">leg_xmK25CNT44tzLM0ADwulP</id>
+      <data type="string">1993-02-07</data>
+      <numero type="string">2454/93</numero>
+      <tipo type="string">Regulamento</tipo>
+      <sumario type="string">Fixa determinadas disposições de aplicação do Regulamento (CEE) n° 2913/92 do Conselho que estabelece o Código Aduaneiro Comunitário</sumario>
+      <estado type="string">Ativo</estado>
+      <link type="string">http://eur-lex.europa.eu/legal-content/PT/TXT/?uri=celex%3A31993R2454</link>
+      <entidades type="array">
+          <item index="0" type="object">
+              <id type="string">ent_CEE</id>
+              <sigla type="string">CEE</sigla>
+          </item>
+      </entidades>
+  </root>

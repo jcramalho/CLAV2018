@@ -10,6 +10,7 @@ properties:
     type: array
     items:
       type: object
+      description: Objeto sem estrutura pré-definida. Possui um conjunto variável de propriedades em que o conteúdo de cada propriedade é uma string.
 required:
   - descRel
   - descInv

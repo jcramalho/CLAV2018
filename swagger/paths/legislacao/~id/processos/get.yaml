@@ -10,16 +10,23 @@ tags:
 parameters:
   - name: id
     in: path
-    description: 'Identificador de um documento legislativo (exemplo: leg_6U8eokSH6rjR0mh34m6-y)'
+    description: Identificador de um documento legislativo
     schema:
-      type: string
+      $ref: '#/components/schemas/LegislacaoId'
     required: true
 responses:
   200:
     description: Devolve a lista de processos regulados pelo documento
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/LegislacaoProcessos'
+        example: !!inc/file '/examples/legislacao/LegislacaoProcessos.yaml'
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:
     $ref: '#/components/responses/PermissionsKey'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
   500:
     description: Erro

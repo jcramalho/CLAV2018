@@ -7,7 +7,7 @@ var router = express.Router();
 
 var validKeys = ["sigla", "designacao", "internacional", "sioe", "estado"];
 const { query, body, validationResult } = require('express-validator');
-const { existe, estaEm, verificaEntId, eFS, verificaEnts, dataValida, existeTip } = require('../validation')
+const { existe, estaEm, verificaEntId, eFS, verificaEnts, dataValida, existeTip, verificaLista } = require('../validation')
 
 async function naoExisteSigla(valor) {
     if(await Entidades.existeSigla(valor))
@@ -244,13 +244,7 @@ router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), [
     estaEm("body", "internacional", ["Sim", "Não"]).optional(),
     body("sioe", "Valor inválido, SIOE é um número").optional().matches(/^\d+$/),
     dataValida('body', 'dataCriacao').optional(),
-    existe("body", "tipologiasSel")
-        .optional()
-        .isArray()
-        .withMessage("Não é um array")
-        .bail()
-        .custom(existeEverificaTips)
-        .withMessage("Um dos elementos do array não respeita '^tip_.+$' ou não existe na BD")
+    verificaLista("body", "tipologiasSel", existeEverificaTips, '^tip_.+$').optional()
 ], (req, res) => {
   const errors = validationResult(req)
   if(!errors.isEmpty()){
@@ -272,13 +266,7 @@ router.put("/:id", Auth.isLoggedInUser, Auth.checkLevel(4), [
     body("sioe", "Valor inválido, SIOE é um número").optional().matches(/^\d+$/),
     dataValida('body', 'dataCriacao').optional(),
     dataValida('body', 'dataExtincao').optional(),
-    existe("body", "tipologiasSel")
-        .bail()
-        .isArray()
-        .withMessage("Não é um array")
-        .bail()
-        .custom(existeEverificaTips)
-        .withMessage("Um dos elementos do array não respeita '^tip_.+$' ou não existe na BD")
+    verificaLista("body", "tipologiasSel", existeEverificaTips, '^tip_.+$')
 ], (req, res) => {
   const errors = validationResult(req)
   if(!errors.isEmpty()){

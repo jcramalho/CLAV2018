@@ -77,7 +77,7 @@ const convert_to = {
         "sumario": ["Sumário", v => v],
         "fonte": ["Fonte", v => v],
         "link": ["Link", v => v],
-        "entidades": ["Entidades", entidades],
+        "entidades": ["Entidades", map_value("sigla")],
         "regula": ["Regula processo", map_value("codigo")]
     },
     "pca": {
@@ -98,10 +98,10 @@ const convert_to = {
 
 //convert internacional field
 function internacional(value){
-    if(value == "")
-        return "Não"
-    else
+    if(value == "Sim")
         return "Sim"
+    else
+        return "Não"
 }
 
 //join elements that should be in the same csv "square"
@@ -119,16 +119,6 @@ function map_value(key){
 //obtain legislacao title
 function leg_titulos(value){
     return join(value.map(l => l.tipo + ' ' + l.numero))
-}
-
-//parse entidades of legislacao, if is an array of objects we should obtain only the siglas
-function entidades(value){
-    var v = value
-
-    if(value.length && "sigla" in value[0])
-        v = value.map(t => t.sigla)
-
-    return join(v)
 }
 
 //if DF is equal to "NE" should be empty
@@ -197,9 +187,7 @@ function protect(string){
 
 //build a final string
 function joinLines(csvLines){
-    var len = csvLines.length
-
-    for(var i=0; i<len; i++)
+    for(var i = 0; i < csvLines.length; i++)
         csvLines[i] = csvLines[i].join(separator)
 
     return csvLines.join('\n')
