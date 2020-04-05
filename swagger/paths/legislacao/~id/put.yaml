@@ -1,0 +1,44 @@
+summary: Atualiza um diploma legislativo
+description: Atualiza um diploma legislativo a partir da informação enviada no pedido
+tags:
+  - Legislação
+security:
+  - userQuery: []
+  - userAuth: []
+parameters:
+  - name: id
+    in: path
+    description: 'Identificador de um documento legislativo'
+    schema:
+      $ref: '#/components/schemas/LegislacaoId'
+    required: true
+requestBody:
+  description: 'Diploma legislativo a atualizar'
+  required: true
+  content:
+    application/json:
+      schema:
+        $ref: '#/components/schemas/LegislacaoPUT'
+      example:
+        sumario: Exemplo Sumario
+        link: dglab.gov.pt
+        diplomaFonte: PGD/LC
+        estado: Ativo
+        entidadesSel:
+          - id: "ent_DGLAB"
+        processosSel:
+          - codigo: "100.10.001"
+        data: "2020-02-20"
+        numero: 1014/2015
+        tipo: DL
+responses:
+  200:
+    description: Diploma legislativo atualizado
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
+  500:
+    description: Erro

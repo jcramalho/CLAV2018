@@ -273,7 +273,7 @@ router.put("/:id", Auth.isLoggedInUser, Auth.checkLevel(4), [
       return res.status(422).jsonp(errors.array())
   }
 
-  Entidades.atualizar(req.body)
+  Entidades.atualizar(req.params.id, req.body)
     .then(dados => res.jsonp(dados))
     .catch(err => res.status(500).send(`Erro na atualização de uma entidade: ${err}`));
 });

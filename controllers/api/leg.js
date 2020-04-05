@@ -1,5 +1,7 @@
 const execQuery = require("../../controllers/api/utils").execQuery;
 const normalize = require("../../controllers/api/utils").normalize;
+const allTriplesFrom = require("../../controllers/api/utils").allTriplesFrom;
+const allTriplesFromInverse = require("../../controllers/api/utils").allTriplesFromInverse;
 const projection = require("../../controllers/api/utils").projection;
 const request = require("../../controllers/api/utils").request;
 const Leg = module.exports;
@@ -467,19 +469,20 @@ Leg.moreInfo = async leg => {
   leg.regula = await Leg.regula(leg.id);
 };
 
-//Criar legislação
-Leg.criar = async leg => {
-  const nanoid = require('nanoid')
-  var id = "leg_" + nanoid();
+//Cria legislação em triplos dado um objeto legislação
+function queryLeg(id, leg){
+  if(!id){
+    const nanoid = require('nanoid')
+    id = "leg_" + nanoid();
+  }
 
-  let baseQuery = `{
-    clav:${id} rdf:type owl:NamedIndividual, clav:Legislacao ;
-        clav:rdfs:label "Leg.: ${leg.tipo} ${leg.numero}" ;
-        clav:diplomaData "${leg.data}" ;
-        clav:diplomaNumero "${leg.numero}" ;
-        clav:diplomaTipo "${leg.tipo}" ;
-        clav:diplomaSumario "${leg.sumario}" ;
-        clav:diplomaEstado "${leg.estado}"`;
+  let baseQuery = `clav:${id} rdf:type owl:NamedIndividual, clav:Legislacao ;
+    clav:rdfs:label "Leg.: ${leg.tipo} ${leg.numero}" ;
+    clav:diplomaData "${leg.data}" ;
+    clav:diplomaNumero "${leg.numero}" ;
+    clav:diplomaTipo "${leg.tipo}" ;
+    clav:diplomaSumario "${leg.sumario}" ;
+    clav:diplomaEstado "${leg.estado}"`;
 
   if (leg.diplomaFonte)
     baseQuery += ` ;\n\tclav:diplomaFonte "${leg.diplomaFonte}"`;
@@ -498,10 +501,15 @@ Leg.criar = async leg => {
     }`;
   }
 
-  baseQuery += " .\n}";
+  baseQuery += " .";
+  return baseQuery;
+}
 
-  const query = "INSERT DATA " + baseQuery;
-  const ask = "ASK " + baseQuery;
+//Criar legislação
+Leg.criar = async leg => {
+  const baseQuery = queryLeg(undefined, leg)
+  const query = `INSERT DATA {${baseQuery}}`;
+  const ask = `ASK {${baseQuery}}`;
 
   return execQuery("update", query).then(res =>
     execQuery("query", ask).then(result => {
@@ -511,56 +519,18 @@ Leg.criar = async leg => {
   );
 };
 
-/*
-Leg.updateDoc = function (dataObj) {
-
-    var del = "";
-    var ins = "";
-    var wer = "";
-
-    if (dataObj.year) {
-        del += `clav:${dataObj.id} clav:diplomaAno ?y .\n`;
-        ins += `clav:${dataObj.id} clav:diplomaAno "${dataObj.year}" .\n`;
-    }
-    if (dataObj.date) {
-        del += `clav:${dataObj.id} clav:diplomaData ?d .\n`;
-        ins += `clav:${dataObj.id} clav:diplomaData "${dataObj.date}" .\n`;
-    }
-    if (dataObj.number) {
-        del += `clav:${dataObj.id} clav:diplomaNumero ?n .\n`;
-        ins += `clav:${dataObj.id} clav:diplomaNumero "${dataObj.number}" .\n`;
-    }
-    if (dataObj.type) {
-        del += `clav:${dataObj.id} clav:diplomaTipo ?t .\n`;
-        ins += `clav:${dataObj.id} clav:diplomaTipo "${dataObj.type}" .\n`;
-    }
-    if (dataObj.title) {
-        del += `clav:${dataObj.id} clav:diplomaTitulo ?tit .\n`;
-        ins += `clav:${dataObj.id} clav:diplomaTitulo "${dataObj.title}" .\n`;
-    }
-    if (dataObj.link) {
-        del += `clav:${dataObj.id} clav:diplomaLink ?l .\n`;
-        ins += `clav:${dataObj.id} clav:diplomaLink "${dataObj.link}" .\n`;
-    }
-
-    if (dataObj.org && dataObj.org.length) {
-        del += `clav:${dataObj.id} clav:temEntidadeResponsavel ?org .\n`;
-
-        for(let ent of dataObj.org){
-            ins += `clav:${dataObj.id} clav:temEntidadeResponsavel clav:${ent}.\n`;
-        }
-    }
-
-    wer = "WHERE {\n" + del + "}\n";
-    del = "DELETE {\n" + del + "}\n";
-    ins = "INSERT {\n" + ins + "}\n";
-
-    var updateQuery = del + ins + wer;
-
-    console.log(updateQuery);
-
-    return execQuery("update", updateQuery)
-        .then(response => Promise.resolve(response))
-        .catch(error => console.error("Error in update:\n" + error));
-};
-*/
+//Atualizar legislação
+Leg.atualizar = async (id, leg) => {
+  const baseQuery = queryLeg(id, leg)
+  try{
+    var triplesLeg = await allTriplesFrom(id);
+    triplesLeg += await allTriplesFromInverse(id);
+    var query = `DELETE {${triplesLeg}}`;
+    query += `INSERT {${baseQuery}}`
+    query += `WHERE {${triplesLeg}}`
+    await execQuery("update", query);
+    return "Sucesso na atualização do diploma legislativo";
+  }catch(e){
+    throw "Insucesso na atualização do diploma legislativo";
+  }
+}

@@ -233,4 +233,29 @@ router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), [
     .catch(err => res.status(500).send(`Erro na inserção de uma legislação: ${err}`));
 });
 
+// Atualiza uma legislação na BD
+router.put("/:id", Auth.isLoggedInUser, Auth.checkLevel(4), [
+    verificaLegId("param", "id"),
+    verificaNumeroLeg("body", "numero")
+        .custom(naoExisteNumeroSelf)
+        .withMessage("Número já em uso"),
+    estaEm("body", "tipo", tipoLegislacao),
+    dataValida("body", "data"),
+    existe("body", "sumario"),
+    estaEm("body", "estado", ["Ativo", "Revogado"]),
+    estaEm("body", "diplomaFonte", ["PGD", "PGD/LC", "RADA"]).optional(),
+    existe("body", "link").optional().isURL().withMessage("URL inválido"),
+    verificaLista("body", "entidadesSel", existeEverificaEnts, '^ent_.+$'),
+    verificaLista("body", "processosSel", existeEverificaClasses, "^\\d{3}(\\.\\d{2}(\\.\\d{3}(\\.\\d{2})?)?)?$")
+], (req, res) => {
+  const errors = validationResult(req)
+  if(!errors.isEmpty()){
+      return res.status(422).jsonp(errors.array())
+  }
+
+  Leg.atualizar(req.params.id, req.body)
+    .then(dados => res.jsonp(dados))
+    .catch(err => res.status(500).send(`Erro na atualização de uma legislação: ${err}`));
+});
+
 module.exports = router;
