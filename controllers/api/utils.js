@@ -112,6 +112,18 @@ exports.allTriplesFrom = objId => {
 }
 
 /**
+ * Obtém todos os triplos não inferidos de um objeto (entidade, tipologia, legislação, classe, etc)
+ * @param objId id do objecto
+ */
+exports.allTriplesFromInverse = objId => {
+    const query = `construct FROM noInferences: where {
+        ?s ?p clav:${objId} .
+    }`
+
+    return exports.execQuery("query", query)
+}
+
+/**
  * Normaliza e simplifica os resultados de uma query SPARQL.
  * 
  * @example

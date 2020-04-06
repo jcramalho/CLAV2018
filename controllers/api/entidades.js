@@ -491,8 +491,7 @@ Entidades.criar = async ent => {
 };
 
 //Atualizar entidade
-Entidades.atualizar = async ent => {
-  const id = "ent_" + ent.sigla
+Entidades.atualizar = async (id, ent) => {
   var queryEnt = `clav:${id} rdf:type owl:NamedIndividual, clav:Entidade ;
     clav:entEstado "${ent.estado}" ;
     clav:entSigla "${ent.sigla}" ;
