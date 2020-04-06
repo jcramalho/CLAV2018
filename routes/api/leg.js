@@ -98,6 +98,13 @@ router.get("/", Auth.isLoggedInKey, async (req, res, next) => {
   }
 });
 
+// Devolve o numero de entidades ativas no sistema
+router.get('/ativas', Auth.isLoggedInKey, (req, res) => {
+  Leg.getAtivas()
+      .then(dados => res.jsonp(dados))
+      .catch(erro => res.status(500).send(`Erro na consulta do numero de Documentos Legislativos ativos : ${erro}`))
+})
+
 // Verifica a existência do número de um diploma/legislacao
 router.get("/numero", Auth.isLoggedInKey, (req, res, next) => {
   Leg.existe(req.query.valor)
