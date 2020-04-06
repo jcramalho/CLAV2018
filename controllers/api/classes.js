@@ -540,3 +540,32 @@ Classes.relStats = async () => {
     let resultado = await execQuery("query", query)
     return normalize(resultado)
 }
+
+// Devolve as estatísticas relativas dos Critérios de Justificações
+Classes.critStats = async () => {
+    var query = `
+    SELECT 
+        ?cj (COUNT(?cj) as ?cjCount)
+    WHERE{
+        ?c a clav:CriterioJustificacao .
+        ?c a ?cj .
+    }
+    GROUP BY ?cj`
+
+    let resultado = await execQuery("query", query)
+    return normalize(resultado)
+}
+
+// Devolve as estatísticas relacionais aos aos Destinos finais
+Classes.dfStats = async () => {
+    var query = `
+    SELECT 
+        ?df (COUNT(?df) as ?dfCount)
+    WHERE{
+        ?s clav:temDF ?d .
+        ?d clav:dfValor ?df .
+    } Group by ?df`
+
+    let resultado = await execQuery("query", query)
+    return normalize(resultado)
+}
