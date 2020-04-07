@@ -55,7 +55,7 @@ const PedidoSchema = new mongoose.Schema({
     },
     acao: {
       type: String,
-      enum: ["Criação", "Alteração", "Remoção", "Importação"],
+      enum: ["Criação", "Alteração", "Remoção", "Importação", "Extinção"],
       required: true,
     },
   },
