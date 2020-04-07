@@ -6,12 +6,16 @@ services:
     restart: always
     volumes:
       - mongodb-data:/data/db
+    ports:
+      - "${MONGODB_PORT}:27017"
   graphdb:
     image: ${GRAPHDB_IMG}
     container_name: clav_graphdb
     restart: always
     volumes:
       - graphdb-data:/opt/graphdb/home/data/repositories
+    ports:
+      - "${GRAPHDB_PORT}:7200"
   server:
     image: ${SERVER_IMG}
     container_name: clav_server
@@ -19,8 +23,8 @@ services:
     environment:
       - NODE_ENV=production
       - SWAGGER_URL=${SWAGGER_URL}
-      - GRAPHDB=graphdb:7200
-      - MONGODB=mongo
+      - GRAPHDB=graphdb:${GRAPHDB_PORT}
+      - MONGODB=mongo:${MONGODB_PORT}
       - API_VERSION=${API_VERSION}
       - INTERFACE_HOSTS=${INTERFACE_HOSTS}
   nginx:
