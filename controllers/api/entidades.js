@@ -1,6 +1,7 @@
 const execQuery = require("../../controllers/api/utils").execQuery;
 const normalize = require("../../controllers/api/utils").normalize;
 const allTriplesFrom = require("../../controllers/api/utils").allTriplesFrom;
+const allTriplesRel = require("../../controllers/api/utils").allTriplesRel;
 const request = require("../../controllers/api/utils").request;
 const Entidades = module.exports;
 
@@ -519,7 +520,8 @@ Entidades.atualizar = async (id, ent) => {
   queryEnt += " .";
 
   try{
-    const triplesEnt = await allTriplesFrom(id);
+    var triplesEnt = await allTriplesFrom(id);
+    triplesEnt += await allTriplesRel("contemEntidade", id);
     var query = `DELETE {${triplesEnt}}`;
     query += `INSERT {${queryEnt}}`
     query += `WHERE {${triplesEnt}}`

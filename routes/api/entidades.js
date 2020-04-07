@@ -80,13 +80,11 @@ router.get("/", Auth.isLoggedInKey, [
 
   var queryData = url.parse(req.url, true).query;
   var ents = queryData.ents
-    ? `?uri IN (${queryData.ents
-        .split(",")
-        .map(t => `clav:${t}`)
-        .join(",")})`
+    ? `?uri IN (${queryData.ents.split(",").map(t => `clav:${t}`).join(",")})`
     : "True";
+
   var filtro = Object.entries(queryData)
-    .filter(([k, v]) => v !== undefined && validKeys.includes(k))
+    .filter(([k, v]) => validKeys.includes(k))
     .map(([k, v]) => k == "internacional" && v == "Não"
                         ? `?${k} != "Sim"`
                         : `?${k} = "${v}"`)
@@ -171,7 +169,8 @@ router.get("/designacao", Auth.isLoggedInKey, [
 // Consulta de uma entidade: sigla, designacao, estado, internacional
 router.get("/:id", Auth.isLoggedInKey, [
     eFS(),
-    verificaEntId('param', 'id')
+    verificaEntId('param', 'id'),
+    estaEm("query", "info", ["completa"]).optional()
 ], async (req, res, next) => {
   const errors = validationResult(req)
   if(!errors.isEmpty()){
@@ -186,9 +185,7 @@ router.get("/:id", Auth.isLoggedInKey, [
     }
 
     res.locals.tipo = "entidade";
-    res.locals.dados
-      ? next()
-      : res.status(404).send(`Erro. A entidade '${req.params.id}' não existe`);
+    res.locals.dados ? next() : res.status(404).send(`Erro. A entidade '${req.params.id}' não existe`);
   } catch (erro) {
     res.status(500).send(`Erro na consulta da entidade '${req.params.id}': ${erro}`);
   }

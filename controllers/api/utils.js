@@ -112,12 +112,13 @@ exports.allTriplesFrom = objId => {
 }
 
 /**
- * Obtém todos os triplos não inferidos de um objeto (entidade, tipologia, legislação, classe, etc)
+ * Obtém todos os triplos de uma relação em que o objeto (entidade, tipologia, legislação, classe, etc) é sujeito
  * @param objId id do objecto
+ * @param rel relação
  */
-exports.allTriplesFromInverse = objId => {
+exports.allTriplesRel = (rel, objId) => {
     const query = `construct FROM noInferences: where {
-        ?s ?p clav:${objId} .
+        ?s clav:${rel} clav:${objId} .
     }`
 
     return exports.execQuery("query", query)

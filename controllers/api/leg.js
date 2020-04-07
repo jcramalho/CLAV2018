@@ -1,7 +1,7 @@
 const execQuery = require("../../controllers/api/utils").execQuery;
 const normalize = require("../../controllers/api/utils").normalize;
 const allTriplesFrom = require("../../controllers/api/utils").allTriplesFrom;
-const allTriplesFromInverse = require("../../controllers/api/utils").allTriplesFromInverse;
+const allTriplesRel = require("../../controllers/api/utils").allTriplesRel;
 const projection = require("../../controllers/api/utils").projection;
 const request = require("../../controllers/api/utils").request;
 const Leg = module.exports;
@@ -495,10 +495,11 @@ function queryLeg(id, leg){
     }`;
   }
 
-  if (leg.processosSel && leg.processosSel.length > 0) {
-    baseQuery += ` ;\n\tclav:estaAssoc ${
-      leg.processosSel.map(proc => `clav:c${proc.codigo}`).join(", ")
-    }`;
+  baseQuery += ".\n"
+  if (leg.processosSel) {
+    baseQuery += leg.processosSel
+      .map(proc => `clav:c${proc.codigo} clav:temLegislacao clav:${id}`)
+      .join(".\n")
   }
 
   baseQuery += " .";
@@ -524,7 +525,7 @@ Leg.atualizar = async (id, leg) => {
   const baseQuery = queryLeg(id, leg)
   try{
     var triplesLeg = await allTriplesFrom(id);
-    triplesLeg += await allTriplesFromInverse(id);
+    triplesLeg += await allTriplesRel("temLegislacao", id);
     var query = `DELETE {${triplesLeg}}`;
     query += `INSERT {${baseQuery}}`
     query += `WHERE {${triplesLeg}}`
