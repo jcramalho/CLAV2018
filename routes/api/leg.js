@@ -219,7 +219,7 @@ router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), [
     existe("body", "sumario"),
     estaEm("body", "estado", ["Ativo", "Revogado"]),
     estaEm("body", "diplomaFonte", ["PGD", "PGD/LC", "RADA"]).optional(),
-    existe("body", "link").optional().isURL().withMessage("URL inválido"),
+    existe("body", "link").optional().isURL({require_tld: false}).withMessage("URL inválido"),
     verificaLista("body", "entidadesSel", existeEverificaEnts, '^ent_.+$').optional(),
     verificaLista("body", "processosSel", existeEverificaClasses, "^\\d{3}(\\.\\d{2}(\\.\\d{3}(\\.\\d{2})?)?)?$").optional()
 ], (req, res) => {
