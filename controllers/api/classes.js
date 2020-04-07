@@ -549,6 +549,7 @@ Classes.critStats = async () => {
     WHERE{
         ?c a clav:CriterioJustificacao .
         ?c a ?cj .
+    FILTER(?cj != owl:NamedIndividual && ?cj != clav:AtributoComposto) .
     }
     GROUP BY ?cj`
 
