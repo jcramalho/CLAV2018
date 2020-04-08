@@ -5,16 +5,12 @@ var express = require('express');
 var router = express.Router();
 
 const { query, oneOf, validationResult } = require('express-validator');
-const { existe, estaEm, existeDep } = require('../validation')
+const { existe, estaEm } = require('../validation')
 
 router.get('/', Auth.isLoggedInUser, Auth.checkLevel(6), oneOf([
     [
-        estaEm('query', 'tipo', ['User', 'Chave'])
-            .custom(existeDep("query", "id"))
-            .withMessage("'id' é undefined, null ou vazio"),
+        estaEm('query', 'tipo', ['User', 'Chave']),
         existe('query', 'id')
-            .custom(existeDep("query", "tipo"))
-            .withMessage("'tipo' é undefined, null ou vazio")
     ],
     query("pagina")
         .customSanitizer(v => {

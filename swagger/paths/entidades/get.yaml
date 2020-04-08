@@ -44,7 +44,7 @@ parameters:
     name: sioe
     schema:
       $ref: '#/components/schemas/SIOE'
-    description: Permite filtrar as entidades que contém sioe igual a este valor
+    description: 'Permite filtrar as entidades que contém sioe igual a este valor (ex: 875780390)'
     required: false
   - in: query
     name: estado
