@@ -7,7 +7,7 @@ var router = express.Router();
 
 var validKeys = ["sigla", "designacao", "internacional", "sioe", "estado"];
 const { query, body, validationResult } = require('express-validator');
-const { existe, estaEm, verificaEntId, eFS, verificaEnts, dataValida, existeTip, verificaLista } = require('../validation')
+const { existe, estaEm, verificaEntId, eFS, verificaEnts, dataValida, existeTip, verificaLista, estaAtiva } = require('../validation')
 
 async function naoExisteSigla(valor) {
     if(await Entidades.existeSigla(valor))
@@ -235,11 +235,17 @@ router.get("/:id/intervencao/participante", Auth.isLoggedInKey, [
 
 // Insere uma entidade na BD
 router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), [
-    existe('body', 'sigla').custom(naoExisteSigla).withMessage("Sigla já existe"),
+    existe('body', 'sigla')
+        .custom(naoExisteSigla)
+        .withMessage("Sigla já existe"),
     estaEm('body', "estado", ["Ativa", "Harmonização", "Inativa"]),
-    existe('body', 'designacao').custom(naoExisteDesignacao).withMessage("Designação já existe"),
+    existe('body', 'designacao')
+        .custom(naoExisteDesignacao)
+        .withMessage("Designação já existe"),
     estaEm("body", "internacional", ["Sim", "Não"]).optional(),
-    body("sioe", "Valor inválido, SIOE é um número").optional().matches(/^\d+$/),
+    body("sioe", "Valor inválido, SIOE é um número")
+        .optional()
+        .matches(/^\d+$/),
     dataValida('body', 'dataCriacao').optional(),
     verificaLista("body", "tipologiasSel", existeEverificaTips, '^tip_.+$').optional()
 ], (req, res) => {
@@ -255,12 +261,20 @@ router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), [
 
 // Atualiza uma entidade na BD
 router.put("/:id", Auth.isLoggedInUser, Auth.checkLevel(4), [
-    verificaEntId('param', 'id'),
-    existe('body', 'sigla').custom(naoExisteSiglaSelf).withMessage("Sigla já existe"),
+    verificaEntId('param', 'id')
+        .custom(estaAtiva)
+        .withMessage("Só é possível editar entidades ativas"),
+    existe('body', 'sigla')
+        .custom(naoExisteSiglaSelf)
+        .withMessage("Sigla já existe"),
     estaEm('body', "estado", ["Ativa", "Harmonização", "Inativa"]),
-    existe('body', 'designacao').custom(naoExisteDesignacaoSelf).withMessage("Designação já existe"),
+    existe('body', 'designacao')
+        .custom(naoExisteDesignacaoSelf)
+        .withMessage("Designação já existe"),
     estaEm("body", "internacional", ["Sim", "Não"]).optional(),
-    body("sioe", "Valor inválido, SIOE é um número").optional().matches(/^\d+$/),
+    body("sioe", "Valor inválido, SIOE é um número")
+        .optional()
+        .matches(/^\d+$/),
     dataValida('body', 'dataCriacao').optional(),
     dataValida('body', 'dataExtincao').optional(),
     verificaLista("body", "tipologiasSel", existeEverificaTips, '^tip_.+$')

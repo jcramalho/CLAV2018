@@ -531,8 +531,8 @@ Tipologias.criar = async tip => {
 
   return execQuery("update", query).then(res =>
     execQuery("query", ask).then(result => {
-      if (result.boolean) return "Sucesso na inserção da entidade";
-      else throw "Insucesso na inserção da entidade";
+      if (result.boolean) return "Sucesso na inserção da tipologia";
+      else throw "Insucesso na inserção da tipologia";
     })
   );
 };

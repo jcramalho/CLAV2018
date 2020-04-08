@@ -7,7 +7,7 @@ var express = require("express");
 var router = express.Router();
 
 const { validationResult } = require('express-validator');
-const { existe, estaEm, eFS, dataValida, verificaNumeroLeg, verificaLegId, existeEnt, verificaLista, existeClasse } = require('../validation')
+const { existe, estaEm, eFS, dataValida, verificaNumeroLeg, verificaLegId, existeEnt, verificaLista, existeClasse, estaAtiva } = require('../validation')
 var tipoLegislacao = ["Decreto", "DL", "Lei", "Diretiva", "Circular", "Despacho", "Decreto Regulamentar", "Portaria", "Decreto do Governo", "Decreto Legislativo Regional", "Resolução do Conselho de Ministros", "Despacho Normativo", "Resolução da Assembleia da República", "Decisão", "Regulamento", "Decreto do Presidente da República", "Aviso", "Despacho Conjunto", "Lei Orgânica", "Decisão-Quadro", "Circular Normativa", "Recomendação", "Deliberação", "Circular Informativa", "Lei Constitucional", "CSN EN", "Declaração de Retificação", "ISO", "NP", "Diretiva Técnica", "Comunicação", "Resolução", "Tratado", "Regulamento de Execução", "NP EN ISO/IEC", "NOP", "ILAC", "Regulamento Delegado", "NP EN ISO", "Ordem de Serviço", "Estatuto", "Instrução", "ISO/IEC"]
 
 async function naoExisteNumero(valor) {
@@ -219,7 +219,10 @@ router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), [
     existe("body", "sumario"),
     estaEm("body", "estado", ["Ativo", "Revogado"]),
     estaEm("body", "diplomaFonte", ["PGD", "PGD/LC", "RADA"]).optional(),
-    existe("body", "link").optional().isURL({require_tld: false}).withMessage("URL inválido"),
+    existe("body", "link")
+        .optional()
+        .isURL({require_tld: false})
+        .withMessage("URL inválido"),
     verificaLista("body", "entidadesSel", existeEverificaEnts, '^ent_.+$').optional(),
     verificaLista("body", "processosSel", existeEverificaClasses, "^\\d{3}(\\.\\d{2}(\\.\\d{3}(\\.\\d{2})?)?)?$").optional()
 ], (req, res) => {
@@ -235,7 +238,9 @@ router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), [
 
 // Atualiza uma legislação na BD
 router.put("/:id", Auth.isLoggedInUser, Auth.checkLevel(4), [
-    verificaLegId("param", "id"),
+    verificaLegId("param", "id")
+        .custom(estaAtiva)
+        .withMessage("Só é possível editar diplomas legislativos ativos"),
     verificaNumeroLeg("body", "numero")
         .custom(naoExisteNumeroSelf)
         .withMessage("Número já em uso"),
@@ -244,7 +249,10 @@ router.put("/:id", Auth.isLoggedInUser, Auth.checkLevel(4), [
     existe("body", "sumario"),
     estaEm("body", "estado", ["Ativo", "Revogado"]),
     estaEm("body", "diplomaFonte", ["PGD", "PGD/LC", "RADA"]).optional(),
-    existe("body", "link").optional().isURL().withMessage("URL inválido"),
+    existe("body", "link")
+        .optional()
+        .isURL({require_tld: false})
+        .withMessage("URL inválido"),
     verificaLista("body", "entidadesSel", existeEverificaEnts, '^ent_.+$'),
     verificaLista("body", "processosSel", existeEverificaClasses, "^\\d{3}(\\.\\d{2}(\\.\\d{3}(\\.\\d{2})?)?)?$")
 ], (req, res) => {

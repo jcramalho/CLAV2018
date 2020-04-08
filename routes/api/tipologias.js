@@ -6,7 +6,7 @@ var router = express.Router();
 
 var validKeys = ["designacao", "estado"];
 const { query, validationResult } = require('express-validator');
-const { existe, estaEm, verificaTipId, eFS, dataValida, existeEnt, verificaTips, verificaLista } = require('../validation')
+const { existe, estaEm, verificaTipId, eFS, dataValida, existeEnt, verificaTips, verificaLista, estaAtiva } = require('../validation')
 
 async function naoExisteSigla(valor) {
     if(await Tipologias.existeSigla(valor))
@@ -202,9 +202,13 @@ router.get("/:id/intervencao/participante", Auth.isLoggedInKey, [
 
 // Insere uma tipologia na BD
 router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), [
-    existe("body", "sigla").custom(naoExisteSigla).withMessage("Sigla já existe"),
+    existe("body", "sigla")
+        .custom(naoExisteSigla)
+        .withMessage("Sigla já existe"),
     estaEm("body", "estado", ["Ativa", "Harmonização", "Inativa"]),
-    existe("body", "designacao").custom(naoExisteDesignacao).withMessage("Designação já existe"),
+    existe("body", "designacao")
+        .custom(naoExisteDesignacao)
+        .withMessage("Designação já existe"),
     verificaLista("body", "entidadesSel", existeEverificaEnts, '^ent_.+$').optional()
 ], (req, res) => {
   const errors = validationResult(req)
@@ -219,10 +223,16 @@ router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), [
 
 // Atualiza uma tipologia na BD
 router.put("/:id", Auth.isLoggedInUser, Auth.checkLevel(4), [
-    verificaTipId('param', 'id'),
-    existe("body", "sigla").custom(naoExisteSiglaSelf).withMessage("Sigla já existe"),
+    verificaTipId('param', 'id')
+        .custom(estaAtiva)
+        .withMessage("Só é possível editar tipologias ativas"),
+    existe("body", "sigla")
+        .custom(naoExisteSiglaSelf)
+        .withMessage("Sigla já existe"),
     estaEm("body", "estado", ["Ativa", "Harmonização", "Inativa"]),
-    existe("body", "designacao").custom(naoExisteDesignacaoSelf).withMessage("Designação já existe"),
+    existe("body", "designacao")
+        .custom(naoExisteDesignacaoSelf)
+        .withMessage("Designação já existe"),
     verificaLista("body", "entidadesSel", existeEverificaEnts, '^ent_.+$')
 ], (req, res) => {
   const errors = validationResult(req)

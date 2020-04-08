@@ -3,6 +3,7 @@ const { formats } = require("./outputFormat.js")
 var Entidades = require("../controllers/api/entidades.js");
 var Tipologias = require("../controllers/api/tipologias.js");
 var State = require("../controllers/state.js");
+const execQuery = require("../controllers/api/utils").execQuery;
 
 const getLocation = {
     'param': param,
@@ -210,4 +211,37 @@ module.exports.eFS = function(){
         module.exports.estaEm('query', 'fs', formats).optional(),
         module.exports.estaEm('header', 'accept', formats).optional()
     ])
+}
+
+module.exports.estaAtiva = async function(id){
+    const tipo = id.split("_")[0]
+    var rel = null
+    switch(tipo){
+        case "leg":
+            rel = 'clav:diplomaEstado "Ativo"'
+            break
+        case "tip":
+            rel = 'clav:tipEstado "Ativa"'
+            break
+        case "ent":
+            rel = 'clav:entEstado "Ativa"'
+            break
+        default:
+            break
+    }
+
+    if(rel){
+        const query = `ASK {
+            clav:${id} ${rel}
+        }`
+
+        res = await execQuery("query", query)
+        if(res.boolean){
+            return Promise.resolve()
+        }else{
+            return Promise.reject()
+        }
+    }else{
+        return Promise.reject()
+    }
 }
