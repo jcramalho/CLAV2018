@@ -10,16 +10,23 @@ tags:
 parameters:
   - name: id
     in: path
-    description: 'Identificador de uma tipologia (exemplo: tip_FA)'
+    description: Identificador de uma tipologia
     schema:
-      type: string
+      $ref: '#/components/schemas/TipologiaId'
     required: true
 responses:
   200:
     description: Lista os processos em que uma tipologia intervem como dono
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/TipologiaEntidadeDonos'
+        example: !!inc/file '/examples/tipologias/TipologiaDonos.yaml'
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:
     $ref: '#/components/responses/PermissionsKey'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
   500:
     description: Erro

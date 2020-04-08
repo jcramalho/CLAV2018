@@ -1,0 +1,21 @@
+type: object
+properties:
+  sigla:
+    type: string
+  designacao:
+    type: string
+  estado:
+    $ref: '#/components/schemas/Estado'
+  id:
+    $ref: '#/components/schemas/TipologiaId'
+  participante:
+    $ref: '#/components/schemas/TipologiaEntidadeParticipantes'
+  dono:
+    $ref: '#/components/schemas/TipologiaEntidadeDonos'
+required:
+  - sigla
+  - designacao
+  - estado
+  - id
+  - participante
+  - dono

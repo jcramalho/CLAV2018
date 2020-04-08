@@ -502,7 +502,6 @@ function queryLeg(id, leg){
       .join(".\n")
   }
 
-  baseQuery += " .";
   return baseQuery;
 }
 

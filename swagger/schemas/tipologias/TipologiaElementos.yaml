@@ -1,0 +1,14 @@
+type: array
+items:
+  type: object
+  properties:
+    designacao:
+      type: string
+    sigla:
+      type: string
+    id:
+      $ref: '#/components/schemas/EntidadeId'
+  required:
+    - designacao
+    - sigla
+    - id

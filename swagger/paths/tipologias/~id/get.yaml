@@ -10,9 +10,9 @@ tags:
 parameters:
   - name: id
     in: path
-    description: 'Identificador de uma tipologia (exemplo: tip_AADR)'
+    description: Identificador de uma tipologia
     schema:
-      type: string
+      $ref: '#/components/schemas/TipologiaId'
     required: true
   - in: query
     name: info
@@ -28,35 +28,61 @@ responses:
     content:
       application/json:
         schema:
-          $ref: '#/components/schemas/TipologiaSimples'
+          oneOf:
+            - $ref: '#/components/schemas/TipologiaSimples'
+            - $ref: '#/components/schemas/TipologiaCompleta'
+        examples:
+          Exemplo de uma tipologia:
+            $ref: '#/components/examples/TipologiaSimplesJSON'
+          Exemplo de uma tipologia completa:
+            $ref: '#/components/examples/TipologiaCompletaJSON'
       json:
         schema:
-          $ref: '#/components/schemas/TipologiaSimples'
+          oneOf:
+            - $ref: '#/components/schemas/TipologiaSimples'
+            - $ref: '#/components/schemas/TipologiaCompleta'
+        examples:
+          Exemplo de uma tipologia:
+            $ref: '#/components/examples/TipologiaSimplesJSON'
+          Exemplo de uma tipologia completa:
+            $ref: '#/components/examples/TipologiaCompletaJSON'
       application/xml:
         examples:
-          xml:
-            $ref: '#/components/examples/TipologiaXML'
+          Exemplo de uma tipologia:
+            $ref: '#/components/examples/TipologiaSimplesXML'
+          Exemplo de uma tipologia completa:
+            $ref: '#/components/examples/TipologiaCompletaXML'
       xml:
         examples:
-          xml:
-            $ref: '#/components/examples/TipologiaXML'
+          Exemplo de uma tipologia:
+            $ref: '#/components/examples/TipologiaSimplesXML'
+          Exemplo de uma tipologia completa:
+            $ref: '#/components/examples/TipologiaCompletaXML'
       text/csv:
         examples:
-          csv:
-            $ref: '#/components/examples/TipologiaCSV'
+          Exemplo de uma tipologia:
+            $ref: '#/components/examples/TipologiaSimplesCSV'
+          Exemplo de uma tipologia completa:
+            $ref: '#/components/examples/TipologiaCompletaCSV'
       csv:
         examples:
-          csv:
-            $ref: '#/components/examples/TipologiaCSV'
+          Exemplo de uma tipologia:
+            $ref: '#/components/examples/TipologiaSimplesCSV'
+          Exemplo de uma tipologia completa:
+            $ref: '#/components/examples/TipologiaCompletaCSV'
       excel/csv:
         examples:
-          csv:
-            $ref: '#/components/examples/TipologiaExcelCSV'
+          Exemplo de uma tipologia:
+            $ref: '#/components/examples/TipologiaSimplesExcelCSV'
+          Exemplo de uma tipologia completa:
+            $ref: '#/components/examples/TipologiaCompletaExcelCSV'
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:
     $ref: '#/components/responses/PermissionsKey'
   404:
     description: A tipologia não existe
+  422:
+    $ref: '#/components/responses/ValidationParameters'
   500:
     description: Erro

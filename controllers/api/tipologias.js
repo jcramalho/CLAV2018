@@ -1,5 +1,7 @@
 const execQuery = require("../../controllers/api/utils").execQuery;
 const normalize = require("../../controllers/api/utils").normalize;
+const allTriplesFrom = require("../../controllers/api/utils").allTriplesFrom;
+const allTriplesRel = require("../../controllers/api/utils").allTriplesRel;
 const request = require("../../controllers/api/utils").request;
 const Tipologias = module.exports;
 
@@ -192,10 +194,28 @@ Tipologias.existe = tipologia => {
  */
 Tipologias.existeSigla = sigla => {
   const query = `ASK {
-    ?s clav:tipSigla '${sigla}' 
+    ?s clav:tipSigla '${sigla}'
   }`;
 
   return execQuery("query", query).then(response => response.boolean);
+};
+
+/**
+ * Verifica se uma determinada sigla de tipologia existe no sistema e retorna o id dessa.
+ *
+ * @param {Sigla} sigla
+ * @return {Promise<boolean | Error>}
+ */
+Tipologias.existeSiglaId = sigla => {
+  const query = `select ?s where {
+    ?s clav:tipSigla '${sigla}' 
+  }`;
+
+  return execQuery("query", query).then(response => {
+      var res = normalize(response)[0]
+      if(res) res = res.s.split("#")[1]
+      return res
+  });
 };
 
 /**
@@ -206,10 +226,28 @@ Tipologias.existeSigla = sigla => {
  */
 Tipologias.existeDesignacao = designacao => {
   const query = `ASK {
-    ?e clav:tipDesignacao '${designacao}' 
+    ?e clav:tipDesignacao '${designacao}'
   }`;
 
   return execQuery("query", query).then(response => response.boolean);
+};
+
+/**
+ * Verifica se uma determinada designacao de tipologia existe no sistema e retorna o id dessa.
+ *
+ * @param {Designacao} designacao
+ * @return {Promise<boolean | Error>}
+ */
+Tipologias.existeDesignacaoId = designacao => {
+  const query = `select ?s where {
+    ?s clav:tipDesignacao '${designacao}' 
+  }`;
+
+  return execQuery("query", query).then(response => {
+      var res = normalize(response)[0]
+      if(res) res = res.s.split("#")[1]
+      return res
+  });
 };
 
 /**
@@ -465,38 +503,52 @@ Tipologias.moreInfo = async tip => {
   tip.participante = await Tipologias.participante(id);
 };
 
+//Cria tipologia em triplos dado um objeto tipologia
+function queryTip(id, tip){
+  if(!id){
+    id = "tip_" + tip.sigla
+  }
+
+  var query = `clav:${id} rdf:type owl:NamedIndividual, clav:TipologiaEntidade ;
+    clav:tipSigla "${tip.sigla}" ;
+    clav:tipDesignacao "${tip.designacao}" ;
+    clav:tipEstado "${tip.estado}" .`;
+
+  if (tip.entidadesSel) {
+    query += tip.entidadesSel
+      .map(ent => `clav:${ent.id} clav:pertenceTipologiaEnt clav:${id}`)
+      .join(".\n")
+  }
+
+  return query
+}
+
 //Criar tipologia
 Tipologias.criar = async tip => {
-  var queryPart = `{ 
-    clav:tip_${tip.sigla} rdf:type owl:NamedIndividual, clav:TipologiaEntidade ;
-        clav:tipSigla "${tip.sigla}" ;
-        clav:tipDesignacao "${tip.designacao}" ;
-        clav:tipEstado "${tip.estado}"`;
+  var queryPart = queryTip(undefined, tip)
+  const query = `INSERT DATA {${queryPart}}`;
+  const ask = `ASK {${queryPart}}`;
 
-  if (
-    tip.entidadesSel &&
-    tip.entidadesSel instanceof Array &&
-    tip.entidadesSel.length > 0
-  )
-    queryPart += ` ;\n\tclav:pertenceTipologiaEnt ${tip.entidadesSel
-      .map(ent => `clav:ent_${ent.sigla}`)
-      .join(", ")}`;
-
-  queryPart += " .\n}";
-  const query = "INSERT DATA " + queryPart;
-  const ask = "ASK " + queryPart;
-
-  if (
-    (await Tipologias.existeSigla(tip.sigla)) ||
-    (await Tipologias.existeDesignacao(tip.designacao))
-  ) {
-    throw "Entidade já existe, sigla ou designação já em uso.";
-  } else {
-    return execQuery("update", query).then(res =>
-      execQuery("query", ask).then(result => {
-        if (result.boolean) return "Sucesso na inserção da entidade";
-        else throw "Insucesso na inserção da entidade";
-      })
-    );
-  }
+  return execQuery("update", query).then(res =>
+    execQuery("query", ask).then(result => {
+      if (result.boolean) return "Sucesso na inserção da entidade";
+      else throw "Insucesso na inserção da entidade";
+    })
+  );
 };
+
+//Atualizar tipologia
+Tipologias.atualizar = async (id, tip) => {
+  const baseQuery = queryTip(id, tip)
+  try{
+    var triplesTip = await allTriplesFrom(id);
+    triplesTip += await allTriplesRel("pertenceTipologiaEnt", id);
+    var query = `DELETE {${triplesTip}}`;
+    query += `INSERT {${baseQuery}}`
+    query += `WHERE {${triplesTip}}`
+    await execQuery("update", query);
+    return "Sucesso na atualização da tipologia";
+  }catch(e){
+    throw "Insucesso na atualização da tipologia";
+  }
+}
