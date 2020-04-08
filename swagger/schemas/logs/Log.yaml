@@ -1,0 +1,25 @@
+type: object
+properties:
+  _id:
+    type: string
+  accessDate:
+    type: string
+    format: date-time
+  httpStatus:
+    $ref: '#/components/schemas/StatusHTTP'
+  id:
+    type: string
+  method:
+    $ref: '#/components/schemas/VerboHTTP'
+  route:
+    $ref: '#/components/schemas/Rota'
+  type:
+    $ref: '#/components/schemas/TipoLog'
+required:
+  - _id
+  - accessDate
+  - httpStatus
+  - id
+  - method
+  - route
+  - type

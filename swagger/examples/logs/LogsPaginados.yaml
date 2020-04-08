@@ -1,0 +1,24 @@
+value:
+  items:
+    - _id: "5e5fb0b5c014d614097666e1"
+      accessDate: "2020-03-04T13:44:21.261Z"
+      httpStatus: 200
+      id: "5e2adcfdc38aef5caa90efc7"
+      method: "GET"
+      route: "/logsAgregados"
+      type: "User"
+    - _id: "5e5fb0b5c014d614097666e0"
+      accessDate: "2020-03-04T13:44:21.108Z"
+      httpStatus: 200
+      id: "5e2adcfdc38aef5caa90efc7"
+      method: "GET"
+      route: "/logs"
+      type: "User"
+    - _id: "5e5fb0b5c014d614097666df"
+      accessDate: "2020-03-04T13:44:21.014Z"
+      httpStatus: 304
+      id: "5e2adcfdc38aef5caa90efc7"
+      method: "GET"
+      route: "/chaves"
+      type: "User"
+  total: 105910

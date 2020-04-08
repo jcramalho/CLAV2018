@@ -11,25 +11,26 @@ parameters:
     required: true
     description: Método (verbo) da rota
     schema:
-      type: string
-      enum: [GET, POST, PUT, DELETE]
+      $ref: '#/components/schemas/VerboHTTP'
   - name: rota
     in: query
     required: true
     description: Caminho da rota
     schema:
-      type: string
-      example: "/tipologias"
+      $ref: '#/components/schemas/Rota'
 responses:
   200:
     description: Pedidos realizados (log)
     content:
       application/json:
         schema:
-          type: string
+          $ref: '#/components/schemas/Logs'
+        example: !!inc/file '/examples/logs/Logs.yaml'
   401:
     $ref: '#/components/responses/UnauthorizedUser'
   403:
     $ref: '#/components/responses/PermissionsUser'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
   500:
     description: Erro
