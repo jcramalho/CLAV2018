@@ -13,9 +13,9 @@ properties:
   id:
     $ref: '#/components/schemas/EntidadeId'
   dono:
-    $ref: '#/components/schemas/EntidadeDonos'
+    $ref: '#/components/schemas/TipologiaEntidadeDonos'
   participante:
-    $ref: '#/components/schemas/EntidadeParticipantes'
+    $ref: '#/components/schemas/TipologiaEntidadeParticipantes'
   tipologias:
     $ref: '#/components/schemas/EntidadeTipologias'
   dataCriacao:

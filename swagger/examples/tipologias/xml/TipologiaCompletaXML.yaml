@@ -1,0 +1,44 @@
+value: |
+  <?xml version="1.0" encoding="utf-8"?>
+  <root>
+      <estado type="string">Ativa</estado>
+      <sigla type="string">UI</sigla>
+      <designacao type="string">Unidades de Investigação</designacao>
+      <dono type="array">
+          <item index="0" type="object">
+              <codigo type="string">800.20.001</codigo>
+              <titulo type="string">Realização de estudos de investigação básica</titulo>
+              <id type="string">c800.20.001</id>
+          </item>
+          <item index="1" type="object">
+              <codigo type="string">800.20.002</codigo>
+              <titulo type="string">Execução de projetos de investigação aplicada</titulo>
+              <id type="string">c800.20.002</id>
+          </item>
+          <item index="2" type="object">
+              <codigo type="string">800.20.500</codigo>
+              <titulo type="string">Desenvolvimento experimental e aplicacional</titulo>
+              <id type="string">c800.20.500</id>
+          </item>
+      </dono>
+      <participante type="array">
+          <item index="0" type="object">
+              <tipoPar type="string">temParticipanteAssessor</tipoPar>
+              <codigo type="string">800.20.001</codigo>
+              <titulo type="string">Realização de estudos de investigação básica</titulo>
+              <id type="string">c800.20.001</id>
+          </item>
+          <item index="1" type="object">
+              <tipoPar type="string">temParticipanteAssessor</tipoPar>
+              <codigo type="string">800.20.002</codigo>
+              <titulo type="string">Execução de projetos de investigação aplicada</titulo>
+              <id type="string">c800.20.002</id>
+          </item>
+          <item index="2" type="object">
+              <tipoPar type="string">temParticipanteAssessor</tipoPar>
+              <codigo type="string">800.20.500</codigo>
+              <titulo type="string">Desenvolvimento experimental e aplicacional</titulo>
+              <id type="string">c800.20.500</id>
+          </item>
+      </participante>
+  </root>

@@ -30,6 +30,5 @@ items:
           - msg
           - param
   required:
-    - location
     - msg
     - param

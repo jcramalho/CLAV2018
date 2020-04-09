@@ -1,0 +1,19 @@
+type: object
+properties:
+  designacao:
+    type: string
+  sigla:
+    type: string
+  estado:
+    $ref: '#/components/schemas/Estado'
+  entidadesSel:
+    type: array
+    items:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/EntidadeId'
+required:
+  - designacao
+  - estado
+  - sigla

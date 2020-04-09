@@ -143,7 +143,8 @@ router.get('/codigo', Auth.isLoggedInKey, [
 // Devolve a informação de uma classe
 router.get('/:id', Auth.isLoggedInKey, [
     verificaId(),
-    eFS()
+    eFS(),
+    estaEm("query", "tipo", ["subarvore"]).optional()
 ], async function (req, res, next) {
     const errors = validationResult(req)
     if(!errors.isEmpty()){

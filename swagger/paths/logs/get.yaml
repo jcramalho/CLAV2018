@@ -10,8 +10,7 @@ parameters:
     in: query
     description: Tipo de acesso. Considerado apenas se 'id' também for inserido
     schema:
-      type: string
-      enum: [User, Chave]
+      $ref: '#/components/schemas/TipoLog'
   - name: id
     in: query
     description: Id do utilizador ou da chave API. Considerado apenas se 'tipo' também for inserido
@@ -19,7 +18,7 @@ parameters:
       type: string
   - name: pagina
     in: query
-    description: Página a apresentar (paginação dos logs, cada página possui 2500 logs). Este parâmetro apenas é considerado se 'tipo' ou 'id' não for inserido
+    description: Página a apresentar (paginação dos logs, cada página possui 2500 logs). Este parâmetro apenas é considerado se 'tipo' ou 'id' não for inserido, ou ainda se um destes dois é inválido
     schema:
       type: integer
       minimum: 0
@@ -29,10 +28,19 @@ responses:
     content:
       application/json:
         schema:
-          type: string
+          oneOf:
+            - $ref: '#/components/schemas/LogsPaginados'
+            - $ref: '#/components/schemas/Logs'
+        examples:
+          Exemplo de uma página dos logs:
+            $ref: '#/components/examples/LogsPaginados'
+          Exemplo do log para um determinado id e tipo:
+            $ref: '#/components/examples/LogsId'
   401:
     $ref: '#/components/responses/UnauthorizedUser'
   403:
     $ref: '#/components/responses/PermissionsUser'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
   500:
     description: Erro

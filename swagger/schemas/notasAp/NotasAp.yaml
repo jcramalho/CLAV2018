@@ -1,0 +1,17 @@
+type: array
+items:
+  type: object
+  properties:
+    cProc:
+      $ref: '#/components/schemas/ClasseId'
+    idNota:
+      $ref: '#/components/schemas/NotaApIdCompleto'
+    nota:
+      type: string
+    tituloProc:
+      type: string
+  required:
+    - cProc
+    - idNota
+    - nota
+    - tituloProc

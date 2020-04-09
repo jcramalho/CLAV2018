@@ -1,3 +1,2 @@
 type: string
 pattern: '^\d*$'
-example: 875780390

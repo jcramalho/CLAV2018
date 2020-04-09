@@ -7,7 +7,7 @@ var router = express.Router();
 
 var validKeys = ["sigla", "designacao", "internacional", "sioe", "estado"];
 const { query, body, validationResult } = require('express-validator');
-const { existe, estaEm, verificaEntId, eFS, verificaEnts, dataValida, existeTip, verificaLista } = require('../validation')
+const { existe, estaEm, verificaEntId, eFS, verificaEnts, dataValida, existeTip, verificaLista, estaAtiva } = require('../validation')
 
 async function naoExisteSigla(valor) {
     if(await Entidades.existeSigla(valor))
@@ -80,13 +80,11 @@ router.get("/", Auth.isLoggedInKey, [
 
   var queryData = url.parse(req.url, true).query;
   var ents = queryData.ents
-    ? `?uri IN (${queryData.ents
-        .split(",")
-        .map(t => `clav:${t}`)
-        .join(",")})`
+    ? `?uri IN (${queryData.ents.split(",").map(t => `clav:${t}`).join(",")})`
     : "True";
+
   var filtro = Object.entries(queryData)
-    .filter(([k, v]) => v !== undefined && validKeys.includes(k))
+    .filter(([k, v]) => validKeys.includes(k))
     .map(([k, v]) => k == "internacional" && v == "Não"
                         ? `?${k} != "Sim"`
                         : `?${k} = "${v}"`)
@@ -171,7 +169,8 @@ router.get("/designacao", Auth.isLoggedInKey, [
 // Consulta de uma entidade: sigla, designacao, estado, internacional
 router.get("/:id", Auth.isLoggedInKey, [
     eFS(),
-    verificaEntId('param', 'id')
+    verificaEntId('param', 'id'),
+    estaEm("query", "info", ["completa"]).optional()
 ], async (req, res, next) => {
   const errors = validationResult(req)
   if(!errors.isEmpty()){
@@ -186,9 +185,7 @@ router.get("/:id", Auth.isLoggedInKey, [
     }
 
     res.locals.tipo = "entidade";
-    res.locals.dados
-      ? next()
-      : res.status(404).send(`Erro. A entidade '${req.params.id}' não existe`);
+    res.locals.dados ? next() : res.status(404).send(`Erro. A entidade '${req.params.id}' não existe`);
   } catch (erro) {
     res.status(500).send(`Erro na consulta da entidade '${req.params.id}': ${erro}`);
   }
@@ -238,11 +235,17 @@ router.get("/:id/intervencao/participante", Auth.isLoggedInKey, [
 
 // Insere uma entidade na BD
 router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), [
-    existe('body', 'sigla').custom(naoExisteSigla).withMessage("Sigla já existe"),
+    existe('body', 'sigla')
+        .custom(naoExisteSigla)
+        .withMessage("Sigla já existe"),
     estaEm('body', "estado", ["Ativa", "Harmonização", "Inativa"]),
-    existe('body', 'designacao').custom(naoExisteDesignacao).withMessage("Designação já existe"),
+    existe('body', 'designacao')
+        .custom(naoExisteDesignacao)
+        .withMessage("Designação já existe"),
     estaEm("body", "internacional", ["Sim", "Não"]).optional(),
-    body("sioe", "Valor inválido, SIOE é um número").optional().matches(/^\d+$/),
+    body("sioe", "Valor inválido, SIOE é um número")
+        .optional()
+        .matches(/^\d+$/),
     dataValida('body', 'dataCriacao').optional(),
     verificaLista("body", "tipologiasSel", existeEverificaTips, '^tip_.+$').optional()
 ], (req, res) => {
@@ -258,12 +261,20 @@ router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), [
 
 // Atualiza uma entidade na BD
 router.put("/:id", Auth.isLoggedInUser, Auth.checkLevel(4), [
-    verificaEntId('param', 'id'),
-    existe('body', 'sigla').custom(naoExisteSiglaSelf).withMessage("Sigla já existe"),
+    verificaEntId('param', 'id')
+        .custom(estaAtiva)
+        .withMessage("Só é possível editar entidades ativas"),
+    existe('body', 'sigla')
+        .custom(naoExisteSiglaSelf)
+        .withMessage("Sigla já existe"),
     estaEm('body', "estado", ["Ativa", "Harmonização", "Inativa"]),
-    existe('body', 'designacao').custom(naoExisteDesignacaoSelf).withMessage("Designação já existe"),
+    existe('body', 'designacao')
+        .custom(naoExisteDesignacaoSelf)
+        .withMessage("Designação já existe"),
     estaEm("body", "internacional", ["Sim", "Não"]).optional(),
-    body("sioe", "Valor inválido, SIOE é um número").optional().matches(/^\d+$/),
+    body("sioe", "Valor inválido, SIOE é um número")
+        .optional()
+        .matches(/^\d+$/),
     dataValida('body', 'dataCriacao').optional(),
     dataValida('body', 'dataExtincao').optional(),
     verificaLista("body", "tipologiasSel", existeEverificaTips, '^tip_.+$')

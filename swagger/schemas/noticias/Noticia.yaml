@@ -1,0 +1,18 @@
+type: object
+properties:
+  _id:
+    type: string
+  titulo:
+    type: string
+  desc:
+    type: string
+  data:
+    $ref: '#/components/schemas/Data'
+  ativa:
+    type: boolean
+required:
+  - _id
+  - titulo
+  - desc
+  - data
+  - ativa

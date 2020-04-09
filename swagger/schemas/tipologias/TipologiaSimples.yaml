@@ -5,11 +5,9 @@ properties:
   designacao:
     type: string
   estado:
-    type: string
-    enum: [Ativa, Inativa, Harmonização]
+    $ref: '#/components/schemas/Estado'
   id:
-    type: string
-    description: "'tip_' concatenado com o valor de sigla"
+    $ref: '#/components/schemas/TipologiaId'
 required:
   - sigla
   - designacao
