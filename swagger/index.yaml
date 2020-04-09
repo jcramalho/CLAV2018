@@ -159,6 +159,17 @@ components:
         'examples/entidades/EntidadeTipologias.yaml',
         'examples/entidades/EntidadeParticipantes.yaml',
         'examples/indicePesquisa/IndicePesquisa_get.yaml',
-        'examples/exemplosNotasAp/ExemplosNotasAp_get_all.yaml'
+        'examples/exemplosNotasAp/ExemplosNotasAp_get_all.yaml',
+        'examples/logs/Logs.yaml',
+        'examples/notasAp/NotasAp.yaml',
+        'examples/noticias/Noticia.yaml',
+        'examples/noticias/NoticiaP.yaml',
+        'examples/noticias/Noticias.yaml',
+        'examples/legislacao/LegislacaoPortarias.yaml',
+        'examples/legislacao/LegislacaoProcessos.yaml',
+        'examples/invariantes/InvariantesTestarTodos.yaml',
+        'examples/tipologias/TipologiaDonos.yaml',
+        'examples/tipologias/TipologiaParticipantes.yaml',
+        'examples/tipologias/TipologiaElementos.yaml'
       ]
   }]

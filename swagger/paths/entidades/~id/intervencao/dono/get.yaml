@@ -20,7 +20,7 @@ responses:
     content:
       application/json:
         schema:
-          $ref: '#/components/schemas/EntidadeDonos'
+          $ref: '#/components/schemas/TipologiaEntidadeDonos'
         example: !!inc/file '/examples/entidades/EntidadeDonos.yaml'
   401:
     $ref: '#/components/responses/UnauthorizedKey'
