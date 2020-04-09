@@ -4,6 +4,9 @@ var TermosIndice = require('../../controllers/api/termosIndice.js')
 var express = require('express')
 var router = express.Router()
 
+const { validationResult } = require('express-validator');
+const { existe } = require('../validation')
+
 // Devolve a lista dos termos de índice ou processa uma query
 router.get('/', Auth.isLoggedInKey, function(req, res) {
     TermosIndice.listar()
@@ -14,12 +17,19 @@ router.get('/', Auth.isLoggedInKey, function(req, res) {
 // Devolve o número de termos na BD
 router.get('/quantos', Auth.isLoggedInKey, function(req, res) {
 	TermosIndice.contar()
-		.then((dados) => res.jsonp(dados))
+		.then((dados) => res.jsonp(dados[0].num))
 		.catch((erro) => res.status(500).send(`Erro na contagem dos termos de índice: ${erro}`))
 })
 
 // Verifica se termo indice existe
-router.get('/termoIndice', Auth.isLoggedInKey, function(req, res) {
+router.get('/termoIndice', Auth.isLoggedInKey, [
+    existe("query", "valor")
+], function(req, res) {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
+    }
+
     TermosIndice.existe(req.query.valor)
         .then((dados) => res.jsonp(dados))
         .catch((erro) => res.status(500).send(`Erro ao verificar se um TI existe: ${erro}`))

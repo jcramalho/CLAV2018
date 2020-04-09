@@ -10,6 +10,11 @@ tags:
 responses:
   200:
     description: Devolve a lista dos termos de índice
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/TermosIndiceLista'
+        example: !!inc/file '/examples/termosIndice/TermosIndiceLista.yaml'
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:
