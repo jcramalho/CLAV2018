@@ -7,7 +7,7 @@ var router = express.Router();
 
 var validKeys = ["sigla", "designacao", "internacional", "sioe", "estado"];
 const { query, body, validationResult } = require('express-validator');
-const { existe, estaEm, verificaEntId, eFS, verificaEnts, dataValida, existeTip, verificaLista, estaAtiva } = require('../validation')
+const { existe, estaEm, verificaEntId, eFS, verificaEnts, dataValida, verificaLista, estaAtiva, verificaExisteTip } = require('../validation')
 
 async function naoExisteSigla(valor) {
     if(await Entidades.existeSigla(valor))
@@ -37,28 +37,6 @@ async function naoExisteDesignacaoSelf(valor, {req}) {
         return Promise.reject()
     else
         return Promise.resolve()
-}
-
-async function existeEverificaTips(tips) {
-    var valid = true
-
-    for(var i = 0; i < tips.length && valid; i++){
-        if(tips[i].id.match(/^tip_.+$/)){
-            try{
-                await existeTip(tips[i].id)
-            }catch(e){
-                valid = false
-            }
-        }else{
-            valid = false
-        }
-    }
-
-    if(valid){
-        return Promise.resolve()
-    }else{
-        return Promise.reject()
-    }
 }
 
 // Lista todas as entidades: id, sigla, designacao, internacional
@@ -247,7 +225,8 @@ router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), [
         .optional()
         .matches(/^\d+$/),
     dataValida('body', 'dataCriacao').optional(),
-    verificaLista("body", "tipologiasSel", existeEverificaTips, '^tip_.+$').optional()
+    verificaLista("body", "tipologiasSel").optional(),
+    verificaExisteTip("body", "tipologiasSel.*.id")
 ], (req, res) => {
   const errors = validationResult(req)
   if(!errors.isEmpty()){
@@ -277,7 +256,8 @@ router.put("/:id", Auth.isLoggedInUser, Auth.checkLevel(4), [
         .matches(/^\d+$/),
     dataValida('body', 'dataCriacao').optional(),
     dataValida('body', 'dataExtincao').optional(),
-    verificaLista("body", "tipologiasSel", existeEverificaTips, '^tip_.+$')
+    verificaLista("body", "tipologiasSel"),
+    verificaExisteTip("body", "tipologiasSel.*.id")
 ], (req, res) => {
   const errors = validationResult(req)
   if(!errors.isEmpty()){

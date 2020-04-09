@@ -1,0 +1,10 @@
+type: array
+items:
+  properties:
+    processo:
+      $ref: '#/components/schemas/Codigo'
+    travessia:
+      $ref: '#/components/schemas/Travessia'
+  required:
+    - processo
+    - travessia

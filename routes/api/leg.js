@@ -7,7 +7,7 @@ var express = require("express");
 var router = express.Router();
 
 const { validationResult } = require('express-validator');
-const { existe, estaEm, eFS, dataValida, verificaNumeroLeg, verificaLegId, existeEnt, verificaLista, existeClasse, estaAtiva } = require('../validation')
+const { existe, estaEm, eFS, dataValida, verificaNumeroLeg, verificaLegId, verificaLista, estaAtiva, verificaExisteEnt, verificaExisteClasse } = require('../validation')
 var tipoLegislacao = ["Decreto", "DL", "Lei", "Diretiva", "Circular", "Despacho", "Decreto Regulamentar", "Portaria", "Decreto do Governo", "Decreto Legislativo Regional", "Resolução do Conselho de Ministros", "Despacho Normativo", "Resolução da Assembleia da República", "Decisão", "Regulamento", "Decreto do Presidente da República", "Aviso", "Despacho Conjunto", "Lei Orgânica", "Decisão-Quadro", "Circular Normativa", "Recomendação", "Deliberação", "Circular Informativa", "Lei Constitucional", "CSN EN", "Declaração de Retificação", "ISO", "NP", "Diretiva Técnica", "Comunicação", "Resolução", "Tratado", "Regulamento de Execução", "NP EN ISO/IEC", "NOP", "ILAC", "Regulamento Delegado", "NP EN ISO", "Ordem de Serviço", "Estatuto", "Instrução", "ISO/IEC"]
 
 async function naoExisteNumero(valor) {
@@ -23,50 +23,6 @@ async function naoExisteNumeroSelf(valor, {req}) {
         return Promise.reject()
     else
         return Promise.resolve()
-}
-
-async function existeEverificaEnts(ents) {
-    var valid = true
-
-    for(var i = 0; i < ents.length && valid; i++){
-        if(ents[i].id.match(/^ent_.+$/)){
-            try{
-                await existeEnt(ents[i].id)
-            }catch(e){
-                valid = false
-            }
-        }else{
-            valid = false
-        }
-    }
-
-    if(valid){
-        return Promise.resolve()
-    }else{
-        return Promise.reject()
-    }
-}
-
-async function existeEverificaClasses(classes) {
-    var valid = true
-
-    for(var i = 0; i < classes.length && valid; i++){
-        if(classes[i].codigo.match(/^\d{3}(\.\d{2}(\.\d{3}(\.\d{2})?)?)?$/)){
-            try{
-                await existeClasse(classes[i].codigo)
-            }catch(e){
-                valid = false
-            }
-        }else{
-            valid = false
-        }
-    }
-
-    if(valid){
-        return Promise.resolve()
-    }else{
-        return Promise.reject()
-    }
 }
 
 // Lista todos os documentos legislativos: id, data, numero, tipo, sumario, entidades
@@ -223,8 +179,10 @@ router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), [
         .optional()
         .isURL({require_tld: false})
         .withMessage("URL inválido"),
-    verificaLista("body", "entidadesSel", existeEverificaEnts, '^ent_.+$').optional(),
-    verificaLista("body", "processosSel", existeEverificaClasses, "^\\d{3}(\\.\\d{2}(\\.\\d{3}(\\.\\d{2})?)?)?$").optional()
+    verificaLista("body", "entidadesSel").optional(),
+    verificaExisteEnt("body", "entidadesSel.*.id"),
+    verificaLista("body", "processosSel").optional(),
+    verificaExisteClasse("body", "processosSel.*.codigo")
 ], (req, res) => {
   const errors = validationResult(req)
   if(!errors.isEmpty()){
@@ -253,8 +211,10 @@ router.put("/:id", Auth.isLoggedInUser, Auth.checkLevel(4), [
         .optional()
         .isURL({require_tld: false})
         .withMessage("URL inválido"),
-    verificaLista("body", "entidadesSel", existeEverificaEnts, '^ent_.+$'),
-    verificaLista("body", "processosSel", existeEverificaClasses, "^\\d{3}(\\.\\d{2}(\\.\\d{3}(\\.\\d{2})?)?)?$")
+    verificaLista("body", "entidadesSel"),
+    verificaExisteEnt("body", "entidadesSel.*.id"),
+    verificaLista("body", "processosSel"),
+    verificaExisteClasse("body", "processosSel.*.codigo")
 ], (req, res) => {
   const errors = validationResult(req)
   if(!errors.isEmpty()){
