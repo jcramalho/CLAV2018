@@ -10,6 +10,11 @@ tags:
 responses:
   200:
     description: Data da ontologia
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/Data'
+        example: "2020-03-03"
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:

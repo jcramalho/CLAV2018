@@ -136,6 +136,16 @@ module.exports.verificaTipId = function (location, field){
     return module.exports.comecaPorEMatch(location, field, 'tip_', '^tip_.+$')
 }
 
+//Valida o id de um possível vocabulario
+module.exports.verificaVCId = function (location, field){
+    return module.exports.comecaPorEMatch(location, field, 'vc_', '^vc_.+$')
+}
+
+//Valida o id de um possível termo de um vocabulario
+module.exports.verificaTermoVCId = function (location, field){
+    return module.exports.comecaPorEMatch(location, field, 'vc_', '^vc_.+_.+$')
+}
+
 //valida e o id e verifica se a entidade existe na BD
 module.exports.verificaExisteEnt = function(location, field){
     return module.exports.verificaEntId(location, field)
@@ -150,6 +160,14 @@ module.exports.verificaExisteTip = function(location, field){
         .bail()
         .custom(module.exports.existeTip)
         .withMessage("Entidade não existe na BD")
+}
+
+//valida e o id e verifica se a classe existe na BD
+module.exports.verificaExisteClasse = function(location, field){
+    return module.exports.verificaClasseCodigo(location, field)
+        .bail()
+        .custom(module.exports.existeClasse)
+        .withMessage("Classe não existe na BD")
 }
 
 //Valida o id de um possível AE
@@ -194,15 +212,11 @@ module.exports.existeDep = function (location, fieldDep){
     }
 }
 
-module.exports.verificaLista = function (location, field, func, regex){
-    const msg = `Um dos elementos do array não respeita '${regex}' ou não existe na BD`
+module.exports.verificaLista = function (location, field){
     return module.exports.existe(location, field)
         .bail()
         .isArray()
         .withMessage("Não é um array")
-        .bail()
-        .custom(func)
-        .withMessage(msg)
 }
 
 //Valida o formato de saida de classes, entidades, tipologias e legislação

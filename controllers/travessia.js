@@ -29,12 +29,8 @@ exports.travProc = async (id) => {
 
 exports.novaTravessia = async (newTrav) => {
     try {
-        fs.writeFileSync("./public/travessia/travessia.json", JSON.stringify(newTrav), function(err){
-            if(err) {
-                return `Erro a guardar ficheiro: ${err}`
-            }
-            return "Ficheiro com as travessias atualizado!"
-        })
+        fs.writeFileSync("./public/travessia/travessia.json", JSON.stringify(newTrav))
+        return "Ficheiro com as travessias atualizado!"
     } catch (error) {
         return `Erro: ${error}`
     }

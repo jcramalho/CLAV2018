@@ -8,6 +8,12 @@ tags:
 responses:
   200:
     description: Devolve o número total de acessos às rotas
+    content:
+      application/json:
+        schema:
+          type: integer
+          minimum: 0
+        example: 7589 
   401:
     $ref: '#/components/responses/UnauthorizedUser'
   403:

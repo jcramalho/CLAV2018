@@ -6,7 +6,7 @@ var router = express.Router();
 
 var validKeys = ["designacao", "estado"];
 const { query, validationResult } = require('express-validator');
-const { existe, estaEm, verificaTipId, eFS, dataValida, existeEnt, verificaTips, verificaLista, estaAtiva } = require('../validation')
+const { existe, estaEm, verificaTipId, eFS, dataValida, verificaTips, verificaLista, estaAtiva, verificaExisteEnt } = require('../validation')
 
 async function naoExisteSigla(valor) {
     if(await Tipologias.existeSigla(valor))
@@ -36,28 +36,6 @@ async function naoExisteDesignacaoSelf(valor, {req}) {
         return Promise.reject()
     else
         return Promise.resolve()
-}
-
-async function existeEverificaEnts(tips) {
-    var valid = true
-
-    for(var i = 0; i < tips.length && valid; i++){
-        if(tips[i].id.match(/^ent_.+$/)){
-            try{
-                await existeEnt(tips[i].id)
-            }catch(e){
-                valid = false
-            }
-        }else{
-            valid = false
-        }
-    }
-
-    if(valid){
-        return Promise.resolve()
-    }else{
-        return Promise.reject()
-    }
 }
 
 // Lista todas as tipologias: id, sigla, designacao
@@ -209,7 +187,8 @@ router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), [
     existe("body", "designacao")
         .custom(naoExisteDesignacao)
         .withMessage("Designação já existe"),
-    verificaLista("body", "entidadesSel", existeEverificaEnts, '^ent_.+$').optional()
+    verificaLista("body", "entidadesSel").optional(),
+    verificaExisteEnt("body", "entidadesSel.*.id")
 ], (req, res) => {
   const errors = validationResult(req)
   if(!errors.isEmpty()){
@@ -233,7 +212,8 @@ router.put("/:id", Auth.isLoggedInUser, Auth.checkLevel(4), [
     existe("body", "designacao")
         .custom(naoExisteDesignacaoSelf)
         .withMessage("Designação já existe"),
-    verificaLista("body", "entidadesSel", existeEverificaEnts, '^ent_.+$')
+    verificaLista("body", "entidadesSel"),
+    verificaExisteEnt("body", "entidadesSel.*.id")
 ], (req, res) => {
   const errors = validationResult(req)
   if(!errors.isEmpty()){

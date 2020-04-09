@@ -1,0 +1,69 @@
+"<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+
+<rdf:RDF
+
+\txmlns=\"http://jcr.di.uminho.pt/m51-clav#\"
+
+\txmlns:wgs=\"http://www.w3.org/2003/01/geo/wgs84_pos#\"
+
+\txmlns:obda=\"https://w3id.org/obda/vocabulary#\"
+
+\txmlns:owl=\"http://www.w3.org/2002/07/owl#\"
+
+\txmlns:gn=\"http://www.geonames.org/ontology#\"
+
+\txmlns:xsd=\"http://www.w3.org/2001/XMLSchema#\"
+
+\txmlns:fn=\"http://www.w3.org/2005/xpath-functions#\"
+
+\txmlns:skos=\"http://www.w3.org/2004/02/skos/core#\"
+
+\txmlns:rdfs=\"http://www.w3.org/2000/01/rdf-schema#\"
+
+\txmlns:noInferences=\"http://www.ontotext.com/explicit\"
+
+\txmlns:clav=\"http://jcr.di.uminho.pt/m51-clav#\"
+
+\txmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"
+
+\txmlns:xml=\"http://www.w3.org/XML/1998/namespace\"
+
+\txmlns:sesame=\"http://www.openrdf.org/schema/sesame#\"
+
+\txmlns:dc=\"http://purl.org/dc/elements/1.1#\">
+
+<rdf:Description rdf:about=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\">
+
+\t<rdf:type rdf:resource=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#Property\"/>
+
+</rdf:Description>
+
+<rdf:Description rdf:about=\"http://www.w3.org/2000/01/rdf-schema#subPropertyOf\">
+
+\t<rdf:type rdf:resource=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#Property\"/>
+
+\t<rdf:type rdf:resource=\"http://www.w3.org/2002/07/owl#TransitiveProperty\"/>
+
+</rdf:Description>
+
+<...></...>
+
+<rdf:Description rdf:about=\"http://jcr.di.uminho.pt/m51-clav#c950.10.600\">
+
+\t<processoUniform>S</processoUniform>
+
+</rdf:Description>
+
+<rdf:Description rdf:about=\"http://jcr.di.uminho.pt/m51-clav#c350.10.518\">
+
+\t<processoUniform>S</processoUniform>
+
+</rdf:Description>
+
+<rdf:Description rdf:about=\"http://jcr.di.uminho.pt/m51-clav\">
+
+\t<dc:date>2019-09-05</dc:date>
+
+</rdf:Description>
+
+</rdf:RDF>"

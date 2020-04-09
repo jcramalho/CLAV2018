@@ -9,23 +9,20 @@ parameters:
   - name: idVC
     in: path
     required: true
-    description: 'Identificador de um vocabulário a adicionar o termo (exemplo: vc_processoTipoRelacao)'
+    description: Identificador de um vocabulário a adicionar o termo
     schema:
-      type: string
+      $ref: '#/components/schemas/VocabularioId'
 requestBody:
   description: 'Termo'
   required: true
   content:
     application/json:
       schema:
-        properties:
-          idtermo:
-            type: string
-            description: 'o valor de idVC é concatenado com _ sendo posteriormente concatenado com o valor de idtermo'
-          termo:
-            type: string
-          desc:
-            type: string
+        $ref: '#/components/schemas/VocabularioTermoPOST'
+      example:
+        idtermo: "vc_processoTipoRelacao_cruzado"
+        termo: "É Cruzado com"
+        desc: "Quando existe interseção de dois processos em determinado momento, seguindo depois percursos distintos."
 responses:
   200:
     description: Adicionar um termo a um vocabulário
@@ -33,5 +30,7 @@ responses:
     $ref: '#/components/responses/UnauthorizedUser'
   403:
     $ref: '#/components/responses/PermissionsUser'
-  404:
+  422:
+    $ref: '#/components/responses/ValidationParameters'
+  500:
     description: Erro

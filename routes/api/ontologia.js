@@ -4,8 +4,39 @@ var Ontologia = require('../../controllers/api/ontologia.js');
 var express = require('express');
 var router = express.Router();
 
-router.get('/', Auth.isLoggedInKey, (req, res) => {
-    var format = req.query.fs || req.headers.accept
+const { oneOf, validationResult } = require('express-validator');
+const { existe, estaEm } = require('../validation')
+
+var formats = [
+    "text/turtle",
+    "turtle",
+    "application/ld+json",
+    "json-ld",
+    "application/rdf+xml",
+    "rdf-xml"
+]
+
+router.get('/', Auth.isLoggedInKey, [
+    oneOf([
+        estaEm('query', 'fs', formats).optional(),
+        estaEm('header', 'accept', formats).optional()
+    ]),
+    existe("query", "inferencia")
+        .bail()
+        .isBoolean()
+        .withMessage("Não é um valor booleano ('true', 'false')")
+        .optional()
+], (req, res) => {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
+    }
+
+    var format
+    if(req.query.fs && formats.includes(req.query.fs)){
+        format = req.query.fs
+    } else format = req.headers.accept
+
     Ontologia.exportar(req.query.inferencia, format, 7)
         .then(dados => res.download(dados[0], "clav." + dados[1]))
         .catch(erro => res.status(500).send(`Erro: ${erro}`))

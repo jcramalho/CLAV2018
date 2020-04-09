@@ -1,0 +1,61 @@
+[
+    {
+        "@id": "_:node156",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#Class"
+        ],
+        "http://www.w3.org/2002/07/owl#unionOf": [
+            {
+                "@list": [
+                    {
+                        "@id": "http://jcr.di.uminho.pt/m51-clav#Classe_N3"
+                    },
+                    {
+                        "@id": "http://jcr.di.uminho.pt/m51-clav#Classe_N4"
+                    }
+                ]
+            }
+        ]
+    },
+    "...",
+    {
+        "@id": "http://jcr.di.uminho.pt/m51-clav#c200.30.303",
+        "@type": [
+            "http://jcr.di.uminho.pt/m51-clav#Classe_N3",
+            "http://www.w3.org/2002/07/owl#NamedIndividual"
+        ],
+        "http://jcr.di.uminho.pt/m51-clav#classeStatus": [
+            {
+                "@value": "A"
+            }
+        ],
+        "http://jcr.di.uminho.pt/m51-clav#codigo": [
+            {
+                "@value": "200.30.303"
+            }
+        ],
+        "http://jcr.di.uminho.pt/m51-clav#descricao": [
+            {
+                "@value": "Avaliação dos programas de cooperação e de ajuda ao desenvolvimento, executados por entidades públicas e privadasInicia com verificação de procedimentos previamente estabelecidos e termina com a apresentação de relatório final.Inclui, quando devido, apresentação de caderno de encargos, convite ou candidatura do avaliador, apresentação do memorando da cooperação em análise, compilação de informação de referência, análise da matriz de seguimento das recomendações, produção de relatórios das reuniões, avaliação do seguimento das recomendações e do respetivo plano de implementação e produção de um relatório final da avaliação."
+            }
+        ],
+        "http://jcr.di.uminho.pt/m51-clav#eComplementarDe": [
+            {
+                "@id": "http://jcr.di.uminho.pt/m51-clav#c200.30.301"
+            }
+        ],
+        "...":"..."
+    },
+    {
+        "@id": "http://www.w3.org/2004/02/skos/core#related",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#AnnotationProperty"
+        ]
+    },
+    {
+        "@id": "http://www.w3.org/2004/02/skos/core#scopeNote",
+        "@type": [
+            "http://www.w3.org/2002/07/owl#AnnotationProperty"
+        ]
+    }
+]

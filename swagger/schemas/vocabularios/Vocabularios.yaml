@@ -1,0 +1,13 @@
+type: array
+items:
+  type: object
+  properties:
+    desc:
+      type: string
+    label:
+      type: string
+    id:
+      $ref: '#/components/schemas/VocabularioIdCompleto'
+  required:
+    - id
+    - label

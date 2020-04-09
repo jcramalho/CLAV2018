@@ -10,16 +10,23 @@ tags:
 parameters:
   - name: id
     in: path
-    description: 'Identificador de um vocabulario (exemplo: vc_processoTipoRelacao)'
+    description: Identificador de um vocabulario
     schema:
-      type: string
+      $ref: '#/components/schemas/VocabularioId'
     required: true
 responses:
   200:
     description: Devolve a lista de termos de um vocabulario
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/VocabularioTermos'
+        example: !!inc/file '/examples/vocabularios/VocabularioTermos.yaml'
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:
     $ref: '#/components/responses/PermissionsKey'
-  404:
+  422:
+    $ref: '#/components/responses/ValidationParameters'
+  500:
     description: Erro
