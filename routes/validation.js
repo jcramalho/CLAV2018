@@ -245,3 +245,10 @@ module.exports.estaAtiva = async function(id){
         return Promise.reject()
     }
 }
+
+module.exports.eMongoId = function(location, field){
+    return module.exports.existe(location, field)
+        .bail()
+        .isMongoId()
+        .withMessage("Formato do 'id' inválido")
+}

@@ -5,18 +5,36 @@ var url = require('url')
 var express = require('express')
 var router = express.Router()
 
+var validKeys = ["titulo", "desc", "data", "ativa"];
+const { validationResult } = require('express-validator');
+const { existe, estaEm, dataValida, eMongoId } = require('../validation')
+
 // Lista todas as noticias: data, titulo, desc
-router.get('/', Auth.isLoggedInKey, (req, res) => {
-    var validKeys = ["titulo", "desc", "data", "ativa"];
+router.get('/', Auth.isLoggedInKey, [
+    existe("query", "titulo").optional(),
+    existe("query", "desc").optional(),
+    dataValida("query", "data").optional(),
+    existe("query", "ativa")
+        .bail()
+        .isBoolean()
+        .withMessage("Não é um valor booleano ('true', 'false')")
+        .optional(),
+    estaEm("query", "recentes", ["sim"]).optional()
+], (req, res) => {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
+    }
+
     var queryData = url.parse(req.url, true).query;
     
     var filtro = Object.entries(queryData)
-        .filter(([k, v]) => v !== undefined && validKeys.includes(k))
+        .filter(([k, v]) => validKeys.includes(k))
 
     filtro = Object.assign({}, ...Array.from(filtro, ([k, v]) => ({[k]: v}) ));
     
     // api/noticias?recentes=sim
-    if (queryData.recentes && queryData.recentes == 'sim') {
+    if (queryData.recentes) {
         Noticias.recentes()
             .then(dados => res.jsonp(dados))
 		    .catch(erro => res.status(500).send(`Erro na listagem das noticias recentes: ${erro}`))
@@ -28,45 +46,74 @@ router.get('/', Auth.isLoggedInKey, (req, res) => {
 })
 
 // Consulta de uma noticia: titulo, data, desc
-router.get('/:id', Auth.isLoggedInKey, (req, res) => {
+router.get('/:id', Auth.isLoggedInKey, [
+    eMongoId('param', 'id')
+], (req, res) => {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
+    }
+
     Noticias.consultar(req.params.id)
         .then(dados => dados ? res.jsonp(dados) : res.status(404).send(`Erro. A noticia '${req.params.id}' não existe`))
 	    .catch(erro => res.status(500).send(`Erro na consulta da noticia '${req.params.id}': ${erro}`))
 })
 
 // Update de uma Noticia
-router.put('/:id', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), (req, res) => {
-    var titulo = req.body.titulo
-    var desc = req.body.desc
-    var ativa = req.body.ativa
-    var data = req.body.data
-    if(typeof titulo !== "undefined" && typeof desc !== "undefined" && typeof ativa !== "undefined" && typeof data !== "undefined")
-        Noticias.update(req.params.id,titulo,desc,data, ativa)
-            .then(dados => {
-                if(dados) res.jsonp("Noticia modificado com sucesso")
-                else res.status(404).jsonp("Erro na modificação da Noticia "+req.params.id)
-            })
-            .catch(erro => res.status(404).jsonp("Erro no update da Noticia "+req.params.id+": " + erro))    
-    else res.status(404).jsonp("Erro no update da Noticia "+req.params.id+": Titulo, descricao ou data nao definidos")
+router.put('/:id', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), [
+    eMongoId('param', 'id'),
+    existe("body", "titulo"),
+    existe("body", "desc"),
+    dataValida("body", "data"),
+    existe("body", "ativa")
+        .bail()
+        .isBoolean()
+        .withMessage("Não é um valor booleano ('true', 'false')")
+], (req, res) => {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
+    }
+
+    Noticias.update(req.params.id, req.body.titulo, req.body.desc, req.body.data, req.body.ativa)
+        .then(dados => {
+            if(dados) res.jsonp("Noticia modificado com sucesso")
+            else res.status(500).jsonp("Erro na modificação da Noticia "+req.params.id)
+        })
+        .catch(erro => res.status(500).jsonp("Erro no update da Noticia "+req.params.id+": " + erro))
 })
 
 // Adiciona uma noticia
-router.post('/', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), (req, res) => {
-    var titulo = req.body.titulo
-    var desc = req.body.desc
-    var data = req.body.data
-    var ativa = req.body.ativa
-    if(typeof titulo !== "undefined" && typeof desc !== "undefined" && typeof data !== "undefined" && typeof ativa !== "undefined") {
-        Noticias.criar({titulo,data, desc, ativa})
-            .then(dados => {
-                if(dados) res.jsonp("Noticia adicionada com sucesso")
-                else res.status(404).jsonp("Erro na adição da Noticia " + req.body.titulo)
-            })
-            .catch(erro => res.status(404).jsonp("Erro na adição da Noticia "+req.body.titulo+": " + erro))
-    } else res.status(404).jsonp("Erro na adição da Noticia: Campos em falta ")
+router.post('/', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), [
+    existe("body", "titulo"),
+    existe("body", "desc"),
+    dataValida("body", "data"),
+    existe("body", "ativa")
+        .bail()
+        .isBoolean()
+        .withMessage("Não é um valor booleano ('true', 'false')")
+], (req, res) => {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
+    }
+
+    Noticias.criar(req.body)
+        .then(dados => {
+            if(dados) res.jsonp("Noticia adicionada com sucesso")
+            else res.status(500).jsonp("Erro na adição da Noticia " + req.body.titulo)
+        })
+        .catch(erro => res.status(500).jsonp("Erro na adição da Noticia "+req.body.titulo+": " + erro))
 })
 
-router.delete('/:id', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), async function(req, res) {
+router.delete('/:id', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), [
+    eMongoId('param', 'id')
+], function(req, res) {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
+    }
+
     Noticias.eliminar(req.params.id, function(err, user){
         if(err){
             res.status(500).send("Não foi possível eliminar a notícia!");

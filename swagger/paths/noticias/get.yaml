@@ -30,7 +30,7 @@ parameters:
   - in: query
     name: data
     schema:
-      type: string
+      $ref: '#/components/schemas/Data'
     description: "Permite filtrar as notícias pela data (exemplo: '2019-12-04')"
     required: false
   - in: query
@@ -42,9 +42,16 @@ parameters:
 responses:
   200:
     description: Lista todas as notícias
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/Noticias'
+        example: !!inc/file '/examples/noticias/Noticias.yaml'
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:
     $ref: '#/components/responses/PermissionsKey'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
   500:
     description: Erro

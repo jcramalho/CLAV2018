@@ -1,5 +1,5 @@
-summary: Atualiza uma notícia
-description: Atualiza uma notícia a partir da informação enviada no pedido
+summary: Elimina uma notícia
+description: Elimina uma notícia
 tags:
   - Notícias
 security:
@@ -12,17 +12,9 @@ parameters:
     schema:
       type: string
     required: true
-requestBody:
-  description: 'Notícia a atualizar'
-  required: true
-  content:
-    application/json:
-      schema:
-        $ref: '#/components/schemas/NoticiaP'
-      example: !!inc/file '/examples/noticias/NoticiaP.yaml'
 responses:
   200:
-    description: Notícia atualizada
+    description: Notícia eliminada
   401:
     $ref: '#/components/responses/UnauthorizedUser'
   403:

@@ -17,11 +17,18 @@ parameters:
 responses:
   200:
     description: Devolvida a informação de uma notícia
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/Noticia'
+        example: !!inc/file '/examples/noticias/Noticia.yaml'
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:
     $ref: '#/components/responses/PermissionsKey'
   404:
     description: A notícia não existe
+  422:
+    $ref: '#/components/responses/ValidationParameters'
   500:
     description: Erro
