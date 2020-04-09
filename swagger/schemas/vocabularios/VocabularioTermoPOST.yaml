@@ -1,0 +1,12 @@
+type: object
+properties:
+  idtermo:
+    $ref: '#/components/schemas/VocabularioTermoId'
+  desc:
+    type: string
+  termo:
+    type: string
+required:
+  - idtermo
+  - desc
+  - termo

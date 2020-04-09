@@ -8,9 +8,9 @@ tags:
 parameters:
   - name: id
     in: path
-    description: 'Identificador de um vocabulario (exemplo: vc_processoTipoRelacao)'
+    description: Identificador de um vocabulario
     schema:
-      type: string
+      $ref: '#/components/schemas/VocabularioId'
     required: true
 requestBody:
   description: 'Dados a alterar'
@@ -18,11 +18,10 @@ requestBody:
   content:
     application/json:
       schema:
-        properties:
-          label:
-            type: string
-          desc:
-            type: string
+        $ref: '#/components/schemas/VocabularioPUT'
+      example:
+        label: "Tipo de diploma"
+        desc: "Este vocabulário encerra os vários tipos de diplomas legislativos registados na base de dados."
 responses:
   200:
     description: Atualizada a legenda e descrição de um vocabulário
@@ -30,5 +29,7 @@ responses:
     $ref: '#/components/responses/UnauthorizedUser'
   403:
     $ref: '#/components/responses/PermissionsUser'
-  404:
+  422:
+    $ref: '#/components/responses/ValidationParameters'
+  500:
     description: Erro

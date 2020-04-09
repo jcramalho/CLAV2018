@@ -1,0 +1,10 @@
+type: object
+properties:
+  desc:
+    type: string
+  label:
+    type: string
+required:
+  - id
+  - desc
+  - label

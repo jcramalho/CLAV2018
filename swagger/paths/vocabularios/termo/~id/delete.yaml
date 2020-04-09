@@ -9,9 +9,9 @@ parameters:
   - name: id
     in: path
     required: true
-    description: 'Identificador de um termo a remover (exemplo: vc_status_A)'
+    description: Identificador de um termo a remover
     schema:
-      type: string
+      $ref: '#/components/schemas/VocabularioTermoId'
 responses:
   200:
     description: Apagado um termo de vocabulário
@@ -19,5 +19,7 @@ responses:
     $ref: '#/components/responses/UnauthorizedUser'
   403:
     $ref: '#/components/responses/PermissionsUser'
-  404:
+  422:
+    $ref: '#/components/responses/ValidationParameters'
+  500:
     description: Erro

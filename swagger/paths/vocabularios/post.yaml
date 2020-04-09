@@ -6,18 +6,16 @@ security:
 tags:
   - Vocabulários
 requestBody:
-  description: 'Vocabulário'
+  description: 'Vocabulário a adicionar'
   required: true
   content:
     application/json:
       schema:
-        properties:
-          id:
-            type: string
-          label:
-            type: string
-          desc:
-            type: string
+        $ref: '#/components/schemas/VocabularioPOST'
+      example:
+        id: "vc_tipoDiplomaLegislativo"
+        label: "Tipo de diploma"
+        desc: "Este vocabulário encerra os vários tipos de diplomas legislativos registados na base de dados."
 responses:
   200:
     description: Adicionar um vocabulário
@@ -25,5 +23,7 @@ responses:
     $ref: '#/components/responses/UnauthorizedUser'
   403:
     $ref: '#/components/responses/PermissionsUser'
-  404:
+  422:
+    $ref: '#/components/responses/ValidationParameters'
+  500:
     description: Erro

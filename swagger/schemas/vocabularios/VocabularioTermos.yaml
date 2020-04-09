@@ -1,0 +1,13 @@
+type: array
+items:
+  type: object
+  properties:
+    desc:
+      type: string
+    termo:
+      type: string
+    idtermo:
+      $ref: '#/components/schemas/VocabularioTermoIdCompleto'
+  required:
+    - idtermo
+    - termo

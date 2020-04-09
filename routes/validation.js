@@ -136,6 +136,16 @@ module.exports.verificaTipId = function (location, field){
     return module.exports.comecaPorEMatch(location, field, 'tip_', '^tip_.+$')
 }
 
+//Valida o id de um possível vocabulario
+module.exports.verificaVCId = function (location, field){
+    return module.exports.comecaPorEMatch(location, field, 'vc_', '^vc_.+$')
+}
+
+//Valida o id de um possível termo de um vocabulario
+module.exports.verificaTermoVCId = function (location, field){
+    return module.exports.comecaPorEMatch(location, field, 'vc_', '^vc_.+_.+$')
+}
+
 //valida e o id e verifica se a entidade existe na BD
 module.exports.verificaExisteEnt = function(location, field){
     return module.exports.verificaEntId(location, field)
