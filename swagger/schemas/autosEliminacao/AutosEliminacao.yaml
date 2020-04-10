@@ -1,9 +1,11 @@
 type: object
 properties:
-  entidade:
-    $ref: '#/components/schemas/EntidadeId'
-  fundo:
+  tipo:
     type: string
+  fundo:
+    type: array
+    items:
+      type: string
   legislacao:
     type: string
   zonaControlo:
@@ -12,8 +14,10 @@ properties:
       type: object
       properties:
         codigo:
-          $ref: '#/components/schemas/Codigo'
+          type: string
         titulo:
+          type: string
+        referencia:
           type: string
         prazoConservacao:
           $ref: '#/components/schemas/PCAValor'
@@ -55,8 +59,6 @@ properties:
       required:
         - codigo
         - titulo
-        - prazoConservacao
-        - destino
         - dataInicio
         - dataFim
         - uiPapel
@@ -64,8 +66,6 @@ properties:
         - uiOutros
         - agregacoes
 required:
-  - tipo
-  - entidade
   - fundo
   - legislacao
   - zonaControlo

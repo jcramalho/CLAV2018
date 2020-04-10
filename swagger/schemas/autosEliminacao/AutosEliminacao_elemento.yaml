@@ -3,36 +3,67 @@ properties:
   id:
     $ref: '#/components/schemas/AutoEliminacaoId'
   data:
-    type: string
-    format: date
+    $ref: '#/components/schemas/Data'
   entidade:
     $ref: '#/components/schemas/EntidadeId'
+  entidadeNome:
+    type: string
   responsavel:
     type: string
+    format: email
   fundo:
-    type: string
+    type: array
+    items:
+      type: object
+      properties:
+        fundo:
+          $ref: '#/components/schemas/EntidadeId'
+        nome:
+          type: string
   legislacao:
     type: string
+  refLegislacao:
+    $ref: '#/components/schemas/LegislacaoId'
+  tipo:
+    $ref: '#/components/schemas/Fonte'
   zonaControlo:
     type: array
     items:
       type: object
       properties:
-        codigo:
-          $ref: '#/components/schemas/Codigo'
-        referencia:
-          type: string
-          description: Apenas presente caso o tipo seja RADA
-        ni:
-          type: string
-          enum: [Dono, Participante]
-        dono:
-          $ref: '#/components/schemas/EntidadeId'
+        id:
+          $ref: '#/components/schemas/ZonaControloId'
         dataInicio:
           type: string
         dataFim:
           type: string
-        ag:
+        UIpapel:
+          type: string
+        UIdigital:
+          type: string
+        UIoutros:
+          type: string
+        codigo:
+          $ref: '#/components/schemas/Codigo'
+        titulo:
+          type: string
+        destino:
+          $ref: '#/components/schemas/DFValor'
+        pca:
+          $ref: '#/components/schemas/PCAValor'
+        referencia:
+          type: string
+        ni:
+          type: string
+          enum: [Dono, Participante]
+        dono:
+          type: array
+          properties:
+            dono:
+              $ref: '#/components/schemas/EntidadeId'
+            nome:
+              type: string
+        agregacoes:
           type: array
           items:
             type: object
@@ -51,16 +82,22 @@ properties:
               - titulo
               - dataContagem
       required:
+        - id
         - codigo
         - titulo
         - dataInicio
         - dataFim
-        - ag
+        - agregacoes
+        - dono
+        - agregacoes
 required:
   - id
   - data
   - entidade
+  - entidadeNome
   - responsavel
+  - tipo
   - fundo
   - legislacao
+  - refLegislacao
   - zonaControlo
