@@ -10,6 +10,11 @@ tags:
 responses:
   200:
     description: Lista todas as tabelas de seleção
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/TabelasSelecao'
+        example: !!inc/file '/examples/tabelasSelecao/TabelasSelecao.yaml'
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:

@@ -7,36 +7,45 @@ var formidable = require("formidable")
 var express = require('express');
 var router = express.Router();
 
+const { validationResult } = require('express-validator');
+const { existe, estaEm, verificaTSId } = require('../validation')
+
 router.get('/', Auth.isLoggedInKey, function (req, res) {
     SelTabs.list()
         .then(list => res.send(list))
-        .catch(function (error) {
-            console.error(error);
-        });
+        .catch(err => res.status(500).json(`Erro ao obter TSs: ${err}`))
 })
 
-router.get('/skeleton', Auth.isLoggedInKey, function (req, res) {
-    SelTabs.skeleton()
-        .then( tsSkeleton => res.send(tsSkeleton))
-        .catch(function (error) {
-            console.error(error);
-        });
-})
+//router.get('/skeleton', Auth.isLoggedInKey, function (req, res) {
+//    SelTabs.skeleton()
+//        .then( tsSkeleton => res.send(tsSkeleton))
+//        .catch(err => res.status(500).json(`Erro ao obter skeleton: ${err}`))
+//})
 
-router.get('/:id/classes', Auth.isLoggedInKey, function (req, res) {
+router.get('/:id/classes', Auth.isLoggedInKey, [
+    verificaTSId('param', 'id')
+], function (req, res) {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
+    }
+
     SelTabs.listClasses(req.params.id)
         .then(list => res.send(list))
-        .catch(function (error) {
-            console.error(error);
-        });
+        .catch(err => res.status(500).json(`Erro ao obter classes de TS: ${err}`))
 })
 
-router.get('/:id', Auth.isLoggedInKey, function (req, res) {
+router.get('/:id', Auth.isLoggedInKey, [
+    verificaTSId('param', 'id')
+], function (req, res) {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
+    }
+
     SelTabs.stats(req.params.id)
         .then(result => res.send(result))
-        .catch(function (error) {
-            console.error(error);
-        });
+        .catch(err => res.status(500).json(`Erro ao obter TS: ${err}`))
 })
 
 router.post('/importar', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), async function (req, res){
@@ -46,8 +55,6 @@ router.post('/importar', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 
         if(err){
             res.status(500).json(`Erro ao importar CSV/Excel, não foi possível obter o utilizador: ${err}`)
         }else{
-            var entidade_user = req.user.entidade.split("_")[1]
-
             form.parse(req, async (error, fields, formData) => {
                 if(!error){
                     if(formData.file && formData.file.type &&
@@ -91,14 +98,14 @@ router.post('/importar', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 
                             }
 
                             if(i < len){
-                                SelTabs.criarPedidoDoCSV(workbook, user.email, entidade_user, fields.entidade_ts, fields.tipo_ts)
+                                SelTabs.criarPedidoDoCSV(workbook, user.email, req.user.entidade, fields.entidade_ts, fields.tipo_ts)
                                     .then(codigoPedido => res.json(codigoPedido))
                                     .catch(erro => res.status(500).json(`Erro ao importar CSV: ${erro}`))
                             }
                         }else if(formData.file.type == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"){
                             workbook.xlsx.readFile(formData.file.path)
                                 .then(function() {
-                                    SelTabs.criarPedidoDoCSV(workbook, user.email, entidade_user, fields.entidade_ts, fields.tipo_ts)
+                                    SelTabs.criarPedidoDoCSV(workbook, user.email, req.user.entidade, fields.entidade_ts, fields.tipo_ts)
                                         .then(dados => res.json(dados))
                                         .catch(erro => res.status(500).json(`Erro ao importar Excel: ${erro}`))
                                 })

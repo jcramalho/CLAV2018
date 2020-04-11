@@ -38,10 +38,21 @@ requestBody:
             type: string
             enum: ['TS Organizacional', 'TS Pluriorganizacional']
           entidade_ts:
-            type: string
+            $ref: '#/components/schemas/EntidadeId'
 responses:
   200:
     description: Cria um pedido de criação de uma tabela de seleção a partir de um ficheiro CSV/Excel
+    content:
+      application/json:
+        schema:
+          oneOf:
+            - $ref: '#/components/schemas/TabelaSelecaoImportarOrg'
+            - $ref: '#/components/schemas/TabelaSelecaoImportarPluri'
+        examples:
+          Exemplo da importação de uma TS Organizacional:
+            $ref: '#/components/examples/TabelaSelecaoImportarOrg'
+          Exemplo da importação de uma TS Pluriorganizacional:
+            $ref: '#/components/examples/TabelaSelecaoImportarPluri'
   401:
     $ref: '#/components/responses/UnauthorizedUser'
   403:

@@ -1,0 +1,2 @@
+type: string
+pattern: '^http://jcr.di.uminho.pt/m51-clav#.+$'
