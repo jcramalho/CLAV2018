@@ -1,3 +1,2 @@
 type: string
 pattern: '^ent_.+$'
-example: ent_DGLAB

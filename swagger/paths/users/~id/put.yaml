@@ -18,15 +18,12 @@ requestBody:
   content:
     application/json:
       schema:
-        properties:
-          nome:
-            type: string
-          email:
-            type: string
-          entidade:
-            type: string
-          level:
-            type: number
+        $ref: '#/components/schemas/UserPUT'
+      example:
+        email: exemplo@exemplo.com
+        entidade: ent_DGLAB
+        level: 2
+        nome: Antonio
 responses:
   200:
     description: Alterado os dados da conta de um utilizador
@@ -34,5 +31,7 @@ responses:
     $ref: '#/components/responses/UnauthorizedUser'
   403:
     $ref: '#/components/responses/PermissionsUser'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
   500:
     description: Erro

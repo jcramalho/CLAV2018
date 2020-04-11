@@ -11,25 +11,14 @@ requestBody:
   content:
     application/json:
       schema:
-        properties:
-          entidade:
-            type: string
-          users:
-            type: array
-            items:
-              type: object
-              properties:
-                nic:
-                  type: string
-                  pattern: '^[0-9]{7,}$'
-                name:
-                  type: string
-                email:
-                  type: string
-                  format: email
-                type:
-                  type: string
-                  pattern: '^[0-9]$'
+        $ref: '#/components/schemas/UsersCcPOST'
+      example:
+        entidade: ent_DGLAB
+        users:
+          - email: exemplo@exemplo.com
+            name: Maria
+            type: 3
+            nic: 1111111
 responses:
   200:
     description: Adicionados/registados utilizadores para uma determinada entidade
@@ -37,5 +26,7 @@ responses:
     $ref: '#/components/responses/UnauthorizedUser'
   403:
     $ref: '#/components/responses/PermissionsUser'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
   500:
     description: Erro

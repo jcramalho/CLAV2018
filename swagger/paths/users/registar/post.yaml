@@ -6,22 +6,18 @@ security:
 tags:
   - Utilizadores
 requestBody:
-  description: 'De forma a registar um utilizador é necessário name, email, entidade (sigla), type (level) e password'
+  description: 'De forma a registar um utilizador é necessário name, email, entidade, type (level) e password'
   required: true
   content:
     application/json:
       schema:
-        properties:
-          name:
-            type: string
-          email:
-            type: string
-          entidade:
-            type: string
-          type:
-            type: number
-          password:
-            type: string
+        $ref: '#/components/schemas/UserPOST'
+      example:
+        email: exemplo@exemplo.com
+        entidade: ent_DGLAB
+        type: 2
+        name: Antonio
+        password: 123password
 responses:
   200:
     description: Adicionado/registado um utilizador
@@ -29,5 +25,7 @@ responses:
     $ref: '#/components/responses/UnauthorizedUser'
   403:
     $ref: '#/components/responses/PermissionsUser'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
   500:
     description: Erro

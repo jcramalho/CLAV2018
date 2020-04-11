@@ -11,10 +11,19 @@ requestBody:
         properties:
           email:
             type: string
+            format: email
           url:
             type: string
+        required:
+          - email
+          - url
+      example:
+        email: exemplo@exemplo.com
+        url: http://clav.dglab.gov.pt/
 responses:
   200:
     description: Enviado email ao utilizador
+  422:
+    $ref: '#/components/responses/ValidationParameters'
   500:
     description: Erro

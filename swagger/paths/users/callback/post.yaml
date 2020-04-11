@@ -1,5 +1,5 @@
-summary: 'callback após login através de autenticação.gov'
-description: callback após login através de autenticação.gov
+summary: 'callback após login através de Autenticação.gov'
+description: callback após login através de Autenticação.gov
 tags:
   - Utilizadores
 requestBody:
@@ -11,6 +11,10 @@ requestBody:
         properties:
           SAMLResponse:
             type: string
+        required:
+          - SAMLResponse
 responses:
   301:
-    description: Devolve url para onde seguir de seguida.
+    description: Redireciona utilizador.
+  422:
+    $ref: '#/components/responses/ValidationParameters'

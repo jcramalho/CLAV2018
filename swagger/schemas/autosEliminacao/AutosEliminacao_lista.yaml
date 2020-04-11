@@ -3,19 +3,18 @@ items:
   type: object
   properties:
     id:
-      $ref: '#/components/schemas/AutoEliminacaoId'
+      $ref: '#/components/schemas/AutoEliminacaoIdCompleto'
     data:
-      type: string
-      format: date 
+      $ref: '#/components/schemas/Data'
     entidade:
-      $ref: '#/components/schemas/EntidadeId'
-    legislacao:
-      type: string
-    fundo:
-      type: string
+      $ref: '#/components/schemas/EntidadeIdCompleto'
+    numero:
+      $ref: '#/components/schemas/NumeroLeg'
+    tipo:
+      $ref: '#/components/schemas/Fonte'
   required:
     - id
     - data
     - entidade
-    - legislacao
-    - fundo
+    - numero
+    - tipo

@@ -11,17 +11,13 @@ requestBody:
   content:
     application/json:
       schema:
-        properties:
-          nic:
-            type: string
-          name:
-            type: string
-          email:
-            type: string
-          entidade:
-            type: string
-          type:
-            type: number
+        $ref: '#/components/schemas/UserCcPOST'
+      example:
+        email: exemplo@exemplo.com
+        entidade: ent_DGLAB
+        type: 2
+        name: Antonio
+        nic: 1111111
 responses:
   200:
     description: Adicionado/registado um utilizador através de CC
@@ -29,5 +25,7 @@ responses:
     $ref: '#/components/responses/UnauthorizedUser'
   403:
     $ref: '#/components/responses/PermissionsUser'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
   500:
     description: Erro

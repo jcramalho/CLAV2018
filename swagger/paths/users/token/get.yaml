@@ -1,5 +1,5 @@
-summary: Verifica o token para um utilizador que está ativo
-description: Verifica o token para um utilizador que está ativo devolvendo o id do utilizador, iat e exp.
+summary: Verifica o token de um utilizador
+description: Verifica o token de um utilizador, devolvendo a sua informação
 security:
   - userQuery: []
   - userAuth: []
@@ -8,6 +8,11 @@ tags:
 responses:
   200:
     description: Informação acerca do token
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/UserToken'
+        example: !!inc/file '/examples/users/UserToken.yaml'
   401:
     $ref: '#/components/responses/UnauthorizedUser'
   403:

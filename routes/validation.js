@@ -191,6 +191,13 @@ module.exports.verificaTips = function (location, field){
         .withMessage("Valor inválido, exemplo: 'tip_AAC,tip_AF'")
 }
 
+module.exports.verificaUserId = function(location, field){
+    return oneOf([
+        module.exports.eMongoId(location, field),
+        module.exports.eNIC(location, field)
+    ], `'${field}' é um Id do MongoDB ou um NIC`)
+}
+
 module.exports.dataValida = function (location, field){
     return module.exports.existe(location, field)
         .bail()
@@ -224,7 +231,7 @@ module.exports.eFS = function(){
     return oneOf([
         module.exports.estaEm('query', 'fs', formats).optional(),
         module.exports.estaEm('header', 'accept', formats).optional()
-    ])
+    ], `O formato de saída deve ser colocado na query string 'fs' ou na header 'Accept'`)
 }
 
 module.exports.estaAtiva = async function(id){
@@ -265,4 +272,8 @@ module.exports.eMongoId = function(location, field){
         .bail()
         .isMongoId()
         .withMessage("Formato do 'id' inválido")
+}
+
+module.exports.eNIC = function(location, field){
+    return module.exports.match(location, field, '^[0-9]{7,}$')
 }

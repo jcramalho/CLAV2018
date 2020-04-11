@@ -1,0 +1,3 @@
+type: string
+pattern: '^zc_.+$'
+example: zc_1_DGLAB_100.10.001
