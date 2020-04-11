@@ -20,6 +20,9 @@ properties:
           $ref: '#/components/schemas/EntidadeId'
         nome:
           type: string
+      required:
+        - fundo
+        - nome
   legislacao:
     type: string
   refLegislacao:
@@ -58,11 +61,16 @@ properties:
           enum: [Dono, Participante]
         dono:
           type: array
-          properties:
-            dono:
-              $ref: '#/components/schemas/EntidadeId'
-            nome:
-              type: string
+          items:
+            type: object
+            properties:
+              dono:
+                $ref: '#/components/schemas/EntidadeId'
+              nome:
+                type: string
+            required:
+              - dono
+              - nome
         agregacoes:
           type: array
           items:
@@ -87,7 +95,6 @@ properties:
         - titulo
         - dataInicio
         - dataFim
-        - agregacoes
         - dono
         - agregacoes
 required:

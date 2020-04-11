@@ -11,7 +11,7 @@ var secretKey = require('./../../config/app');
 var Mailer = require('../../controllers/api/mailer');
 var mongoose = require('mongoose');
 
-const { query, body, validationResult } = require('express-validator');
+const { body, validationResult } = require('express-validator');
 const { existe, estaEm, verificaExisteEnt, eNIC, verificaLista, verificaUserId, verificaEntId } = require('../validation')
 var levels = [1, 2, 3, 3.5, 4, 5, 6, 7]
 

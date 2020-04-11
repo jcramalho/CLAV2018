@@ -1,0 +1,20 @@
+type: object
+properties:
+  stats:
+    type: object
+    properties:
+      processos:
+        type: integer
+        minimum: 0
+      donos:
+        type: integer
+        minimum: 0
+      participantes:
+        type: integer
+        minimum: 0
+    required:
+      - processos
+      - donos
+      - participantes
+required:
+  - stats

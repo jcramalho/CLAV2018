@@ -175,6 +175,11 @@ module.exports.verificaAEId = function (location, field){
     return module.exports.comecaPorEMatch(location, field, 'ae_', '^ae_.+$')
 }
 
+//Valida o id de uma possível TS
+module.exports.verificaTSId = function (location, field){
+    return module.exports.match(location, field, '^.+$')
+}
+
 //Valida um conjunto de ids de possiveis entidades
 module.exports.verificaEnts = function (location, field){
     return module.exports.existe(location, field)

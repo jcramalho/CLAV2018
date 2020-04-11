@@ -12,14 +12,21 @@ parameters:
     in: path
     description: 'Identificador de uma tabela de seleção'
     schema:
-      type: string
+      $ref: '#/components/schemas/TSId'
     required: true
 responses:
   200:
     description: Consultar tabela de seleção
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/TabelaSelecao'
+        example: !!inc/file '/examples/tabelasSelecao/TabelaSelecao.yaml'
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:
     $ref: '#/components/responses/PermissionsKey'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
   500:
     description: Erro
