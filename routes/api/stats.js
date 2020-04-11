@@ -8,6 +8,7 @@ var Classes = require('../../controllers/api/classes.js');
 var Entidades = require("../../controllers/api/entidades.js");
 var Leg = require("../../controllers/api/leg.js");
 var Tipologias = require("../../controllers/api/tipologias.js");
+var State = require('../../controllers/state.js');
 
 router.get('/', Auth.isLoggedInUser, Auth.checkLevel(6), (req, res) => {
     ApiStats.getStats(function(err, result){
@@ -31,53 +32,77 @@ router.get('/total', Auth.isLoggedInUser, Auth.checkLevel(6), (req, res) => {
 
 
 //=====================Tabela de indicadores=====================//
-
+/*
 router.get('/tabela', Auth.isLoggedInKey, async (req, res) => {
     try{
+        var classes1 = await classes(1);
+        var classes1 = await classes(2);
+        var classes1 = await classes(3);
+        var classes1 = await classes(4);
+
         var nEntidades = await entidades(req); 
         var nDiplomas = await diplomas(); 
         var nTipologias = await tipologias(req); 
+
         var relStats = await Classes.relStats();
         var critStats = await Classes.critStats();
         var dfStats = await Classes.dfStats();
         var entAtivas = await Entidades.getAtivas();
         var legAtivas = await Leg.getAtivas();
 
+
+
         res.jsonp(dados);
     }catch(error) {
         return error;
     }
-})
+})*/
 
 
 //=====================Classes=====================//
 
 //Devolve o numero de classes de nivel 1
-router.get('/classesn1', Auth.isLoggedInKey, (req, res) => {
-    Classes.relStats()
-        .then(dados => res.jsonp(dados))
-        .catch(erro => res.status(500).send(`Erro na consulta das estatísticas associadas aos Processos de Negócios : ${erro}`))
+router.get('/classesn1', Auth.isLoggedInKey, async (req, res) => {
+    try {
+        var result = await classes(1);
+        res.jsonp(result);
+
+    } catch (erro) {
+        res.status(500).send(erro);
+    }
 })
 
 //Devolve o numero de classes de nivel 2
-router.get('/classesn2', Auth.isLoggedInKey, (req, res) => {
-    Classes.relStats()
-        .then(dados => res.jsonp(dados))
-        .catch(erro => res.status(500).send(`Erro na consulta das estatísticas associadas aos Processos de Negócios : ${erro}`))
+router.get('/classesn2', Auth.isLoggedInKey, async (req, res) => {
+    try {
+        var result = await classes(2);
+        res.jsonp(result);
+
+    } catch (erro) {
+        res.status(500).send(erro);
+    }
 })
 
 //Devolve o numero de classes de nivel 3
-router.get('/classesn3', Auth.isLoggedInKey, (req, res) => {
-    Classes.relStats()
-        .then(dados => res.jsonp(dados))
-        .catch(erro => res.status(500).send(`Erro na consulta das estatísticas associadas aos Processos de Negócios : ${erro}`))
+router.get('/classesn3', Auth.isLoggedInKey, async (req, res) => {
+    try {
+        var result = await classes(3);
+        res.jsonp(result);
+
+    } catch (erro) {
+        res.status(500).send(erro);
+    }
 })
 
 //Devolve o numero de classes de nivel 4
-router.get('/classesn4', Auth.isLoggedInKey, (req, res) => {
-    Classes.relStats()
-        .then(dados => res.jsonp(dados))
-        .catch(erro => res.status(500).send(`Erro na consulta das estatísticas associadas aos Processos de Negócios : ${erro}`))
+router.get('/classesn4', Auth.isLoggedInKey, async (req, res) => {
+    try {
+        var result = await classes(4);
+        res.jsonp(result);
+
+    } catch (erro) {
+        res.status(500).send(erro);
+    }
 })
 
 // Devolve as estatísticas relacionais dos Processos
@@ -158,6 +183,22 @@ router.get('/tipologias', Auth.isLoggedInKey, async (req, res) => {
 
 
 //=====================Funções auxiliares=====================//
+
+async function classes (nivel) {
+    try {
+        var lista = await State.getLevelClasses(nivel);
+        var result = {
+            indicador: `Número de Classes de nivel ${nivel}`,
+            valor: Object.keys(lista).length
+        }
+        return result;
+
+    } catch (erro) {
+        res
+          .status(500)
+          .send(`Erro na listagem das classes de nivel ${nivel}: ${erro}`);
+    }
+}
 
 async function entidades (req) {
     try {
