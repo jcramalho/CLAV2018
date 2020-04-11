@@ -530,12 +530,12 @@ Classes.df = function (id) {
 Classes.relStats = async () => {
     var query = `
     Select 
-        ?rel (COUNT(?rel) as ?relCount)
+        ?indicador (COUNT(?indicador) as ?valor)
     WHERE {
         ?pn a clav:Classe_N3 .
         {?o a clav:Classe_N3} UNION {?o a clav:Entidade} UNION {?o a clav:Legislacao} .
-        ?pn ?rel ?o .
-    } Group by ?rel`
+        ?pn ?indicador ?o .
+    } Group by ?indicador`
 
     let resultado = await execQuery("query", query)
     return normalize(resultado)
@@ -545,13 +545,13 @@ Classes.relStats = async () => {
 Classes.critStats = async () => {
     var query = `
     SELECT 
-        ?cj (COUNT(?cj) as ?cjCount)
+        ?indicador (COUNT(?indicador) as ?valor)
     WHERE{
         ?c a clav:CriterioJustificacao .
-        ?c a ?cj .
-    FILTER(?cj != owl:NamedIndividual && ?cj != clav:AtributoComposto) .
+        ?c a ?indicador .
+    FILTER(?indicador != owl:NamedIndividual && ?indicador != clav:AtributoComposto) .
     }
-    GROUP BY ?cj`
+    GROUP BY ?indicador`
 
     let resultado = await execQuery("query", query)
     return normalize(resultado)
@@ -561,11 +561,11 @@ Classes.critStats = async () => {
 Classes.dfStats = async () => {
     var query = `
     SELECT 
-        ?df (COUNT(?df) as ?dfCount)
+        ?indicador (COUNT(?indicador) as ?valor)
     WHERE{
         ?s clav:temDF ?d .
-        ?d clav:dfValor ?df .
-    } Group by ?df`
+        ?d clav:dfValor ?indicador .
+    } Group by ?indicador`
 
     let resultado = await execQuery("query", query)
     return normalize(resultado)

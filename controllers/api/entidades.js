@@ -482,12 +482,12 @@ Entidades.extinguir = (id, dataExtincao) => {
 Entidades.getAtivas = async () => {
   var query = `
   SELECT 
-    ?e (COUNT(?s) as ?count)
+    ?indicador (COUNT(?s) as ?valor)
   WHERE{
       ?s a clav:Entidade .
-      ?s clav:entEstado ?e .
+      ?s clav:entEstado ?indicador .
   }
-  GROUP BY ?e`
+  GROUP BY ?indicador`
 
   let resultado = await execQuery("query", query)
   return normalize(resultado)

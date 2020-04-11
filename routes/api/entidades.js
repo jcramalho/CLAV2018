@@ -71,13 +71,6 @@ router.get("/", Auth.isLoggedInKey, async (req, res, next) => {
   }
 });
 
-// Devolve o numero de entidades ativas no sistema
-router.get('/ativas', Auth.isLoggedInKey, (req, res) => {
-  Entidades.getAtivas()
-      .then(dados => res.jsonp(dados))
-      .catch(erro => res.status(500).send(`Erro na consulta do numero de entidades ativas : ${erro}`))
-})
-
 // Verifica se a sigla já existe numa entidade
 router.get("/sigla", Auth.isLoggedInKey, (req, res) => {
   Entidades.existeSigla(req.query.valor)

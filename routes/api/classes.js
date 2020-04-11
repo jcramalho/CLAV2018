@@ -107,27 +107,6 @@ router.get('/', Auth.isLoggedInKey, async (req, res, next) => {
     }
 })
 
-// Devolve as estatísticas relacionais dos Processos
-router.get('/relstats', Auth.isLoggedInKey, (req, res) => {
-    Classes.relStats()
-        .then(dados => res.jsonp(dados))
-        .catch(erro => res.status(500).send(`Erro na consulta das estatísticas associadas aos Processos de Negócios : ${erro}`))
-})
-
-// Devolve as estatísticas relativas aos Critérios de Justificação
-router.get('/critstats', Auth.isLoggedInKey, (req, res) => {
-    Classes.critStats()
-        .then(dados => res.jsonp(dados))
-        .catch(erro => res.status(500).send(`Erro na consulta das estatísticas associadas aos Critérios de Justificação : ${erro}`))
-})
-
-// Devolve as estatísticas relativas aos Destinos finais
-router.get('/dfstats', Auth.isLoggedInKey, (req, res) => {
-    Classes.dfStats()
-        .then(dados => res.jsonp(dados))
-        .catch(erro => res.status(500).send(`Erro na consulta das estatísticas associadas aos Destinos finais : ${erro}`))
-})
-
 // Verifica se um determinado título de classe já existe
 router.get('/titulo', Auth.isLoggedInKey, function (req, res) {
     State.verificaTitulo(req.query.valor)

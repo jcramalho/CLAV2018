@@ -505,11 +505,11 @@ Leg.criar = async leg => {
 Leg.getAtivas = async () => {
   var query = `
   SELECT 
-    ?e (COUNT(?s) as ?count)
+    ?indicador (COUNT(?s) as ?valor)
   WHERE{
       ?s a clav:Legislacao .
-      ?s clav:diplomaEstado ?e .
-  } GROUP BY ?e`
+      ?s clav:diplomaEstado ?indicador .
+  } GROUP BY ?indicador`
 
   let resultado = await execQuery("query", query)
   return normalize(resultado)
