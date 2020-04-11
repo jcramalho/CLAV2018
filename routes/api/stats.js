@@ -105,7 +105,7 @@ router.get('/tipologias', Auth.isLoggedInKey, async (req, res) => {
     try {
     var lista = await Tipologias.listar(filtro);
     var result = {
-        indicador: "Numero de tipologias",
+        indicador: "Número de tipologias",
         valor: Object.keys(lista).length
     }
     res.jsonp(result);
