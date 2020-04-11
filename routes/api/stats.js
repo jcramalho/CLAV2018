@@ -29,10 +29,12 @@ router.get('/total', Auth.isLoggedInUser, Auth.checkLevel(6), (req, res) => {
     });
 });
 
+
 //=====================Tabela de indicadores=====================//
 /*
 router.get('/tabela', Auth.isLoggedInKey, async (req, res) => {
     try{
+        var nEntidades = await entidades(req); 
         var relStats = await Classes.relStats();
         var critStats = await Classes.critStats();
         var dfStats = await Classes.dfStats();
@@ -43,6 +45,7 @@ router.get('/tabela', Auth.isLoggedInKey, async (req, res) => {
         return error;
     }
 })*/
+
 
 //=====================Classes=====================//
 
@@ -67,6 +70,7 @@ router.get('/dfstats', Auth.isLoggedInKey, (req, res) => {
         .catch(erro => res.status(500).send(`Erro na consulta das estatísticas associadas aos Destinos finais : ${erro}`))
 })
 
+
 //=====================Entidades=====================//
 
 //Devolve o numero de entidades
@@ -86,6 +90,7 @@ router.get('/entativas', Auth.isLoggedInKey, (req, res) => {
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na consulta do numero de entidades ativas : ${erro}`))
 })
+
 
 //=====================Legislação=====================//
 
@@ -117,9 +122,9 @@ router.get('/tipologias', Auth.isLoggedInKey, async (req, res) => {
         res.jsonp(result);
     }catch(erro) {
         res.status(500).send(erro);
-    }
-    
+    }  
 })
+
 
 //=====================Funções auxiliares=====================//
 
@@ -142,7 +147,7 @@ async function entidades (req) {
 
         var lista = await Entidades.listar(filtro);
         var result = {
-            indicador: "Numero de Diplomas Legislativos",
+            indicador: "Número de Entidades",
             valor: Object.keys(lista).length
         }
         return result;
@@ -150,7 +155,7 @@ async function entidades (req) {
     } catch (erro) {
         res
           .status(500)
-          .send(`Erro na listagem dos diplomas legislativos: ${erro}`);
+          .send(`Erro na listagem das entidades: ${erro}`);
     }
 }
 
@@ -158,7 +163,7 @@ async function diplomas () {
     try {
         var lista = await Leg.listar();
         var result = {
-            indicador: "Numero de Diplomas Legislativos",
+            indicador: "Número de Diplomas Legislativos",
             valor: Object.keys(lista).length
         }
         return result;
@@ -189,7 +194,7 @@ async function tipologias (req) {
     try {
     var lista = await Tipologias.listar(filtro);
     var result = {
-        indicador: "Numero de tipologias",
+        indicador: "Nú mero de tipologias",
         valor: Object.keys(lista).length
     }
     return result;
