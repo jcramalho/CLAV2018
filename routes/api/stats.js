@@ -194,11 +194,7 @@ async function tipologias (req) {
     try {
     var lista = await Tipologias.listar(filtro);
     var result = {
-<<<<<<< HEAD
-        indicador: "Nú mero de tipologias",
-=======
         indicador: "Número de tipologias",
->>>>>>> 59ed1cea927d0695c2ccbe4da696c06f24e47d67
         valor: Object.keys(lista).length
     }
     return result;
