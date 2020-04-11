@@ -20,7 +20,11 @@ requestBody:
       schema:
         properties:
           nic:
-            type: string
+            $ref: '#/components/schemas/NIC'
+        required:
+          - nic
+      example:
+        nic: 1111111
 responses:
   200:
     description: Alterado o NIC de um utilizador
@@ -28,5 +32,7 @@ responses:
     $ref: '#/components/responses/UnauthorizedUser'
   403:
     $ref: '#/components/responses/PermissionsUser'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
   500:
     description: Erro

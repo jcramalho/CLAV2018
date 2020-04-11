@@ -1,0 +1,12 @@
+type: object
+properties:
+  entidade:
+    $ref: '#/components/schemas/EntidadeId'
+  name:
+    type: string
+  token:
+    type: string
+required:
+  - entidade
+  - name
+  - token

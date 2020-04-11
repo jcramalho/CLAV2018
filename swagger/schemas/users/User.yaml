@@ -1,0 +1,29 @@
+type: object
+properties:
+  _id:
+    type: string
+  email:
+    type: string
+    format: email
+  entidade:
+    $ref: '#/components/schemas/EntidadeId'
+  internal:
+    type: boolean
+  level:
+    $ref: '#/components/schemas/UserLevel'
+  local:
+    type: boolean
+  nCalls:
+    type: integer
+    minimum: 0
+  name:
+    type: string
+required:
+  - _id
+  - email
+  - entidade
+  - internal
+  - level
+  - local
+  - nCalls
+  - name

@@ -59,16 +59,16 @@ Users.comparePassword = function (candidatePassword, hash, callback) {
 	});
 }
 
-Users.listar = function(req, callback){
+Users.listar = function(entidade, normalizado, callback){
     var filtro = {}
-    if(req.query.entidade!=undefined)
-    filtro = {entidade: req.query.entidade};
+    if(entidade)
+        filtro.entidade = entidade
     
     User.find(filtro, function(err,users){
         if(err){
             callback(err, null)
         }else{
-            if(req.query.formato=='normalizado'){
+            if(normalizado){
                 listaNormalizada = [];
                 for(var i = 0; i < users.length; i++) {
                     item = {}
@@ -146,91 +146,83 @@ Users.atualizarMultiplosCampos = function(id, nome, email, entidade, level, call
     });
 }
 
+function genAndSave(user, password, callback){
+    bcrypt.genSalt(salt, function (err, salt) {
+        bcrypt.hash(password, salt, async function (err, hash) {
+            user.local.password = hash;
+            try{
+                user = await user.save()
+                callback(null, user)
+            }catch(err){
+                callback("Não foi possível atualizar a password do utilizador!", null)
+            }
+        });
+    });
+}
+
 Users.atualizarPassword = function(id, password, callback){
     Users.getUserById(id, function(err, user){
 		if (err) {
-            callback(err, null);
+            callback("Não foi possível atualizar a password do utilizador!", null);
 		} else {
-            bcrypt.genSalt(salt, function (err, salt) {
-                bcrypt.hash(password, salt, async function (err, hash) {
-                    user.local.password = hash;
-                    try{
-                        user = await user.save()
-                        callback(null, user)
-                    }catch(err){
-                        callback(err, null)
-                    }
-                });
-            });
+            genAndSave(user, password, callback)
         }
     });
 }
 
 Users.atualizarPasswordComVerificacao = function(id, atualPassword, novaPassword, callback){
     Users.getUserById(id, function(err, user){
-		if (err) {
-            callback(err, null);
-		} else {
-            Users.comparePassword(atualPassword, user.local.password, function(err, isMatch) {
-                if (err) {
-                    callback(err, null);
-                }else{
-                    if(isMatch){
-                        bcrypt.genSalt(salt, function (err, salt) {
-                            bcrypt.hash(novaPassword, salt, async function (err, hash) {
-                                user.local.password = hash;
-                                try{
-                                    user = await user.save()
-                                    callback(null, user)
-                                }catch(err){
-                                    callback(err, null)
-                                }
-                            });
-                        });
+		if (err || !user) {
+            callback("Não foi possível atualizar a password do utilizador!", null);
+		} else if(user.local.password != undefined){
+            if(!atualPassword){
+                callback("Precisa de indicar a password atual!", null)
+            }else{
+                Users.comparePassword(atualPassword, user.local.password, function(err, isMatch) {
+                    if (err) {
+                        callback("Não foi possível atualizar a password do utilizador!", null);
                     }else{
-                        callback("Credenciais inválidas", null)
+                        if(isMatch){
+                            genAndSave(user, novaPassword, callback)
+                        }else{
+                            callback("Credenciais inválidas", null)
+                        }
                     }
-                }
-            })
+                })
+            }
+        } else {
+            genAndSave(user, novaPassword, callback)
         }
     });
 }
 
 Users.atualizarNIC = function(id, nic, callback){
-    Users.getUserByCC(nic, function(err, userNIC){
+    Users.eliminar(id, async function(err, user){
         if (err) {	
             callback(err,null)
-        } else if (!userNIC) {
-            Users.eliminar(id, async function(err, user){
-                if (err) {	
-                    callback(err,null)
-                } else if(user) {
-                    newUser = new User({
-                        _id: nic,
-                        name: user.name,
-                        email: user.email,
-                        entidade: user.entidade,
-                        internal: user.internal,
-                        level: user.level
-                    })
+        } else if(user) {
+            newUser = new User({
+                _id: nic,
+                name: user.name,
+                email: user.email,
+                entidade: user.entidade,
+                internal: user.internal,
+                level: user.level
+            })
 
-                    if("local" in user){
-                        newUser.local = {
-                            password: user.local.password
-                        }
-                    }
-                    try{
-                        user = await newUser.save()
-                        callback(null, user)
-                    }catch(err){
-                        callback(err, null)
-                    }
-                } else {
-                    callback("Utilizador não existe", null)
+            if("local" in user){
+                newUser.local = {
+                    password: user.local.password
                 }
-            });
+            }
+            try{
+                user = await newUser.save()
+                callback(null, user)
+            }catch(err){
+                callback(err, null)
+            }
         } else {
-            callback("Já existe um utilizador com esse NIC", null)
+            callback("Utilizador não existe", null)
         }
     });
 }
@@ -321,102 +313,13 @@ Users.parseSAMLResponse = function(SAMLResponse, callback){
 }
 
 Users.registarParaEntidade = async function(req, entidade, users){
-    var ent = entidade.split('_')[0] == 'ent' ? entidade : 'ent_' + entidade
-
-    //validar se entidade existe
-    try{
-        await request.get(req, '/entidades/' + ent)
-    } catch (e) {
-        if(e.response.status == 404){
-            throw('Entidade não existe! Nenhum utilizador foi registado. Tente novamente.')
-        }else{
-            throw('Não foi possível verificar se entidade existe. Nenhum utilizador foi registado. Tente novamente.')
-        }
-    }
-
-    //validar se não há utilizadores com o mesmo email o nic na lista recebida
-    //valida também se o type, email e nic tem um padrão correto
-    var emails = []
-    var nics = []
-
-    for(var i = 0; i < users.length; i++){
-
-        if(!users[i].name || !users[i].email || !users[i].nic || !users[i].type){
-            throw('O utilizador no índice ' + i + ' não possui um dos seguinte campo: name, email, nic (Número do Cartão de Cidadão) ou type (tipo de conta). Nenhum utilizador foi registado. Tente novamente.')
-        }else{
-            if(!/^[0-9]$/g.test(users[i].type)){
-                throw('O utilizador no índice ' + i + ' possui um type incorreto, tem de ser um número de 0 a 9! Nenhum utilizador foi registado. Tente novamente.')
-            }
-
-            var email = users[i].email
-            var index = emails.indexOf(email)
-
-            if(!/^.*@.*\..*$/g.test(email)){
-                throw('O utilizador no índice ' + i + ' possui um email incorreto! Nenhum utilizador foi registado. Tente novamente.')
-            }
-
-            if(index == -1){
-                emails.push(email)
-            }else{
-                throw('O utilizador no índice ' + index + ' e o utilizador no índice ' + i + ' tem o mesmo email! Nenhum utilizador foi registado. Tente novamente.')
-            }
-
-            var nic = users[i].nic
-            index = nics.indexOf(nic)
-
-            if(!/^[0-9]{7,}$/g.test(nic)){
-                throw('O utilizador no índice ' + i + ' possui um NIC incorreto! Nenhum utilizador foi registado. Tente novamente.')
-            }
-
-            if(index == -1){
-                nics.push(nic)
-            }else{
-                throw('O utilizador no índice ' + index + ' e o utilizador no índice ' + i + ' tem o mesmo NIC! Nenhum utilizador foi registado. Tente novamente.')
-            }
-        }
-    }
-
-    //validação dos utilizadores com a BD antes de os registar
-    for(var i = 0; i < users.length; i++){
-        try{
-            var user = await new Promise((resolve, reject) => {
-                Users.getUserByCC(users[i].nic, function (err, user) {
-                    if (err) reject(err)
-                    else resolve(user)
-                })
-            })
-        } catch (err) {
-            throw(`Erro ao verificar se utilizador no índice ${i} já existe.`);
-        }
-
-        if (!user) {
-            try{
-                user = await new Promise((resolve, reject) => {
-                    Users.getUserByEmail(users[i].email, function(err, user){
-                        if (err) reject(err)
-                        else resolve(user)
-                    })
-                })
-            } catch(err) {
-                throw(`Erro ao verificar se email do utilizador no índice ${i} já existe.`);
-            }
-
-            if (user) {
-                throw('Email do utilizador no índice ' + i + ' já em uso! Nenhum utilizador foi registado. Tente novamente.');
-            }
-        } else {
-            throw('Utilizador no indíce ' + i + ' já se encontra registado ou possui um NIC errado! Nenhum utilizador foi registado. Tente novamente.');
-        }
-    }
-
-    //inserir os utilizadores na BD
     for(var i = 0; i < users.length; i++){
         var internal = (users[i].type > 1);
         var newUser = new User({
             _id: users[i].nic,
             name: users[i].name,
             email: users[i].email,
-            entidade: ent,
+            entidade: entidade,
             internal: internal,
             level: users[i].type
         });

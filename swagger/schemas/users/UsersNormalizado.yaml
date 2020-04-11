@@ -1,0 +1,21 @@
+type: array
+items:
+  type: object
+  properties:
+    id:
+      type: string
+    email:
+      type: string
+      format: email
+    entidade:
+      $ref: '#/components/schemas/EntidadeId'
+    level:
+      type: string
+    name:
+      type: string
+  required:
+    - id
+    - email
+    - entidade
+    - level
+    - name

@@ -25,6 +25,9 @@ requestBody:
             type: string
         required:
           - novaPassword
+      example:
+        atualPassword: 123password
+        novaPassword: passwordForte
 responses:
   200:
     description: Alterado a password da conta de um utilizador
@@ -32,5 +35,7 @@ responses:
     $ref: '#/components/responses/UnauthorizedUser'
   403:
     $ref: '#/components/responses/PermissionsUser'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
   500:
     description: Erro

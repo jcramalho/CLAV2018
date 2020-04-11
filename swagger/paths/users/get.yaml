@@ -9,7 +9,7 @@ parameters:
   - in: query
     name: entidade
     schema:
-      type: string
+      $ref: '#/components/schemas/EntidadeId'
     description: Filtra os utilizadores pela entidade a que correspondem 
     required: false
   - in: query
@@ -22,9 +22,22 @@ parameters:
 responses:
   200:
     description: Devolve a lista dos utilizadores
+    content:
+      application/json:
+        schema:
+          oneOf:
+            - $ref: '#/components/schemas/Users'
+            - $ref: '#/components/schemas/UsersNormalizado'
+        examples:
+          Exemplo de uma lista de utilizadores:
+            $ref: '#/components/examples/Users'
+          Exemplo de uma lista de utilizadores normalizada:
+            $ref: '#/components/examples/UsersNormalizado'
   401:
     $ref: '#/components/responses/UnauthorizedUser'
   403:
     $ref: '#/components/responses/PermissionsUser'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
   500:
     description: Erro
