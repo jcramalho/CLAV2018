@@ -32,13 +32,14 @@ router.get('/total', Auth.isLoggedInUser, Auth.checkLevel(6), (req, res) => {
 
 
 //=====================Tabela de indicadores=====================//
-/*
+
+//Devolve lista de todos os indicadores apresentados abaixo
 router.get('/tabela', Auth.isLoggedInKey, async (req, res) => {
     try{
         var classes1 = await classes(1);
-        var classes1 = await classes(2);
-        var classes1 = await classes(3);
-        var classes1 = await classes(4);
+        var classes2 = await classes(2);
+        var classes3 = await classes(3);
+        var classes4 = await classes(4);
 
         var nEntidades = await entidades(req); 
         var nDiplomas = await diplomas(); 
@@ -50,13 +51,17 @@ router.get('/tabela', Auth.isLoggedInKey, async (req, res) => {
         var entAtivas = await Entidades.getAtivas();
         var legAtivas = await Leg.getAtivas();
 
-
+        var dados = [].concat(classes1, classes2, classes3, classes4, 
+                                relStats, critStats, dfStats,
+                                nEntidades, entAtivas, 
+                                nDiplomas, legAtivas, 
+                                nTipologias);
 
         res.jsonp(dados);
     }catch(error) {
         return error;
     }
-})*/
+})
 
 
 //=====================Classes=====================//
