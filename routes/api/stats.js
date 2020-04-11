@@ -31,23 +31,54 @@ router.get('/total', Auth.isLoggedInUser, Auth.checkLevel(6), (req, res) => {
 
 
 //=====================Tabela de indicadores=====================//
-/*
+
 router.get('/tabela', Auth.isLoggedInKey, async (req, res) => {
     try{
         var nEntidades = await entidades(req); 
+        var nDiplomas = await diplomas(); 
+        var nTipologias = await tipologias(req); 
         var relStats = await Classes.relStats();
         var critStats = await Classes.critStats();
         var dfStats = await Classes.dfStats();
         var entAtivas = await Entidades.getAtivas();
         var legAtivas = await Leg.getAtivas();
+
         res.jsonp(dados);
     }catch(error) {
         return error;
     }
-})*/
+})
 
 
 //=====================Classes=====================//
+
+//Devolve o numero de classes de nivel 1
+router.get('/classesn1', Auth.isLoggedInKey, (req, res) => {
+    Classes.relStats()
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.status(500).send(`Erro na consulta das estatísticas associadas aos Processos de Negócios : ${erro}`))
+})
+
+//Devolve o numero de classes de nivel 2
+router.get('/classesn2', Auth.isLoggedInKey, (req, res) => {
+    Classes.relStats()
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.status(500).send(`Erro na consulta das estatísticas associadas aos Processos de Negócios : ${erro}`))
+})
+
+//Devolve o numero de classes de nivel 3
+router.get('/classesn3', Auth.isLoggedInKey, (req, res) => {
+    Classes.relStats()
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.status(500).send(`Erro na consulta das estatísticas associadas aos Processos de Negócios : ${erro}`))
+})
+
+//Devolve o numero de classes de nivel 4
+router.get('/classesn4', Auth.isLoggedInKey, (req, res) => {
+    Classes.relStats()
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.status(500).send(`Erro na consulta das estatísticas associadas aos Processos de Negócios : ${erro}`))
+})
 
 // Devolve as estatísticas relacionais dos Processos
 router.get('/relstats', Auth.isLoggedInKey, (req, res) => {
@@ -194,11 +225,7 @@ async function tipologias (req) {
     try {
     var lista = await Tipologias.listar(filtro);
     var result = {
-<<<<<<< HEAD
-        indicador: "Nú mero de tipologias",
-=======
         indicador: "Número de tipologias",
->>>>>>> 59ed1cea927d0695c2ccbe4da696c06f24e47d67
         valor: Object.keys(lista).length
     }
     return result;
