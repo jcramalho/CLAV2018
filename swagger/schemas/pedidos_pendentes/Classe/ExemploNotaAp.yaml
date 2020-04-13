@@ -1,8 +1,7 @@
 type: object
 properties:
   idExemplo:
-    type: string
-    description: "'exna_' concatenado com valor aleatório"
+    $ref: '#/components/schemas/ExemploNotasApId'
   exemplo:
     type: string
 required:

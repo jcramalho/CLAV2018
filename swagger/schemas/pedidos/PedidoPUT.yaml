@@ -1,0 +1,16 @@
+type: object
+properties:
+  pedido:
+    allOf:
+      - type: object
+        properties:
+          _id:
+            type: string
+        required:
+          - _id
+      - $ref: '#/components/schemas/Pedido'
+  distribuicao:
+    $ref: '#/components/schemas/PedidoDistribuicao'
+required:
+  - pedido
+  - distribuicao

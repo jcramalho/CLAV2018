@@ -3,10 +3,9 @@ properties:
   termo:
     type: string
   idClasse:
-    type: string
+    $ref: '#/components/schemas/ClasseId'
   id:
-    type: string
-    description: "'ti_' concatenado com um valor aleatório"
+    $ref: '#/components/schemas/TermoId'
 required:
   - termo
   - idClasse

@@ -1,0 +1,2 @@
+type: string
+enum: [vc_pcaSubformaContagem_F01.01, vc_pcaSubformaContagem_F01.02, vc_pcaSubformaContagem_F01.03, vc_pcaSubformaContagem_F01.04, vc_pcaSubformaContagem_F01.05, vc_pcaSubformaContagem_F01.06, vc_pcaSubformaContagem_F01.07, vc_pcaSubformaContagem_F01.08, vc_pcaSubformaContagem_F01.09, vc_pcaSubformaContagem_F01.10, vc_pcaSubformaContagem_F01.11, vc_pcaSubformaContagem_F01.12]

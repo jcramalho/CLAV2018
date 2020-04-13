@@ -21,14 +21,7 @@ properties:
   termosInd:
     type: array
     items:
-      properties:
-        id:
-          type: string
-          description: "'ti_' concatenado com valor aleatório"
-        termo:
-          type: string
-        existe:
-          type: boolean
+      $ref: '#/components/schemas/TermoIndice'
   processosRelacionados:
     type: array
     items:
@@ -36,22 +29,7 @@ properties:
   legislacao:
     type: array
     items:
-      properties:
-        tipo:
-          type: string
-        numero:
-          type: string
-          pattern: '\d{1,6}/\d{1,4}'
-        sumario:
-          type: string
-        data:
-          type: string
-          pattern: '\d{4}/\d{2}/\d{2}'
-        selected:
-          type: boolean
-        id:
-          type: string
-          description: "'leg_' concatenado com valor aleatório"
+      $ref: '#/components/schemas/Legislacao'
   pca:
     $ref: '#/components/schemas/PCA'
   df:
@@ -78,42 +56,13 @@ properties:
     type: boolean
   tipoProc:
     type: string
+    enum: [PC, PE]
   procTrans:
-    type: string
+    $ref: '#/components/schemas/ProcessoTransversal'
   donos:
-    type: array
-    items:
-      properties:
-        intervencao:
-          type: string
-        tipo:
-          type: string
-        designacao:
-          type: string
-        sigla:
-          type: string
-        id:
-          type: string
-          description: "'ent_' concatenado com o valor de sigla"
-        selected:
-          type: boolean
+    $ref: '#/components/schemas/Donos'
   participantes:
-    type: array
-    items:
-      properties:
-        intervencao:
-          type: string
-        tipo:
-          type: string
-        designacao:
-          type: string
-        sigla:
-          type: string
-        id:
-          type: string
-          description: "'ent_' concatenado com o valor de sigla"
-        selected:
-          type: boolean
+    $ref: '#/components/schemas/Participantes'
   subclasses:
     type: array
     items:

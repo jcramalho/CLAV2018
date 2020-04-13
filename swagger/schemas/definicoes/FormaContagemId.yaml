@@ -1,0 +1,2 @@
+type: string
+enum: [vc_pcaFormaContagem_cessacaoVigencia, vc_pcaFormaContagem_conclusaoProcedimento, vc_pcaFormaContagem_disposicaoLegal, vc_pcaFormaContagem_emissaoTitulo, vc_pcaFormaContagem_extincaoDireito, vc_pcaFormaContagem_extincaoEntidade, vc_pcaFormaContagem_inicioProcedimento]

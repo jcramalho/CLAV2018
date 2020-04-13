@@ -1,8 +1,7 @@
 type: object
 properties:
   id:
-    type: string
-    description: "'na_' concatenado com valor aleatório"
+    $ref: '#/components/schemas/NotaExId'
   nota:
     type: string
 required:

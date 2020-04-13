@@ -1,0 +1,15 @@
+codigo: "2020-11"
+estado: "Submetido"
+data: "2020-04-13T19:13:09.802Z"
+criadoPor: "example@example.com"
+objeto:
+  codigo: "c100"
+  dados: {}
+  tipo: "Classe"
+  acao: "Criação"
+distribuicao:
+  estado: "Submetido"
+  responsavel: "example2@example.com"
+  data: "2020-04-19T19:13:09.802Z"
+  despacho: "Despacho a inserir"
+entidade: "ent_DGLAB"

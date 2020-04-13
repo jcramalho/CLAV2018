@@ -1,16 +1,15 @@
 type: object
 properties:
   relacao:
-    type: string
+    $ref: '#/components/schemas/TipoRelacao'
   idRel:
-    type: string
+    $ref: '#/components/schemas/TipoRelacao'
   titulo:
     type: string
   codigo:
-    type: string
+    $ref: '#/components/schemas/Codigo'
   id:
-    type: string
-    description: "'c' concatenado com o valor de codigo"
+    $ref: '#/components/schemas/ClasseId'
   selected:
     type: boolean
 required:

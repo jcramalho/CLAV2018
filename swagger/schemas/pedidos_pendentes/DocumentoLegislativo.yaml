@@ -12,6 +12,8 @@ properties:
     type: string
   estado:
     $ref: '#/components/schemas/EstadoLeg'
+  diplomaFonte:
+    $ref: '#/components/schemas/Fonte'
   entidadesSel:
     type: array
     items:
@@ -19,8 +21,14 @@ properties:
       properties:
         id:
           $ref: '#/components/schemas/EntidadeId'
-  diplomaFonte:
-    $ref: '#/components/schemas/Fonte'
+        designacao:
+          type: string
+        sigla:
+          type: string
+      required:
+        - id
+        - designacao
+        - sigla
   processosSel:
     type: array
     items:
@@ -28,9 +36,24 @@ properties:
       properties:
         codigo:
           $ref: '#/components/schemas/Codigo'
+        id:
+          $ref: '#/components/schemas/Codigo'
+        titulo:
+          type: string
+      required:
+        - codigo
+        - id
+        - titulo
+  codigo:
+    $ref: '#/components/schemas/LegislacaoId'
 required:
   - numero
   - sumario
   - data
   - tipo
+  - link
+  - processosSel
   - estado
+  - entidadesSel
+  - diplomaFonte
+  - codigo

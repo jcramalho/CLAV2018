@@ -1,0 +1,2 @@
+type: string
+enum: [Critério Legal, Critério de Densidade Informacional, Critério de Complementaridade Informacional]

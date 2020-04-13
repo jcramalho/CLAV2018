@@ -1,16 +1,12 @@
 type: object
 properties:
   valor:
-    type: string
-    nullable: true
-  formaContagem:
-    type: string
-  subFormaContagem:
+    $ref: '#/components/schemas/DFValor'
+  notas:
     type: string
   justificacao:
     $ref: '#/components/schemas/Justificacao'
 required:
   - valor
-  - formaContagem
-  - subFormaContagem
+  - notas
   - justificacao

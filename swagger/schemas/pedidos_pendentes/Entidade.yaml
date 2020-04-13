@@ -13,9 +13,20 @@ properties:
   tipologiasSel:
     type: array
     items:
-      type: string
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/TipologiaId'
+        sigla:
+          type: string
+        designacao:
+          type: string
   codigo:
     $ref: '#/components/schemas/EntidadeId'
+  dataCriacao:
+    $ref: '#/components/schemas/Data'
+  dataExtincao:
+    $ref: '#/components/schemas/Data'
 required:
   - designacao
   - internacional

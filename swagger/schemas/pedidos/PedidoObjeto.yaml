@@ -1,0 +1,13 @@
+type: object
+properties:
+  codigo:
+    type: string
+  dados:
+    $ref: '#/components/schemas/PedidoDados'
+  tipo:
+    $ref: '#/components/schemas/PedidoTipo'
+  acao:
+    $ref: '#/components/schemas/PedidoAcao'
+required:
+  - tipo
+  - acao

@@ -1,0 +1,40 @@
+type: object
+properties:
+  nivel:
+    $ref: '#/components/schemas/Nivel'
+  pai:
+    $ref: '#/components/schemas/Codigo'
+  codigo:
+    $ref: '#/components/schemas/Codigo'
+  titulo:
+    type: string
+  descricao:
+    type: string
+  termosInd:
+    type: array
+    items:
+      $ref: '#/components/schemas/TermoIndice'
+  processosRelacionados:
+    type: array
+    items:
+      $ref: '#/components/schemas/ProcessoRelacionado'
+  legislacao:
+    type: array
+    items:
+      $ref: '#/components/schemas/Legislacao'
+  pca:
+    $ref: '#/components/schemas/PCA'
+  df:
+    $ref: '#/components/schemas/DF'
+required:
+  - nivel
+  - pai
+  - status
+  - codigo
+  - titulo
+  - descricao
+  - termosInd
+  - processosRelacionados
+  - legislacao
+  - pca
+  - df

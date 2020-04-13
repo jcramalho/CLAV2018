@@ -9,7 +9,7 @@ properties:
           type: object
           properties:
             codigo:
-              type: string
+              $ref: '#/components/schemas/Codigo'
             titulo:
               type: string
             dono:
@@ -21,21 +21,9 @@ properties:
             - dono
             - participante
       entidade:
-        type: string
+        $ref: '#/components/schemas/EntidadeId'
       designacao:
         type: string
-      tipologias:
-        type: array
-        items:
-          type: object
-          properties:
-            id:
-              type: string
-              description: "'tip_' concatenado com o valor em sigla"
-            sigla:
-              type: string
-            designacao:
-              type: string
     required:
       - processos
       - entidade

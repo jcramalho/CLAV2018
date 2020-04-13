@@ -1,0 +1,26 @@
+type: object
+properties:
+  tipoPedido:
+    $ref: '#/components/schemas/PedidoAcao'
+  tipoObjeto:
+    $ref: '#/components/schemas/PedidoTipo'
+  novoObjeto:
+    $ref: '#/components/schemas/PedidoDados'
+  objetoOriginal:
+    $ref: '#/components/schemas/PedidoDados'
+  user:
+    type: object
+    properties:
+      email:
+        type: string
+        format: email
+    required:
+      - email
+  entidade:
+    $ref: '#/components/schemas/EntidadeId'
+required:
+  - tipoPedido
+  - tipoObjeto
+  - novoObjeto
+  - user
+  - entidade

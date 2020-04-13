@@ -9,7 +9,7 @@ properties:
           type: object
           properties:
             codigo:
-              type: string
+              $ref: '#/components/schemas/Codigo'
             titulo:
               type: string
             entidades:

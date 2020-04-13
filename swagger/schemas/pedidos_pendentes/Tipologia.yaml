@@ -6,15 +6,22 @@ properties:
     type: string
   estado:
     $ref: '#/components/schemas/Estado'
-  entidades:
+  entidadesSel:
     type: array
     items:
-      type: string
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/EntidadeId'
+        sigla:
+          type: string
+        designacao:
+          type: string
   codigo:
     $ref: '#/components/schemas/TipologiaId'
 required:
   - sigla
   - designacao
   - estado
-  - entidades
+  - entidadesSel
   - codigo
