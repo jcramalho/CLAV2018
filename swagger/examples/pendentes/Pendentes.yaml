@@ -1,0 +1,16 @@
+- _id: "5e950365c211d4aba422f153"
+  acao: "Criação"
+  criadoPor: "example@example.com"
+  dataAtualizacao: "2020-04-14T00:27:17.772Z"
+  dataCriacao: "2020-02-01T00:00:00.000Z"
+  numInterv: 1
+  objeto: {}
+  tipo: "Classe"
+- _id: "5e950315c201d4abg426f153"
+  acao: "Alteração"
+  criadoPor: "example2@example.com"
+  dataAtualizacao: "2020-04-12T00:27:17.772Z"
+  dataCriacao: "2020-03-11T00:00:00.000Z"
+  numInterv: 5
+  objeto: {}
+  tipo: "Tipologia"

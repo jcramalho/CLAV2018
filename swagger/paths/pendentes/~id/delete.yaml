@@ -1,4 +1,4 @@
-summary: 'Remove um trabalho pendente'
+summary: Remove um trabalho pendente
 description: Remove um trabalho pendente
 security:
   - userQuery: []
@@ -19,5 +19,7 @@ responses:
     $ref: '#/components/responses/UnauthorizedUser'
   403:
     $ref: '#/components/responses/PermissionsUser'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
   500:
     description: Erro

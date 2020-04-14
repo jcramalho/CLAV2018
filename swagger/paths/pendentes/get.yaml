@@ -8,6 +8,11 @@ tags:
 responses:
   200:
     description: Listagem dos trabalhos pendentes
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/Pendentes'
+        example: !!inc/file '/examples/pendentes/Pendentes.yaml'
   401:
     $ref: '#/components/responses/UnauthorizedUser'
   403:
