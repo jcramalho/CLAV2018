@@ -140,7 +140,8 @@ Indicadores.relStats = async () => {
     WHERE {
         ?pn a clav:Classe_N3 .
         {?o a clav:Classe_N3} UNION {?o a clav:Entidade} UNION {?o a clav:Legislacao} .
-        ?pn ?indicador ?o .
+        ?pn ?ind ?o .
+        BIND(STRAFTER(STR(?ind), 'clav#') AS ?indicador) .
     } Group by ?indicador`
 
     let resultado = await execQuery("query", query)
@@ -154,8 +155,9 @@ Indicadores.critStats = async () => {
         ?indicador (COUNT(?indicador) as ?valor)
     WHERE{
         ?c a clav:CriterioJustificacao .
-        ?c a ?indicador .
-    FILTER(?indicador != owl:NamedIndividual && ?indicador != clav:AtributoComposto) .
+        ?c a ?ind .
+    FILTER(?ind != owl:NamedIndividual && ?ind != clav:AtributoComposto) .
+    BIND(STRAFTER(STR(?ind), 'clav#') AS ?indicador) .
     }
     GROUP BY ?indicador`
 
