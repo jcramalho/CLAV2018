@@ -52,7 +52,7 @@ Indicadores.totalEntidadesAtivas = async () => {
     GROUP BY ?indicador`
 
     results = await execQuery("query", query)
-    return normalizeOrdered(results)[0].count
+    return normalize(resultado)
 }
 
 //Tipologias
@@ -87,7 +87,7 @@ Indicadores.totalLegislacaoAtivos = async () => {
     } GROUP BY ?indicador`
 
     results = await execQuery("query", query)
-    return normalizeOrdered(results)[0].count
+    return normalize(resultado)
 }
 
 //Relacoes
