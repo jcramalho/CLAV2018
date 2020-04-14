@@ -1,5 +1,5 @@
 summary: Lista as estatisticas para cada rota
-description: Lista as estatisticas para cada rota. Para cada rota devolve _id, nCallsPut, nCallsPost e nCallsGet.
+description: Lista as estatisticas para cada rota
 security:
   - userQuery: []
   - userAuth: []

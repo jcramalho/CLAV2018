@@ -1,5 +1,5 @@
 summary: Efetua login de um utilizador
-description: Efetua login de um utilizador devolvendo token, name e entidade.
+description: Efetua login de um utilizador
 tags:
   - Utilizadores
 requestBody:

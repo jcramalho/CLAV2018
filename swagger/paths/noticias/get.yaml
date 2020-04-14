@@ -1,5 +1,5 @@
 summary: Devolve todas as notícias
-description: Devolve todas as notícias ordenadas pela data (da mais recente para a mais antiga).
+description: Devolve todas as notícias ordenadas pela data (da mais recente para a mais antiga)
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

@@ -1,5 +1,5 @@
 summary: Lista os processos em que uma entidade intervem como participante
-description: Lista os processos em que uma entidade intervem como participante. Para cada processo devolve a informação do codigo, titulo e tipoPar
+description: Lista os processos em que uma entidade intervem como participante
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

@@ -1,5 +1,5 @@
 summary: Devolve a lista de todos os vocabularios
-description: Devolve a lista de todos os vocabularios onde para cada vocabulario devolve a informação do id, label e desc
+description: Devolve a lista de todos os vocabularios
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

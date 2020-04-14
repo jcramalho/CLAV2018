@@ -1,5 +1,5 @@
 summary: Lista os processos em que uma entidade intervem como dono
-description: Lista os processos em que uma entidade intervem como dono. Para cada processo devolve a informação do codigo e titulo
+description: Lista os processos em que uma entidade intervem como dono
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

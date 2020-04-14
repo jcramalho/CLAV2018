@@ -1,5 +1,5 @@
 summary: Lista legislações do tipo Portaria
-description: Lista legislações do tipo Portaria. Para cada documento legislativo é devolvida a informação do estado, sumario, numero e id (legislacao)
+description: Lista legislações do tipo Portaria
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

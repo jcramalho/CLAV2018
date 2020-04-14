@@ -3,7 +3,7 @@ description: Envia um email ao utilizador de forma a puder recuperar a conta
 tags:
   - Utilizadores
 requestBody:
-  description: 'De forma a puder recuperar a conta de um utilizador é necessário email e url'
+  description: Informação necessária para a recuperação da conta 
   required: true
   content:
     application/json:

@@ -1,5 +1,5 @@
 summary: Devolve a lista de todos as notas de aplicação
-description: Devolve a lista de todas as notas de aplicação. Para cada exemplo de nota de aplicação devolve idNota, nota, cProc e tituloProc
+description: Devolve a lista de todas as notas de aplicação
 tags:
   - Notas de Aplicação
 security:

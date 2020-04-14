@@ -1,5 +1,5 @@
 summary: Devolve a(s) entidade(s) dona(s) do processo
-description: Devolve a(s) entidade(s) dona(s) do processo. De cada entidade é devolvida a informação do id, tipo, sigla e designacao
+description: Devolve a(s) entidade(s) dona(s) do processo
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

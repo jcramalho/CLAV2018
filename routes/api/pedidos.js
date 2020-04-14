@@ -3,10 +3,6 @@ var Pedidos = require('../../controllers/api/pedidos');
 var express = require('express');
 var router = express.Router();
 
-function isEmpty(obj) {
-    return Object.keys(obj).length === 0;
-}
-
 var validKeys = ["criadoPor", "codigo", "tipo", "acao"];
 const { validationResult } = require('express-validator');
 const { existe, estaEm, verificaPedidoCodigo, verificaExisteEnt, eMongoId } = require('../validation')
@@ -92,7 +88,9 @@ router.post('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), 
     }
 
     Pedidos.criar(req.body)
-        .then(dados => res.jsonp(dados))
+        .then(dados => {
+            res.jsonp(dados);
+        })
         .catch(erro => res.status(500).send(`Erro na criação do pedido: ${erro}`));
 })
 
@@ -134,7 +132,9 @@ router.put('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
     }
 
     Pedidos.atualizar(req.body.pedido._id, req.body)
-        .then(dados => res.jsonp(dados))
+        .then(dados => {
+            res.jsonp(dados);
+        })
         .catch(erro => res.status(500).send(`Erro na atualização do pedido: ${erro}`));
 })
 

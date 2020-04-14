@@ -1,5 +1,5 @@
 summary: Devolve a lista de termos de um vocabulario
-description: Devolve a lista de termos de um vocabulario, onde para cada termo é devolvida a informação do idtermo, termo e desc
+description: Devolve a lista de termos de um vocabulario
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

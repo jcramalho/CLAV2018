@@ -1,5 +1,5 @@
 summary: Devolve a informação de uma notícia
-description: Devolve a informação de uma notícia. Devolve a informação do título, data e descrição da notícia
+description: Devolve a informação de uma notícia
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []
