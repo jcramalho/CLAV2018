@@ -552,18 +552,3 @@ Entidades.extinguir = (id, dataExtincao) => {
     })
   );
 };
-
-// Devolve o numero de entidades ativas no sistema
-Entidades.getAtivas = async () => {
-  var query = `
-  SELECT 
-    ?indicador (COUNT(?s) as ?valor)
-  WHERE{
-      ?s a clav:Entidade .
-      ?s clav:entEstado ?indicador .
-  }
-  GROUP BY ?indicador`
-
-  let resultado = await execQuery("query", query)
-  return normalize(resultado)
-}

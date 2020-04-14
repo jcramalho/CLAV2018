@@ -519,20 +519,6 @@ Leg.criar = async leg => {
   );
 };
 
-// Devolve o numero de entidades ativas no sistema
-Leg.getAtivas = async () => {
-  var query = `
-  SELECT 
-    ?indicador (COUNT(?s) as ?valor)
-  WHERE{
-      ?s a clav:Legislacao .
-      ?s clav:diplomaEstado ?indicador .
-  } GROUP BY ?indicador`
-
-  let resultado = await execQuery("query", query)
-  return normalize(resultado)
-}
-
 /*
 Leg.updateDoc = function (dataObj) {
 
