@@ -206,34 +206,44 @@ router.get('/critJust', Auth.isLoggedInKey, (req, res) => {
 //Devolve lista de todos os indicadores apresentados abaixo
 router.get('/tabela', Auth.isLoggedInKey, async (req, res) => {
     try{
+        var nClasses1 = await Indicadores.totalClassesN(1);
+        var nClasses2 = await Indicadores.totalClassesN(2);
+        var nClasses3 = await Indicadores.totalClassesN(3);
+        var nClasses4 = await Indicadores.totalClassesN(4);
+
+
         var classes1 = {
             indicador: `Número de Classes de nivel 1`,
-            valor: await Indicadores.totalClassesN(1)
+            valor: nClasses1
         }
         var classes2 = {
             indicador: `Número de Classes de nivel 2`,
-            valor: await Indicadores.totalClassesN(2)
+            valor: nClasses2
         }
         var classes3 = {
             indicador: `Número de Classes de nivel 3`,
-            valor: await Indicadores.totalClassesN(3)
+            valor: nClasses3
         }
         var classes4 = {
             indicador: `Número de Classes de nivel 4`,
-            valor: await Indicadores.totalClassesN(4)
+            valor: nClasses4
         }
+
+        var nEntidades = await Indicadores.totalEntidades();
+        var nDiplomas = await Indicadores.totalLegislacao();
+        var nTipologias = await Indicadores.totalTipologias();
 
         var entidades = {
             indicador: `Número de Entidades`,
-            valor: await Indicadores.totalEntidades()
+            valor: nEntidades
         }
         var diplomas = {
             indicador: `Número de Diplomas Legislativos`,
-            valor: await Indicadores.totalLegislacao()
+            valor: nDiplomas
         }
         var tipologias = {
             indicador: `Número de tipologias`,
-            valor: await Indicadores.totalTipologias()
+            valor: nTipologias
         }
 
         var relStats = await Indicadores.relStats();
