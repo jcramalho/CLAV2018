@@ -1,5 +1,5 @@
 summary: Lista todas as tipologias podendo a lista ser filtrada
-description: Lista todas as tipologias podendo a lista ser filtrada. Para cada tipologia devolve a informação do id, sigla, designação e estado
+description: Lista todas as tipologias podendo a lista ser filtrada
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

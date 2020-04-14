@@ -1,5 +1,5 @@
 summary: Devolve a lista de notas de exclusão de uma classe
-description: Devolve a lista de notas de exclusão de uma classe. Para cada elemento da lista é devolvida a informação do idNota e nota
+description: Devolve a lista de notas de exclusão de uma classe
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

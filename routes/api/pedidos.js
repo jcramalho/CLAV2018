@@ -3,10 +3,6 @@ var Pedidos = require('../../controllers/api/pedidos');
 var express = require('express');
 var router = express.Router();
 
-function isEmpty(obj) {
-    return Object.keys(obj).length === 0;
-}
-
 var validKeys = ["criadoPor", "codigo", "tipo", "acao"];
 const { validationResult } = require('express-validator');
 const { existe, estaEm, verificaPedidoCodigo, verificaExisteEnt, eMongoId } = require('../validation')

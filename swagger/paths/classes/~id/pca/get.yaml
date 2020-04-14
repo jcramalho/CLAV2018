@@ -1,5 +1,5 @@
 summary: Devolve a informação base do PCA
-description: Devolve a informação base do PCA, ou seja, idPCA, formaContagem, subFormaContagem, idJustificacao, valores e notas
+description: Devolve a informação base do PCA
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

@@ -1,5 +1,5 @@
 summary: Devolve o(s) processo(s) relacionado(s) por uma relação específica
-description: Devolve o(s) processo(s) relacionado(s) por uma relação específica. Para cada processo é devolvida a informação do id, codigo e titulo
+description: Devolve o(s) processo(s) relacionado(s) por uma relação específica
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

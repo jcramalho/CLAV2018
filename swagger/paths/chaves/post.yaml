@@ -3,7 +3,7 @@ description: Criar Chave API
 tags:
   - Chaves
 requestBody:
-  description: Para criar uma chave é necessário o nome para a chave, o email e a entidade
+  description: Dados necessários para criar a chave API 
   required: true
   content:
     application/json:

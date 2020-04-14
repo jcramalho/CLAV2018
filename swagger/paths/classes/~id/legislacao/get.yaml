@@ -1,5 +1,5 @@
 summary: Devolve a legislação associada ao contexto de avaliação
-description: Devolve a legislação associada ao contexto de avaliação. Para cada lei devolve a informação do id, idLeg, tipo, numero e sumario
+description: Devolve a legislação associada ao contexto de avaliação
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

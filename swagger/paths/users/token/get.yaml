@@ -1,5 +1,5 @@
 summary: Verifica o token de um utilizador
-description: Verifica o token de um utilizador, devolvendo a sua informação
+description: Verifica o token de um utilizador, devolvendo a informação do token
 security:
   - userQuery: []
   - userAuth: []

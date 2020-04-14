@@ -1,5 +1,5 @@
 summary: Lista todas as entidades
-description: Lista todas as entidades. Para cada entidade será devolvida a informação do id, sigla, designacao, sioe, estado e internacional
+description: Lista todas as entidades
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

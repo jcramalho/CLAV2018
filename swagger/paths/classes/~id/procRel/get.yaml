@@ -1,5 +1,5 @@
 summary: Devolve o(s) processo(s) relacionado(s)
-description: Devolve o(s) processo(s) relacionado(s). Para cada processo relacionado é devolvida a informação do id, codigo, titulo, idRel e tipoRel
+description: Devolve o(s) processo(s) relacionado(s)
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

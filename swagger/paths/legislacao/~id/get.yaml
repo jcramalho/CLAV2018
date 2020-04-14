@@ -1,5 +1,5 @@
 summary: Devolve a informação associada a um documento legislativo
-description: Devolve a informação associada a um documento legislativo, ou seja, tipo, data, numero, sumario, link e entidades
+description: Devolve a informação associada a um documento legislativo
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

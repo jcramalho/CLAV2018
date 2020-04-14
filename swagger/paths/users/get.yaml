@@ -1,5 +1,5 @@
 summary: Devolve a lista utilizadores
-description: Devolve a lista utilizadores. Para cada utilizador devolve a informação do id, name, email, entidade, internal, level e nCalls
+description: Devolve a lista utilizadores
 security:
   - userQuery: []
   - userAuth: []
@@ -17,7 +17,7 @@ parameters:
     schema:
       type: string
       enum: [normalizado]
-    description: Caso o formato seja normalizado em vez de devolver o level como um número devolve em texto para além de que devolve apenas o name, entidade, level, email e id
+    description: "Caso o formato seja 'normalizado' a informação é normalizada devolvendo por exemplo o nível em texto em vez de em número"
     required: false
 responses:
   200:

@@ -1,5 +1,5 @@
 summary: Consulta de uma tipologia
-description: Consulta de uma tipologia devolvendo a informação de sigla, designação e estado
+description: Consulta de uma tipologia
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []
