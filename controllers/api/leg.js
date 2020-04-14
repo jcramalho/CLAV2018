@@ -519,7 +519,6 @@ Leg.criar = async leg => {
   );
 };
 
-<<<<<<< HEAD
 // Devolve o numero de entidades ativas no sistema
 Leg.getAtivas = async () => {
   var query = `
@@ -587,7 +586,6 @@ Leg.updateDoc = function (dataObj) {
         .catch(error => console.error("Error in update:\n" + error));
 };
 */
-=======
 //Atualizar legislação
 Leg.atualizar = async (id, leg) => {
   const baseQuery = queryLeg(id, leg)
@@ -603,4 +601,3 @@ Leg.atualizar = async (id, leg) => {
     throw "Insucesso na atualização do diploma legislativo";
   }
 }
->>>>>>> 6f19e7851d82240c2140ef6b5ae645771f617d62
