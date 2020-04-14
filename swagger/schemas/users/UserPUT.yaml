@@ -1,0 +1,16 @@
+type: object
+properties:
+  email:
+    type: string
+    format: email
+  entidade:
+    $ref: '#/components/schemas/EntidadeId'
+  level:
+    $ref: '#/components/schemas/UserLevel'
+  nome:
+    type: string
+required:
+  - email
+  - entidade
+  - level
+  - nome

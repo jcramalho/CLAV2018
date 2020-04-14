@@ -1,0 +1,3 @@
+type: string
+pattern: '^\d{4}-\d{2}-\d{2}$'
+description: AAAA-MM-DD (Ano, mês, dia)

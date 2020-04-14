@@ -1,0 +1,12 @@
+type: object
+properties:
+  termo:
+    type: string
+  idClasse:
+    $ref: '#/components/schemas/ClasseId'
+  id:
+    $ref: '#/components/schemas/TermoId'
+required:
+  - termo
+  - idClasse
+  - id

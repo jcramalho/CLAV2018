@@ -8,18 +8,26 @@ tags:
 parameters:
   - name: codigo
     in: path
-    description: 'Identificador de um pedido (exemplo: 2019-321)'
+    description: Identificador de um pedido
     schema:
-      type: string
+      $ref: '#/components/schemas/PedidoCodigo'
+    example: 2019-321
     required: true
 responses:
   200:
     description: Consulta de um pedido
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/Pedido'
+        example: !!inc/file '/examples/pedidos/Pedido.yaml'
   401:
     $ref: '#/components/responses/UnauthorizedUser'
   403:
     $ref: '#/components/responses/PermissionsUser'
   404:
     description: Pedido não existe
+  422:
+    $ref: '#/components/responses/ValidationParameters'
   500:
     description: Erro

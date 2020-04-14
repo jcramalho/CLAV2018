@@ -1,0 +1,2 @@
+type: string
+enum: ["Classe", "TS Organizacional", "TS Pluriorganizacional", "Entidade", "Tipologia", "Legislação", "Termo de Indice", "Auto de Eliminação", "RADA"]

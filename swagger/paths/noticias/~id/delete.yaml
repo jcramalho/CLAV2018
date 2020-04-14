@@ -1,0 +1,25 @@
+summary: Elimina uma notícia
+description: Elimina uma notícia
+tags:
+  - Notícias
+security:
+  - userQuery: []
+  - userAuth: []
+parameters:
+  - name: id
+    in: path
+    description: 'Identificador de uma notícia'
+    schema:
+      type: string
+    required: true
+responses:
+  200:
+    description: Notícia eliminada
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
+  500:
+    description: Erro

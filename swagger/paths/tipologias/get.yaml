@@ -11,14 +11,13 @@ parameters:
   - in: query
     name: tips
     schema:
-      type: string
+      $ref: '#/components/schemas/Tips'
     description: "Devolve a informação destas tipologias. Exemplo de input: 'tip_AAC,tip_AF'"
     required: false
   - in: query
     name: estado
     schema:
-      type: string
-      enum: [Ativa, Inativa, Harmonização]
+      $ref: '#/components/schemas/Estado'
     description: Filtra as tipologias pelo estado das mesmas. O estado pode ser Ativa, Inativa ou Harmonização.
     required: false
   - in: query
@@ -41,33 +40,59 @@ responses:
     content:
       application/json:
         schema:
-          $ref: '#/components/schemas/TipologiaSimplesLista'
+          oneOf:
+            - $ref: '#/components/schemas/TipologiaSimplesLista'
+            - $ref: '#/components/schemas/TipologiaCompletaLista'
+        examples:
+          Exemplo de lista de tipologias:
+            $ref: '#/components/examples/TipologiaSimplesListaJSON'
+          Exemplo de lista de tipologias completas:
+            $ref: '#/components/examples/TipologiaCompletaListaJSON'
       json:
         schema:
-          $ref: '#/components/schemas/TipologiaSimplesLista'
+          oneOf:
+            - $ref: '#/components/schemas/TipologiaSimplesLista'
+            - $ref: '#/components/schemas/TipologiaCompletaLista'
+        examples:
+          Exemplo de lista de tipologias:
+            $ref: '#/components/examples/TipologiaSimplesListaJSON'
+          Exemplo de lista de tipologias completas:
+            $ref: '#/components/examples/TipologiaCompletaListaJSON'
       application/xml:
         examples:
-          xml:
-            $ref: '#/components/examples/TipologiasXML'
+          Exemplo de lista de tipologias:
+            $ref: '#/components/examples/TipologiaSimplesListaXML'
+          Exemplo de lista de tipologias completas:
+            $ref: '#/components/examples/TipologiaCompletaListaXML'
       xml:
         examples:
-          xml:
-            $ref: '#/components/examples/TipologiasXML'
+          Exemplo de lista de tipologias:
+            $ref: '#/components/examples/TipologiaSimplesListaXML'
+          Exemplo de lista de tipologias completas:
+            $ref: '#/components/examples/TipologiaCompletaListaXML'
       text/csv:
         examples:
-          csv:
-            $ref: '#/components/examples/TipologiasCSV'
+          Exemplo de lista de tipologias:
+            $ref: '#/components/examples/TipologiaSimplesListaCSV'
+          Exemplo de lista de tipologias completas:
+            $ref: '#/components/examples/TipologiaCompletaListaCSV'
       csv:
         examples:
-          csv:
-            $ref: '#/components/examples/TipologiasCSV'
+          Exemplo de lista de tipologias:
+            $ref: '#/components/examples/TipologiaSimplesListaCSV'
+          Exemplo de lista de tipologias completas:
+            $ref: '#/components/examples/TipologiaCompletaListaCSV'
       excel/csv:
         examples:
-          csv:
-            $ref: '#/components/examples/TipologiasExcelCSV'
+          Exemplo de lista de tipologias:
+            $ref: '#/components/examples/TipologiaSimplesListaExcelCSV'
+          Exemplo de lista de tipologias completas:
+            $ref: '#/components/examples/TipologiaCompletaListaExcelCSV'
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:
     $ref: '#/components/responses/PermissionsKey'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
   500:
     description: Erro

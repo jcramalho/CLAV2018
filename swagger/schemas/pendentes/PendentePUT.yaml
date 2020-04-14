@@ -1,0 +1,12 @@
+type: object
+properties:
+  _id:
+    type: string
+  numInterv:
+    type: integer
+    minimum: 0
+  objeto:
+    $ref: '#/components/schemas/PendenteDados'
+required:
+  - _id
+  - objeto

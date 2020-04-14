@@ -1,0 +1,2 @@
+type: string
+enum: [Processo Comum, Processo Específico]

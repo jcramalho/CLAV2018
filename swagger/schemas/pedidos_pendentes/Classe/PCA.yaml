@@ -1,0 +1,18 @@
+type: object
+properties:
+  valor:
+    $ref: '#/components/schemas/PCAValor'
+  formaContagem:
+    $ref: '#/components/schemas/FormaContagemId'
+  subFormaContagem:
+    $ref: '#/components/schemas/SubFormaContagemId'
+  justificacao:
+    $ref: '#/components/schemas/Justificacao'
+  notas:
+    type: string
+required:
+  - valor
+  - formaContagem
+  - subFormaContagem
+  - justificacao
+  - notas

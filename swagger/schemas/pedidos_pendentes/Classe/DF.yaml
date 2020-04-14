@@ -1,0 +1,12 @@
+type: object
+properties:
+  valor:
+    $ref: '#/components/schemas/DFValor'
+  notas:
+    type: string
+  justificacao:
+    $ref: '#/components/schemas/Justificacao'
+required:
+  - valor
+  - notas
+  - justificacao

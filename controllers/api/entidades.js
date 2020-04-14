@@ -1,5 +1,7 @@
 const execQuery = require("../../controllers/api/utils").execQuery;
 const normalize = require("../../controllers/api/utils").normalize;
+const allTriplesFrom = require("../../controllers/api/utils").allTriplesFrom;
+const allTriplesRel = require("../../controllers/api/utils").allTriplesRel;
 const request = require("../../controllers/api/utils").request;
 const Entidades = module.exports;
 
@@ -28,7 +30,7 @@ const Entidades = module.exports;
  * lista das entidades existentes que respeitam o filtro dado
  */
 Entidades.listar = filtro => {
-  const query = `SELECT ?id ?sigla ?designacao ?internacional ?sioe ?estado {
+  const query = `SELECT ?id ?sigla ?designacao ?internacional ?sioe ?estado ?dataCriacao ?dataExtincao {
         ?uri rdf:type clav:Entidade ;
             clav:entEstado ?estado;
             clav:entDesignacao ?designacao ;
@@ -36,6 +38,12 @@ Entidades.listar = filtro => {
             clav:entInternacional ?internacional .
         OPTIONAL {
             ?uri clav:entSIOE ?sioe.
+        }
+        OPTIONAL {
+            ?uri clav:entDataCriacao ?dataCriacao
+        }
+        OPTIONAL {
+            ?uri clav:entDataExtincao ?dataExtincao
         }
         BIND(CONCAT('ent_', ?sigla) AS ?id).
 
@@ -312,6 +320,24 @@ Entidades.existeSigla = sigla => {
 };
 
 /**
+ * Verifica se uma determinada sigla de entidade existe no sistema e retorna o id dessa.
+ *
+ * @param {Sigla} sigla
+ * @return {Promise<string | Error>}
+ */
+Entidades.existeSiglaId = sigla => {
+  const query = `select ?s where {
+      ?s clav:entSigla|clav:tipSigla '${sigla}'
+  }`;
+
+  return execQuery("query", query).then(response => {
+      var res = normalize(response)[0]
+      if(res) res = res.s.split("#")[1]
+      return res
+  });
+};
+
+/**
  * Verifica se uma determinada designacao de entidade existe no sistema.
  *
  * @param {Designacao} designacao
@@ -326,6 +352,24 @@ Entidades.existeDesignacao = designacao => {
 };
 
 /**
+ * Verifica se uma determinada designacao de entidade existe no sistema e retorna o id dessa.
+ *
+ * @param {Designacao} designacao
+ * @return {Promise<boolean | Error>}
+ */
+Entidades.existeDesignacaoId = designacao => {
+  const query = `select ?s where {
+      ?s clav:entDesignacao|clav:tipDesignacao '${designacao}'
+  }`;
+
+  return execQuery("query", query).then(response => {
+      var res = normalize(response)[0]
+      if(res) res = res.s.split("#")[1]
+      return res
+  });
+};
+
+/**
  * Lista os processos em que uma entidade intervem como dona.
  *
  * @param {string} id código identificador da entidade (p.e, "ent_CEE")
@@ -334,12 +378,13 @@ Entidades.existeDesignacao = designacao => {
  * participa como dona
  */
 Entidades.dono = id => {
-  const query = `SELECT ?codigo ?titulo WHERE {
-        ?id clav:temDono clav:${id} ;
+  const query = `SELECT ?id ?codigo ?titulo WHERE {
+        ?uri clav:temDono clav:${id} ;
             clav:codigo ?codigo ;
             clav:titulo ?titulo ;
             clav:pertenceLC clav:lc1 ;
             clav:classeStatus "A" .
+        BIND(CONCAT('c', ?codigo) AS ?id).
     }ORDER BY ?codigo`;
 
   return execQuery("query", query).then(response => normalize(response));
@@ -354,13 +399,14 @@ Entidades.dono = id => {
  * participa
  */
 Entidades.participante = id => {
-  const query = `SELECT ?tipoPar ?codigo ?titulo WHERE { 
+  const query = `SELECT ?id ?tipoPar ?codigo ?titulo WHERE { 
         ?uri clav:temParticipante clav:${id} ;
             ?tipoParURI clav:${id} ;
             clav:titulo ?titulo ;
             clav:codigo ?codigo ;
             clav:pertenceLC clav:lc1 ;
             clav:classeStatus "A" .
+        BIND(CONCAT('c', ?codigo) AS ?id).
         BIND (STRAFTER(STR(?tipoParURI), 'clav#') AS ?tipoPar).
         FILTER (?tipoParURI != clav:temParticipante && ?tipoParURI != clav:temDono)
     }ORDER BY ?codigo`;
@@ -419,9 +465,7 @@ Entidades.criar = async ent => {
 
   if (ent.sioe) queryEnt += ` ;\n\tclav:entSIOE "${ent.sioe}"`;
 
-  if (ent.internacional !== null && ent.internacional !== undefined) {
-    ent.internacional = ent.internacional === "" ? "Não" : ent.internacional;
-  } else {
+  if (!ent.internacional) {
     ent.internacional = "Não";
   }
   queryEnt += ` ;\n\tclav:entInternacional "${ent.internacional}"`;
@@ -429,31 +473,62 @@ Entidades.criar = async ent => {
   if (ent.dataCriacao)
     queryEnt += ` ;\n\tclav:entDataCriacao "${ent.dataCriacao}"`;
 
-  if (
-    ent.tipologiasSel &&
-    ent.tipologiasSel instanceof Array &&
-    ent.tipologiasSel.length > 0
-  )
-    queryEnt += ` ;\n\tclav:pertenceTipologiaEnt ${ent.tipologiasSel
-      .map(tip => `clav:tip_${tip.sigla}`)
-      .join(", ")}`;
+  if (ent.tipologiasSel && ent.tipologiasSel.length > 0){
+    queryEnt += ` ;\n\tclav:pertenceTipologiaEnt ${
+      ent.tipologiasSel.map(tip => `clav:${tip.id}`).join(", ")
+    }`;
+  }
 
   queryEnt += " .\n}";
   const query = "INSERT DATA " + queryEnt;
   const ask = "ASK " + queryEnt;
 
-  if (
-    (await Entidades.existeSigla(ent.sigla)) ||
-    (await Entidades.existeDesignacao(ent.designacao))
-  ) {
-    throw "Entidade já existe, sigla ou designação já em uso.";
-  } else {
-    return execQuery("update", query).then(res =>
-      execQuery("query", ask).then(result => {
-        if (result.boolean) return "Sucesso na inserção da entidade";
-        else throw "Insucesso na inserção da entidade";
-      })
-    );
+  return execQuery("update", query).then(res =>
+    execQuery("query", ask).then(result => {
+      if (result.boolean) return "Sucesso na inserção da entidade";
+      else throw "Insucesso na inserção da entidade";
+    })
+  );
+};
+
+//Atualizar entidade
+Entidades.atualizar = async (id, ent) => {
+  var queryEnt = `clav:${id} rdf:type owl:NamedIndividual, clav:Entidade ;
+    clav:entEstado "${ent.estado}" ;
+    clav:entSigla "${ent.sigla}" ;
+    clav:entDesignacao "${ent.designacao}"`;
+
+  if (ent.sioe) queryEnt += ` ;\n\tclav:entSIOE "${ent.sioe}"`;
+
+  if (!ent.internacional) {
+    ent.internacional = "Não";
+  }
+  queryEnt += ` ;\n\tclav:entInternacional "${ent.internacional}"`;
+
+  if (ent.dataCriacao)
+    queryEnt += ` ;\n\tclav:entDataCriacao "${ent.dataCriacao}"`;
+
+  if (ent.dataExtincao)
+    queryEnt += ` ;\n\tclav:entDataExtincao "${ent.dataExtincao}"`;
+
+  if (ent.tipologiasSel && ent.tipologiasSel.length > 0){
+    queryEnt += ` ;\n\tclav:pertenceTipologiaEnt ${
+      ent.tipologiasSel.map(tip => `clav:${tip.id}`).join(", ")
+    }`;
+  }
+
+  queryEnt += " .";
+
+  try{
+    var triplesEnt = await allTriplesFrom(id);
+    triplesEnt += await allTriplesRel("contemEntidade", id);
+    var query = `DELETE {${triplesEnt}}`;
+    query += `INSERT {${queryEnt}}`
+    query += `WHERE {${triplesEnt}}`
+    await execQuery("update", query);
+    return "Sucesso na atualização da entidade";
+  }catch(e){
+    throw "Insucesso na atualização da entidade";
   }
 };
 

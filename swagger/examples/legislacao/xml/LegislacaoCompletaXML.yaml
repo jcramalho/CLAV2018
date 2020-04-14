@@ -1,0 +1,54 @@
+value: |
+  <?xml version="1.0" encoding="utf-8"?>
+  <root>
+      <id type="string">leg_xmK25CNT44tzLM0ADwulP</id>
+      <data type="string">1993-02-07</data>
+      <numero type="string">2454/93</numero>
+      <tipo type="string">Regulamento</tipo>
+      <sumario type="string">Fixa determinadas disposições de aplicação do Regulamento (CEE) n° 2913/92 do Conselho que estabelece o Código Aduaneiro Comunitário</sumario>
+      <estado type="string">Ativo</estado>
+      <link type="string">http://eur-lex.europa.eu/legal-content/PT/TXT/?uri=celex%3A31993R2454</link>
+      <entidades type="array">
+          <item index="0" type="object">
+              <id type="string">ent_CEE</id>
+              <sigla type="string">CEE</sigla>
+          </item>
+      </entidades>
+      <regula type="array">
+          <item index="0" type="object">
+              <codigo type="string">400.10.050</codigo>
+              <titulo type="string">Registo de operadores económicos</titulo>
+              <id type="string">c400.10.050</id>
+          </item>
+          <item index="1" type="object">
+              <codigo type="string">450.10.228</codigo>
+              <titulo type="string">Autorização de locais para depósito de mercadorias</titulo>
+              <id type="string">c450.10.228</id>
+          </item>
+          <item index="2" type="object">
+              <codigo type="string">450.10.444</codigo>
+              <titulo type="string">Reconhecimento de requisitos e competência técnica a entidades</titulo>
+              <id type="string">c450.10.444</id>
+          </item>
+          <item index="3" type="object">
+              <codigo type="string">450.10.648</codigo>
+              <titulo type="string">Reconhecimento das  características e origem de animais, bens, produtos e serviços</titulo>
+              <id type="string">c450.10.648</id>
+          </item>
+          <item index="4" type="object">
+              <codigo type="string">450.10.650</codigo>
+              <titulo type="string">Autorização de regimes especiais aduaneiros para as mercadorias</titulo>
+              <id type="string">c450.10.650</id>
+          </item>
+          <item index="5" type="object">
+              <codigo type="string">450.10.807</codigo>
+              <titulo type="string">Autorização de simplificação de procedimentos</titulo>
+              <id type="string">c450.10.807</id>
+          </item>
+          <item index="6" type="object">
+              <codigo type="string">500.10.301</codigo>
+              <titulo type="string">Realização de fiscalização</titulo>
+              <id type="string">c500.10.301</id>
+          </item>
+      </regula>
+  </root>

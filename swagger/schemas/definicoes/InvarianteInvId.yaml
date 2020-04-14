@@ -1,0 +1,4 @@
+type: string
+description: identificador do invariante dentro do grupo anteriormente identificado
+pattern: '^inv_\d+$'
+example: inv_3

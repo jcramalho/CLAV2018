@@ -1,0 +1,23 @@
+value: |
+  <?xml version="1.0" encoding="utf-8"?>
+  <root>
+    <item index="0" type="object">
+      <codigo type="string">100</codigo>
+      <titulo type="string">ORDENAMENTO JURÍDICO E NORMATIVO</titulo>
+      <id type="string">http://jcr.di.uminho.pt/m51-clav#c100</id>
+      <status type="string">A</status>
+    </item>
+    <item index="1" type="object">
+      <codigo type="string">150</codigo>
+      <titulo type="string">PLANEAMENTO E GESTÃO ESTRATÉGICA</titulo>
+      <id type="string">http://jcr.di.uminho.pt/m51-clav#c150</id>
+      <status type="string">A</status>
+    </item>
+    <item index="2" type="object">
+      <codigo type="string">200</codigo>
+      <titulo type="string">EXECUÇÃO DA POLÍTICA EXTERNA</titulo>
+      <id type="string">http://jcr.di.uminho.pt/m51-clav#c200</id>
+      <status type="string">A</status>
+    </item>
+  </root>
+summary: Exemplo de parte das classes em lista

@@ -1,0 +1,31 @@
+"@prefix : <http://jcr.di.uminho.pt/m51-clav#> .
+
+@prefix dc: <http://purl.org/dc/elements/1.1#> .
+
+@prefix fn: <http://www.w3.org/2005/xpath-functions#> .
+
+%...
+
+rdf:type a rdf:Property .
+
+rdfs:subPropertyOf a rdf:Property, owl:TransitiveProperty .
+
+rdfs:subClassOf a rdf:Property, owl:TransitiveProperty .
+
+rdfs:domain a rdf:Property .
+
+rdfs:range a rdf:Property .
+
+%...
+
+:c650.10.305 a :Classe_N3, owl:NamedIndividual .
+
+:c650.10.306 a :Classe_N3, owl:NamedIndividual .
+
+:c650.10.307 a :Classe_N3, owl:NamedIndividual .
+
+:c650.10.308 a :Classe_N3, owl:NamedIndividual .
+
+:c650.10.400 a :Classe_N3, owl:NamedIndividual .
+
+%..."

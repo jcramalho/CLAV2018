@@ -1,0 +1,22 @@
+value:
+  - _id: "5e90851bc4ec15e6fa94cf8c"
+    email: "exemplo@exemplo.com"
+    entidade: "ent_DGLAB"
+    internal: true
+    level: 3
+    nCalls: 0
+    name: "Maria"
+  - _id: "1111112"
+    email: "exemplo2@exemplo.com"
+    entidade: "ent_DGLAB"
+    internal: true
+    level: 2
+    nCalls: 0
+    name: "Antonio"
+  - _id: "1111111"
+    email: "exemplo3@exemplo.com"
+    entidade: "ent_DGLAB"
+    internal: true
+    level: 3.5
+    nCalls: 0
+    name: "Jose"

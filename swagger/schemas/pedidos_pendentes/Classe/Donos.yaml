@@ -1,0 +1,25 @@
+type: object
+properties:
+  intervencao:
+    type: string
+    enum: [Indefinido]
+  tipo:
+    type: string
+    enum: [Entidade, Tipologia]
+  designacao:
+    type: string
+  sigla:
+    type: string
+  id:
+    oneOf:
+      - $ref: '#/components/schemas/EntidadeId'
+      - $ref: '#/components/schemas/TipologiaId'
+  selected:
+    type: boolean
+required:
+  - intervencao
+  - tipo
+  - designacao
+  - sigla
+  - id
+  - selected

@@ -1,0 +1,34 @@
+type: array
+items:
+  type: object
+  properties:
+    location:
+      type: string
+      enum: [body, query, params, cookies, headers]
+    msg:
+      type: string
+    param:
+      type: string
+    value:
+      type: string
+    nestedErrors:
+      type: array
+      items:
+        type: object
+        properties:
+          location:
+            type: string
+            enum: [body, query, params, cookies, headers]
+          msg:
+            type: string
+          param:
+            type: string
+          value:
+            type: string
+        required:
+          - location
+          - msg
+          - param
+  required:
+    - msg
+    - param

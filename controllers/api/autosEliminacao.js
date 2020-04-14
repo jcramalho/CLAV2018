@@ -6,12 +6,13 @@ var AutosEliminacao = module.exports
 
 AutosEliminacao.listar = async function() {
     let query = `
-    SELECT ?id ?data ?entidade ?legislacao ?fundo WHERE {
+    SELECT ?id ?data ?entidade ?tipo ?numero WHERE {
         ?id a clav:AutoEliminacao;
-                clav:autoDataAutenticacao ?data;
-                clav:temEntidadeResponsavel ?entidade ;
-                clav:autoLegislacao ?legislacao ;
-                clav:fundo ?fundo .
+            clav:autoDataAutenticacao ?data;
+            clav:temEntidadeResponsavel ?entidade;
+            clav:temLegislacao ?legislacao .
+        ?legislacao clav:diplomaFonte ?tipo;
+                    clav:diplomaNumero ?numero
     } 
     `
     try {
@@ -23,71 +24,133 @@ AutosEliminacao.listar = async function() {
 
 AutosEliminacao.consultar = async function(id) {
     var query = `
-    SELECT * WHERE {
+    select * where {
         clav:${id} a clav:AutoEliminacao;
+                clav:autoNumero ?numero;
+                clav:autoResponsavel ?responsavel;
                 clav:autoDataAutenticacao ?data;
-                clav:autoResponsavel ?resp ;
-                clav:temEntidadeResponsavel ?entidade ;
-                clav:autoLegislacao ?legislacao ;
-                clav:fundo ?fundo ;
-                   clav:temZonaControlo ?zc .
-        ?zc clav:codigo ?codigo ;
-            clav:autoDataInicio ?dataInicio;
-            clav:autoDataFim ?dataFim;
-            clav:temAgregacao ?ag .
-    	?ag clav:agregacaoCodigo ?agCodigo ;
-            clav:agregacaoTitulo ?agTitulo ;
-            clav:agregacaoDataContagem ?agData.
-        OPTIONAL {
-            ?zc clav:temNI ?zcNI .
-        }
-        OPTIONAL {
-            ?zc clav:temDono ?dono .
-        }
-        OPTIONAL {
-            ?ag clav:temNI ?agNI .
-        }
-        OPTIONAL {
-            ?zc clav:referencia ?referencia .
-        }
+                clav:temEntidadeResponsavel ?entResponsavel;
+                clav:temLegislacao ?legislacao ;
+                clav:temFundoDe ?fundo .
+        ?fundo clav:entDesignacao ?fundoNome .
+        ?entResponsavel clav:entDesignacao ?entidadeNome .
+        ?legislacao clav:diplomaFonte ?fonte;
+                      clav:diplomaNumero ?legNumero .
     }
     `
     try {
-        return execQuery("query", query)
-            .then(response => {
-                if(normalize(response).length === 0) return []
-                var autos = normalize(response)
-                var res = {
-                    id: id,
-                    data: autos[0].data,
-                    entidade: autos[0].entidade,
-                    responsavel: autos[0].resp,
-                    legislacao: autos[0].legislacao,
-                    fundo: autos[0].fundo,
-                    zonaControlo: {}
+        let response = await execQuery("query",query);
+        if(normalize(response).length === 0) return null;
+        var autos = normalize(response)
+        
+        var res = {
+            id: id,
+            data: autos[0].data,
+            entidade: autos[0].entResponsavel.split("#")[1],
+            entidadeNome: autos[0].entidadeNome,
+            responsavel: autos[0].responsavel,
+            tipo: autos[0].fonte,
+            refLegislacao: autos[0].legislacao.split("#")[1],
+            legislacao: "Portaria "+autos[0].legNumero,
+            fundo: [],
+            zonaControlo: []
+        }
+        
+        for(a of autos)
+            res.fundo.push({
+               fundo: a.fundo.split("#")[1],
+               nome: a.fundoNome,
+            })
+        
+        var query2 = `
+        select * where {
+    		clav:${id} a clav:AutoEliminacao ;
+                         clav:temZonaControlo ?zonaControlo .
+    		?zonaControlo clav:dataInicio ?dataInicio ;
+                    	  clav:dataFim ?dataFim ;
+                       	  clav:temClasseControlo ?classe .
+            OPTIONAL {
+        			?zonaControlo clav:UIpapel ?UIpapel ;
+    		} .
+    		OPTIONAL {
+        			?zonaControlo clav:UIDigital ?UIdigital ;
+    		} .
+    		OPTIONAL {
+        			?zonaControlo clav:UIOutros ?UIoutros ;
+    		} .
+    		?classe clav:codigo ?codigo ;
+              		clav:titulo ?titulo ;
+                	clav:temDF ?destino;
+                 	clav:temPCA ?prazo .
+    		?destino clav:dfValor ?df .
+    		?prazo clav:pcaValor ?pca .   
+}
+        `
+        var response2 = await execQuery("query",query2);
+        var zonasControlo = normalize(response2)
+    
+        for(zonaControlo of zonasControlo) {
+            var res2 = {
+                id: zonaControlo.zonaControlo.split("#")[1],
+                dataInicio: zonaControlo.dataInicio,
+                dataFim: zonaControlo.dataFim,
+                UIpapel: zonaControlo.UIpapel,
+                UIdigital: zonaControlo.UIdigital,
+                UIoutros: zonaControlo.UIoutros,
+                codigo: zonaControlo.codigo,
+                titulo: zonaControlo.titulo,
+                destino: zonaControlo.df,
+                pca: zonaControlo.pca,
+                dono: [],
+                agregacoes: []
+            }
+            
+            if(res2.destino === "C") {
+                res2['ni'] = "Participante"
+                var query3 = `
+                select * where {
+                    clav:${res2.id} clav:temDono ?dono .
+                    ?dono clav:entDesignacao ?entNome .
                 }
-                for(ae of autos) {
-                    if(!(ae.codigo in res.zonaControlo)) {
-                        res.zonaControlo[ae.codigo] = {
-                            codigo: ae.codigo,
-                            referencia: ae.referencia,
-                            dataInicio: ae.dataInicio,
-                            dataFim: ae.dataFim,
-                            dono: ae.dono,
-                            ni: ae.zcNI,
-                            ag: {}
-                        }
+                `
 
-                    }
-                    res.zonaControlo[ae.codigo].ag[ae.agCodigo] = {
-                        codigo: ae.agCodigo,
-                        titulo: ae.agTitulo,
-                        dataContagem: ae.agData,
-                        ni: ae.agNI
-                    }
+                var response3 = await execQuery("query",query3);
+                var donos = normalize(response3)
+                
+                for(dono of donos) {
+                    res2.dono.push({
+                        dono: dono.dono.split("#")[1],
+                        nome: dono.entNome,
+                    })
                 }
-                return res
-            });
+            }
+            var query4 = `
+            select * where {
+                clav:${res2.id} clav:temAgregacao ?ag .
+                ?ag clav:agregacaoCodigo ?codigo ;
+                    clav:agregacaoTitulo ?titulo ;
+                    clav:agregacaoDataContagem ?data .
+                OPTIONAL {    
+                    ?ag clav:temNI ?ni .
+                }
+            }
+            `
+            var response4 = await execQuery("query",query4)
+            var agregacoes = normalize(response4)
+            
+            for(ag of agregacoes) {
+                res2.agregacoes.push({
+                    codigo: ag.codigo,
+                    titulo: ag.titulo,
+                    dataContagem: ag.data,
+                    ni: ag.ni.split("_")[1]
+                })
+            }
+
+            res.zonaControlo.push(res2)
+        }
+
+        return res
     } 
     catch(erro) { throw (erro);}
 }

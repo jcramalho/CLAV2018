@@ -14,21 +14,34 @@ parameters:
   - in: query
     name: idRel
     schema:
-      type: string
+      $ref: '#/components/schemas/InvarianteRelId'
     description: identificador de um grupo de invariantes 
     required: false
   - in: query
     name: idInv
     schema:
-      type: string
+      $ref: '#/components/schemas/InvarianteInvId'
     description: identificador do invariante dentro do grupo anteriormente identificado 
     required: false
 responses:
   200:
     description: Lista os invariantes ou devolve os erros de um invariante em especifico
+    content:
+      application/json:
+        schema:
+          oneOf:
+            - $ref: '#/components/schemas/InvariantesLista'
+            - $ref: '#/components/schemas/InvarianteErros'
+        examples:
+          Exemplo da lista de todos os invariantes:
+            $ref: '#/components/examples/InvariantesLista'
+          Exemplo dos erros de um invariante:
+            $ref: '#/components/examples/InvarianteErros'
   401:
     $ref: '#/components/responses/UnauthorizedUser'
   403:
     $ref: '#/components/responses/PermissionsUser'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
   500:
     description: Erro

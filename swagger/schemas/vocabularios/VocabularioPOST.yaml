@@ -1,0 +1,12 @@
+type: object
+properties:
+  id:
+    $ref: '#/components/schemas/VocabularioId'
+  desc:
+    type: string
+  label:
+    type: string
+required:
+  - id
+  - desc
+  - label

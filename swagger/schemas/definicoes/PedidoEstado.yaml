@@ -1,0 +1,2 @@
+type: string
+enum: ["Submetido", "Distribuído", "Apreciado", "Validado", "Devolvido"]

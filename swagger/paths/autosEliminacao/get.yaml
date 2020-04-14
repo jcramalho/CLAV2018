@@ -10,6 +10,11 @@ tags:
 responses:
   200:
     description: Devolve a lista de todos os autos de eliminação
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/AutosEliminacao_lista'
+        example: !!inc/file '/examples/autosEliminacao/autosEliminacao_get_all.yaml'
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:

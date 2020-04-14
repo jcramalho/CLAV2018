@@ -1,0 +1,189 @@
+value: |
+  <?xml version="1.0" encoding="utf-8"?>
+  <root>
+    <nivel type="number">2</nivel>
+    <pai type="object">
+      <codigo type="string">200</codigo>
+      <titulo type="string">EXECUÇÃO DA POLÍTICA EXTERNA</titulo>
+    </pai>
+    <codigo type="string">200.10</codigo>
+    <titulo type="string">Definição de políticas conjuntas e de instrumentos de regulação</titulo>
+    <descricao type="string">Compreende as atividades que consubstanciam a participação na negociação, preparação e fixação de instrumentos reguladores das relações internacionais, de decisões tomadas no âmbito da cooperação intergovernamental da União Europeia, bem como de instrumentos de regulação comunitária.Compreende, igualmente, a participação na elaboração de normas técnicas europeias e internacionais.</descricao>
+    <status type="string">A</status>
+    <filhos type="array">
+      <item index="0" type="object">
+        <nivel type="number">3</nivel>
+        <pai type="object">
+          <codigo type="string">200.10</codigo>
+          <titulo type="string">Definição de políticas conjuntas e de instrumentos de regulação</titulo>
+        </pai>
+        <codigo type="string">200.10.001</codigo>
+        <titulo type="string">Definição e acompanhamento de posições nacionais no âmbito das relações bilaterais e multilaterais entre países</titulo>
+        <descricao type="string">Preparação e apresentação da posição de Portugal no âmbito das negociações, nas reuniões de organismos ou em instâncias multilaterais/bilaterais.Inicia com o envio da agenda e termina com a remessa do contributo.Inclui os contributos de embaixadas e de ministérios setoriais, demonstrativos da posição assumida por Portugal e do processo negocial empreendido nos vários grupos de trabalho preparatórios das reuniões.</descricao>
+        <status type="string">A</status>
+        <filhos type="array">
+        </filhos>
+        <notasAp type="array">
+          <item index="0" type="object">
+            <idNota type="string">http://jcr.di.uminho.pt/m51-clav#na_c200.10.001_rbi7ShEjgWCUb6MaOmmJr</idNota>
+            <nota type="string">Acompanhamento no âmbito de processos multilaterais</nota>
+          </item>
+        </notasAp>
+        <exemplosNotasAp type="array">
+          <item index="0" type="object">
+            <idExemplo type="string">http://jcr.di.uminho.pt/m51-clav#exna_c200.10.001_fpQMSBPH4ShGE9Wc9IVnV</idExemplo>
+            <exemplo type="string">Relações bilaterais / multilaterais  em matéria consular</exemplo>
+          </item>
+        </exemplosNotasAp>
+        <notasEx type="array">
+          <item index="0" type="object">
+            <idNota type="string">http://jcr.di.uminho.pt/m51-clav#ne_c200.10.001_MC1VflGFxX-X-oIie-Dqq</idNota>
+            <nota type="string">A definição de políticas nacionais setoriais deve ser considerada em 150.10.100 – Definição de políticas setoriais</nota>
+          </item>
+        </notasEx>
+        <termosInd type="array">
+          <item index="0" type="object">
+            <idTI type="string">http://jcr.di.uminho.pt/m51-clav#ti_2BrT4QFUa3Y40xFjVghJ8</idTI>
+            <termo type="string">Definição e acompanhamento de posição nacional no âmbito das relações bilaterais e multilaterais entre países</termo>
+          </item>
+        </termosInd>
+        <temSubclasses4Nivel type="boolean">false</temSubclasses4Nivel>
+        <temSubclasses4NivelPCA type="boolean">false</temSubclasses4NivelPCA>
+        <temSubclasses4NivelDF type="boolean">false</temSubclasses4NivelDF>
+        <subdivisao4Nivel01Sintetiza02 type="boolean">true</subdivisao4Nivel01Sintetiza02>
+        <tipoProc type="string">Processo Comum</tipoProc>
+        <procTrans type="string">S</procTrans>
+        <donos type="array">
+          <item index="0" type="object">
+            <tipo type="string">http://jcr.di.uminho.pt/m51-clav#TipologiaEntidade</tipo>
+            <sigla type="string">CCDR</sigla>
+            <idDono type="string">tip_CCDR</idDono>
+            <idTipo type="string">TipologiaEntidade</idTipo>
+            <designacao type="string">Comissões de Coordenação do Desenvolvimento Regional</designacao>
+            <id type="string">http://jcr.di.uminho.pt/m51-clav#tip_CCDR</id>
+          </item>
+        </donos>
+        <participantes type="array">
+          <item index="0" type="object">
+            <participLabel type="string">Assessor</participLabel>
+            <sigla type="string">ACT</sigla>
+            <designacao type="string">Autoridade para as Condições de Trabalho</designacao>
+            <idTipo type="string">Entidade</idTipo>
+            <id type="string">http://jcr.di.uminho.pt/m51-clav#ent_ACT</id>
+            <idParticipante type="string">ent_ACT</idParticipante>
+          </item>
+        </participantes>
+        <processosRelacionados type="array">
+          <item index="0" type="object">
+            <codigo type="string">550.10.009</codigo>
+            <tipoRel type="string">http://jcr.di.uminho.pt/m51-clav#eAntecessorDe</tipoRel>
+            <idRel type="string">eAntecessorDe</idRel>
+            <titulo type="string">Vigilância da fronteira</titulo>
+            <id type="string">http://jcr.di.uminho.pt/m51-clav#c550.10.009</id>
+            <status type="string">A</status>
+          </item>
+        </processosRelacionados>
+        <legislacao type="array">
+          <item index="0" type="object">
+            <tipo type="string">Lei Constitucional</tipo>
+            <sumario type="string">Sétima revisão constitucional</sumario>
+            <numero type="string">1/2005</numero>
+            <idLeg type="string">leg_bjA4XVgJL9coqKgo_-8gC</idLeg>
+            <id type="string">http://jcr.di.uminho.pt/m51-clav#leg_bjA4XVgJL9coqKgo_-8gC</id>
+          </item>
+        </legislacao>
+        <pca type="object">
+          <formaContagem type="string">Data de conclusão do procedimento</formaContagem>
+          <idPCA type="string">http://jcr.di.uminho.pt/m51-clav#pca_c200.10.001</idPCA>
+          <idJust type="string">just_pca_c200.10.001</idJust>
+          <notas type="string">
+          </notas>
+          <valores type="string">5</valores>
+          <justificacao type="array">
+            <item index="0" type="object">
+              <tipoId type="string">CriterioJustificacaoGestionario</tipoId>
+              <conteudo type="string">Prazo para imputação de responsabilidade pela negociação e definição de posições nacionais, decorrente de escrutínio público (eleições) ou da não recondução no mandato.Considerou-se para a definição do prazo o tempo do mandato de maior duração - 5 anos.</conteudo>
+              <criterio type="string">http://jcr.di.uminho.pt/m51-clav#crit_just_pca_c200.10.001_1</criterio>
+              <processos type="array">
+              </processos>
+              <legislacao type="array">
+              </legislacao>
+            </item>
+          </justificacao>
+        </pca>
+        <df type="object">
+          <idJust type="string">just_df_c200.10.001</idJust>
+          <valor type="string">C</valor>
+          <idDF type="string">http://jcr.di.uminho.pt/m51-clav#df_c200.10.001</idDF>
+          <justificacao type="array">
+            <item index="0" type="object">
+              <tipoId type="string">CriterioJustificacaoComplementaridadeInfo</tipoId>
+              <conteudo type="string">É complementar dos PN 150.10.001 - Definição de políticas globais; PN 150.10.100 - Definição de políticas setoriais  Sendo necessária uma visão do conjunto para o entendimento global da negociação e definição das posições nacionais.  </conteudo>
+              <criterio type="string">http://jcr.di.uminho.pt/m51-clav#crit_just_df_c200.10.001_1</criterio>
+              <processos type="array">
+                <item index="0" type="object">
+                  <procId type="string">c150.10.001</procId>
+                </item>
+              </processos>
+              <legislacao type="array">
+              </legislacao>
+            </item>
+          </justificacao>
+        </df>
+        <id type="string">http://jcr.di.uminho.pt/m51-clav#c200.10.001</id>
+      </item>
+    </filhos>
+    <notasAp type="array">
+      <item index="0" type="object">
+        <idNota type="string">http://jcr.di.uminho.pt/m51-clav#na_c200.10_Z716gvTd2fhSRxzYHfPYo</idNota>
+        <nota type="string">Atividades preparatórias de cimeiras, encontros e reuniões políticas ou técnicas, e na representação nacional nas mesmas cimeiras ou encontros de chefes de Estado e de Governo, reuniões e conselhos de ministros de diferentes Estados, reuniões de dirigentes, de comités e de grupos de peritos internacionais</nota>
+      </item>
+    </notasAp>
+    <exemplosNotasAp type="array">
+    </exemplosNotasAp>
+    <notasEx type="array">
+      <item index="0" type="object">
+        <idNota type="string">http://jcr.di.uminho.pt/m51-clav#ne_c200.10_xeB1UQ1ADNKVFx6HIDUZB</idNota>
+        <nota type="string">A definição da política externa portuguesa, tal como a definição das demais políticas, deve ser considerada em &quot;Planeamento e gestão estratégica/ Definição e avaliação de políticas&quot; (150.10)</nota>
+      </item>
+    </notasEx>
+    <termosInd type="array">
+    </termosInd>
+    <temSubclasses4Nivel type="boolean">false</temSubclasses4Nivel>
+    <temSubclasses4NivelPCA type="boolean">false</temSubclasses4NivelPCA>
+    <temSubclasses4NivelDF type="boolean">false</temSubclasses4NivelDF>
+    <subdivisao4Nivel01Sintetiza02 type="boolean">true</subdivisao4Nivel01Sintetiza02>
+    <tipoProc type="string">
+    </tipoProc>
+    <procTrans type="string">
+    </procTrans>
+    <donos type="array">
+    </donos>
+    <participantes type="array">
+    </participantes>
+    <processosRelacionados type="array">
+    </processosRelacionados>
+    <legislacao type="array">
+    </legislacao>
+    <pca type="object">
+      <valores type="string">
+      </valores>
+      <notas type="string">
+      </notas>
+      <formaContagem type="string">
+      </formaContagem>
+      <subFormaContagem type="string">
+      </subFormaContagem>
+      <justificacao type="array">
+      </justificacao>
+    </pca>
+    <df type="object">
+      <valor type="string">NE</valor>
+      <nota type="object">
+      </nota>
+      <justificacao type="array">
+      </justificacao>
+    </df>
+    <id type="string">http://jcr.di.uminho.pt/m51-clav#c200.10</id>
+  </root>
+summary: Exemplo de parte da subárvore de uma classe

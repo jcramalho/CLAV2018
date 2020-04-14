@@ -8,33 +8,27 @@ tags:
 parameters:
   - name: codigo
     in: path
-    description: 'Identificador de um pedido (exemplo: 2019-321)'
+    description: Identificador de um pedido
     schema:
-      type: string
+      $ref: '#/components/schemas/PedidoCodigo'
+    example: 2020-10
     required: true
 requestBody:
-  description: 'Dados'
+  description: 'Distribuição a adicionar'
   required: true
   content:
     application/json:
       schema:
-        properties:
-          estado:
-            type: string
-            enum: [Submetido, Distribuído, Apreciado, Validado]
-          responsavel:
-            type: string
-          data:
-            type: string
-            format: date-time
-          despacho:
-            type: string
-        required:
-          - estado
-          - data
+        $ref: '#/components/schemas/PedidoDistribuicao'
+      example: !!inc/file '/examples/pedidos/PedidoDistribuicao.yaml'
 responses:
   200:
     description: Adição de distribuição
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/PedidoCodigo'
+        example: 2020-11
   401:
     $ref: '#/components/responses/UnauthorizedUser'
   403:

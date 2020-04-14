@@ -8,16 +8,23 @@ tags:
 parameters:
   - name: id
     in: path
-    description: 'Código de um processo (exemplo: 100.10.001)'
+    description: Código de um processo
     schema:
-      type: string
+      $ref: '#/components/schemas/Codigo'
     required: true
 responses:
   200:
     description: Obtém a travessia de um processo
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/Travessia'
+        example: !!inc/file '/examples/travessia/Travessia.yaml'
   401:
     $ref: '#/components/responses/UnauthorizedUser'
   403:
     $ref: '#/components/responses/PermissionsUser'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
   500:
     description: Erro

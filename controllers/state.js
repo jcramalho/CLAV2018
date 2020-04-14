@@ -211,63 +211,12 @@ exports.getEsqueleto = () => {
     return ret
 }
 
-//Função auxiliar para getClassesParaPesquisaRec, devolve defaultValue se o objero for null, undefined ou vazio
-function ternaryOp(obj, defaultValue){
-    return obj ? obj : defaultValue
-}
-
-//Função auxiliar para getClassesParaPesquisaRec, obtém o termo 'termo' de cada objeto da lista e realiza depois o join com " ". Caso a lista seja null, undefined ou vazia devolve []
-function mapJoin(list, term){
-    return list ? list.map(e => e[term]).join(" ") : []
-}
-
-//Função auxiliar para getClassesParaPesquisaRec, obtém o termo 'termo' de cada objeto da lista. Caso a lista seja null, undefined ou vazia devolve []
-function ternaryMap(list, term){
-    return list ? list.map(e => e[term]) : []
-}
-
-//Função auxiliar para getClassesParaPesquisa, função que trata de transformar cada classe para a classe a retornar
-function getClassesParaPesquisaRec(classes){
-    var ret = []
-
-    for (var i = 0; i < classes.length; i++) {
-        ret.push({
-            id: classes[i].codigo,
-            nome: classes[i].codigo + " - " + classes[i].titulo,
-            titulo: classes[i].titulo,
-            status: classes[i].status,
-            na: mapJoin(classes[i].notasAp, "nota"),
-            exemploNa: mapJoin(classes[i].exemplosNotasAp, "exemplo"),
-            ne: mapJoin(classes[i].notasEx, "nota"),
-            ti: mapJoin(classes[i].termosInd, "termo"),
-            pca: ternaryOp(classes[i].pca.valores, ""),
-            fc_pca: ternaryOp(classes[i].pca.formaContagem, ""),
-            sfc_pca: ternaryOp(classes[i].pca.subFormaContagem, ""),
-            crit_pca: ternaryMap(classes[i].pca.justificacao, "tipoId"),
-            df: ternaryOp(classes[i].df.valor, "NE"),
-            crit_df: ternaryMap(classes[i].df.justificacao, "tipoId"),
-            donos: ternaryMap(classes[i].donos, "idDono"),
-            participantes: ternaryMap(classes[i].participantes, "idParticipante"),
-            filhos: getClassesParaPesquisaRec(classes[i].filhos)
-        })
-    }
-
-    return ret
-}
-
-//Devolve a informação das classes preparadas para a pesquisa avançada
-exports.getClassesParaPesquisa = () => {
-    var ret = JSON.parse(JSON.stringify(classTreeInfo))
-    ret = getClassesParaPesquisaRec(ret)
-    return ret
-}
-
 exports.getIndicePesquisa = async () => { return indicePesquisa }
 
 exports.getLegislacao = (id) => {
     let res = legislacao.filter(l => l.id == id)
     if (res.length > 0) {
-        return res[0]
+        return JSON.parse(JSON.stringify(res[0]))
     }
     else
         return null

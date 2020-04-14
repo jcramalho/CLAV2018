@@ -1,0 +1,26 @@
+type: array
+items:
+  type: object
+  properties:
+    codigo:
+      $ref: '#/components/schemas/Codigo'
+    exemplos:
+      type: array
+      items:
+        type: string
+    notas:
+      type: array
+      items:
+        type: string
+    tis:
+      type: array
+      items:
+        type: string
+    titulo:
+      type: string
+  required:
+    - codigo
+    - exemplos
+    - notas
+    - tis
+    - titulo

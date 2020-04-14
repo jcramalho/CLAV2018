@@ -1,0 +1,12 @@
+type: object
+properties:
+  id:
+    $ref: '#/components/schemas/TermoId'
+  termo:
+    type: string
+  existe:
+    type: boolean
+required:
+  - id
+  - termo
+  - existe

@@ -13,7 +13,7 @@ info:
 
     Se tiver um token de um utilizador não necessita de indicar uma chave API para aceder aos GET's que a chave API dá acesso.
     
-    **Última alteração: 04/03/2020**
+    **Última alteração: 14/04/2020**
   version: 2.0.0
   title: CLAV API
   contact:
@@ -80,9 +80,11 @@ tags:
     description: "Informação que especifica o âmbito de aplicação da classe. Aplica-se às classes de 1º, 2º e 3º nível."
   - name: Exemplos de Notas de Aplicação
     description: "Informação que exemplifica o âmbito de aplicação da classe. Aplica-se às classes de 1º, 2º e 3º nível."
+  - name: Notícias
+    description: "Notícias da plataforma CLAV"
 paths: !!inc/dir [ 'paths' ] 
 components: 
-  schemas: !!inc/dir [ 'schemas', excludeTopLevelDirSeparator: true ]
+  schemas: !!inc/dir [ 'schemas', { excludeTopLevelDirSeparator: true, recursive: false }]
   securitySchemes:
     apiKeyQuery:
       type: apiKey
@@ -113,6 +115,12 @@ components:
       description: Não tem permissões suficientes para realizar o pedido ou a sua chave API foi desativada.
     PermissionsUser:
       description: Não tem permissões suficientes para realizar o pedido.
+    ValidationParameters:
+      description: Alguns dos parâmetros são inválidos ou estão em falta.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/errosParametros'
   parameters:
     OutputFormatWithCSV:
       in: query
@@ -122,4 +130,70 @@ components:
         type: string
         enum: [application/json, json, application/xml, xml, text/csv, csv, excel/csv]
       description: "Formato de saída do resultado"
-  examples: !!inc/dir [ 'examples', excludeTopLevelDirSeparator: true ]
+  examples: !!inc/dir [ 'examples', {
+      excludeTopLevelDirSeparator: true,
+      recursive: false,
+      #Se começar a ficar grande fazer whitelist em vez de blacklist
+      #OU fazer a incluir exemplo a exemplo com inc/file e remover este inc/dir
+      blacklist: [
+        'examples/chaves/chaves_get_all.yaml',
+        'examples/chaves/chaves_get_one.yaml',
+        'examples/classes/ClasseDF.yaml',
+        'examples/classes/ClassePCA.yaml',
+        'examples/classes/ClasseDono.yaml',
+        'examples/classes/ClasseMeta.yaml',
+        'examples/classes/ClasseNotasAp.yaml',
+        'examples/classes/ClasseNotasEx.yaml',
+        'examples/classes/ClasseProcRels.yaml',
+        'examples/classes/ClasseLegislacao.yaml',
+        'examples/classes/ClasseProcRelsRel.yaml',
+        'examples/classes/ClasseDescendencia.yaml',
+        'examples/classes/ClasseJustificacao.yaml',
+        'examples/classes/ClasseParticipante.yaml',
+        'examples/classes/ClasseTermosIndice.yaml',
+        'examples/classes/ClasseExemploNotasAp.yaml',
+        'examples/autosEliminacao/AutosEliminacaoPOST.yaml',
+        'examples/autosEliminacao/autosEliminacao_get_all.yaml',
+        'examples/autosEliminacao/autosEliminacao_get_one.yaml',
+        'examples/entidades/EntidadeDonos.yaml',
+        'examples/entidades/EntidadeTipologias.yaml',
+        'examples/entidades/EntidadeParticipantes.yaml',
+        'examples/indicePesquisa/IndicePesquisa_get.yaml',
+        'examples/exemplosNotasAp/ExemplosNotasAp_get_all.yaml',
+        'examples/logs/Logs.yaml',
+        'examples/notasAp/NotasAp.yaml',
+        'examples/noticias/Noticia.yaml',
+        'examples/noticias/NoticiaP.yaml',
+        'examples/noticias/Noticias.yaml',
+        'examples/legislacao/LegislacaoPortarias.yaml',
+        'examples/legislacao/LegislacaoProcessos.yaml',
+        'examples/invariantes/InvariantesTestarTodos.yaml',
+        'examples/tipologias/TipologiaDonos.yaml',
+        'examples/tipologias/TipologiaParticipantes.yaml',
+        'examples/tipologias/TipologiaElementos.yaml',
+        'examples/stats/Stats.yaml',
+        'examples/ontologia/Turtle.yaml',
+        'examples/ontologia/JSONLD.yaml',
+        'examples/ontologia/RDFXML.yaml',
+        'examples/travessia/Travessia.yaml',
+        'examples/travessia/Travessias.yaml',
+        'examples/termosIndice/TermosIndiceLista.yaml',
+        'examples/vocabularios/Vocabularios.yaml',
+        'examples/vocabularios/VocabularioTermos.yaml',
+        'examples/users/User.yaml',
+        'examples/users/UserLogin.yaml',
+        'examples/users/UserToken.yaml',
+        'examples/tabelasSelecao/TabelaSelecao.yaml',
+        'examples/tabelasSelecao/TabelasSelecao.yaml',
+        'examples/tabelasSelecao/TabelaSelecaoClasses.yaml',
+        'examples/pedidos/Pedido.yaml',
+        'examples/pedidos/Pedidos.yaml',
+        'examples/pedidos/PedidoPOST.yaml',
+        'examples/pedidos/PedidoPUT.yaml',
+        'examples/pedidos/PedidoDistribuicao.yaml',
+        'examples/pendentes/Pendente.yaml',
+        'examples/pendentes/Pendentes.yaml',
+        'examples/pendentes/PendentePOST.yaml',
+        'examples/pendentes/PendentePUT.yaml'
+      ]
+  }]

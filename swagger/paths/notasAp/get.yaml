@@ -10,6 +10,11 @@ security:
 responses:
   200:
     description: Devolve a lista de todas as notas de aplicação
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/NotasAp'
+        example: !!inc/file '/examples/notasAp/NotasAp.yaml'
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:

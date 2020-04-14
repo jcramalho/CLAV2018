@@ -1,0 +1,110 @@
+type: object
+properties:
+  id:
+    $ref: '#/components/schemas/AutoEliminacaoId'
+  data:
+    $ref: '#/components/schemas/Data'
+  entidade:
+    $ref: '#/components/schemas/EntidadeId'
+  entidadeNome:
+    type: string
+  responsavel:
+    type: string
+    format: email
+  fundo:
+    type: array
+    items:
+      type: object
+      properties:
+        fundo:
+          $ref: '#/components/schemas/EntidadeId'
+        nome:
+          type: string
+      required:
+        - fundo
+        - nome
+  legislacao:
+    type: string
+  refLegislacao:
+    $ref: '#/components/schemas/LegislacaoId'
+  tipo:
+    $ref: '#/components/schemas/Fonte'
+  zonaControlo:
+    type: array
+    items:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/ZonaControloId'
+        dataInicio:
+          type: string
+        dataFim:
+          type: string
+        UIpapel:
+          type: string
+        UIdigital:
+          type: string
+        UIoutros:
+          type: string
+        codigo:
+          $ref: '#/components/schemas/Codigo'
+        titulo:
+          type: string
+        destino:
+          $ref: '#/components/schemas/DFValor'
+        pca:
+          $ref: '#/components/schemas/PCAValor'
+        referencia:
+          type: string
+        ni:
+          type: string
+          enum: [Dono, Participante]
+        dono:
+          type: array
+          items:
+            type: object
+            properties:
+              dono:
+                $ref: '#/components/schemas/EntidadeId'
+              nome:
+                type: string
+            required:
+              - dono
+              - nome
+        agregacoes:
+          type: array
+          items:
+            type: object
+            properties:
+              codigo:
+                type: string
+              titulo:
+                type: string
+              dataContagem:
+                type: string
+              ni:
+                type: string
+                enum: [Dono, Participante]
+            required:
+              - codigo
+              - titulo
+              - dataContagem
+      required:
+        - id
+        - codigo
+        - titulo
+        - dataInicio
+        - dataFim
+        - dono
+        - agregacoes
+required:
+  - id
+  - data
+  - entidade
+  - entidadeNome
+  - responsavel
+  - tipo
+  - fundo
+  - legislacao
+  - refLegislacao
+  - zonaControlo

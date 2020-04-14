@@ -1,0 +1,37 @@
+type: object
+properties:
+  designacao:
+    type: string
+  sigla:
+    type: string
+  internacional:
+    $ref: '#/components/schemas/Internacional'
+  sioe:
+    $ref: '#/components/schemas/SIOE'
+  estado:
+    $ref: '#/components/schemas/Estado'
+  tipologiasSel:
+    type: array
+    items:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/TipologiaId'
+        sigla:
+          type: string
+        designacao:
+          type: string
+  codigo:
+    $ref: '#/components/schemas/EntidadeId'
+  dataCriacao:
+    $ref: '#/components/schemas/Data'
+  dataExtincao:
+    $ref: '#/components/schemas/Data'
+required:
+  - designacao
+  - internacional
+  - sioe
+  - estado
+  - tipologiasSel
+  - sigla
+  - codigo

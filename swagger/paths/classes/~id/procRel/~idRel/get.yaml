@@ -10,22 +10,29 @@ tags:
 parameters:
   - name: id
     in: path
-    description: 'Identificador de uma classe (exemplo: c200.10.100)'
+    description: 'Identificador de uma classe'
     schema:
-      type: string
+      $ref: '#/components/schemas/ClasseId'
     required: true
   - name: idRel
     in: path
-    description: 'Identificador da relação (exemplo: eSucessorDe)'
+    description: 'Identificador da relação'
     schema:
-      type: string
+      $ref: '#/components/schemas/TipoRelacao'
     required: true
 responses:
   200:
     description: Devolve o(s) processo(s) relacionado(s) por uma relação específica
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/ClasseProcRels'
+        example: !!inc/file '/examples/classes/ClasseProcRelsRel.yaml'
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:
     $ref: '#/components/responses/PermissionsKey'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
   500:
     description: Erro

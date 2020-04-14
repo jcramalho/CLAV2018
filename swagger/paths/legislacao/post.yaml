@@ -1,0 +1,37 @@
+summary: Cria um diploma legislativo
+description: Cria um diploma legislativo a partir da informação enviada no pedido
+tags:
+  - Legislação
+security:
+  - userQuery: []
+  - userAuth: []
+requestBody:
+  description: 'Diploma legislativo a criar'
+  required: true
+  content:
+    application/json:
+      schema:
+        $ref: '#/components/schemas/LegislacaoPOST'
+      example:
+        sumario: Exemplo Sumario
+        link: dglab.gov.pt
+        diplomaFonte: PGD/LC
+        estado: Ativo
+        entidadesSel:
+          - id: "ent_DGLAB"
+        processosSel:
+          - codigo: "100.10.001"
+        data: "2020-02-20"
+        numero: 1014/2015
+        tipo: DL
+responses:
+  200:
+    description: Diploma legislativo criado
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
+  500:
+    description: Erro

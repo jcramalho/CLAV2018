@@ -1,0 +1,2 @@
+type: string
+enum: [Apreciador, Assessor, Comunicador, Decisor, Executor, Iniciador]

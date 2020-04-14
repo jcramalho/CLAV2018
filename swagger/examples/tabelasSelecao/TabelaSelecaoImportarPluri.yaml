@@ -1,0 +1,14 @@
+value:
+  stats:
+    DGPM:
+      processos: 322
+      donos: 176
+      participantes: 216
+    DGRM:
+      processos: 388
+      donos: 218
+      participantes: 256
+    GAMA:
+      processos: 285
+      donos: 111
+      participantes: 206

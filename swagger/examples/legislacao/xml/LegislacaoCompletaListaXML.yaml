@@ -1,0 +1,68 @@
+value: |
+  <?xml version="1.0" encoding="utf-8"?>
+  <root>
+      <item index="0" type="object">
+          <id type="string">leg_7vkb4QxU_tqT1lt3GzGiS</id>
+          <data type="string">2004-03-03</data>
+          <numero type="string">235/2004</numero>
+          <tipo type="string">Portaria</tipo>
+          <sumario type="string">Regulamento Arquivístico do Centro Nacional de Protecção contra os Riscos Profissionais no que se refere à avaliação, selecção e eliminação da sua documentação</sumario>
+          <estado type="string">Ativo</estado>
+          <fonte type="string">PGD</fonte>
+          <link type="string">https://dre.pt/application/file/a/551716</link>
+          <entidades type="array">
+          </entidades>
+          <regula type="array">
+          </regula>
+      </item>
+      <item index="1" type="object">
+          <id type="string">leg_0NlrVCb4b94VM-XsFvyR_</id>
+          <data type="string">2008-01-03</data>
+          <numero type="string">12/2008</numero>
+          <tipo type="string">Portaria</tipo>
+          <sumario type="string">Regulamento de Conservação e Arquivístico do Instituto Politécnico do Porto</sumario>
+          <estado type="string">Ativo</estado>
+          <fonte type="string">PGD</fonte>
+          <link type="string">https://dre.pt/application/file/a/386762</link>
+          <entidades type="array">
+          </entidades>
+          <regula type="array">
+          </regula>
+      </item>
+      <item index="2" type="object">
+          <id type="string">leg_SrM7wPMFB8AXsilYzKFVk</id>
+          <data type="string">2006-08-01</data>
+          <numero type="string">745/2006</numero>
+          <tipo type="string">Portaria</tipo>
+          <sumario type="string">Regulamento Arquivístico da Secretaria-Geral do Ministério das Obras Públicas, Transportes e Comunicações</sumario>
+          <estado type="string">Ativo</estado>
+          <fonte type="string">PGD</fonte>
+          <link type="string">https://dre.pt/application/file/a/539367</link>
+          <entidades type="array">
+          </entidades>
+          <regula type="array">
+          </regula>
+      </item>
+      <item index="3" type="object">
+          <id type="string">leg_0PO9dcYtpyn8TRqKgF-Ly</id>
+          <data type="string">1979-02-04</data>
+          <numero type="string">409/79</numero>
+          <tipo type="string">Diretiva</tipo>
+          <sumario type="string">Diretiva do Conselho 79/409/CEE, relativa à conservação das aves selvagens</sumario>
+          <estado type="string">Ativo</estado>
+          <link type="string">http://eur-lex.europa.eu/legal-content/PT/TXT/PDF/?uri=CELEX:31979L0409&amp;from=PT</link>
+          <entidades type="array">
+              <item index="0" type="object">
+                  <id type="string">ent_CEE</id>
+                  <sigla type="string">CEE</sigla>
+              </item>
+          </entidades>
+          <regula type="array">
+              <item index="0" type="object">
+                  <codigo type="string">300.40.004</codigo>
+                  <titulo type="string">Reprodução de espécies de fauna e flora</titulo>
+                  <id type="string">c300.40.004</id>
+              </item>
+          </regula>
+      </item>
+  </root>

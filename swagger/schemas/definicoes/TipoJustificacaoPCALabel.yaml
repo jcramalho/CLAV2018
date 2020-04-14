@@ -1,0 +1,2 @@
+type: string
+enum: [Critério Legal, Critério Gestionário, Critério de Utilidade Administrativa]

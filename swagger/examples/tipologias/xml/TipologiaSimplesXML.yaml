@@ -1,0 +1,7 @@
+value: |
+  <?xml version="1.0" encoding="utf-8"?>
+  <root>
+      <estado type="string">Ativa</estado>
+      <sigla type="string">UI</sigla>
+      <designacao type="string">Unidades de Investigação</designacao>
+  </root>

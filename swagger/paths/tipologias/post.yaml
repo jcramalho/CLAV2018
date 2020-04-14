@@ -1,0 +1,31 @@
+summary: Cria uma tipologia
+description: Cria uma tipologia a partir da informação enviada no pedido
+tags:
+  - Tipologias
+security:
+  - userQuery: []
+  - userAuth: []
+requestBody:
+  description: 'Tipologia a criar'
+  required: true
+  content:
+    application/json:
+      schema:
+        $ref: '#/components/schemas/TipologiaPOST'
+      example:
+        sigla: FA
+        designacao: "Forças Armadas"
+        estado: Ativa
+        entidadesSel:
+          - id: "ent_FAP"
+responses:
+  200:
+    description: Tipologia criada
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
+  500:
+    description: Erro

@@ -100,6 +100,21 @@ Classes.listarPNsEspecificos = async (entidades, tipologias) => {
         .then(response => normalize(response))
 }
 
+function sortEntsTips(lista){
+    var ret = lista.sort((d1, d2) => {
+        var compSigla = d1.sigla.localeCompare(d2.sigla)
+        var ret = compSigla
+
+        if(compSigla == 0){
+            ret = d1.designacao.localeCompare(d2.designacao)
+        }
+
+        return ret
+    })
+
+    return ret
+}
+
 // Devolve toda a informação de uma classe
 Classes.retrieve = async id => {
     try {
@@ -183,8 +198,8 @@ Classes.retrieve = async id => {
         classe.exemplosNotasAp = await Classes.exemplosNotasAp(id)
         classe.notasEx = await Classes.notasEx(id)
         classe.termosInd = await Classes.ti(id)
-        classe.donos = await Classes.dono(id)
-        classe.participantes = await Classes.participante(id)
+        classe.donos = sortEntsTips(await Classes.dono(id))
+        classe.participantes = sortEntsTips(await Classes.participante(id))
         classe.processosRelacionados = await Classes.procRel(id)
         classe.legislacao = await Classes.legislacao(id)
 

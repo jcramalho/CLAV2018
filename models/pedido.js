@@ -5,28 +5,34 @@ const PedidoSchema = new mongoose.Schema({
     type: String,
     index: true,
     match: /\d{4}-\d{1,}/,
-    required: true
+    required: true,
   },
   estado: {
     type: String,
-    required: true
+    required: true,
+  },
+  proximoResponsavel: {
+    type: String, // Responsável pela execução do próximo estado do pedido
   },
   data: {
     type: Date,
     default: Date.now,
-    required: true
+    required: true,
   },
   criadoPor: {
     type: String,
-    required: true
+    required: true,
   },
   objeto: {
     codigo: {
       type: String,
-      required: false
+      required: false,
     },
     dados: {
-      type: Object
+      type: Object,
+    },
+    dadosOriginais: {
+      type: Object,
     },
     tipo: {
       type: String,
@@ -43,43 +49,49 @@ const PedidoSchema = new mongoose.Schema({
         "AE PGD/LC",
         "AE PGD",
         "AE RADA",
-        "RADA"
+        "RADA",
       ],
-      required: true
+      required: true,
     },
     acao: {
       type: String,
-      enum: ["Criação", "Alteração", "Remoção", "Importação"],
-      required: true
-    }
+      enum: ["Criação", "Alteração", "Remoção", "Importação", "Extinção"],
+      required: true,
+    },
   },
   distribuicao: [
     {
       estado: {
         type: String,
-        enum: ["Submetido", "Distribuído", "Apreciado", "Validado", "Devolvido"],
-        required: true
+        enum: [
+          "Submetido",
+          "Distribuído",
+          "Apreciado",
+          "Validado",
+          "Devolvido",
+        ],
+        required: true,
       },
       responsavel: {
-        type: String // Email do técnico responsável pelo pedido neste estado
+        type: String, // Email do técnico responsável pelo pedido neste estado
       },
       data: {
         type: Date,
         default: Date.now,
-        required: true
+        required: true,
       },
       despacho: {
-        type: String
-      }
-    }
+        type: String,
+      },
+    },
   ],
   entidade: {
     type: String,
-    required: false
-  }
+    required: false,
+  },
 });
 
-PedidoSchema.pre("validate", async function(next) {
+PedidoSchema.pre("validate", async function (next) {
   if (!this.codigo) {
     let count = await mongoose.model("Pedido").estimatedDocumentCount();
     this.codigo = `${new Date().getFullYear()}-${count}`;
@@ -87,14 +99,14 @@ PedidoSchema.pre("validate", async function(next) {
   next();
 });
 
-PedidoSchema.methods.sparqlQuery = function() {
+PedidoSchema.methods.sparqlQuery = function () {
   console.log(JSON.stringify(this));
   const rdf_types = {
     Entidade: "clav:Entidade",
     Legislação: "clav:Legislacao",
     "Termo de Indice": "clav:TermoIndice",
     Tipologia: "clav:TipologiaEntidade",
-    "Auto de Eliminacao": "clav:AutoEliminacao"
+    "Auto de Eliminacao": "clav:AutoEliminacao",
   };
   const rdf_type = rdf_types[this.objeto.tipo];
   let query = "";
@@ -104,7 +116,7 @@ PedidoSchema.methods.sparqlQuery = function() {
             ${this.objeto.codigo} rdf:type owl:NamedIndividual, ${rdf_type} .
             ${this.objeto.triplos
               .map(
-                triplo =>
+                (triplo) =>
                   `${triplo.sujeito} ${triplo.predicado} ${triplo.objeto}; `
               )
               .join("\n")}

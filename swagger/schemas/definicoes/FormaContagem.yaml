@@ -1,0 +1,2 @@
+type: string
+enum: ["Data de cessação da vigência", "Data de conclusão do procedimento", "Conforme disposição legal", "Data de emissão do título", "Data de extinção do direito", "Data de extinção da entidade sobre a qual recai o procedimento", "Data de início do procedimento"]

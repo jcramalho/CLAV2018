@@ -1,23 +1,26 @@
-summary: Guardar um trabalho pendente
-description: Guardar um trabalho pendente
+summary: Guarda um trabalho pendente
+description: Guarda um trabalho pendente
 security:
   - userQuery: []
   - userAuth: []
 tags:
   - Pendentes
 requestBody:
-  description: 'Dados. No campo objeto é colocado o objeto a guardar. Pode ser um objeto Classe, TS Organizacional, TS Pluriorganizacional, Entidade, Tipologia, Legislação, Termo de Indice ou Autos de Eliminação'
+  description: Pendente a guardar
   required: true
   content:
     application/json:
       schema:
-        $ref: '#/components/schemas/Pendente'
+        $ref: '#/components/schemas/PendentePOST'
+      example: !!inc/file '/examples/pendentes/PendentePOST.yaml'
 responses:
   200:
-    description: Guardar um trabalho pendente
+    description: Guardado um trabalho pendente
   401:
     $ref: '#/components/responses/UnauthorizedUser'
   403:
     $ref: '#/components/responses/PermissionsUser'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
   500:
     description: Erro

@@ -1,0 +1,21 @@
+type: array
+items:
+  properties:
+    tipo:
+      oneOf:
+        - $ref: '#/components/schemas/TipoJustificacaoDF'
+        - $ref: '#/components/schemas/TipoJustificacaoPCA'
+    label:
+      oneOf:
+        - $ref: '#/components/schemas/TipoJustificacaoDFLabel'
+        - $ref: '#/components/schemas/TipoJustificacaoPCALabel'
+    notas:
+      type: string
+    procRel:
+      type: array
+      items:
+        $ref: '#/components/schemas/ProcessoRelacionado'
+    legislacao:
+      type: array
+      items:
+        $ref: '#/components/schemas/Legislacao'

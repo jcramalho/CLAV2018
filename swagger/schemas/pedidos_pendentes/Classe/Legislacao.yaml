@@ -1,0 +1,21 @@
+type: object
+properties:
+  tipo:
+    $ref: '#/components/schemas/TipoRelacao'
+  numero:
+    $ref: '#/components/schemas/NumeroLeg'
+  sumario:
+    type: string
+  data:
+    $ref: '#/components/schemas/Data'
+  selected:
+    type: boolean
+  id:
+    $ref: '#/components/schemas/LegislacaoId'
+required:
+  - tipo
+  - numero
+  - sumario
+  - data
+  - id
+  - selected

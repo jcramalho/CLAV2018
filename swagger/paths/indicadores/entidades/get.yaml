@@ -10,6 +10,12 @@ description: Número total de entidades
 responses:
   200:
     description: Número total de entidades
+    content:
+      application/json:
+        schema:
+          type: string
+          pattern: '^\d+$'
+        example: "23"
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:

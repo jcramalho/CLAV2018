@@ -4,28 +4,59 @@ var Logs = require('../../controllers/api/logs.js');
 var express = require('express');
 var router = express.Router();
 
+const { query, oneOf, validationResult } = require('express-validator');
+const { existe, estaEm } = require('../validation')
 
-router.get('/', Auth.isLoggedInUser, Auth.checkLevel(6), async (req, res) => {
+router.get('/', Auth.isLoggedInUser, Auth.checkLevel(6), oneOf([
+    [
+        estaEm('query', 'tipo', ['User', 'Chave']),
+        existe('query', 'id')
+    ],
+    query("pagina")
+        .customSanitizer(v => {
+            if(!v) v = 0
+            return v
+        })
+        .isInt({min: 0})
+        .withMessage("Não é um número inteiro")
+        .toInt()
+]), async (req, res) => {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
+    }
 
     if (req.query.tipo && req.query.id) {
         Logs.getUserLogs(req.query.id, req.query.tipo)
             .then(data => res.jsonp(data))
             .catch(error => res.status(500).send(`Erro ao obter os logs de ${req.query.tipo} com o id ${req.query.id}: ${error}`))
     } else {
-        Logs.getAllLogs()
+        Logs.getAllLogs(req.query.pagina)
             .then(data => res.jsonp(data))
             .catch(error => res.status(500).send(`Erro ao obter os logs: ${error}`))
     }
 })
 
-router.get('/:rota', Auth.isLoggedInUser, Auth.checkLevel(6), async (req, res) => {
-    if(req.query.verbo){
-        Logs.getRouteLogs(decodeURIComponent(req.params.rota), req.query.verbo)
-            .then(data => res.jsonp(data))
-            .catch(error => res.status(500).send(`Erro ao obter os logs da rota ${decodeURIComponent(req.params.rota)} com o método ${req.query.verbo}: ${error}`))
-    }else{
-        res.status(500).send(`Erro ao obter os logs: precisa de indicar o verbo da rota (GET, POST, PUT ou DELETE) na query string 'verbo'.`)
-    }   
+router.get('/:verbo', Auth.isLoggedInUser, Auth.checkLevel(6), [
+    estaEm('param', 'verbo', ['GET', 'POST', 'PUT', 'DELETE']),
+    existe('query', 'rota')
+        .bail()
+        .isURL({
+            require_tld: false,
+            require_host: false,
+            require_valid_protocol: false
+        })
+        .withMessage("Não é uma rota válida")
+        .customSanitizer(decodeURIComponent)
+], async (req, res) => {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
+    }
+
+    Logs.getRouteLogs(req.query.rota, req.params.verbo)
+        .then(data => res.jsonp(data))
+        .catch(error => res.status(500).send(`Erro ao obter os logs da rota ${req.query.rota} com o método ${req.params.verbo}: ${error}`))
 })
 
 module.exports = router;

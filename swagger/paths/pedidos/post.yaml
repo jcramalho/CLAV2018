@@ -6,52 +6,26 @@ security:
 tags:
   - Pedidos
 requestBody:
-  description: 'Dados. No campo novoObjeto é colocado os dados com o qual se pretende realizar o pedido. Pode ser um objeto Classe, TS Organizacional, TS Pluriorganizacional, Entidade, Tipologia, Legislação, Termo de Indice ou Autos de Eliminação'
+  description: 'Pedido a criar' 
   required: true
   content:
     application/json:
       schema:
-        properties:
-          tipoPedido:
-            type: string
-            enum: [Criação, Alteração, Remoção]
-          tipoObjeto:
-            type: string
-            enum: [Classe, TS Organizacional, TS Pluriorganizacional, Entidade, Tipologia, Legislação, Termo de Indice, Auto de Eliminação, AE PGD/LC, AE PGD, AE RADA]
-          novoObjeto:
-            type: object
-            oneOf:
-              - $ref: '#/components/schemas/Classe'
-              - $ref: '#/components/schemas/DocumentoLegislativo'
-              - $ref: '#/components/schemas/Entidade'
-              - $ref: '#/components/schemas/TabelaSelecaoOrganizacional'
-              - $ref: '#/components/schemas/TabelaSelecaoPluriorganizacional'
-              - $ref: '#/components/schemas/TermosIndice'
-              - $ref: '#/components/schemas/Tipologia'
-              - $ref: '#/components/schemas/AutosEliminacao'
-              - $ref: '#/components/schemas/AutosEliminacaoS'
-          user:
-            type: object
-            properties:
-              email:
-                type: string
-            required:
-              - email
-          entidade:
-            type: string
-            description: "'ent_' concatenado com a sigla da entidade do utilizador"
-        required:
-          - tipoPedido
-          - tipoObjeto
-          - novoObjeto
-          - user
-          - entidade
+        $ref: '#/components/schemas/PedidoPOST'
+      example: !!inc/file '/examples/pedidos/PedidoPOST.yaml'
 responses:
   200:
     description: Criação de um pedido
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/PedidoCodigo'
+        example: 2020-11
   401:
     $ref: '#/components/responses/UnauthorizedUser'
   403:
     $ref: '#/components/responses/PermissionsUser'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
   500:
     description: Erro

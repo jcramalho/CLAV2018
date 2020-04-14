@@ -2,6 +2,7 @@ var jwt = require('jsonwebtoken');
 var Auth = require('../../controllers/auth');
 var secretKey = require('./../../config/app');
 var Chave = require('./../../models/chave');
+var mongoose = require('mongoose');
 var Chaves = module.exports
 
 Chaves.listar = function(callback){
@@ -58,8 +59,10 @@ Chaves.listarPorEmail = function (email, callback) {
 
 Chaves.criarChave = function(name, email, entidade, callback){
     var ent = entidade.split('_')[0] == 'ent' ? entidade : 'ent_' + entidade
+    var id = mongoose.Types.ObjectId()
     var newKey = new Chave({
-        key: Auth.generateTokenKey(),
+        _id: id,
+        key: Auth.generateTokenKey(id),
         name: name,
 		contactInfo: email,
         entity: ent
@@ -78,6 +81,8 @@ Chaves.desativar = function(id, callback){
     Chave.findById(id, async function(err, key){
         if (err) {	
             callback(err, null);
+        }else if(!key){
+            callback("Chave API não existe", null);
         } else {
 			key.active = false;
             try{
@@ -94,6 +99,8 @@ Chaves.ativar = function(id,callback){
     Chave.findById(id, async function(err, key){
         if (err) {	
             callback(err, null);
+        }else if(!key){
+            callback("Chave API não existe", null);
         } else {
 			key.active = true;
             try{
@@ -110,6 +117,8 @@ Chaves.eliminar = function(id, callback){
 	Chave.findByIdAndRemove(id, function(err, key){
 		if(err){
 			callback(err, null);
+        }else if(!key){
+            callback("Chave API não existe", null);
 		}else{
 			callback(null, key);
 		}
@@ -118,10 +127,12 @@ Chaves.eliminar = function(id, callback){
 
 Chaves.renovar = function(id, callback){
 	Chave.findById(id, async function(err, key){
-		if(err || !key){
+		if(err){
 			callback(err, null);
+        }else if(!key){
+            callback("Chave API não existe", null);
 		}else{
-            key.key = Auth.generateTokenKey();
+            key.key = Auth.generateTokenKey(key._id);
             key.created = Date.now();
             key.nCalls = 0;
             key.lastUsed = null;
@@ -139,6 +150,8 @@ Chaves.atualizarMultiplosCampos = function(id, name, email, entidade, callback){
     Chave.findById(id, async function(err, chave){
 		if (err) {	
             callback(err, null);
+        }else if(!chave){
+            callback("Chave API não existe", null);
 		} else {
             chave.name = name;
             chave.contactInfo = email;

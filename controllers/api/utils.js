@@ -77,26 +77,51 @@ exports.request = {
  * @param query a query a executar
  */
 exports.execQuery = async function(method, query){
-    var getLink = urlGraphDB + "?query="
+    var getLink = urlGraphDB
     var postLink = urlGraphDB + "/statements"
     var encoded = encodeURIComponent(prefixes + query)
     var response
     try{
         switch(method) {
             case "query":
-                response = await axios.get(getLink + encoded)
+                response = await axios.post(getLink, `query=${encoded}`)
                 break;
             case "update":
                 response = await axios.post(postLink, `update=${encoded}`)
                 break;
             default:
-                response = await axios.get(getLink + encoded)
+                response = await axios.post(getLink, `query=${encoded}`)
                 break;
         }
         return response.data
     }catch(error){
         throw(error)
     }
+}
+
+/**
+ * Obtém todos os triplos não inferidos de um objeto (entidade, tipologia, legislação, classe, etc)
+ * @param objId id do objecto
+ */
+exports.allTriplesFrom = objId => {
+    const query = `construct FROM noInferences: where {
+        clav:${objId} ?p ?o .
+    }`
+
+    return exports.execQuery("query", query)
+}
+
+/**
+ * Obtém todos os triplos de uma relação em que o objeto (entidade, tipologia, legislação, classe, etc) é sujeito
+ * @param objId id do objecto
+ * @param rel relação
+ */
+exports.allTriplesRel = (rel, objId) => {
+    const query = `construct FROM noInferences: where {
+        ?s clav:${rel} clav:${objId} .
+    }`
+
+    return exports.execQuery("query", query)
 }
 
 /**

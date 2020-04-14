@@ -1,0 +1,34 @@
+type: array
+items:
+  type: object
+  properties:
+    PN:
+      $ref: '#/components/schemas/ClasseIdCompleto'
+    PNCodigo:
+      $ref: '#/components/schemas/Codigo'
+    PNTitulo:
+      type: string
+    Pai:
+      $ref: '#/components/schemas/ClasseIdCompleto'
+    PaiCodigo:
+      $ref: '#/components/schemas/Codigo'
+    PaiTitulo:
+      type: string
+    Avo:
+      $ref: '#/components/schemas/ClasseIdCompleto'
+    AvoCodigo:
+      $ref: '#/components/schemas/Codigo'
+    AvoTitulo:
+      type: string
+    Filhos:
+      type: string
+  required:
+    - PN
+    - PNCodigo
+    - PNTitulo
+    - Pai
+    - PaiCodigo
+    - PaiTitulo
+    - Avo
+    - AvoCodigo
+    - AvoTitulo

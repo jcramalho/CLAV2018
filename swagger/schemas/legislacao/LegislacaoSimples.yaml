@@ -1,0 +1,27 @@
+type: object
+properties:
+  numero:
+    $ref: '#/components/schemas/NumeroLeg'
+  sumario:
+    type: string
+  data:
+    $ref: '#/components/schemas/Data'
+  tipo:
+    $ref: '#/components/schemas/TipoLegislacao'
+  link:
+    type: string
+  estado:
+    $ref: '#/components/schemas/EstadoLeg'
+  entidades:
+    $ref: '#/components/schemas/LegislacaoEnts'
+  id:
+    $ref: '#/components/schemas/LegislacaoId'
+  fonte:
+    $ref: '#/components/schemas/Fonte'
+required:
+  - numero
+  - sumario
+  - data
+  - tipo
+  - estado
+  - id

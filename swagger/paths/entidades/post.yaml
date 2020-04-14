@@ -6,44 +6,21 @@ security:
   - userQuery: []
   - userAuth: []
 requestBody:
-  description: 'sigla da entidade a verificar'
+  description: 'Entidade a criar'
   required: true
   content:
     application/json:
       schema:
-        properties:
-          sigla:
-            type: string
-          designacao:
-            type: string
-          estado:
-            type: string
-            enum: [Ativa, Inativa, Harmonização]
-          sioe:
-            type: string
-          internacional:
-            type: string
-            default: "Não"
-            enum: ["Não", "Sim"]
-          tipologias:
-            type: array
-            items:
-              type: string
-              description: "Sigla da Tipologia"
-          dataCriacao:
-            type: string
-        required:
-          - sigla
-          - designacao
-          - estado
-        example:
-          sigla: MdP
-          designacao: "Metro do Porto, SA"
-          estado: Ativa
-          sioe: "770000329"
-          internacional: "Não"
-          tipologias: ["SPE"]
-          dataCriacao: "2020/02/02"
+        $ref: '#/components/schemas/EntidadePOST'
+      example:
+        sigla: MdP
+        designacao: "Metro do Porto, SA"
+        estado: Ativa
+        sioe: "770000329"
+        internacional: "Não"
+        tipologiasSel:
+          - id: "tip_SPE"
+        dataCriacao: "2020-02-02"
 responses:
   200:
     description: Entidade criada
@@ -51,5 +28,7 @@ responses:
     $ref: '#/components/responses/UnauthorizedUser'
   403:
     $ref: '#/components/responses/PermissionsUser'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
   500:
     description: Erro

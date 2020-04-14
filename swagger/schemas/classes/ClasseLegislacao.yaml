@@ -1,0 +1,19 @@
+type: array
+items:
+  properties:
+    tipo:
+      $ref: '#/components/schemas/TipoLegislacao'
+    numero:
+      $ref: '#/components/schemas/NumeroLeg'
+    sumario:
+      type: string
+    idLeg:
+      $ref: '#/components/schemas/LegislacaoId'
+    id:
+      $ref: '#/components/schemas/LegislacaoIdCompleto'
+  required:
+    - tipo
+    - numero
+    - sumario
+    - idLeg
+    - id

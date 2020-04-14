@@ -1,0 +1,38 @@
+type: object
+properties:
+  numero:
+    $ref: '#/components/schemas/NumeroLeg'
+  sumario:
+    type: string
+  data:
+    $ref: '#/components/schemas/Data'
+  tipo:
+    $ref: '#/components/schemas/TipoLegislacao'
+  link:
+    type: string
+  estado:
+    $ref: '#/components/schemas/EstadoLeg'
+  entidadesSel:
+    type: array
+    items:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/EntidadeId'
+  diplomaFonte:
+    $ref: '#/components/schemas/Fonte'
+  processosSel:
+    type: array
+    items:
+      type: object
+      properties:
+        codigo:
+          $ref: '#/components/schemas/Codigo'
+required:
+  - numero
+  - sumario
+  - data
+  - tipo
+  - estado
+  - entidadesSel
+  - processosSel

@@ -10,9 +10,14 @@ tags:
 responses:
   200:
     description: Devolve a lista de todos os vocabularios
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/Vocabularios'
+        example: !!inc/file '/examples/vocabularios/Vocabularios.yaml'
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:
     $ref: '#/components/responses/PermissionsKey'
-  404:
+  500:
     description: Erro

@@ -11,15 +11,21 @@ parameters:
   - in: query
     name: valor
     schema:
-      type: string
-    description: 'Número do documento legislativo a verificar se já existe (exemplo: 14/2018)'
+      $ref: '#/components/schemas/NumeroLeg'
+    description: 'Número do documento legislativo a verificar se já existe'
     required: true
 responses:
   200:
     description: Verifica se existe o número de um documento legislativo
+    content:
+      application/json:
+        schema:
+          type: boolean
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:
     $ref: '#/components/responses/PermissionsKey'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
   500:
     description: Erro

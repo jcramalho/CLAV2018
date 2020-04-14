@@ -54,7 +54,8 @@ Pendentes.criar = async function (pendente) {
     var newPendente = new Pendente(pendente);
 
     try {
-        return await newPendente.save()
+        await newPendente.save()
+        return "Pendente guardado com sucesso"
     } catch (err) {
         console.log(err)
         return 'Ocorreu um erro a submeter o pedido! Tente novamente mais tarde'
@@ -82,7 +83,8 @@ Pendentes.atualizar = async function (pendente) {
         oldPendente.dataAtualizacao = Date.now()
 
         try {
-            return await oldPendente.save()
+            await oldPendente.save()
+            return "Pendente atualizado com sucesso"
         } catch (err) {
             console.log(err)
             return err
@@ -100,15 +102,14 @@ Pendentes.atualizar = async function (pendente) {
  * @return {Pendente} pendente atualizado.
  */
 Pendentes.apagar = async function (pendente) {
-    try {
+    return new Promise((resolve, reject) => {
         Pendente.findByIdAndRemove({ _id: pendente }, function (err, updatedPendente) {
             if (err) {
-                return err;
+                reject(err);
             } else {
-                return (updatedPendente)
+                //resolve(updatedPendente)
+                resolve("Pendente removido")
             }
         })
-    } catch (err) {
-        return err
-    }
+    })
 }

@@ -11,12 +11,26 @@ requestBody:
         properties:
           username:
             type: string
+            format: email
           password:
             type: string
+        required:
+          - username
+          - password
+      example:
+        username: exemplo@exemplo.com
+        password: 123password
 responses:
   200:
     description: Login efetuado com sucesso
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/UserLogin'
+        example: !!inc/file '/examples/users/UserLogin.yaml'
   401:
     description: Credenciais inválidas
+  422:
+    $ref: '#/components/responses/ValidationParameters'
   500:
     description: Erro

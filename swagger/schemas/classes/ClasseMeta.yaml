@@ -1,0 +1,24 @@
+type: object
+properties:
+  codigo:
+    $ref: '#/components/schemas/Codigo'
+  tituloPai:
+    type: string
+  pt:
+    $ref: '#/components/schemas/TipoProcessoId'
+  procTipo:
+    $ref: '#/components/schemas/TipoProcesso'
+  titulo:
+    type: string
+  pai:
+    $ref: '#/components/schemas/ClasseIdCompleto'
+  id:
+    $ref: '#/components/schemas/ClasseIdCompleto'
+  codigoPai:
+    $ref: '#/components/schemas/Codigo'
+  procTrans:
+    $ref: '#/components/schemas/ProcessoTransversal'
+  status:
+    $ref: '#/components/schemas/Status'
+  desc:
+    type: string

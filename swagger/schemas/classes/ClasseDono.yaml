@@ -1,0 +1,28 @@
+type: array
+items:
+  properties:
+    idDono:
+      oneOf:
+        - $ref: '#/components/schemas/EntidadeId'
+        - $ref: '#/components/schemas/TipologiaId'
+    tipo:
+      type: string
+      enum: ["http://jcr.di.uminho.pt/m51-clav#Entidade", "http://jcr.di.uminho.pt/m51-clav#TipologiaEntidade"]
+    idTipo:
+      type: string
+      enum: [Entidade, TipologiaEntidade]
+    designacao:
+      type: string
+    sigla:
+      type: string
+    id:
+      oneOf:
+        - $ref: '#/components/schemas/EntidadeIdCompleto'
+        - $ref: '#/components/schemas/TipologiaIdCompleto'
+  required:
+    - idDono
+    - tipo
+    - idTipo
+    - designacao
+    - sigla
+    - id

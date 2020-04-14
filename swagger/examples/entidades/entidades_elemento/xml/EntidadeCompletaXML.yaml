@@ -1,0 +1,41 @@
+value: |
+  <?xml version="1.0" encoding="utf-8"?>
+  <root>
+      <estado type="string">Ativa</estado>
+      <sigla type="string">AAN</sigla>
+      <sioe type="string">875780390</sioe>
+      <designacao type="string">Autoridade Aeronáutica Nacional</designacao>
+      <internacional type="string"></internacional>
+      <tipologias type="array">
+          <item index="0" type="object">
+              <sigla type="string">ASF</sigla>
+              <designacao type="string">Autoridades de supervisão e fiscalização</designacao>
+              <id type="string">tip_ASF</id>
+          </item>
+          <item index="1" type="object">
+              <sigla type="string">FA</sigla>
+              <designacao type="string">Forças Armadas</designacao>
+              <id type="string">tip_FA</id>
+          </item>
+      </tipologias>
+      <dono type="array">
+          <item index="0" type="object">
+              <codigo type="string">550.10.009</codigo>
+              <titulo type="string">Vigilância da fronteira</titulo>
+              <id type="string">c550.10.009</id>
+          </item>
+          <item index="1" type="object">
+              <codigo type="string">550.30.400</codigo>
+              <titulo type="string">Vigilância dos espaços sob soberania e jurisdição nacional, da circulação e segurança das linhas de comunicação</titulo>
+              <id type="string">c550.30.400</id>
+          </item>
+      </dono>
+      <participante type="array">
+          <item index="0" type="object">
+              <tipoPar type="string">temParticipanteAssessor</tipoPar>
+              <codigo type="string">550.10.009</codigo>
+              <titulo type="string">Vigilância da fronteira</titulo>
+              <id type="string">c550.10.009</id>
+          </item>
+      </participante>
+  </root>

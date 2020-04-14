@@ -8,6 +8,11 @@ tags:
 responses:
   200:
     description: Obtém as travessias
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/Travessias'
+        example: !!inc/file '/examples/travessia/Travessias.yaml'
   401:
     $ref: '#/components/responses/UnauthorizedUser'
   403:

@@ -44,8 +44,8 @@ Auth.generateTokenUser = function (user) {
     return token
 }
 
-Auth.generateTokenKey = function () {
-    var token = jwt.sign({}, secretKey.apiKey, {expiresIn: '30d'});
+Auth.generateTokenKey = function (chaveId) {
+    var token = jwt.sign({id: chaveId}, secretKey.apiKey, {expiresIn: '30d'});
 
     return token
 }

@@ -1,0 +1,26 @@
+summary: Cria uma notícia
+description: Cria uma notícia a partir da informação enviada no pedido, por defeito o estado é ativa aquando da inserção
+tags:
+  - Notícias
+security:
+  - userQuery: []
+  - userAuth: []
+requestBody:
+  description: 'Notícia a criar'
+  required: true
+  content:
+    application/json:
+      schema:
+        $ref: '#/components/schemas/NoticiaP'
+      example: !!inc/file '/examples/noticias/NoticiaP.yaml'
+responses:
+  200:
+    description: Notícia criada
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
+  500:
+    description: Erro

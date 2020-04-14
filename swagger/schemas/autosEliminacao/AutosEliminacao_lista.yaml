@@ -1,0 +1,20 @@
+type: array
+items:
+  type: object
+  properties:
+    id:
+      $ref: '#/components/schemas/AutoEliminacaoIdCompleto'
+    data:
+      $ref: '#/components/schemas/Data'
+    entidade:
+      $ref: '#/components/schemas/EntidadeIdCompleto'
+    numero:
+      $ref: '#/components/schemas/NumeroLeg'
+    tipo:
+      $ref: '#/components/schemas/Fonte'
+  required:
+    - id
+    - data
+    - entidade
+    - numero
+    - tipo

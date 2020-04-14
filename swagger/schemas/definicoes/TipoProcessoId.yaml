@@ -1,0 +1,2 @@
+type: string
+enum: ["http://jcr.di.uminho.pt/m51-clav#vc_processoTipo_pc", "http://jcr.di.uminho.pt/m51-clav#vc_processoTipo_pe"]

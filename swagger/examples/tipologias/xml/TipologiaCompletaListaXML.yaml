@@ -1,0 +1,79 @@
+value: |
+  <?xml version=\"1.0\" encoding=\"utf-8\"?>
+  <root>
+      <item index="0" type="object">
+          <estado type="string">Ativa</estado>
+          <sigla type="string">SEN</sigla>
+          <designacao type="string">Sistema Estatístico Nacional</designacao>
+          <id type="string">tip_SEN</id>
+          <dono type="array">
+          </dono>
+          <participante type="array">
+          </participante>
+      </item>
+      <item index="1" type="object">
+          <estado type="string">Ativa</estado>
+          <sigla type="string">SG</sigla>
+          <designacao type="string">Secretarias Gerais</designacao>
+          <id type="string">tip_SG</id>
+          <dono type="array">
+          </dono>
+          <participante type="array">
+              <item index="0" type="object">
+                  <tipoPar type="string">temParticipanteAssessor</tipoPar>
+                  <codigo type="string">150.20.500</codigo>
+                  <titulo type="string">Análise e melhoria de processos</titulo>
+                  <id type="string">c150.20.500</id>
+              </item>
+              <item index="1" type="object">
+                  <tipoPar type="string">temParticipanteAssessor</tipoPar>
+                  <codigo type="string">150.20.501</codigo>
+                  <titulo type="string">Análise e melhoria de serviços</titulo>
+                  <id type="string">c150.20.501</id>
+              </item>
+          </participante>
+      </item>
+      <item index="65" type="object">
+          <estado type="string">Ativa</estado>
+          <sigla type="string">UI</sigla>
+          <designacao type="string">Unidades de Investigação</designacao>
+          <id type="string">tip_UI</id>
+          <dono type="array">
+              <item index="0" type="object">
+                  <codigo type="string">800.20.001</codigo>
+                  <titulo type="string">Realização de estudos de investigação básica</titulo>
+                  <id type="string">c800.20.001</id>
+              </item>
+              <item index="1" type="object">
+                  <codigo type="string">800.20.002</codigo>
+                  <titulo type="string">Execução de projetos de investigação aplicada</titulo>
+                  <id type="string">c800.20.002</id>
+              </item>
+              <item index="2" type="object">
+                  <codigo type="string">800.20.500</codigo>
+                  <titulo type="string">Desenvolvimento experimental e aplicacional</titulo>
+                  <id type="string">c800.20.500</id>
+              </item>
+          </dono>
+          <participante type="array">
+              <item index="0" type="object">
+                  <tipoPar type="string">temParticipanteAssessor</tipoPar>
+                  <codigo type="string">800.20.001</codigo>
+                  <titulo type="string">Realização de estudos de investigação básica</titulo>
+                  <id type="string">c800.20.001</id>
+              </item>
+              <item index="1" type="object">
+                  <tipoPar type="string">temParticipanteAssessor</tipoPar>
+                  <codigo type="string">800.20.002</codigo>
+                  <titulo type="string">Execução de projetos de investigação aplicada</titulo>
+                  <id type="string">c800.20.002</id>
+              </item>
+              <item index="2" type="object">
+                  <tipoPar type="string">temParticipanteAssessor</tipoPar>
+                  <codigo type="string">800.20.500</codigo>
+                  <titulo type="string">Desenvolvimento experimental e aplicacional</titulo>
+                  <id type="string">c800.20.500</id>
+              </item>
+          </participante>
+      </item>
+  </root>

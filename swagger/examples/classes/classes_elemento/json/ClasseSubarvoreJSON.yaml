@@ -1,0 +1,111 @@
+value:
+  nivel: 2
+  pai:
+    codigo: "200"
+    titulo: "EXECUÇÃO DA POLÍTICA EXTERNA"
+  codigo: "200.10"
+  titulo: "Definição de políticas conjuntas e de instrumentos de regulação"
+  descricao: "Compreende as atividades que consubstanciam a participação na negociação, preparação e fixação de instrumentos reguladores das relações internacionais, de decisões tomadas no âmbito da cooperação intergovernamental da União Europeia, bem como de instrumentos de regulação comunitária.Compreende, igualmente, a participação na elaboração de normas técnicas europeias e internacionais."
+  status: "A"
+  filhos:
+    - nivel: 3
+      pai:
+        codigo: "200.10"
+        titulo: "Definição de políticas conjuntas e de instrumentos de regulação"
+      codigo: "200.10.001"
+      titulo: "Definição e acompanhamento de posições nacionais no âmbito das relações bilaterais e multilaterais entre países"
+      descricao: "Preparação e apresentação da posição de Portugal no âmbito das negociações, nas reuniões de organismos ou em instâncias multilaterais/bilaterais.Inicia com o envio da agenda e termina com a remessa do contributo.Inclui os contributos de embaixadas e de ministérios setoriais, demonstrativos da posição assumida por Portugal e do processo negocial empreendido nos vários grupos de trabalho preparatórios das reuniões."
+      status: "A"
+      filhos: []
+      notasAp:
+        - idNota: "http://jcr.di.uminho.pt/m51-clav#na_c200.10.001_rbi7ShEjgWCUb6MaOmmJr"
+          nota: "Acompanhamento no âmbito de processos multilaterais"
+      exemplosNotasAp:
+        - idExemplo: "http://jcr.di.uminho.pt/m51-clav#exna_c200.10.001_fpQMSBPH4ShGE9Wc9IVnV"
+          exemplo: "Relações bilaterais / multilaterais  em matéria consular"
+      notasEx:
+        - idNota: "http://jcr.di.uminho.pt/m51-clav#ne_c200.10.001_MC1VflGFxX-X-oIie-Dqq"
+          nota: "A definição de políticas nacionais setoriais deve ser considerada em 150.10.100 – Definição de políticas setoriais"
+      termosInd:
+        - idTI: "http://jcr.di.uminho.pt/m51-clav#ti_2BrT4QFUa3Y40xFjVghJ8"
+          termo: "Definição e acompanhamento de posição nacional no âmbito das relações bilaterais e multilaterais entre países"
+      temSubclasses4Nivel: false
+      temSubclasses4NivelPCA: false
+      temSubclasses4NivelDF: false
+      subdivisao4Nivel01Sintetiza02: true
+      tipoProc: "Processo Comum"
+      procTrans: "S"
+      donos:
+        - tipo: "http://jcr.di.uminho.pt/m51-clav#TipologiaEntidade"
+          sigla: "CCDR"
+          idDono: "tip_CCDR"
+          idTipo: "TipologiaEntidade"
+          designacao: "Comissões de Coordenação do Desenvolvimento Regional"
+          id: "http://jcr.di.uminho.pt/m51-clav#tip_CCDR"
+      participantes:
+        - participLabel: "Assessor"
+          sigla: "ACT"
+          designacao: "Autoridade para as Condições de Trabalho"
+          idTipo: "Entidade"
+          id: "http://jcr.di.uminho.pt/m51-clav#ent_ACT"
+          idParticipante: "ent_ACT"
+      legislacao:
+        - tipo: "Lei Constitucional"
+          sumario: "Sétima revisão constitucional"
+          numero: "1/2005"
+          idLeg: "leg_bjA4XVgJL9coqKgo_-8gC"
+          id: "http://jcr.di.uminho.pt/m51-clav#leg_bjA4XVgJL9coqKgo_-8gC"
+      pca:
+        formaContagem: "Data de conclusão do procedimento"
+        idPCA: "http://jcr.di.uminho.pt/m51-clav#pca_c200.10.001"
+        idJust: "just_pca_c200.10.001"
+        notas: ""
+        valores: "5"
+        justificacao:
+          - tipoId: "CriterioJustificacaoGestionario"
+            conteudo: "Prazo para imputação de responsabilidade pela negociação e definição de posições nacionais, decorrente de escrutínio público (eleições) ou da não recondução no mandato.Considerou-se para a definição do prazo o tempo do mandato de maior duração: 5 anos."
+            criterio: "http://jcr.di.uminho.pt/m51-clav#crit_just_pca_c200.10.001_1"
+            processos: []
+            legislacao: []
+      df:
+        idJust: "just_df_c200.10.001"
+        valor: "C"
+        idDF: "http://jcr.di.uminho.pt/m51-clav#df_c200.10.001"
+        justificacao:
+          - tipoId: "CriterioJustificacaoComplementaridadeInfo"
+            conteudo: "É complementar dos PN 150.10.001 - Definição de políticas globais; PN 150.10.100 - Definição de políticas setoriais  Sendo necessária uma visão do conjunto para o entendimento global da negociação e definição das posições nacionais.  "
+            criterio: "http://jcr.di.uminho.pt/m51-clav#crit_just_df_c200.10.001_1"
+            processos:
+              - procId: "c150.10.001"
+            legislacao: []
+      id: "http://jcr.di.uminho.pt/m51-clav#c200.10.001"
+  notasAp:
+    - idNota: "http://jcr.di.uminho.pt/m51-clav#na_c200.10_Z716gvTd2fhSRxzYHfPYo"
+      nota: "Atividades preparatórias de cimeiras, encontros e reuniões políticas ou técnicas, e na representação nacional nas mesmas cimeiras ou encontros de chefes de Estado e de Governo, reuniões e conselhos de ministros de diferentes Estados, reuniões de dirigentes, de comités e de grupos de peritos internacionais"
+  exemplosNotasAp: []
+  notasEx:
+    - idNota: "http://jcr.di.uminho.pt/m51-clav#ne_c200.10_xeB1UQ1ADNKVFx6HIDUZB"
+      nota: "A definição da política externa portuguesa, tal como a definição das demais políticas, deve ser considerada em \"Planeamento e gestão estratégica/ Definição e avaliação de políticas\" (150.10)"
+  termosInd: []
+  temSubclasses4Nivel: false
+  temSubclasses4NivelPCA: false
+  temSubclasses4NivelDF: false
+  subdivisao4Nivel01Sintetiza02: true
+  tipoProc: ""
+  procTrans: ""
+  donos: []
+  participantes: []
+  processosRelacionados: []
+  legislacao: []
+  pca:
+    valores: ""
+    notas: ""
+    formaContagem: ""
+    subFormaContagem: ""
+    justificacao: []
+  df:
+    valor: "NE"
+    nota: null
+    justificacao: []
+  id: "http://jcr.di.uminho.pt/m51-clav#c200.10"
+summary: Exemplo de parte da subárvore de uma classe

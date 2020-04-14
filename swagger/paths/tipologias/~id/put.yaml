@@ -1,0 +1,38 @@
+summary: Atualiza uma tipologia
+description: Atualiza uma tipologia a partir da informação enviada no pedido
+tags:
+  - Tipologias
+security:
+  - userQuery: []
+  - userAuth: []
+parameters:
+  - name: id
+    in: path
+    description: Identificador de uma tipologia
+    schema:
+      $ref: '#/components/schemas/TipologiaId'
+    required: true
+requestBody:
+  description: 'Tipologia a atualizar'
+  required: true
+  content:
+    application/json:
+      schema:
+        $ref: '#/components/schemas/TipologiaPUT'
+      example:
+        sigla: FA
+        designacao: "Forças Armadas"
+        estado: Ativa
+        entidadesSel:
+          - id: "ent_FAP"
+responses:
+  200:
+    description: Tipologia atualizada
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
+  500:
+    description: Erro

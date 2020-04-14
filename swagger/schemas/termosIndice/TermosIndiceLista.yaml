@@ -1,0 +1,23 @@
+type: array
+items:
+  type: object
+  properties:
+    codigoClasse:
+      $ref: '#/components/schemas/ClasseId'
+    estado:
+      $ref: '#/components/schemas/EstadoTermo'
+    id:
+      $ref: '#/components/schemas/TermoId'
+    idClasse:
+      $ref: '#/components/schemas/Codigo'
+    termo:
+      type: string
+    tituloClasse:
+      type: string
+  required:
+    - codigoClasse
+    - estado
+    - id
+    - idClasse
+    - termo
+    - tituloClasse

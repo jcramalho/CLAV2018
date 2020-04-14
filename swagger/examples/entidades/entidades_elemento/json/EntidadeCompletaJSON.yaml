@@ -1,0 +1,25 @@
+value:
+  designacao: "Autoridade Aeronáutica Nacional"
+  dono:
+    - codigo: "550.10.009"
+      id: "c550.10.009"
+      titulo: "Vigilância da fronteira"
+    - codigo: "550.30.400"
+      id: "c550.30.400"
+      titulo: "Vigilância dos espaços sob soberania e jurisdição nacional, da circulação e segurança das linhas de comunicação"
+  estado: "Ativa"
+  internacional: ""
+  participante:
+    - codigo: "550.10.009"
+      id: "c550.10.009"
+      tipoPar: "temParticipanteAssessor"
+      titulo: "Vigilância da fronteira"
+  sigla: "AAN"
+  sioe: "875780390"
+  tipologias:
+    - designacao: "Autoridades de supervisão e fiscalização"
+      id: "tip_ASF"
+      sigla: "ASF"
+    - designacao: "Forças Armadas"
+      id: "tip_FA"
+      sigla: "FA"

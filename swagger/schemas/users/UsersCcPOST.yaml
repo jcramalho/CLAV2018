@@ -1,0 +1,26 @@
+type: object
+properties:
+  entidade:
+    $ref: '#/components/schemas/EntidadeId' 
+  users:
+    type: array
+    items:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        type:
+          $ref: '#/components/schemas/UserLevel'
+        name:
+          type: string
+        nic:
+          $ref: '#/components/schemas/NIC'
+      required:
+        - email
+        - type
+        - name
+        - nic
+required:
+  - entidade
+  - users

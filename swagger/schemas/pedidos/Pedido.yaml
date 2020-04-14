@@ -1,0 +1,25 @@
+type: object
+properties:
+  codigo:
+    $ref: '#/components/schemas/PedidoCodigo'
+  estado:
+    $ref: '#/components/schemas/PedidoEstado'
+  data:
+    type: string
+    format: date-time
+  criadoPor:
+    type: string
+    format: email
+  objeto:
+    $ref: '#/components/schemas/PedidoObjeto'
+  distribuicao:
+    $ref: '#/components/schemas/PedidoDistribuicao'
+  entidade:
+    $ref: '#/components/schemas/EntidadeId'
+required:
+  - codigo
+  - estado
+  - criadoPor
+  - data
+  - objeto
+  - distribuicao

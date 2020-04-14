@@ -10,16 +10,23 @@ tags:
 parameters:
   - name: id
     in: path
-    description: 'Identificador de uma classe (exemplo: c200.10.100)'
+    description: 'Identificador de uma classe'
     schema:
-      type: string
+      $ref: '#/components/schemas/ClasseId'
     required: true
 responses:
   200:
     description: Devolve a informação base do DF
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/ClasseDF'
+        example: !!inc/file '/examples/classes/ClasseDF.yaml'
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:
     $ref: '#/components/responses/PermissionsKey'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
   500:
     description: Erro

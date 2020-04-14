@@ -23,6 +23,7 @@ module.exports.options = {
   customSiteTitle: 'CLAV API',
   swaggerOptions: {
     url: '/clav.yaml',
+    defaultModelsExpandDepth: -1, //hide models section
     tagsSorter: 'alpha',
     operationsSorter: (a, b) => {
         var methods = ["get", "post", "put", "delete", "patch", "options", "trace"]

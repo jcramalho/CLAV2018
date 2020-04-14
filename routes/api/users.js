@@ -11,8 +11,83 @@ var secretKey = require('./../../config/app');
 var Mailer = require('../../controllers/api/mailer');
 var mongoose = require('mongoose');
 
-router.get('/', Auth.isLoggedInUser, Auth.checkLevel(5), (req, res) => {
-    Users.listar(req,function(err, result){
+const { body, validationResult } = require('express-validator');
+const { existe, estaEm, verificaExisteEnt, eNIC, verificaLista, verificaUserId, verificaEntId } = require('../validation')
+var levels = [1, 2, 3, 3.5, 4, 5, 6, 7]
+
+function emailNaoUsado(v){
+    return new Promise((resolve, reject) => {
+        Users.getUserByEmail(v, function (err, user) {
+            if (!err && !user) {
+                resolve()
+            } else {
+                reject()
+            }
+        })
+    })
+}
+
+function nicNaoUsado(v){
+    return new Promise((resolve, reject) => {
+        Users.getUserByCC(v, function (err, user) {
+            if (!err && !user) {
+                resolve()
+            } else {
+                reject()
+            }
+        })
+    })
+}
+
+function emailNaoUsadoSelf(v, {req}){
+    return new Promise((resolve, reject) => {
+        Users.getUserByEmail(v, function (err, user) {
+            if (!err && !user) {
+                resolve()
+            } else if(user && user._id == req.params.id) {
+                resolve()
+            } else {
+                reject()
+            }
+        })
+    })
+}
+
+function nicNaoUsadoSelf(v, {req}){
+    return new Promise((resolve, reject) => {
+        Users.getUserByCC(v, function (err, user) {
+            if (!err && !user) {
+                resolve()
+            } else if(user && user._id == req.params.id) {
+                resolve()
+            } else {
+                reject()
+            }
+        })
+    })
+}
+
+function unic(field){
+    return function(v, {req}) {
+        var n = req.body.users.filter(e => e[field] == v).length
+        if(n < 2){
+            return Promise.resolve()
+        }else{
+            return Promise.reject(`Multiplos utilizadores tem o mesmo ${field} '${v}'!`)
+        }
+    }
+}
+
+router.get('/', Auth.isLoggedInUser, Auth.checkLevel(5), [
+    verificaEntId('query', 'entidade').optional(),
+    estaEm('query', 'formato', ["normalizado"]).optional()
+], (req, res) => {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
+    }
+
+    Users.listar(req.query.entidade, req.query.formato, function(err, result){
         if(err){
             //res.status(500).send(`Erro: ${err}`);
             res.status(500).send("Não foi possível obter os utilizadores!");
@@ -22,7 +97,16 @@ router.get('/', Auth.isLoggedInUser, Auth.checkLevel(5), (req, res) => {
     });
 });
 
-router.get('/:id/token', Auth.isLoggedInUser, async function(req,res){
+router.get('/:id/token', Auth.isLoggedInUser, [
+    existe('param', 'id')
+        .isJWT()
+        .withMessage("Não possui um formato válido de um JWT")
+], async function(req,res){
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
+    }
+
     await jwt.verify(req.params.id, secretKey.userKey, async function(err, decoded){
         if(!err){
             if(decoded.id == req.user.id || req.user.level == 7){
@@ -50,14 +134,30 @@ router.get('/token', Auth.isLoggedInUser, async function(req,res){
     res.send(req.user);
 });
 
-router.post('/registar', Auth.isLoggedInUser, Auth.checkLevel(5), function (req, res) {
-    var ent = req.body.entidade.split("_").pop()
+router.post('/registar', Auth.isLoggedInUser, Auth.checkLevel(5), [
+    verificaExisteEnt('body', 'entidade'),
+    estaEm('body', 'type', levels),
+    existe('body', 'name'),
+    existe('body', 'email')
+        .bail()
+        .isEmail()
+        .withMessage("Email inválido")
+        .bail()
+        .custom(emailNaoUsado)
+        .withMessage("O email já se encontra em uso"),
+    existe('body', 'password')
+], function (req, res) {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
+    }
+
     var internal = (req.body.type > 1);
     var newUser = new User({
         _id: mongoose.Types.ObjectId(),
         name: req.body.name,
         email: req.body.email,
-        entidade: 'ent_' + ent,
+        entidade: req.body.entidade,
         internal: internal,
         level: req.body.type,
         local: {
@@ -65,38 +165,59 @@ router.post('/registar', Auth.isLoggedInUser, Auth.checkLevel(5), function (req,
         }
     });
     
-    Users.getUserByEmail(req.body.email, async function (err, user) {
+    Users.createUser(newUser, function (err, user) {
         if (err) {
-            //return res.status(500).send(`Erro: ${err}`);
-            return res.status(500).send('Não foi possível registar o utilizador! Verifique se os valores estão corretos ou se falta algum valor.');
-        }
-
-        if (!user) {
-            await Users.createUser(newUser, function (err, user) {
-                if (err) {
-                    //return res.status(500).send(`Erro: ${err}`);
-                    return res.status(500).send('Não foi possível registar o utilizador! Verifique se os valores estão corretos ou se falta algum valor.');
-                }
-            });
-            res.send('Utilizador registado com sucesso!');
-        } else {
-            //Email já em uso
+            //res.status(500).send(`Erro: ${err}`);
             res.status(500).send('Não foi possível registar o utilizador! Verifique se os valores estão corretos ou se falta algum valor.');
+        } else {
+            res.send('Utilizador registado com sucesso!');
         }
     });
 });
 
-router.post('/registarParaEntidade', Auth.isLoggedInUser, Auth.checkLevel(5), function (req, res) {
-    if(req.body.users instanceof Array && req.body.entidade){
-        Users.registarParaEntidade(req, req.body.entidade, req.body.users)
-           .then(data => res.send(data))
-           .catch(erro => res.status(500).send(erro))
-    }else{
-        res.status(500).send('O body deve possuir uma lista de utilizadores (users) e a entidade a adicionar os utilizadores (entidade).')
+router.post('/registarParaEntidade', Auth.isLoggedInUser, Auth.checkLevel(5), [
+    verificaExisteEnt('body', 'entidade'),
+    verificaLista('body', 'users'),
+    existe('body', 'users.*.name'),
+    existe('body', 'users.*.email')
+        .bail()
+        .isEmail()
+        .withMessage("Email inválido")
+        .bail()
+        .custom(unic('email'))
+        .bail()
+        .custom(emailNaoUsado)
+        .withMessage(v => `O email '${v}' já se encontra em uso`),
+    eNIC('body', 'users.*.nic')
+        .bail()
+        .custom(unic('nic'))
+        .bail()
+        .custom(nicNaoUsado)
+        .withMessage(v => `Utilizador com NIC '${v}' já registado`),
+    estaEm('body', 'users.*.type', levels)
+], function (req, res) {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
     }
+
+    Users.registarParaEntidade(req, req.body.entidade, req.body.users)
+       .then(data => res.send(data))
+       .catch(erro => res.status(500).send(erro))
 });
 
-router.post("/login", (req, res, next) => {
+router.post("/login", [
+    existe('body', 'username')
+        .bail()
+        .isEmail()
+        .withMessage("Email inválido"),
+    existe('body', 'password')
+], (req, res, next) => {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
+    }
+
     passport.authenticate('login', (err, user, info) => {
         if (err)
             //res.status(500).send(err)
@@ -117,7 +238,18 @@ router.post("/login", (req, res, next) => {
     })(req, res, next);
 });
 
-router.post('/recuperar', function (req, res) {
+router.post('/recuperar', [
+    existe('body', 'email')
+        .bail()
+        .isEmail()
+        .withMessage("Email inválido"),
+    body('url', 'Valor não é um URL').isURL({require_tld: false})
+], function (req, res) {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
+    }
+
     Users.getUserByEmail(req.body.email, function (err, user) {
         if (err) 
             //return res.status(500).send(`Erro: ${err}`);
@@ -145,7 +277,14 @@ router.post('/recuperar', function (req, res) {
     });
 });
 
-router.put('/:id/desativar', Auth.isLoggedInUser, Auth.checkLevel(5), async function(req, res) {
+router.put('/:id/desativar', Auth.isLoggedInUser, Auth.checkLevel(5), [
+    verificaUserId('param', 'id')
+], async function(req, res) {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
+    }
+
     if(req.user.id != req.params.id){
         Users.desativar(req.params.id, function(err, user){
             if(err){
@@ -156,11 +295,18 @@ router.put('/:id/desativar', Auth.isLoggedInUser, Auth.checkLevel(5), async func
             }
         })
     }else{
-        res.status(500).send('Não pode desativar o seu próprio utilizador!');
+        res.status(403).send('Não pode desativar o seu próprio utilizador!');
     }
 });
 
-router.delete('/:id', Auth.isLoggedInUser, Auth.checkLevel(7), async function(req, res) {
+router.delete('/:id', Auth.isLoggedInUser, Auth.checkLevel(7), [
+    verificaUserId('param', 'id')
+], async function(req, res) {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
+    }
+
     if(req.user.id != req.params.id){
         Users.eliminar(req.params.id, function(err, user){
             if(err){
@@ -171,88 +317,49 @@ router.delete('/:id', Auth.isLoggedInUser, Auth.checkLevel(7), async function(re
             }
         })
     }else{
-        res.status(500).send('Não pode eliminar o seu próprio utilizador!');
+        res.status(403).send('Não pode eliminar o seu próprio utilizador!');
     }
 });
 
 //Funcoes de alteracao de utilizador
-router.put('/:id/password', Auth.isLoggedInUser, function (req, res) {
-    if(req.user.level >= 6){
-        //Se enviou a password atual e é a sua conta
-        if(req.body.atualPassword && req.body.novaPassword && req.params.id == req.user.id){
-            Users.getUserById(req.params.id, function(err, user) {
-                if(err) {
-                    //return res.status(500).send(`Erro: ${err}`);
-                    return res.status(500).send("Não foi possível atualizar a password do utilizador!");
-                }
+router.put('/:id/password', Auth.isLoggedInUser, [
+    verificaUserId('param', 'id'),
+    existe('body', 'atualPassword').optional(),
+    existe('body', 'novaPassword')
+], function (req, res) {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
+    }
 
-                if(user.local.password != undefined){
-                    Users.atualizarPasswordComVerificacao(req.params.id, req.body.atualPassword, req.body.novaPassword, function (err, cb) {
-                        if (err) {
-                            //res.status(500).send(`Erro: ${err}`);
-                            res.status(500).send("Não foi possível atualizar a password do utilizador!");
-                        } else res.send('Password atualizada com sucesso!')
-                    });
-                }else{
-                    Users.atualizarPassword(req.params.id, req.body.novaPassword, function (err, cb) {
-                        if (err) {
-                            //res.status(500).send(`Erro: ${err}`);
-                            res.status(500).send("Não foi possível atualizar a password do utilizador!");
-                        } else res.send('Password atualizada com sucesso!')
-                    });
-                }
-            })
-        //se não enviou a password atual ou não é a sua conta
-        }else if(req.body.novaPassword){
-            Users.atualizarPassword(req.params.id, req.body.novaPassword, function (err, cb) {
+    if(req.user.level >= 6){
+        if(req.body.atualPassword && req.params.id == req.user.id){
+            Users.atualizarPasswordComVerificacao(req.params.id, req.body.atualPassword, req.body.novaPassword, function (err, cb) {
                 if (err) {
-                    //res.status(500).send(`Erro: ${err}`);
-                    res.status(500).send("Não foi possível atualizar a password do utilizador!");
+                    res.status(500).send(err);
                 } else res.send('Password atualizada com sucesso!')
             });
         }else{
-            res.status(500).send("Faltam campos para puder atualizar a password: atualPassword e/ou novaPassword!")
+            Users.atualizarPassword(req.params.id, req.body.novaPassword, function (err, cb) {
+                if (err) {
+                    res.status(500).send(err);
+                } else res.send('Password atualizada com sucesso!')
+            });
         }
     }else if(req.params.id == req.user.id){
         //Utilizador a recuperar a conta
-        if(req.user.level == 0 && req.body.novaPassword){
+        if(req.user.level == 0){
             Users.atualizarPassword(req.params.id, req.body.novaPassword, function (err, cb) {
                 if (err) {
-                    //res.status(500).send(`Erro: ${err}`);
-                    res.status(500).send("Não foi possível atualizar a password do utilizador!");
+                    res.status(500).send(err);
                 } else res.send('Password atualizada com sucesso!')
             });
         } else {
-            Users.getUserById(req.params.id, function(err, user) {
-                if(err) {
-                    //return res.status(500).send(`Erro: ${err}`);
-                    return res.status(500).send("Não foi possível atualizar a password do utilizador!");
-                }
-
-                if(user.local.password != undefined){
-                    if(req.body.atualPassword && req.body.novaPassword){
-                        Users.atualizarPasswordComVerificacao(req.params.id, req.body.atualPassword, req.body.novaPassword, function (err, cb) {
-                            if (err) {
-                                //res.status(500).send(`Erro: ${err}`);
-                                res.status(500).send("Não foi possível atualizar a password do utilizador!");
-                            } else res.send('Password atualizada com sucesso!')
-                        });
-                    }else{
-                        res.status(500).send("Faltam campos para puder atualizar a password: atualPassword e/ou novaPassword!")
-                    }
-                }else{
-                    if (req.body.novaPassword){
-                        Users.atualizarPassword(req.params.id, req.body.novaPassword, function (err, cb) {
-                            if (err) {
-                                //res.status(500).send(`Erro: ${err}`);
-                                res.status(500).send("Não foi possível atualizar a password do utilizador!");
-                            } else res.send('Password atualizada com sucesso!')
-                        });
-                    }else{
-                        res.status(500).send("Faltam campos para puder atualizar a password: atualPassword e/ou novaPassword!")
-                    }
-                }
-            })
+            Users.atualizarPasswordComVerificacao(req.params.id, req.body.atualPassword, req.body.novaPassword, function (err, cb) {
+                if (err) {
+                    res.status(500).send(err);
+                } else res.send('Password atualizada com sucesso!')
+            });
         }
     }else{
         //Não tem permissões para alterar a password de outro utilizador
@@ -260,44 +367,68 @@ router.put('/:id/password', Auth.isLoggedInUser, function (req, res) {
     }
 });
 
-router.put('/:id/nic', Auth.isLoggedInUser, Auth.checkLevel(7), function (req, res) {
+router.put('/:id/nic', Auth.isLoggedInUser, Auth.checkLevel(7), [
+    verificaUserId('param', 'id'),
+    eNIC('body', 'nic')
+        .bail()
+        .custom(nicNaoUsadoSelf)
+        .withMessage("Já existe um utilizador com esse NIC")
+], function (req, res) {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
+    }
+
     if(req.params.id != req.user.id){
-        if(req.body.nic){
-            Users.atualizarNIC(req.params.id, req.body.nic, function (err, u) {
-                if (err) { 
-                    //res.status(500).send(`Erro: ${err}`);
-                    res.status(500).send("Não foi possível atualizar o NIC do utilizador! Verifique os valores usados.");
-                } else {
-                    res.send('NIC do utilizador atualizado com sucesso!')
-                }
-            });
-        }else{
-            res.status(500).send("Por forma a atualizar o NIC precisa de enviar o campo nic com o novo valor!")
-        }
+        Users.atualizarNIC(req.params.id, req.body.nic, function (err, u) {
+            if (err) { 
+                //res.status(500).send(`Erro: ${err}`);
+                res.status(500).send("Não foi possível atualizar o NIC do utilizador! Verifique os valores usados.");
+            } else {
+                res.send('NIC do utilizador atualizado com sucesso!')
+            }
+        });
     }else{
         res.status(403).send("Não pode alterar o seu próprio NIC!")
     }
 });
 
-router.put('/:id', Auth.isLoggedInUser, Auth.checkLevel(5), function (req, res) {
-    Users.getUserByEmail(req.body.email, function(err,user){
-        if(user && req.params.id != user._id){
-            //Já existe utilizador registado com esse email
+router.put('/:id', Auth.isLoggedInUser, Auth.checkLevel(5), [
+    verificaUserId('param', 'id'),
+    verificaExisteEnt('body', 'entidade'),
+    estaEm('body', 'level', levels),
+    existe('body', 'nome'),
+    existe('body', 'email')
+        .bail()
+        .isEmail()
+        .withMessage("Email inválido")
+        .bail()
+        .custom(emailNaoUsadoSelf)
+        .withMessage("O email já se encontra em uso")
+], function (req, res) {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
+    }
+
+    Users.atualizarMultiplosCampos(req.params.id, req.body.nome, req.body.email, req.body.entidade, req.body.level, function (err, cb) {
+        if (err) { 
+            //res.status(500).send(`Erro: ${err}`);
             res.status(500).send('Não foi possível atualizar o utilizador! Verifique se os valores estão corretos ou se falta algum valor.');
-        }else{
-            Users.atualizarMultiplosCampos(req.params.id, req.body.nome, req.body.email, req.body.entidade, req.body.level, function (err, cb) {
-                if (err) { 
-                    //res.status(500).send(`Erro: ${err}`);
-                    res.status(500).send('Não foi possível atualizar o utilizador! Verifique se os valores estão corretos ou se falta algum valor.');
-                } else {
-                    res.send('Utilizador atualizado com sucesso!')
-                }
-            });
+        } else {
+            res.send('Utilizador atualizado com sucesso!')
         }
     });
 });
 
-router.get('/:id', Auth.isLoggedInUser, (req, res) => {
+router.get('/:id', Auth.isLoggedInUser, [
+    verificaUserId('param', 'id')
+], (req, res) => {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
+    }
+
     if(req.params.id == req.user.id || req.user.level >= 5){
         Users.listarPorId(req.params.id,function(err, result){
             if(err){
@@ -315,7 +446,14 @@ router.get('/:id', Auth.isLoggedInUser, (req, res) => {
 });
 
 //Callback Autenticação.Gov
-router.post('/callback', async function(req, res){
+router.post('/callback', [
+    existe('body', 'SAMLResponse')
+], async function(req, res){
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
+    }
+
     await Users.parseSAMLResponse(req.body.SAMLResponse, function(err, result){
         // console.log(result)
         AuthCalls.get(result.RequestID, function(err, url){
@@ -348,47 +486,44 @@ router.post('/callback', async function(req, res){
 });
 
 //Registo via CC
-router.post('/registarCC', Auth.isLoggedInUser, Auth.checkLevel(5), function (req, res) {
+router.post('/registarCC', Auth.isLoggedInUser, Auth.checkLevel(5), [
+    verificaExisteEnt('body', 'entidade'),
+    existe('body', 'name'),
+    existe('body', 'email')
+        .bail()
+        .isEmail()
+        .withMessage("Email inválido")
+        .bail()
+        .custom(emailNaoUsado)
+        .withMessage("O email já se encontra em uso"),
+    eNIC('body', 'nic')
+        .bail()
+        .custom(nicNaoUsado)
+        .withMessage("Utilizador já se encontra registado"),
+    estaEm('body', 'type', levels)
+], function (req, res) {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
+    }
+
     var internal = (req.body.type > 1);
     var newUser = new User({
         _id: req.body.nic,
         name: req.body.name,
         email: req.body.email,
-        entidade: 'ent_'+req.body.entidade,
+        entidade: req.body.entidade,
         internal: internal,
         level: req.body.type
     });
     
-    Users.getUserByCC(req.body.nic, function (err, user) {
-        if (err) { 
+    Users.createUser(newUser, function (err, user) {
+        Logging.logger.info('Utilizador ' + user._id + ' registado.');
+        if (err) {
             //return res.status(500).send(`Erro: ${err}`);
-            return res.status(500).send('Não foi possível registar o utilizador! Verifique se os valores estão corretos ou se falta algum valor.');
-        }
-
-        if (!user) {
-            Users.getUserByEmail(req.body.email, function(err, user){
-                if (err) {
-                    //return res.status(500).send(`Erro: ${err}`);
-                    return res.status(500).send('Não foi possível registar o utilizador! Verifique se os valores estão corretos ou se falta algum valor.');
-                }
-
-                if (!user) {
-                    Users.createUser(newUser, function (err, user) {
-                        Logging.logger.info('Utilizador ' + user._id + ' registado.');
-                        if (err) {
-                            //return res.status(500).send(`Erro: ${err}`);
-                            return res.status(500).send('Não foi possível registar o utilizador! Verifique se os valores estão corretos ou se falta algum valor.');
-                        }
-                    });
-                    res.send('Utilizador registado com sucesso!');
-                }else{
-                    //Email já em uso
-                    res.status(500).send('Não foi possível registar o utilizador! Verifique se os valores estão corretos ou se falta algum valor.');
-                }
-            })
-        } else {
-            //Utilizador já registado
             res.status(500).send('Não foi possível registar o utilizador! Verifique se os valores estão corretos ou se falta algum valor.');
+        } else {
+            res.send('Utilizador registado com sucesso!');
         }
     });
 });

@@ -1,5 +1,7 @@
 const execQuery = require("../../controllers/api/utils").execQuery;
 const normalize = require("../../controllers/api/utils").normalize;
+const allTriplesFrom = require("../../controllers/api/utils").allTriplesFrom;
+const allTriplesRel = require("../../controllers/api/utils").allTriplesRel;
 const projection = require("../../controllers/api/utils").projection;
 const request = require("../../controllers/api/utils").request;
 const Leg = module.exports;
@@ -31,8 +33,10 @@ Leg.listar = () => {
              clav:diplomaNumero ?numero;
              clav:diplomaTipo ?tipo;
              clav:diplomaSumario ?sumario;
-             clav:diplomaEstado ?estado;
-             clav:diplomaLink ?link.
+             clav:diplomaEstado ?estado.
+        OPTIONAL {
+          ?uri clav:diplomaLink ?link.
+        }
         OPTIONAL {
         	?uri clav:diplomaFonte ?fonte.
         }
@@ -321,6 +325,24 @@ Leg.existe = numero => {
 };
 
 /**
+ * Verifica se um determinado numero de legislação existe no sistema.
+ *
+ * @param {Legislacao} legislacao
+ * @return {Promise<boolean | Error>}
+ */
+Leg.existeId = numero => {
+  const query = `select ?s where {
+            ?s clav:diplomaNumero '${numero}'
+        }`;
+
+  return execQuery("query", query).then(response => {
+      var res = normalize(response)[0]
+      if(res) res = res.s.split("#")[1]
+      return res
+  });
+};
+
+/**
  * Verifica se uma determinada legislação tem PNs associados.
  *
  * @param {Legislacao} legislacao
@@ -447,60 +469,57 @@ Leg.moreInfo = async leg => {
   leg.regula = await Leg.regula(leg.id);
 };
 
-//Criar legislação
-Leg.criar = async leg => {
-  let baseQuery = `{
-    clav:${leg.codigo} rdf:type owl:NamedIndividual, clav:Legislacao ;
-        clav:rdfs:label "Leg.: ${leg.tipo} ${leg.numero}" ;
-        clav:diplomaData "${leg.data}" ;
-        clav:diplomaNumero "${leg.numero}" ;
-        clav:diplomaTipo "${leg.tipo}" ;
-        clav:diplomaSumario "${leg.sumario}" ;
-        clav:diplomaEstado "${leg.estado}"`;
+//Cria legislação em triplos dado um objeto legislação
+function queryLeg(id, leg){
+  if(!id){
+    const nanoid = require('nanoid')
+    id = "leg_" + nanoid();
+  }
+
+  let baseQuery = `clav:${id} rdf:type owl:NamedIndividual, clav:Legislacao ;
+    clav:rdfs:label "Leg.: ${leg.tipo} ${leg.numero}" ;
+    clav:diplomaData "${leg.data}" ;
+    clav:diplomaNumero "${leg.numero}" ;
+    clav:diplomaTipo "${leg.tipo}" ;
+    clav:diplomaSumario "${leg.sumario}" ;
+    clav:diplomaEstado "${leg.estado}"`;
 
   if (leg.diplomaFonte)
     baseQuery += ` ;\n\tclav:diplomaFonte "${leg.diplomaFonte}"`;
 
   if (leg.link) baseQuery += ` ;\n\tclav:diplomaLink "${leg.link}"`;
 
-  if (
-    leg.entidadesSel &&
-    leg.entidadesSel instanceof Array &&
-    leg.entidadesSel.length > 0
-  ) {
-    baseQuery += ` ;\n\tclav:temEntidadeResponsavel ${leg.entidadesSel
-      .map(ent => `clav:ent_${ent.sigla}`)
-      .join(", ")}`;
+  if (leg.entidadesSel && leg.entidadesSel.length > 0) {
+    baseQuery += ` ;\n\tclav:temEntidadeResponsavel ${
+      leg.entidadesSel.map(ent => `clav:${ent.id}`).join(", ")
+    }`;
   }
 
-  if (
-    leg.processosSel &&
-    leg.processosSel instanceof Array &&
-    leg.processosSel.length > 0
-  ) {
-    baseQuery += ` ;\n\tclav:estaAssoc ${leg.processosSel
-      .map(proc => `clav:c${proc.codigo}`)
-      .join(", ")}`;
+  baseQuery += ".\n"
+  if (leg.processosSel) {
+    baseQuery += leg.processosSel
+      .map(proc => `clav:c${proc.codigo} clav:temLegislacao clav:${id}`)
+      .join(".\n")
   }
 
-  baseQuery += " .\n}";
+  return baseQuery;
+}
 
-  const query = "INSERT DATA " + baseQuery;
+//Criar legislação
+Leg.criar = async leg => {
+  const baseQuery = queryLeg(undefined, leg)
+  const query = `INSERT DATA {${baseQuery}}`;
+  const ask = `ASK {${baseQuery}}`;
 
-  const ask = "ASK " + baseQuery;
-
-  if (await Leg.existe(leg.numero)) {
-    throw "Legislação já existe, número já em uso.";
-  } else {
-    return execQuery("update", query).then(res =>
-      execQuery("query", ask).then(result => {
-        if (result.boolean) return "Sucesso na inserção da legislação";
-        else throw "Insucesso na inserção da legislação";
-      })
-    );
-  }
+  return execQuery("update", query).then(res =>
+    execQuery("query", ask).then(result => {
+      if (result.boolean) return "Sucesso na inserção da legislação";
+      else throw "Insucesso na inserção da legislação";
+    })
+  );
 };
 
+<<<<<<< HEAD
 // Devolve o numero de entidades ativas no sistema
 Leg.getAtivas = async () => {
   var query = `
@@ -568,3 +587,20 @@ Leg.updateDoc = function (dataObj) {
         .catch(error => console.error("Error in update:\n" + error));
 };
 */
+=======
+//Atualizar legislação
+Leg.atualizar = async (id, leg) => {
+  const baseQuery = queryLeg(id, leg)
+  try{
+    var triplesLeg = await allTriplesFrom(id);
+    triplesLeg += await allTriplesRel("temLegislacao", id);
+    var query = `DELETE {${triplesLeg}}`;
+    query += `INSERT {${baseQuery}}`
+    query += `WHERE {${triplesLeg}}`
+    await execQuery("update", query);
+    return "Sucesso na atualização do diploma legislativo";
+  }catch(e){
+    throw "Insucesso na atualização do diploma legislativo";
+  }
+}
+>>>>>>> 6f19e7851d82240c2140ef6b5ae645771f617d62

@@ -1,0 +1,67 @@
+value: |
+  <?xml version=\"1.0\" encoding=\"utf-8\"?>
+  </root>
+    <item index="0" type="object">
+        <estado type="string">Ativa</estado>
+        <sigla type="string">TJUE</sigla>
+        <sioe type="string"></sioe>
+        <designacao type="string">Tribunal de Justiça da União Europeia</designacao>
+        <id type="string">ent_TJUE</id>
+        <internacional type="string">Sim</internacional>
+        <tipologias type="array">
+        </tipologias>
+        <dono type="array">
+        </dono>
+        <participante type="array">
+        </participante>
+    </item>
+    <item index="1" type="object">
+        <estado type="string">Ativa</estado>
+        <sigla type="string">TP</sigla>
+        <sioe type="string">73400000</sioe>
+        <designacao type="string">Turismo de Portugal, IP</designacao>
+        <id type="string">ent_TP</id>
+        <internacional type="string"></internacional>
+        <tipologias type="array">
+            <item index="0" type="object">
+                <sigla type="string">AP</sigla>
+                <designacao type="string">Administração Pública</designacao>
+                <id type="string">tip_AP</id>
+            </item>
+            <item index="1" type="object">
+                <sigla type="string">IP</sigla>
+                <designacao type="string">Institutos Públicos</designacao>
+                <id type="string">tip_IP</id>
+            </item>
+        </tipologias>
+        <dono type="array">
+            <item index="0" type="object">
+                <codigo type="string">450.10.064</codigo>
+                <titulo type="string">Licenciamento ou autorização de atividades de alojamento e de restauração</titulo>
+                <id type="string">c450.10.064</id>
+            </item>
+        </dono>
+        <participante type="array">
+            <item index="0" type="object">
+                <tipoPar type="string">temParticipanteApreciador</tipoPar>
+                <codigo type="string">450.10.214</codigo>
+                <titulo type="string">Licenciamento ou comunicação de publicidade</titulo>
+                <id type="string">c450.10.214</id>
+            </item>
+        </participante>
+    </item>
+    <item index="2" type="object">
+        <estado type="string">Ativa</estado>
+        <sigla type="string">UE</sigla>
+        <sioe type="string"></sioe>
+        <designacao type="string">União Europeia</designacao>
+        <id type="string">ent_UE</id>
+        <internacional type="string">Sim</internacional>
+        <tipologias type="array">
+        </tipologias>
+        <dono type="array">
+        </dono>
+        <participante type="array">
+        </participante>
+    </item>
+  </root>

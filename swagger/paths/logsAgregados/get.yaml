@@ -23,10 +23,19 @@ responses:
     content:
       application/json:
         schema:
-          type: string
+          oneOf:
+            - $ref: '#/components/schemas/LogsAgregados'
+            - $ref: '#/components/schemas/LogAgregado'
+        examples:
+          Logs Agregados de todos os utilizadores:
+            $ref: '#/components/examples/logsAgregados_get_all'
+          Logs Agregados de um utilizador:
+            $ref: '#/components/examples/logsAgregados_get_one'
   401:
     $ref: '#/components/responses/UnauthorizedUser'
   403:
     $ref: '#/components/responses/PermissionsUser'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
   500:
     description: Erro

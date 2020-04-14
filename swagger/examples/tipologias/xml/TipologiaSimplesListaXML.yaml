@@ -1,0 +1,22 @@
+value: |
+  <?xml version=\"1.0\" encoding=\"utf-8\"?>
+  </root>
+      <item index="73" type="object">
+          <estado type="string">Ativa</estado>
+          <sigla type="string">SG</sigla>
+          <designacao type="string">Secretarias Gerais</designacao>
+          <id type="string">tip_SG</id>
+      </item>
+      <item index="74" type="object">
+          <estado type="string">Ativa</estado>
+          <sigla type="string">ARS</sigla>
+          <designacao type="string">Administrações Regionais de Saúde</designacao>
+          <id type="string">tip_ARS</id>
+      </item>
+      <item index="75" type="object">
+          <estado type="string">Ativa</estado>
+          <sigla type="string">DRAP</sigla>
+          <designacao type="string">Direções Regionais de Agricultura e Pescas</designacao>
+          <id type="string">tip_DRAP</id>
+      </item>
+  </root>
