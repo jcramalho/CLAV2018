@@ -1,5 +1,6 @@
 const execQuery = require('../../controllers/api/utils').execQuery
 const normalizeOrdered = require('../../controllers/api/utils').normalizeOrdered
+const normalize = require('../../controllers/api/utils').normalize
 
 var Indicadores = module.exports
 
@@ -52,7 +53,7 @@ Indicadores.totalEntidadesAtivas = async () => {
     GROUP BY ?indicador`
 
     results = await execQuery("query", query)
-    return normalize(resultado)
+    return normalize(results)
 }
 
 //Tipologias
@@ -87,7 +88,7 @@ Indicadores.totalLegislacaoAtivos = async () => {
     } GROUP BY ?indicador`
 
     results = await execQuery("query", query)
-    return normalize(resultado)
+    return normalize(results)
 }
 
 //Relacoes
