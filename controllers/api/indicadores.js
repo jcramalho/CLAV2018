@@ -40,11 +40,16 @@ Indicadores.totalEntidades = async () => {
     return normalizeOrdered(results)[0].count
 }
 
+//Devolve total de entidades ativas/inativas
 Indicadores.totalEntidadesAtivas = async () => {
-    const query = `SELECT (COUNT(?s) as ?count) WHERE {
+    const query = `
+    SELECT 
+      ?indicador (COUNT(?s) as ?valor)
+    WHERE{
         ?s a clav:Entidade .
-        ?s clav:entEstado "Ativa" .
-    }`
+        ?s clav:entEstado ?indicador .
+    }
+    GROUP BY ?indicador`
 
     results = await execQuery("query", query)
     return normalizeOrdered(results)[0].count
@@ -72,11 +77,14 @@ Indicadores.totalLegislacao = async () => {
     return normalizeOrdered(results)[0].count
 }
 
+//Devolve total de diplomas ativos/revogados
 Indicadores.totalLegislacaoAtivos = async () => {
-    const query = `SELECT (COUNT(?s) as ?count) WHERE {
+    const query = `SELECT 
+    ?indicador (COUNT(?s) as ?valor)
+    WHERE{
         ?s a clav:Legislacao .
-        ?s clav:diplomaEstado "Ativo" .
-    }`
+        ?s clav:diplomaEstado ?indicador .
+    } GROUP BY ?indicador`
 
     results = await execQuery("query", query)
     return normalizeOrdered(results)[0].count
@@ -121,4 +129,49 @@ Indicadores.totalCritJust = async (crit) => {
 
     results = await execQuery("query", query)
     return normalizeOrdered(results)[0].count
+}
+
+// Devolve as estatísticas relacionais dos Processos
+Indicadores.relStats = async () => {
+    var query = `
+    Select 
+        ?indicador (COUNT(?indicador) as ?valor)
+    WHERE {
+        ?pn a clav:Classe_N3 .
+        {?o a clav:Classe_N3} UNION {?o a clav:Entidade} UNION {?o a clav:Legislacao} .
+        ?pn ?indicador ?o .
+    } Group by ?indicador`
+
+    let resultado = await execQuery("query", query)
+    return normalize(resultado)
+}
+
+// Devolve as estatísticas relativas dos Critérios de Justificações
+Indicadores.critStats = async () => {
+    var query = `
+    SELECT 
+        ?indicador (COUNT(?indicador) as ?valor)
+    WHERE{
+        ?c a clav:CriterioJustificacao .
+        ?c a ?indicador .
+    FILTER(?indicador != owl:NamedIndividual && ?indicador != clav:AtributoComposto) .
+    }
+    GROUP BY ?indicador`
+
+    let resultado = await execQuery("query", query)
+    return normalize(resultado)
+}
+
+// Devolve as estatísticas relacionais aos aos Destinos finais
+Indicadores.dfStats = async () => {
+    var query = `
+    SELECT 
+        ?indicador (COUNT(?indicador) as ?valor)
+    WHERE{
+        ?s clav:temDF ?d .
+        ?d clav:dfValor ?indicador .
+    } Group by ?indicador`
+
+    let resultado = await execQuery("query", query)
+    return normalize(resultado)
 }
