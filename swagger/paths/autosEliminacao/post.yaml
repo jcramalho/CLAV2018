@@ -19,10 +19,8 @@ requestBody:
   content:
     application/json:
       schema:
-        properties:
-          auto:
-            $ref: '#/components/schemas/AutosEliminacao'
-      example: !!inc/file '/examples/autosEliminacao/AutosEliminacao.yaml'
+        $ref: '#/components/schemas/AutosEliminacaoPOST'
+      example: !!inc/file '/examples/autosEliminacao/AutosEliminacaoPOST.yaml'
 responses:
   200:
     description: Criado um pedido para a criação de uma auto de eliminação

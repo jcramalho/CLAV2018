@@ -1,0 +1,15 @@
+type: object
+properties:
+  estado:
+    $ref: '#/components/schemas/PedidoEstado'
+  responsavel:
+    type: string
+    format: email
+  data:
+    type: string
+    format: date-time
+  despacho:
+    type: string
+required:
+  - estado
+  - data

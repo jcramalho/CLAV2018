@@ -1,46 +1,26 @@
-summary: 'Atualizar um trabalho previamente guardado como pendente'
-description: Atualizar um trabalho previamente guardado como pendente
+summary: Atualiza um trabalho previamente guardado como pendente
+description: Atualiza um trabalho previamente guardado como pendente
 security:
   - userQuery: []
   - userAuth: []
 tags:
   - Pendentes
 requestBody:
-  description: 'Dados a alterar. No campo objeto é colocado o objeto a guardar. Pode ser um objeto Classe, TS Organizacional, TS Pluriorganizacional, Entidade, Tipologia, Legislação, Termo de Indice ou Autos de Eliminação'
+  description: Pendente a atualizar
   required: true
   content:
     application/json:
       schema:
-        properties:
-          _id:
-            type: string
-          dataAtualizacao:
-            type: string
-            format: date-time
-          numInterv:
-            type: number
-          objeto:
-            type: object
-            oneOf:
-              - $ref: '#/components/schemas/Classe'
-              - $ref: '#/components/schemas/DocumentoLegislativo'
-              - $ref: '#/components/schemas/Entidade'
-              - $ref: '#/components/schemas/TabelaSelecaoOrganizacional'
-              - $ref: '#/components/schemas/TabelaSelecaoPluriorganizacional'
-              - $ref: '#/components/schemas/TermosIndice'
-              - $ref: '#/components/schemas/Tipologia'
-              - $ref: '#/components/schemas/AutosEliminacao'
-        required:
-          - _id
-          - dataAtualizacao
-          - numInterv
-          - objeto
+        $ref: '#/components/schemas/PendentePUT'
+      example: !!inc/file '/examples/pendentes/PendentePUT.yaml'
 responses:
   200:
-    description: Atualizar um trabalho previamente guardado como pendente
+    description: Atualizado um trabalho previamente guardado como pendente
   401:
     $ref: '#/components/responses/UnauthorizedUser'
   403:
     $ref: '#/components/responses/PermissionsUser'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
   500:
     description: Erro

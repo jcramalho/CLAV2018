@@ -1,0 +1,9 @@
+type: object
+properties:
+  id:
+    $ref: '#/components/schemas/NotaApId'
+  nota:
+    type: string
+required:
+  - id
+  - nota

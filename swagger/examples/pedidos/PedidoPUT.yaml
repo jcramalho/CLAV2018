@@ -1,0 +1,20 @@
+pedido:
+  _id: "5e947eeb7872b62b2b7c2754"
+  codigo: "2020-11"
+  estado: "Submetido"
+  data: "2020-04-18T19:24:58.278Z"
+  criadoPor: "example@example.com"
+  objeto:
+    dados: {}
+    tipo: "Classe"
+    acao: "Criação"
+  distribuicao:
+    estado: "Submetido"
+    responsavel: "example2@example.com"
+    data: "2020-04-13T19:24:58.278Z"
+  entidade: "ent_DGLAB"
+distribuicao:
+  estado: "Submetido"
+  responsavel: "example3@example.com"
+  data: "2020-04-19T19:24:58.278Z"
+  despacho: "Despacho a inserir"

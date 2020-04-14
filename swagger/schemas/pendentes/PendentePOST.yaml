@@ -1,0 +1,26 @@
+type: object
+properties:
+  dataCriacao:
+    type: string
+    format: date-time
+  dataAtualizacao:
+    type: string
+    format: date-time
+  numInterv:
+    type: integer
+    minimum: 0
+  criadoPor:
+    type: string
+    format: email
+  objeto:
+    $ref: '#/components/schemas/PendenteDados'
+  tipo:
+    $ref: '#/components/schemas/PendenteTipo'
+  acao:
+    $ref: '#/components/schemas/PendenteAcao'
+required:
+  - numInterv
+  - criadoPor
+  - tipo
+  - acao
+  - objeto

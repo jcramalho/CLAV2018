@@ -108,6 +108,11 @@ module.exports.verificaClasseCodigo = function(location, field){
     return module.exports.match(location, field, regex)
 }
 
+module.exports.verificaPedidoCodigo = function(location, field){
+    const regex = "^\\d{4}-\\d+$"
+    return module.exports.match(location, field, regex)
+}
+
 module.exports.verificaNumeroLeg = function(location, field){
     const regex = "^\\d+(-\\w)?\\/\\d+$"
     return module.exports.match(location, field, regex)
@@ -276,7 +281,7 @@ module.exports.eMongoId = function(location, field){
     return module.exports.existe(location, field)
         .bail()
         .isMongoId()
-        .withMessage("Formato do 'id' inválido")
+        .withMessage("Formato do id inválido")
 }
 
 module.exports.eNIC = function(location, field){

@@ -10,32 +10,40 @@ parameters:
     name: criadoPor
     schema:
       type: string
+      format: email
     description: 'Permite filtrar os pedidos que contém criadoPor igual a este valor'
     required: false
   - in: query
     name: codigo
     schema:
-      type: string
+      $ref: '#/components/schemas/PedidoCodigo'
     description: 'Permite filtrar os pedidos que contém codigo igual a este valor'
     required: false
   - in: query
     name: tipo
     schema:
-      type: string
+      $ref: '#/components/schemas/PedidoTipo'
     description: 'Permite filtrar os pedidos que contém tipo igual a este valor'
     required: false
   - in: query
     name: acao
     schema:
-      type: string
+      $ref: '#/components/schemas/PedidoAcao'
     description: 'Permite filtrar os pedidos que contém acao igual a este valor'
     required: false
 responses:
   200:
     description: Lista todos os pedidos que satisfazem uma condição
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/Pedidos'
+        example: !!inc/file '/examples/pedidos/Pedidos.yaml'
   401:
     $ref: '#/components/responses/UnauthorizedUser'
   403:
     $ref: '#/components/responses/PermissionsUser'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
   500:
     description: Erro

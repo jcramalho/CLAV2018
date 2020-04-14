@@ -75,7 +75,7 @@ Pedidos.criar = async function (pedidoParams) {
     return newPedido.codigo;
   } catch (err) {
     console.log(err);
-    return "Ocorreu um erro a submeter o pedido! Tente novamente mais tarde";
+    throw "Ocorreu um erro a submeter o pedido! Tente novamente mais tarde";
   }
 };
 
@@ -83,28 +83,27 @@ Pedidos.criar = async function (pedidoParams) {
  * Atualiza um pedido.
  *
  * @param pedidoParams novos dados para atualizar o pedido.
- * @return {Pedido} pedido criado.
+ * @return {Pedido} Código do pedido criado.
  */
 Pedidos.atualizar = async function (id, pedidoParams) {
-  try {
+  return new Promise((resolve, reject) => {
     Pedido.findByIdAndRemove(id, async function (error) {
       if (error) {
-        return error;
+        reject(error);
       } else {
         var novoPedido = new Pedido(pedidoParams.pedido);
         novoPedido.distribuicao.push(pedidoParams.distribuicao);
 
         try {
-          return await novoPedido.save();
+          novoPedido = await novoPedido.save()
+          resolve(novoPedido.codigo);
         } catch (err) {
           console.log(err);
-          return err;
+          reject(err);
         }
       }
     });
-  } catch (error) {
-    return error;
-  }
+  })
 };
 
 /**

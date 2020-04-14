@@ -1,0 +1,92 @@
+type: object
+properties:
+  nivel:
+    $ref: '#/components/schemas/Nivel'
+  pai:
+    type: object
+    properties:
+      codigo:
+        $ref: '#/components/schemas/Codigo'
+      titulo:
+        type: string
+    required:
+      - codigo
+      - titulo
+  codigo:
+    $ref: '#/components/schemas/Codigo'
+  titulo:
+    type: string
+  descricao:
+    type: string
+  termosInd:
+    type: array
+    items:
+      $ref: '#/components/schemas/TermoIndice'
+  processosRelacionados:
+    type: array
+    items:
+      $ref: '#/components/schemas/ProcessoRelacionado'
+  legislacao:
+    type: array
+    items:
+      $ref: '#/components/schemas/Legislacao'
+  pca:
+    $ref: '#/components/schemas/PCA'
+  df:
+    $ref: '#/components/schemas/DF'
+  notasAp:
+    type: array
+    items:
+      $ref: '#/components/schemas/NotaAp'
+  exemplosNotasAp:
+   type: array
+   items:
+      $ref: '#/components/schemas/ExemploNotaAp'
+  notasEx:
+   type: array
+   items:
+      $ref: '#/components/schemas/NotaEx'
+  temSubclasses4Nivel:
+    type: boolean
+  temSubclasses4NivelPCA:
+    type: boolean
+  temSubclasses4NivelDF:
+    type: boolean
+  subdivisao4Nivel01Sintetiza02:
+    type: boolean
+  tipoProc:
+    type: string
+    enum: [PC, PE]
+  procTrans:
+    $ref: '#/components/schemas/ProcessoTransversal'
+  donos:
+    $ref: '#/components/schemas/Donos'
+  participantes:
+    $ref: '#/components/schemas/Participantes'
+  subclasses:
+    type: array
+    items:
+      $ref: '#/components/schemas/SubClasse'
+required:
+  - nivel
+  - pai
+  - codigo
+  - titulo
+  - descricao
+  - termosInd
+  - processosRelacionados
+  - legislacao
+  - pca
+  - df
+  - notasAp
+  - exemplosNotasAp
+  - notasEx
+  - temSubclasses4Nivel
+  - temSubclasses4NivelPCA
+  - temSubclasses4NivelDF
+  - subdivisao4Nivel01Sintetiza02
+  - tipoProc
+  - procTrans
+  - donos
+  - participantes
+  - subclasses

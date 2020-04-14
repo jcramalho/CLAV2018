@@ -1,0 +1,21 @@
+type: object
+properties:
+  relacao:
+    $ref: '#/components/schemas/TipoRelacao'
+  idRel:
+    $ref: '#/components/schemas/TipoRelacao'
+  titulo:
+    type: string
+  codigo:
+    $ref: '#/components/schemas/Codigo'
+  id:
+    $ref: '#/components/schemas/ClasseId'
+  selected:
+    type: boolean
+required:
+  - relacao
+  - idRel
+  - titulo
+  - codigo
+  - id
+  - selected

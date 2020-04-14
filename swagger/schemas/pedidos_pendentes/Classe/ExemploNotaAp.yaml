@@ -1,0 +1,9 @@
+type: object
+properties:
+  idExemplo:
+    $ref: '#/components/schemas/ExemploNotasApId'
+  exemplo:
+    type: string
+required:
+  - idExemplo
+  - exemplo

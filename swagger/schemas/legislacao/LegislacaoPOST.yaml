@@ -13,17 +13,21 @@ properties:
   estado:
     $ref: '#/components/schemas/EstadoLeg'
   entidadesSel:
-    type: object
-    properties:
-      id:
-        $ref: '#/components/schemas/EntidadeId'
+    type: array
+    items:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/EntidadeId'
   diplomaFonte:
     $ref: '#/components/schemas/Fonte'
   processosSel:
-    type: object
-    properties:
-      codigo:
-        $ref: '#/components/schemas/Codigo'
+    type: array
+    items:
+      type: object
+      properties:
+        codigo:
+          $ref: '#/components/schemas/Codigo'
 required:
   - numero
   - sumario

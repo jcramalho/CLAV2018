@@ -1,0 +1,31 @@
+type: object
+properties:
+  ts:
+    type: array
+    items:
+      type: object
+      properties:
+        codigo:
+          $ref: '#/components/schemas/Codigo'
+        titulo:
+          type: string
+        entidades:
+          type: array
+          items:
+            type: object
+            properties:
+              sigla:
+                type: string
+              dono:
+                type: boolean
+              participante:
+                type: boolean
+            required:
+              - sigla
+              - dono
+              - participante
+      required:
+        - codigo
+        - entidades
+required:
+  - ts

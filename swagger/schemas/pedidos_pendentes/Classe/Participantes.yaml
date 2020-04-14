@@ -1,0 +1,24 @@
+type: object
+properties:
+  intervencao:
+    $ref: '#/components/schemas/TipoParticipacaoVerbo'
+  tipo:
+    type: string
+    enum: [Entidade, Tipologia]
+  designacao:
+    type: string
+  sigla:
+    type: string
+  id:
+    oneOf:
+      - $ref: '#/components/schemas/EntidadeId'
+      - $ref: '#/components/schemas/TipologiaId'
+  selected:
+    type: boolean
+required:
+  - intervencao
+  - tipo
+  - designacao
+  - sigla
+  - id
+  - selected

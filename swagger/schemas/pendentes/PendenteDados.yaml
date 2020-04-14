@@ -1,0 +1,10 @@
+type: object
+oneOf:
+  - $ref: '#/components/schemas/Classe'
+  - $ref: '#/components/schemas/DocumentoLegislativo'
+  - $ref: '#/components/schemas/Entidade'
+  - $ref: '#/components/schemas/TabelaSelecaoOrganizacional'
+  - $ref: '#/components/schemas/TabelaSelecaoPluriorganizacionalWeb'
+  - $ref: '#/components/schemas/TermosIndice'
+  - $ref: '#/components/schemas/Tipologia'
+  - $ref: '#/components/schemas/AutosEliminacao'
