@@ -290,7 +290,7 @@ router.get('/tabela', Auth.isLoggedInKey, async (req, res) => {
 
         res.jsonp(dados);
     }catch(error) {
-        return error;
+        res.status(500).send(`Erro ao obter a lista dos indicadores: ${err}`)
     }
 })
 

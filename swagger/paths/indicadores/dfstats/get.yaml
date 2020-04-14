@@ -1,0 +1,36 @@
+summary: Indicadores dos destinos finais (DFs) das classes 
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Indicadores Estatísticos
+description: |
+  Indicadores dos destinos finais (DFs) das classes:
+    - Número total de PNs com destino final igual a C (Conservação)
+    - Número total de PNs com destino final igual a CP (Conservação Parcial)
+    - Número total de PNs com destino final igual a E (Eliminação)
+    - Número total de PNs com destino final igual a NE (Não Especificado)
+responses:
+  200:
+    description: Indicadores dos destinos finais (DFs) das classes
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/Indicadores'
+        example:
+          - indicador: "C"
+            valor: "22"
+          - indicador: "E"
+            valor: "18"
+          - indicador: "CP"
+            valor: "15"
+          - indicador: "NE"
+            valor: "5"
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  500:
+    description: Erro
