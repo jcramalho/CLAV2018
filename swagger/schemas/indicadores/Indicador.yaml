@@ -1,0 +1,10 @@
+type: object
+properties:
+  indicador:
+    type: string
+  valor:
+    type: string
+    pattern: '^\d+$'
+required:
+  - indicador
+  - valor

@@ -75,7 +75,13 @@ router.get('/classesN1', Auth.isLoggedInKey, (req, res) => {
 
 router.get('/classes', Auth.isLoggedInKey, (req, res) => {
     Indicadores.totalClasses()
-        .then(dados => res.jsonp(dados))
+        .then(dados => {
+            var result = {
+                indicador: `Número Total de Classes`,
+                valor: dados
+            }
+            res.jsonp(result)
+        })
         .catch(err => res.status(500).send(`Erro ao obter o número total de classes: ${err}`))
 })
 
@@ -165,7 +171,13 @@ router.get('/relacoes/:relacao', Auth.isLoggedInKey, [
     }
 
     Indicadores.totalRelacoes(req.params.relacao)
-        .then(dados => res.jsonp(dados))
+        .then(dados => {
+            var result = {
+                indicador: `Número de relações ${req.params.relacao}`,
+                valor: dados
+            }
+            res.jsonp(result)
+        })
         .catch(err => res.status(500).send(`Erro ao obter o número total de relações "${req.params.relacao}": ${err}`))
 })
 
@@ -178,7 +190,13 @@ router.get('/df/:df', Auth.isLoggedInKey, [
     }
 
     Indicadores.totalDF(req.params.df)
-        .then(dados => res.jsonp(dados))
+        .then(dados => {
+            var result = {
+                indicador: `Número de PNs com destino final igual a ${req.params.df}`,
+                valor: dados
+            }
+            res.jsonp(result)
+        })
         .catch(err => res.status(500).send(`Erro ao obter o número total de PN's com DF igual a ${req.params.df}: ${err}`))
 })
 
@@ -191,13 +209,25 @@ router.get('/critJust/:critJust', Auth.isLoggedInKey, [
     }
 
     Indicadores.totalCritJust(req.params.critJust)
-        .then(dados => res.jsonp(dados))
+        .then(dados => {
+            var result = {
+                indicador: `Número de critério de justificação ${req.params.critJust}`,
+                valor: dados
+            }
+            res.jsonp(result)
+        })
         .catch(err => res.status(500).send(`Erro ao obter o número total de Critérios de Justificação do tipo "CriterioJustificacao${req.params.critJust}": ${err}`))
 })
 
 router.get('/critJust', Auth.isLoggedInKey, (req, res) => {
     Indicadores.totalCritJust("")
-        .then(dados => res.jsonp(dados))
+        .then(dados => {
+            var result = {
+                indicador: `Número total de critério de justificação`,
+                valor: dados
+            }
+            res.jsonp(result)
+        })
         .catch(err => res.status(500).send(`Erro ao obter o número total de Critérios de Justificação: ${err}`))
 })
 
@@ -260,7 +290,7 @@ router.get('/tabela', Auth.isLoggedInKey, async (req, res) => {
 
         res.jsonp(dados);
     }catch(error) {
-        return error;
+        res.status(500).send(`Erro ao obter a lista dos indicadores: ${err}`)
     }
 })
 

@@ -1,4 +1,4 @@
-summary: Número total de diplomas legislativos em vigor
+summary: Número total de diplomas legislativos em vigor e revogadas
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []
@@ -6,16 +6,19 @@ security:
   - userAuth: []
 tags:
   - Indicadores Estatísticos
-description: Número total de diplomas legislativos em vigor
+description: Número total de diplomas legislativos em vigor e revogadas
 responses:
   200:
-    description: Número total de diplomas legislativos em vigor
+    description: Número total de diplomas legislativos em vigor e revogadas
     content:
       application/json:
         schema:
-          type: string
-          pattern: '^\d+$'
-        example: "23"
+          $ref: '#/components/schemas/Indicadores'
+        example:
+          - indicador: "Ativo"
+            valor: "13"
+          - indicador: "Revogado"
+            valor: "16"
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:

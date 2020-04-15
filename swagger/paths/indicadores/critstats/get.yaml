@@ -1,0 +1,34 @@
+summary: Indicadores dos Critérios de Justificação
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Indicadores Estatísticos
+description: |
+  Indicadores dos Critérios de Justificação:
+    - Número total de Critérios de Justificação (CriterioJustificacao)
+    - Número total de Critérios de Justificação Gestionário (CriterioJustificacaoGestionario)
+    - Número total de Critérios de Justificação Legal (CriterioJustificacaoLegal)
+    - Número total de Critérios de Justificação de Utilidade Administrativa (CriterioJustificacaoUtilidadeAdministrativa)
+    - Número total de Critérios de Justificação de Complementariedade Informacional (CriterioJustificacaoComplementaridadeInfo)
+    - Número total de Critérios de Justificação de Densidade Informacional (CriterioJustificacaoDensidadeInfo)
+responses:
+  200:
+    description: Indicadores dos Critérios de Justificação
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/Indicadores'
+        example:
+          - indicador: "CriterioJustificacaoGestionario"
+            valor: "20"
+          - indicador: "CriterioJustificacaoLegal"
+            valor: "21"
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  500:
+    description: Erro

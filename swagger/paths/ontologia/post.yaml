@@ -1,0 +1,53 @@
+summary: Executa uma query no GraphDB
+description: Executa uma query no GraphDB
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Ontologia
+requestBody:
+  description: 'Query a executar bem como a indicação(opcional) de normalizar ou não o resultado. Por default o resultado é normalizado'
+  required: true
+  content:
+    application/json:
+      schema:
+        properties:
+          query:
+            type: string
+          normalizado:
+            type: string
+            enum: [Sim, Não]
+            default: Sim
+        required:
+          - query
+      example:
+        query: "select * where {
+          ?s ?p ?o
+        } limit 100"
+responses:
+  200:
+    description: Devolve o resultado da query 
+    content:
+      application/json:
+        schema:
+          oneOf:
+            - type: string
+            - $ref: '#/components/schemas/OntologiaPOSTNotNorm'
+            - $ref: '#/components/schemas/OntologiaPOSTNorm'
+        examples:
+          Exemplo de uma query do tipo update que executou com sucesso:
+            value: "Sucesso na query de update"
+          Exemplo de uma query do tipo query não normalizada:
+            $ref: '#/components/examples/OntologiaPOSTNotNorm'
+          Exemplo de uma query do tipo query normalizada:
+            $ref: '#/components/examples/OntologiaPOSTNorm'
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
+  500:
+    description: Erro

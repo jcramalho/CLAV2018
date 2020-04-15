@@ -1,0 +1,33 @@
+type: object
+properties:
+  head:
+    type: object
+    properties:
+      vars:
+        type: array
+        items:
+          type: string
+    required:
+      - vars
+  results:
+    type: object
+    properties:
+      bindings:
+        type: array
+        items:
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              type:
+                type: string
+              value:
+                type: string
+            required:
+              - type
+              - value
+    required:
+      - bindings
+required:
+  - head
+  - results

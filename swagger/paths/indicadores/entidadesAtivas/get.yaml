@@ -1,4 +1,4 @@
-summary: Número total de entidades ativas
+summary: Número total de entidades ativas, inativas e em harmonização
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []
@@ -6,16 +6,21 @@ security:
   - userAuth: []
 tags:
   - Indicadores Estatísticos
-description: Número total de entidades ativas
+description: Número total de entidades ativas, inativas e em harmonização
 responses:
   200:
-    description: Número total de entidades ativas
+    description: Número total de entidades ativas, inativas e em harmonização
     content:
       application/json:
         schema:
-          type: string
-          pattern: '^\d+$'
-        example: "23"
+          $ref: '#/components/schemas/Indicadores'
+        example:
+          - indicador: "Ativa"
+            valor: "25"
+          - indicador: "Inativa"
+            valor: "21"
+          - indicador: "Harmonização"
+            valor: "22"
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:
