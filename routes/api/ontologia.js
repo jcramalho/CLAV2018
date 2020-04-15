@@ -1,5 +1,6 @@
 var Auth = require('../../controllers/auth.js');
 var Ontologia = require('../../controllers/api/ontologia.js');
+const normalizeOrdered = require('../../controllers/api/utils').normalizeOrdered
 
 var express = require('express');
 var router = express.Router();
@@ -52,6 +53,35 @@ router.get('/descricao', Auth.isLoggedInKey, (req, res) => {
     Ontologia.descricao()
         .then(dados => res.json(dados))
         .catch(erro => res.status(500).send(`Erro ao obter data da ontologia: ${erro}`))
+})
+
+router.post('/', Auth.isLoggedInUser, Auth.checkLevel(7), [
+    existe("body", "query")
+        .bail()
+        .isString()
+        .withMessage("A query não é uma string"),
+    estaEm("body", "normalizado", ["Sim", "Não"]).optional()
+], (req, res) => {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
+    }
+
+    Ontologia.executa(req.body.query)
+        .then(dados => {
+            if(!dados){
+                dados = "Sucesso na query de update"
+            }else if(!req.body.normalizado || req.body.normalizado != "Não"){
+                dados = normalizeOrdered(dados)
+            }
+            res.json(dados)
+        })
+        .catch(erro => {
+            if(erro.response && erro.response.data){
+                erro = "\n\n" + erro.response.data
+            }
+            res.status(500).send(`Erro ao executar query: ${erro}`)
+        })
 })
 
 module.exports = router;

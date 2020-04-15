@@ -199,3 +199,17 @@ Ontologia.atualizaData = async function() {
         return "Data já está atualizada"
     }
 }
+
+//Executa uma query
+Ontologia.executa = async function(query){
+    var isUpdate = query.match(/\b(insert|delete|load|clear|create|drop)\b/ig)
+    var isQuery = query.match(/\b(select|ask|construct|describe)\b/ig)
+
+    if(isQuery){
+        return await execQuery("query", query)
+    }else if(isUpdate){
+        return await execQuery("update", query)
+    }else{
+        throw "Não foi possível identificar o tipo da query"
+    }
+}
