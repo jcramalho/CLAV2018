@@ -45,8 +45,9 @@ function getRoute(req){
 app.use((req, res, next) => {
     res.on('finish', async () => {
         //console.log('_DEBUG_:' + `${req.method} ${getRoute(req)} ${res.statusCode}`) 
-        if(getRoute(req).includes('/' + dataBases.apiVersion + '/')){
-            apiStats.addUsage(req.method, getRoute(req));
+        var route = getRoute(req)
+        if(route.includes('/')){
+            apiStats.addUsage(req.method, route);
         }
 
         if(res.locals.id && res.locals.idType){
