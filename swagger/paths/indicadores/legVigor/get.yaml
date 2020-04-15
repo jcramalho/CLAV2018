@@ -1,7 +1,5 @@
 summary: Número total de diplomas legislativos em vigor e revogadas
 security:
-  - apiKeyQuery: []
-  - apiKeyAuth: []
   - userQuery: []
   - userAuth: []
 tags:

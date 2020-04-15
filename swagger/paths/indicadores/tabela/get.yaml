@@ -1,7 +1,5 @@
 summary: Listagem de vários indicadores
 security:
-  - apiKeyQuery: []
-  - apiKeyAuth: []
   - userQuery: []
   - userAuth: []
 tags:

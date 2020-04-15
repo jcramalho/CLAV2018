@@ -1,7 +1,5 @@
 summary: Número total de classes de nível 3
 security:
-  - apiKeyQuery: []
-  - apiKeyAuth: []
   - userQuery: []
   - userAuth: []
 tags:

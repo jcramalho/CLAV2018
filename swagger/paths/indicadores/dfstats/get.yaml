@@ -1,7 +1,5 @@
 summary: Indicadores dos destinos finais (DFs) das classes 
 security:
-  - apiKeyQuery: []
-  - apiKeyAuth: []
   - userQuery: []
   - userAuth: []
 tags:

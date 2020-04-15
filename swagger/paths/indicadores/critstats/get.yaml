@@ -1,7 +1,5 @@
 summary: Indicadores dos Critérios de Justificação
 security:
-  - apiKeyQuery: []
-  - apiKeyAuth: []
   - userQuery: []
   - userAuth: []
 tags:

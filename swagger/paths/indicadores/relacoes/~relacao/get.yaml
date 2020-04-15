@@ -1,7 +1,5 @@
 summary: Número total de relações
 security:
-  - apiKeyQuery: []
-  - apiKeyAuth: []
   - userQuery: []
   - userAuth: []
 tags:

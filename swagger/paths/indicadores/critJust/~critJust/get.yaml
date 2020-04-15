@@ -1,7 +1,5 @@
 summary: Número total de Critérios de Justificação 'critJust'
 security:
-  - apiKeyQuery: []
-  - apiKeyAuth: []
   - userQuery: []
   - userAuth: []
 tags:
