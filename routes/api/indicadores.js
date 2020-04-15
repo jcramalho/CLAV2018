@@ -3,12 +3,8 @@ var Indicadores = require('../../controllers/api/indicadores.js');
 var express = require('express');
 var router = express.Router();
 
-var dfs = ["C", "CP", "E"] 
-var crits = ["legal", "gestionario", "utilidadeAdministrativa", "densidadeInfo", "complementaridadeInfo"]
-var rels = ["temRelProc", "eAntecessorDe", "eSucessorDe", "eComplementarDe", "eCruzadoCom", "eSinteseDe", "eSintetizadoPor", "eSuplementoDe", "eSuplementoPara", "dono", "participante", "temLeg"]
-
 const { query, body, validationResult } = require('express-validator');
-const { existe, estaEm, verificaEntId, eFS, verificaEnts, dataValida, existeEverificaTips } = require('../validation')
+const { existe, estaEm, verificaEntId, eFS, verificaEnts, dataValida, existeEverificaTips, vcIndicRels, vcIndicCrits, vcIndicDfs } = require('../validation')
 
 function capitalizeFL(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
@@ -163,7 +159,7 @@ router.get('/dfstats', Auth.isLoggedInKey, (req, res) => {
 })
 
 router.get('/relacoes/:relacao', Auth.isLoggedInKey, [
-    estaEm('param', 'relacao', rels).customSanitizer(relacaoSanitizer)
+    estaEm('param', 'relacao', vcIndicRels).customSanitizer(relacaoSanitizer)
 ], (req, res) => {
     const errors = validationResult(req)
     if(!errors.isEmpty()){
@@ -182,7 +178,7 @@ router.get('/relacoes/:relacao', Auth.isLoggedInKey, [
 })
 
 router.get('/df/:df', Auth.isLoggedInKey, [
-    estaEm('param', 'df', dfs)
+    estaEm('param', 'df', vcIndicDfs)
 ], (req, res) => {
     const errors = validationResult(req)
     if(!errors.isEmpty()){
@@ -201,7 +197,7 @@ router.get('/df/:df', Auth.isLoggedInKey, [
 })
 
 router.get('/critJust/:critJust', Auth.isLoggedInKey, [
-    estaEm('param', 'critJust', crits).customSanitizer(capitalizeFL)
+    estaEm('param', 'critJust', vcIndicCrits).customSanitizer(capitalizeFL)
 ], (req, res) => {
     const errors = validationResult(req)
     if(!errors.isEmpty()){

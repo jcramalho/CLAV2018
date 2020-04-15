@@ -4,20 +4,7 @@ var express = require('express');
 var router = express.Router();
 
 const { validationResult } = require('express-validator');
-const { existe, estaEm, eMongoId } = require('../validation')
-
-var tipos = [
-    "Classe",
-    "TS Organizacional",
-    "TS Pluriorganizacional",
-    "Entidade",
-    "Tipologia",
-    "Legislação",
-    "Termo de Indice",
-    "Auto de Eliminação",
-    "RADA"
-]
-var acoes = ["Criação", "Alteração", "Remoção"]
+const { existe, estaEm, eMongoId, vcPendenteTipo, vcPendenteAcao } = require('../validation')
 
 router.get('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), (req, res) => {
     Pendentes.listarTodos()
@@ -40,8 +27,8 @@ router.get('/:id', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7])
 
 // Guardar um trabalho pendente
 router.post('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
-    estaEm('body', 'tipo', tipos),
-    estaEm('body', 'acao', acoes),
+    estaEm('body', 'tipo', vcPendenteTipo),
+    estaEm('body', 'acao', vcPendenteAcao),
     existe('body', 'criadoPor')
         .bail()
         .isEmail()

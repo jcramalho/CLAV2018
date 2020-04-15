@@ -8,7 +8,7 @@ var express = require('express');
 var router = express.Router();
 
 const { validationResult } = require('express-validator');
-const { existe, estaEm, verificaTSId } = require('../validation')
+const { existe, verificaTSId } = require('../validation')
 
 router.get('/', Auth.isLoggedInKey, function (req, res) {
     SelTabs.list()

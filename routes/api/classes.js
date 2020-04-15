@@ -6,7 +6,7 @@ var express = require('express');
 var router = express.Router();
 
 const { query, validationResult } = require('express-validator');
-const { existe, estaEm, verificaClasseId, verificaClasseCodigo, verificaJustId, eFS, verificaEnts, verificaTips } = require('../validation')
+const { existe, estaEm, verificaClasseId, verificaClasseCodigo, verificaJustId, eFS, verificaEnts, verificaTips, vcClassesInfo, vcClassesStruct, vcClassesTipo, vcClassesNiveis, vcClasseInfo, vcClassesRels } = require('../validation')
 
 function verificaId() {
     return verificaClasseId('param', 'id')
@@ -14,11 +14,11 @@ function verificaId() {
 
 // Devolve as classes em vários formatos podendo ser filtradas por nível 
 router.get('/', Auth.isLoggedInKey, [
-    estaEm('query', 'info', ['completa', 'esqueleto', 'pesquisa']).optional(),
+    estaEm('query', 'info', vcClassesInfo).optional(),
     eFS(),
-    estaEm('query', 'estrutura', ['arvore', 'lista']).optional(),
-    estaEm('query', 'tipo', ['comum', 'especifico']).optional(),
-    estaEm('query', 'nivel', ["1", "2", "3", "4"]).optional(),
+    estaEm('query', 'estrutura', vcClassesStruct).optional(),
+    estaEm('query', 'tipo', vcClassesTipo).optional(),
+    estaEm('query', 'nivel', vcClassesNiveis).optional(),
     verificaEnts("query", "ents").optional(),
     verificaTips("query", "tips").optional()
 ], async (req, res, next) => { 
@@ -144,7 +144,7 @@ router.get('/codigo', Auth.isLoggedInKey, [
 router.get('/:id', Auth.isLoggedInKey, [
     verificaId(),
     eFS(),
-    estaEm("query", "tipo", ["subarvore"]).optional()
+    estaEm("query", "tipo", vcClasseInfo).optional()
 ], async function (req, res, next) {
     const errors = validationResult(req)
     if(!errors.isEmpty()){
@@ -295,7 +295,7 @@ router.get('/:id/procRel', Auth.isLoggedInKey, [
 // Devolve o(s) processo(s) relacionado(s) por uma relação específica: id, codigo, titulo
 router.get('/:id/procRel/:idRel', Auth.isLoggedInKey, [
     verificaId(),
-    estaEm("param", "idRel", ["eAntecessorDe", "eComplementarDe", "eCruzadoCom", "eSinteseDe", "eSintetizadoPor", "eSucessorDe", "eSuplementoPara", "eSuplementoDe"])
+    estaEm("param", "idRel", vcClassesRels)
 ], (req, res) => {
     const errors = validationResult(req)
     if(!errors.isEmpty()){
