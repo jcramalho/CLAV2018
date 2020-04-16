@@ -42,7 +42,11 @@ app.use((req, res, next) => {
 
             Logs.newLog(route, req.method, res.locals.id, res.locals.idType, res.statusCode)
             route = route.match(/^\/[^/]*/)[0]
-            aggLogs.newAggregateLog(route, req.method, res.locals.id, res.locals.idType)      
+            try{
+                aggLogs.newAggregateLog(route, req.method, res.locals.id, res.locals.idType)      
+            }catch(err){
+                console.log("Erro ao adicionar Agg Log: " + err)
+            }
         }
     });
     next();
