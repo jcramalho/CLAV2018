@@ -52,8 +52,6 @@ tags:
     description: "Pedidos de alteração ou de criação de novas instâncias que deram entrada na plataforma."
   - name: Pendentes
     description: "Trabalhos em curso guardados para mais tarde terem continuidade: criação e alteração de instâncias."
-  - name: Stats
-    description: "Dados Estatísticos dos acessos às rotas da API."
   - name: Tabelas de Seleção
     description: "Uma tabela de seleção é um instrumento utilizado pelas entidades para a gestão da informação. Permite organizar e estruturar a informação desde o momento da sua produção, através da atribuição de um código de classificação. A esse código de classificação estão associadas as decisões de avaliação, i.e., o período de tempo que deve manter a informação (prazo de conservação administrativa), o destino a aplicar findo esse prazo (conservação permanente ou eliminação) e a responsabilização pela guarda da informação de conservação permanente.
 
@@ -82,6 +80,8 @@ tags:
     description: "Informação que exemplifica o âmbito de aplicação da classe. Aplica-se às classes de 1º, 2º e 3º nível."
   - name: Notícias
     description: "Notícias da plataforma CLAV"
+  - name: Logs Agregados
+    description: "Agregação dos logs presentes no conjunto de rotas 'Logs'"
 paths: !!inc/dir [ 'paths' ] 
 components: 
   schemas: !!inc/dir [ 'schemas', { excludeTopLevelDirSeparator: true, recursive: false }]
@@ -171,7 +171,6 @@ components:
         'examples/tipologias/TipologiaDonos.yaml',
         'examples/tipologias/TipologiaParticipantes.yaml',
         'examples/tipologias/TipologiaElementos.yaml',
-        'examples/stats/Stats.yaml',
         'examples/ontologia/Turtle.yaml',
         'examples/ontologia/JSONLD.yaml',
         'examples/ontologia/RDFXML.yaml',
@@ -194,6 +193,7 @@ components:
         'examples/pendentes/Pendente.yaml',
         'examples/pendentes/Pendentes.yaml',
         'examples/pendentes/PendentePOST.yaml',
-        'examples/pendentes/PendentePUT.yaml'
+        'examples/pendentes/PendentePUT.yaml',
+        'examples/pendentes/PendentePUTres.yaml'
       ]
   }]

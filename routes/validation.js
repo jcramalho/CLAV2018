@@ -299,7 +299,7 @@ module.exports.vcEstado = ["Ativa", "Harmonização", "Inativa"]
 module.exports.vcFonte = ["PGD", "PGD/LC", "RADA"]
 
 //aggregateLogs e logs
-module.exports.vcTipoUser = ['User', 'Chave']
+module.exports.vcTipoUser = ['User', 'Chave', 'Desconhecido']
 module.exports.vcVerbo = ['GET', 'POST', 'PUT', 'DELETE']
 
 //autosEliminacao

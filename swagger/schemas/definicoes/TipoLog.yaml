@@ -1,2 +1,2 @@
 type: string
-enum: [User, Chave]
+enum: [User, Chave, Desconhecido]

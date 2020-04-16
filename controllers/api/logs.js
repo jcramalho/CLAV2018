@@ -6,8 +6,11 @@ const repeatPeriod = 1 //days
 const pageSize = 2500
 
 Logs.getRoute = function(req){
-    var route = req.originalUrl.replace(/\?.*$/,"")
-    route = route.replace("/" + dataBases.apiVersion, "")
+    var route = null
+    if(req.baseUrl){
+        route = req.originalUrl.replace(/\?.*$/,"")
+        route = route.replace("/" + dataBases.apiVersion, "")
+    }
     return route
 }
 

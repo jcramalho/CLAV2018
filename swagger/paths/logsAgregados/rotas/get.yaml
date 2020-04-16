@@ -1,0 +1,35 @@
+summary: Devolve todos os pedidos realizados agregados por uma base da rota específica ou os pedidos realizados agregados por todas as bases de rotas
+description: Devolve todos os pedidos realizados agregados por todas as bases de rotas. Caso seja enviada a rota devolve os pedidos realizados pela base da rota específica inserida. 
+tags:
+  - Logs Agregados
+security:
+  - userQuery: []
+  - userAuth: []
+parameters:
+  - name: rota
+    in: query
+    description: Base da rota
+    schema:
+      $ref: '#/components/schemas/Rota'
+responses:
+  200:
+    description: Pedidos realizados agregados à base da(s) rota(s)
+    content:
+      application/json:
+        schema:
+          oneOf:
+            - $ref: '#/components/schemas/LogAgregadoRotas'
+            - $ref: '#/components/schemas/LogAgregadoRota'
+        examples:
+          Logs Agregados das bases das rotas:
+            $ref: '#/components/examples/logAgregadoRotas'
+          Logs Agregados para a base de uma rota:
+            $ref: '#/components/examples/logAgregadoRota'
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
+  500:
+    description: Erro

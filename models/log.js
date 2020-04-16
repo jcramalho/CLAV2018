@@ -12,7 +12,7 @@ var LogSchema = new mongoose.Schema({
     },
     type: {
         type: String,
-        enum: ["User", "Chave"],
+        enum: ["User", "Chave", "Desconhecido"],
         required: true
     },
     id: {
@@ -29,8 +29,5 @@ var LogSchema = new mongoose.Schema({
         required: true
     }
 });
-
-//create index for accessDate
-LogSchema.index({accessDate: -1})
 
 module.exports = mongoose.model('Log', LogSchema, 'logs');

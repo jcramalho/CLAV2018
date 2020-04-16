@@ -7,3 +7,22 @@ value:
   nPOSTs: 39
   nPUTs: 2
   type: "User"
+  routes:
+    - nGETs: 1
+      nPOSTs: 0
+      nPUTs: 0
+      nDELETEs: 0
+      lastAccess: "2020-04-16T15:49:48.680Z"
+      route: "/users"
+    - nGETs: 5
+      nPOSTs: 0
+      nPUTs: 0
+      nDELETEs: 0
+      lastAccess: "2020-04-16T16:57:37.853Z"
+      route: "/tipologias"
+    - nGETs: 1
+      nPOSTs: 0
+      nPUTs: 0
+      nDELETEs: 0
+      lastAccess: "2020-04-16T16:57:00.750Z"
+      route: "/logsAgregados"

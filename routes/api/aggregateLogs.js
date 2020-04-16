@@ -32,4 +32,38 @@ router.get('/', Auth.isLoggedInUser, Auth.checkLevel(6), [
     }
 })
 
+router.get('/rotas', Auth.isLoggedInUser, Auth.checkLevel(6), [
+    existe('query', 'rota')
+        .bail()
+        .isURL({
+            require_tld: false,
+            require_host: false,
+            require_valid_protocol: false
+        })
+        .withMessage("Não é uma rota válida")
+        .customSanitizer(decodeURIComponent)
+        .optional()
+], (req, res) => {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
+    }
+
+    if(req.query.rota){
+        AggregateLogs.getAggregateLogRoute(req.query.rota)
+            .then(data => res.jsonp(data))
+            .catch(error => res.status(500).send(`Erro ao obter os logs agregados para a rota ${req.query.rota}: ${error}`))
+    }else{
+        AggregateLogs.getAggregateLogRoutes()
+            .then(data => res.jsonp(data))
+            .catch(error => res.status(500).send(`Erro ao obter os logs agregados das rotas: ${error}`))
+    }
+})
+
+router.get('/total', Auth.isLoggedInUser, Auth.checkLevel(6), (req, res) => {
+    AggregateLogs.totalAggregateLogs()
+        .then(data => res.jsonp(data))
+        .catch(error => res.status(500).send(`Erro ao obter o total de chamadas à API: ${error}`))
+})
+
 module.exports = router;
