@@ -1,5 +1,5 @@
-summary: Devolve o total de chamadas à API 
-description: Devolve o total de chamadas à API 
+summary: Devolve o número total de acessos à API 
+description: Devolve o número total de acessos à API 
 tags:
   - Logs Agregados
 security:
@@ -7,7 +7,7 @@ security:
   - userAuth: []
 responses:
   200:
-    description: Total de chamadas à API
+    description: Número total de acessos à API
     content:
       application/json:
         schema:

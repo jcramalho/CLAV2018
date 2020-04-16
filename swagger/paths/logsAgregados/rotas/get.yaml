@@ -8,7 +8,7 @@ security:
 parameters:
   - name: rota
     in: query
-    description: Base da rota
+    description: "Base da rota (exemplo: '/tipologias')"
     schema:
       $ref: '#/components/schemas/Rota'
 responses:
