@@ -63,7 +63,7 @@ router.get('/rotas', Auth.isLoggedInUser, Auth.checkLevel(6), [
 router.get('/total', Auth.isLoggedInUser, Auth.checkLevel(6), (req, res) => {
     AggregateLogs.totalAggregateLogs()
         .then(data => res.jsonp(data))
-        .catch(error => res.status(500).send(`Erro ao obter o total de chamadas à API: ${error}`))
+        .catch(error => res.status(500).send(`Erro ao obter o número total de acessos à API: ${error}`))
 })
 
 module.exports = router;
