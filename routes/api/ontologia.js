@@ -6,21 +6,12 @@ var express = require('express');
 var router = express.Router();
 
 const { oneOf, validationResult } = require('express-validator');
-const { existe, estaEm } = require('../validation')
-
-var formats = [
-    "text/turtle",
-    "turtle",
-    "application/ld+json",
-    "json-ld",
-    "application/rdf+xml",
-    "rdf-xml"
-]
+const { existe, estaEm, vcOntoFormats, vcBoolean } = require('../validation')
 
 router.get('/', Auth.isLoggedInKey, [
     oneOf([
-        estaEm('query', 'fs', formats).optional(),
-        estaEm('header', 'accept', formats).optional()
+        estaEm('query', 'fs', vcOntoFormats).optional(),
+        estaEm('header', 'accept', vcOntoFormats).optional()
     ]),
     existe("query", "inferencia")
         .bail()
@@ -60,7 +51,7 @@ router.post('/', Auth.isLoggedInUser, Auth.checkLevel(7), [
         .bail()
         .isString()
         .withMessage("A query não é uma string"),
-    estaEm("body", "normalizado", ["Sim", "Não"]).optional()
+    estaEm("body", "normalizado", vcBoolean).optional()
 ], (req, res) => {
     const errors = validationResult(req)
     if(!errors.isEmpty()){

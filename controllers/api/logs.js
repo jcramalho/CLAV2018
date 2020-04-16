@@ -6,8 +6,11 @@ const repeatPeriod = 1 //days
 const pageSize = 2500
 
 Logs.getRoute = function(req){
-    var route = req.originalUrl.replace(/\?.*$/,"")
-    route = route.replace("/" + dataBases.apiVersion, "")
+    var route = null
+    if(req.baseUrl){
+        route = req.originalUrl.replace(/\?.*$/,"")
+        route = route.replace("/" + dataBases.apiVersion, "")
+    }
     return route
 }
 
@@ -35,8 +38,8 @@ Logs.getAllLogs = async function(page){
     var ret = {
         items: await Log.find({})
             .sort({accessDate: -1})
-            .skip(page*pageSize)
-            .limit(pageSize),
+            .limit(page*pageSize + pageSize)
+            .skip(page*pageSize),
         total: await Log.estimatedDocumentCount()
     }
 
@@ -45,8 +48,10 @@ Logs.getAllLogs = async function(page){
 
 Logs.getRouteLogs = function(route, method){
     return Log.find({route: route, method: method})
+        .sort({accessDate: -1})
 }
 
 Logs.getUserLogs = function(id, type){
     return Log.find({id: id, type: type})
+        .sort({accessDate: -1})
 }

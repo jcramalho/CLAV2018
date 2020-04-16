@@ -1,15 +1,5 @@
 type: object
-nullable: true
 properties:
-  _id:
-    type: string
-  type:
-    $ref: '#/components/schemas/TipoLog'
-  id:
-    type: string
-  lastAccess:
-    type: string
-    format: date-time
   nGETs:
     type: integer
     minimum: 0
@@ -22,15 +12,15 @@ properties:
   nDELETEs:
     type: integer
     minimum: 0
-  routes:
-    $ref: '#/components/schemas/LogAgregadoRotas'
+  lastAccess:
+    type: string
+    format: date-time
+  route:
+    $ref: '#/components/schemas/Rota'
 required:
-  - _id
-  - type
-  - id
   - lastAccess
   - nGETs
   - nPOSTs
   - nPUTs
   - nDELETEs
-  - routes
+  - route

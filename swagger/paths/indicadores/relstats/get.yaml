@@ -1,7 +1,5 @@
 summary: Indicadores relacionais dos PNs
 security:
-  - apiKeyQuery: []
-  - apiKeyAuth: []
   - userQuery: []
   - userAuth: []
 tags:

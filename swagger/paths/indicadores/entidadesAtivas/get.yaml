@@ -1,7 +1,5 @@
 summary: Número total de entidades ativas, inativas e em harmonização
 security:
-  - apiKeyQuery: []
-  - apiKeyAuth: []
   - userQuery: []
   - userAuth: []
 tags:

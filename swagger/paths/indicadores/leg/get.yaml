@@ -1,7 +1,5 @@
 summary: Número total de diplomas legislativos
 security:
-  - apiKeyQuery: []
-  - apiKeyAuth: []
   - userQuery: []
   - userAuth: []
 tags:

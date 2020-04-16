@@ -53,35 +53,26 @@ var cspForDocs = helmet.contentSecurityPolicy({
 // Logging na consola do admin
 var logger = require('morgan')
 
-//Funcao auxiliar para contar numero de GET e POST
-var apiStats = require('./models/api')
 var Logs = require('./controllers/api/logs')
-var aggregateLogs = require('./controllers/api/aggregateLogs')
+var aggLogs = require('./controllers/api/aggregateLogs')
 var dataBases = require('./config/database');
-
-function getRoute(req){
-    const route = req.route ? req.route.path : '' // check if the handler exist
-    var baseUrl = req.baseUrl ? req.baseUrl : '' // adding the base url if the handler is a child of another handler
- 
-    // return route ? `${baseUrl === '/' ? '' : baseUrl}${route}` : 'unknown route'
-    // remove API version from url
-    baseUrl = baseUrl ? baseUrl.split(dataBases.apiVersion)[1] : baseUrl
-    return route ? `${baseUrl === '/' ? '' : baseUrl}` : 'unknown route'
-}
 
 app.use((req, res, next) => {
     res.on('finish', async () => {
-        //console.log('_DEBUG_:' + `${req.method} ${getRoute(req)} ${res.statusCode}`) 
-        if(getRoute(req).includes('/' + dataBases.apiVersion + '/')){
-            apiStats.addUsage(req.method, getRoute(req));
-        }
+        var route = Logs.getRoute(req)
 
-        if(res.locals.id && res.locals.idType){
-            Logs.newLog(Logs.getRoute(req), req.method, res.locals.id, res.locals.idType, res.statusCode)
+        if(route){
+            if(!res.locals.id || !res.locals.idType){
+                res.locals.id = "Desconhecido"
+                res.locals.idType = "Desconhecido"
+            }
+
+            Logs.newLog(route, req.method, res.locals.id, res.locals.idType, res.statusCode)
+            route = route.match(/^\/[^/]*/)[0]
             try{
-                aggregateLogs.newAggregateLog(req.method, res.locals.id, res.locals.idType)      
+                aggLogs.newAggregateLog(route, req.method, res.locals.id, res.locals.idType)      
             }catch(err){
-                console.log("Erro ao criar/atualizar o log agregado.")
+                console.log("Erro ao adicionar Agg Log: " + err)
             }
         }
     });
@@ -190,7 +181,6 @@ mainRouter.use('/pedidos',require('./routes/api/pedidos'));
 mainRouter.use('/pendentes',require('./routes/api/pendentes'));
 mainRouter.use('/users',require('./routes/api/users'));
 mainRouter.use('/chaves',require('./routes/api/chaves'));
-mainRouter.use('/stats', require('./routes/api/stats'));
 mainRouter.use('/travessia',require('./routes/api/travessia'));
 mainRouter.use('/invariantes',require('./routes/api/invariantes'));
 mainRouter.use('/auth', require('./routes/api/auth'));

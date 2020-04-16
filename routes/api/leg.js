@@ -7,8 +7,7 @@ var express = require("express");
 var router = express.Router();
 
 const { validationResult } = require('express-validator');
-const { existe, estaEm, eFS, dataValida, verificaNumeroLeg, verificaLegId, verificaLista, estaAtiva, verificaExisteEnt, verificaExisteClasse } = require('../validation')
-var tipoLegislacao = ["Decreto", "DL", "Lei", "Diretiva", "Circular", "Despacho", "Decreto Regulamentar", "Portaria", "Decreto do Governo", "Decreto Legislativo Regional", "Resolução do Conselho de Ministros", "Despacho Normativo", "Resolução da Assembleia da República", "Decisão", "Regulamento", "Decreto do Presidente da República", "Aviso", "Despacho Conjunto", "Lei Orgânica", "Decisão-Quadro", "Circular Normativa", "Recomendação", "Deliberação", "Circular Informativa", "Lei Constitucional", "CSN EN", "Declaração de Retificação", "ISO", "NP", "Diretiva Técnica", "Comunicação", "Resolução", "Tratado", "Regulamento de Execução", "NP EN ISO/IEC", "NOP", "ILAC", "Regulamento Delegado", "NP EN ISO", "Ordem de Serviço", "Estatuto", "Instrução", "ISO/IEC"]
+const { existe, estaEm, eFS, dataValida, verificaNumeroLeg, verificaLegId, verificaLista, estaAtiva, verificaExisteEnt, verificaExisteClasse, vcLegTipo, vcFonte, vcLegEstado, vcLegProcs, vcLegInfo } = require('../validation')
 
 async function naoExisteNumero(valor) {
     if(await Leg.existe(valor))
@@ -28,10 +27,10 @@ async function naoExisteNumeroSelf(valor, {req}) {
 // Lista todos os documentos legislativos: id, data, numero, tipo, sumario, entidades
 router.get("/", Auth.isLoggedInKey, [
     eFS(),
-    estaEm("query", "estado", ["Ativo", "Revogado"]).optional(),
-    estaEm("query", "fonte", ["PGD", "PGD/LC", "RADA"]).optional(),
-    estaEm("query", "processos", ["com", "sem"]).optional(),
-    estaEm("query", "info", ["completa"]).optional()
+    estaEm("query", "estado", vcLegEstado).optional(),
+    estaEm("query", "fonte", vcFonte).optional(),
+    estaEm("query", "processos", vcLegProcs).optional(),
+    estaEm("query", "info", vcLegInfo).optional()
 ], async (req, res, next) => {
   const errors = validationResult(req)
   if(!errors.isEmpty()){
@@ -129,7 +128,7 @@ router.get("/portarias", Auth.isLoggedInKey, (req, res) => {
 router.get("/:id", Auth.isLoggedInKey, [
     verificaLegId("param", "id"),
     eFS(),
-    estaEm("query", "info", ["completa"]).optional()
+    estaEm("query", "info", vcLegInfo).optional()
 ], async (req, res, next) => {
   const errors = validationResult(req)
   if(!errors.isEmpty()){
@@ -170,11 +169,11 @@ router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), [
     verificaNumeroLeg("body", "numero")
         .custom(naoExisteNumero)
         .withMessage("Número já em uso"),
-    estaEm("body", "tipo", tipoLegislacao),
+    estaEm("body", "tipo", vcLegTipo),
     dataValida("body", "data"),
     existe("body", "sumario"),
-    estaEm("body", "estado", ["Ativo", "Revogado"]),
-    estaEm("body", "diplomaFonte", ["PGD", "PGD/LC", "RADA"]).optional(),
+    estaEm("body", "estado", vcLegEstado),
+    estaEm("body", "diplomaFonte", vcFonte).optional(),
     existe("body", "link")
         .optional()
         .isURL({require_tld: false})
@@ -202,11 +201,11 @@ router.put("/:id", Auth.isLoggedInUser, Auth.checkLevel(4), [
     verificaNumeroLeg("body", "numero")
         .custom(naoExisteNumeroSelf)
         .withMessage("Número já em uso"),
-    estaEm("body", "tipo", tipoLegislacao),
+    estaEm("body", "tipo", vcLegTipo),
     dataValida("body", "data"),
     existe("body", "sumario"),
-    estaEm("body", "estado", ["Ativo", "Revogado"]),
-    estaEm("body", "diplomaFonte", ["PGD", "PGD/LC", "RADA"]).optional(),
+    estaEm("body", "estado", vcLegEstado),
+    estaEm("body", "diplomaFonte", vcFonte).optional(),
     existe("body", "link")
         .optional()
         .isURL({require_tld: false})

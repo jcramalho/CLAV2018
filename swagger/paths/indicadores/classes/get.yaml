@@ -1,7 +1,5 @@
 summary: Número total de classes
 security:
-  - apiKeyQuery: []
-  - apiKeyAuth: []
   - userQuery: []
   - userAuth: []
 tags:

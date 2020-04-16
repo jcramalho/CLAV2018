@@ -1,7 +1,5 @@
 summary: Número total de entidades
 security:
-  - apiKeyQuery: []
-  - apiKeyAuth: []
   - userQuery: []
   - userAuth: []
 tags:

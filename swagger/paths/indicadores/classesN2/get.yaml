@@ -1,7 +1,5 @@
 summary: Número total de classes de nível 2
 security:
-  - apiKeyQuery: []
-  - apiKeyAuth: []
   - userQuery: []
   - userAuth: []
 tags:

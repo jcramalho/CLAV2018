@@ -2,15 +2,7 @@ const { json2xml } = require('./../controllers/conversor/json2xml.js')
 const { json2csv } = require('./../controllers/conversor/json2csv.js')
 
 const notSup = "Esta rota não suporta exportação para CSV. Contudo pode exportar para JSON (application/json ou json) ou XML (application/xml ou xml) nesta rota."
-module.exports.formats = [
-    'application/json',
-    'json',
-    'application/xml',
-    'xml',
-    'text/csv',
-    'excel/csv',
-    'csv'
-]
+const { vcFormats } = require("./validation.js")
 
 function searchClasse(proc, classes){
     var status = null
@@ -145,7 +137,7 @@ function getClassesParaPesquisa(classes){
 module.exports.outputFormat = async (req, res, next) => {
 	if (res.locals.dados) {
         var outF
-        if(req.query.fs && module.exports.formats.includes(req.query.fs)){
+        if(req.query.fs && vcFormats.includes(req.query.fs)){
             outF = req.query.fs
         } else outF = req.headers.accept
 

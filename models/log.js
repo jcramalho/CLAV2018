@@ -12,7 +12,7 @@ var LogSchema = new mongoose.Schema({
     },
     type: {
         type: String,
-        enum: ["User", "Chave"],
+        enum: ["User", "Chave", "Desconhecido"],
         required: true
     },
     id: {

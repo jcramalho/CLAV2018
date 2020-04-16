@@ -54,11 +54,19 @@ Pendentes.criar = async function (pendente) {
     var newPendente = new Pendente(pendente);
 
     try {
-        await newPendente.save()
-        return "Pendente guardado com sucesso"
+        let pendente_confirmado = await newPendente.save()
+        return {
+            _id: pendente_confirmado._id,
+            numInterv: pendente_confirmado.numInterv,
+            acao: pendente_confirmado.acao,
+            tipo: pendente_confirmado.tipo,
+            criadoPor: pendente_confirmado.criadoPor,
+            dataCriacao: pendente_confirmado.dataCriacao,
+            dataAtualizacao: pendente_confirmado.dataAtualizacao
+        }
     } catch (err) {
         console.log(err)
-        return 'Ocorreu um erro a submeter o pedido! Tente novamente mais tarde'
+        throw 'Ocorreu um erro a submeter o pedido! Tente novamente mais tarde'
     }
 }
 
@@ -87,11 +95,11 @@ Pendentes.atualizar = async function (pendente) {
             return "Pendente atualizado com sucesso"
         } catch (err) {
             console.log(err)
-            return err
+            throw err
         }
     }
     catch (err) {
-        return err
+        throw err
     }
 }
 

@@ -8,7 +8,7 @@ var xml2js = require('xml2js')
 var fs = require("fs")
 
 const { validationResult } = require('express-validator');
-const { existe, estaEm, verificaAEId } = require('../validation')
+const { existe, estaEm, verificaAEId, vcTipoAE } = require('../validation')
 var tipoSanitizer = value => {
     if(value == "PGD_LC") value = "PGD/LC"
     value = "AE " + value
@@ -41,7 +41,7 @@ router.get('/:id', Auth.isLoggedInKey, [
 //Criar um AE && Importar AE
 router.post('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
     existe('body', 'auto'),
-    estaEm('query', 'tipo', ["PGD", "RADA", "PGD_LC"]).optional().customSanitizer(tipoSanitizer)
+    estaEm('query', 'tipo', vcTipoAE).optional().customSanitizer(tipoSanitizer)
 ], (req, res) => {
     const errors = validationResult(req)
     if(!errors.isEmpty()){
@@ -67,7 +67,7 @@ router.post('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), 
 
 //Importar um AE (Inserir ficheiro diretamente pelo Servidor)
 router.post('/importar', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
-    estaEm('query', 'tipo', ["PGD", "RADA", "PGD_LC"]).customSanitizer(tipoSanitizer)
+    estaEm('query', 'tipo', vcTipoAE).customSanitizer(tipoSanitizer)
 ], (req, res) => {
     const errors = validationResult(req)
     if(!errors.isEmpty()){

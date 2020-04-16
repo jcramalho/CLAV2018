@@ -3,12 +3,8 @@ var Indicadores = require('../../controllers/api/indicadores.js');
 var express = require('express');
 var router = express.Router();
 
-var dfs = ["C", "CP", "E"] 
-var crits = ["legal", "gestionario", "utilidadeAdministrativa", "densidadeInfo", "complementaridadeInfo"]
-var rels = ["temRelProc", "eAntecessorDe", "eSucessorDe", "eComplementarDe", "eCruzadoCom", "eSinteseDe", "eSintetizadoPor", "eSuplementoDe", "eSuplementoPara", "dono", "participante", "temLeg"]
-
 const { query, body, validationResult } = require('express-validator');
-const { existe, estaEm, verificaEntId, eFS, verificaEnts, dataValida, existeEverificaTips } = require('../validation')
+const { existe, estaEm, verificaEntId, eFS, verificaEnts, dataValida, existeEverificaTips, vcIndicRels, vcIndicCrits, vcIndicDfs } = require('../validation')
 
 function capitalizeFL(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
@@ -25,7 +21,7 @@ var relacaoSanitizer = value => {
 
 //Classes
 
-router.get('/classesN4', Auth.isLoggedInKey, (req, res) => {
+router.get('/classesN4', Auth.isLoggedInUser, Auth.checkLevel(3.5), (req, res) => {
     Indicadores.totalClassesN(4)
         .then(dados => {
             var result = {
@@ -37,7 +33,7 @@ router.get('/classesN4', Auth.isLoggedInKey, (req, res) => {
         .catch(err => res.status(500).send(`Erro ao obter o número total de classes de nível 4: ${err}`))
 })
 
-router.get('/classesN3', Auth.isLoggedInKey, (req, res) => {
+router.get('/classesN3', Auth.isLoggedInUser, Auth.checkLevel(3.5), (req, res) => {
     Indicadores.totalClassesN(3)
         .then(dados => {
             var result = {
@@ -49,7 +45,7 @@ router.get('/classesN3', Auth.isLoggedInKey, (req, res) => {
         .catch(err => res.status(500).send(`Erro ao obter o número total de classes de nível 3: ${err}`))
 })
 
-router.get('/classesN2', Auth.isLoggedInKey, (req, res) => {
+router.get('/classesN2', Auth.isLoggedInUser, Auth.checkLevel(3.5), (req, res) => {
     Indicadores.totalClassesN(2)
         .then(dados => {
             var result = {
@@ -61,7 +57,7 @@ router.get('/classesN2', Auth.isLoggedInKey, (req, res) => {
         .catch(err => res.status(500).send(`Erro ao obter o número total de classes de nível 2: ${err}`))
 })
 
-router.get('/classesN1', Auth.isLoggedInKey, (req, res) => {
+router.get('/classesN1', Auth.isLoggedInUser, Auth.checkLevel(3.5), (req, res) => {
     Indicadores.totalClassesN(1)
         .then(dados => {
             var result = {
@@ -73,7 +69,7 @@ router.get('/classesN1', Auth.isLoggedInKey, (req, res) => {
         .catch(err => res.status(500).send(`Erro ao obter o número total de classes de nível 1: ${err}`))
 })
 
-router.get('/classes', Auth.isLoggedInKey, (req, res) => {
+router.get('/classes', Auth.isLoggedInUser, Auth.checkLevel(3.5), (req, res) => {
     Indicadores.totalClasses()
         .then(dados => {
             var result = {
@@ -87,13 +83,13 @@ router.get('/classes', Auth.isLoggedInKey, (req, res) => {
 
 //Entidades
 
-router.get('/entidadesAtivas', Auth.isLoggedInKey, (req, res) => {
+router.get('/entidadesAtivas', Auth.isLoggedInUser, Auth.checkLevel(3.5), (req, res) => {
     Indicadores.totalEntidadesAtivas()
         .then(dados => res.jsonp(dados))
         .catch(err => res.status(500).send(`Erro ao obter o número total de entidades ativas: ${err}`))
 })
 
-router.get('/entidades', Auth.isLoggedInKey, (req, res) => {
+router.get('/entidades', Auth.isLoggedInUser, Auth.checkLevel(3.5), (req, res) => {
     Indicadores.totalEntidades()
         .then(dados => {
             var result = {
@@ -107,7 +103,7 @@ router.get('/entidades', Auth.isLoggedInKey, (req, res) => {
 
 //Tipologias
 
-router.get('/tipologias', Auth.isLoggedInKey, (req, res) => {
+router.get('/tipologias', Auth.isLoggedInUser, Auth.checkLevel(3.5), (req, res) => {
     Indicadores.totalTipologias()
         .then(dados => {
             var result = {
@@ -121,13 +117,13 @@ router.get('/tipologias', Auth.isLoggedInKey, (req, res) => {
 
 //Legislacao
 
-router.get('/legVigor', Auth.isLoggedInKey, (req, res) => {
+router.get('/legVigor', Auth.isLoggedInUser, Auth.checkLevel(3.5), (req, res) => {
     Indicadores.totalLegislacaoAtivos()
         .then(dados => res.jsonp(dados))
         .catch(err => res.status(500).send(`Erro ao obter o número total de diplomas legislativos em vigor: ${err}`))
 })
 
-router.get('/leg', Auth.isLoggedInKey, (req, res) => {
+router.get('/leg', Auth.isLoggedInUser, Auth.checkLevel(3.5), (req, res) => {
     Indicadores.totalLegislacao()
         .then(dados => {
             var result = {
@@ -142,28 +138,28 @@ router.get('/leg', Auth.isLoggedInKey, (req, res) => {
 //Relacoes
 
 // Devolve as estatísticas relacionais dos Processos
-router.get('/relstats', Auth.isLoggedInKey, (req, res) => {
+router.get('/relstats', Auth.isLoggedInUser, Auth.checkLevel(3.5), (req, res) => {
     Indicadores.relStats()
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na consulta das estatísticas associadas aos Processos de Negócios : ${erro}`))
 })
 
 // Devolve as estatísticas relativas aos Critérios de Justificação
-router.get('/critstats', Auth.isLoggedInKey, (req, res) => {
+router.get('/critstats', Auth.isLoggedInUser, Auth.checkLevel(3.5), (req, res) => {
     Indicadores.critStats()
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na consulta das estatísticas associadas aos Critérios de Justificação : ${erro}`))
 })
 
 // Devolve as estatísticas relativas aos Destinos finais
-router.get('/dfstats', Auth.isLoggedInKey, (req, res) => {
+router.get('/dfstats', Auth.isLoggedInUser, Auth.checkLevel(3.5), (req, res) => {
     Indicadores.dfStats()
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na consulta das estatísticas associadas aos Destinos finais : ${erro}`))
 })
 
-router.get('/relacoes/:relacao', Auth.isLoggedInKey, [
-    estaEm('param', 'relacao', rels).customSanitizer(relacaoSanitizer)
+router.get('/relacoes/:relacao', Auth.isLoggedInUser, Auth.checkLevel(3.5), [
+    estaEm('param', 'relacao', vcIndicRels).customSanitizer(relacaoSanitizer)
 ], (req, res) => {
     const errors = validationResult(req)
     if(!errors.isEmpty()){
@@ -181,8 +177,8 @@ router.get('/relacoes/:relacao', Auth.isLoggedInKey, [
         .catch(err => res.status(500).send(`Erro ao obter o número total de relações "${req.params.relacao}": ${err}`))
 })
 
-router.get('/df/:df', Auth.isLoggedInKey, [
-    estaEm('param', 'df', dfs)
+router.get('/df/:df', Auth.isLoggedInUser, Auth.checkLevel(3.5), [
+    estaEm('param', 'df', vcIndicDfs)
 ], (req, res) => {
     const errors = validationResult(req)
     if(!errors.isEmpty()){
@@ -200,8 +196,8 @@ router.get('/df/:df', Auth.isLoggedInKey, [
         .catch(err => res.status(500).send(`Erro ao obter o número total de PN's com DF igual a ${req.params.df}: ${err}`))
 })
 
-router.get('/critJust/:critJust', Auth.isLoggedInKey, [
-    estaEm('param', 'critJust', crits).customSanitizer(capitalizeFL)
+router.get('/critJust/:critJust', Auth.isLoggedInUser, Auth.checkLevel(3.5), [
+    estaEm('param', 'critJust', vcIndicCrits).customSanitizer(capitalizeFL)
 ], (req, res) => {
     const errors = validationResult(req)
     if(!errors.isEmpty()){
@@ -219,7 +215,7 @@ router.get('/critJust/:critJust', Auth.isLoggedInKey, [
         .catch(err => res.status(500).send(`Erro ao obter o número total de Critérios de Justificação do tipo "CriterioJustificacao${req.params.critJust}": ${err}`))
 })
 
-router.get('/critJust', Auth.isLoggedInKey, (req, res) => {
+router.get('/critJust', Auth.isLoggedInUser, Auth.checkLevel(3.5), (req, res) => {
     Indicadores.totalCritJust("")
         .then(dados => {
             var result = {
@@ -234,7 +230,7 @@ router.get('/critJust', Auth.isLoggedInKey, (req, res) => {
 //Tabelas
 
 //Devolve lista de todos os indicadores apresentados abaixo
-router.get('/tabela', Auth.isLoggedInKey, async (req, res) => {
+router.get('/tabela', Auth.isLoggedInUser, Auth.checkLevel(3.5), async (req, res) => {
     try{
         var nClasses1 = await Indicadores.totalClassesN(1);
         var nClasses2 = await Indicadores.totalClassesN(2);

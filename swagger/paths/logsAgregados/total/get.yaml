@@ -1,19 +1,19 @@
-summary: Devolve o número total de acessos às rotas
-description: Devolve o número total de acessos às rotas
+summary: Devolve o total de chamadas à API 
+description: Devolve o total de chamadas à API 
+tags:
+  - Logs Agregados
 security:
   - userQuery: []
   - userAuth: []
-tags:
-  - Stats
 responses:
   200:
-    description: Devolve o número total de acessos às rotas
+    description: Total de chamadas à API
     content:
       application/json:
         schema:
           type: integer
           minimum: 0
-        example: 7589 
+        example: 20221
   401:
     $ref: '#/components/responses/UnauthorizedUser'
   403:
