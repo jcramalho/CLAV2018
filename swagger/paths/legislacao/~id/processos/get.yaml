@@ -1,5 +1,5 @@
 summary: Devolve a lista de processos regulados pelo documento
-description: Devolve a lista de processos regulados pelo documento. Para cada processo devolve a informação do id, codigo e titulo
+description: Devolve a lista de processos regulados pelo documento
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

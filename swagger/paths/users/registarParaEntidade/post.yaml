@@ -6,7 +6,7 @@ security:
 tags:
   - Utilizadores
 requestBody:
-  description: 'De forma a registar os utilizadores é necessário a entidade(sigla) e o nic, name, email e type (level) para cada um deles'
+  description: Utilizadores a registar 
   required: true
   content:
     application/json:

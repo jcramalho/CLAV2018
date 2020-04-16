@@ -1,5 +1,5 @@
 summary: Consulta de uma entidade
-description: Consulta de uma entidade. Devolve a informação da sigla, designacao, estado, sioe e internacional da entidade
+description: Consulta de uma entidade
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

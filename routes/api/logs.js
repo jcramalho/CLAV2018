@@ -5,11 +5,11 @@ var express = require('express');
 var router = express.Router();
 
 const { query, oneOf, validationResult } = require('express-validator');
-const { existe, estaEm } = require('../validation')
+const { existe, estaEm, vcTipoUser, vcVerbo } = require('../validation')
 
 router.get('/', Auth.isLoggedInUser, Auth.checkLevel(6), oneOf([
     [
-        estaEm('query', 'tipo', ['User', 'Chave']),
+        estaEm('query', 'tipo', vcTipoUser),
         existe('query', 'id')
     ],
     query("pagina")
@@ -38,7 +38,7 @@ router.get('/', Auth.isLoggedInUser, Auth.checkLevel(6), oneOf([
 })
 
 router.get('/:verbo', Auth.isLoggedInUser, Auth.checkLevel(6), [
-    estaEm('param', 'verbo', ['GET', 'POST', 'PUT', 'DELETE']),
+    estaEm('param', 'verbo', vcVerbo),
     existe('query', 'rota')
         .bail()
         .isURL({

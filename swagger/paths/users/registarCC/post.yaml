@@ -6,7 +6,7 @@ security:
 tags:
   - Utilizadores
 requestBody:
-  description: 'De forma a registar um utilizador através de CC é necessário nic, name, email, entidade (sigla) e type (level)'
+  description: Utilizador a registar 
   required: true
   content:
     application/json:

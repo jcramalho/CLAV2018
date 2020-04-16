@@ -1,13 +1,13 @@
 var Auth = require('../../controllers/auth.js');
 var AggregateLogs = require('../../controllers/api/aggregateLogs.js');
 const { validationResult } = require('express-validator');
-const { existe, estaEm, existeDep } = require('../validation')
+const { existe, estaEm, existeDep, vcTipoUser } = require('../validation')
 
 var express = require('express');
 var router = express.Router();
 
 router.get('/', Auth.isLoggedInUser, Auth.checkLevel(6), [
-    estaEm('query', 'tipo', ['User', 'Chave'])
+    estaEm('query', 'tipo', vcTipoUser)
         .custom(existeDep("query", "id"))
         .withMessage("'id' é undefined, null ou vazio")
         .optional(),

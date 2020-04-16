@@ -30,4 +30,7 @@ var LogSchema = new mongoose.Schema({
     }
 });
 
+//create index for accessDate
+LogSchema.index({accessDate: -1})
+
 module.exports = mongoose.model('Log', LogSchema, 'logs');

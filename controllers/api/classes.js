@@ -540,4 +540,3 @@ Classes.df = function (id) {
     return execQuery("query", query)
         .then(response => normalize(response))
 }
-

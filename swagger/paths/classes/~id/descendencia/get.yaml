@@ -1,5 +1,5 @@
 summary: Devolve a lista de filhos de uma classe
-description: Devolve a lista de filhos de uma classe. Para cada elemento da lista de filhos é devolvida a informação do id, codigo e titulo
+description: Devolve a lista de filhos de uma classe
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

@@ -3,31 +3,9 @@ var Pedidos = require('../../controllers/api/pedidos');
 var express = require('express');
 var router = express.Router();
 
-function isEmpty(obj) {
-    return Object.keys(obj).length === 0;
-}
-
 var validKeys = ["criadoPor", "codigo", "tipo", "acao"];
 const { validationResult } = require('express-validator');
-const { existe, estaEm, verificaPedidoCodigo, verificaExisteEnt, eMongoId } = require('../validation')
-
-var tipos = [
-    "Classe",
-    "TS Organizacional",
-    "TS Pluriorganizacional",
-    "TS Pluriorganizacional web",
-    "Entidade",
-    "Tipologia",
-    "Legislação",
-    "Termo de Indice",
-    "Auto de Eliminação",
-    "AE PGD/LC",
-    "AE PGD",
-    "AE RADA",
-    "RADA"
-]
-var acoes = ["Criação", "Alteração", "Remoção", "Importação", "Extinção"]
-var estados = ["Submetido", "Distribuído", "Apreciado", "Validado", "Devolvido"]
+const { existe, estaEm, verificaPedidoCodigo, verificaExisteEnt, eMongoId, vcPedidoTipo, vcPedidoAcao, vcPedidoEstado } = require('../validation')
 
 // Lista todos os pedidos que statisfazem uma condição
 router.get('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
@@ -37,8 +15,8 @@ router.get('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
         .withMessage("Email inválido")
         .optional(),
     verificaPedidoCodigo('query', 'codigo').optional(),
-    estaEm('query', 'tipo', tipos).optional(),
-    estaEm('query', 'acao', acoes).optional()
+    estaEm('query', 'tipo', vcPedidoTipo).optional(),
+    estaEm('query', 'acao', vcPedidoAcao).optional()
 ], (req, res) => {
     const errors = validationResult(req)
     if(!errors.isEmpty()){
@@ -82,8 +60,8 @@ router.post('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), 
         .withMessage("Email inválido"),
     existe('body', 'novoObjeto'),
     existe('body', 'objetoOriginal').optional(),
-    estaEm('body', 'tipoObjeto', tipos),
-    estaEm('body', 'tipoPedido', acoes),
+    estaEm('body', 'tipoObjeto', vcPedidoTipo),
+    estaEm('body', 'tipoPedido', vcPedidoAcao),
     verificaExisteEnt('body', 'entidade')
 ], (req, res) => {
     const errors = validationResult(req)
@@ -92,7 +70,9 @@ router.post('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), 
     }
 
     Pedidos.criar(req.body)
-        .then(dados => res.jsonp(dados))
+        .then(dados => {
+            res.jsonp(dados);
+        })
         .catch(erro => res.status(500).send(`Erro na criação do pedido: ${erro}`));
 })
 
@@ -101,7 +81,7 @@ router.put('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
     existe('body', 'pedido'),
     eMongoId('body', 'pedido._id'),
     verificaPedidoCodigo('body', 'pedido.codigo'),
-    estaEm('body', 'pedido.estado', estados),
+    estaEm('body', 'pedido.estado', vcPedidoEstado),
     existe('body', 'pedido.data')
         .bail()
         .isISO8601({strict: true})
@@ -113,10 +93,10 @@ router.put('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
     existe('body', 'pedido.objeto'),
     existe('body', 'pedido.objeto.codigo').optional(),
     existe('body', 'pedido.objeto.dados').optional(),
-    estaEm('body', 'pedido.objeto.tipo', tipos),
-    estaEm('body', 'pedido.objeto.acao', acoes),
+    estaEm('body', 'pedido.objeto.tipo', vcPedidoTipo),
+    estaEm('body', 'pedido.objeto.acao', vcPedidoAcao),
     existe('body', 'distribuicao'),
-    estaEm('body', 'distribuicao.estado', estados),
+    estaEm('body', 'distribuicao.estado', vcPedidoEstado),
     existe('body', 'distribuicao.responsavel')
         .bail()
         .isEmail()
@@ -134,14 +114,16 @@ router.put('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
     }
 
     Pedidos.atualizar(req.body.pedido._id, req.body)
-        .then(dados => res.jsonp(dados))
+        .then(dados => {
+            res.jsonp(dados);
+        })
         .catch(erro => res.status(500).send(`Erro na atualização do pedido: ${erro}`));
 })
 
 // Adição de distribuição 
 router.post('/:codigo/distribuicao', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
     verificaPedidoCodigo('param', 'codigo'),
-    estaEm('body', 'estado', estados),
+    estaEm('body', 'estado', vcPedidoEstado),
     existe('body', 'responsavel')
         .bail()
         .isEmail()

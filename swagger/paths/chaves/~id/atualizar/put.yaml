@@ -1,5 +1,5 @@
 summary: Atualizar chave API
-description: Atualizar chave API. Pode-se alterar nome, email (contactInfo) e entidade.
+description: Atualizar chave API
 security:
   - userQuery: []
   - userAuth: []
@@ -13,7 +13,7 @@ parameters:
       type: string
     required: true
 requestBody:
-  description: Para renovar a chave API é necessário o nome a usar, o email a usar (contactInfo) e a entidade a usar.
+  description: Dados a atualizar 
   required: true
   content:
     application/json:

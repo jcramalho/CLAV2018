@@ -1,5 +1,4 @@
 const { oneOf, check, param, query, body, header, cookie } = require('express-validator');
-const { formats } = require("./outputFormat.js")
 var Entidades = require("../controllers/api/entidades.js");
 var Tipologias = require("../controllers/api/tipologias.js");
 var State = require("../controllers/state.js");
@@ -23,9 +22,15 @@ module.exports.existe = function (location, field){
     }
 }
 
-module.exports.estaEm = function (location, field, list){
+module.exports.enumList = function(list){
     var strList = list.map(v => "'" + v + "'")
-    strList = (list.length > 1 ? strList.slice(0, -1).join(", ") + ' e ' : "") + strList.slice(-1)
+    var ret = list.length > 1 ? strList.slice(0, -1).join(", ") + ' e ' : ""
+    ret += strList.slice(-1)
+    return ret
+}
+
+module.exports.estaEm = function (location, field, list){
+    var strList = module.exports.enumList(list)
     const msg = "Valor diferente de " + strList
 
     return module.exports.existe(location, field)
@@ -239,8 +244,8 @@ module.exports.verificaLista = function (location, field){
 //Valida o formato de saida de classes, entidades, tipologias e legislação
 module.exports.eFS = function(){
     return oneOf([
-        module.exports.estaEm('query', 'fs', formats).optional(),
-        module.exports.estaEm('header', 'accept', formats).optional()
+        module.exports.estaEm('query', 'fs', module.exports.vcFormats).optional(),
+        module.exports.estaEm('header', 'accept', module.exports.vcFormats).optional()
     ], `O formato de saída deve ser colocado na query string 'fs' ou na header 'Accept'`)
 }
 
@@ -287,3 +292,103 @@ module.exports.eMongoId = function(location, field){
 module.exports.eNIC = function(location, field){
     return module.exports.match(location, field, '^[0-9]{7,}$')
 }
+
+//Vocabulários
+module.exports.vcBoolean = ["Sim", "Não"]
+module.exports.vcEstado = ["Ativa", "Harmonização", "Inativa"]
+module.exports.vcFonte = ["PGD", "PGD/LC", "RADA"]
+
+//aggregateLogs e logs
+module.exports.vcTipoUser = ['User', 'Chave']
+module.exports.vcVerbo = ['GET', 'POST', 'PUT', 'DELETE']
+
+//autosEliminacao
+module.exports.vcTipoAE = ["PGD", "RADA", "PGD_LC"]
+
+//classes
+module.exports.vcClassesInfo = ['completa', 'esqueleto', 'pesquisa']
+module.exports.vcClassesStruct = ['arvore', 'lista']
+module.exports.vcClassesTipo = ['comum', 'especifico']
+module.exports.vcClassesNiveis = ["1", "2", "3", "4"]
+module.exports.vcClasseInfo = ["subarvore"]
+module.exports.vcClassesRels = ["eAntecessorDe", "eComplementarDe", "eCruzadoCom", "eSinteseDe", "eSintetizadoPor", "eSucessorDe", "eSuplementoPara", "eSuplementoDe"]
+
+//Entidades
+module.exports.vcEntsProcs = ["com", "sem"]
+module.exports.vcEntsInfo = ["completa"]
+
+//Indicadores
+module.exports.vcIndicRels = ["temRelProc", "eAntecessorDe", "eSucessorDe", "eComplementarDe", "eCruzadoCom", "eSinteseDe", "eSintetizadoPor", "eSuplementoDe", "eSuplementoPara", "dono", "participante", "temLeg"]
+module.exports.vcIndicCrits = ["legal", "gestionario", "utilidadeAdministrativa", "densidadeInfo", "complementaridadeInfo"]
+module.exports.vcIndicDfs = ["C", "CP", "E"]
+
+//Legislacao
+module.exports.vcLegTipo = ["Decreto", "DL", "Lei", "Diretiva", "Circular", "Despacho", "Decreto Regulamentar", "Portaria", "Decreto do Governo", "Decreto Legislativo Regional", "Resolução do Conselho de Ministros", "Despacho Normativo", "Resolução da Assembleia da República", "Decisão", "Regulamento", "Decreto do Presidente da República", "Aviso", "Despacho Conjunto", "Lei Orgânica", "Decisão-Quadro", "Circular Normativa", "Recomendação", "Deliberação", "Circular Informativa", "Lei Constitucional", "CSN EN", "Declaração de Retificação", "ISO", "NP", "Diretiva Técnica", "Comunicação", "Resolução", "Tratado", "Regulamento de Execução", "NP EN ISO/IEC", "NOP", "ILAC", "Regulamento Delegado", "NP EN ISO", "Ordem de Serviço", "Estatuto", "Instrução", "ISO/IEC"]
+module.exports.vcLegEstado = ["Ativo", "Revogado"]
+module.exports.vcLegProcs = ["com", "sem"]
+module.exports.vcLegInfo = ["completa"]
+
+//Noticias
+module.exports.vcNotRec = ["sim"]
+
+//Ontologia
+module.exports.vcOntoFormats = [
+    "text/turtle",
+    "turtle",
+    "application/ld+json",
+    "json-ld",
+    "application/rdf+xml",
+    "rdf-xml"
+]
+
+//Pedidos
+module.exports.vcPedidoTipo = [
+    "Classe",
+    "TS Organizacional",
+    "TS Pluriorganizacional",
+    "TS Pluriorganizacional web",
+    "Entidade",
+    "Tipologia",
+    "Legislação",
+    "Termo de Indice",
+    "Auto de Eliminação",
+    "AE PGD/LC",
+    "AE PGD",
+    "AE RADA",
+    "RADA"
+]
+module.exports.vcPedidoAcao = ["Criação", "Alteração", "Remoção", "Importação", "Extinção"]
+module.exports.vcPedidoEstado = ["Submetido", "Distribuído", "Apreciado", "Validado", "Devolvido"]
+
+//Pendentes
+module.exports.vcPendenteTipo = [
+    "Classe",
+    "TS Organizacional",
+    "TS Pluriorganizacional",
+    "Entidade",
+    "Tipologia",
+    "Legislação",
+    "Termo de Indice",
+    "Auto de Eliminação",
+    "RADA"
+]
+module.exports.vcPendenteAcao = ["Criação", "Alteração", "Remoção"]
+
+//Tipologias
+module.exports.vcTipsInfo = ["completa"]
+
+
+//Users
+module.exports.vcUserLevels = [1, 2, 3, 3.5, 4, 5, 6, 7]
+module.exports.vcUsersFormato = ["normalizado"]
+
+//OutputFormat
+module.exports.vcFormats = [
+    'application/json',
+    'json',
+    'application/xml',
+    'xml',
+    'text/csv',
+    'excel/csv',
+    'csv'
+]

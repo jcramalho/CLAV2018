@@ -3,7 +3,7 @@ var mongoose = require('mongoose');
 // User Schema
 var UserSchema = mongoose.Schema({
 	_id: {
-		
+
 	},
 	internal: {
 		type: Boolean,
@@ -44,7 +44,11 @@ var UserSchema = mongoose.Schema({
 		password: {
 			type: String
 		}
-	}
+	},
+	notificacoes: [{
+			type: String
+		}
+	]
 });
 
 module.exports = mongoose.model('User', UserSchema, 'users');

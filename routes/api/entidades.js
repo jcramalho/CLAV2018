@@ -7,7 +7,7 @@ var router = express.Router();
 
 var validKeys = ["sigla", "designacao", "internacional", "sioe", "estado"];
 const { query, body, validationResult } = require('express-validator');
-const { existe, estaEm, verificaEntId, eFS, verificaEnts, dataValida, verificaLista, estaAtiva, verificaExisteTip } = require('../validation')
+const { existe, estaEm, verificaEntId, eFS, verificaEnts, dataValida, verificaLista, estaAtiva, verificaExisteTip, vcBoolean, vcEstado, vcEntsProcs, vcEntsInfo } = require('../validation')
 
 async function naoExisteSigla(valor) {
     if(await Entidades.existeSigla(valor))
@@ -44,12 +44,12 @@ router.get("/", Auth.isLoggedInKey, [
     eFS(),
     existe("query", "sigla").optional(),
     existe("query", "designacao").optional(),
-    estaEm("query", "internacional", ["Sim", "Não"]).optional(),
+    estaEm("query", "internacional", vcBoolean).optional(),
     query("sioe", "Valor inválido, SIOE é um número").optional().matches(/^\d+$/),
-    estaEm("query", "estado", ["Ativa", "Harmonização", "Inativa"]).optional(),
+    estaEm("query", "estado", vcEstado).optional(),
     verificaEnts("query", "ents").optional(),
-    estaEm("query", "processos", ["com", "sem"]).optional(),
-    estaEm("query", "info", ["completa"]).optional()
+    estaEm("query", "processos", vcEntsProcs).optional(),
+    estaEm("query", "info", vcEntsInfo).optional()
 ], async (req, res, next) => {
   const errors = validationResult(req)
   if(!errors.isEmpty()){
@@ -148,7 +148,7 @@ router.get("/designacao", Auth.isLoggedInKey, [
 router.get("/:id", Auth.isLoggedInKey, [
     eFS(),
     verificaEntId('param', 'id'),
-    estaEm("query", "info", ["completa"]).optional()
+    estaEm("query", "info", vcEntsInfo).optional()
 ], async (req, res, next) => {
   const errors = validationResult(req)
   if(!errors.isEmpty()){
@@ -216,11 +216,11 @@ router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), [
     existe('body', 'sigla')
         .custom(naoExisteSigla)
         .withMessage("Sigla já existe"),
-    estaEm('body', "estado", ["Ativa", "Harmonização", "Inativa"]),
+    estaEm('body', "estado", vcEstado),
     existe('body', 'designacao')
         .custom(naoExisteDesignacao)
         .withMessage("Designação já existe"),
-    estaEm("body", "internacional", ["Sim", "Não"]).optional(),
+    estaEm("body", "internacional", vcBoolean).optional(),
     body("sioe", "Valor inválido, SIOE é um número")
         .optional()
         .matches(/^\d+$/),
@@ -246,11 +246,11 @@ router.put("/:id", Auth.isLoggedInUser, Auth.checkLevel(4), [
     existe('body', 'sigla')
         .custom(naoExisteSiglaSelf)
         .withMessage("Sigla já existe"),
-    estaEm('body', "estado", ["Ativa", "Harmonização", "Inativa"]),
+    estaEm('body', "estado", vcEstado),
     existe('body', 'designacao')
         .custom(naoExisteDesignacaoSelf)
         .withMessage("Designação já existe"),
-    estaEm("body", "internacional", ["Sim", "Não"]).optional(),
+    estaEm("body", "internacional", vcBoolean).optional(),
     body("sioe", "Valor inválido, SIOE é um número")
         .optional()
         .matches(/^\d+$/),

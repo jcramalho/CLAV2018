@@ -1,5 +1,5 @@
 summary: Consulta um utilizador
-description: Consulta um utilizador devolvendo a informação de id, name, email, entidade, internal, level e nCalls
+description: Consulta um utilizador
 security:
   - userQuery: []
   - userAuth: []

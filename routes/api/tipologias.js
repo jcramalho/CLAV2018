@@ -6,7 +6,7 @@ var router = express.Router();
 
 var validKeys = ["designacao", "estado"];
 const { query, validationResult } = require('express-validator');
-const { existe, estaEm, verificaTipId, eFS, dataValida, verificaTips, verificaLista, estaAtiva, verificaExisteEnt } = require('../validation')
+const { existe, estaEm, verificaTipId, eFS, dataValida, verificaTips, verificaLista, estaAtiva, verificaExisteEnt, vcEstado, vcTipsInfo, enumList } = require('../validation')
 
 async function naoExisteSigla(valor) {
     if(await Tipologias.existeSigla(valor))
@@ -46,11 +46,11 @@ router.get("/", Auth.isLoggedInKey, [
             if(!v) v = "Ativa"
             return v
         })
-        .isIn(["Ativa", "Inativa", "Harmonização"])
-        .withMessage("Valor diferente de 'Ativa', 'Inativa' e 'Harmonização'"),
+        .isIn(vcEstado)
+        .withMessage(`Valor diferente de ${enumList(vcEstado)}`),
     existe("query", "designacao").optional(),
     verificaTips("query", "tips").optional(),
-    estaEm("query", "info", ["completa"]).optional()
+    estaEm("query", "info", vcTipsInfo).optional()
 ], async (req, res, next) => {
   const errors = validationResult(req)
   if(!errors.isEmpty()){
@@ -115,7 +115,7 @@ router.get("/designacao", Auth.isLoggedInKey, [
 router.get("/:id", Auth.isLoggedInKey, [
     eFS(),
     verificaTipId('param', 'id'),
-    estaEm("query", "info", ["completa"]).optional()
+    estaEm("query", "info", vcTipsInfo).optional()
 ], async (req, res, next) => {
   const errors = validationResult(req)
   if(!errors.isEmpty()){
@@ -183,7 +183,7 @@ router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), [
     existe("body", "sigla")
         .custom(naoExisteSigla)
         .withMessage("Sigla já existe"),
-    estaEm("body", "estado", ["Ativa", "Harmonização", "Inativa"]),
+    estaEm("body", "estado", vcEstado),
     existe("body", "designacao")
         .custom(naoExisteDesignacao)
         .withMessage("Designação já existe"),
@@ -208,7 +208,7 @@ router.put("/:id", Auth.isLoggedInUser, Auth.checkLevel(4), [
     existe("body", "sigla")
         .custom(naoExisteSiglaSelf)
         .withMessage("Sigla já existe"),
-    estaEm("body", "estado", ["Ativa", "Harmonização", "Inativa"]),
+    estaEm("body", "estado", vcEstado),
     existe("body", "designacao")
         .custom(naoExisteDesignacaoSelf)
         .withMessage("Designação já existe"),

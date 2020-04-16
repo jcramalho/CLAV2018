@@ -1,5 +1,5 @@
 summary: Dado o token de um utilizador devolve a informação do utilizador
-description: Dado o token de um utilizador devolve a informação do utilizador, ou seja, o id, name, email, entidade, internal, level e nCalls.
+description: Dado o token de um utilizador devolve a informação do utilizador
 security:
   - userQuery: []
   - userAuth: []

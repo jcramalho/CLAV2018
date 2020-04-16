@@ -1,0 +1,44 @@
+summary: Indicadores relacionais dos PNs
+security:
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Indicadores Estatísticos
+description: |
+  Indicadores relacionais dos PNs:
+    - Número total de relações entre PNs (temRelProc)
+    - Número total de relações eAntecessorDe
+    - Número total de relações eSucessorDe
+    - Número total de relações eComplementarDe
+    - Número total de relações eCruzadoCom
+    - Número total de relações eSinteseDe
+    - Número total de relações eSintetizadoPor
+    - Número total de relações eSuplementoDe
+    - Número total de relações eSuplementoPara
+    - Número total de relações entre PNs e entidades como donas (temDono)
+    - Número total de relações entre PNs e entidades como participantes (temParticipante)
+    - Número total de relações entre PNs e entidades como participantes do tipo Apreciador (temParticipanteApreciador)
+    - Número total de relações entre PNs e entidades como participantes do tipo Comunicador (temParticipanteComunicador)
+    - Número total de relações entre PNs e entidades como participantes do tipo Decisor (temParticipanteDecisor)
+    - Número total de relações entre PNs e entidades como participantes do tipo Assessor (temParticipanteAssessor)
+    - Número total de relações entre PNs e entidades como participantes do tipo Iniciador (temParticipanteIniciador)
+    - Número total de relações entre PNs e entidades como participantes do tipo Executor (temParticipanteExecutor)
+    - Número total de relações entre PNs e Legislação (temLegislacao)
+responses:
+  200:
+    description: Indicadores relacionais dos PNs
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/Indicadores'
+        example:
+          - indicador: "temRelProc"
+            valor: "22"
+          - indicador: "eSucessorDe"
+            valor: "10"
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  500:
+    description: Erro

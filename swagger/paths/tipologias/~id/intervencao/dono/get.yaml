@@ -1,5 +1,5 @@
 summary: Lista os processos em que uma tipologia intervem como dono
-description: Lista os processos em que uma tipologia intervem como dono. Para cada processo devolve a informação do codigo, titulo e id.
+description: Lista os processos em que uma tipologia intervem como dono
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

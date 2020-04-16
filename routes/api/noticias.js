@@ -7,7 +7,7 @@ var router = express.Router()
 
 var validKeys = ["titulo", "desc", "data", "ativa"];
 const { validationResult } = require('express-validator');
-const { existe, estaEm, dataValida, eMongoId } = require('../validation')
+const { existe, estaEm, dataValida, eMongoId, vcNotRec } = require('../validation')
 
 // Lista todas as noticias: data, titulo, desc
 router.get('/', Auth.isLoggedInKey, [
@@ -19,7 +19,7 @@ router.get('/', Auth.isLoggedInKey, [
         .isBoolean()
         .withMessage("Não é um valor booleano ('true', 'false')")
         .optional(),
-    estaEm("query", "recentes", ["sim"]).optional()
+    estaEm("query", "recentes", vcNotRec).optional()
 ], (req, res) => {
     const errors = validationResult(req)
     if(!errors.isEmpty()){

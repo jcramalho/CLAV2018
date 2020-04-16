@@ -1,12 +1,12 @@
 summary: Define as travessias
-description: Define as travessias, ou seja, as travessias que estavam anteriormente definidas são descartadas e são consideradas apenas as providenciadas
+description: Define as travessias, ou seja, as travessias que estavam anteriormente definidas são descartadas e são consideradas apenas as providenciadas. É contudo depois necessário realizar reset das travessias por forma a estas travessias definidas serem carregadas para cache
 security:
   - userQuery: []
   - userAuth: []
 tags:
   - Travessias
 requestBody:
-  description: 'Lista de objetos onde em cada objeto no processo deve ser colocado o código do processo e na travessia uma lista de códigos de processos'
+  description: Travessias a definir 
   required: true
   content:
     application/json:

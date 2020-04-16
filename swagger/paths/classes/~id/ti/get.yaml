@@ -1,5 +1,5 @@
 summary: Devolve os termos de índice de uma classe
-description: Devolve os termos de índice de uma classe. Para cada elemento da lista devolvida é devolvida a informação do idTI e termo
+description: Devolve os termos de índice de uma classe
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

@@ -12,8 +12,7 @@ var Mailer = require('../../controllers/api/mailer');
 var mongoose = require('mongoose');
 
 const { body, validationResult } = require('express-validator');
-const { existe, estaEm, verificaExisteEnt, eNIC, verificaLista, verificaUserId, verificaEntId } = require('../validation')
-var levels = [1, 2, 3, 3.5, 4, 5, 6, 7]
+const { existe, estaEm, verificaExisteEnt, eNIC, verificaLista, verificaUserId, verificaEntId, vcUserLevels, vcUsersFormato } = require('../validation')
 
 function emailNaoUsado(v){
     return new Promise((resolve, reject) => {
@@ -80,7 +79,7 @@ function unic(field){
 
 router.get('/', Auth.isLoggedInUser, Auth.checkLevel(5), [
     verificaEntId('query', 'entidade').optional(),
-    estaEm('query', 'formato', ["normalizado"]).optional()
+    estaEm('query', 'formato', vcUsersFormato).optional()
 ], (req, res) => {
     const errors = validationResult(req)
     if(!errors.isEmpty()){
@@ -136,7 +135,7 @@ router.get('/token', Auth.isLoggedInUser, async function(req,res){
 
 router.post('/registar', Auth.isLoggedInUser, Auth.checkLevel(5), [
     verificaExisteEnt('body', 'entidade'),
-    estaEm('body', 'type', levels),
+    estaEm('body', 'type', vcUserLevels),
     existe('body', 'name'),
     existe('body', 'email')
         .bail()
@@ -194,7 +193,7 @@ router.post('/registarParaEntidade', Auth.isLoggedInUser, Auth.checkLevel(5), [
         .bail()
         .custom(nicNaoUsado)
         .withMessage(v => `Utilizador com NIC '${v}' já registado`),
-    estaEm('body', 'users.*.type', levels)
+    estaEm('body', 'users.*.type', vcUserLevels)
 ], function (req, res) {
     const errors = validationResult(req)
     if(!errors.isEmpty()){
@@ -396,7 +395,7 @@ router.put('/:id/nic', Auth.isLoggedInUser, Auth.checkLevel(7), [
 router.put('/:id', Auth.isLoggedInUser, Auth.checkLevel(5), [
     verificaUserId('param', 'id'),
     verificaExisteEnt('body', 'entidade'),
-    estaEm('body', 'level', levels),
+    estaEm('body', 'level', vcUserLevels),
     existe('body', 'nome'),
     existe('body', 'email')
         .bail()
@@ -500,7 +499,7 @@ router.post('/registarCC', Auth.isLoggedInUser, Auth.checkLevel(5), [
         .bail()
         .custom(nicNaoUsado)
         .withMessage("Utilizador já se encontra registado"),
-    estaEm('body', 'type', levels)
+    estaEm('body', 'type', vcUserLevels)
 ], function (req, res) {
     const errors = validationResult(req)
     if(!errors.isEmpty()){

@@ -13,7 +13,7 @@ parameters:
     schema:
       $ref: '#/components/schemas/VocabularioId'
 requestBody:
-  description: 'Termo'
+  description: 'Termo a adicionar'
   required: true
   content:
     application/json:

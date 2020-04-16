@@ -1,5 +1,5 @@
 summary: Devolve o Índice de Pesquisa para Notas de Aplicação, Exemplos de Notas de Aplicação e Termos de Índice
-description: Devolve o Índice de Pesquisa para Notas de Aplicação, Exemplos de Notas de Aplicação e Termos de Índice. Devolve uma relação entre o código e o título da classe e estes componentes.
+description: Devolve o Índice de Pesquisa para Notas de Aplicação, Exemplos de Notas de Aplicação e Termos de Índice
 tags:
   - Diversos
 security:

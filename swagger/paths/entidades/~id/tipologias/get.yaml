@@ -1,5 +1,5 @@
 summary: Lista as tipologias a que uma entidade pertence
-description: Lista as tipologias a que uma entidade pertence. Para cada tipologia devolva a informação do id, sigla e designacao
+description: Lista as tipologias a que uma entidade pertence
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

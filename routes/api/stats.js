@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+
 var Auth = require('../../controllers/auth.js');
 var ApiStats = require('../../controllers/api/stats');
 
@@ -22,6 +23,5 @@ router.get('/total', Auth.isLoggedInUser, Auth.checkLevel(6), (req, res) => {
         }
     });
 });
-
 
 module.exports = router;
