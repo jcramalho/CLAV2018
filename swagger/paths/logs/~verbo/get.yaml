@@ -15,7 +15,7 @@ parameters:
   - name: rota
     in: query
     required: true
-    description: Caminho da rota
+    description: "Caminho da rota (exemplo: '/tipologias')"
     schema:
       $ref: '#/components/schemas/Rota'
 responses:

@@ -128,7 +128,7 @@ AggregateLogs.getAggregateLogRoutes = async function(){
 AggregateLogs.totalAggregateLogs = async function(){
     var agg = await AggregateLog.aggregate([{
         $project: {
-            total: { $sum: ["$nGETs", "$nPOSTs", "$nPUTs", "$nDELETEs"] }
+            total: { $add: ["$nGETs", "$nPOSTs", "$nPUTs", "$nDELETEs"] }
         }
     }])
     agg = agg.map(v => v.total)
