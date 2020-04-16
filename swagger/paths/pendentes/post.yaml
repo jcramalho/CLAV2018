@@ -16,6 +16,11 @@ requestBody:
 responses:
   200:
     description: Guardado um trabalho pendente
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/PendentePOSTres'
+        example: !!inc/file '/examples/pendentes/PendentePOSTres.yaml'
   401:
     $ref: '#/components/responses/UnauthorizedUser'
   403:
