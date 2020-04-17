@@ -42,8 +42,8 @@ module.exports = function(passport) {
     });
 
     passport.use("jwt", new JWTstrategy({
-        secretOrKey: secretKey.userKey,
-        algorithms: ["HS256"],
+        secretOrKey: secretKey.userPublicKey,
+        algorithms: ["RS256"],
         jwtFromRequest: ExtractJWT.fromExtractors([
             ExtractJWT.fromUrlQueryParameter('token'),
             ExtractJWT.fromAuthHeaderWithScheme('token')

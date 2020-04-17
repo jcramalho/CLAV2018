@@ -6,8 +6,6 @@ var User = require('../../models/user');
 var Users = require('../../controllers/api/users');
 var AuthCalls = require('../../controllers/api/auth');
 var Auth = require('../../controllers/auth');
-var jwt = require('jsonwebtoken');
-var secretKey = require('./../../config/app');
 var Mailer = require('../../controllers/api/mailer');
 var mongoose = require('mongoose');
 
@@ -106,7 +104,7 @@ router.get('/:id/token', Auth.isLoggedInUser, [
         return res.status(422).jsonp(errors.array())
     }
 
-    await jwt.verify(req.params.id, secretKey.userKey, async function(err, decoded){
+    await Auth.verifyTokenUser(req.params.id, async function(err, decoded){
         if(!err){
             if(decoded.id == req.user.id || req.user.level == 7){
                 await Users.listarPorId(decoded.id, function(err, result){

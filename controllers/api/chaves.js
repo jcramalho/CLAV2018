@@ -1,19 +1,17 @@
-var jwt = require('jsonwebtoken');
 var Auth = require('../../controllers/auth');
-var secretKey = require('./../../config/app');
 var Chave = require('./../../models/chave');
 var mongoose = require('mongoose');
 var Chaves = module.exports
 
 Chaves.listar = function(callback){
     jsonObj = [];
-    Chave.find({}, function(err, keys){
+    Chave.find({}, async function(err, keys){
         if (err) {
             callback(err, null)
         }else {
             for(var i = 0; i < keys.length; i++) {
                 item = {}
-                jwt.verify(keys[i].key, secretKey.apiKey, function(err, decoded){
+                await Auth.verifyTokenKey(keys[i].key, function(err, decoded){
                     if(!err){
                         item["expiration"] = new Date(decoded.exp*1000).toLocaleString();
                     }else{

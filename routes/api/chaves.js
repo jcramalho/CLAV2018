@@ -1,7 +1,5 @@
 var express = require("express");
 var router = express.Router();
-var jwt = require("jsonwebtoken");
-var secretKey = require("./../../config/app");
 var interfaceHosts = require("./../../config/database").interfaceHosts;
 var Auth = require("../../controllers/auth");
 var Chaves = require("../../controllers/api/chaves");
@@ -43,7 +41,7 @@ router.get("/clavToken", [
             //res.status(500).send(err);
             res.status(500).send("Erro ao obter o token da CLAV!")
           } else {
-            jwt.verify(chave.key, secretKey.apiKey, function(err, decoded) {
+            Auth.verifyTokenKey(chave.key, function(err, decoded) {
               if (err) {
                 //res.status(500).send(err);
                 res.status(500).send("Erro ao obter o token da CLAV!")
@@ -55,14 +53,14 @@ router.get("/clavToken", [
         }
       );
     } else {
-      jwt.verify(chave.key, secretKey.apiKey, function(err, decoded) {
+      Auth.verifyTokenKey(chave.key, function(err, decoded) {
         if (err) {
           Chaves.renovar(chave.id, function(err, chave) {
             if (err) {
               //res.status(500).send(err);
               res.status(500).send("Erro ao obter o token da CLAV!")
             } else {
-              jwt.verify(chave.key, secretKey.apiKey, function(err, decoded) {
+              Auth.verifyTokenKey(chave.key, function(err, decoded) {
                 if (err) {
                   //res.status(500).send(err);
                   res.status(500).send("Erro ao obter o token da CLAV!")
@@ -88,7 +86,7 @@ router.get("/:id", Auth.isLoggedInUser, Auth.checkLevel(7), [
       return res.status(422).jsonp(errors.array())
   }
 
-  await jwt.verify(req.params.id, secretKey.apiKey,async function(err, decoded){
+  await Auth.verifyTokenKey(req.params.id, async function(err, decoded){
     if (!err) {
       await Chaves.listarPorId(decoded.id, function(err, result) {
         if (err) {
