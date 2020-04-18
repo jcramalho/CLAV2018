@@ -181,7 +181,6 @@ components:
         'examples/vocabularios/VocabularioTermos.yaml',
         'examples/users/User.yaml',
         'examples/users/UserLogin.yaml',
-        'examples/users/UserToken.yaml',
         'examples/tabelasSelecao/TabelaSelecao.yaml',
         'examples/tabelasSelecao/TabelasSelecao.yaml',
         'examples/tabelasSelecao/TabelaSelecaoClasses.yaml',

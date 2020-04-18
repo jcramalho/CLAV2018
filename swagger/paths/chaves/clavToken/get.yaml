@@ -10,13 +10,10 @@ responses:
         schema:
           type: object
           properties:
-            exp:
-              type: integer
-            token:
+            apikey:
               type: string
         example:
-          exp: 1587769143
-          token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1ODUxNzcxNDMsImV4cCI6MTU4Nzc2OTE0M30.4y50-kHf21fFaLPZdD4pecg4J8o968SclcYD5ObAA2s"
+          apikey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1ODUxNzcxNDMsImV4cCI6MTU4Nzc2OTE0M30.4y50-kHf21fFaLPZdD4pecg4J8o968SclcYD5ObAA2s"
   422:
     $ref: '#/components/responses/ValidationParameters'
   500:

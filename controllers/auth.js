@@ -33,21 +33,29 @@ Auth.checkLevel = function (clearance) {
 }
 
 Auth.generateTokenUserRecuperar = function (user) {
-    var token = jwt.sign({id: user._id, name: user.name, level: 0, entidade: user.entidade}, secretKey.userKey, {expiresIn: '30m'});
+    var token = jwt.sign({id: user._id, name: user.name, level: 0, entidade: user.entidade}, secretKey.userPrivateKey, {expiresIn: '30m', algorithm: 'RS256'});
 
     return token
 }
 
 Auth.generateTokenUser = function (user) {
-    var token = jwt.sign({id: user._id, level: user.level, entidade: user.entidade}, secretKey.userKey, {expiresIn: '8h'});
+    var token = jwt.sign({id: user._id, level: user.level, entidade: user.entidade, email: user.email}, secretKey.userPrivateKey, {expiresIn: '8h', algorithm: 'RS256'});
 
     return token
 }
 
+Auth.verifyTokenUser = function (key, callback) {
+    return jwt.verify(key, secretKey.userPublicKey, { algorithms: ['RS256'] }, callback)
+}
+
 Auth.generateTokenKey = function (chaveId) {
-    var token = jwt.sign({id: chaveId}, secretKey.apiKey, {expiresIn: '30d'});
+    var token = jwt.sign({id: chaveId}, secretKey.apiPrivateKey, {expiresIn: '30d', algorithm: 'RS256'});
 
     return token
+}
+
+Auth.verifyTokenKey = function (key, callback) {
+    return jwt.verify(key, secretKey.apiPublicKey, { algorithms: ['RS256'] }, callback)
 }
 
 //verifica se está forneceu chave API. Em caso afirmativo verifica se é válido. Caso não tenha fornecido uma chave API verifica se forneceu antes um token.
@@ -66,7 +74,7 @@ Auth.isLoggedInKey = async function (req, res, next) {
                 //A sua chave API não se encontra na base de dados
                 res.status(401).send('A sua chave API é inválida ou expirou.');
             }else{
-                await jwt.verify(key, secretKey.apiKey, { algorithms: ['HS256'] }, async function(err, decoded){
+                await Auth.verifyTokenKey(key, async function(err, decoded){
                     if(err){
                         res.status(401).send('A sua chave API é inválida ou expirou.');
                     }else{

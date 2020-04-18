@@ -6,8 +6,6 @@ var User = require('../../models/user');
 var Users = require('../../controllers/api/users');
 var AuthCalls = require('../../controllers/api/auth');
 var Auth = require('../../controllers/auth');
-var jwt = require('jsonwebtoken');
-var secretKey = require('./../../config/app');
 var Mailer = require('../../controllers/api/mailer');
 var mongoose = require('mongoose');
 
@@ -94,43 +92,6 @@ router.get('/', Auth.isLoggedInUser, Auth.checkLevel(5), [
             res.json(result);
         }
     });
-});
-
-router.get('/:id/token', Auth.isLoggedInUser, [
-    existe('param', 'id')
-        .isJWT()
-        .withMessage("Não possui um formato válido de um JWT")
-], async function(req,res){
-    const errors = validationResult(req)
-    if(!errors.isEmpty()){
-        return res.status(422).jsonp(errors.array())
-    }
-
-    await jwt.verify(req.params.id, secretKey.userKey, async function(err, decoded){
-        if(!err){
-            if(decoded.id == req.user.id || req.user.level == 7){
-                await Users.listarPorId(decoded.id, function(err, result){
-                    if(err){
-                        //res.status(500).send(err);
-                        res.status(500).send("Não foi possível obter o utilizador!");
-                    }else{
-                        result._doc.local = result._doc.local.password ? true : false
-                        res.send(result);
-                    }
-                });
-            }else{
-                //Não tem permissões para aceder à informação de outro utilizador
-                res.status(403).send("Não tem permissões suficientes!")
-            }
-        }else{
-            //res.status(403).send(err);
-            res.status(500).send("Não foi possível obter o utilizador!");
-        }
-    });
-});
-
-router.get('/token', Auth.isLoggedInUser, async function(req,res){
-    res.send(req.user);
 });
 
 router.post('/registar', Auth.isLoggedInUser, Auth.checkLevel(5), [
