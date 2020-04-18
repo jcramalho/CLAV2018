@@ -39,7 +39,7 @@ Auth.generateTokenUserRecuperar = function (user) {
 }
 
 Auth.generateTokenUser = function (user) {
-    var token = jwt.sign({id: user._id, level: user.level, entidade: user.entidade}, secretKey.userPrivateKey, {expiresIn: '8h', algorithm: 'RS256'});
+    var token = jwt.sign({id: user._id, level: user.level, entidade: user.entidade, email: user.email}, secretKey.userPrivateKey, {expiresIn: '8h', algorithm: 'RS256'});
 
     return token
 }

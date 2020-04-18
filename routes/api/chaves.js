@@ -41,14 +41,7 @@ router.get("/clavToken", [
             //res.status(500).send(err);
             res.status(500).send("Erro ao obter o token da CLAV!")
           } else {
-            Auth.verifyTokenKey(chave.key, function(err, decoded) {
-              if (err) {
-                //res.status(500).send(err);
-                res.status(500).send("Erro ao obter o token da CLAV!")
-              } else {
-                res.send({ token: chave.key, exp: decoded.exp });
-              }
-            });
+            res.send({ apikey: chave.key });
           }
         }
       );
@@ -60,18 +53,11 @@ router.get("/clavToken", [
               //res.status(500).send(err);
               res.status(500).send("Erro ao obter o token da CLAV!")
             } else {
-              Auth.verifyTokenKey(chave.key, function(err, decoded) {
-                if (err) {
-                  //res.status(500).send(err);
-                  res.status(500).send("Erro ao obter o token da CLAV!")
-                } else {
-                  res.send({ token: chave.key, exp: decoded.exp });
-                }
-              });
+              res.send({ apikey: chave.key });
             }
           });
         } else {
-          res.send({ token: chave.key, exp: decoded.exp });
+          res.send({ apikey: chave.key });
         }
       });
     }
