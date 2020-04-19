@@ -155,81 +155,123 @@ AutosEliminacao.consultar = async function(id) {
     catch(erro) { throw (erro);}
 }
 
-AutosEliminacao.adicionarTS = async function (auto) {
-    const nanoid = require('nanoid')
-    //Invariante Legislação
+AutosEliminacao.adicionar = async function (auto) {
+    var currentTime = new Date();
+
     var tipo = auto.legislacao.split(' ')[0]
     var numero = auto.legislacao.split(' ')[1]
     var queryLeg = `
-        ASK {
+        SELECT * WHERE {
             ?leg a clav:Legislacao;
-            	:diplomaTipo ${tipo};
-              	:diplomaNumero ${numero} .
+                clav:diplomaTipo "${tipo}";
+                clav:diplomaNumero "${numero}" .
         }
     `
-    var queryEnt = `
-        SELECT * WHERE {
-            ?ent a clav:Entidade ;
-                 clav:entDesignacao ${auto.entidade} .
+    var queryNum = `
+        select * where {
+            ?ae a clav:AutoEliminacao ;
+                clav:temEntidadeResponsavel clav:${auto.entidade} .
         }
     `
     try {
-        let resultLeg = execQuery("query", queryLeg)
-        let resultEnt = normalize(execQuery("query", queryEnt));
-        if(resultLeg.boolean && (resultEnt.length > 0)) {
-            var id = "ae_"+nanoid();
-            var data = currentTime.getDate()+"/"+(currentTime.getMonth()+1)+"/"+currentTime.getFullYear()
-            var query = `
-                INSERT DATA {
+        let resultLeg = await execQuery("query", queryLeg);
+        resultLeg = normalize(resultLeg)
+        let resultNum = await execQuery("query", queryNum);
+        resultNum = normalize(resultNum)
+        
+        if(resultLeg.length > 0) {
+            var id = "ae_"+(resultNum.length+1)+"_"+auto.entidade.split("_")[1]+"_"+currentTime.getFullYear()
+            var numero = id.split("ae_")[1].replace(/\_/g,"/")
+            var data = currentTime.getFullYear()+"-"+(currentTime.getMonth()+1)+"-"+currentTime.getDate()
+            var query = `{
                     clav:${id} a clav:AutoEliminacao ;
-                               clav:autoNumero "${id}" ;
-                               clav:autoDataAutenticacao "${data}" ;
+                               clav:autoNumero "${numero}" ;
                                clav:autoResponsavel "${auto.responsavel}" ;
-                               clav:autoLegislacao "${auto.legislacao}" ;
-                               clav:fundo "${auto.fundo}" ;
-                               clav:temEntidadeResponsavel :${resultEnt.split("#")[1]} .
+                               clav:autoDataAutenticacao "${data}" ;
+                               clav:temEntidadeResponsavel clav:${auto.entidade} ;
+                               clav:temLegislacao clav:${resultLeg[0].leg.split("#")[1]} .
             `
+            
+            for(fundo of auto.fundo) {
+                query += `
+                    clav:${id} clav:temFundoDe clav:ent_${fundo.split(" - ")[0]} .
+                `
+            }
+            
+            var indexZona = 1
             for(zona of auto.zonaControlo) {
-                var idZona = ":zc_"+nanoid();
+                var idZona = "zc_"+indexZona+"_"+id.split("ae_")[1];
                 query += `
                     clav:${id} clav:temZonaControlo clav:${idZona} .
                 `
                 query += `
                     clav:${idZona} a clav:ZonaControlo ;
-                    clav:codigo "${zona.codigo}" ;`
-                if(zona.ni.lowerCase() === "dono") query += `
-                   clav:temNI clav:vc_naturezaIntervencao_dono ;`
-                else if(zona.ni.lowerCase() === "participante") query += `
-                   clav:temNI clav:vc_naturezaIntervencao_participante ;`
-                if(zona.dono !== "") query += `
-                     clav:temDono :ent_${zona.dono} ;`
-                
-                query += `
-                    clav:autoDataInicio "${zona.dataInicio}" ;
-                    clav:autoDataFim "${zona.dataInicio}" .
+                        clav:temClasseControlo clav:c${zona.codigo} ;
+                        clav:dataInicio "${zona.dataInicio}" ;
+                        clav:dataFim "${zona.dataFim}" .
                 `
+                if(zona.destino=="C") {
+                    query += `
+                        clav:${idZona} clav:temNI clav:vc_participante .
+                    `
+                    
+                    for(dono of zona.dono)
+                        query += `
+                            clav:${idZona} clav:temDono clav:ent_${dono.split(" - ")[0]} .
+                        `
+                }
+
+                if(zona.uiPapel && zona.uiPapel!="0")
+                    query += `
+                        clav:${idZona} clav:UIpapel "${zona.uiPapel}" .
+                    `
+                if(zona.uiDigital && zona.uiDigital!="0")
+                    query += `
+                        clav:${idZona} clav:UIDigital "${zona.uiDigital}" .
+                    `
+                if(zona.uiOutros && zona.uiOutros!="0")
+                    query += `
+                        clav:${idZona} clav:UIOutros "${zona.uiOutros}" .
+                    `
+                
+                var indexAg = 1;
                 for(agregacao of zona.agregacoes) {
-                    var idAg = ":ag_"+agregacao.codigo
+                    var idAg = "ag_"+indexAg+"_"+idZona
                     query += `
                         clav:${idZona} clav:temAgregacao clav:${idAg} .
                     `
+
                     query += `
-                        clav:${idAg} a :Agregacao ;
+                        clav:${idAg} a clav:Agregacao ;
                             clav:agregacaoCodigo "${agregacao.codigo}" ;
                             clav:agregacaoTitulo "${agregacao.titulo}" ;
+                            clav:agregacaoDataContagem "${agregacao.dataContagem}" .
                     `
-                    if(agregacao.ni.lowerCase() === "dono") query += `
-                        clav:temNI clav:vc_naturezaIntervencao_dono ;`
-                    else if(agregacao.ni.lowerCase() === "participante") query += `
-                        clav:temNI clav:vc_naturezaIntervencao_participante ;`
+                    if(agregacao.ni.toLowerCase() === "dono") 
+                        query += `
+                            clav:${idAg} clav:temNI clav:vc_dono .
+                        `
+                    else 
+                        query += `
+                            clav:${idAg} clav:temNI clav:vc_participante .
+                        `
                     
-                    query += `
-                        clav:agregacaoDataContagem "${agregacao.dataContagem}" .
-                    `
+                    indexAg++;
                 }
+                indexZona++;
             }
-            return execQuery("update", query)
-                    .then(response => normalize(response));
+            query += `
+            }
+            `
+            var inserir = "INSERT DATA "+query;
+            var ask = "ASK "+ query;
+
+            return execQuery("update", inserir).then(res =>
+                execQuery("query", ask).then(result => {
+                  if (result.boolean) return "Sucesso na inserção do auto de eliminação";
+                  else throw "Insucesso na inserção do auto de eliminação";
+                })
+              );
         }
     } 
     catch(erro) { throw (erro);}
