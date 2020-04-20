@@ -180,7 +180,7 @@ AutosEliminacao.adicionar = async function (auto) {
         resultNum = normalize(resultNum)
         
         if(resultLeg.length > 0) {
-            var id = "ae_"+(resultNum.length+1)+"_"+auto.entidade.split("_")[1]+"_"+currentTime.getFullYear()
+            var id = "ae_"+auto.entidade.split("_")[1]+"_"+currentTime.getFullYear()+"_"+(resultNum.length+1)
             var numero = id.split("ae_")[1].replace(/\_/g,"/")
             var data = currentTime.getFullYear()+"-"+(currentTime.getMonth()+1)+"-"+currentTime.getDate()
             var query = `{
