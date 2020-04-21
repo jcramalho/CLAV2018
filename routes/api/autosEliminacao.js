@@ -40,28 +40,16 @@ router.get('/:id', Auth.isLoggedInKey, [
 
 //Criar um AE && Importar AE
 router.post('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
-    existe('body', 'auto'),
-    estaEm('query', 'tipo', vcTipoAE).optional().customSanitizer(tipoSanitizer)
+    existe('body', 'auto')
 ], (req, res) => {
     const errors = validationResult(req)
     if(!errors.isEmpty()){
         return res.status(422).jsonp(errors.array())
     }
 
-    User.getUserById(req.user.id, function (err, user) {
-        if(err) res.status(500).json(`Erro na consulta de utilizador para criação do AE: ${err}`)
-        else {
-            if(req.query.tipo) {
-                AutosEliminacao.importar(req.body.auto, req.query.tipo, user)
-                    .then(dados => res.jsonp(req.query.tipo+" adicionado aos pedidos com sucesso com codigo: "+dados.codigo))
-                    .catch(erro => res.status(500).json(`Erro na adição do AE: ${erro}`))
-            } else {
-                AutosEliminacao.criar(req.body.auto, user)
-                    .then(dados => res.jsonp("Auto de Eliminação adicionado aos pedidos com sucesso com codigo: "+dados.codigo))
-                    .catch(erro => res.status(500).json(`Erro na criação do AE: ${erro}`))
-            }
-        }
-    });
+    AutosEliminacao.adicionar(req.body.auto)
+        .then(dados => res.jsonp(dados))
+        .catch(err => res.status(500).send(`Erro na criação de auto de eliminação: ${err}`))
         
 })
 
