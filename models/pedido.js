@@ -100,7 +100,7 @@ PedidoSchema.pre("validate", async function (next) {
         {codigo: 1, _id: 0}
     );
     pedidos = pedidos.map(p => Number(p.codigo.split("-")[1]))
-    let count = Math.max.apply(null, pedidos) + 1
+    let count = pedidos.reduce((a,b) => Math.max(a, b), 0) + 1
     this.codigo = `${year}-${count}`;
   }
   next();
