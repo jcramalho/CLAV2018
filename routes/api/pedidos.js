@@ -100,12 +100,17 @@ router.put('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
     existe('body', 'distribuicao.responsavel')
         .bail()
         .isEmail()
-        .withMessage("Email inválido")
-        .optional(),
+        .withMessage("Email inválido"),
     existe('body', 'distribuicao.data')
         .bail()
         .isISO8601({strict: true})
         .withMessage("A data é inválida"),
+    existe('body', 'distribuicao.proximoResponsavel.nome', existe('body', 'distribuicao.proximoResponsavel')),
+    verificaExisteEnt('body', 'distribuicao.proximoResponsavel.entidade', existe('body', 'distribuicao.proximoResponsavel')),
+     existe('body', 'distribuicao.proximoResponsavel.email', existe('body', 'distribuicao.proximoResponsavel'))
+        .bail()
+        .isEmail()
+        .withMessage("Email inválido"),
     existe('body', 'distribuicao.despacho').optional()
 ], (req, res) => {
     const errors = validationResult(req)
@@ -127,12 +132,17 @@ router.post('/:codigo/distribuicao', Auth.isLoggedInUser, Auth.checkLevel([1, 3,
     existe('body', 'responsavel')
         .bail()
         .isEmail()
-        .withMessage("Email inválido")
-        .optional(),
+        .withMessage("Email inválido"),
     existe('body', 'data')
         .bail()
         .isISO8601({strict: true})
         .withMessage("A data é inválida"),
+    existe('body', 'proximoResponsavel.nome', existe('body', 'proximoResponsavel')),
+    verificaExisteEnt('body', 'proximoResponsavel.entidade', existe('body', 'proximoResponsavel')),
+    existe('body', 'proximoResponsavel.email', existe('body', 'proximoResponsavel'))
+        .bail()
+        .isEmail()
+        .withMessage("Email inválido"),
     existe('body', 'despacho').optional()
 ], (req, res) => {
     const errors = validationResult(req)

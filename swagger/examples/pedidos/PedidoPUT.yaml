@@ -16,5 +16,9 @@ pedido:
 distribuicao:
   estado: "Submetido"
   responsavel: "example3@example.com"
+  proximoResponsavel:
+    nome: "João"
+    entidade: "ent_DGLAB"
+    email: "example2@example.com"
   data: "2020-04-19T19:24:58.278Z"
   despacho: "Despacho a inserir"

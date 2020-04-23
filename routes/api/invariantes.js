@@ -12,7 +12,7 @@ function verificaId(location, field, fieldDep){
         regex = /^rel_\d+$/
     }else{
         starts = 'inv_'
-        regex = /^inv_\d+$/
+        regex = /^inv_\d+(_\d+)?$/
     }
     return comecaPorEMatch(location, field, starts, regex)
         .custom(existeDep(location, fieldDep))

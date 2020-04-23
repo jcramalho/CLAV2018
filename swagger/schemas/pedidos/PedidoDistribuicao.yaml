@@ -5,6 +5,20 @@ properties:
   responsavel:
     type: string
     format: email
+  proximoResponsavel:
+    type: object
+    properties:
+      nome:
+        type: string
+      entidade:
+        $ref: '#/components/schemas/EntidadeId'
+      email:
+        type: string
+        email: string
+    required:
+      - nome
+      - entidade
+      - email
   data:
     type: string
     format: date-time
@@ -12,4 +26,5 @@ properties:
     type: string
 required:
   - estado
+  - responsavel
   - data

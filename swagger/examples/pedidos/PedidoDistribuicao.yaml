@@ -1,4 +1,8 @@
 estado: "Submetido"
 responsavel: "example2@example.com"
+proximoResponsavel:
+  nome: "Maria"
+  entidade: "ent_DGLAB"
+  email: "example@example.com"
 data: "2020-04-16T19:22:49.400Z"
 despacho: "Despacho a inserir"

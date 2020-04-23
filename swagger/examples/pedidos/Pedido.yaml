@@ -8,8 +8,12 @@ objeto:
   tipo: "Classe"
   acao: "Criação"
 distribuicao:
-  estado: "Submetido"
-  responsavel: "example2@example.com"
-  data: "2020-04-19T19:13:09.802Z"
-  despacho: "Despacho a inserir"
+  - estado: "Submetido"
+    responsavel: "example2@example.com"
+    proximoResponsavel:
+      nome: "Maria"
+      entidade: "ent_DGLAB"
+      email: "example@example.com"
+    data: "2020-04-19T19:13:09.802Z"
+    despacho: "Despacho a inserir"
 entidade: "ent_DGLAB"
