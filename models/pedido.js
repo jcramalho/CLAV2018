@@ -11,9 +11,6 @@ const PedidoSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  proximoResponsavel: {
-    type: String, // Responsável pela execução do próximo estado do pedido
-  },
   data: {
     type: Date,
     default: Date.now,
@@ -75,6 +72,17 @@ const PedidoSchema = new mongoose.Schema({
       responsavel: {
         type: String, // Email do técnico responsável pelo pedido neste estado
       },
+  proximoResponsavel: {
+    nome: {
+      type: String
+    },
+    entidade: {
+      type: String
+    },
+    email: {
+      type: String
+    }
+  },
       data: {
         type: Date,
         default: Date.now,
