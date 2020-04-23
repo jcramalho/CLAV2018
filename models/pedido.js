@@ -93,8 +93,15 @@ const PedidoSchema = new mongoose.Schema({
 
 PedidoSchema.pre("validate", async function (next) {
   if (!this.codigo) {
-    let count = await mongoose.model("Pedido").estimatedDocumentCount();
-    this.codigo = `${new Date().getFullYear()}-${count}`;
+    const year = new Date().getFullYear()
+    const pattern = "^" + year + "-.*"
+    var pedidos = await mongoose.model("Pedido").find(
+        {codigo: {$regex: pattern}},
+        {codigo: 1, _id: 0}
+    );
+    pedidos = pedidos.map(p => Number(p.codigo.split("-")[1]))
+    let count = pedidos.reduce((a,b) => Math.max(a, b), 0) + 1
+    this.codigo = `${year}-${count}`;
   }
   next();
 });
