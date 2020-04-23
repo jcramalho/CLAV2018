@@ -13,7 +13,9 @@ properties:
   objeto:
     $ref: '#/components/schemas/PedidoObjeto'
   distribuicao:
-    $ref: '#/components/schemas/PedidoDistribuicao'
+    type: array
+    items:
+      $ref: '#/components/schemas/PedidoDistribuicao'
   entidade:
     $ref: '#/components/schemas/EntidadeId'
 required:
@@ -23,3 +25,4 @@ required:
   - data
   - objeto
   - distribuicao
+  - entidade

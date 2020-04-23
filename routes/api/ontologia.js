@@ -25,7 +25,7 @@ router.get('/', Auth.isLoggedInKey, [
     }
 
     var format
-    if(req.query.fs && formats.includes(req.query.fs)){
+    if(req.query.fs && vcOntoFormats.includes(req.query.fs)){
         format = req.query.fs
     } else format = req.headers.accept
 

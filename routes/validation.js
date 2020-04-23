@@ -12,13 +12,26 @@ const getLocation = {
     'cookie': cookie
 }
 
-module.exports.existe = function (location, field){
+module.exports.existe = function (location, field, ifF){
+    ifF = ifF || undefined
     const msg = 'Valor é undefined, null ou vazio'
 
     try{
-        return getLocation[location](field, msg).exists({checkFalsy: true})
+        if(!ifF){
+            return getLocation[location](field, msg).exists({checkFalsy: true})
+        }else{
+            return getLocation[location](field, msg)
+                .if(ifF)
+                .exists({checkFalsy: true})
+        }
     }catch(err){
-        return check(field, msg).exists({checkFalsy: true})
+        if(!ifF){
+            return check(field, msg).exists({checkFalsy: true})
+        }else{
+            return check(field, msg)
+                .if(ifF)
+                .exists({checkFalsy: true})
+        }
     }
 }
 
@@ -29,29 +42,32 @@ module.exports.enumList = function(list){
     return ret
 }
 
-module.exports.estaEm = function (location, field, list){
+module.exports.estaEm = function (location, field, list, ifF){
     var strList = module.exports.enumList(list)
     const msg = "Valor diferente de " + strList
+    ifF = ifF || undefined
 
-    return module.exports.existe(location, field)
+    return module.exports.existe(location, field, ifF)
         .bail()
         .isIn(list)
         .withMessage(msg)
 }
 
-module.exports.comecaPor = function (location, field, starts){
+module.exports.comecaPor = function (location, field, starts, ifF){
     const msg = `Valor não começa por '${starts}'`
+    ifF = ifF || undefined
 
-    return module.exports.existe(location, field)
+    return module.exports.existe(location, field, ifF)
         .bail()
         .custom(value => value.startsWith(starts))
         .withMessage(msg)
 }
 
-module.exports.comecaPorEMatch = function (location, field, starts, regex){
+module.exports.comecaPorEMatch = function (location, field, starts, regex, ifF){
     const msg = `Formato Inválido. Não respeita o regex: '${regex}'`
+    ifF = ifF || undefined
 
-    return module.exports.comecaPor(location, field, starts)
+    return module.exports.comecaPor(location, field, starts, ifF)
         .bail()
         .matches(new RegExp(regex))
         .withMessage(msg)
@@ -90,131 +106,153 @@ module.exports.existeClasse = async classeCodigo => {
     }
 }
 
-module.exports.verificaClasseId = function(location, field){
+module.exports.verificaClasseId = function(location, field, ifF){
+    ifF = ifF || undefined
     return module.exports.comecaPorEMatch(
         location,
         field,
         'c',
-        '^c\\d{3}(\\.\\d{2}(\\.\\d{3}(\\.\\d{2})?)?)?$'
+        '^c\\d{3}(\\.\\d{2}(\\.\\d{3}(\\.\\d{2})?)?)?$',
+        ifF
     )
 }
 
-module.exports.match = function(location, field, regex){
+module.exports.match = function(location, field, regex, ifF){
     const msg = `Formato Inválido. Não respeita o regex: '${regex}'`
+    ifF = ifF || undefined
 
-    return module.exports.existe(location, field)
+    return module.exports.existe(location, field, ifF)
         .bail()
         .matches(new RegExp(regex))
         .withMessage(msg)
 }
 
-module.exports.verificaClasseCodigo = function(location, field){
+module.exports.verificaClasseCodigo = function(location, field, ifF){
     const regex = "^\\d{3}(\\.\\d{2}(\\.\\d{3}(\\.\\d{2})?)?)?$"
-    return module.exports.match(location, field, regex)
+    ifF = ifF || undefined
+    return module.exports.match(location, field, regex, ifF)
 }
 
-module.exports.verificaPedidoCodigo = function(location, field){
+module.exports.verificaPedidoCodigo = function(location, field, ifF){
     const regex = "^\\d{4}-\\d+$"
-    return module.exports.match(location, field, regex)
+    ifF = ifF || undefined
+    return module.exports.match(location, field, regex, ifF)
 }
 
-module.exports.verificaNumeroLeg = function(location, field){
+module.exports.verificaNumeroLeg = function(location, field, ifF){
     const regex = "^\\d+(-\\w)?\\/\\d+$"
-    return module.exports.match(location, field, regex)
+    ifF = ifF || undefined
+    return module.exports.match(location, field, regex, ifF)
 }
 
-module.exports.verificaLegId = function(location, field){
-    return module.exports.comecaPorEMatch(location, field, 'leg_', '^leg_.+$')
+module.exports.verificaLegId = function(location, field, ifF){
+    ifF = ifF || undefined
+    return module.exports.comecaPorEMatch(location, field, 'leg_', '^leg_.+$', ifF)
 }
 
-module.exports.verificaJustId = function(location, field){
+module.exports.verificaJustId = function(location, field, ifF){
+    ifF = ifF || undefined
     return module.exports.comecaPorEMatch(
         location,
         field,
         'just_',
-        '^just_(df|pca)_c\\d{3}(\\.\\d{2}(\\.\\d{3}(\\.\\d{2})?)?)?$'
+        '^just_(df|pca)_c\\d{3}(\\.\\d{2}(\\.\\d{3}(\\.\\d{2})?)?)?$',
+        ifF
     )
 }
 
 //Valida o id de uma possível entidade
-module.exports.verificaEntId = function (location, field){
-    return module.exports.comecaPorEMatch(location, field, 'ent_', '^ent_.+$')
+module.exports.verificaEntId = function (location, field, ifF){
+    ifF = ifF || undefined
+    return module.exports.comecaPorEMatch(location, field, 'ent_', '^ent_.+$', ifF)
 }
 
 //Valida o id de uma possível tipologia
-module.exports.verificaTipId = function (location, field){
-    return module.exports.comecaPorEMatch(location, field, 'tip_', '^tip_.+$')
+module.exports.verificaTipId = function (location, field, ifF){
+    ifF = ifF || undefined
+    return module.exports.comecaPorEMatch(location, field, 'tip_', '^tip_.+$', ifF)
 }
 
 //Valida o id de um possível vocabulario
-module.exports.verificaVCId = function (location, field){
-    return module.exports.comecaPorEMatch(location, field, 'vc_', '^vc_.+$')
+module.exports.verificaVCId = function (location, field, ifF){
+    ifF = ifF || undefined
+    return module.exports.comecaPorEMatch(location, field, 'vc_', '^vc_.+$', ifF)
 }
 
 //Valida o id de um possível termo de um vocabulario
-module.exports.verificaTermoVCId = function (location, field){
-    return module.exports.comecaPorEMatch(location, field, 'vc_', '^vc_.+_.+$')
+module.exports.verificaTermoVCId = function (location, field, ifF){
+    ifF = ifF || undefined
+    return module.exports.comecaPorEMatch(location, field, 'vc_', '^vc_.+_.+$', ifF)
 }
 
 //valida e o id e verifica se a entidade existe na BD
-module.exports.verificaExisteEnt = function(location, field){
-    return module.exports.verificaEntId(location, field)
+module.exports.verificaExisteEnt = function(location, field, ifF){
+    ifF = ifF || undefined
+    return module.exports.verificaEntId(location, field, ifF)
         .bail()
         .custom(module.exports.existeEnt)
         .withMessage("Entidade não existe na BD")
 }
 
 //valida e o id e verifica se a tipologia existe na BD
-module.exports.verificaExisteTip = function(location, field){
-    return module.exports.verificaTipId(location, field)
+module.exports.verificaExisteTip = function(location, field, ifF){
+    ifF = ifF || undefined
+    return module.exports.verificaTipId(location, field, ifF)
         .bail()
         .custom(module.exports.existeTip)
         .withMessage("Entidade não existe na BD")
 }
 
 //valida e o id e verifica se a classe existe na BD
-module.exports.verificaExisteClasse = function(location, field){
-    return module.exports.verificaClasseCodigo(location, field)
+module.exports.verificaExisteClasse = function(location, field, ifF){
+    ifF = ifF || undefined
+    return module.exports.verificaClasseCodigo(location, field, ifF)
         .bail()
         .custom(module.exports.existeClasse)
         .withMessage("Classe não existe na BD")
 }
 
 //Valida o id de um possível AE
-module.exports.verificaAEId = function (location, field){
-    return module.exports.comecaPorEMatch(location, field, 'ae_', '^ae_.+$')
+module.exports.verificaAEId = function (location, field, ifF){
+    ifF = ifF || undefined
+    return module.exports.comecaPorEMatch(location, field, 'ae_', '^ae_.+$', ifF)
 }
 
 //Valida o id de uma possível TS
-module.exports.verificaTSId = function (location, field){
-    return module.exports.match(location, field, '^.+$')
+module.exports.verificaTSId = function (location, field, ifF){
+    ifF = ifF || undefined
+    return module.exports.match(location, field, '^.+$', ifF)
 }
 
 //Valida um conjunto de ids de possiveis entidades
-module.exports.verificaEnts = function (location, field){
-    return module.exports.existe(location, field)
+module.exports.verificaEnts = function (location, field, ifF){
+    ifF = ifF || undefined
+    return module.exports.existe(location, field, ifF)
         .bail()
         .matches(/^ent_[^,]+(,ent_[^,]+)*$/)
         .withMessage("Valor inválido, exemplo: 'ent_AAN,ent_SEF'")
 }
 
 //Valida um conjunto de ids de possiveis tipologias
-module.exports.verificaTips = function (location, field){
-    return module.exports.existe(location, field)
+module.exports.verificaTips = function (location, field, ifF){
+    ifF = ifF || undefined
+    return module.exports.existe(location, field, ifF)
         .bail()
         .matches(/^tip_[^,]+(,tip_[^,]+)*$/)
         .withMessage("Valor inválido, exemplo: 'tip_AAC,tip_AF'")
 }
 
-module.exports.verificaUserId = function(location, field){
+module.exports.verificaUserId = function(location, field, ifF){
+    ifF = ifF || undefined
     return oneOf([
-        module.exports.eMongoId(location, field),
-        module.exports.eNIC(location, field)
+        module.exports.eMongoId(location, field, ifF),
+        module.exports.eNIC(location, field, ifF)
     ], `'${field}' é um Id do MongoDB ou um NIC`)
 }
 
-module.exports.dataValida = function (location, field){
-    return module.exports.existe(location, field)
+module.exports.dataValida = function (location, field, ifF){
+    ifF = ifF || undefined
+    return module.exports.existe(location, field, ifF)
         .bail()
         .matches(/^\d{4}-\d{2}-\d{2}$/) //garante formato da data
         .withMessage("A data deve estar no formato: AAAA-MM-DD")
@@ -234,8 +272,9 @@ module.exports.existeDep = function (location, fieldDep){
     }
 }
 
-module.exports.verificaLista = function (location, field){
-    return module.exports.existe(location, field)
+module.exports.verificaLista = function (location, field, ifF){
+    ifF = ifF || undefined
+    return module.exports.existe(location, field, ifF)
         .bail()
         .isArray()
         .withMessage("Não é um array")
@@ -282,15 +321,17 @@ module.exports.estaAtiva = async function(id){
     }
 }
 
-module.exports.eMongoId = function(location, field){
-    return module.exports.existe(location, field)
+module.exports.eMongoId = function(location, field, ifF){
+    ifF = ifF || undefined
+    return module.exports.existe(location, field, ifF)
         .bail()
         .isMongoId()
         .withMessage("Formato do id inválido")
 }
 
-module.exports.eNIC = function(location, field){
-    return module.exports.match(location, field, '^[0-9]{7,}$')
+module.exports.eNIC = function(location, field, ifF){
+    ifF = ifF || undefined
+    return module.exports.match(location, field, '^[0-9]{7,}$', ifF)
 }
 
 //Vocabulários
