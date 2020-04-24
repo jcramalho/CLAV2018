@@ -134,7 +134,7 @@ module.exports.verificaClasseCodigo = function(location, field, ifF){
 }
 
 module.exports.verificaPedidoCodigo = function(location, field, ifF){
-    const regex = "^\\d{4}-\\d+$"
+    const regex = "^\\d{4}-\\d{7}$"
     ifF = ifF || undefined
     return module.exports.match(location, field, regex, ifF)
 }

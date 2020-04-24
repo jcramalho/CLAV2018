@@ -109,7 +109,7 @@ PedidoSchema.pre("validate", async function (next) {
     );
     pedidos = pedidos.map(p => Number(p.codigo.split("-")[1]))
     let count = pedidos.reduce((a,b) => Math.max(a, b), 0) + 1
-    this.codigo = `${year}-${count}`;
+    this.codigo = `${year}-${count.toString().padStart(7, '0')}`;
   }
   next();
 });

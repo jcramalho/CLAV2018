@@ -3,6 +3,6 @@ email: "exemplo@exemplo.com"
 entidade: "ent_DGLAB"
 internal: true
 level: 3
-local: true
+temPass: true
 nCalls: 0
 name: "Maria"

@@ -1,19 +1,21 @@
 openapi: 3.0.0
 info: 
   description: |
-    Esta é a API do projeto CLAV. Pode encontrar mais informação sobre o CLAV em [http://clav.dglab.gov.pt](https://clav.dglab.gov.pt).
+    Esta é a API do projeto CLAV. Pode encontrar mais informação sobre a CLAV em [https://clav.dglab.gov.pt](https://clav.dglab.gov.pt).
 
     Por forma a usar esta API necessita em grande parte dos pedidos de usar um método de autenticação (Chaves API ou Token de um utilizador).
 
-    As chaves API podem ser criadas na rota POST /chaves e serem posteriormente usadas em grande parte dos pedidos GET usando a chave API num dos métodos de autenticação (apiKeyQuery ou apikeyAuth).
+    As chaves API podem ser criadas na rota [POST /chaves](#/Chaves/post_chaves) e serem posteriormente usadas em grande parte dos pedidos GET. Nesta documentação por forma a usar a Chave API deve usar um dos métodos de autenticação aqui disponíveis (apiKeyQuery (a Chave API é colocada na querystring 'apikey') ou apikeyAuth (a Chave API é colocada no cabeçalho 'Authorization' sendo que o utilizador tem de colocar no formato 'apikey <Chave API>')).
 
-    A chave API tem a duração de 30 dias pelo que deve ser renovada na rota PUT /chaves/renovar indicando o email associado à chave.
+    A chave API tem a duração de 30 dias pelo que deve ser renovada na rota [PUT /chaves/renovar](#/Chaves/put_chaves_renovar) indicando o email associado à chave.
 
-    Já um token de utilizador tem de ser obtido através do login de um utilizador (POST /users/login devolve um token) tendo acesso a todas as rotas que as chaves API conseguem aceder mais algumas rotas GET, POST, PUT e DELETE que dependem do nível do utilizador. Por forma a usar este tipo de autenticação use o método de autenticação userQuery ou userAuth.
+    Já um token de utilizador tem de ser obtido através do login de um utilizador ([POST /users/login](#/Utilizadores/post_users_login) devolve um token, se ainda não definiu uma password para a sua conta necessitará de definir se pretender usar esta rota) tendo acesso a todas as rotas que as chaves API conseguem aceder bem como algumas rotas GET, POST, PUT e DELETE que puderá aceder dependendo do seu nível do utilizador. Por forma a usar este tipo de autenticação nesta documentação use o método de autenticação userQuery (o token é colocado na querystring 'token') ou userAuth (o token é colocado no cabeçalho 'Authorization' onde o utilizador tem de colocar no formato 'token <token>').
 
-    Se tiver um token de um utilizador não necessita de indicar uma chave API para aceder aos GET's que a chave API dá acesso.
+    Se tiver um token de um utilizador não necessita de indicar uma chave API para aceder aos GET's que a chave API dá acesso. O token tem a duração de 8h ao fim das quais necessita de realizar uma nova autenticação através da rota [POST /users/login](#/Utilizadores/post_users_login) e usar o novo token em vez do antigo.
+
+    Os métodos de autenticação disponíveis podem ser acedidos ao carregar num dos cadeados. Ao carregar no botão 'Authorize' irá aparecer todos os métodos de autenticação. Se carregar no cadeado de uma rota irá apenas aparecer os métodos de autenticação que a rota suporta (permite/autoriza).
     
-    **Última alteração: 16/04/2020**
+    **Última alteração: 24/04/2020**
   version: 2.0.0
   title: CLAV API
   contact:
@@ -95,7 +97,7 @@ components:
       type: apiKey
       in: header
       name: Authorization
-      description: 'Introduza a sua chave API com o formato: **apikey &lt;chaveAPI>**'
+      description: 'Introduza a sua chave API no formato: **apikey &lt;chaveAPI>**'
     userQuery:
       type: apiKey
       in: query
@@ -105,7 +107,7 @@ components:
       type: apiKey
       in: header
       name: Authorization
-      description: 'Introduza o seu token com o formato: **token &lt;token>**'
+      description: 'Introduza o seu token no formato: **token &lt;token>**'
   responses:
     UnauthorizedKey:
       description: Precisa de estar autenticado ou de usar uma chave API. O seu token ou a chave API expirou?

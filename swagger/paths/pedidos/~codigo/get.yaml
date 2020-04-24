@@ -11,7 +11,7 @@ parameters:
     description: Identificador de um pedido
     schema:
       $ref: '#/components/schemas/PedidoCodigo'
-    example: 2019-321
+    example: 2019-0000321
     required: true
 responses:
   200:

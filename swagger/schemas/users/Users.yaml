@@ -18,6 +18,11 @@ items:
       minimum: 0
     name:
       type: string
+    local:
+      type: object
+      properties:
+        password:
+          type: string
   required:
     - _id
     - email
