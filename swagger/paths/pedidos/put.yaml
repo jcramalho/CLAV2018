@@ -20,7 +20,7 @@ responses:
       application/json:
         schema:
           $ref: '#/components/schemas/PedidoCodigo'
-        example: 2020-11
+        example: 2020-0000011
   401:
     $ref: '#/components/responses/UnauthorizedUser'
   403:
