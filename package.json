@@ -37,6 +37,7 @@
     "mongoose": "^5.9.5",
     "morgan": "^1.9.1",
     "nanoid": "^2.1.11",
+    "ncp": "^2.0.0",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",

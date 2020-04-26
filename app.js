@@ -143,6 +143,7 @@ mainRouter.use('/tipologias',require('./routes/api/tipologias'), outputFormat);
 mainRouter.use('/legislacao',require('./routes/api/leg'), outputFormat);
 mainRouter.use('/classes',require('./routes/api/classes'), outputFormat);
 mainRouter.use('/noticias',require('./routes/api/noticias'));
+mainRouter.use('/documentacaoCientifica',require('./routes/api/documentacaoCientifica'));
 mainRouter.use('/notasAp',require('./routes/api/notasAp'));
 mainRouter.use('/exemplosNotasAp',require('./routes/api/exemplosNotasAp'));
 mainRouter.use('/indicePesquisa',require('./routes/api/indicePesquisa'));
