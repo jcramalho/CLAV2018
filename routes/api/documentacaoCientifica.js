@@ -130,6 +130,50 @@ router.post('/', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), function (r
     })
 })
 
+// Importação de um ficheiro com registos - Pode ser adição (append) à BD ou substituição (drop)
+router.post('/importar', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), (req, res) => {
+    var form = new formidable.IncomingForm()
+    form.parse(req, async (error, fields, formData) => {
+        if(!error){
+            // Verificar os operacao e ficheiro
+            if(fields.opcao && formData.file && formData.file.type && formData.file.path){
+                fs.readFile(formData.file.path, 'utf8', function read(err, data) {
+                    if (err) {
+                        res.status(500).json(`Erro na importação da Documentação: ${err}`)
+                    }
+                    else {
+                        if(fields.opcao === 'adição'){
+                            // Parsing dos dados
+                            var dados = JSON.parse(data)
+                            // Chamada do controlador de append 
+                            DocumentacaoCientifica.append(dados)
+                                .then(dados => res.jsonp(dados))
+                                .catch(erro => res.status(500).jsonp(erro))
+                        }
+                        else if(fields.opcao === 'substituição'){
+                            // Parsing dos dados
+                            var dados = JSON.parse(data)
+                            // Chamada do controlador de drop e povoamento da BD
+                            DocumentacaoCientifica.replace(dados)
+                                .then(dados => res.jsonp(dados))
+                                .catch(erro => res.status(500).jsonp(erro))
+                        }
+                        else{
+                            res.status(500).json(`Erro na importação: as opções são "adição" ou "substituição."`)
+                        } 
+                    }
+                });
+            }
+            else {
+                res.status(500).json(`Erro nos campos da importação: deve fornecer um ficheiro e a opção`)
+            }
+        }
+        else {
+            res.status(500).json(`Erro na importação da Documentação: ${error}`)
+        }
+    })
+})
+
 // PUT - remover ficheiro antigo se necessario, inserir novo se existente + atualizar objeto
 router.put('/:id', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), (req, res) => {
    var form = new formidable.IncomingForm()
