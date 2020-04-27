@@ -7,16 +7,36 @@ var formidable = require("formidable")
 var ncp = require('ncp').ncp;
 ncp.limit = 16;
 var fs = require('fs')
+var fsExtra = require("fs.extra")
 var path = require('path')
 
 var express = require('express')
 var router = express.Router()
 
+var validKeys = ["classe", "titulo", "url", "local", "ano", "visivel", "autores"];
+const { query, validationResult } = require('express-validator');
+const { existe, eMongoId, match } = require('../validation')
+
 // Lista toda a documentacao Científica
-router.get('/', Auth.isLoggedInKey, (req, res) => {
-    var validKeys = ["classe", "titulo", "url", "local", "ano", "visivel", "autores"];
+router.get('/', Auth.isLoggedInKey, [
+    existe("query", "classe").optional(),
+    existe("query", "titulo").optional(),
+    query('url', 'Valor não é um URL').isURL({require_tld: false}).optional(),
+    existe("query", "local").optional(),
+    match("query", "ano", "\\d{4,}").optional(),
+    existe("query", "visivel")
+        .bail()
+        .isBoolean()
+        .withMessage("Não é um valor booleano ('true', 'false')")
+        .optional(),
+    existe("query", "autores").optional()
+], (req, res) => {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
+    }
+
     var queryData = url.parse(req.url, true).query;
-    
     var filtro = Object.entries(queryData)
         .filter(([k, v]) => v !== undefined && validKeys.includes(k))
 
@@ -60,14 +80,28 @@ router.get('/exportar', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), (req
 })
 
 // Consulta de uma entrada na documentação
-router.get('/:id', Auth.isLoggedInKey, (req, res) => {
+router.get('/:id', Auth.isLoggedInKey, [
+    eMongoId('params', 'id')
+], (req, res) => {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
+    }
+
     DocumentacaoCientifica.consultar(req.params.id)
         .then(dados => dados ? res.jsonp(dados) : res.status(404).send(`Erro. O elemento da Documentação '${req.params.id}' não existe`))
 	    .catch(erro => res.status(500).send(`Erro na consulta do elemento da Documentação '${req.params.id}': ${erro}`))
 })
 
 // Download de um ficheiro na documentação
-router.get('/:id/ficheiro', Auth.isLoggedInKey, (req, res) => {
+router.get('/:id/ficheiro', Auth.isLoggedInKey, [
+    eMongoId('params', 'id')
+], (req, res) => {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
+    }
+
     DocumentacaoCientifica.consultar_ficheiro(req.params.id)
         .then(dados => dados && dados.ficheiro ? res.download(path.resolve(__dirname + '/../../' + dados.ficheiro.path)) : res.status(404).send(`Erro. O ficheiro da Documentação '${req.params.id}' não existe`))
         .catch(erro => res.status(500).send(`Erro na consulta do ficheiro do elemento da Documentação '${req.params.id}': ${erro}`))
@@ -90,7 +124,7 @@ router.post('/', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), function (r
                         var dbpath = '/public/documentacao_apoio/Produção_Técnica_e_Científica/' + fields.classe.replace(/ /g, '_') + '/' + formData.file.name;
                         var newPath = path.resolve(__dirname + '/../../' + dbpath);
                         
-                        fs.rename(oldPath, newPath, function (err) {
+                        fsExtra.move(oldPath, newPath, function (err) {
                             if (err) {
                                 res.status(500).json(`Erro na adição da Documentação: ${err}`)
                             }
@@ -106,22 +140,22 @@ router.post('/', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), function (r
                                 DocumentacaoCientifica.criar(documento)
                                     .then(dados => {
                                         if(dados) res.jsonp("Documentação adicionada com sucesso")
-                                        else res.status(404).jsonp("Erro na adição da Documentação " + documento.titulo)
+                                        else res.status(500).jsonp("Erro na adição da Documentação " + documento.titulo)
                                     })
-                                    .catch(erro => res.status(404).jsonp("Erro na adição da Documentação " + documento.titulo + ": " + erro))
+                                    .catch(erro => res.status(500).jsonp("Erro na adição da Documentação " + documento.titulo + ": " + erro))
                             }
                         })
                     } else {
                         DocumentacaoCientifica.criar(documento)
                             .then(dados => {
                                 if(dados) res.jsonp("Documentação adicionada com sucesso")
-                                else res.status(404).jsonp("Erro na adição da Documentação " + documento.titulo)
+                                else res.status(500).jsonp("Erro na adição da Documentação " + documento.titulo)
                             })
-                            .catch(erro => res.status(404).jsonp("Erro na adição da Documentação " + documento.titulo + ": " + erro))
+                            .catch(erro => res.status(500).jsonp("Erro na adição da Documentação " + documento.titulo + ": " + erro))
                     }
                 }
             else {
-                res.status(500).json(`Erro nos campos da documentação: ${JSON.stringify(documento)}`)
+                res.status(500).json(`Erro nos campos da documentação: ${JSON.stringify(fields)}`)
             }
         }
         else {
@@ -175,123 +209,137 @@ router.post('/importar', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), (re
 })
 
 // PUT - remover ficheiro antigo se necessario, inserir novo se existente + atualizar objeto
-router.put('/:id', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), (req, res) => {
-   var form = new formidable.IncomingForm()
-   form.parse(req, async (error, fields, formData) => {
-       if(!error){
-           // Verificar os dados textuais
-           if(fields.classe && fields.titulo && fields.url && fields.local &&
-               fields.ano && fields.visivel && fields.autores){
-                
-                var documento = fields;
-                documento.autores = fields.autores.split(",")
-                
-                DocumentacaoCientifica.consultar(req.params.id)
-                    .then(function(dados) { 
-                        if(dados){
-                            // Verificar se existe um ficheiro no form ou se passou a ser um link
-                            if((formData.file && formData.file.type && formData.file.path) || fields.url != "FICHEIRO"){
-                                // Se existir ficheiro tem que ser apagado 
-                                if(dados.ficheiro){
-                                    fs.unlink(path.resolve(__dirname + '/../../' + dados.ficheiro.path), function (err) {
-                                        if (err){
-                                            res.status(500).json(`Erro na atualização da Documentação: ${err}`)
-                                        }
-                                    });
-                                }    
-                                // Novo Ficheiro 
-                                if(formData.file && formData.file.type && formData.file.path){
-                                    // Inserir ficheiro e gerar objeto para mongo
-                                    var oldPath = formData.file.path;
-                                    var dbpath = '/public/documentacao_apoio/Produção_Técnica_e_Científica/' + fields.classe.replace(/ /g, '_') + '/' + formData.file.name;
-                                    var newPath = path.resolve(__dirname + '/../../' + dbpath);
-                                    
-                                    fs.rename(oldPath, newPath, function (err) {
-                                        if (err){
-                                            res.status(500).json(`Erro na atualização da Documentação: ${err}`)
-                                        } else {
-                                            var novoFicheiro = { 
-                                                data: formData.file.mtime,
-                                                nome: formData.file.name,
-                                                path: dbpath, 
-                                                mimetype: formData.file.type, 
-                                                size: formData.file.size
-                                            };
-                                            documento.ficheiro = novoFicheiro;
-                                            // Atualizar da Base de Dados
-                                            DocumentacaoCientifica.update(req.params.id, documento)
-                                                .then(dados => {
-                                                    if(dados) res.jsonp("Documentação modificado com sucesso")
-                                                    else res.status(404).jsonp("Erro na modificação da Documentação " + req.params.id)
-                                                })
-                                                .catch(erro => res.status(404).jsonp("Erro no update da Noticia "+req.params.id+": " + erro))   
-                                        }
-                                    })
-                                } else {
-                                    // Atualizar da Base de Dados
-                                    DocumentacaoCientifica.update(req.params.id, documento)
-                                        .then(dados => {
-                                            if(dados) res.jsonp("Documentação modificado com sucesso")
-                                            else res.status(404).jsonp("Erro na modificação da Documentação " + req.params.id)
-                                        })
-                                        .catch(erro => res.status(404).jsonp("Erro no update da Noticia "+req.params.id+": " + erro))
-                                }
-                            }
-                            // Caso seja alterada a classe da entrada, o ficheiro tem que ser mudado de pasta 
-                            else if(dados.classe !== fields.classe && dados.ficheiro !== undefined){
-                                var antes = path.resolve(__dirname + '/../../' + dados.ficheiro.path);
-                                var dbpath = '/public/documentacao_apoio/Produção_Técnica_e_Científica/' + fields.classe.replace(/ /g, '_') + '/' + dados.ficheiro.nome;
-                                var depois = path.resolve(__dirname + '/../../' + dbpath);
-                                    
-                                fs.rename(antes, depois, function (err) {
-                                    if (err){
-                                        res.status(500).json(`Erro na atualização da Documentação: ${err}`)
-                                    } else {
-                                        var ficheiro_atualizado = dados.ficheiro;
-                                        ficheiro_atualizado.path = dbpath;
-                                        documento.ficheiro = ficheiro_atualizado;
-                                        // Atualizar da Base de Dados
-                                        DocumentacaoCientifica.update(req.params.id, documento)
-                                            .then(dados => {
-                                                if(dados) res.jsonp("Documentação modificado com sucesso")
-                                                else res.status(404).jsonp("Erro na modificação da Documentação " + req.params.id)
-                                            })
-                                            .catch(erro => res.status(404).jsonp("Erro no update da Noticia "+req.params.id+": " + erro))   
-                                    }
-                                })
-                            } else {
-                                // Caso nao altere o ficheiro ja existente
-                                if(dados.ficheiro !== undefined) {
-                                    documento.ficheiro = dados.ficheiro;
-                                }
-                                // Atualizar da Base de Dados
-                                DocumentacaoCientifica.update(req.params.id, documento)
-                                    .then(dados => {
-                                        if(dados) res.jsonp("Documentação modificado com sucesso")
-                                        else res.status(404).jsonp("Erro na modificação da Documentação " + req.params.id)
-                                    })
-                                    .catch(erro => res.status(404).jsonp("Erro no update da Noticia "+req.params.id+": " + erro))   
-                            }
-                        } 
-                        else {
-                            res.status(404).send(`Erro. O elemento da Documentação '${req.params.id}' não existe`)
-                        }
-                    })
-                    .catch(erro => res.status(500).send(`Erro na eliminação do elemento da Documentação '${req.params.id}': ${erro}`))
-               }
-           else {
-               res.status(500).json(`Erro nos campos da documentação: ${JSON.stringify(documento)}`)
-           }
-       }
-       else {
-           res.status(500).json(`Erro na atualização da Documentação: ${error}`)
-       }
-   })
+router.put('/:id', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), [
+    eMongoId('params', 'id')
+], (req, res) => {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
+    }
+
+    var form = new formidable.IncomingForm()
+    form.parse(req, async (error, fields, formData) => {
+        if(!error){
+            // Verificar os dados textuais
+            if(fields.classe && fields.titulo && fields.url && fields.local &&
+                fields.ano && fields.visivel && fields.autores){
+                 
+                 var documento = fields;
+                 documento.autores = fields.autores.split(",")
+                 
+                 DocumentacaoCientifica.consultar(req.params.id)
+                     .then(function(dados) { 
+                         if(dados){
+                             // Verificar se existe um ficheiro no form ou se passou a ser um link
+                             if((formData.file && formData.file.type && formData.file.path) || fields.url != "FICHEIRO"){
+                                 // Se existir ficheiro tem que ser apagado 
+                                 if(dados.ficheiro){
+                                     fs.unlink(path.resolve(__dirname + '/../../' + dados.ficheiro.path), function (err) {
+                                         if (err){
+                                             res.status(500).json(`Erro na atualização da Documentação: ${err}`)
+                                         }
+                                     });
+                                 }    
+                                 // Novo Ficheiro 
+                                 if(formData.file && formData.file.type && formData.file.path){
+                                     // Inserir ficheiro e gerar objeto para mongo
+                                     var oldPath = formData.file.path;
+                                     var dbpath = '/public/documentacao_apoio/Produção_Técnica_e_Científica/' + fields.classe.replace(/ /g, '_') + '/' + formData.file.name;
+                                     var newPath = path.resolve(__dirname + '/../../' + dbpath);
+                                     
+                                     fsExtra.move(oldPath, newPath, function (err) {
+                                         if (err){
+                                             res.status(500).json(`Erro na atualização da Documentação: ${err}`)
+                                         } else {
+                                             var novoFicheiro = { 
+                                                 data: formData.file.mtime,
+                                                 nome: formData.file.name,
+                                                 path: dbpath, 
+                                                 mimetype: formData.file.type, 
+                                                 size: formData.file.size
+                                             };
+                                             documento.ficheiro = novoFicheiro;
+                                             // Atualizar da Base de Dados
+                                             DocumentacaoCientifica.update(req.params.id, documento)
+                                                 .then(dados => {
+                                                     if(dados) res.jsonp("Documentação modificado com sucesso")
+                                                     else res.status(500).jsonp("Erro na modificação da Documentação " + req.params.id)
+                                                 })
+                                                 .catch(erro => res.status(500).jsonp("Erro no update da Noticia "+req.params.id+": " + erro))   
+                                         }
+                                     })
+                                 } else {
+                                     // Atualizar da Base de Dados
+                                     DocumentacaoCientifica.update(req.params.id, documento)
+                                         .then(dados => {
+                                             if(dados) res.jsonp("Documentação modificado com sucesso")
+                                             else res.status(500).jsonp("Erro na modificação da Documentação " + req.params.id)
+                                         })
+                                         .catch(erro => res.status(500).jsonp("Erro no update da Noticia "+req.params.id+": " + erro))
+                                 }
+                             }
+                             // Caso seja alterada a classe da entrada, o ficheiro tem que ser mudado de pasta 
+                             else if(dados.classe !== fields.classe && dados.ficheiro !== undefined){
+                                 var antes = path.resolve(__dirname + '/../../' + dados.ficheiro.path);
+                                 var dbpath = '/public/documentacao_apoio/Produção_Técnica_e_Científica/' + fields.classe.replace(/ /g, '_') + '/' + dados.ficheiro.nome;
+                                 var depois = path.resolve(__dirname + '/../../' + dbpath);
+                                     
+                                 fsExtra.move(antes, depois, function (err) {
+                                     if (err){
+                                         res.status(500).json(`Erro na atualização da Documentação: ${err}`)
+                                     } else {
+                                         var ficheiro_atualizado = dados.ficheiro;
+                                         ficheiro_atualizado.path = dbpath;
+                                         documento.ficheiro = ficheiro_atualizado;
+                                         // Atualizar da Base de Dados
+                                         DocumentacaoCientifica.update(req.params.id, documento)
+                                             .then(dados => {
+                                                 if(dados) res.jsonp("Documentação modificado com sucesso")
+                                                 else res.status(500).jsonp("Erro na modificação da Documentação " + req.params.id)
+                                             })
+                                             .catch(erro => res.status(500).jsonp("Erro no update da Noticia "+req.params.id+": " + erro))   
+                                     }
+                                 })
+                             } else {
+                                 // Caso nao altere o ficheiro ja existente
+                                 if(dados.ficheiro !== undefined) {
+                                     documento.ficheiro = dados.ficheiro;
+                                 }
+                                 // Atualizar da Base de Dados
+                                 DocumentacaoCientifica.update(req.params.id, documento)
+                                     .then(dados => {
+                                         if(dados) res.jsonp("Documentação modificado com sucesso")
+                                         else res.status(500).jsonp("Erro na modificação da Documentação " + req.params.id)
+                                     })
+                                     .catch(erro => res.status(500).jsonp("Erro no update da Noticia "+req.params.id+": " + erro))   
+                             }
+                         } 
+                         else {
+                             res.status(404).send(`Erro. O elemento da Documentação '${req.params.id}' não existe`)
+                         }
+                     })
+                     .catch(erro => res.status(500).send(`Erro na eliminação do elemento da Documentação '${req.params.id}': ${erro}`))
+                }
+            else {
+                res.status(500).json(`Erro nos campos da documentação: ${JSON.stringify(fields)}`)
+            }
+        }
+        else {
+            res.status(500).json(`Erro na atualização da Documentação: ${error}`)
+        }
+    })
 })
 
 
 // DELETE -> ver se tem ficheiro, se sim apagar + apagar registo do mongo
-router.delete('/:id', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), async function(req, res) {
+router.delete('/:id', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), [
+    eMongoId('params', 'id')
+], async function(req, res) {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
+    }
+
     // GET -> ver se tem ficheiro 
     DocumentacaoCientifica.consultar(req.params.id)
         .then(function(dados) { 

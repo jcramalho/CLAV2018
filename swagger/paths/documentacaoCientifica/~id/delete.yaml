@@ -1,0 +1,27 @@
+summary: Elimina uma entrada da documentação científica
+description: Elimina uma entrada da documentação científica
+security:
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Documentação Científica
+parameters:
+  - name: id
+    in: path
+    description: 'Identificador de uma entrada na documentação científica'
+    schema:
+      type: string
+    required: true
+responses:
+  200:
+    description: Entrada na documentação científica eliminada com sucesso
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  404:
+    description: A entrada da documentação científica não existe
+  422:
+    $ref: '#/components/responses/ValidationParameters'
+  500:
+    description: Erro

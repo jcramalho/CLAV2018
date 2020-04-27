@@ -1,0 +1,34 @@
+summary: Atualização de uma entrada na documentação científica
+description: Atualização de uma entrada na documentação na documentação científica
+security:
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Documentação Científica
+parameters:
+  - name: id
+    in: path
+    description: 'Identificador de uma entrada na documentação científica'
+    schema:
+      type: string
+    required: true
+requestBody:
+  description: FormData a enviar
+  required: true
+  content:
+    multipart/form-data:
+      schema:
+        $ref: '#/components/schemas/DocCientificaPUT'
+responses:
+  200:
+    description: Entrada na documentação científica atualizada com sucesso
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  404:
+    description: A entrada da documentação científica não existe
+  422:
+    $ref: '#/components/responses/ValidationParameters'
+  500:
+    description: Erro
