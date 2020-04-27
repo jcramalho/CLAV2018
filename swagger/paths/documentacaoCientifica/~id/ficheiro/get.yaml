@@ -1,0 +1,34 @@
+summary: Devolve o ficheiro de uma entrada da documentação científica se existir
+description: Devolve o ficheiro de uma entrada da documentação científica se existir
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Documentação Científica
+parameters:
+  - name: id
+    in: path
+    description: 'Identificador de uma entrada na documentação científica'
+    schema:
+      type: string
+    required: true
+responses:
+  200:
+    description: Ficheiro da entrada da documentação científica com id igual ao do campo 'id'
+    content:
+      '*/*':
+        schema:
+          type: string
+          format: binary
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  404:
+    description: Esta entrada da documentação científica não possui um ficheiro ou a entrada não existe
+  422:
+    $ref: '#/components/responses/ValidationParameters'
+  500:
+    description: Erro

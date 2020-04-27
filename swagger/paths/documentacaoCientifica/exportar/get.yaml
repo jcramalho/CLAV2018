@@ -1,0 +1,21 @@
+summary: Exportação de entradas para a documentação científica
+description: Exportação de entradas para a documentação científica
+security:
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Documentação Científica
+responses:
+  200:
+    description: 'Exportação das entradas da documentação científica realizada com sucesso. Devolve um ficheiro JSON com a seguinte estrutura:'
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/DocCientificaExportacao'
+        example: !!inc/file '/examples/documentacaoCientifica/DocCientificaExportacao.yaml'
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  500:
+    description: Erro

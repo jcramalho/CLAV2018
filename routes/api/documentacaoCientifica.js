@@ -15,7 +15,7 @@ var router = express.Router()
 
 var validKeys = ["classe", "titulo", "url", "local", "ano", "visivel", "autores"];
 const { query, validationResult } = require('express-validator');
-const { existe, estaEm, dataValida, eMongoId, match } = require('../validation')
+const { existe, eMongoId, match } = require('../validation')
 
 // Lista toda a documentacao Científica
 router.get('/', Auth.isLoggedInKey, [
@@ -155,7 +155,7 @@ router.post('/', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), function (r
                     }
                 }
             else {
-                res.status(500).json(`Erro nos campos da documentação: ${JSON.stringify(documento)}`)
+                res.status(500).json(`Erro nos campos da documentação: ${JSON.stringify(fields)}`)
             }
         }
         else {
@@ -321,7 +321,7 @@ router.put('/:id', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), [
                      .catch(erro => res.status(500).send(`Erro na eliminação do elemento da Documentação '${req.params.id}': ${erro}`))
                 }
             else {
-                res.status(500).json(`Erro nos campos da documentação: ${JSON.stringify(documento)}`)
+                res.status(500).json(`Erro nos campos da documentação: ${JSON.stringify(fields)}`)
             }
         }
         else {

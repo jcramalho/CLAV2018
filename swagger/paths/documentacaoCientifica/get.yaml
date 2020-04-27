@@ -1,0 +1,69 @@
+summary: Devolve todas as entradas da documentação Científica
+description: Devolve todas as entradas da documentação científica. Permite a filtragem pelos atributos (classe, titulo, url, local, ano, visivel, autores)
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Documentação Científica
+parameters:
+  - in: query
+    name: classe
+    schema:
+      type: string
+    description: Permite filtrar as entradas pela classe
+    required: false
+  - in: query
+    name: titulo
+    schema:
+      type: string
+    description: Permite filtrar as entradas pelo título
+    required: false
+  - in: query
+    name: url
+    schema:
+      type: string
+    description: Permite filtrar as entradas pelo URL
+    required: false
+  - in: query
+    name: local
+    schema:
+      type: string
+    description: Permite filtrar as entradas pelo local
+    required: false
+  - in: query
+    name: ano
+    schema:
+      type: string
+      pattern: '^\d{4,}$'
+    description: Permite filtrar as entradas pelo ano
+    required: false
+  - in: query
+    name: visivel
+    schema:
+      type: boolean
+    description: Permite filtrar as entradas pela visibilidade
+    required: false
+  - in: query
+    name: autores
+    schema:
+      type: string
+    description: Permite filtrar as entradas pelo nome de um autor
+    required: false
+responses:
+  200:
+    description: Lista todas as entradas da documentação científica
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/DocCientificas'
+        example: !!inc/file '/examples/documentacaoCientifica/DocCientificas.yaml'
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
+  500:
+    description: Erro

@@ -1,0 +1,23 @@
+summary: Criação de uma nova entrada na documentação científica
+description: Criação de uma nova entrada na documentação científica, onde o conteúdo pode ser só um link ou um ficheiro 
+security:
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Documentação Científica
+requestBody:
+  description: FormData a enviar
+  required: true
+  content:
+    multipart/form-data:
+      schema:
+        $ref: '#/components/schemas/DocCientificaPOST'
+responses:
+  200:
+    description: Entrada adicionada com sucesso na documentação científica
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  500:
+    description: Erro

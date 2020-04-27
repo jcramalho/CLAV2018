@@ -84,6 +84,8 @@ tags:
     description: "Notícias da plataforma CLAV"
   - name: Logs Agregados
     description: "Agregação dos logs presentes no conjunto de rotas 'Logs'"
+  - name: Documentação Científica
+    description: "Documentos de produção técnica e científica"
 paths: !!inc/dir [ 'paths' ] 
 components: 
   schemas: !!inc/dir [ 'schemas', { excludeTopLevelDirSeparator: true, recursive: false }]
@@ -195,6 +197,9 @@ components:
         'examples/pendentes/Pendentes.yaml',
         'examples/pendentes/PendentePOST.yaml',
         'examples/pendentes/PendentePUT.yaml',
-        'examples/pendentes/PendentePOSTres.yaml'
+        'examples/pendentes/PendentePOSTres.yaml',
+        'examples/documentacaoCientifica/DocCientifica.yaml',
+        'examples/documentacaoCientifica/DocCientificas.yaml',
+        'examples/documentacaoCientifica/DocCientificaExportacao.yaml'
       ]
   }]
