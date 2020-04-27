@@ -34,6 +34,31 @@ router.get('/classes', Auth.isLoggedInKey, (req, res) => {
         .catch(erro => res.status(500).send(`Erro na listagem das classes da Documentação Científica: ${erro}`))
 })
 
+// Devolve um ficheiro com todos os registos em formato pronto a importar no MongoDB
+router.get('/exportar', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), (req, res) => {
+    DocumentacaoCientifica.listar({})
+        .then(function(dados){
+            // Tratamento do formato do ID
+            var output = dados.map(obj => {
+                return {
+                    ...obj._doc,
+                    _id: {
+                        $oid : obj._doc._id
+                    }
+                    
+                }
+            });
+            // Encoding 
+            var data = JSON.stringify(output, null, 2);
+            res.setHeader('Content-disposition', 'attachment; filename= doc_cientifica.json');
+            res.setHeader('Content-type', 'application/json');
+            res.write(data, function (err) {
+                res.end()
+            })
+        })
+        .catch(erro => res.status(500).send(`Erro na exportação da Documentação Científica: ${erro}`))
+})
+
 // Consulta de uma entrada na documentação
 router.get('/:id', Auth.isLoggedInKey, (req, res) => {
     DocumentacaoCientifica.consultar(req.params.id)
@@ -101,6 +126,50 @@ router.post('/', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), function (r
         }
         else {
             res.status(500).json(`Erro na adição da Documentação: ${error}`)
+        }
+    })
+})
+
+// Importação de um ficheiro com registos - Pode ser adição (append) à BD ou substituição (drop)
+router.post('/importar', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), (req, res) => {
+    var form = new formidable.IncomingForm()
+    form.parse(req, async (error, fields, formData) => {
+        if(!error){
+            // Verificar os operacao e ficheiro
+            if(fields.opcao && formData.file && formData.file.type && formData.file.path){
+                fs.readFile(formData.file.path, 'utf8', function read(err, data) {
+                    if (err) {
+                        res.status(500).json(`Erro na importação da Documentação: ${err}`)
+                    }
+                    else {
+                        if(fields.opcao === 'adição'){
+                            // Parsing dos dados
+                            var dados = JSON.parse(data)
+                            // Chamada do controlador de append 
+                            DocumentacaoCientifica.append(dados)
+                                .then(dados => res.jsonp(dados))
+                                .catch(erro => res.status(500).jsonp(erro))
+                        }
+                        else if(fields.opcao === 'substituição'){
+                            // Parsing dos dados
+                            var dados = JSON.parse(data)
+                            // Chamada do controlador de drop e povoamento da BD
+                            DocumentacaoCientifica.replace(dados)
+                                .then(dados => res.jsonp(dados))
+                                .catch(erro => res.status(500).jsonp(erro))
+                        }
+                        else{
+                            res.status(500).json(`Erro na importação: as opções são "adição" ou "substituição."`)
+                        } 
+                    }
+                });
+            }
+            else {
+                res.status(500).json(`Erro nos campos da importação: deve fornecer um ficheiro e a opção`)
+            }
+        }
+        else {
+            res.status(500).json(`Erro na importação da Documentação: ${error}`)
         }
     })
 })

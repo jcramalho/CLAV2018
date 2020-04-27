@@ -25,7 +25,6 @@ DocumentacaoCientifica.criar = doc => {
     return newDoc.save(); 
 }
 
-
 DocumentacaoCientifica.update = function(id, documento){
     return DocCientifica
         .update({_id : id}, documento, {overwrite: true })
@@ -53,4 +52,56 @@ DocumentacaoCientifica.eliminar = function(id, callback){
 		    callback(null, documento);
         }
     });
+}
+
+DocumentacaoCientifica.append = async function(dados){ 
+    // Converter IDs para o tipo do mongoose
+    dados.forEach(elem => {
+        elem._id = mongoose.Types.ObjectId(elem._id.$oid);
+    })
+    try{
+        await new Promise((resolve, reject) => {
+            // ordered a false permite que caso aconteça erro a inserir o elemento N, os restantes elementos podem ser inseridos
+            DocCientifica.insertMany(dados, { ordered : false }, function(err,result) {
+                if (err) {
+                    reject(err)
+                } else {
+                    resolve(result);
+                }
+            })
+        })
+    }catch(err){
+        throw(`Erro na importação dos documentos. Apenas foram registados os documentos sem erros.`);
+    }
+    return "Documentação importada com sucesso!"
+}
+
+DocumentacaoCientifica.replace = async function(dados){
+    // Converter IDs para o tipo do mongoose
+    dados.forEach(elem => {
+        elem._id = mongoose.Types.ObjectId(elem._id.$oid);
+    })
+    // Apaga todos os registos
+    try {
+        await new Promise((resolve, reject) => {
+            DocCientifica.deleteMany({}, function(err) {
+                if(err){
+                    reject(err)
+                }
+                else {
+                    // ordered a false permite que caso aconteça erro a inserir o elemento N, os restantes elementos podem ser inseridos
+                    DocCientifica.insertMany(dados, { ordered : false }, function(err,result) {
+                        if (err) {
+                            reject(err)
+                        } else {
+                            resolve(result);
+                        }
+                    })
+                }
+            });
+        })
+    }catch(err){
+        throw(`Erro na importação dos documentos. Apenas foram registados os documentos sem erros.`);
+    }
+    return "Documentação importada com sucesso!"
 }
