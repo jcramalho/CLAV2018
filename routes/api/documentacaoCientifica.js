@@ -34,6 +34,31 @@ router.get('/classes', Auth.isLoggedInKey, (req, res) => {
         .catch(erro => res.status(500).send(`Erro na listagem das classes da Documentação Científica: ${erro}`))
 })
 
+// Devolve um ficheiro com todos os registos em formato pronto a importar no MongoDB
+router.get('/exportar', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), (req, res) => {
+    DocumentacaoCientifica.listar({})
+        .then(function(dados){
+            // Tratamento do formato do ID
+            var output = dados.map(obj => {
+                return {
+                    ...obj._doc,
+                    _id: {
+                        $oid : obj._doc._id
+                    }
+                    
+                }
+            });
+            // Encoding 
+            var data = JSON.stringify(output, null, 2);
+            res.setHeader('Content-disposition', 'attachment; filename= doc_cientifica.json');
+            res.setHeader('Content-type', 'application/json');
+            res.write(data, function (err) {
+                res.end()
+            })
+        })
+        .catch(erro => res.status(500).send(`Erro na exportação da Documentação Científica: ${erro}`))
+})
+
 // Consulta de uma entrada na documentação
 router.get('/:id', Auth.isLoggedInKey, (req, res) => {
     DocumentacaoCientifica.consultar(req.params.id)
