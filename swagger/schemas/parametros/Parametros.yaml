@@ -1,2 +1,2 @@
 additionalProperties:
-  type: string
+  $ref: '#/components/schemas/Parametro'

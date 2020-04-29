@@ -202,6 +202,8 @@ components:
         'examples/pendentes/PendentePOSTres.yaml',
         'examples/documentacaoCientifica/DocCientifica.yaml',
         'examples/documentacaoCientifica/DocCientificas.yaml',
-        'examples/documentacaoCientifica/DocCientificaExportacao.yaml'
+        'examples/documentacaoCientifica/DocCientificaExportacao.yaml',
+        'examples/parametros/Parametro.yaml',
+        'examples/parametros/Parametros.yaml'
       ]
   }]

@@ -11,7 +11,7 @@ parameters:
     required: true
     description: Parâmetro
     schema:
-      $ref: '#/components/schemas/Parametro'
+      $ref: '#/components/schemas/ParametroTypes'
 requestBody:
   description: Valor a colocar no parâmetro
   content:
@@ -20,8 +20,7 @@ requestBody:
         type: object
         properties:
           valor:
-            oneOf:
-              - $ref: '#/components/schemas/ParametroExpires'
+            $ref: '#/components/schemas/ParametroValor'
       example:
         valor: 30d
 responses:

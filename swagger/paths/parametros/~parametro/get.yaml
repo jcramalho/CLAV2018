@@ -11,15 +11,15 @@ parameters:
     required: true
     description: Parâmetro
     schema:
-      $ref: '#/components/schemas/Parametro'
+      $ref: '#/components/schemas/ParametroTypes'
 responses:
   200:
     description: Valor do parâmetro da API de dados
     content:
       application/json:
         schema:
-          type: string
-        example: 30d 
+          $ref: '#/components/schemas/Parametro'
+        example: !!inc/file '/examples/parametros/Parametro.yaml' 
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:

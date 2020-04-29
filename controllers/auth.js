@@ -40,7 +40,7 @@ Auth.generateTokenUserRecuperar = function (user) {
 }
 
 Auth.generateTokenUser = function (user) {
-    const userExpires = Parametros.getParameter('userExpires')
+    const userExpires = Parametros.getParameter('userExpires').valor
     var token = jwt.sign({id: user._id, level: user.level, entidade: user.entidade, email: user.email}, secretKey.userPrivateKey, {expiresIn: userExpires, algorithm: 'RS256'});
 
     return token
@@ -51,7 +51,7 @@ Auth.verifyTokenUser = function (key, callback) {
 }
 
 Auth.generateTokenKey = function (chaveId) {
-    const keyExpires = Parametros.getParameter('keyExpires')
+    const keyExpires = Parametros.getParameter('keyExpires').valor
     var token = jwt.sign({id: chaveId}, secretKey.apiPrivateKey, {expiresIn: keyExpires, algorithm: 'RS256'});
 
     return token

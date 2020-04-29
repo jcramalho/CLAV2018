@@ -5,7 +5,7 @@ var parametrosFile = './config/parametros.json'
 var parametros = JSON.parse(fs.readFileSync(parametrosFile))
 
 Parametros.setParameter = function (key, value) {
-    parametros[key] = value
+    parametros[key].valor = value
     fs.unlinkSync(parametrosFile)
     const dados = JSON.stringify(parametros, null, 4)
     fs.writeFileSync(parametrosFile, dados)

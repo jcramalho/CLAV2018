@@ -1,0 +1,9 @@
+type: object
+properties:
+  valor:
+    $ref: '#/components/schemas/ParametroValor'
+  desc:
+    type: string
+required:
+  - valor
+  - desc
