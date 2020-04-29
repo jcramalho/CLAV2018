@@ -375,11 +375,8 @@ module.exports.vcNotRec = ["sim"]
 //Ontologia
 module.exports.vcOntoFormats = [
     "text/turtle",
-    "turtle",
     "application/ld+json",
-    "json-ld",
-    "application/rdf+xml",
-    "rdf-xml"
+    "application/rdf+xml"
 ]
 
 //Pedidos
@@ -426,10 +423,7 @@ module.exports.vcUsersFormato = ["normalizado"]
 //OutputFormat
 module.exports.vcFormats = [
     'application/json',
-    'json',
     'application/xml',
-    'xml',
     'text/csv',
-    'excel/csv',
-    'csv'
+    'excel/csv'
 ]

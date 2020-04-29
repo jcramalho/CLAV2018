@@ -69,22 +69,6 @@ responses:
             $ref: '#/components/examples/ClassesCompletaArvoreJSON'
           jsonClassesCompletaLista:
             $ref: '#/components/examples/ClassesCompletaListaJSON'
-      json:
-        schema:
-          oneOf:
-            - $ref: '#/components/schemas/ClasseSimplesArvore'
-            - $ref: '#/components/schemas/ClasseSimplesLista'
-            - $ref: '#/components/schemas/ClasseCompletaArvore'
-            - $ref: '#/components/schemas/ClasseCompletaLista'
-        examples:
-          jsonClassesSimplesArvore:
-            $ref: '#/components/examples/ClassesSimplesArvoreJSON'
-          jsonClassesSimplesLista:
-            $ref: '#/components/examples/ClassesSimplesListaJSON'
-          jsonClassesCompletaArvore:
-            $ref: '#/components/examples/ClassesCompletaArvoreJSON'
-          jsonClassesCompletaLista:
-            $ref: '#/components/examples/ClassesCompletaListaJSON'
       application/xml:
         examples:
           xmlClassesSimplesArvore:
@@ -95,27 +79,7 @@ responses:
             $ref: '#/components/examples/ClassesCompletaArvoreXML'
           xmlClassesCompletaLista:
             $ref: '#/components/examples/ClassesCompletaListaXML'
-      xml:
-        examples:
-          xmlClassesSimplesArvore:
-            $ref: '#/components/examples/ClassesSimplesArvoreXML'
-          xmlClassesSimplesLista:
-            $ref: '#/components/examples/ClassesSimplesListaXML'
-          xmlClassesCompletaArvore:
-            $ref: '#/components/examples/ClassesCompletaArvoreXML'
-          xmlClassesCompletaLista:
-            $ref: '#/components/examples/ClassesCompletaListaXML'
       text/csv:
-        examples:
-          csvClassesSimplesArvore:
-            $ref: '#/components/examples/ClassesSimplesArvoreCSV'
-          csvClassesSimplesLista:
-            $ref: '#/components/examples/ClassesSimplesListaCSV'
-          csvClassesCompletaArvore:
-            $ref: '#/components/examples/ClassesCompletaArvoreCSV'
-          csvClassesCompletaLista:
-            $ref: '#/components/examples/ClassesCompletaListaCSV'
-      csv:
         examples:
           csvClassesSimplesArvore:
             $ref: '#/components/examples/ClassesSimplesArvoreCSV'

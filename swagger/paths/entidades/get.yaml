@@ -74,35 +74,13 @@ responses:
             $ref: '#/components/examples/EntidadesJSON'
           Exemplo de Entidades Completas:
             $ref: '#/components/examples/EntidadesCompletasJSON'
-      json:
-        schema:
-          oneOf:
-            - $ref: '#/components/schemas/EntidadeSimplesLista'
-            - $ref: '#/components/schemas/EntidadeCompletaLista'
-        examples:
-          Exemplo de Entidades:
-            $ref: '#/components/examples/EntidadesJSON'
-          Exemplo de Entidades Completas:
-            $ref: '#/components/examples/EntidadesCompletasJSON'
       application/xml:
         examples:
           Exemplo de Entidades:
             $ref: '#/components/examples/EntidadesXML'
           Exemplo de Entidades Completas:
             $ref: '#/components/examples/EntidadesCompletasXML'
-      xml:
-        examples:
-          Exemplo de Entidades:
-            $ref: '#/components/examples/EntidadesXML'
-          Exemplo de Entidades Completas:
-            $ref: '#/components/examples/EntidadesCompletasXML'
       text/csv:
-        examples:
-          Exemplo de Entidades:
-            $ref: '#/components/examples/EntidadesCSV'
-          Exemplo de Entidades Completas:
-            $ref: '#/components/examples/EntidadesCompletasCSV'
-      csv:
         examples:
           Exemplo de Entidades:
             $ref: '#/components/examples/EntidadesCSV'

@@ -48,35 +48,13 @@ responses:
             $ref: '#/components/examples/TipologiaSimplesListaJSON'
           Exemplo de lista de tipologias completas:
             $ref: '#/components/examples/TipologiaCompletaListaJSON'
-      json:
-        schema:
-          oneOf:
-            - $ref: '#/components/schemas/TipologiaSimplesLista'
-            - $ref: '#/components/schemas/TipologiaCompletaLista'
-        examples:
-          Exemplo de lista de tipologias:
-            $ref: '#/components/examples/TipologiaSimplesListaJSON'
-          Exemplo de lista de tipologias completas:
-            $ref: '#/components/examples/TipologiaCompletaListaJSON'
       application/xml:
         examples:
           Exemplo de lista de tipologias:
             $ref: '#/components/examples/TipologiaSimplesListaXML'
           Exemplo de lista de tipologias completas:
             $ref: '#/components/examples/TipologiaCompletaListaXML'
-      xml:
-        examples:
-          Exemplo de lista de tipologias:
-            $ref: '#/components/examples/TipologiaSimplesListaXML'
-          Exemplo de lista de tipologias completas:
-            $ref: '#/components/examples/TipologiaCompletaListaXML'
       text/csv:
-        examples:
-          Exemplo de lista de tipologias:
-            $ref: '#/components/examples/TipologiaSimplesListaCSV'
-          Exemplo de lista de tipologias completas:
-            $ref: '#/components/examples/TipologiaCompletaListaCSV'
-      csv:
         examples:
           Exemplo de lista de tipologias:
             $ref: '#/components/examples/TipologiaSimplesListaCSV'
