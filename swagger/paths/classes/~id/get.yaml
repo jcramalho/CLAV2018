@@ -36,35 +36,13 @@ responses:
             $ref: '#/components/examples/ClasseJSON'
           jsonSubarvore:
             $ref: '#/components/examples/ClasseSubarvoreJSON'
-      json:
-        schema:
-          oneOf:
-            - $ref: '#/components/schemas/ClasseCompletaSubArvore'
-            - $ref: '#/components/schemas/ClasseCompleta'
-        examples:
-          jsonClasse:
-            $ref: '#/components/examples/ClasseJSON'
-          jsonSubarvore:
-            $ref: '#/components/examples/ClasseSubarvoreJSON'
       application/xml:
         examples:
           xmlClasse:
             $ref: '#/components/examples/ClasseXML'
           xmlSubarvore:
             $ref: '#/components/examples/ClasseSubarvoreXML'
-      xml:
-        examples:
-          xmlClasse:
-            $ref: '#/components/examples/ClasseXML'
-          xmlSubarvore:
-            $ref: '#/components/examples/ClasseSubarvoreXML'
       text/csv:
-        examples:
-          csvClasse:
-            $ref: '#/components/examples/ClasseCSV'
-          csvSubarvore:
-            $ref: '#/components/examples/ClasseSubarvoreCSV'
-      csv:
         examples:
           csvClasse:
             $ref: '#/components/examples/ClasseCSV'

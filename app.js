@@ -190,6 +190,7 @@ mainRouter.use('/reload', require('./routes/api/reload'));
 mainRouter.use('/logsAgregados', require('./routes/api/aggregateLogs'));
 mainRouter.use('/logs', require('./routes/api/logs'));
 mainRouter.use('/indicadores', require('./routes/api/indicadores'));
+mainRouter.use('/parametros', require('./routes/api/parametros'));
 
 app.use('/' + dataBases.apiVersion, mainRouter);
 

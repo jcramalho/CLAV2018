@@ -1,0 +1,36 @@
+summary: Altera o valor de um parâmetro da API de dados
+description: Altera o valor de um parâmetro da API de dados
+security:
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Parâmetros
+parameters:
+  - name: parametro
+    in: path
+    required: true
+    description: Parâmetro
+    schema:
+      $ref: '#/components/schemas/ParametroTypes'
+requestBody:
+  description: Valor a colocar no parâmetro
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          valor:
+            $ref: '#/components/schemas/ParametroValor'
+      example:
+        valor: 30d
+responses:
+  200:
+    description: Parâmetro da API de dados alterado
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
+  500:
+    description: Erro

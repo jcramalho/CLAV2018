@@ -334,6 +334,12 @@ module.exports.eNIC = function(location, field, ifF){
     return module.exports.match(location, field, '^[0-9]{7,}$', ifF)
 }
 
+module.exports.eExpiresTime = function(location, field, ifF){
+    ifF = ifF || undefined
+    var regex = '^\\d+(ms|s|m|h|d|y)$'
+    return module.exports.match(location, field, regex, ifF)
+}
+
 //Vocabulários
 module.exports.vcBoolean = ["Sim", "Não"]
 module.exports.vcEstado = ["Ativa", "Harmonização", "Inativa"]
@@ -375,11 +381,8 @@ module.exports.vcNotRec = ["sim"]
 //Ontologia
 module.exports.vcOntoFormats = [
     "text/turtle",
-    "turtle",
     "application/ld+json",
-    "json-ld",
-    "application/rdf+xml",
-    "rdf-xml"
+    "application/rdf+xml"
 ]
 
 //Pedidos
@@ -426,10 +429,16 @@ module.exports.vcUsersFormato = ["normalizado"]
 //OutputFormat
 module.exports.vcFormats = [
     'application/json',
-    'json',
     'application/xml',
-    'xml',
     'text/csv',
-    'excel/csv',
-    'csv'
+    'excel/csv'
 ]
+
+//Parametros
+module.exports.vcParametrosExpires = [
+    'userExpires',
+    'keyExpires'
+]
+module.exports.vcParametros = module.exports.vcParametrosExpires.concat([
+    //adicionar mais parametros caso seja necessário
+])
