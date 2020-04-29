@@ -86,6 +86,8 @@ tags:
     description: "Agregação dos logs presentes no conjunto de rotas 'Logs'"
   - name: Documentação Científica
     description: "Documentos de produção técnica e científica"
+  - name: Parâmetros
+    description: "Parâmetros da API de dados"
 paths: !!inc/dir [ 'paths' ] 
 components: 
   schemas: !!inc/dir [ 'schemas', { excludeTopLevelDirSeparator: true, recursive: false }]

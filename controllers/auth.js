@@ -5,6 +5,7 @@ var jwt = require('jsonwebtoken');
 var Key = require('../models/chave');
 var secretKey = require('./../config/app');
 var Calls = require('./api/logs')
+var Parametros = require('./api/parametros')
 
 //WARNING: correr primeiro isLoggedInUser e só depois correr esta função como middleware
 //clearance se for um número, permite o acesso a todos os utilizadores com nivel igual ou superior; se for uma lista de números, apenas permite ao acesso aos níveis presentes nessa lista.
@@ -39,7 +40,8 @@ Auth.generateTokenUserRecuperar = function (user) {
 }
 
 Auth.generateTokenUser = function (user) {
-    var token = jwt.sign({id: user._id, level: user.level, entidade: user.entidade, email: user.email}, secretKey.userPrivateKey, {expiresIn: '8h', algorithm: 'RS256'});
+    const userExpires = Parametros.getParameter('userExpires')
+    var token = jwt.sign({id: user._id, level: user.level, entidade: user.entidade, email: user.email}, secretKey.userPrivateKey, {expiresIn: userExpires, algorithm: 'RS256'});
 
     return token
 }
@@ -49,7 +51,8 @@ Auth.verifyTokenUser = function (key, callback) {
 }
 
 Auth.generateTokenKey = function (chaveId) {
-    var token = jwt.sign({id: chaveId}, secretKey.apiPrivateKey, {expiresIn: '30d', algorithm: 'RS256'});
+    const keyExpires = Parametros.getParameter('keyExpires')
+    var token = jwt.sign({id: chaveId}, secretKey.apiPrivateKey, {expiresIn: keyExpires, algorithm: 'RS256'});
 
     return token
 }

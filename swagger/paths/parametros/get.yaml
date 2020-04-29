@@ -1,0 +1,21 @@
+summary: Devolve todos os parâmetros da API de dados
+description: Devolve todos os parâmetros da API de dados
+security:
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Parâmetros
+responses:
+  200:
+    description: Parâmetros da API de dados
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/Parametros'
+        example: !!inc/file '/examples/parametros/Parametros.yaml'
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  500:
+    description: Erro
