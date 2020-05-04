@@ -1,0 +1,37 @@
+summary: Obtém a travessia especial de um processo
+description: Obtém a travessia especial de um processo. Permite também obter apenas os processos da travessia de um determinado tipo de processo ao usar a query string 'filtro'
+security:
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Travessias Especiais
+parameters:
+  - name: id
+    in: path
+    description: Código de um processo
+    schema:
+      $ref: '#/components/schemas/Codigo'
+    required: true
+  - name: filtro
+    in: query
+    description: Permite obter os processos com o tipo de processo aqui indicado
+    schema:
+      type: string
+      enum: [comum, especifico]
+    required: false
+responses:
+  200:
+    description: Obtém a travessia especial de um processo ou a travessia especial com apenas os processos de um determinado tipo
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/TravessiaEspecial'
+        example: !!inc/file '/examples/travessiaEspecial/TravessiaEspecial.yaml'
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
+  500:
+    description: Erro

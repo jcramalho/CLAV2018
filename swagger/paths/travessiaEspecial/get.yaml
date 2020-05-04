@@ -1,0 +1,21 @@
+summary: Obtém as travessias especiais
+description: Obtém as travessias especiais, ou seja, uma lista em que cada elemento possui o código do processo (campo codigo) e a travessia (lista objetos, em que cada objeto tem o codigo, o tipo de processo, os donos e os participantes)
+security:
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Travessias Especiais
+responses:
+  200:
+    description: Obtém as travessias especiais
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/TravessiasEspeciais'
+        example: !!inc/file '/examples/travessiaEspecial/TravessiasEspeciais.yaml'
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro

@@ -4,15 +4,21 @@
 var Trav = [];
 var travessias = [];
 const fs = require('fs')
+var TravessiaEspecial = require('./travessiaEspecial.js')
 
 exports.reset = async () => {
     try {
         console.debug("Loading travessias")
+        travessias = []
         Trav = require('../public/travessia/travessia.json');
         for(var i = 0; i < Trav.length; i++){
             travessias[Trav[i].processo] = Trav[i].travessia
         }
         console.debug("Travessia completa")
+
+        //dicionário da travessia especial
+        await TravessiaEspecial.reset()
+
         return "Reset efetuado com sucesso!"
     } catch (err) {
         throw err
