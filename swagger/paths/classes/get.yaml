@@ -60,6 +60,8 @@ responses:
             - $ref: '#/components/schemas/ClasseSimplesLista'
             - $ref: '#/components/schemas/ClasseCompletaArvore'
             - $ref: '#/components/schemas/ClasseCompletaLista'
+            - $ref: '#/components/schemas/ClassesEsqueleto'
+            - $ref: '#/components/schemas/ClassesPesquisa'
         examples:
           jsonClassesSimplesArvore:
             $ref: '#/components/examples/ClassesSimplesArvoreJSON'
@@ -69,6 +71,10 @@ responses:
             $ref: '#/components/examples/ClassesCompletaArvoreJSON'
           jsonClassesCompletaLista:
             $ref: '#/components/examples/ClassesCompletaListaJSON'
+          jsonClassesEsqueleto:
+            $ref: '#/components/examples/ClassesEsqueletoJSON'
+          jsonClassesPesquisa:
+            $ref: '#/components/examples/ClassesPesquisaJSON'
       application/xml:
         examples:
           xmlClassesSimplesArvore:
@@ -79,6 +85,10 @@ responses:
             $ref: '#/components/examples/ClassesCompletaArvoreXML'
           xmlClassesCompletaLista:
             $ref: '#/components/examples/ClassesCompletaListaXML'
+          xmlClassesEsqueleto:
+            $ref: '#/components/examples/ClassesEsqueletoXML'
+          xmlClassesPesquisa:
+            $ref: '#/components/examples/ClassesPesquisaXML'
       text/csv:
         examples:
           csvClassesSimplesArvore:
@@ -89,16 +99,24 @@ responses:
             $ref: '#/components/examples/ClassesCompletaArvoreCSV'
           csvClassesCompletaLista:
             $ref: '#/components/examples/ClassesCompletaListaCSV'
+          csvClassesEsqueleto:
+            $ref: '#/components/examples/ClassesEsqueletoCSV'
+          csvClassesPesquisa:
+            $ref: '#/components/examples/ClassesPesquisaCSV'
       excel/csv:
         examples:
-          csvClassesSimplesArvore:
+          excelcsvClassesSimplesArvore:
             $ref: '#/components/examples/ClassesSimplesArvoreExcelCSV'
-          csvClassesSimplesLista:
+          excelcsvClassesSimplesLista:
             $ref: '#/components/examples/ClassesSimplesListaExcelCSV'
-          csvClassesCompletaArvore:
+          excelcsvClassesCompletaArvore:
             $ref: '#/components/examples/ClassesCompletaArvoreExcelCSV'
-          csvClassesCompletaLista:
+          excelcsvClassesCompletaLista:
             $ref: '#/components/examples/ClassesCompletaListaExcelCSV'
+          excelcsvClassesEsqueleto:
+            $ref: '#/components/examples/ClassesEsqueletoExcelCSV'
+          excelcsvClassesPesquisa:
+            $ref: '#/components/examples/ClassesPesquisaExcelCSV'
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:

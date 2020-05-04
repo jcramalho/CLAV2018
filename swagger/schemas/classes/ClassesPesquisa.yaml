@@ -1,0 +1,27 @@
+type: array
+items:
+  allOf:
+    - $ref: '#/components/schemas/ClassePesquisa'
+    - properties:
+        filhos:
+          type: array
+          items:
+            allOf:
+              - $ref: '#/components/schemas/ClassePesquisa'
+              - properties:
+                  filhos:
+                    type: array
+                    items:
+                      allOf:
+                        - $ref: '#/components/schemas/ClassePesquisa'
+                        - properties:
+                            filhos:
+                              type: array
+                              items:
+                                $ref: '#/components/schemas/ClassePesquisa'
+                          required:
+                            - filhos
+                required:
+                  - filhos
+      required:
+        - filhos
