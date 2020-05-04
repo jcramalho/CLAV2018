@@ -15,7 +15,7 @@ info:
 
     Os métodos de autenticação disponíveis podem ser acedidos ao carregar num dos cadeados. Ao carregar no botão 'Authorize' irá aparecer todos os métodos de autenticação. Se carregar no cadeado de uma rota irá apenas aparecer os métodos de autenticação que a rota suporta (permite/autoriza).
     
-    **Última alteração: 29/04/2020**
+    **Última alteração: 05/05/2020**
   version: 2.0.0
   title: CLAV API
   contact:
@@ -64,6 +64,8 @@ tags:
     description: "Forma de agrupamento de entidades que intervêm nos processos de negócio (classes de 3º nível) da Lista Consolidada."
   - name: Travessias
     description: "Fecho transitivo das classes considerando as ligações entre as classes que não se pode 'partir'."
+  - name: Travessias Especiais
+    description: "Parecido com as travessias, contudo possui mais informação"
   - name: Vocabulários
     description: "Vocabulários Controlados utilizados na plataforma."
   - name: Utilizadores
@@ -204,6 +206,8 @@ components:
         'examples/documentacaoCientifica/DocCientificas.yaml',
         'examples/documentacaoCientifica/DocCientificaExportacao.yaml',
         'examples/parametros/Parametro.yaml',
-        'examples/parametros/Parametros.yaml'
+        'examples/parametros/Parametros.yaml',
+        'examples/travessiaEspecial/TravessiaEspecial.yaml',
+        'examples/travessiaEspecial/TravessiasEspeciais.yaml'
       ]
   }]

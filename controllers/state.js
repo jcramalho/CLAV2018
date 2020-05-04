@@ -9,6 +9,7 @@ var Legs = require('./api/leg.js')
 var NotasAp = require('./api/notasAp.js')
 var ExemplosNotasAp = require('./api/exemplosNotasAp.js')
 var TermosIndice = require('./api/termosIndice.js')
+var TravessiaEspecial = require('./travessiaEspecial.js')
 
 var classTree = []
 var classList = []
@@ -43,6 +44,9 @@ exports.reset = async () => {
         console.debug("A criar o índice de pesquisa...")
         indicePesquisa = await criaIndicePesquisa()
         console.debug("Índice de pesquisa criado com " + indicePesquisa.length + " entradas.")
+
+        //dicionário da travessia especial
+        await TravessiaEspecial.reset()
     } catch(err) {
         throw err
     }
@@ -77,6 +81,9 @@ exports.reload = async () => {
         console.debug("a guardar a informação num ficheiro...")
         fs.writeFileSync('./public/classes/classesInfo.json', JSON.stringify(classTreeInfo, null, 4))
         console.debug("Terminei de carregar a informação completa das classes.")
+
+        //dicionário da travessia especial
+        await TravessiaEspecial.reset()
     } catch(err) {
         throw err
     }

@@ -1,0 +1,142 @@
+value: |
+  <?xml version="1.0" encoding="utf-8"?>
+  <root>
+    <item index="0" type="object">
+      <id type="string">100</id>
+      <nome type="string">100 - ORDENAMENTO JURÍDICO E NORMATIVO</nome>
+      <titulo type="string">ORDENAMENTO JURÍDICO E NORMATIVO</titulo>
+      <status type="string">A</status>
+      <tp type="string">
+      </tp>
+      <pt type="string">
+      </pt>
+      <na type="string">Os atos de caráter dispositivo podem incidir sobre a sociedade portuguesa em geral, sobre determinados setores de atividade, sobre determinadas parcelas do território ou, ainda, sobre organismos ou serviços singulares</na>
+      <exemploNa type="string">
+      </exemploNa>
+      <ne type="string">A negociação de convenções internacionais (tratados, acordos) e a participação na elaboração de normas técnicas internacionais, bem como a participação na elaboração de diretivas e de regulamentos comunitários, devem ser consideradas em &quot;Execução da política externa/ Definição de políticas conjuntas e dos instrumentos de regulação&quot; (200.10) - ou seja, na área funcional 100 devem ser considerados apenas os procedimentos de ratificação, transposição e interpretação daquelas disposições comunitárias ou internacionais</ne>
+      <ti type="string">
+      </ti>
+      <pca type="string">
+      </pca>
+      <fc_pca type="string">
+      </fc_pca>
+      <sfc_pca type="string">
+      </sfc_pca>
+      <crit_pca type="array">
+      </crit_pca>
+      <df type="string">NE</df>
+      <crit_df type="array">
+      </crit_df>
+      <donos type="array">
+      </donos>
+      <participantes type="array">
+      </participantes>
+      <filhos type="array">
+        <item index="0" type="object">
+          <id type="string">100.10</id>
+          <nome type="string">100.10 - Elaboração de diplomas jurídico-normativos e de normas técnicas</nome>
+          <titulo type="string">Elaboração de diplomas jurídico-normativos e de normas técnicas</titulo>
+          <status type="string">A</status>
+          <tp type="string">
+          </tp>
+          <pt type="string">
+          </pt>
+          <na type="string">Atos legislativos Atos regulamentares, independentemente da forma ou da competência para a sua emissão Qualquer despacho com diretrizes gerais e abstratas Atos administrativos individuais e abstratos que alterem ou complementem os termos de aplicação de lei ou regulamento vigente Resoluções do Conselho de Ministros, independentemente de se revestirem de natureza regulamentar ou de natureza política Decretos e outras formas de aprovação/ratificação de convenções internacionais Decisões dos Tribunais a que a lei confira força obrigatória geral No que respeita às normas técnicas, deve ser aqui considerada a elaboração de normas formais emitidas pelo organismo nacional de normalização (NP) Normas informais ou recomendações técnicas emitidas por organismos de coordenação ou superintendência técnica No que respeita à elaboração de diplomas jurídico-normativos, deve ser sempre considerada nesta área a iniciativa (sob a forma de projeto ou de proposta) e os procedimentos orientados à fixação da respetiva redação final e publicitação oficial, no que se inclui, na generalidade, a verificação jurídica, consulta pública e recolha de pareceres a que a lei obrigue, aprovação, ratificação, promulgação e publicação, sem prejuízo de outros procedimentos próprios da produção de cada norma</na>
+          <exemploNa type="string">
+          </exemploNa>
+          <ne type="string">Devem ser considerados noutras áreas os procedimentos administrativos autonomizáveis do processo legislativo, bem como os trabalhos técnicos, estudos e relatórios preliminares ou acessórios à elaboração ou atualização dos diplomas jurídico-normativos. Por exemplo:- Trabalhos técnicos de comissões ou outras estruturas envolvidas na definição de políticas, planos e programas devem ser considerados em &quot;Planeamento e gestão estratégica/ Definição e avaliação de políticas&quot; (150.10) - Estudos e trabalhos técnicos orientados à (re)definição de estruturas e/ou funcionamento dos serviços, ou ainda trabalhos preparatórios para a elaboração do Orçamento de Estado, devem ser considerados em &quot;Planeamento e gestão estratégica/ Planeamento, avaliação e melhoria de serviços&quot; (150.20) - Trabalhos técnicos preparatórios de planos de classificação e de tabelas de seleção devem ser considerados em &quot;Administração de direitos, bens e serviços/ Identificação e caracterização de bens&quot; (300.30) - Procedimentos administrativos de classificação do património cultural devem ser considerados em &quot;Reconhecimentos e permissões/ Classificação e declaração de interesse ou utilidade pública&quot; (450.20) Considerar em &quot;Execução da política externa/ Definição de políticas conjuntas e dos instrumentos de regulação&quot; (200.10) a participação na elaboração de diretivas e de regulamentos comunitários, bem como a participação na elaboração de tratados ou acordos comunitários ou internacionais e, ainda, a participação na elaboração de normas técnicas europeias e internacionais</ne>
+          <ti type="string">
+          </ti>
+          <pca type="string">
+          </pca>
+          <fc_pca type="string">
+          </fc_pca>
+          <sfc_pca type="string">
+          </sfc_pca>
+          <crit_pca type="array">
+          </crit_pca>
+          <df type="string">NE</df>
+          <crit_df type="array">
+          </crit_df>
+          <donos type="array">
+          </donos>
+          <participantes type="array">
+          </participantes>
+          <filhos type="array">
+            <item index="0" type="object">
+              <id type="string">100.10.001</id>
+              <nome type="string">100.10.001 - Produção e comunicação de atos legislativos</nome>
+              <titulo type="string">Produção e comunicação de atos legislativos</titulo>
+              <status type="string">A</status>
+              <tp type="string">Processo Comum</tp>
+              <pt type="string">S</pt>
+              <na type="string">Iniciativa legislativa por parte de cidadãos Leis Decretos-Lei Decretos Legislativos regionais Transposição de diretivas da União Europeia</na>
+              <exemploNa type="string">Código da Estrada Código Civil Regime de acesso à informação administrativa e ambiental e de reutilização dos documentos administrativos</exemploNa>
+              <ne type="string">O impulso legiferante, quando reveste a forma de petição pública sem apresentação de projeto de lei, deve ser considerado em 950.20.001 – Processamento de petições, reclamações e sugestões Os procedimentos administrativos, trabalhos preparatórios ou elaboração de estudos preliminares, por exemplo quando a regulamentação seja necessária para dar forma legal a instrumentos de planeamento, devem ser considerados em “Planeamento e gestão estratégica / Definição e avaliação de políticas” (150.10)</ne>
+              <ti type="string">Ato legislativo (produção e comunicação) Comunicação de ato legislativo Declaração de estado de emergência (produção e comunicação) Estado de emergência, declaração de (produção e comunicação) Declaração de estado de sítio (produção e comunicação) Estado de sítio, declaração de (produção e comunicação Decreto da Assembleia da República (produção e comunicação) Decreto legislativo regional (produção e comunicação) Decreto-lei (produção e comunicação) Diploma legislativo (produção e comunicação) Diretiva comunitária (transposição) Estatutos, produção e comunicação de atos legislativos a aplicar em Lei constitucional (produção e comunicação) Lei do Orçamento de Estado (produção e comunicação) Orçamento de Estado, Lei do (produção e comunicação) Lei orgânica (produção e comunicação) Lei (produção e comunicação) Produção e comunicação de ato legislativo Projeto de lei (produção e comunicação) Promulgação de diploma Proposta de lei (produção e comunicação) Resolução do Conselho de Ministros (produção e comunicação) Transposição de diretiva comunitária</ti>
+              <pca type="string">5</pca>
+              <fc_pca type="string">Data de conclusão do procedimento</fc_pca>
+              <sfc_pca type="string">
+              </sfc_pca>
+              <crit_pca type="array">
+                <item index="0" type="string">CriterioJustificacaoGestionario</item>
+              </crit_pca>
+              <df type="string">C</df>
+              <crit_df type="array">
+                <item index="0" type="string">CriterioJustificacaoComplementaridadeInfo</item>
+              </crit_df>
+              <donos type="array">
+                <item index="0" type="string">ent_ALRAA</item>
+                <item index="1" type="string">tip_Gov</item>
+              </donos>
+              <participantes type="array">
+                <item index="0" type="string">ent_POISE</item>
+                <item index="1" type="string">ent_PR</item>
+                <item index="2" type="string">ent_SGMTSSS</item>
+                <item index="3" type="string">ent_SGPCM</item>
+              </participantes>
+              <filhos type="array">
+              </filhos>
+            </item>
+            <item index="1" type="object">
+              <id type="string">100.10.002</id>
+              <nome type="string">100.10.002 - Aprovação e comunicação de convenções internacionais</nome>
+              <titulo type="string">Aprovação e comunicação de convenções internacionais</titulo>
+              <status type="string">A</status>
+              <tp type="string">Processo Específico</tp>
+              <pt type="string">S</pt>
+              <na type="string">Avisos respeitantes às convenções internacionais e relativos a outros Estados contratantes   Aprovação, ratificação e publicação de convenções internacionais Depósito de diploma em entidade designada para efeitos da vinculação do Estado português e dos seus termos</na>
+              <exemploNa type="string">
+              </exemploNa>
+              <ne type="string">Os trabalhos relativos à celebração das convenções internacionais (preparação, compromisso entre as partes, assinatura) devem ser considerados em 200.10.800 – Celebração de acordos e outros atos internacionais</ne>
+              <ti type="string">Acordo internacional, vinculação do Estado a Aprovação de convenção internacional Comunicação de convenção internacional Depósito de instrumento de regulação Ratificação de convenção internacional Ratificação de tratado internacional Tratado internacional (aprovação, comunicação e ratificação) Convenção internacional (aprovação, comunicação e ratificação) Aprovação e comunicação de convenção internacional</ti>
+              <pca type="string">5</pca>
+              <fc_pca type="string">Data de conclusão do procedimento</fc_pca>
+              <sfc_pca type="string">
+              </sfc_pca>
+              <crit_pca type="array">
+                <item index="0" type="string">CriterioJustificacaoGestionario</item>
+              </crit_pca>
+              <df type="string">C</df>
+              <crit_df type="array">
+                <item index="0" type="string">CriterioJustificacaoDensidadeInfo</item>
+                <item index="1" type="string">CriterioJustificacaoComplementaridadeInfo</item>
+              </crit_df>
+              <donos type="array">
+                <item index="0" type="string">ent_AR</item>
+                <item index="1" type="string">tip_Gov</item>
+              </donos>
+              <participantes type="array">
+                <item index="0" type="string">tip_CCDR</item>
+                <item index="1" type="string">ent_CNPDPCJ</item>
+                <item index="2" type="string">ent_SGPCM</item>
+              </participantes>
+              <filhos type="array">
+              </filhos>
+            </item>
+          </filhos>
+        </item>
+      </filhos>
+    </item>
+  </root>
+summary: Exemplo de parte da informação de classes para a pesquisa avançada

@@ -183,6 +183,7 @@ mainRouter.use('/pendentes',require('./routes/api/pendentes'));
 mainRouter.use('/users',require('./routes/api/users'));
 mainRouter.use('/chaves',require('./routes/api/chaves'));
 mainRouter.use('/travessia',require('./routes/api/travessia'));
+mainRouter.use('/travessiaEspecial',require('./routes/api/travessiaEspecial'));
 mainRouter.use('/invariantes',require('./routes/api/invariantes'));
 mainRouter.use('/auth', require('./routes/api/auth'));
 mainRouter.use('/ontologia', require('./routes/api/ontologia'));

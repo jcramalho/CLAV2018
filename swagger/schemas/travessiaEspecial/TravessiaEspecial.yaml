@@ -1,0 +1,25 @@
+type: array
+items:
+  type: object
+  properties:
+    codigo:
+      $ref: '#/components/schemas/Codigo'
+    tipoProc:
+      $ref: '#/components/schemas/TipoProcesso'
+    donos:
+      type: array
+      items:
+        oneOf:
+          - $ref: '#/components/schemas/EntidadeId'
+          - $ref: '#/components/schemas/TipologiaId'
+    participantes:
+      type: array
+      items:
+        oneOf:
+          - $ref: '#/components/schemas/EntidadeId'
+          - $ref: '#/components/schemas/TipologiaId'
+  required:
+    - codigo
+    - tipoProc
+    - donos
+    - participantes
