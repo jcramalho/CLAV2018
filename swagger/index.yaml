@@ -64,6 +64,8 @@ tags:
     description: "Forma de agrupamento de entidades que intervêm nos processos de negócio (classes de 3º nível) da Lista Consolidada."
   - name: Travessias
     description: "Fecho transitivo das classes considerando as ligações entre as classes que não se pode 'partir'."
+  - name: Travessias De Síntese
+    description: "Fecho transitivo das classes considerando apenas a relação sintetizado por entre as classes."
   - name: Travessias Especiais
     description: "Parecido com as travessias, contudo possui mais informação"
   - name: Vocabulários

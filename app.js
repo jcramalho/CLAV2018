@@ -110,6 +110,10 @@ mongoose.connect(dataBases.userDB, {
             var travessia = require('./controllers/travessia.js')
             travessia.reset()
 
+            //loads APP travessia de sintese
+            var travessiaDeSintese = require('./controllers/travessiaDeSintese.js')
+            travessiaDeSintese.reset()
+
             //clean old logs
             Logs.removeOldLogs()
             //clean old logs periodically
@@ -156,6 +160,7 @@ mainRouter.use('/pendentes',require('./routes/api/pendentes'));
 mainRouter.use('/users',require('./routes/api/users'));
 mainRouter.use('/chaves',require('./routes/api/chaves'));
 mainRouter.use('/travessia',require('./routes/api/travessia'));
+mainRouter.use('/travessiaDeSintese',require('./routes/api/travessiaDeSintese'));
 mainRouter.use('/travessiaEspecial',require('./routes/api/travessiaEspecial'));
 mainRouter.use('/invariantes',require('./routes/api/invariantes'));
 mainRouter.use('/auth', require('./routes/api/auth'));
