@@ -1,0 +1,30 @@
+summary: Obtém a travessia de síntese de um processo
+description: Obtém a travessia de síntese de um processo (lista de códigos de processos)
+security:
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Travessias De Síntese
+parameters:
+  - name: id
+    in: path
+    description: Código de um processo
+    schema:
+      $ref: '#/components/schemas/Codigo'
+    required: true
+responses:
+  200:
+    description: Obtém a travessia de síntese de um processo
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/Travessia'
+        example: !!inc/file '/examples/travessia/Travessia.yaml'
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
+  500:
+    description: Erro
