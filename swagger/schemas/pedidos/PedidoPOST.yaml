@@ -18,6 +18,8 @@ properties:
       - email
   entidade:
     $ref: '#/components/schemas/EntidadeId'
+  despacho:
+    type: string
 required:
   - tipoPedido
   - tipoObjeto

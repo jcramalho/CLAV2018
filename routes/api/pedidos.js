@@ -64,7 +64,7 @@ router.post('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), 
     estaEm('body', 'tipoPedido', vcPedidoAcao),
     verificaExisteEnt('body', 'entidade'),
     body('despacho').customSanitizer(v => {
-        value = !!value ? value : "Submissão inicial"
+        return !!v ? v : "Submissão inicial"
     })
 ], (req, res) => {
     const errors = validationResult(req)
