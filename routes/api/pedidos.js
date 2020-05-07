@@ -4,7 +4,7 @@ var express = require('express');
 var router = express.Router();
 
 var validKeys = ["criadoPor", "codigo", "tipo", "acao"];
-const { validationResult } = require('express-validator');
+const { body, validationResult } = require('express-validator');
 const { existe, estaEm, verificaPedidoCodigo, verificaExisteEnt, eMongoId, vcPedidoTipo, vcPedidoAcao, vcPedidoEstado } = require('../validation')
 
 // Lista todos os pedidos que statisfazem uma condição
@@ -62,7 +62,10 @@ router.post('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), 
     existe('body', 'objetoOriginal').optional(),
     estaEm('body', 'tipoObjeto', vcPedidoTipo),
     estaEm('body', 'tipoPedido', vcPedidoAcao),
-    verificaExisteEnt('body', 'entidade')
+    verificaExisteEnt('body', 'entidade'),
+    body('despacho').customSanitizer(v => {
+        return !!v ? v : "Submissão inicial"
+    })
 ], (req, res) => {
     const errors = validationResult(req)
     if(!errors.isEmpty()){

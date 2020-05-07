@@ -186,6 +186,7 @@ mainRouter.use('/pedidos',require('./routes/api/pedidos'));
 mainRouter.use('/pendentes',require('./routes/api/pendentes'));
 mainRouter.use('/users',require('./routes/api/users'));
 mainRouter.use('/chaves',require('./routes/api/chaves'));
+mainRouter.use('/travessiaV2',require('./routes/api/travessiaV2'));
 mainRouter.use('/travessia',require('./routes/api/travessia'));
 mainRouter.use('/travessiaDeSintese',require('./routes/api/travessiaDeSintese'));
 mainRouter.use('/travessiaEspecial',require('./routes/api/travessiaEspecial'));

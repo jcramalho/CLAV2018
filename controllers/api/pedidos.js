@@ -55,7 +55,7 @@ Pedidos.criar = async function (pedidoParams) {
       {
         estado: "Submetido",
         responsavel: pedidoParams.user.email,
-        despacho: "Submissão inicial",
+        despacho: pedidoParams.despacho,
       },
     ],
   };
