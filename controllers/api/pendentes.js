@@ -107,7 +107,6 @@ Pendentes.atualizar = async function (pendente) {
  * Apaga um pendente no sistema.
  * 
  * @param pendente a apagar no sistema.
- * @return {Pendente} pendente atualizado.
  */
 Pendentes.apagar = async function (pendente) {
     return new Promise((resolve, reject) => {
@@ -120,4 +119,13 @@ Pendentes.apagar = async function (pendente) {
             }
         })
     })
+}
+
+/**
+ * Apaga todos os pendentes no sistema.
+ *
+ */
+Pendentes.apagarTodos = async function () {
+    await Pendente.deleteMany({}).exec()
+    return "Todos os trabalhos pendentes removidos com sucesso"
 }

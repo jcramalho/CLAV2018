@@ -158,4 +158,11 @@ router.post('/:codigo/distribuicao', Auth.isLoggedInUser, Auth.checkLevel([1, 3,
         .catch(erro => res.status(500).send(`Erro na distribuição do pedido: ${erro}`));
 });
 
+// Apaga todos pedidos
+router.delete('/', Auth.isLoggedInUser, Auth.checkLevel(7), (req, res) => {
+    Pedidos.apagarTodos()
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.status(500).send(`Erro na remoção de todos os pedidos: ${erro}`));
+})
+
 module.exports = router;

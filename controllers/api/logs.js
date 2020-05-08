@@ -55,3 +55,9 @@ Logs.getUserLogs = function(id, type){
     return Log.find({id: id, type: type})
         .sort({accessDate: -1})
 }
+
+// Delete all logs
+Logs.deleteAllLogs = async function () {
+    await Log.deleteMany({}).exec()
+    return "Todos os logs removidos com sucesso"
+}
