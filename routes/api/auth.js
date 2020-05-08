@@ -36,5 +36,11 @@ router.post('/adicionar', Auth.isLoggedInKey, [
     });
 });
 
+// Deletes all Auth Calls
+router.delete('/', Auth.isLoggedInUser, Auth.checkLevel(7), (req, res) => {
+    AuthCalls.removeAll()
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.status(500).send(`Erro na remoção de todos os Auth Calls: ${erro}`));
+})
 
 module.exports = router;

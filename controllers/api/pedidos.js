@@ -115,3 +115,12 @@ Pedidos.adicionarDistribuicao = (codigo, distribuicao) => {
     { $push: { distribuicao: distribuicao } }
   );
 };
+
+/**
+ * Apaga todos os pendentes no sistema.
+ *
+ */
+Pedidos.apagarTodos = async function () {
+    await Pedido.deleteMany({}).exec()
+    return "Todos os pedidos removidos com sucesso"
+}

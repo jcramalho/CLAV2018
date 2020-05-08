@@ -1,0 +1,16 @@
+summary: Elimina todos os pedidos
+description: Elimina todos os pedidos
+security:
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Pedidos
+responses:
+  200:
+    description: Eliminados todos os pedidos
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro

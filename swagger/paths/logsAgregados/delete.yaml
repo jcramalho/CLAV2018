@@ -1,0 +1,16 @@
+summary: Elimina todos os logs agregados
+description: Elimina todos os logs agregados
+security:
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Logs Agregados
+responses:
+  200:
+    description: Eliminados todos os logs agregados
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro
