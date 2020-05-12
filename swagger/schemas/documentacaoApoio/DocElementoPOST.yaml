@@ -1,0 +1,12 @@
+type: object
+properties:
+  file:
+    type: string
+    format: binary
+  texto:
+    type: string
+  visivel:
+    type: boolean
+required:
+  - texto
+  - visivel

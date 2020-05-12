@@ -12,13 +12,22 @@ ncp.limit = 16;
 var express = require('express')
 var router = express.Router()
 
+var validKeys = ["classe"];
+const { validationResult } = require('express-validator');
+const { existe, eMongoId } = require('../validation')
+
 // ------------------------------------------- GET -------------------------------------------
 
 // Lista toda a documentacao de Apoio
-router.get('/', Auth.isLoggedInKey, (req, res) => {
-    var validKeys = ["classe"];
+router.get('/', Auth.isLoggedInKey, [
+    existe("query", "classe").optional()
+], (req, res) => {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
+    }
+
     var queryData = url.parse(req.url, true).query;
-    
     var filtro = Object.entries(queryData)
         .filter(([k, v]) => v !== undefined && validKeys.includes(k))
 
@@ -55,35 +64,74 @@ router.get('/classes', Auth.isLoggedInKey, (req, res) => {
 })
 
 // Retorna uma só classe e o seu conteúdo com base no id
-router.get('/:id', Auth.isLoggedInKey, (req, res) => {
+router.get('/:id', Auth.isLoggedInKey, [
+    eMongoId('params', 'id')
+], (req, res) => {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
+    }
+
     DocumentacaoApoio.consultar(req.params.id)
         .then(dados => dados ? res.jsonp(dados) : res.status(404).send(`Erro: A classe '${req.params.id}' da documentação de apoio não existe.`))
 	    .catch(erro => res.status(500).send(`Erro na consulta da classe '${req.params.id}' da documentação de apoio: ${erro}`))
 })
 
 // Retorna as entradas de uma classe com base no id
-router.get('/:id/entradas/', Auth.isLoggedInKey, (req, res) => {
+router.get('/:id/entradas/', Auth.isLoggedInKey, [
+    eMongoId('params', 'id')
+], (req, res) => {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
+    }
+
     DocumentacaoApoio.consultar_entradas(req.params.id)
-        .then(dados => dados ? res.jsonp(dados) : res.status(404).send(`Erro: A classe '${req.params.id}' da documentação de apoio não existe.`))
+        .then(dados => dados ? res.jsonp(dados.entradas) : res.status(404).send(`Erro: A classe '${req.params.id}' da documentação de apoio não existe.`))
 	    .catch(erro => res.status(500).send(`Erro na consulta das entradas da classe '${req.params.id}' da documentação de apoio: ${erro}`))
 })
 
 // Retorna uma entrada de uma classe com base nos ids
-router.get('/:id/entradas/:idEnt', Auth.isLoggedInKey, (req, res) => {
+router.get('/:id/entradas/:idEnt', Auth.isLoggedInKey, [
+    eMongoId('params', 'id'),
+    eMongoId('params', 'idEnt')
+], (req, res) => {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
+    }
+
     DocumentacaoApoio.consultar_entrada(req.params.id, req.params.idEnt)
         .then(dados => dados && dados.length > 0 ? res.jsonp(dados[0]) : res.status(404).send(`Erro: A entrada '${req.params.idEnt}' da classe '${req.params.id}' da documentação de apoio não existe.`))
 	    .catch(erro => res.status(500).send(`Erro na consulta da entrada '${req.params.idEnt}' da classe '${req.params.id}' da documentação de apoio: ${erro}`))
 })
 
 // Retorna os elementos textuais de uma entrada específica dentro de uma classe 
-router.get('/:id/entradas/:idEnt/elementos', Auth.isLoggedInKey, (req, res) => {
+router.get('/:id/entradas/:idEnt/elementos', [
+    eMongoId('params', 'id'),
+    eMongoId('params', 'idEnt')
+], Auth.isLoggedInKey, (req, res) => {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
+    }
+
     DocumentacaoApoio.consultar_elementos(req.params.id, req.params.idEnt)
-        .then(dados => dados ? res.jsonp(dados) : res.status(404).send(`Erro: A entrada '${req.params.idEnt}' da classe '${req.params.id}' da documentação de apoio não existe.`))
+        .then(dados => dados ? res.jsonp(dados[0].elementos) : res.status(404).send(`Erro: A entrada '${req.params.idEnt}' da classe '${req.params.id}' da documentação de apoio não existe.`))
 	    .catch(erro => res.status(500).send(`Erro na consulta dos elementos da entrada '${req.params.idEnt}' da classe '${req.params.id}' da documentação de apoio: ${erro}`))
 })
 
 // Retorna um elemento textual de uma entrada específica dentro de uma classe com base em ids 
-router.get('/:id/entradas/:idEnt/elementos/:idElem', Auth.isLoggedInKey, (req, res) => {
+router.get('/:id/entradas/:idEnt/elementos/:idElem', Auth.isLoggedInKey, [
+    eMongoId('params', 'id'),
+    eMongoId('params', 'idEnt'),
+    eMongoId('params', 'idElem')
+], (req, res) => {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
+    }
+
     DocumentacaoApoio.consultar_elemento(req.params.id, req.params.idEnt, req.params.idElem)
         .then(dados => dados && dados.length > 0 ? res.jsonp(dados[0]) : res.status(404).send(`Erro: O elemento '${req.params.idElem}' associado à entrada '${req.params.idEnt}' da classe '${req.params.id}' da documentação de apoio não existe.`))
 	    .catch(erro => res.status(500).send(`Erro na consulta do elemento '${req.params.idElem}' associado à entrada '${req.params.idEnt}' da classe '${req.params.id}' da documentação de apoio: ${erro}`))
@@ -91,9 +139,18 @@ router.get('/:id/entradas/:idEnt/elementos/:idElem', Auth.isLoggedInKey, (req, r
 
 
 // Retorna um ficheiro dentro de um elemento de uma entrada específica dentro de uma classe com base em ids 
-router.get('/:id/entradas/:idEnt/elementos/:idElem/ficheiro', Auth.isLoggedInKey, (req, res) => {
+router.get('/:id/entradas/:idEnt/elementos/:idElem/ficheiro', Auth.isLoggedInKey, [
+    eMongoId('params', 'id'),
+    eMongoId('params', 'idEnt'),
+    eMongoId('params', 'idElem')
+], (req, res) => {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
+    }
+
     DocumentacaoApoio.consultar_ficheiro(req.params.id, req.params.idEnt, req.params.idElem)
-        .then(dados => dados && dados.length > 0 ? res.download(path.resolve(__dirname + '/../../' + dados[0].path)) : res.status(404).send(`Erro: O ficheiro do elemento '${req.params.idElem}' associado à entrada '${req.params.idEnt}' da classe '${req.params.id}' da documentação de apoio não existe.`))
+        .then(dados => dados && dados.length > 0 && dados[0].path ? res.download(path.resolve(__dirname + '/../../' + dados[0].path)) : res.status(404).send(`Erro: O ficheiro do elemento '${req.params.idElem}' associado à entrada '${req.params.idEnt}' da classe '${req.params.id}' da documentação de apoio não existe.`))
 	    .catch(erro => res.status(500).send(`Erro na consulta do ficheiro do elemento '${req.params.idElem}' associado à entrada '${req.params.idEnt}' da classe '${req.params.id}' da documentação de apoio: ${erro}`))
 })
 
@@ -101,41 +158,60 @@ router.get('/:id/entradas/:idEnt/elementos/:idElem/ficheiro', Auth.isLoggedInKey
 // ------------------------------------------ POST ------------------------------------------- 
 
 // Criar uma nova classe com entradas vazias, além de ser criada uma pasta para armazenar os ficheiros da classe
-router.post('/', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), (req, res) => {
+router.post('/', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), [
+    existe("body", "classe")
+], (req, res) => {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
+    }
+
     var classe = req.body.classe;
-    if(classe !== undefined) {
-        var dbpath = '/public/documentacao_apoio/' + classe.replace(/ /g, '_'); 
-        fs.mkdir(path.resolve(__dirname + '/../../' + dbpath),function(err){
-            if (err) {
-                res.status(500).jsonp("Ocorreu um erro na adição da classe à documentação de apoio.")
-            } else {
-                DocumentacaoApoio.criar_classe(classe)
-                    .then(dados => {
-                        if(dados) res.jsonp("Classe adicionada com sucesso à documentação de apoio.")
-                        else res.status(404).jsonp("Erro na adição da classe à documentação de apoio.")
-                    })
-                    .catch(erro => res.status(404).jsonp("Erro na adição da classe à documentação de apoio: " + erro))
-                    }
-         });
-    } else res.status(404).jsonp("Erro na adição da classe à documentação de apoio: campos em falta.")
+    var dbpath = '/public/documentacao_apoio/' + classe.replace(/ /g, '_'); 
+    fs.mkdir(path.resolve(__dirname + '/../../' + dbpath),function(err){
+        if (err) {
+            res.status(500).jsonp("Ocorreu um erro na adição da classe à documentação de apoio.")
+        } else {
+            DocumentacaoApoio.criar_classe(classe)
+                .then(dados => {
+                    if(dados) res.jsonp("Classe adicionada com sucesso à documentação de apoio.")
+                    else res.status(500).jsonp("Erro na adição da classe à documentação de apoio.")
+                })
+                .catch(erro => res.status(500).jsonp("Erro na adição da classe à documentação de apoio: " + erro))
+                }
+     });
 })
 
 // Criar entrada dentro de uma classe - apenas recebe a descrição, elementos são inicializados com lista vazia
-router.post('/:id', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), (req, res) => {
+router.post('/:id', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), [
+    eMongoId('params', 'id'),
+    existe("body", "descricao")
+], (req, res) => {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
+    }
+
     // Descricao 
     var descricao = req.body.descricao;
-    if(descricao !== undefined) {
-        DocumentacaoApoio.criar_entrada(req.params.id, descricao)
-            .then(dados => {
-                if(dados) res.jsonp("Entrada adicionada com sucesso à classe " + req.params.id +" da documentação de apoio.")
-                else res.status(404).jsonp("Erro na adição da entrada à classe " + req.params.id + " da documentação de apoio.")
-            })
-            .catch(erro => res.status(404).jsonp("Erro na adição da entrada à classe " + req.params.id + " da documentação de apoio: " + erro))
-    } else res.status(404).jsonp("Erro na adição da entrada à classe " + req.params.id + " da documentação de apoio: campos em falta.")
+    DocumentacaoApoio.criar_entrada(req.params.id, descricao)
+        .then(dados => {
+            if(dados) res.jsonp("Entrada adicionada com sucesso à classe " + req.params.id +" da documentação de apoio.")
+            else res.status(500).jsonp("Erro na adição da entrada à classe " + req.params.id + " da documentação de apoio.")
+        })
+        .catch(erro => res.status(500).jsonp("Erro na adição da entrada à classe " + req.params.id + " da documentação de apoio: " + erro))
 })
 
 // Criar elemento dentro de uma entrada numa classe 
-router.post('/:id/entradas/:entrada', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), (req, res) => {
+router.post('/:id/entradas/:idEnt', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), [
+    eMongoId('params', 'id'),
+    eMongoId('params', 'idEnt')
+], (req, res) => {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
+    }
+
     var form = new formidable.IncomingForm()
     form.parse(req, async (error, fields, formData) => {
         if(!error){
@@ -167,23 +243,23 @@ router.post('/:id/entradas/:entrada', Auth.isLoggedInUser, Auth.checkLevel([4, 5
                                             size: formData.file.size
                                         };
                                         documento.ficheiro = novoFicheiro;
-                                        DocumentacaoApoio.criar_elemento(req.params.id, req.params.entrada, documento)
+                                        DocumentacaoApoio.criar_elemento(req.params.id, req.params.idEnt, documento)
                                             .then(dados => {
                                                 if(dados) res.jsonp("Elemento adicionado com sucesso à documentação de apoio.")
-                                                else res.status(404).jsonp("Erro na adição do elemento à documentação de apoio.")
+                                                else res.status(500).jsonp("Erro na adição do elemento à documentação de apoio.")
                                             })
-                                            .catch(erro => res.status(404).jsonp("Erro na adição do elemento à documentação de apoio: " + erro))
+                                            .catch(erro => res.status(500).jsonp("Erro na adição do elemento à documentação de apoio: " + erro))
                                     }
                                 })
                             })
-                            .catch(erro => res.status(404).jsonp("Erro na adição do elemento à documentação de apoio: " + erro))
+                            .catch(erro => res.status(500).jsonp("Erro na adição do elemento à documentação de apoio: " + erro))
                     } else {
-                        DocumentacaoApoio.criar_elemento(req.params.id, req.params.entrada, documento)
+                        DocumentacaoApoio.criar_elemento(req.params.id, req.params.idEnt, documento)
                             .then(dados => {
                                 if(dados) res.jsonp("Elemento adicionado com sucesso à documentação de apoio.")
-                                else res.status(404).jsonp("Erro na adição do elemento à documentação de apoio.")
+                                else res.status(500).jsonp("Erro na adição do elemento à documentação de apoio.")
                             })
-                            .catch(erro => res.status(404).jsonp("Erro na adição do elemento à documentação de apoio: " + erro))
+                            .catch(erro => res.status(500).jsonp("Erro na adição do elemento à documentação de apoio: " + erro))
                     }
                 }
             else {
@@ -200,66 +276,88 @@ router.post('/:id/entradas/:entrada', Auth.isLoggedInUser, Auth.checkLevel([4, 5
 // ------------------------------------------- PUT ------------------------------------------- 
 
 // Alterar a designação da classe -> Mudar nome da pasta
-router.put('/:id', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), (req, res) => {
+router.put('/:id', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), [
+    eMongoId('params', 'id'),
+    existe("body", "classe")
+], (req, res) => {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
+    }
+
     // classe
     var classe = req.body.classe;
-    if(classe !== undefined) {
-        DocumentacaoApoio.consultar(req.params.id)
-            .then(function(dados){
-                var old = dados.classe;
-                var oldPath = '/public/documentacao_apoio/' + old.replace(/ /g, '_')
-                var dbpath = '/public/documentacao_apoio/' + classe.replace(/ /g, '_'); 
-                fsExtra.move(path.resolve(__dirname + '/../../' + oldPath), path.resolve(__dirname + '/../../' + dbpath),function(err){
-                    if (err) {
-                        res.status(500).jsonp("Ocorreu um erro na atualização da classe " + req.params.id + ".")
-                    } else {
-                        // Atualizar a designação da classe
-                        var novaClasse = dados;
-                        novaClasse.classe = classe;
-                        // ALterar os paths dos ficheiros existentes nos elementos da classe
-                        novaClasse.entradas.forEach(entrada => {
-                            entrada.elementos.forEach(elemento => {
-                                if(elemento.ficheiro){
-                                    elemento.ficheiro.path = elemento.ficheiro.path.replace(oldPath, dbpath);
-                                }
-                            })
+    DocumentacaoApoio.consultar(req.params.id)
+        .then(function(dados){
+            var old = dados.classe;
+            var oldPath = '/public/documentacao_apoio/' + old.replace(/ /g, '_')
+            var dbpath = '/public/documentacao_apoio/' + classe.replace(/ /g, '_'); 
+            fsExtra.move(path.resolve(__dirname + '/../../' + oldPath), path.resolve(__dirname + '/../../' + dbpath),function(err){
+                if (err) {
+                    res.status(500).jsonp("Ocorreu um erro na atualização da classe " + req.params.id + ".")
+                } else {
+                    // Atualizar a designação da classe
+                    var novaClasse = dados;
+                    novaClasse.classe = classe;
+                    // ALterar os paths dos ficheiros existentes nos elementos da classe
+                    novaClasse.entradas.forEach(entrada => {
+                        entrada.elementos.forEach(elemento => {
+                            if(elemento.ficheiro){
+                                elemento.ficheiro.path = elemento.ficheiro.path.replace(oldPath, dbpath);
+                            }
                         })
-                        // Editar a classe na BD
-                        DocumentacaoApoio.editar_classe(req.params.id, novaClasse)
-                            .then(dados => {
-                                if(dados) res.jsonp("Classe da documentação de apoio atualizada com sucesso.")
-                                else res.status(404).jsonp("Erro na atualização da classe " + req.params.id + " da documentação de apoio.")
-                            })
-                            .catch(erro => res.status(404).jsonp("Erro na atualização da classe " + req.params.id + " da documentação de apoio: " + erro))
-                    }
-                })
+                    })
+                    // Editar a classe na BD
+                    DocumentacaoApoio.editar_classe(req.params.id, novaClasse)
+                        .then(dados => {
+                            if(dados) res.jsonp("Classe da documentação de apoio atualizada com sucesso.")
+                            else res.status(500).jsonp("Erro na atualização da classe " + req.params.id + " da documentação de apoio.")
+                        })
+                        .catch(erro => res.status(500).jsonp("Erro na atualização da classe " + req.params.id + " da documentação de apoio: " + erro))
+                }
             })
-            .catch(erro => res.status(500).jsonp("Ocorreu um erro na atualização da classe " + req.params.id + " da documentação de apoio."))
-    } else res.status(404).jsonp("Erro na atualização da classe da documentação de apoio: campos em falta.")
+        })
+        .catch(erro => res.status(500).jsonp("Ocorreu um erro na atualização da classe " + req.params.id + " da documentação de apoio."))
 })
 
 // Alterar entrada numa classe
-router.put('/:id/entradas/:entrada', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), (req, res) => {
+router.put('/:id/entradas/:idEnt', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), [
+    eMongoId('params', 'id'),
+    eMongoId('params', 'idEnt'),
+    existe("body", "descricao")
+], (req, res) => {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
+    }
+
     // Descricao 
     var descricao = req.body.descricao;
-    if(descricao !== undefined) {
-        DocumentacaoApoio.editar_entrada(req.params.id, req.params.entrada, descricao)
-            .then(dados => {
-                if(dados) res.jsonp("Entrada atualizada com sucesso na classe " + req.params.id + " da documentação de apoio.")
-                else res.status(404).jsonp("Erro na atualização da entrada na classe " + req.params.id + " da documentação de apoio.")
-            })
-            .catch(erro => res.status(404).jsonp("Erro na atualização da entrada na classe " + req.params.id + " da documentação de apoio: " + erro))
-    } else res.status(404).jsonp("Erro na atualização da entrada na classe " + req.params.id + " da documentação de apoio: campos em falta.")
+    DocumentacaoApoio.editar_entrada(req.params.id, req.params.idEnt, descricao)
+        .then(dados => {
+            if(dados) res.jsonp("Entrada atualizada com sucesso na classe " + req.params.id + " da documentação de apoio.")
+            else res.status(500).jsonp("Erro na atualização da entrada na classe " + req.params.id + " da documentação de apoio.")
+        })
+        .catch(erro => res.status(500).jsonp("Erro na atualização da entrada na classe " + req.params.id + " da documentação de apoio: " + erro))
 })
 
 // Altera um elemento dentro de uma entrada
-router.put('/:id/entradas/:entrada/elementos/:elemento', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), (req, res) => {
+router.put('/:id/entradas/:idEnt/elementos/:idElem', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), [
+    eMongoId('params', 'id'),
+    eMongoId('params', 'idEnt'),
+    eMongoId('params', 'idElem')
+], (req, res) => {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
+    }
+
     var form = new formidable.IncomingForm()
     form.parse(req, async (error, fields, formData) => {
         if(!error){
             // Verificar os dados textuais
             if(fields.texto && fields.visivel){
-                DocumentacaoApoio.consultar_elemento(req.params.id, req.params.entrada, req.params.elemento)
+                DocumentacaoApoio.consultar_elemento(req.params.id, req.params.idEnt, req.params.idElem)
                     .then(function(dados){
                         if(dados && dados.length > 0){
                             var documento = dados[0];
@@ -295,16 +393,16 @@ router.put('/:id/entradas/:entrada/elementos/:elemento', Auth.isLoggedInUser, Au
                                                     size: formData.file.size
                                                 };
                                                 documento.ficheiro = novoFicheiro;
-                                                DocumentacaoApoio.editar_elemento(req.params.id, req.params.entrada, req.params.elemento, documento)
+                                                DocumentacaoApoio.editar_elemento(req.params.id, req.params.idEnt, req.params.idElem, documento)
                                                     .then(dados => {
                                                         if(dados) res.jsonp("Elemento da documentação de apoio atualizado com sucesso.")
-                                                        else res.status(404).jsonp("Erro na atualização do elemento da documentação de apoio.")
+                                                        else res.status(500).jsonp("Erro na atualização do elemento da documentação de apoio.")
                                                     })
-                                                    .catch(erro => res.status(404).jsonp("Erro na atualização do elemento da documentação de apoio: " + erro))
+                                                    .catch(erro => res.status(500).jsonp("Erro na atualização do elemento da documentação de apoio: " + erro))
                                             }
                                         })
                                     })
-                                    .catch(erro => res.status(404).jsonp("Erro na atualização do elemento da documentação de apoio: " + erro))
+                                    .catch(erro => res.status(500).jsonp("Erro na atualização do elemento da documentação de apoio: " + erro))
                             } else if(fields.apagar_ficheiro && documento.ficheiro){
                                 // Caso a flag de apagar ficheiro sem substituição seja enviada no form
                                 fs.unlink(path.resolve(__dirname + '/../../' + dados[0].ficheiro.path), function (err) {
@@ -314,22 +412,22 @@ router.put('/:id/entradas/:entrada/elementos/:elemento', Auth.isLoggedInUser, Au
                                         // Apagar o objeto do documento
                                         delete documento.ficheiro;
                                         // Atualizar a BD
-                                        DocumentacaoApoio.editar_elemento(req.params.id, req.params.entrada, req.params.elemento, documento)
+                                        DocumentacaoApoio.editar_elemento(req.params.id, req.params.idEnt, req.params.idElem, documento)
                                             .then(dados => {
                                                 if(dados) res.jsonp("Elemento da documentação de apoio atualizado com sucesso.")
-                                                else res.status(404).jsonp("Erro na atualização do elemento da documentação de apoio.")
+                                                else res.status(500).jsonp("Erro na atualização do elemento da documentação de apoio.")
                                             })
-                                            .catch(erro => res.status(404).jsonp("Erro na atualização do elemento da documentação de apoio: " + erro))
+                                            .catch(erro => res.status(500).jsonp("Erro na atualização do elemento da documentação de apoio: " + erro))
                                     }
                                 });
                             } 
                             else {
-                                DocumentacaoApoio.editar_elemento(req.params.id, req.params.entrada, req.params.elemento, documento)
+                                DocumentacaoApoio.editar_elemento(req.params.id, req.params.idEnt, req.params.idElem, documento)
                                     .then(dados => {
                                         if(dados) res.jsonp("Elemento da documentação de apoio atualizado com sucesso.")
-                                        else res.status(404).jsonp("Erro na atualização do elemento da documentação de apoio.")
+                                        else res.status(500).jsonp("Erro na atualização do elemento da documentação de apoio.")
                                     })
-                                    .catch(erro => res.status(404).jsonp("Erro na atualização do elemento da documentação de apoio: " + erro))
+                                    .catch(erro => res.status(500).jsonp("Erro na atualização do elemento da documentação de apoio: " + erro))
                             }
                         } else {
                             res.status(404).send(`Erro: O elemento a atualizar na classe '${req.params.id}' não existe.`)
@@ -352,6 +450,11 @@ router.put('/:id/entradas/:entrada/elementos/:elemento', Auth.isLoggedInUser, Au
 
 // Apaga uma classe -> eliminar a pasta
 router.delete('/:id', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), (req, res) => {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
+    }
+
     DocumentacaoApoio.consultar(req.params.id)
         .then(function(dados) { 
             if(dados){
@@ -382,14 +485,22 @@ router.delete('/:id', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), (req, 
 })
 
 // Apaga uma entrada -> eliminar ficheiros nos elementos
-router.delete('/:id/entradas/:entrada', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), (req, res) => {
+router.delete('/:id/entradas/:idEnt', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), [
+    eMongoId('params', 'id'),
+    eMongoId('params', 'idEnt')
+], (req, res) => {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
+    }
+
     // entrada
     // GET entrada
-    DocumentacaoApoio.consultar_entrada(req.params.id, req.params.entrada)
+    DocumentacaoApoio.consultar_entrada(req.params.id, req.params.idEnt)
         .then(function(dados) { 
             if(dados && dados.length > 0){
                 // Apagar da BD
-                DocumentacaoApoio.eliminar_entrada(req.params.id, req.params.entrada, function(err, user){
+                DocumentacaoApoio.eliminar_entrada(req.params.id, req.params.idEnt, function(err, user){
                     if(err){
                         res.status(500).send("Não foi possível eliminar a entrada da documentação de apoio.");
                     }else{
@@ -408,17 +519,26 @@ router.delete('/:id/entradas/:entrada', Auth.isLoggedInUser, Auth.checkLevel([4,
                 })
             }
             else {
-                res.status(404).send(`Erro: A entrada '${req.params.entrada}' da classe '${req.params.id}' da documentação de apoio não existe.`)
+                res.status(404).send(`Erro: A entrada '${req.params.idEnt}' da classe '${req.params.id}' da documentação de apoio não existe.`)
             }
         })
         .catch(erro => res.status(500).send(`Erro na eliminação da entrada da documentação de apoio: ${erro}`))
 })
 
 // Apaga um elemento -> eliminar ficheiro se existir
-router.delete('/:id/entradas/:entrada/elementos/:elemento', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), (req, res) => {
+router.delete('/:id/entradas/:idEnt/elementos/:idElem', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), [
+    eMongoId('params', 'id'),
+    eMongoId('params', 'idEnt'),
+    eMongoId('params', 'idElem')
+], (req, res) => {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
+    }
+
     // elemento
     // GET elemento 
-    DocumentacaoApoio.consultar_elemento(req.params.id, req.params.entrada, req.params.elemento)
+    DocumentacaoApoio.consultar_elemento(req.params.id, req.params.idEnt, req.params.idElem)
         .then(function(dados) { 
             if(dados && dados.length > 0){
                 // Caso possua um ficheiro associado este deve ser apagado
@@ -428,7 +548,7 @@ router.delete('/:id/entradas/:entrada/elementos/:elemento', Auth.isLoggedInUser,
                             res.status(500).send(`Erro na eliminação do elemento da documentação de apoio: ${err}`)
                         } else {
                             // Apagar da Base de Dados
-                            DocumentacaoApoio.eliminar_elemento(req.params.id, req.params.entrada, req.params.elemento, function(err, user){
+                            DocumentacaoApoio.eliminar_elemento(req.params.id, req.params.idEnt, req.params.idElem, function(err, user){
                                 if(err){
                                     res.status(500).send("Não foi possível eliminar o elemento da documentação de apoio.");
                                 }else{
@@ -439,7 +559,7 @@ router.delete('/:id/entradas/:entrada/elementos/:elemento', Auth.isLoggedInUser,
                     });
                 } else {
                     // Apagar da Base de Dados
-                    DocumentacaoApoio.eliminar_elemento(req.params.id, req.params.entrada, req.params.elemento, function(err, user){
+                    DocumentacaoApoio.eliminar_elemento(req.params.id, req.params.idEnt, req.params.idElem, function(err, user){
                         if(err){
                             res.status(500).send("Não foi possível eliminar o elemento da documentação de apoio.");
                         }else{
@@ -449,7 +569,7 @@ router.delete('/:id/entradas/:entrada/elementos/:elemento', Auth.isLoggedInUser,
                 }
             }
             else {
-                res.status(404).send(`Erro: O elemento '${req.params.elemento}' associado à entrada '${req.params.entrada}' da classe '${req.params.id}' da documentação de apoio não existe`)
+                res.status(404).send(`Erro: O elemento '${req.params.idElem}' associado à entrada '${req.params.idEnt}' da classe '${req.params.id}' da documentação de apoio não existe`)
             }
         })
         .catch(erro => res.status(500).send(`Erro na eliminação do elemento da documentação de apoio: ${erro}`))

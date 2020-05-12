@@ -1,0 +1,48 @@
+summary: Alterar um elemento de uma entrada de uma classe da documentação de apoio
+description: Alterar um elemento de uma entrada de uma classe da documentação de apoio. Se for enviado o ficheiro, o ficheiro associado é substituído pelo novo. Se não for enviado um ficheiro e for adicionado o campo 'apagar_ficheiro' com valor true o ficheiro é eliminado do elemento. Se não for enviado o ficheiro nem o campo 'apagar_ficheiro' são apenas alterados os campos texto e visível.
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Documentação de Apoio
+parameters:
+  - name: id
+    in: path
+    description: 'Identificador de uma classe na documentação de apoio'
+    schema:
+      type: string
+    required: true
+  - name: idEnt
+    in: path
+    description: 'Identificador de uma entrada da classe na documentação de apoio'
+    schema:
+      type: string
+    required: true
+  - name: idElem
+    in: path
+    description: 'Identificador de um elemento da entrada da classe na documentação de apoio'
+    schema:
+      type: string
+    required: true
+requestBody:
+  description: FormData a enviar
+  required: true
+  content:
+    multipart/form-data:
+      schema:
+        $ref: '#/components/schemas/DocElementoPUT'
+responses:
+  200:
+    description: Alterado o elemento da entrada da classe da documentação de apoio
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  404:
+    description: Este elemento não existe na entrada da classe da documentação de apoio
+  422:
+    $ref: '#/components/responses/ValidationParameters'
+  500:
+    description: Erro

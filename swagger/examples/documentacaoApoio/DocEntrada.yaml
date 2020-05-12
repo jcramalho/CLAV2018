@@ -1,0 +1,18 @@
+elementos:
+  - _id: "5ebad41bf05791a480b5dc06"
+    texto: "AE"
+    visivel: true
+  - _id: "5ebad49ff05791a480b5dc0b"
+    texto: "TS"
+    visivel: true
+  - _id: "5ebae3753c7da1f0a0f55f67"
+    texto: "Ficheiro"
+    visivel: true
+    ficheiro:
+      _id: "5ebae3753c7da1f0a0f55f69"
+      nome: "ficheiro.txt"
+      path: "/public/documentacao_apoio/Formularios/ficheiro.txt"
+      mimetype: "text/plain"
+      size: 7276
+_id: "5ebad3bff05791a480b5dbff"
+descricao: "tabelas de selecao"

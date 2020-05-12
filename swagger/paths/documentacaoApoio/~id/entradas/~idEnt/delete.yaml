@@ -1,0 +1,33 @@
+summary: Eliminar a entrada da classe da documentação de apoio
+description: Eliminar a entrada da classe da documentação de apoio
+security:
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Documentação de Apoio
+parameters:
+  - name: id
+    in: path
+    description: 'Identificador de uma classe na documentação de apoio'
+    schema:
+      type: string
+    required: true
+  - name: idEnt
+    in: path
+    description: 'Identificador de uma entrada da classe na documentação de apoio'
+    schema:
+      type: string
+    required: true
+responses:
+  200:
+    description: Eliminada entrada da classe da documentação de apoio
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  404:
+    description: Esta entrada não existe na classe da documentação de apoio
+  422:
+    $ref: '#/components/responses/ValidationParameters'
+  500:
+    description: Erro

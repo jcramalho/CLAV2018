@@ -1,0 +1,38 @@
+summary: Cria um elemento na entrada da classe na documentação de apoio
+description: Cria um elemento na entrada da classe na documentação de apoio
+security:
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Documentação de Apoio
+parameters:
+  - name: id
+    in: path
+    description: 'Identificador de uma classe na documentação de apoio'
+    schema:
+      type: string
+    required: true
+  - name: idEnt
+    in: path
+    description: 'Identificador de uma entrada da classe na documentação de apoio'
+    schema:
+      type: string
+    required: true
+requestBody:
+  description: FormData a enviar
+  required: true
+  content:
+    multipart/form-data:
+      schema:
+        $ref: '#/components/schemas/DocElementoPOST'
+responses:
+  200:
+    description: Elemento criado na entrada da classe da documentação de apoio
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
+  500:
+    description: Erro

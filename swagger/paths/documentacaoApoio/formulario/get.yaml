@@ -1,0 +1,26 @@
+summary: Devolve um ficheiro CSV com o formulário das TS
+description: Devolve um ficheiro CSV com o formulário das TS
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Documentação de Apoio
+responses:
+  200:
+    description: Ficheiro CSV com o formulário das TS
+    content:
+      text/csv:
+        schema:
+          type: string
+          format: binary
+        examples:
+          csv:
+            $ref: '#/components/examples/ClassesEsqueletoCSV'
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  500:
+    description: Erro
