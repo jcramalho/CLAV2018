@@ -21,7 +21,7 @@ Pendentes.listar = (filtro) => {
 };
 
 Pendentes.listarTodos = () => {
-    return Pendente.find().sort({ data: -1 });
+    return Pendente.find();
 };
 
 // Recupera a lista de trabalhos pendentes de determinado tipo
