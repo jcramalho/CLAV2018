@@ -189,7 +189,10 @@ router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), [
   }
 
   Leg.criar(req.body)
-    .then(dados => res.jsonp(dados))
+    .then(async dados => {
+        await State.reloadLegislacao()
+        res.jsonp(dados)
+    })
     .catch(err => res.status(500).send(`Erro na inserção de uma legislação: ${err}`));
 });
 
@@ -221,7 +224,10 @@ router.put("/:id", Auth.isLoggedInUser, Auth.checkLevel(4), [
   }
 
   Leg.atualizar(req.params.id, req.body)
-    .then(dados => res.jsonp(dados))
+    .then(async dados => {
+        await State.reloadLegislacao()
+        res.jsonp(dados)
+    })
     .catch(err => res.status(500).send(`Erro na atualização de uma legislação: ${err}`));
 });
 

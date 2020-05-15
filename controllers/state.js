@@ -26,6 +26,13 @@ var legislacao = []
 // Índice de pesquisa para v-trees: 
 var indicePesquisa = []
 
+exports.reloadLegislacao = async () => {
+    console.debug("A carregar a legislação da BD para a cache...")
+    legislacao = []
+    legislacao = await loadLegs();
+    console.debug("Terminei de carregar a legislação.")
+}
+
 exports.reset = async () => { 
     try {
         console.debug("A carregar as classes da BD para a cache...")
@@ -37,9 +44,7 @@ exports.reset = async () => {
         classTreeInfo = JSON.parse(fs.readFileSync('./public/classes/classesInfo.json'))
         console.debug("Terminei de carregar a informação completa das classes.")
 
-        console.debug("A carregar a legislação da BD para a cache...")
-        legislacao = await loadLegs();
-        console.debug("Terminei de carregar a legislação.")
+        await exports.reloadLegislacao()
 
         console.debug("A criar o índice de pesquisa...")
         indicePesquisa = await criaIndicePesquisa()
@@ -61,21 +66,17 @@ exports.reload = async () => {
         exemplosNotasAplicacao = []
         termosInd = []
 
-        legislacao = []
-
         classTree = await loadClasses();
         classList = [].concat.apply([], levelClasses)
         console.debug("Informação base das classes carregada...")
 
-        console.debug("A carregar a legislação da BD para a cache...")
-        legislacao = await loadLegs();
-        console.debug("Terminei de carregar a legislação.")
+        await exports.reloadLegislacao()
 
         console.debug("A criar o índice de pesquisa...")
         indicePesquisa = await criaIndicePesquisa()
         console.debug("Índice de pesquisa criado com " + indicePesquisa.length + " entradas.")
 
-        //Carrega a info completa de todas as classes de forma assincrona
+        //Carrega a info completa de todas as classes
         console.debug("A obter a informação completa das classes...")
         classTreeInfo = await loadClassesInfo()
         console.debug("a guardar a informação num ficheiro...")
