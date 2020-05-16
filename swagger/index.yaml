@@ -15,7 +15,7 @@ info:
 
     Os métodos de autenticação disponíveis podem ser acedidos ao carregar num dos cadeados. Ao carregar no botão 'Authorize' irá aparecer todos os métodos de autenticação. Se carregar no cadeado de uma rota irá apenas aparecer os métodos de autenticação que a rota suporta (permite/autoriza).
     
-    **Última alteração: 12/05/2020**
+    **Última alteração: 16/05/2020**
   version: 2.0.0
   title: CLAV API
   contact:
@@ -205,7 +205,7 @@ components:
         'examples/pendentes/Pendentes.yaml',
         'examples/pendentes/PendentePOST.yaml',
         'examples/pendentes/PendentePUT.yaml',
-        'examples/pendentes/PendentePOSTres.yaml',
+        'examples/pendentes/PendenteRes.yaml',
         'examples/documentacaoCientifica/DocCientifica.yaml',
         'examples/documentacaoCientifica/DocCientificas.yaml',
         'examples/documentacaoCientifica/DocCientificaExportacao.yaml',
@@ -213,6 +213,12 @@ components:
         'examples/parametros/Parametros.yaml',
         'examples/travessiaEspecial/TravessiaEspecial.yaml',
         'examples/travessiaEspecial/TravessiasEspeciais.yaml',
-        'examples/travessiaV2/TravessiasV2.yaml'
+        'examples/travessiaV2/TravessiasV2.yaml',
+        'examples/documentacaoApoio/DocApoios.yaml',
+        'examples/documentacaoApoio/DocClasse.yaml',
+        'examples/documentacaoApoio/DocEntrada.yaml',
+        'examples/documentacaoApoio/DocElemento.yaml',
+        'examples/documentacaoApoio/DocEntradas.yaml',
+        'examples/documentacaoApoio/DocElementos.yaml'
       ]
   }]

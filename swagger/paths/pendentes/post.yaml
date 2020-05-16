@@ -19,8 +19,8 @@ responses:
     content:
       application/json:
         schema:
-          $ref: '#/components/schemas/PendentePOSTres'
-        example: !!inc/file '/examples/pendentes/PendentePOSTres.yaml'
+          $ref: '#/components/schemas/PendenteRes'
+        example: !!inc/file '/examples/pendentes/PendenteRes.yaml'
   401:
     $ref: '#/components/responses/UnauthorizedUser'
   403:

@@ -91,8 +91,17 @@ Pendentes.atualizar = async function (pendente) {
         oldPendente.dataAtualizacao = Date.now()
 
         try {
-            await oldPendente.save()
-            return "Pendente atualizado com sucesso"
+            let novoPendente = await oldPendente.save()
+            return {
+                _id: novoPendente._id,
+                numInterv: novoPendente.numInterv,
+                acao: novoPendente.acao,
+                tipo: novoPendente.tipo,
+                criadoPor: novoPendente.criadoPor,
+                dataCriacao: novoPendente.dataCriacao,
+                dataAtualizacao: novoPendente.dataAtualizacao
+            }
+            //return "Pendente atualizado com sucesso"
         } catch (err) {
             console.log(err)
             throw err

@@ -16,6 +16,11 @@ requestBody:
 responses:
   200:
     description: Atualizado um trabalho previamente guardado como pendente
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/PendenteRes'
+        example: !!inc/file '/examples/pendentes/PendenteRes.yaml'
   401:
     $ref: '#/components/responses/UnauthorizedUser'
   403:
