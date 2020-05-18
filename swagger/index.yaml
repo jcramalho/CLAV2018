@@ -15,7 +15,7 @@ info:
 
     Os métodos de autenticação disponíveis podem ser acedidos ao carregar num dos cadeados. Ao carregar no botão 'Authorize' irá aparecer todos os métodos de autenticação. Se carregar no cadeado de uma rota irá apenas aparecer os métodos de autenticação que a rota suporta (permite/autoriza).
     
-    **Última alteração: 16/05/2020**
+    **Última alteração: 18/05/2020**
   version: 2.0.0
   title: CLAV API
   contact:

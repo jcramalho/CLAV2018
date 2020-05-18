@@ -119,12 +119,20 @@ Pendentes.atualizar = async function (pendente) {
  */
 Pendentes.apagar = async function (pendente) {
     return new Promise((resolve, reject) => {
-        Pendente.findByIdAndRemove({ _id: pendente }, function (err, updatedPendente) {
+        Pendente.findByIdAndRemove({ _id: pendente }, function (err, delPendente) {
             if (err) {
                 reject(err);
             } else {
-                //resolve(updatedPendente)
-                resolve("Pendente removido")
+                resolve({
+                    _id: delPendente._id,
+                    numInterv: delPendente.numInterv,
+                    acao: delPendente.acao,
+                    tipo: delPendente.tipo,
+                    criadoPor: delPendente.criadoPor,
+                    dataCriacao: delPendente.dataCriacao,
+                    dataAtualizacao: delPendente.dataAtualizacao
+                })
+                //resolve("Pendente removido")
             }
         })
     })

@@ -15,6 +15,11 @@ parameters:
 responses:
   200:
     description: Removido um trabalho pendente
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/PendenteRes'
+        example: !!inc/file '/examples/pendentes/PendenteRes.yaml'
   401:
     $ref: '#/components/responses/UnauthorizedUser'
   403:
