@@ -399,7 +399,8 @@ module.exports.vcPedidoTipo = [
     "AE PGD/LC",
     "AE PGD",
     "AE RADA",
-    "RADA"
+    "RADA",
+    "PGD"
 ]
 module.exports.vcPedidoAcao = ["Criação", "Alteração", "Remoção", "Importação", "Extinção"]
 module.exports.vcPedidoEstado = ["Submetido", "Distribuído", "Apreciado", "Validado", "Devolvido"]
