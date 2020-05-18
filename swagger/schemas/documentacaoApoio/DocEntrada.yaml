@@ -1,0 +1,12 @@
+type: object
+properties:
+  _id:
+    type: string
+  descricao:
+    type: string
+  elementos:
+    $ref: '#/components/schemas/DocElementos'
+required:
+  - _id
+  - descricao
+  - elementos

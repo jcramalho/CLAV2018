@@ -1,0 +1,34 @@
+summary: Lista as entradas de uma classe da documentação de apoio
+description: Lista as entradas de uma classe da documentação de apoio
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Documentação de Apoio
+parameters:
+  - name: id
+    in: path
+    description: 'Identificador de uma classe na documentação de apoio'
+    schema:
+      type: string
+    required: true
+responses:
+  200:
+    description: Devolve a lista das entradas de uma classe da documentação de apoio com id igual ao do campo 'id'
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/DocEntradas'
+        example: !!inc/file '/examples/documentacaoApoio/DocEntradas.yaml'
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  404:
+    description: Esta classe não existe na documentação de apoio
+  422:
+    $ref: '#/components/responses/ValidationParameters'
+  500:
+    description: Erro

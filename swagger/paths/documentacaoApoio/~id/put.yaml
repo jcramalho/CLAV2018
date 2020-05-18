@@ -1,0 +1,37 @@
+summary: Alterar designação da classe na documentação de apoio
+description: Alterar designação da classe na documentação de apoio
+security:
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Documentação de Apoio
+parameters:
+  - name: id
+    in: path
+    description: 'Identificador de uma classe na documentação de apoio'
+    schema:
+      type: string
+    required: true
+requestBody:
+  description: 'Designação a usar'
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          classe:
+            type: string
+        required:
+          - classe
+responses:
+  200:
+    description: Alterada designação da classe da documentação de apoio
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
+  500:
+    description: Erro

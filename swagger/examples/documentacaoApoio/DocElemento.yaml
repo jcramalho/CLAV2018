@@ -1,0 +1,9 @@
+_id: "5ebae3753c7da1f0a0f55f67"
+texto: "Ficheiro"
+visivel: true
+ficheiro:
+  _id: "5ebae3753c7da1f0a0f55f69"
+  nome: "ficheiro.txt"
+  path: "/public/documentacao_apoio/Formularios/ficheiro.txt"
+  mimetype: "text/plain"
+  size: 7276

@@ -1,0 +1,30 @@
+summary: Cria uma classe na documentação de apoio
+description: Cria uma classe na documentação de apoio
+security:
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Documentação de Apoio
+requestBody:
+  description: 'Classe a criar'
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          classe:
+            type: string
+        required:
+          - classe
+responses:
+  200:
+    description: Classe criada na documentação de apoio
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
+  500:
+    description: Erro

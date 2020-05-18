@@ -1,0 +1,40 @@
+summary: Lista todos os elementos de uma entrada de uma classe da documentação de apoio
+description: Lista todos os elementos de uma entrada de uma classe da documentação de apoio
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Documentação de Apoio
+parameters:
+  - name: id
+    in: path
+    description: 'Identificador de uma classe na documentação de apoio'
+    schema:
+      type: string
+    required: true
+  - name: idEnt
+    in: path
+    description: 'Identificador de uma entrada da classe na documentação de apoio'
+    schema:
+      type: string
+    required: true
+responses:
+  200:
+    description: Lista com todos os elementos de uma entrada da classe da documentação de apoio com id igual ao do campo 'id' e a entrada com id igual ao do campo 'idEnt'
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/DocElementos'
+        example: !!inc/file '/examples/documentacaoApoio/DocElementos.yaml'
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  404:
+    description: Esta entrada não existe na classe da documentação de apoio
+  422:
+    $ref: '#/components/responses/ValidationParameters'
+  500:
+    description: Erro
