@@ -1,4 +1,3 @@
-var Auth = require('../../controllers/auth.js');
 var AutosEliminacao = require('../../controllers/api/autosEliminacao.js');
 var User = require('../../controllers/api/users.js')
 var excel2Json = require('../../controllers/conversor/xslx2json')
@@ -19,13 +18,13 @@ var express = require('express');
 var router = express.Router();
 var formidable = require("formidable")
 
-router.get('/', Auth.isLoggedInKey, (req, res) => {
+router.get('/', (req, res) => {
     AutosEliminacao.listar()
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(404).jsonp("Erro na listagem dos AE: " + erro))
 })
 
-router.get('/:id', Auth.isLoggedInKey, [
+router.get('/:id', [
     verificaAEId('param', 'id')
 ], function (req, res) {
     const errors = validationResult(req)
@@ -39,7 +38,7 @@ router.get('/:id', Auth.isLoggedInKey, [
 })
 
 //Criar um AE && Importar AE
-router.post('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
+router.post('/', [
     existe('body', 'auto')
 ], (req, res) => {
     const errors = validationResult(req)
@@ -54,7 +53,7 @@ router.post('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), 
 })
 
 //Importar um AE (Inserir ficheiro diretamente pelo Servidor)
-router.post('/importar', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
+router.post('/importar', [
     estaEm('query', 'tipo', vcTipoAE).customSanitizer(tipoSanitizer)
 ], (req, res) => {
     const errors = validationResult(req)

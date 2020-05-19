@@ -1,13 +1,12 @@
 var express = require("express");
 var router = express.Router();
 var interfaceHosts = require("./../../config/database").interfaceHosts;
-var Auth = require("../../controllers/auth");
 var Chaves = require("../../controllers/api/chaves");
 var Mailer = require("../../controllers/api/mailer");
 const { param, header, body, query, validationResult } = require('express-validator');
 const { existe, verificaExisteEnt } = require('../validation')
 
-router.get("/", Auth.isLoggedInUser, Auth.checkLevel(6), (req, res) => {
+router.get("/", (req, res) => {
   Chaves.listar(function(err, result) {
     if (err) {
       //res.status(500).send(`Erro: ${err}`);
@@ -64,7 +63,7 @@ router.get("/clavToken", [
   });
 });
 
-router.get("/:id", Auth.isLoggedInUser, Auth.checkLevel(7), [
+router.get("/:id", [
     param('id', "A chave API não possui um formato válido").isJWT()
 ], async function(req, res) {
   const errors = validationResult(req)
@@ -159,7 +158,7 @@ router.put("/renovar", [
   });
 });
 
-router.put("/:id/desativar", Auth.isLoggedInUser, Auth.checkLevel(7), [
+router.put("/:id/desativar", [
     param('id', "Formato do id inválido").isMongoId()
 ], function(req, res) {
   const errors = validationResult(req)
@@ -177,7 +176,7 @@ router.put("/:id/desativar", Auth.isLoggedInUser, Auth.checkLevel(7), [
   });
 });
 
-router.put("/:id/ativar", Auth.isLoggedInUser, Auth.checkLevel(7), [
+router.put("/:id/ativar", [
     param('id', "Formato do id inválido").isMongoId()
 ], function(req, res) {
   const errors = validationResult(req)
@@ -195,7 +194,7 @@ router.put("/:id/ativar", Auth.isLoggedInUser, Auth.checkLevel(7), [
   });
 });
 
-router.delete("/:id", Auth.isLoggedInUser, Auth.checkLevel(7), [
+router.delete("/:id", [
     param('id', "Formato do id inválido").isMongoId()
 ], function(req, res) {
   const errors = validationResult(req)
@@ -213,7 +212,7 @@ router.delete("/:id", Auth.isLoggedInUser, Auth.checkLevel(7), [
   });
 });
 
-router.put("/:id/atualizar", Auth.isLoggedInUser, Auth.checkLevel(7), [
+router.put("/:id/atualizar", [
     param('id', "Formato do id inválido").isMongoId(),
     existe('body', 'name'),
     body('contactInfo', "Email inválido").isEmail(),

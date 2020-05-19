@@ -1,12 +1,11 @@
 var express = require('express');
 var router = express.Router();
-var Auth = require('../../controllers/auth.js');
 var AuthCall = require('../../models/auth')
 var AuthCalls = require('../../controllers/api/auth');
 const { body, validationResult } = require('express-validator');
 const { existe } = require('../validation')
 
-router.get('/:id', Auth.isLoggedInKey, (req, res) => {
+router.get('/:id', (req, res) => {
     AuthCalls.get(req.params.id,function(err, call){
         if(err){
             return res.status(500).send(`Erro: ${err}`);
@@ -16,7 +15,7 @@ router.get('/:id', Auth.isLoggedInKey, (req, res) => {
     });
 })
 
-router.post('/adicionar', Auth.isLoggedInKey, [
+router.post('/adicionar', [
     existe('body', 'id'),
     body('url', 'Valor não é um URL').isURL({require_tld: false})
 ], (req, res) => {
@@ -37,7 +36,7 @@ router.post('/adicionar', Auth.isLoggedInKey, [
 });
 
 // Deletes all Auth Calls
-router.delete('/', Auth.isLoggedInUser, Auth.checkLevel(7), (req, res) => {
+router.delete('/', (req, res) => {
     AuthCalls.removeAll()
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na remoção de todos os Auth Calls: ${erro}`));
