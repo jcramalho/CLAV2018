@@ -19,6 +19,24 @@ var Logs = require('./controllers/api/logs')
 var aggLogs = require('./controllers/api/aggregateLogs')
 var dataBases = require('./config/database');
 
+//Lê e interpreta os dados enviados pelo serviço de autenticação e de autorização
+app.use((req, res, next) => {
+    servAuth = JSON.parse(req.headers["clav-auth"])
+    if("id" in servAuth){
+        res.locals.id = servAuth.id
+    }
+    if("idType" in servAuth){
+        res.locals.idType = servAuth.idType
+        delete servAuth.idType
+
+        if(res.locals.idType == "User"){
+            req.user = servAuth
+        }
+    }
+    next();
+});
+
+//log dos pedidos
 app.use((req, res, next) => {
     res.on('finish', async () => {
         var route = Logs.getRoute(req)

@@ -29,3 +29,5 @@ module.exports.interfaceHosts = envIH || [
     "https://epl.di.uminho.pt:7780",
     "https://epl.di.uminho.pt:7781"
 ]
+
+module.exports.serverAuthHost = process.env.SERVER_AUTH_HOST || 'http://localhost:7778'
