@@ -3,7 +3,6 @@ const normalize = require("../../controllers/api/utils").normalize;
 const allTriplesFrom = require("../../controllers/api/utils").allTriplesFrom;
 const allTriplesRel = require("../../controllers/api/utils").allTriplesRel;
 const projection = require("../../controllers/api/utils").projection;
-const request = require("../../controllers/api/utils").request;
 const Leg = module.exports;
 
 /**

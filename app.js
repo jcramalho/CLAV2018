@@ -12,44 +12,6 @@ app.use(bodyParser.urlencoded({
     parameterLimit:50000
 }));
 
-//CORS
-var cors = require('cors')
-const corsOpts = {
-    origin: '*',
-    credentials: true,
-    methods: ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Accept', 'Authorization', 'Cache-Control', 'Content-Type', 'DNT', 'If-Modified-Since', 'Keep-Alive', 'Origin', 'User-Agent', 'X-Requested-With', 'Content-Length']
-}
-app.use(cors(corsOpts))
-app.options('*', cors(corsOpts))
-
-//helmet (sets various HTTP headers to help protect the app)
-var helmet = require('helmet')
-app.use(helmet({
-    //HSTS recommended config
-    hsts: {
-        maxAge: 31536000,
-        includeSubDomains: true,
-        preload: true
-    },
-    contentSecurityPolicy: {
-        directives: {
-            defaultSrc: ["'none'"]
-        }
-    }
-}))
-
-var swaggerURLs = require('./config/swagger').urls
-//CSP to use in /docs route
-var cspForDocs = helmet.contentSecurityPolicy({
-    directives: {
-        defaultSrc: ["'self'"].concat(swaggerURLs),
-        imgSrc: ["'self'", "https://validator.swagger.io", "data:"].concat(swaggerURLs),
-        styleSrc: ["'self'", "'unsafe-inline'"].concat(swaggerURLs),
-        scriptSrc: ["'self'", "'unsafe-inline'"].concat(swaggerURLs)
-    }
-})
-
 // Logging na consola do admin
 var logger = require('morgan')
 
@@ -79,16 +41,8 @@ app.use((req, res, next) => {
     next();
 });
 
-//authentication dependencies
-var passport = require('passport');
-require('./config/passport')(passport);
-
 //config
 app.use(express.static(__dirname + '/public'));
-
-// Passport init
-app.use(passport.initialize());
-app.use(passport.session());
 
 // Logging middleware
 app.use(logger('dev'))
@@ -163,7 +117,7 @@ var mainRouter = express.Router()
 //Swagger
 const swaggerUi = require('swagger-ui-express');
 const options = require('./config/swagger').options
-mainRouter.use('/docs', cspForDocs, swaggerUi.serve, swaggerUi.setup(null, options));
+mainRouter.use('/docs', swaggerUi.serve, swaggerUi.setup(null, options));
 
 //formatar o resultado consoante a querystring fs
 const { outputFormat } = require('./routes/outputFormat.js')
@@ -218,4 +172,4 @@ app.use(function (err, req, res, next) {
     res.status(err.status || 500).send(`${err.message}`);
 });
 
-module.exports = app; 
+module.exports = app;

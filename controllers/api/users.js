@@ -1,9 +1,7 @@
 var User = require('../../models/user');
-var AuthCall = require('../../models/auth');
 var bcrypt = require('bcryptjs');
 var xml2js = require('xml2js');
 var mongoose = require('mongoose');
-const request = require('../../controllers/api/utils').request
 const salt = 14
 
 var Users = module.exports

@@ -2,7 +2,6 @@ const execQuery = require("../../controllers/api/utils").execQuery;
 const normalize = require("../../controllers/api/utils").normalize;
 const allTriplesFrom = require("../../controllers/api/utils").allTriplesFrom;
 const allTriplesRel = require("../../controllers/api/utils").allTriplesRel;
-const request = require("../../controllers/api/utils").request;
 const Entidades = module.exports;
 
 /**

@@ -1,6 +1,6 @@
 var Auth = require('../../controllers/auth.js');
 var DocumentacaoApoio = require('../../controllers/api/documentacaoApoio.js')
-var request = require('../../controllers/api/utils.js').request
+var axios = require('axios')
 var url = require('url')
 var path = require('path')
 var fs = require('fs')
@@ -42,7 +42,7 @@ router.get('/', Auth.isLoggedInKey, [
 router.get('/formulario', Auth.isLoggedInKey, (req, res) => {
     var path = "/classes?info=esqueleto&fs=text/csv";
     
-    request.get(req, path)
+    axios.get(path)
       .then(function(dados){
         // Encoding 
         var data = dados.data;
