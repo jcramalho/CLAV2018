@@ -47,6 +47,7 @@ const PedidoSchema = new mongoose.Schema({
         "AE PGD",
         "AE RADA",
         "RADA",
+        "PGD"
       ],
       required: true,
     },
