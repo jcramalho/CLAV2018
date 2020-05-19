@@ -66,6 +66,7 @@ const convert_to = {
         "sigla": ["Sigla", v => v],
         "designacao": ["Designação", v => v],
         "estado": ["Estado", v => v],
+        "entidades": ["Entidades da tipologia", map_value("sigla")],
         "dono": ["Dono no processo", map_value("codigo")],
         "participante_codigo": ["Participante no processo", map_value("codigo")],
         "participante_tipoPar": ["Tipo de intervenção no processo", map_value("tipoPar")]

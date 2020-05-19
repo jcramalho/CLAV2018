@@ -25,3 +25,10 @@ value:
       tipoPar: "temParticipanteAssessor"
       titulo: "Desenvolvimento experimental e aplicacional"
   sigla: "UI"
+  entidades:
+    - designacao: "Autoridade Aeronáutica Nacional"
+      id: "ent_AAN"
+      sigla: "AAN"
+    - designacao: "Colégio Militar"
+      id: "ent_CMil"
+      sigla: "CMil"

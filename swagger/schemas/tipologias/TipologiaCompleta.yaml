@@ -12,6 +12,8 @@ properties:
     $ref: '#/components/schemas/TipologiaEntidadeParticipantes'
   dono:
     $ref: '#/components/schemas/TipologiaEntidadeDonos'
+  entidades:
+    $ref: '#/components/schemas/TipologiaElementos'
 required:
   - sigla
   - designacao
@@ -19,3 +21,4 @@ required:
   - id
   - participante
   - dono
+  - entidades

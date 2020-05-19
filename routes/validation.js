@@ -415,7 +415,8 @@ module.exports.vcPendenteTipo = [
     "Legislação",
     "Termo de Indice",
     "Auto de Eliminação",
-    "RADA"
+    "RADA",
+    "PGD"
 ]
 module.exports.vcPendenteAcao = ["Criação", "Alteração", "Remoção"]
 
