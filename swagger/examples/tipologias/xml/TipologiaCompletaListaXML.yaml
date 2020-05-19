@@ -10,6 +10,8 @@ value: |
           </dono>
           <participante type="array">
           </participante>
+          <entidades type="array">
+          </entidades>
       </item>
       <item index="1" type="object">
           <estado type="string">Ativa</estado>
@@ -32,8 +34,15 @@ value: |
                   <id type="string">c150.20.501</id>
               </item>
           </participante>
+          <entidades type="array">
+              <item index="0" type="object">
+                  <designacao type="string">Autoridade Aeronáutica Nacional</designacao>
+                  <sigla type="string">AAN</sigla>
+                  <id type="string">ent_AAN</id>
+              </item>
+          </entidades>
       </item>
-      <item index="65" type="object">
+      <item index="2" type="object">
           <estado type="string">Ativa</estado>
           <sigla type="string">UI</sigla>
           <designacao type="string">Unidades de Investigação</designacao>
@@ -75,5 +84,17 @@ value: |
                   <id type="string">c800.20.500</id>
               </item>
           </participante>
+          <entidades type="array">
+              <item index="0" type="object">
+                  <designacao type="string">Comissão Cultural de Marinha</designacao>
+                  <sigla type="string">CCM</sigla>
+                  <id type="string">ent_CCM</id>
+              </item>
+              <item index="1" type="object">
+                  <designacao type="string">Marinha – Escola Naval</designacao>
+                  <sigla type="string">EN</sigla>
+                  <id type="string">ent_EN</id>
+              </item>
+          </entidades>
       </item>
   </root>
