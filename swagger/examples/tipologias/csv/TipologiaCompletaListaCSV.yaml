@@ -1,14 +1,15 @@
 value: |
-  "Sigla";"Designação";"Estado";"Dono no processo";"Participante no processo";"Tipo de intervenção no processo"
-  "TIC";"Tribunais de Instrução Criminal";"Ativa";"600.10.503";"";""
-  "UI";"Unidades de Investigação";"Ativa";"800.20.001#
+  "Sigla";"Designação";"Estado";"Entidades da tipologia";"Dono no processo";"Participante no processo";"Tipo de intervenção no processo"
+  "TIC";"Tribunais de Instrução Criminal";"Ativa";"";"600.10.503";"";""
+  "UI";"Unidades de Investigação";"Ativa";"AAN";"800.20.001#
   800.20.002#
   800.20.500";"800.20.001#
   800.20.002#
   800.20.500";"temParticipanteAssessor#
   temParticipanteAssessor#
   temParticipanteAssessor"
-  "UL";"Unidades Laboratoriais";"Ativa";"800.10.307#
+  "UL";"Unidades Laboratoriais";"Ativa";"CCM#
+  EN";"800.10.307#
   800.10.601#
   800.20.001#
   800.20.002#

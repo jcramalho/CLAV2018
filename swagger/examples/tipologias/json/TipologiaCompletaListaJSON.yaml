@@ -5,6 +5,7 @@ value:
     id: "tip_SEN"
     participante: []
     sigla: "SEN"
+    entidades: []
   - designacao: "Secretarias Gerais"
     dono: []
     estado: "Ativa"
@@ -19,6 +20,10 @@ value:
         tipoPar: "temParticipanteAssessor"
         titulo: "Análise e melhoria de serviços"
     sigla: "SG"
+    entidades:
+      - designacao: "Autoridade Aeronáutica Nacional"
+        id: "ent_AAN"
+        sigla: "AAN"
   - designacao: "Unidades de Investigação"
     dono:
       - codigo: "800.20.001"
@@ -46,3 +51,10 @@ value:
         tipoPar: "temParticipanteAssessor"
         titulo: "Desenvolvimento experimental e aplicacional"
     sigla: "UI"
+    entidades:
+      - designacao: "Comissão Cultural de Marinha"
+        id: "ent_CCM"
+        sigla: "CCM"
+      - designacao: "Marinha – Escola Naval"
+        id: "ent_EN"
+        sigla: "EN"
