@@ -1,4 +1,3 @@
-var Auth = require('../../controllers/auth.js');
 var Parametros = require('../../controllers/api/parametros');
 
 var express = require('express');
@@ -7,7 +6,7 @@ var router = express.Router();
 const { oneOf, validationResult } = require('express-validator');
 const { estaEm, vcParametros, eExpiresTime, vcParametrosExpires } = require('../validation')
 
-router.get('/', Auth.isLoggedInUser, Auth.checkLevel(7), (req, res) => {
+router.get('/', (req, res) => {
     try{
         var dados = Parametros.getParameters()
         res.jsonp(dados)
@@ -16,7 +15,7 @@ router.get('/', Auth.isLoggedInUser, Auth.checkLevel(7), (req, res) => {
     }
 })
 
-router.get('/:parametro', Auth.isLoggedInUser, Auth.checkLevel(7), [
+router.get('/:parametro', [
     estaEm('param', 'parametro', vcParametros)
 ], (req, res) => {
     const errors = validationResult(req)
@@ -32,7 +31,7 @@ router.get('/:parametro', Auth.isLoggedInUser, Auth.checkLevel(7), [
     }
 })
 
-router.put('/:parametro', Auth.isLoggedInUser, Auth.checkLevel(7), [
+router.put('/:parametro', [
     estaEm('param', 'parametro', vcParametros),
     eExpiresTime('body', "valor", (v, {req}) => {return vcParametrosExpires.includes(req.params.parametro)} /*apenas verifica se for para os parametros expire*/)
 ], (req, res) => {

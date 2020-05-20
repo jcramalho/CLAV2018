@@ -1,4 +1,3 @@
-var Auth = require('../../controllers/auth.js');
 var Classes = require('../../controllers/api/classes.js');
 var State = require('../../controllers/state.js')
 
@@ -13,7 +12,7 @@ function verificaId() {
 }
 
 // Devolve as classes em vários formatos podendo ser filtradas por nível 
-router.get('/', Auth.isLoggedInKey, [
+router.get('/', [
     estaEm('query', 'info', vcClassesInfo).optional(),
     eFS(),
     estaEm('query', 'estrutura', vcClassesStruct).optional(),
@@ -113,7 +112,7 @@ router.get('/', Auth.isLoggedInKey, [
 })
 
 // Verifica se um determinado título de classe já existe
-router.get('/titulo', Auth.isLoggedInKey, [
+router.get('/titulo', [
     existe('query', 'valor')
 ], function (req, res) {
     const errors = validationResult(req)
@@ -127,7 +126,7 @@ router.get('/titulo', Auth.isLoggedInKey, [
 })
 
 // Verifica se um determinado código de classe já existe
-router.get('/codigo', Auth.isLoggedInKey, [
+router.get('/codigo', [
     verificaClasseCodigo('query', 'valor')
 ], function (req, res) {
     const errors = validationResult(req)
@@ -141,7 +140,7 @@ router.get('/codigo', Auth.isLoggedInKey, [
 })
 
 // Devolve a informação de uma classe
-router.get('/:id', Auth.isLoggedInKey, [
+router.get('/:id', [
     verificaId(),
     eFS(),
     estaEm("query", "tipo", vcClasseInfo).optional()
@@ -167,7 +166,7 @@ router.get('/:id', Auth.isLoggedInKey, [
 })
 
 // Devolve a metainformação de uma classe: codigo, titulo, status, desc, codigoPai?, tituloPai?, procTrans?, procTipo?
-router.get('/:id/meta', Auth.isLoggedInKey, [
+router.get('/:id/meta', [
     verificaId()
 ], function (req, res) {
     const errors = validationResult(req)
@@ -181,7 +180,7 @@ router.get('/:id/meta', Auth.isLoggedInKey, [
 })
 
 // Devolve a lista de filhos de uma classe: id, codigo, titulo, nFilhos
-router.get('/:id/descendencia', Auth.isLoggedInKey, [
+router.get('/:id/descendencia', [
     verificaId()
 ], function (req, res) {
     const errors = validationResult(req)
@@ -195,7 +194,7 @@ router.get('/:id/descendencia', Auth.isLoggedInKey, [
 })
 
 // Devolve a lista de notas de aplicação de uma classe: idNota, nota
-router.get('/:id/notasAp', Auth.isLoggedInKey, [
+router.get('/:id/notasAp', [
     verificaId()
 ], (req, res) => {
     const errors = validationResult(req)
@@ -209,7 +208,7 @@ router.get('/:id/notasAp', Auth.isLoggedInKey, [
 })
 
 // Devolve a lista de exemplos das notas de aplicação de uma classe: [exemplo]
-router.get('/:id/exemplosNotasAp', Auth.isLoggedInKey, [
+router.get('/:id/exemplosNotasAp', [
     verificaId()
 ], (req, res) => {
     const errors = validationResult(req)
@@ -223,7 +222,7 @@ router.get('/:id/exemplosNotasAp', Auth.isLoggedInKey, [
 })
 
 // Devolve a lista de notas de exclusão de uma classe: idNota, nota
-router.get('/:id/notasEx', Auth.isLoggedInKey, [
+router.get('/:id/notasEx', [
     verificaId()
 ], (req, res) => {
     const errors = validationResult(req)
@@ -237,7 +236,7 @@ router.get('/:id/notasEx', Auth.isLoggedInKey, [
 })
 
 // Devolve os termos de índice de uma classe: idTI, termo
-router.get('/:id/ti', Auth.isLoggedInKey, [
+router.get('/:id/ti', [
     verificaId()
 ], (req, res) => {
     const errors = validationResult(req)
@@ -251,7 +250,7 @@ router.get('/:id/ti', Auth.isLoggedInKey, [
 })
 
 // Devolve a(s) entidade(s) dona(s) do processo: id, tipo, sigla, designacao
-router.get('/:id/dono', Auth.isLoggedInKey, [
+router.get('/:id/dono', [
     verificaId()
 ], (req, res) => {
     const errors = validationResult(req)
@@ -265,7 +264,7 @@ router.get('/:id/dono', Auth.isLoggedInKey, [
 })
 
 // Devolve a(s) entidade(s) participante(s) do processo: id, sigla, designacao, tipoParticip
-router.get('/:id/participante', Auth.isLoggedInKey, [
+router.get('/:id/participante', [
     verificaId()
 ], (req, res) => {
     const errors = validationResult(req)
@@ -279,7 +278,7 @@ router.get('/:id/participante', Auth.isLoggedInKey, [
 })
 
 // Devolve o(s) processo(s) relacionado(s): id, codigo, titulo, tipoRel
-router.get('/:id/procRel', Auth.isLoggedInKey, [
+router.get('/:id/procRel', [
     verificaId()
 ], (req, res) => {
     const errors = validationResult(req)
@@ -293,7 +292,7 @@ router.get('/:id/procRel', Auth.isLoggedInKey, [
 })
 
 // Devolve o(s) processo(s) relacionado(s) por uma relação específica: id, codigo, titulo
-router.get('/:id/procRel/:idRel', Auth.isLoggedInKey, [
+router.get('/:id/procRel/:idRel', [
     verificaId(),
     estaEm("param", "idRel", vcClassesRels)
 ], (req, res) => {
@@ -308,7 +307,7 @@ router.get('/:id/procRel/:idRel', Auth.isLoggedInKey, [
 })
 
 // Devolve a legislação associada ao contexto de avaliação: id, tipo, numero, sumario
-router.get('/:id/legislacao', Auth.isLoggedInKey, [
+router.get('/:id/legislacao', [
     verificaId()
 ], (req, res) => {
     const errors = validationResult(req)
@@ -322,7 +321,7 @@ router.get('/:id/legislacao', Auth.isLoggedInKey, [
 })
 
 // Devolve a informação base do PCA: idPCA, formaContagem, subFormaContagem, idJustificacao, valores, notas
-router.get('/:id/pca', Auth.isLoggedInKey, [
+router.get('/:id/pca', [
     verificaId()
 ], (req, res) => {
     const errors = validationResult(req)
@@ -336,7 +335,7 @@ router.get('/:id/pca', Auth.isLoggedInKey, [
 })
 
 // Devolve uma justificação, PCA ou DF, que é composta por uma lista de critérios: criterio, tipoLabel, conteudo
-router.get('/justificacao/:id', Auth.isLoggedInKey, [
+router.get('/justificacao/:id', [
     verificaJustId('param', 'id')
 ], (req, res) => {
     const errors = validationResult(req)
@@ -350,7 +349,7 @@ router.get('/justificacao/:id', Auth.isLoggedInKey, [
 })
 
 // Devolve a informação base do DF: idDF, valor, idJustificacao
-router.get('/:id/df', Auth.isLoggedInKey, [
+router.get('/:id/df', [
     verificaId()
 ], (req, res) => {
     const errors = validationResult(req)

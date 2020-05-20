@@ -1,4 +1,3 @@
-var Auth = require('../../controllers/auth.js');
 var DocumentacaoCientifica = require('../../controllers/api/documentacaoCientifica.js')
 var url = require('url')
 var formidable = require("formidable")
@@ -18,7 +17,7 @@ const { query, validationResult } = require('express-validator');
 const { existe, eMongoId, match } = require('../validation')
 
 // Lista toda a documentacao Científica
-router.get('/', Auth.isLoggedInKey, [
+router.get('/', [
     existe("query", "classe").optional(),
     existe("query", "titulo").optional(),
     query('url', 'Valor não é um URL').isURL({require_tld: false}).optional(),
@@ -48,14 +47,14 @@ router.get('/', Auth.isLoggedInKey, [
 })
 
 // Lista as classes existentes na documentação cientifica
-router.get('/classes', Auth.isLoggedInKey, (req, res) => {
+router.get('/classes', (req, res) => {
     DocumentacaoCientifica.listar_classes()
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na listagem das classes da Documentação Científica: ${erro}`))
 })
 
 // Devolve um ficheiro com todos os registos em formato pronto a importar no MongoDB
-router.get('/exportar', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), (req, res) => {
+router.get('/exportar', (req, res) => {
     DocumentacaoCientifica.listar({})
         .then(function(dados){
             // Tratamento do formato do ID
@@ -80,7 +79,7 @@ router.get('/exportar', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), (req
 })
 
 // Consulta de uma entrada na documentação
-router.get('/:id', Auth.isLoggedInKey, [
+router.get('/:id', [
     eMongoId('params', 'id')
 ], (req, res) => {
     const errors = validationResult(req)
@@ -94,7 +93,7 @@ router.get('/:id', Auth.isLoggedInKey, [
 })
 
 // Download de um ficheiro na documentação
-router.get('/:id/ficheiro', Auth.isLoggedInKey, [
+router.get('/:id/ficheiro', [
     eMongoId('params', 'id')
 ], (req, res) => {
     const errors = validationResult(req)
@@ -108,7 +107,7 @@ router.get('/:id/ficheiro', Auth.isLoggedInKey, [
 })
 
 // POST -> ver se tem ficheiro, se sim inserir + inserir no mongo
-router.post('/', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), function (req, res) {
+router.post('/', function (req, res) {
     var form = new formidable.IncomingForm()
     form.parse(req, async (error, fields, formData) => {
         if(!error){
@@ -165,7 +164,7 @@ router.post('/', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), function (r
 })
 
 // Importação de um ficheiro com registos - Pode ser adição (append) à BD ou substituição (drop)
-router.post('/importar', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), (req, res) => {
+router.post('/importar', (req, res) => {
     var form = new formidable.IncomingForm()
     form.parse(req, async (error, fields, formData) => {
         if(!error){
@@ -209,7 +208,7 @@ router.post('/importar', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), (re
 })
 
 // PUT - remover ficheiro antigo se necessario, inserir novo se existente + atualizar objeto
-router.put('/:id', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), [
+router.put('/:id', [
     eMongoId('params', 'id')
 ], (req, res) => {
     const errors = validationResult(req)
@@ -332,7 +331,7 @@ router.put('/:id', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), [
 
 
 // DELETE -> ver se tem ficheiro, se sim apagar + apagar registo do mongo
-router.delete('/:id', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), [
+router.delete('/:id', [
     eMongoId('params', 'id')
 ], async function(req, res) {
     const errors = validationResult(req)

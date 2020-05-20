@@ -1,4 +1,3 @@
-var Auth = require('../../controllers/auth.js');
 var Pedidos = require('../../controllers/api/pedidos');
 var express = require('express');
 var router = express.Router();
@@ -8,7 +7,7 @@ const { body, validationResult } = require('express-validator');
 const { existe, estaEm, verificaPedidoCodigo, verificaExisteEnt, eMongoId, vcPedidoTipo, vcPedidoAcao, vcPedidoEstado } = require('../validation')
 
 // Lista todos os pedidos que statisfazem uma condição
-router.get('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
+router.get('/', [
     existe('query', 'criadoPor')
         .bail()
         .isEmail()
@@ -38,7 +37,7 @@ router.get('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
 });
 
 // Consulta de um pedido
-router.get('/:codigo', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
+router.get('/:codigo', [
     verificaPedidoCodigo('param', 'codigo')
 ], (req, res) => {
     const errors = validationResult(req)
@@ -52,7 +51,7 @@ router.get('/:codigo', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6,
 });
 
 // Criação de um pedido
-router.post('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
+router.post('/', [
     existe('body', 'user'),
     existe('body', 'user.email')
         .bail()
@@ -80,7 +79,7 @@ router.post('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), 
 })
 
 // Atualização de um pedido: mais uma etapa na distribuição
-router.put('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
+router.put('/', [
     existe('body', 'pedido'),
     eMongoId('body', 'pedido._id'),
     verificaPedidoCodigo('body', 'pedido.codigo'),
@@ -129,7 +128,7 @@ router.put('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
 })
 
 // Adição de distribuição 
-router.post('/:codigo/distribuicao', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
+router.post('/:codigo/distribuicao', [
     verificaPedidoCodigo('param', 'codigo'),
     estaEm('body', 'estado', vcPedidoEstado),
     existe('body', 'responsavel')
@@ -159,7 +158,7 @@ router.post('/:codigo/distribuicao', Auth.isLoggedInUser, Auth.checkLevel([1, 3,
 });
 
 // Apaga todos pedidos
-router.delete('/', Auth.isLoggedInUser, Auth.checkLevel(7), (req, res) => {
+router.delete('/', (req, res) => {
     Pedidos.apagarTodos()
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na remoção de todos os pedidos: ${erro}`));

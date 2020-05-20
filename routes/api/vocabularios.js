@@ -1,4 +1,3 @@
-var Auth = require('../../controllers/auth.js');
 var Vocabulario = require('../../controllers/api/vocabularios.js');
 
 var express = require('express');
@@ -7,14 +6,14 @@ var router = express.Router();
 const { query, body, validationResult } = require('express-validator');
 const { existe, verificaVCId, verificaTermoVCId } = require('../validation')
 
-router.get('/', Auth.isLoggedInKey, (req, res) => {
+router.get('/', (req, res) => {
     Vocabulario.listar()
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).jsonp("Erro na listagem dos VC: " + erro))
 })
 
 // Devolve a lista de termos de um VC: idtermo, termo
-router.get('/:id', Auth.isLoggedInKey, [
+router.get('/:id', [
     verificaVCId('param', 'id')
 ], function (req, res) {
     const errors = validationResult(req)
@@ -28,7 +27,7 @@ router.get('/:id', Auth.isLoggedInKey, [
 })
 
 //Update da Legenda e da Descrição de um VC
-router.put('/:id', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
+router.put('/:id', [
     verificaVCId('param', 'id'),
     existe('body', 'label'),
     existe('body', 'desc')
@@ -47,7 +46,7 @@ router.put('/:id', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7])
 })
 
 //Adiciona um VC
-router.post('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
+router.post('/', [
     verificaVCId('body', 'id'),
     existe('body', 'label'),
     existe('body', 'desc')
@@ -66,7 +65,7 @@ router.post('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), 
 })
 
 //Adiciona um Termo a um VC
-router.post('/termo/:idVC', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
+router.post('/termo/:idVC', [
     verificaVCId('param', 'idVC'),
     existe('body', 'idtermo'),
     existe('body', 'termo'),
@@ -87,7 +86,7 @@ router.post('/termo/:idVC', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 
 })
 
 //Update da Legenda e da Descrição de um VC
-router.delete('/termo/:id', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
+router.delete('/termo/:id', [
     verificaTermoVCId('param', 'id')
 ], (req, res) => {
     const errors = validationResult(req)

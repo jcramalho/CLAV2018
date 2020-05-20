@@ -1,4 +1,3 @@
-var Auth = require('../../controllers/auth.js');
 var Travessia = require('../../controllers/travessiaEspecial.js');
 
 var express = require('express');
@@ -7,7 +6,7 @@ var router = express.Router();
 const { body, validationResult } = require('express-validator');
 const { existe, verificaClasseCodigo, vcClassesTipo, estaEm } = require('../validation')
 
-router.get('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), async (req, res) => {
+router.get('/', async (req, res) => {
     try {
         res.jsonp(await Travessia.travessias())
     } catch (error) {
@@ -15,7 +14,7 @@ router.get('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), a
     }
 })
 
-router.get('/:id', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
+router.get('/:id', [
     verificaClasseCodigo("param", "id"),
     estaEm('query', 'filtro', vcClassesTipo).optional()
 ], async function(req,res){

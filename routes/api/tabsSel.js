@@ -1,4 +1,3 @@
-var Auth = require('../../controllers/auth.js');
 var SelTabs = require('../../controllers/api/tabsSel.js');
 var Users = require('../../controllers/api/users.js');
 
@@ -10,19 +9,19 @@ var router = express.Router();
 const { validationResult } = require('express-validator');
 const { existe, verificaTSId } = require('../validation')
 
-router.get('/', Auth.isLoggedInKey, function (req, res) {
+router.get('/', function (req, res) {
     SelTabs.list()
         .then(list => res.send(list))
         .catch(err => res.status(500).json(`Erro ao obter TSs: ${err}`))
 })
 
-//router.get('/skeleton', Auth.isLoggedInKey, function (req, res) {
+//router.get('/skeleton', function (req, res) {
 //    SelTabs.skeleton()
 //        .then( tsSkeleton => res.send(tsSkeleton))
 //        .catch(err => res.status(500).json(`Erro ao obter skeleton: ${err}`))
 //})
 
-router.get('/:id/classes', Auth.isLoggedInKey, [
+router.get('/:id/classes', [
     verificaTSId('param', 'id')
 ], function (req, res) {
     const errors = validationResult(req)
@@ -35,7 +34,7 @@ router.get('/:id/classes', Auth.isLoggedInKey, [
         .catch(err => res.status(500).json(`Erro ao obter classes de TS: ${err}`))
 })
 
-router.get('/:id', Auth.isLoggedInKey, [
+router.get('/:id', [
     verificaTSId('param', 'id')
 ], function (req, res) {
     const errors = validationResult(req)
@@ -48,7 +47,7 @@ router.get('/:id', Auth.isLoggedInKey, [
         .catch(err => res.status(500).json(`Erro ao obter TS: ${err}`))
 })
 
-router.post('/importar', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), async function (req, res){
+router.post('/importar', async function (req, res){
     var form = new formidable.IncomingForm()
     
     Users.getUserById(req.user.id, function(err, user) {

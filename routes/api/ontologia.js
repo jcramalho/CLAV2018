@@ -1,4 +1,3 @@
-var Auth = require('../../controllers/auth.js');
 var Ontologia = require('../../controllers/api/ontologia.js');
 const normalizeOrdered = require('../../controllers/api/utils').normalizeOrdered
 
@@ -8,7 +7,7 @@ var router = express.Router();
 const { oneOf, validationResult } = require('express-validator');
 const { existe, estaEm, vcOntoFormats, vcBoolean } = require('../validation')
 
-router.get('/', Auth.isLoggedInKey, [
+router.get('/', [
     oneOf([
         estaEm('query', 'fs', vcOntoFormats).optional(),
         estaEm('header', 'accept', vcOntoFormats).optional()
@@ -34,19 +33,19 @@ router.get('/', Auth.isLoggedInKey, [
         .catch(erro => res.status(500).send(`Erro: ${erro}`))
 })
 
-router.get('/data', Auth.isLoggedInKey, (req, res) => {
+router.get('/data', (req, res) => {
     Ontologia.data()
         .then(dados => res.json(dados))
         .catch(erro => res.status(500).send(`Erro ao obter data da ontologia: ${erro}`))
 })
 
-router.get('/descricao', Auth.isLoggedInKey, (req, res) => {
+router.get('/descricao', (req, res) => {
     Ontologia.descricao()
         .then(dados => res.json(dados))
         .catch(erro => res.status(500).send(`Erro ao obter data da ontologia: ${erro}`))
 })
 
-router.post('/', Auth.isLoggedInUser, Auth.checkLevel(7), [
+router.post('/', [
     existe("body", "query")
         .bail()
         .isString()

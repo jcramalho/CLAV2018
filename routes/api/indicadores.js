@@ -1,4 +1,3 @@
-var Auth = require('../../controllers/auth.js')
 var Indicadores = require('../../controllers/api/indicadores.js');
 var express = require('express');
 var router = express.Router();
@@ -21,7 +20,7 @@ var relacaoSanitizer = value => {
 
 //Classes
 
-router.get('/classesN4', Auth.isLoggedInUser, Auth.checkLevel(3.5), (req, res) => {
+router.get('/classesN4', (req, res) => {
     Indicadores.totalClassesN(4)
         .then(dados => {
             var result = {
@@ -33,7 +32,7 @@ router.get('/classesN4', Auth.isLoggedInUser, Auth.checkLevel(3.5), (req, res) =
         .catch(err => res.status(500).send(`Erro ao obter o número total de classes de nível 4: ${err}`))
 })
 
-router.get('/classesN3', Auth.isLoggedInUser, Auth.checkLevel(3.5), (req, res) => {
+router.get('/classesN3', (req, res) => {
     Indicadores.totalClassesN(3)
         .then(dados => {
             var result = {
@@ -45,7 +44,7 @@ router.get('/classesN3', Auth.isLoggedInUser, Auth.checkLevel(3.5), (req, res) =
         .catch(err => res.status(500).send(`Erro ao obter o número total de classes de nível 3: ${err}`))
 })
 
-router.get('/classesN2', Auth.isLoggedInUser, Auth.checkLevel(3.5), (req, res) => {
+router.get('/classesN2', (req, res) => {
     Indicadores.totalClassesN(2)
         .then(dados => {
             var result = {
@@ -57,7 +56,7 @@ router.get('/classesN2', Auth.isLoggedInUser, Auth.checkLevel(3.5), (req, res) =
         .catch(err => res.status(500).send(`Erro ao obter o número total de classes de nível 2: ${err}`))
 })
 
-router.get('/classesN1', Auth.isLoggedInUser, Auth.checkLevel(3.5), (req, res) => {
+router.get('/classesN1', (req, res) => {
     Indicadores.totalClassesN(1)
         .then(dados => {
             var result = {
@@ -69,7 +68,7 @@ router.get('/classesN1', Auth.isLoggedInUser, Auth.checkLevel(3.5), (req, res) =
         .catch(err => res.status(500).send(`Erro ao obter o número total de classes de nível 1: ${err}`))
 })
 
-router.get('/classes', Auth.isLoggedInUser, Auth.checkLevel(3.5), (req, res) => {
+router.get('/classes', (req, res) => {
     Indicadores.totalClasses()
         .then(dados => {
             var result = {
@@ -83,13 +82,13 @@ router.get('/classes', Auth.isLoggedInUser, Auth.checkLevel(3.5), (req, res) => 
 
 //Entidades
 
-router.get('/entidadesAtivas', Auth.isLoggedInUser, Auth.checkLevel(3.5), (req, res) => {
+router.get('/entidadesAtivas', (req, res) => {
     Indicadores.totalEntidadesAtivas()
         .then(dados => res.jsonp(dados))
         .catch(err => res.status(500).send(`Erro ao obter o número total de entidades ativas: ${err}`))
 })
 
-router.get('/entidades', Auth.isLoggedInUser, Auth.checkLevel(3.5), (req, res) => {
+router.get('/entidades', (req, res) => {
     Indicadores.totalEntidades()
         .then(dados => {
             var result = {
@@ -103,7 +102,7 @@ router.get('/entidades', Auth.isLoggedInUser, Auth.checkLevel(3.5), (req, res) =
 
 //Tipologias
 
-router.get('/tipologias', Auth.isLoggedInUser, Auth.checkLevel(3.5), (req, res) => {
+router.get('/tipologias', (req, res) => {
     Indicadores.totalTipologias()
         .then(dados => {
             var result = {
@@ -117,13 +116,13 @@ router.get('/tipologias', Auth.isLoggedInUser, Auth.checkLevel(3.5), (req, res) 
 
 //Legislacao
 
-router.get('/legVigor', Auth.isLoggedInUser, Auth.checkLevel(3.5), (req, res) => {
+router.get('/legVigor', (req, res) => {
     Indicadores.totalLegislacaoAtivos()
         .then(dados => res.jsonp(dados))
         .catch(err => res.status(500).send(`Erro ao obter o número total de diplomas legislativos em vigor: ${err}`))
 })
 
-router.get('/leg', Auth.isLoggedInUser, Auth.checkLevel(3.5), (req, res) => {
+router.get('/leg', (req, res) => {
     Indicadores.totalLegislacao()
         .then(dados => {
             var result = {
@@ -138,27 +137,27 @@ router.get('/leg', Auth.isLoggedInUser, Auth.checkLevel(3.5), (req, res) => {
 //Relacoes
 
 // Devolve as estatísticas relacionais dos Processos
-router.get('/relstats', Auth.isLoggedInUser, Auth.checkLevel(3.5), (req, res) => {
+router.get('/relstats', (req, res) => {
     Indicadores.relStats()
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na consulta das estatísticas associadas aos Processos de Negócios : ${erro}`))
 })
 
 // Devolve as estatísticas relativas aos Critérios de Justificação
-router.get('/critstats', Auth.isLoggedInUser, Auth.checkLevel(3.5), (req, res) => {
+router.get('/critstats', (req, res) => {
     Indicadores.critStats()
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na consulta das estatísticas associadas aos Critérios de Justificação : ${erro}`))
 })
 
 // Devolve as estatísticas relativas aos Destinos finais
-router.get('/dfstats', Auth.isLoggedInUser, Auth.checkLevel(3.5), (req, res) => {
+router.get('/dfstats', (req, res) => {
     Indicadores.dfStats()
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na consulta das estatísticas associadas aos Destinos finais : ${erro}`))
 })
 
-router.get('/relacoes/:relacao', Auth.isLoggedInUser, Auth.checkLevel(3.5), [
+router.get('/relacoes/:relacao', [
     estaEm('param', 'relacao', vcIndicRels).customSanitizer(relacaoSanitizer)
 ], (req, res) => {
     const errors = validationResult(req)
@@ -177,7 +176,7 @@ router.get('/relacoes/:relacao', Auth.isLoggedInUser, Auth.checkLevel(3.5), [
         .catch(err => res.status(500).send(`Erro ao obter o número total de relações "${req.params.relacao}": ${err}`))
 })
 
-router.get('/df/:df', Auth.isLoggedInUser, Auth.checkLevel(3.5), [
+router.get('/df/:df', [
     estaEm('param', 'df', vcIndicDfs)
 ], (req, res) => {
     const errors = validationResult(req)
@@ -196,7 +195,7 @@ router.get('/df/:df', Auth.isLoggedInUser, Auth.checkLevel(3.5), [
         .catch(err => res.status(500).send(`Erro ao obter o número total de PN's com DF igual a ${req.params.df}: ${err}`))
 })
 
-router.get('/critJust/:critJust', Auth.isLoggedInUser, Auth.checkLevel(3.5), [
+router.get('/critJust/:critJust', [
     estaEm('param', 'critJust', vcIndicCrits).customSanitizer(capitalizeFL)
 ], (req, res) => {
     const errors = validationResult(req)
@@ -215,7 +214,7 @@ router.get('/critJust/:critJust', Auth.isLoggedInUser, Auth.checkLevel(3.5), [
         .catch(err => res.status(500).send(`Erro ao obter o número total de Critérios de Justificação do tipo "CriterioJustificacao${req.params.critJust}": ${err}`))
 })
 
-router.get('/critJust', Auth.isLoggedInUser, Auth.checkLevel(3.5), (req, res) => {
+router.get('/critJust', (req, res) => {
     Indicadores.totalCritJust("")
         .then(dados => {
             var result = {
@@ -230,7 +229,7 @@ router.get('/critJust', Auth.isLoggedInUser, Auth.checkLevel(3.5), (req, res) =>
 //Tabelas
 
 //Devolve lista de todos os indicadores apresentados abaixo
-router.get('/tabela', Auth.isLoggedInUser, Auth.checkLevel(3.5), async (req, res) => {
+router.get('/tabela', async (req, res) => {
     try{
         var nClasses1 = await Indicadores.totalClassesN(1);
         var nClasses2 = await Indicadores.totalClassesN(2);

@@ -1,4 +1,3 @@
-var Auth = require('../../controllers/auth.js');
 var Trav = require('../../controllers/travessia.js');
 
 var express = require('express');
@@ -7,7 +6,7 @@ var router = express.Router();
 const { body, validationResult } = require('express-validator');
 const { existe, verificaClasseCodigo, verificaLista } = require('../validation')
 
-router.get('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), async (req, res) => {
+router.get('/', async (req, res) => {
     try {
         res.jsonp(await Trav.loadTravessias())
     } catch (error) {
@@ -15,7 +14,7 @@ router.get('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), a
     }
 })
 
-router.get('/reset', Auth.isLoggedInUser, Auth.checkLevel(7), async function(req,res){
+router.get('/reset', async function(req,res){
     try {
         res.jsonp(await Trav.reset())
     } catch (err) {
@@ -23,7 +22,7 @@ router.get('/reset', Auth.isLoggedInUser, Auth.checkLevel(7), async function(req
     }
 })
 
-router.get('/:id', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
+router.get('/:id', [
     verificaClasseCodigo("param", "id")
 ], async function(req,res){
     const errors = validationResult(req)
@@ -39,7 +38,7 @@ router.get('/:id', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7])
 })
 
 // Post de uma nova travessia (enviada pela aplicação de travessias )
-router.post('/', Auth.isLoggedInUser, Auth.checkLevel(7), [
+router.post('/', [
     body().isArray().withMessage("Não é um array"),
     verificaClasseCodigo('body', '*.processo'),
     verificaLista('body', '*.travessia'),

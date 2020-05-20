@@ -1,4 +1,3 @@
-var Auth = require("../../controllers/auth.js");
 var Leg = require("../../controllers/api/leg.js");
 var url = require("url");
 var State = require("../../controllers/state.js");
@@ -25,7 +24,7 @@ async function naoExisteNumeroSelf(valor, {req}) {
 }
 
 // Lista todos os documentos legislativos: id, data, numero, tipo, sumario, entidades
-router.get("/", Auth.isLoggedInKey, [
+router.get("/", [
     eFS(),
     estaEm("query", "estado", vcLegEstado).optional(),
     estaEm("query", "fonte", vcFonte).optional(),
@@ -104,7 +103,7 @@ router.get("/", Auth.isLoggedInKey, [
 });
 
 // Verifica a existência do número de um diploma/legislacao
-router.get("/numero", Auth.isLoggedInKey, [
+router.get("/numero", [
     verificaNumeroLeg("query", "valor")
 ], (req, res, next) => {
   const errors = validationResult(req)
@@ -118,14 +117,14 @@ router.get("/numero", Auth.isLoggedInKey, [
 });
 
 // Devolve a lista de legislações do tipo Portaria
-router.get("/portarias", Auth.isLoggedInKey, (req, res) => {
+router.get("/portarias", (req, res) => {
   return Leg.portarias()
     .then(dados => res.jsonp(dados))
     .catch(erro => res.status(500).send(`Erro na consulta da leg de portarias: ${erro}`));
 });
 
 // Devolve a informação associada a um documento legislativo: tipo data numero sumario link entidades
-router.get("/:id", Auth.isLoggedInKey, [
+router.get("/:id", [
     verificaLegId("param", "id"),
     eFS(),
     estaEm("query", "info", vcLegInfo).optional()
@@ -151,7 +150,7 @@ router.get("/:id", Auth.isLoggedInKey, [
 });
 
 // Devolve a lista de processos regulados pelo documento: id, codigo, titulo
-router.get("/:id/processos", Auth.isLoggedInKey, [
+router.get("/:id/processos", [
     verificaLegId("param", "id")
 ], function(req, res) {
   const errors = validationResult(req)
@@ -165,7 +164,7 @@ router.get("/:id/processos", Auth.isLoggedInKey, [
 });
 
 // Insere uma legislação na BD
-router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), [
+router.post("/", [
     verificaNumeroLeg("body", "numero")
         .custom(naoExisteNumero)
         .withMessage("Número já em uso"),
@@ -197,7 +196,7 @@ router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), [
 });
 
 // Atualiza uma legislação na BD
-router.put("/:id", Auth.isLoggedInUser, Auth.checkLevel(4), [
+router.put("/:id", [
     verificaLegId("param", "id")
         .custom(estaAtiva)
         .withMessage("Só é possível editar diplomas legislativos ativos"),

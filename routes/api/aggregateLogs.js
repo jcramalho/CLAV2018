@@ -1,4 +1,3 @@
-var Auth = require('../../controllers/auth.js');
 var AggregateLogs = require('../../controllers/api/aggregateLogs.js');
 const { validationResult } = require('express-validator');
 const { existe, estaEm, existeDep, vcTipoUser } = require('../validation')
@@ -6,7 +5,7 @@ const { existe, estaEm, existeDep, vcTipoUser } = require('../validation')
 var express = require('express');
 var router = express.Router();
 
-router.get('/', Auth.isLoggedInUser, Auth.checkLevel(6), [
+router.get('/', [
     estaEm('query', 'tipo', vcTipoUser)
         .custom(existeDep("query", "id"))
         .withMessage("'id' é undefined, null ou vazio")
@@ -32,7 +31,7 @@ router.get('/', Auth.isLoggedInUser, Auth.checkLevel(6), [
     }
 })
 
-router.get('/rotas', Auth.isLoggedInUser, Auth.checkLevel(6), [
+router.get('/rotas', [
     existe('query', 'rota')
         .bail()
         .isURL({
@@ -60,14 +59,14 @@ router.get('/rotas', Auth.isLoggedInUser, Auth.checkLevel(6), [
     }
 })
 
-router.get('/total', Auth.isLoggedInUser, Auth.checkLevel(6), (req, res) => {
+router.get('/total', (req, res) => {
     AggregateLogs.totalAggregateLogs()
         .then(data => res.jsonp(data))
         .catch(error => res.status(500).send(`Erro ao obter o número total de acessos à API: ${error}`))
 })
 
 // Delete all agg logs
-router.delete('/', Auth.isLoggedInUser, Auth.checkLevel(7), (req, res) => {
+router.delete('/', (req, res) => {
     AggregateLogs.deleteAllAggLogs()
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na remoção de todos os logs agregados: ${erro}`));

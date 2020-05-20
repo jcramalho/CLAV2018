@@ -75,7 +75,7 @@ function unic(field){
     }
 }
 
-router.get('/', Auth.isLoggedInUser, Auth.checkLevel(5), [
+router.get('/', [
     verificaEntId('query', 'entidade').optional(),
     estaEm('query', 'formato', vcUsersFormato).optional()
 ], (req, res) => {
@@ -94,7 +94,7 @@ router.get('/', Auth.isLoggedInUser, Auth.checkLevel(5), [
     });
 });
 
-router.post('/registar', Auth.isLoggedInUser, Auth.checkLevel(5), [
+router.post('/registar', [
     verificaExisteEnt('body', 'entidade'),
     estaEm('body', 'type', vcUserLevels),
     existe('body', 'name'),
@@ -135,7 +135,7 @@ router.post('/registar', Auth.isLoggedInUser, Auth.checkLevel(5), [
     });
 });
 
-router.post('/registarParaEntidade', Auth.isLoggedInUser, Auth.checkLevel(5), [
+router.post('/registarParaEntidade', [
     verificaExisteEnt('body', 'entidade'),
     verificaLista('body', 'users'),
     existe('body', 'users.*.name'),
@@ -237,7 +237,7 @@ router.post('/recuperar', [
     });
 });
 
-router.put('/:id/desativar', Auth.isLoggedInUser, Auth.checkLevel(5), [
+router.put('/:id/desativar', [
     verificaUserId('param', 'id')
 ], async function(req, res) {
     const errors = validationResult(req)
@@ -259,7 +259,7 @@ router.put('/:id/desativar', Auth.isLoggedInUser, Auth.checkLevel(5), [
     }
 });
 
-router.delete('/:id', Auth.isLoggedInUser, Auth.checkLevel(7), [
+router.delete('/:id', [
     verificaUserId('param', 'id')
 ], async function(req, res) {
     const errors = validationResult(req)
@@ -282,7 +282,7 @@ router.delete('/:id', Auth.isLoggedInUser, Auth.checkLevel(7), [
 });
 
 //Funcoes de alteracao de utilizador
-router.put('/:id/password', Auth.isLoggedInUser, [
+router.put('/:id/password', [
     verificaUserId('param', 'id'),
     existe('body', 'atualPassword').optional(),
     existe('body', 'novaPassword')
@@ -327,7 +327,7 @@ router.put('/:id/password', Auth.isLoggedInUser, [
     }
 });
 
-router.put('/:id/nic', Auth.isLoggedInUser, Auth.checkLevel(7), [
+router.put('/:id/nic', [
     verificaUserId('param', 'id'),
     eNIC('body', 'nic')
         .bail()
@@ -353,7 +353,7 @@ router.put('/:id/nic', Auth.isLoggedInUser, Auth.checkLevel(7), [
     }
 });
 
-router.put('/:id', Auth.isLoggedInUser, Auth.checkLevel(5), [
+router.put('/:id', [
     verificaUserId('param', 'id'),
     verificaExisteEnt('body', 'entidade'),
     estaEm('body', 'level', vcUserLevels),
@@ -381,7 +381,7 @@ router.put('/:id', Auth.isLoggedInUser, Auth.checkLevel(5), [
     });
 });
 
-router.get('/:id', Auth.isLoggedInUser, [
+router.get('/:id', [
     verificaUserId('param', 'id')
 ], (req, res) => {
     const errors = validationResult(req)
@@ -449,7 +449,7 @@ router.post('/callback', [
 });
 
 //Registo via CC
-router.post('/registarCC', Auth.isLoggedInUser, Auth.checkLevel(5), [
+router.post('/registarCC', [
     verificaExisteEnt('body', 'entidade'),
     existe('body', 'name'),
     existe('body', 'email')

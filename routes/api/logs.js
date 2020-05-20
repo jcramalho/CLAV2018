@@ -1,4 +1,3 @@
-var Auth = require('../../controllers/auth.js');
 var Logs = require('../../controllers/api/logs.js');
 
 var express = require('express');
@@ -7,7 +6,7 @@ var router = express.Router();
 const { query, oneOf, validationResult } = require('express-validator');
 const { existe, estaEm, vcTipoUser, vcVerbo } = require('../validation')
 
-router.get('/', Auth.isLoggedInUser, Auth.checkLevel(6), oneOf([
+router.get('/', oneOf([
     [
         estaEm('query', 'tipo', vcTipoUser),
         existe('query', 'id')
@@ -37,7 +36,7 @@ router.get('/', Auth.isLoggedInUser, Auth.checkLevel(6), oneOf([
     }
 })
 
-router.get('/:verbo', Auth.isLoggedInUser, Auth.checkLevel(6), [
+router.get('/:verbo', [
     estaEm('param', 'verbo', vcVerbo),
     existe('query', 'rota')
         .bail()
@@ -60,7 +59,7 @@ router.get('/:verbo', Auth.isLoggedInUser, Auth.checkLevel(6), [
 })
 
 // Apaga todos os logs
-router.delete('/', Auth.isLoggedInUser, Auth.checkLevel(7), (req, res) => {
+router.delete('/', (req, res) => {
     Logs.deleteAllLogs()
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na remoção de todos os logs: ${erro}`));

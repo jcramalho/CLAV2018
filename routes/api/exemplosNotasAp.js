@@ -1,4 +1,3 @@
-var Auth = require('../../controllers/auth.js');
 var ExemplosNotasAp = require('../../controllers/api/exemplosNotasAp.js');
 var State = require('../../controllers/state.js')
 const { validationResult } = require('express-validator');
@@ -8,7 +7,7 @@ var express = require('express');
 var router = express.Router();
 
 // Verifica se umo determinado exemplo de notaAplicação já existe
-router.get('/exemploNotaAp', Auth.isLoggedInKey, [
+router.get('/exemploNotaAp', [
     existe('query', 'valor')
 ], (req, res) => {
     const errors = validationResult(req)
@@ -22,7 +21,7 @@ router.get('/exemploNotaAp', Auth.isLoggedInKey, [
 })
 
 // Devolve a lista de todas as notas de aplicação: idNota, nota, codigoProc, tituloProc
-router.get('/', Auth.isLoggedInKey, (req, res) => {
+router.get('/', (req, res) => {
     ExemplosNotasAp.todosExemplosNotasAp()
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na recuperação total dos exemplos das notas de aplicação: ${erro}`))

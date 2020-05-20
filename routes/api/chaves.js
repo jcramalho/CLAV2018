@@ -2,6 +2,7 @@ var express = require("express");
 var router = express.Router();
 var interfaceHosts = require("./../../config/database").interfaceHosts;
 var Chaves = require("../../controllers/api/chaves");
+var Auth = require('../../controllers/auth');
 var Mailer = require("../../controllers/api/mailer");
 const { param, header, body, query, validationResult } = require('express-validator');
 const { existe, verificaExisteEnt } = require('../validation')

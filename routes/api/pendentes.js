@@ -1,4 +1,3 @@
-var Auth = require('../../controllers/auth.js');
 var Pendentes = require('../../controllers/api/pendentes');
 var express = require('express');
 var router = express.Router();
@@ -6,13 +5,13 @@ var router = express.Router();
 const { validationResult } = require('express-validator');
 const { existe, estaEm, eMongoId, vcPendenteTipo, vcPendenteAcao } = require('../validation')
 
-router.get('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), (req, res) => {
+router.get('/', (req, res) => {
     Pendentes.listarTodos()
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na listagem de pendentes: ${erro}`));
 });
 
-router.get('/:id', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
+router.get('/:id', [
     eMongoId('param', 'id')
 ], (req, res) => {
     const errors = validationResult(req)
@@ -26,7 +25,7 @@ router.get('/:id', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7])
 })
 
 // Guardar um trabalho pendente
-router.post('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
+router.post('/', [
     estaEm('body', 'tipo', vcPendenteTipo),
     estaEm('body', 'acao', vcPendenteAcao),
     existe('body', 'criadoPor')
@@ -60,7 +59,7 @@ router.post('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), 
 })
 
 // Atualizar um trabalho previamente guardado como pendente: UPDATE
-router.put('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
+router.put('/', [
     eMongoId('body', '_id'),
     existe('body', 'objeto'),
     existe('body', 'numInterv')
@@ -80,7 +79,7 @@ router.put('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
 })
 
 // Apaga um trabalho pendente
-router.delete('/:id', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
+router.delete('/:id', [
     eMongoId('param', 'id')
 ], (req, res) => {
     const errors = validationResult(req)
@@ -94,7 +93,7 @@ router.delete('/:id', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 
 })
 
 // Apaga todos trabalhos pendentes
-router.delete('/', Auth.isLoggedInUser, Auth.checkLevel(7), (req, res) => {
+router.delete('/', (req, res) => {
     Pendentes.apagarTodos()
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na remoção de todos os trabalhos pendentes: ${erro}`));

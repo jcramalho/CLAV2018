@@ -1,4 +1,3 @@
-var Auth = require("../../controllers/auth.js");
 var Tipologias = require("../../controllers/api/tipologias.js");
 
 var express = require("express");
@@ -39,7 +38,7 @@ async function naoExisteDesignacaoSelf(valor, {req}) {
 }
 
 // Lista todas as tipologias: id, sigla, designacao
-router.get("/", Auth.isLoggedInKey, [
+router.get("/", [
     eFS(),
     query("estado")
         .customSanitizer(v => {
@@ -82,7 +81,7 @@ router.get("/", Auth.isLoggedInKey, [
 });
 
 // Verifica se a sigla já existe numa entidade
-router.get("/sigla", Auth.isLoggedInKey, [
+router.get("/sigla", [
     existe("query", "valor")
 ], (req, res) => {
   const errors = validationResult(req)
@@ -96,7 +95,7 @@ router.get("/sigla", Auth.isLoggedInKey, [
 });
 
 // Verifica se a designação já existe numa entidade
-router.get("/designacao", Auth.isLoggedInKey, [
+router.get("/designacao", [
     existe("query", "valor")
 ], (req, res) => {
   const errors = validationResult(req)
@@ -112,7 +111,7 @@ router.get("/designacao", Auth.isLoggedInKey, [
 });
 
 // Consulta de uma tipologia: sigla, designacao, estado
-router.get("/:id", Auth.isLoggedInKey, [
+router.get("/:id", [
     eFS(),
     verificaTipId('param', 'id'),
     estaEm("query", "info", vcTipsInfo).optional()
@@ -137,7 +136,7 @@ router.get("/:id", Auth.isLoggedInKey, [
 });
 
 // Lista as entidades que pertencem à tipologia: sigla, designacao, id
-router.get("/:id/elementos", Auth.isLoggedInKey, [
+router.get("/:id/elementos", [
     verificaTipId('param', 'id')
 ], (req, res) => {
   const errors = validationResult(req)
@@ -151,7 +150,7 @@ router.get("/:id/elementos", Auth.isLoggedInKey, [
 });
 
 // Lista os processos em que uma tipologia intervem como dono
-router.get("/:id/intervencao/dono", Auth.isLoggedInKey, [
+router.get("/:id/intervencao/dono", [
     verificaTipId('param', 'id')
 ], (req, res) => {
   const errors = validationResult(req)
@@ -165,7 +164,7 @@ router.get("/:id/intervencao/dono", Auth.isLoggedInKey, [
 });
 
 // Lista os processos em que uma tipologia intervem como participante
-router.get("/:id/intervencao/participante", Auth.isLoggedInKey, [
+router.get("/:id/intervencao/participante", [
     verificaTipId('param', 'id')
 ], (req, res) => {
   const errors = validationResult(req)
@@ -179,7 +178,7 @@ router.get("/:id/intervencao/participante", Auth.isLoggedInKey, [
 });
 
 // Insere uma tipologia na BD
-router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), [
+router.post("/", [
     existe("body", "sigla")
         .custom(naoExisteSigla)
         .withMessage("Sigla já existe"),
@@ -201,7 +200,7 @@ router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), [
 });
 
 // Atualiza uma tipologia na BD
-router.put("/:id", Auth.isLoggedInUser, Auth.checkLevel(4), [
+router.put("/:id", [
     verificaTipId('param', 'id')
         .custom(estaAtiva)
         .withMessage("Só é possível editar tipologias ativas"),

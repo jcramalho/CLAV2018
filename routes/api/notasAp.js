@@ -1,4 +1,3 @@
-var Auth = require('../../controllers/auth.js');
 var NotasAp = require('../../controllers/api/notasAp.js');
 var State = require('../../controllers/state.js')
 
@@ -9,7 +8,7 @@ const { validationResult } = require('express-validator');
 const { existe } = require('../validation')
 
 // Verifica se uma determinada notaAplicação já existe
-router.get('/notaAp', Auth.isLoggedInKey, [
+router.get('/notaAp', [
     existe("query", "valor")
 ], (req, res) => {
     const errors = validationResult(req)
@@ -23,7 +22,7 @@ router.get('/notaAp', Auth.isLoggedInKey, [
 })
 
 // Devolve a lista de todas as notas de aplicação: idNota, nota, codigoProc, tituloProc
-router.get('/', Auth.isLoggedInKey, (req, res) => {
+router.get('/', (req, res) => {
     NotasAp.todasNotasAp()
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na recuperação total das notas de aplicação: ${erro}`))

@@ -1,4 +1,3 @@
-var Auth = require('../../controllers/auth.js');
 var Noticias = require('../../controllers/api/noticias.js')
 var url = require('url')
 
@@ -10,7 +9,7 @@ const { validationResult } = require('express-validator');
 const { existe, estaEm, dataValida, eMongoId, vcNotRec } = require('../validation')
 
 // Lista todas as noticias: data, titulo, desc
-router.get('/', Auth.isLoggedInKey, [
+router.get('/', [
     existe("query", "titulo").optional(),
     existe("query", "desc").optional(),
     dataValida("query", "data").optional(),
@@ -46,7 +45,7 @@ router.get('/', Auth.isLoggedInKey, [
 })
 
 // Consulta de uma noticia: titulo, data, desc
-router.get('/:id', Auth.isLoggedInKey, [
+router.get('/:id', [
     eMongoId('param', 'id')
 ], (req, res) => {
     const errors = validationResult(req)
@@ -60,7 +59,7 @@ router.get('/:id', Auth.isLoggedInKey, [
 })
 
 // Update de uma Noticia
-router.put('/:id', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), [
+router.put('/:id', [
     eMongoId('param', 'id'),
     existe("body", "titulo"),
     existe("body", "desc"),
@@ -84,7 +83,7 @@ router.put('/:id', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), [
 })
 
 // Adiciona uma noticia
-router.post('/', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), [
+router.post('/', [
     existe("body", "titulo"),
     existe("body", "desc"),
     dataValida("body", "data"),
@@ -106,7 +105,7 @@ router.post('/', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), [
         .catch(erro => res.status(500).jsonp("Erro na adição da Noticia "+req.body.titulo+": " + erro))
 })
 
-router.delete('/:id', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), [
+router.delete('/:id', [
     eMongoId('param', 'id')
 ], function(req, res) {
     const errors = validationResult(req)

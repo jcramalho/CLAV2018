@@ -1,9 +1,8 @@
-var Auth = require('../../controllers/auth.js');
 var State = require('../../controllers/state.js');
 var express = require('express');
 var router = express.Router();
 
-router.get('/cache', Auth.isLoggedInUser, Auth.checkLevel(7), async (req, res) => {
+router.get('/cache', async (req, res) => {
     try{
         res.send("A realizar o reload da cache do sistema! Pode demorar alguns minutos. Veja o output log do sistema para ver se foi efetuado com sucesso...")
         await State.reload()

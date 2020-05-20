@@ -1,4 +1,3 @@
-var Auth = require("../../controllers/auth.js");
 var Entidades = require("../../controllers/api/entidades.js");
 var url = require("url");
 
@@ -40,7 +39,7 @@ async function naoExisteDesignacaoSelf(valor, {req}) {
 }
 
 // Lista todas as entidades: id, sigla, designacao, internacional
-router.get("/", Auth.isLoggedInKey, [
+router.get("/", [
     eFS(),
     existe("query", "sigla").optional(),
     existe("query", "designacao").optional(),
@@ -115,7 +114,7 @@ router.get("/", Auth.isLoggedInKey, [
 });
 
 // Verifica se a sigla já existe numa entidade
-router.get("/sigla", Auth.isLoggedInKey, [
+router.get("/sigla", [
     existe("query", "valor")
 ], (req, res) => {
   const errors = validationResult(req)
@@ -129,7 +128,7 @@ router.get("/sigla", Auth.isLoggedInKey, [
 });
 
 // Verifica se a designação já existe numa entidade
-router.get("/designacao", Auth.isLoggedInKey, [
+router.get("/designacao", [
     existe("query", "valor")
 ], (req, res) => {
   const errors = validationResult(req)
@@ -145,7 +144,7 @@ router.get("/designacao", Auth.isLoggedInKey, [
 });
 
 // Consulta de uma entidade: sigla, designacao, estado, internacional
-router.get("/:id", Auth.isLoggedInKey, [
+router.get("/:id", [
     eFS(),
     verificaEntId('param', 'id'),
     estaEm("query", "info", vcEntsInfo).optional()
@@ -170,7 +169,7 @@ router.get("/:id", Auth.isLoggedInKey, [
 });
 
 // Lista as tipologias a que uma entidade pertence: id, sigla, designacao
-router.get("/:id/tipologias", Auth.isLoggedInKey, [
+router.get("/:id/tipologias", [
     verificaEntId('param', 'id')
 ], (req, res) => {
   const errors = validationResult(req)
@@ -184,7 +183,7 @@ router.get("/:id/tipologias", Auth.isLoggedInKey, [
 });
 
 // Lista os processos em que uma entidade intervem como dono
-router.get("/:id/intervencao/dono", Auth.isLoggedInKey, [
+router.get("/:id/intervencao/dono", [
     verificaEntId('param', 'id')
 ], (req, res) => {
   const errors = validationResult(req)
@@ -198,7 +197,7 @@ router.get("/:id/intervencao/dono", Auth.isLoggedInKey, [
 });
 
 // Lista os processos em que uma entidade intervem como participante
-router.get("/:id/intervencao/participante", Auth.isLoggedInKey, [
+router.get("/:id/intervencao/participante", [
     verificaEntId('param', 'id')
 ], (req, res) => {
   const errors = validationResult(req)
@@ -212,7 +211,7 @@ router.get("/:id/intervencao/participante", Auth.isLoggedInKey, [
 });
 
 // Insere uma entidade na BD
-router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), [
+router.post("/", [
     existe('body', 'sigla')
         .custom(naoExisteSigla)
         .withMessage("Sigla já existe"),
@@ -239,7 +238,7 @@ router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), [
 });
 
 // Atualiza uma entidade na BD
-router.put("/:id", Auth.isLoggedInUser, Auth.checkLevel(4), [
+router.put("/:id", [
     verificaEntId('param', 'id')
         .custom(estaAtiva)
         .withMessage("Só é possível editar entidades ativas"),
@@ -270,7 +269,7 @@ router.put("/:id", Auth.isLoggedInUser, Auth.checkLevel(4), [
 });
 
 // Extinguir uma entidade na BD
-router.put("/:id/extinguir", Auth.isLoggedInUser, Auth.checkLevel(4), [
+router.put("/:id/extinguir", [
     verificaEntId('param', 'id'),
     dataValida('body', 'dataExtincao')
 ], (req, res) => {
