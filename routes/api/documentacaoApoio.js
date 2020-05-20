@@ -107,10 +107,10 @@ router.get('/:id/entradas/:idEnt', Auth.isLoggedInKey, [
 })
 
 // Retorna os elementos textuais de uma entrada específica dentro de uma classe 
-router.get('/:id/entradas/:idEnt/elementos', [
+router.get('/:id/entradas/:idEnt/elementos', Auth.isLoggedInKey, [
     eMongoId('params', 'id'),
     eMongoId('params', 'idEnt')
-], Auth.isLoggedInKey, (req, res) => {
+], (req, res) => {
     const errors = validationResult(req)
     if(!errors.isEmpty()){
         return res.status(422).jsonp(errors.array())
@@ -449,7 +449,9 @@ router.put('/:id/entradas/:idEnt/elementos/:idElem', Auth.isLoggedInUser, Auth.c
 // ------------------------------------------- DELETE -------------------------------------------
 
 // Apaga uma classe -> eliminar a pasta
-router.delete('/:id', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), (req, res) => {
+router.delete('/:id', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), [
+    eMongoId('params', 'id')
+], (req, res) => {
     const errors = validationResult(req)
     if(!errors.isEmpty()){
         return res.status(422).jsonp(errors.array())
