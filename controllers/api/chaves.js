@@ -11,13 +11,12 @@ Chaves.listar = function(callback){
         }else {
             for(var i = 0; i < keys.length; i++) {
                 item = {}
-                await Auth.verifyTokenKey(keys[i].key, function(err, decoded){
-                    if(!err){
-                        item["expiration"] = new Date(decoded.exp*1000).toLocaleString();
-                    }else{
-                        item["expiration"] = new Date(err.expiredAt).toLocaleString();
-                    }
-                });
+                try{
+                    var decoded = await Auth.verifyTokenKey(keys[i].key)
+                    item["expiration"] = new Date(decoded.exp*1000).toLocaleString();
+                }catch(err){
+                    item["expiration"] = new Date(err.expiredAt).toLocaleString();
+                }
                 item["id"] = keys[i]._id;
                 item["name"] = keys[i].name;
                 item["key"] = keys[i].key;
@@ -55,12 +54,12 @@ Chaves.listarPorEmail = function (email, callback) {
 	Chave.findOne(query, callback);
 }
 
-Chaves.criarChave = function(name, email, entidade, callback){
+Chaves.criarChave = async function(name, email, entidade, callback){
     var ent = entidade.split('_')[0] == 'ent' ? entidade : 'ent_' + entidade
     var id = mongoose.Types.ObjectId()
     var newKey = new Chave({
         _id: id,
-        key: Auth.generateTokenKey(id),
+        key: await Auth.generateTokenKey(id),
         name: name,
 		contactInfo: email,
         entity: ent
@@ -130,7 +129,7 @@ Chaves.renovar = function(id, callback){
         }else if(!key){
             callback("Chave API não existe", null);
 		}else{
-            key.key = Auth.generateTokenKey(key._id);
+            key.key = await Auth.generateTokenKey(key._id);
             key.created = Date.now();
             key.nCalls = 0;
             key.lastUsed = null;

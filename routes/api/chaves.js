@@ -27,7 +27,7 @@ router.get("/clavToken", [
       return res.status(422).jsonp(errors.array())
   }
   
-  Chaves.listarPorEmail("interface_clav@dglab.pt", function(err, chave) {
+  Chaves.listarPorEmail("interface_clav@dglab.pt", async function(err, chave) {
     if (err) {
       //res.status(500).send(`Erro: ${err}`);
       res.status(500).send("Erro ao obter o token da CLAV!")
@@ -46,20 +46,19 @@ router.get("/clavToken", [
         }
       );
     } else {
-      Auth.verifyTokenKey(chave.key, function(err, decoded) {
-        if (err) {
-          Chaves.renovar(chave.id, function(err, chave) {
-            if (err) {
-              //res.status(500).send(err);
-              res.status(500).send("Erro ao obter o token da CLAV!")
-            } else {
-              res.send({ apikey: chave.key });
-            }
-          });
-        } else {
-          res.send({ apikey: chave.key });
-        }
-      });
+      try{
+        var decoded = await Auth.verifyTokenKey(chave.key)
+        res.send({ apikey: chave.key });
+      }catch(err){
+        Chaves.renovar(chave.id, function(err, chave) {
+          if (err) {
+            //res.status(500).send(err);
+            res.status(500).send("Erro ao obter o token da CLAV!")
+          } else {
+            res.send({ apikey: chave.key });
+          }
+        });
+      }
     }
   });
 });
@@ -72,21 +71,20 @@ router.get("/:id", [
       return res.status(422).jsonp(errors.array())
   }
 
-  await Auth.verifyTokenKey(req.params.id, async function(err, decoded){
-    if (!err) {
-      await Chaves.listarPorId(decoded.id, function(err, result) {
-        if (err) {
-          //res.status(403).send(err);
-          res.status(500).send("Não foi possível obter a Chave API!")
-        } else {
-          res.send(result);
-        }
-      });
-    } else {
-      //res.status(403).send(err);
-      res.status(500).send("Não foi possível obter a Chave API!")
-    }
-  });
+  try {
+    var decoded = await Auth.verifyTokenKey(req.params.id)
+    await Chaves.listarPorId(decoded.id, function(err, result) {
+      if (err) {
+        //res.status(403).send(err);
+        res.status(500).send("Não foi possível obter a Chave API!")
+      } else {
+        res.send(result);
+      }
+    });
+  }catch(err){
+    //res.status(403).send(err);
+    res.status(500).send("Não foi possível obter a Chave API!")
+  }
 });
 
 router.post("/", [

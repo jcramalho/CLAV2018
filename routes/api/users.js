@@ -1,7 +1,6 @@
 var express = require('express');
 var Logging = require('../../controllers/logging');
 var router = express.Router();
-var passport = require('passport');
 var User = require('../../models/user');
 var Users = require('../../controllers/api/users');
 var AuthCalls = require('../../controllers/api/auth');
@@ -172,30 +171,46 @@ router.post("/login", [
         .isEmail()
         .withMessage("Email inválido"),
     existe('body', 'password')
-], (req, res, next) => {
+], (req, res) => {
     const errors = validationResult(req)
     if(!errors.isEmpty()){
         return res.status(422).jsonp(errors.array())
     }
 
-    passport.authenticate('login', (err, user, info) => {
-        if (err)
-            //res.status(500).send(err)
-            res.status(500).send("Não foi possível proceder a autenticação!")
+    Users.getUserByEmail(req.body.email, function (err, user) {
+        if (err) 
+            //return res.status(500).send(`Erro: ${err}`);
+            return res.status(500).send("Não foi possível proceder a autenticação!");
         if (!user)
-            res.status(401).send('Credenciais inválidas')
+            //Não existe nenhum utilizador registado com esse email
+            return res.status(401).send('Credenciais inválidas');
         else{
-            req.login(user, () => {
-                var token = Auth.generateTokenUser(user);
+            Users.comparePassword(req.body.password, user.local.password, async function (err, isMatch) {
+                if (err)
+                    return res.status(500).send("Não foi possível proceder a autenticação!");
+                if (isMatch) {
+                    if(user.level==-1){
+                        //Utilizador desativado
+                        return res.status(500).send("Não foi possível proceder a autenticação!")
+                    }else{
+                        try{
+                            var token = await Auth.generateTokenUser(user);
+                        }catch(err){
+                            return res.status(500).send("Não foi possível proceder a autenticação!")
+                        }
 
-                res.send({
-                    token: token, 
-                    name : user.name, 
-                    entidade: user.entidade
-                })
-            })
+                        res.send({
+                            token: token,
+                            name : user.name,
+                            entidade: user.entidade
+                        })
+                    }
+                } else {
+                    return res.status(401).send('Credenciais inválidas');
+                }
+            });
         }
-    })(req, res, next);
+    });
 });
 
 router.post('/recuperar', [
@@ -219,14 +234,18 @@ router.post('/recuperar', [
             //Por forma a não divulgar que emails estão já usados, será devolvido que foi enviado um email com sucesso
             res.send('Email enviado com sucesso!');
         else{
-            Users.getUserById(user._id, function(err, user){
+            Users.getUserById(user._id, async function(err, user){
                 if(err) 
                     //return res.status(500).send(`Erro: ${err}`);
                     return res.status(500).send("Não foi possível recuperar a conta!");
                 if(user.local.password != undefined){
-                    var token = Auth.generateTokenUserRecuperar(user);
-                    Mailer.sendEmailRecuperacao(req.body.email, req.body.url.split('/recuperacao')[0]+'/alteracaoPasswordRecuperacao?jwt='+token);
-                    res.send('Email enviado com sucesso!')
+                    try{
+                        var token = await Auth.generateTokenUserRecuperar(user);
+                        Mailer.sendEmailRecuperacao(req.body.email, req.body.url.split('/recuperacao')[0]+'/alteracaoPasswordRecuperacao?jwt='+token);
+                        res.send('Email enviado com sucesso!')
+                    }catch(err){
+                        return res.status(500).send("Não foi possível recuperar a conta!");
+                    }
                 }else{
                     //Este utilizador foi registado na plataforma CLAV através do Cartão de Cidadão, não existindo uma password para o mesmo
                     //Por forma a não divulgar que emails estão já usados, será devolvido que foi enviado um email com sucesso
@@ -422,20 +441,27 @@ router.post('/callback', [
         AuthCalls.get(result.RequestID, function(err, url){
             if(!err && result.NIC!=undefined && result.NomeCompleto!=undefined){
                 var NIC = Buffer.from(result.NIC, 'base64').toString('utf8');
-                Users.getUserByCC(NIC, function (err, user) {
+                Users.getUserByCC(NIC, async function (err, user) {
                     if(!user){ //Este cartao cidadao nao tem user associado
                         res.writeHead(301,{
                             Location: url+'/users/HandlerCC?NIC='+result.NIC+'&Nome='+result.NomeCompleto
                         });
                         res.end();
                     }else{ //ja existe user com este cartao cidadao
-                        var token = Auth.generateTokenUser(user);
-                        var name = Buffer.from(user.name).toString('base64');
-                        var entidade = Buffer.from(user.entidade).toString('base64');
-                        res.writeHead(301,{
-                            Location: url+'/users/HandlerCC?Token='+token+'&Nome='+name+'&Entidade='+entidade
-                        });
-                        res.end();
+                        try{
+                            var token = await Auth.generateTokenUser(user);
+                            var name = Buffer.from(user.name).toString('base64');
+                            var entidade = Buffer.from(user.entidade).toString('base64');
+                            res.writeHead(301,{
+                                Location: url+'/users/HandlerCC?Token='+token+'&Nome='+name+'&Entidade='+entidade
+                            });
+                            res.end();
+                        }catch(err){
+                            res.writeHead(301,{
+                                Location: url+'/users/HandlerCC'
+                            });
+                            res.end();
+                        }
                     }
                 })
             }else{

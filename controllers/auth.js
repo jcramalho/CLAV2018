@@ -34,8 +34,12 @@ Auth.generateTokenUser = async function (user) {
 }
 
 Auth.verifyTokenUser = async function (key) {
-    var response = await axios.post(servAuthHost + "/user/verify", { key: key })
-    return response.data
+    try{
+        var response = await axios.post(servAuthHost + "/user/verify", { key: key })
+        return response.data
+    }catch(error){
+        throw error.response.data
+    }
 }
 
 Auth.generateTokenKey = async function (chaveId) {
@@ -50,6 +54,10 @@ Auth.generateTokenKey = async function (chaveId) {
 }
 
 Auth.verifyTokenKey = async function (key) {
-    var response = await axios.post(servAuthHost + "/apikey/verify", { key: key })
-    return response.data
+    try{
+        var response = await axios.post(servAuthHost + "/apikey/verify", { key: key })
+        return response.data
+    }catch(error){
+        throw error.response.data
+    }
 }
