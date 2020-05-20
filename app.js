@@ -18,6 +18,7 @@ var logger = require('morgan')
 var Logs = require('./controllers/api/logs')
 var aggLogs = require('./controllers/api/aggregateLogs')
 var dataBases = require('./config/database');
+var Key = require('./models/chave');
 
 //Lê e interpreta os dados enviados pelo serviço de autenticação e de autorização
 app.use((req, res, next) => {
@@ -31,6 +32,16 @@ app.use((req, res, next) => {
 
         if(res.locals.idType == "User"){
             req.user = servAuth
+        }else if(res.locals.idType == "Chave"){
+            //Atualiza a Chave API por forma a indicar que foi utilizada
+            try{
+                await Key.updateOne(
+                    {_id: servAuth.id},
+                    {$inc: {nCalls: 1}, lastUsed: Date.now()}
+                )
+            }catch(err){
+                console.log("Erro ao atualizar a chave API")
+            }
         }
     }
     next();
