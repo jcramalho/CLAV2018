@@ -19,6 +19,7 @@ Auth.generateTokenUserRecuperar = async function (user) {
 }
 
 Auth.generateTokenUser = async function (user) {
+    const userExpires = Parametros.getParameter('userExpires').valor
     var response = await axios.post(servAuthHost + "/user/sign", {
         user: {
             id: user._id,
@@ -43,6 +44,7 @@ Auth.verifyTokenUser = async function (key) {
 }
 
 Auth.generateTokenKey = async function (chaveId) {
+    const keyExpires = Parametros.getParameter('keyExpires').valor
     var response = await axios.post(servAuthHost + "/apikey/sign", {
         apikey: {
             id: chaveId

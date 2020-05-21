@@ -177,7 +177,7 @@ router.post("/login", [
         return res.status(422).jsonp(errors.array())
     }
 
-    Users.getUserByEmail(req.body.email, function (err, user) {
+    Users.getUserByEmail(req.body.username, function (err, user) {
         if (err) 
             //return res.status(500).send(`Erro: ${err}`);
             return res.status(500).send("Não foi possível proceder a autenticação!");

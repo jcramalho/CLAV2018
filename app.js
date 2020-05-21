@@ -21,26 +21,30 @@ var dataBases = require('./config/database');
 var Key = require('./models/chave');
 
 //Lê e interpreta os dados enviados pelo serviço de autenticação e de autorização
-app.use((req, res, next) => {
-    servAuth = JSON.parse(req.headers["clav-auth"])
-    if("id" in servAuth){
-        res.locals.id = servAuth.id
-    }
-    if("idType" in servAuth){
-        res.locals.idType = servAuth.idType
-        delete servAuth.idType
+app.use(async (req, res, next) => {
+    if("clav-auth" in req.headers){
+        servAuth = JSON.parse(req.headers["clav-auth"])
 
-        if(res.locals.idType == "User"){
-            req.user = servAuth
-        }else if(res.locals.idType == "Chave"){
-            //Atualiza a Chave API por forma a indicar que foi utilizada
-            try{
-                await Key.updateOne(
-                    {_id: servAuth.id},
-                    {$inc: {nCalls: 1}, lastUsed: Date.now()}
-                )
-            }catch(err){
-                console.log("Erro ao atualizar a chave API")
+        if("id" in servAuth){
+            res.locals.id = servAuth.id
+        }
+
+        if("idType" in servAuth){
+            res.locals.idType = servAuth.idType
+            delete servAuth.idType
+
+            if(res.locals.idType == "User"){
+                req.user = servAuth
+            }else if(res.locals.idType == "Chave"){
+                //Atualiza a Chave API por forma a indicar que foi utilizada
+                try{
+                    await Key.updateOne(
+                        {_id: servAuth.id},
+                        {$inc: {nCalls: 1}, lastUsed: Date.now()}
+                    )
+                }catch(err){
+                    console.log("Erro ao atualizar a chave API")
+                }
             }
         }
     }
