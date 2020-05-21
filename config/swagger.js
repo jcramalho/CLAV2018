@@ -11,9 +11,11 @@ var swaggerDoc = yaml.load(src, { schema: yamlinc.YAML_INCLUDE_SCHEMA })
 
 //mudar url principal na secção dos servidores do Swagger
 swaggerDoc.servers[0].variables.versao.default = dataBases.apiVersion
-swaggerDoc.servers[0].variables.versao.enum[0] = dataBases.apiVersion
-swaggerDoc.servers[0].variables.dominio.default = dataBases.swaggerURL
-swaggerDoc.servers[0].variables.dominio.enum[0] = dataBases.swaggerURL
+swaggerDoc.servers[0].variables.versao.enum = [dataBases.apiVersion]
+swaggerDoc.servers[0].variables.dominio.default = dataBases.domains[0]
+swaggerDoc.servers[0].variables.dominio.enum = dataBases.domains
+swaggerDoc.servers[0].variables.protocolo.default = dataBases.protocols[0]
+swaggerDoc.servers[0].variables.protocolo.enum = dataBases.protocols
 //Escrever o ficheiro final da especificação OpenAPI
 fs.writeFileSync("./public/clav.yaml", yaml.dump(swaggerDoc))
 
