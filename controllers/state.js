@@ -326,13 +326,17 @@ function filterEntsTips(classe, ent_tip){
 }
 
 //Função auxiliar recursiva para getProcEntsTips
-function getProcEntsTipsRec(classes, ent_tip, allInfo){
+function getProcEntsTipsRec(classes, ent_tip, allInfo, nivelFilter){
     var ret = []
 
     for(var i = 0; i < classes.length; i++){
-        var filhos = getProcEntsTipsRec(classes[i].filhos, ent_tip, allInfo)
+        if(nivelFilter > 0){
+            var filhos = getProcEntsTipsRec(classes[i].filhos, ent_tip, allInfo, nivelFilter - 1)
+        }else{
+            var filhos = JSON.parse(JSON.stringify(classes[i].filhos))
+        }
         
-        if(filterEntsTips(classes[i], ent_tip) || (filhos && filhos.length > 0)){
+        if(filterEntsTips(classes[i], ent_tip) || (nivelFilter != 0 && filhos && filhos.length > 0)){
             var classe
             if(allInfo){
                 classe = JSON.parse(JSON.stringify(classes[i]))
@@ -361,7 +365,7 @@ exports.getProcEntsTips = (entidades, tipologias, allInfo) => {
     var ret = []
 
     if(ent_tip.length > 0){
-        ret = getProcEntsTipsRec(classTreeInfo, ent_tip, allInfo)
+        ret = getProcEntsTipsRec(classTreeInfo, ent_tip, allInfo, 2)
     }
 
     return ret;
