@@ -6,7 +6,7 @@ var router = express.Router();
 
 var validKeys = ["sigla", "designacao", "internacional", "sioe", "estado"];
 const { query, body, validationResult } = require('express-validator');
-const { existe, estaEm, verificaEntId, eFS, verificaEnts, dataValida, verificaLista, estaAtiva, verificaExisteTip, vcBoolean, vcEstado, vcEntsProcs, vcEntsInfo } = require('../validation')
+const { existe, estaEm, verificaEntId, eFS, verificaEnts, dataValida, verificaLista, verificaExisteTip, vcBoolean, vcEstado, vcEntsProcs, vcEntsInfo } = require('../validation')
 
 async function naoExisteSigla(valor) {
     if(await Entidades.existeSigla(valor))
@@ -224,6 +224,7 @@ router.post("/", [
         .optional()
         .matches(/^\d+$/),
     dataValida('body', 'dataCriacao').optional(),
+    dataValida('body', 'dataExtincao').optional(),
     verificaLista("body", "tipologiasSel").optional(),
     verificaExisteTip("body", "tipologiasSel.*.id")
 ], (req, res) => {
@@ -239,9 +240,7 @@ router.post("/", [
 
 // Atualiza uma entidade na BD
 router.put("/:id", [
-    verificaEntId('param', 'id')
-        .custom(estaAtiva)
-        .withMessage("Só é possível editar entidades ativas"),
+    verificaEntId('param', 'id'),
     existe('body', 'sigla')
         .custom(naoExisteSiglaSelf)
         .withMessage("Sigla já existe"),
