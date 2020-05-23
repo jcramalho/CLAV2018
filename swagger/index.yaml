@@ -22,14 +22,18 @@ info:
     name: CLAV
     email: clav@dglab.gov.pt
 servers:
-  - url: "{dominio}/{versao}"
+  - url: "{protocolo}://{dominio}/{versao}"
     variables:
+      protocolo:
+        default: "https"
+        enum:
+          - "https"
       dominio:
-        default: "http://localhost:7779"
+        default: "localhost:7779"
         description: Domínio
         enum:
-          - "http://localhost:7779"
-          - "https://clav-test.di.uminho.pt"
+          - "localhost:7779"
+          - "clav-test.di.uminho.pt"
       versao:
         description: Versão da API
         default: "v2"
