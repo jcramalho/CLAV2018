@@ -6,6 +6,7 @@ var fs = require('fs')
  */
 var Classes = require('./api/classes.js')
 var Legs = require('./api/leg.js')
+var Entidades = require('./api/entidades.js')
 var NotasAp = require('./api/notasAp.js')
 var ExemplosNotasAp = require('./api/exemplosNotasAp.js')
 var TermosIndice = require('./api/termosIndice.js')
@@ -23,14 +24,25 @@ var termosInd = []
 
 var legislacao = []
 
+var entidades = []
+
 // Índice de pesquisa para v-trees: 
 var indicePesquisa = []
+
+//reload/reset
 
 exports.reloadLegislacao = async () => {
     console.debug("A carregar a legislação da BD para a cache...")
     legislacao = []
     legislacao = await loadLegs();
     console.debug("Terminei de carregar a legislação.")
+}
+
+exports.reloadEntidades = async () => {
+    console.debug("A carregar as entidades da BD para a cache...")
+    entidades = []
+    entidades = await loadEntidades();
+    console.debug("Terminei de carregar as entidades.")
 }
 
 exports.reset = async () => { 
@@ -45,6 +57,8 @@ exports.reset = async () => {
         console.debug("Terminei de carregar a informação completa das classes.")
 
         await exports.reloadLegislacao()
+
+        await exports.reloadEntidades()
 
         console.debug("A criar o índice de pesquisa...")
         indicePesquisa = await criaIndicePesquisa()
@@ -71,6 +85,8 @@ exports.reload = async () => {
         console.debug("Informação base das classes carregada...")
 
         await exports.reloadLegislacao()
+
+        await exports.reloadEntidades()
 
         console.debug("A criar o índice de pesquisa...")
         indicePesquisa = await criaIndicePesquisa()
@@ -499,8 +515,7 @@ async function criaIndicePesquisa(){
 //legislacao
 
 exports.getLegislacoes = () => {
-    console.log("CACHE")
-    return legislacao
+    return JSON.parse(JSON.stringify(legislacao))
 }
 
 exports.getLegislacao = (id) => {
@@ -513,11 +528,37 @@ exports.getLegislacao = (id) => {
 }
 
 // Carrega o catálogo legislativo na cache
-
 async function loadLegs() {
     try{
         let legs = await Legs.listar()
         return legs
+    }
+    catch(err) {
+        throw err;
+    }
+}
+
+
+//entidades
+
+exports.getEntidades = () => {
+    return JSON.parse(JSON.stringify(entidades))
+}
+
+exports.getEntidade = (id) => {
+    let res = entidades.filter(e => e.id == id)
+    if (res.length > 0) {
+        return JSON.parse(JSON.stringify(res[0]))
+    }
+    else
+        return null
+}
+
+// Carrega as entidades para cache
+async function loadEntidades() {
+    try{
+        let ents = await Entidades.listar("True")
+        return ents
     }
     catch(err) {
         throw err;
