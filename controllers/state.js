@@ -90,6 +90,8 @@ exports.reload = async () => {
     }
 }
 
+//classes
+
 exports.getAllClasses = async () => { return classTree }
 exports.getClassesFlatList = async () => { return classList }
 exports.getLevelClasses = async (nivel) => {
@@ -217,17 +219,6 @@ exports.getEsqueleto = () => {
     })
 
     return ret
-}
-
-exports.getIndicePesquisa = async () => { return indicePesquisa }
-
-exports.getLegislacao = (id) => {
-    let res = legislacao.filter(l => l.id == id)
-    if (res.length > 0) {
-        return JSON.parse(JSON.stringify(res[0]))
-    }
-    else
-        return null
 }
 
 // Verifica a existência do código de uma classe: true == existe, false == não existe
@@ -371,67 +362,6 @@ exports.getProcEntsTips = (entidades, tipologias, allInfo) => {
     return ret;
 }
 
-async function criaIndicePesquisa(){
-    let notas = await NotasAp.todasNotasAp()
-    let exemplos = await ExemplosNotasAp.todosExemplosNotasAp()
-    let tis = await TermosIndice.listar()
-    let indice = []
-    
-    //  [ {codigo:"cxxx", titulo:"...", notas: [], exemplos:[], tis:[]}, ...]
-    indice = indice.concat(classList.map(c => ({codigo: c.codigo, titulo: c.titulo, notas:[], exemplos:[], tis:[]})))
-    // Vamos colocar as notas no processo certo
-    notas.forEach(n => {
-        var index = indice.findIndex(c => {
-            return ('c'+c.codigo) == n.cProc
-        })
-        if(index != -1){
-            indice[index].notas.push(n.nota)
-        }
-        else{
-            console.log('Cálculo do índice::Notas:: não encontrei a classe com código: ' + n.cProc)
-        }
-    })
-    
-    // Vamos fazer o mesmo para os exemplos
-    exemplos.forEach(e => {
-        var index = indice.findIndex(c => {
-            return ('c'+c.codigo) == e.cProc
-        })
-        if(index != -1){
-            indice[index].exemplos.push(e.exemplo)
-        }
-        else{
-            console.log('Cálculo do índice::Exemplos:: não encontrei a classe com código: ' + e.cProc)
-        }
-    })
-    // Vamos fazer o mesmo para os tis
-    tis.forEach(t => {
-        var index = indice.findIndex(c => {
-            return ('c'+c.codigo) == t.codigoClasse
-        })
-        if(index != -1){
-            indice[index].tis.push(t.termo)
-        }
-        else{
-            console.log('Cálculo do índice::Termos:: não encontrei a classe com código: ' + t.codigoClasse)
-        }
-    }) 
-    
-    return indice
-}
-
-// Carrega o catálogo legislativo na cache
-
-async function loadLegs() {
-    try{
-        let legs = await Legs.listar()
-        return legs
-    }
-    catch(err) {
-        throw err;
-    }
-}
-
 async function loadClasses() {
         try {
             let classes = await Classes.listar(null);
@@ -511,4 +441,85 @@ async function loadClassesInfo() {
     }catch(err){
         throw err
     }   
+}
+
+//indice de pesquisa
+
+exports.getIndicePesquisa = async () => { return indicePesquisa }
+
+async function criaIndicePesquisa(){
+    let notas = await NotasAp.todasNotasAp()
+    let exemplos = await ExemplosNotasAp.todosExemplosNotasAp()
+    let tis = await TermosIndice.listar()
+    let indice = []
+
+    //  [ {codigo:"cxxx", titulo:"...", notas: [], exemplos:[], tis:[]}, ...]
+    indice = indice.concat(classList.map(c => ({codigo: c.codigo, titulo: c.titulo, notas:[], exemplos:[], tis:[]})))
+    // Vamos colocar as notas no processo certo
+    notas.forEach(n => {
+        var index = indice.findIndex(c => {
+            return ('c'+c.codigo) == n.cProc
+        })
+        if(index != -1){
+            indice[index].notas.push(n.nota)
+        }
+        else{
+            console.log('Cálculo do índice::Notas:: não encontrei a classe com código: ' + n.cProc)
+        }
+    })
+
+    // Vamos fazer o mesmo para os exemplos
+    exemplos.forEach(e => {
+        var index = indice.findIndex(c => {
+            return ('c'+c.codigo) == e.cProc
+        })
+        if(index != -1){
+            indice[index].exemplos.push(e.exemplo)
+        }
+        else{
+            console.log('Cálculo do índice::Exemplos:: não encontrei a classe com código: ' + e.cProc)
+        }
+    })
+    // Vamos fazer o mesmo para os tis
+    tis.forEach(t => {
+        var index = indice.findIndex(c => {
+            return ('c'+c.codigo) == t.codigoClasse
+        })
+        if(index != -1){
+            indice[index].tis.push(t.termo)
+        }
+        else{
+            console.log('Cálculo do índice::Termos:: não encontrei a classe com código: ' + t.codigoClasse)
+        }
+    })
+
+    return indice
+}
+
+//legislacao
+
+exports.getLegislacoes = () => {
+    console.log("CACHE")
+    return legislacao
+}
+
+exports.getLegislacao = (id) => {
+    let res = legislacao.filter(l => l.id == id)
+    if (res.length > 0) {
+        return JSON.parse(JSON.stringify(res[0]))
+    }
+    else
+        return null
+}
+
+// Carrega o catálogo legislativo na cache
+
+async function loadLegs() {
+    try{
+        let legs = await Legs.listar()
+        return legs
+    }
+    catch(err) {
+        throw err;
+    }
 }

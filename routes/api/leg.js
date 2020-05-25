@@ -89,7 +89,7 @@ router.get("/", Auth.isLoggedInKey, [
     }
   } else {
     try {
-      res.locals.dados = await Leg.listar();
+      res.locals.dados = State.getLegislacoes();
 
       if (req.query.info == "completa") {
         await Leg.moreInfoList(res.locals.dados);
