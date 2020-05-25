@@ -1,5 +1,8 @@
 summary: Altera o valor de um parâmetro da API de dados
-description: Altera o valor de um parâmetro da API de dados
+description: |
+  Altera o valor de um parâmetro da API de dados
+
+  **Acesso permitido a:** Utilizadores com nível 7
 security:
   - userQuery: []
   - userAuth: []

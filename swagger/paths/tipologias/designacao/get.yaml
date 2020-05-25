@@ -1,5 +1,8 @@
 summary: Verifica se uma designação já está atribuida a uma tipologia
-description: Verifica se a designação já está presente numa tipologia
+description: |
+  Verifica se a designação já está presente numa tipologia
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

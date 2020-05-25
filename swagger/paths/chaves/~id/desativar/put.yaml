@@ -1,5 +1,8 @@
 summary: Desativar chave API
-description: Desativar chave API
+description: |
+  Desativar chave API
+
+  **Acesso permitido a:** Utilizadores com nível 7
 security:
   - userQuery: []
   - userAuth: []

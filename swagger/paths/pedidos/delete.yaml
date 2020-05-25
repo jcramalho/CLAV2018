@@ -1,5 +1,8 @@
 summary: Elimina todos os pedidos
-description: Elimina todos os pedidos
+description: |
+  Elimina todos os pedidos
+
+  **Acesso permitido a:** Utilizadores com nível 7
 security:
   - userQuery: []
   - userAuth: []

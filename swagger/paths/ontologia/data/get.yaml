@@ -1,5 +1,8 @@
 summary: Devolve a data da ontologia
-description: Devolve a data da ontologia
+description: |
+  Devolve a data da ontologia
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

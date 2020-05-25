@@ -1,5 +1,8 @@
 summary: Atualiza um diploma legislativo
-description: Atualiza um diploma legislativo a partir da informação enviada no pedido
+description: |
+  Atualiza um diploma legislativo a partir da informação enviada no pedido
+
+  **Acesso permitido a:** Utilizadores com nível 4, 5, 6 e 7
 tags:
   - Legislação
 security:

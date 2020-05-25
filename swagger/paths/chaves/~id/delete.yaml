@@ -1,5 +1,8 @@
 summary: Eliminar chave API
-description: Eliminar chave API
+description: |
+  Eliminar chave API
+
+  **Acesso permitido a:** Utilizadores com nível 7
 security:
   - userQuery: []
   - userAuth: []

@@ -1,5 +1,8 @@
 summary: Consultar tabela de seleção
-description: Consultar tabela de seleção
+description: |
+  Consultar tabela de seleção
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

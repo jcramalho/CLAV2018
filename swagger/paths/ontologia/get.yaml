@@ -1,5 +1,8 @@
 summary: Exporta todos os triplos do repositório
-description: Exporta todos os triplos do repositório
+description: |
+  Exporta todos os triplos do repositório
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

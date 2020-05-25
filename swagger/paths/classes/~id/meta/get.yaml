@@ -1,5 +1,8 @@
 summary: Devolve a metainformação de uma classe
-description: Devolve a metainformação de uma classe
+description: |
+  Devolve a metainformação de uma classe
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

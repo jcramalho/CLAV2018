@@ -1,5 +1,8 @@
 summary: Elimina todos os trabalhos pendentes
-description: Elimina todos os trabalhos pendentes
+description: |
+  Elimina todos os trabalhos pendentes
+
+  **Acesso permitido a:** Utilizadores com nível 7
 security:
   - userQuery: []
   - userAuth: []

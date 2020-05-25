@@ -1,5 +1,8 @@
 summary: Atualizar chave API
-description: Atualizar chave API
+description: |
+  Atualizar chave API
+
+  **Acesso permitido a:** Utilizadores com nível 7
 security:
   - userQuery: []
   - userAuth: []

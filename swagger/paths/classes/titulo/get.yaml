@@ -6,7 +6,10 @@ security:
   - userAuth: []
 tags:
   - Classes
-description: Verifica se o título já está presente numa classe
+description: |
+  Verifica se o título já está presente numa classe
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 parameters:
   - in: query
     name: valor
