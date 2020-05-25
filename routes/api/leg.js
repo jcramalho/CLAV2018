@@ -189,9 +189,10 @@ router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), [
   }
 
   Leg.criar(req.body)
-    .then(async dados => {
-        await State.reloadLegislacao()
-        res.jsonp(dados)
+    .then(dados => {
+        State.reloadLegislacao()
+            .then(d => res.jsonp(dados))
+            .catch(err => res.status(500).send(`Erro no reload da cache da legislação. A legislação foi criada com sucesso.`))
     })
     .catch(err => res.status(500).send(`Erro na inserção de uma legislação: ${err}`));
 });
@@ -224,9 +225,10 @@ router.put("/:id", Auth.isLoggedInUser, Auth.checkLevel(4), [
   }
 
   Leg.atualizar(req.params.id, req.body)
-    .then(async dados => {
-        await State.reloadLegislacao()
-        res.jsonp(dados)
+    .then(dados => {
+        State.reloadLegislacao()
+            .then(d => res.jsonp(dados))
+            .catch(err => res.status(500).send(`Erro no reload da cache da legislação. A legislação foi atualizada com sucesso.`))
     })
     .catch(err => res.status(500).send(`Erro na atualização de uma legislação: ${err}`));
 });
