@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+var vcPendenteTipo = require('../routes/validation').vcPendenteTipo
+var vcPendenteAcao = require('../routes/validation').vcPendenteAcao
 
 const PendenteSchema = new mongoose.Schema({
   dataCriacao: {
@@ -24,23 +26,12 @@ const PendenteSchema = new mongoose.Schema({
   },
   tipo: {
     type: String,
-    enum: [
-      "Classe",
-      "TS Organizacional",
-      "TS Pluriorganizacional",
-      "Entidade",
-      "Tipologia",
-      "Legislação",
-      "Termo de Indice",
-      "Auto de Eliminação",
-      "RADA",
-      "PGD"
-    ],
+    enum: vcPendenteTipo,
     required: true
   },
   acao: {
     type: String,
-    enum: ["Criação", "Alteração", "Remoção"],
+    enum: vcPendenteAcao,
     required: true
   }
 });

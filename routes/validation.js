@@ -388,6 +388,10 @@ module.exports.vcOntoFormats = [
 //Pedidos
 module.exports.vcPedidoTipo = [
     "Classe",
+    "Classe_N1",
+    "Classe_N2",
+    "Classe_N3",
+    "Classe_N4",
     "TS Organizacional",
     "TS Pluriorganizacional",
     "TS Pluriorganizacional web",
@@ -408,6 +412,10 @@ module.exports.vcPedidoEstado = ["Submetido", "Distribuído", "Apreciado", "Vali
 //Pendentes
 module.exports.vcPendenteTipo = [
     "Classe",
+    "Classe_N1",
+    "Classe_N2",
+    "Classe_N3",
+    "Classe_N4",
     "TS Organizacional",
     "TS Pluriorganizacional",
     "Entidade",
