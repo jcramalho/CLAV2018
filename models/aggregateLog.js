@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+var vcTipoUser = require('../routes/validation').vcTipoUser
 
 var number = {
     type: Number,
@@ -27,7 +28,7 @@ var routeSchema = new mongoose.Schema({
 var aggregateLogSchema = new mongoose.Schema({
     type: {
         type: String,
-        enum: ["User", "Chave", "Desconhecido"],
+        enum: vcTipoUser,
         required: true
     },
     id: {

@@ -1,4 +1,7 @@
 const mongoose = require("mongoose");
+var vcPedidoTipo = require('../routes/validation').vcPedidoTipo
+var vcPedidoAcao = require('../routes/validation').vcPedidoAcao
+var vcPedidoEstado = require('../routes/validation').vcPedidoEstado
 
 const PedidoSchema = new mongoose.Schema({
   codigo: {
@@ -33,27 +36,12 @@ const PedidoSchema = new mongoose.Schema({
     },
     tipo: {
       type: String,
-      enum: [
-        "Classe",
-        "TS Organizacional",
-        "TS Pluriorganizacional",
-        "TS Pluriorganizacional web",
-        "Entidade",
-        "Tipologia",
-        "Legislação",
-        "Termo de Indice",
-        "Auto de Eliminação",
-        "AE PGD/LC",
-        "AE PGD",
-        "AE RADA",
-        "RADA",
-        "PGD"
-      ],
+      enum: vcPedidoTipo,
       required: true,
     },
     acao: {
       type: String,
-      enum: ["Criação", "Alteração", "Remoção", "Importação", "Extinção"],
+      enum: vcPedidoAcao,
       required: true,
     },
   },
@@ -61,13 +49,7 @@ const PedidoSchema = new mongoose.Schema({
     {
       estado: {
         type: String,
-        enum: [
-          "Submetido",
-          "Distribuído",
-          "Apreciado",
-          "Validado",
-          "Devolvido",
-        ],
+        enum: vcPedidoEstado,
         required: true,
       },
       responsavel: {
