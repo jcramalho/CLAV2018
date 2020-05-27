@@ -1,5 +1,8 @@
 summary: Devolve os pedidos realizados (log) nos últimos 30 dias de forma paginada ou para um utilizador ou chave API
-description: Devolve os pedidos realizados (log) nos últimos 30 dias por utilizadores ou chaves API de forma paginada. Neste caso o resultado é uma lista items (página pedida) e o total de logs da API. Caso seja enviado o tipo e o id devolve os pedidos realizados (log) nos últimos 30 dias para um utilizador ou chave API. Cada entrada no log tem o seu id (_id), o caminho da rota, o método, o tipo de acesso (User ou Chave), o id do utilizador ou da chave API, o status HTTP do pedido e a altura quando foi realizado o pedido.
+description: |
+  Devolve os pedidos realizados (log) nos últimos 30 dias por utilizadores ou chaves API de forma paginada. Neste caso o resultado é uma lista items (página pedida) e o total de logs da API. Caso seja enviado o tipo e o id devolve os pedidos realizados (log) nos últimos 30 dias para um utilizador ou chave API. Cada entrada no log tem o seu id (_id), o caminho da rota, o método, o tipo de acesso (User ou Chave), o id do utilizador ou da chave API, o status HTTP do pedido e a altura quando foi realizado o pedido.
+
+  **Acesso permitido a:** Utilizadores com nível 6 e 7
 tags:
   - Logs
 security:

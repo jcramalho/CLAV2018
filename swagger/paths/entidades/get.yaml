@@ -1,5 +1,8 @@
 summary: Lista todas as entidades
-description: Lista todas as entidades
+description: |
+  Lista todas as entidades
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

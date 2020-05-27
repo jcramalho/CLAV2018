@@ -1,5 +1,8 @@
 summary: Lista as tabelas de seleção
-description: Lista as tabelas de seleção
+description: |
+  Lista as tabelas de seleção
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

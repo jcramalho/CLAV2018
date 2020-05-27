@@ -1,5 +1,8 @@
 summary: Devolve todas as entradas da documentação Científica
-description: Devolve todas as entradas da documentação científica. Permite a filtragem pelos atributos (classe, titulo, url, local, ano, visivel, autores)
+description: |
+  Devolve todas as entradas da documentação científica. Permite a filtragem pelos atributos (classe, titulo, url, local, ano, visivel, autores)
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

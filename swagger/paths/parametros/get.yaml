@@ -1,5 +1,8 @@
 summary: Devolve todos os parâmetros da API de dados
-description: Devolve todos os parâmetros da API de dados
+description: |
+  Devolve todos os parâmetros da API de dados
+
+  **Acesso permitido a:** Utilizadores com nível 7
 security:
   - userQuery: []
   - userAuth: []

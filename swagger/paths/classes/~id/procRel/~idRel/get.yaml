@@ -1,5 +1,8 @@
 summary: Devolve o(s) processo(s) relacionado(s) por uma relação específica
-description: Devolve o(s) processo(s) relacionado(s) por uma relação específica
+description: |
+  Devolve o(s) processo(s) relacionado(s) por uma relação específica
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

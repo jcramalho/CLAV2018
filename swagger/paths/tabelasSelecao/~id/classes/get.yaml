@@ -1,5 +1,8 @@
 summary: Lista as classes da tabela de seleção
-description: Lista as classes da tabela de seleção
+description: |
+  Lista as classes da tabela de seleção
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

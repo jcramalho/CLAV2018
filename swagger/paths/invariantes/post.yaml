@@ -1,5 +1,8 @@
 summary: Corrige os erros de um invariante
-description: Corrige os erros de um invariante, contudo nem todos os invariantes tem esta possibilidade 
+description: |
+  Corrige os erros de um invariante, contudo nem todos os invariantes tem esta possibilidade
+
+  **Acesso permitido a:** Utilizadores com nível 6 e 7
 security:
   - userQuery: []
   - userAuth: []

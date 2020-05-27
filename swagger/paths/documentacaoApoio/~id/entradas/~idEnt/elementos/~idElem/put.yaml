@@ -1,5 +1,8 @@
 summary: Alterar um elemento de uma entrada de uma classe da documentação de apoio
-description: Alterar um elemento de uma entrada de uma classe da documentação de apoio. Se for enviado o ficheiro, o ficheiro associado é substituído pelo novo. Se não for enviado um ficheiro e for adicionado o campo 'apagar_ficheiro' com valor true o ficheiro é eliminado do elemento. Se não for enviado o ficheiro nem o campo 'apagar_ficheiro' são apenas alterados os campos texto e visível.
+description: |
+  Alterar um elemento de uma entrada de uma classe da documentação de apoio. Se for enviado o ficheiro, o ficheiro associado é substituído pelo novo. Se não for enviado um ficheiro e for adicionado o campo 'apagar_ficheiro' com valor true o ficheiro é eliminado do elemento. Se não for enviado o ficheiro nem o campo 'apagar_ficheiro' são apenas alterados os campos texto e visível.
+
+  **Acesso permitido a:** Utilizadores com nível 4, 5, 6 e 7
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

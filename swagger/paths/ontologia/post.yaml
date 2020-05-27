@@ -1,5 +1,8 @@
 summary: Executa uma query no GraphDB
-description: Executa uma query no GraphDB
+description: |
+  Executa uma query no GraphDB
+
+  **Acesso permitido a:** Utilizadores com nível 7
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

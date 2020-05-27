@@ -1,5 +1,8 @@
 summary: Devolve as diferentes classes da documentação de apoio
-description: Devolve as diferentes classes da documentação de apoio
+description: |
+  Devolve as diferentes classes da documentação de apoio
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

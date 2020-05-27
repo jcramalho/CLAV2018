@@ -1,5 +1,8 @@
 summary: Elimina todos os logs
-description: Elimina todos os logs
+description: |
+  Elimina todos os logs
+
+  **Acesso permitido a:** Utilizadores com nível 7
 security:
   - userQuery: []
   - userAuth: []

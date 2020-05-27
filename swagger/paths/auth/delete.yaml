@@ -1,5 +1,8 @@
 summary: Elimina todas as entradas desta coleção
-description: Elimina todas as entradas desta coleção
+description: |
+  Elimina todas as entradas desta coleção
+
+  **Acesso permitido a:** Utilizadores com nível 7
 security:
   - userQuery: []
   - userAuth: []

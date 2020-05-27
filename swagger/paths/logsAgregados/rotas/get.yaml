@@ -1,5 +1,8 @@
 summary: Devolve todos os pedidos realizados agregados por uma base da rota específica ou os pedidos realizados agregados por todas as bases de rotas
-description: Devolve todos os pedidos realizados agregados por todas as bases de rotas. Caso seja enviada a rota devolve os pedidos realizados pela base da rota específica inserida. 
+description: |
+  Devolve todos os pedidos realizados agregados por todas as bases de rotas. Caso seja enviada a rota devolve os pedidos realizados pela base da rota específica inserida.
+
+  **Acesso permitido a:** Utilizadores com nível 6 e 7
 tags:
   - Logs Agregados
 security:

@@ -6,7 +6,10 @@ security:
   - userAuth: []
 tags:
   - Classes
-description: "Devolve as classes em vários formatos podendo ser filtradas por nível, por tipo e se uma entidade/tipologia é dona/participante da classe. Existe uma hierarquia nestas possibilidades. Caso a info seja 'esqueleto' ou 'pesquisa' as query string tipo, nivel, estrutura, ents e tips não são consideradas. Caso o tipo seja definido as query strings nivel e estrutura não são consideradas. Caso tipo não seja definido mas ents e/ou tips sejam, é devolvido os processos que tem como donos ou participantes as entidade e/ou tipologias selecionadas. Caso tipo não seja definido, nem ents e nem tips e o nível seja definido, a query string estrutura não é considerada. Por fim se não for definido tipo, nem ents, nem tips e nem nivel e for definido estrutura esta é a query string considerada."
+description: |
+  Devolve as classes em vários formatos podendo ser filtradas por nível, por tipo e se uma entidade/tipologia é dona/participante da classe. Existe uma hierarquia nestas possibilidades. Caso a info seja 'esqueleto' ou 'pesquisa' as query string tipo, nivel, estrutura, ents e tips não são consideradas. Caso o tipo seja definido as query strings nivel e estrutura não são consideradas. Caso tipo não seja definido mas ents e/ou tips sejam, é devolvido os processos que tem como donos ou participantes as entidade e/ou tipologias selecionadas. Caso tipo não seja definido, nem ents e nem tips e o nível seja definido, a query string estrutura não é considerada. Por fim se não for definido tipo, nem ents, nem tips e nem nivel e for definido estrutura esta é a query string considerada.
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 parameters:
   - in: query
     name: estrutura

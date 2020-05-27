@@ -1,5 +1,8 @@
 summary: Testa todos os invariantes
-description: Testa todos os invariantes. Devolve os erros dos invariantes.
+description: |
+  Testa todos os invariantes. Devolve os erros dos invariantes.
+
+  **Acesso permitido a:** Utilizadores com nível 6 e 7
 security:
   - userQuery: []
   - userAuth: []

@@ -1,5 +1,8 @@
 summary: Adicionar localização de um novo pedido SAML
-description: Adicionar localização de um novo pedido SAML
+description: |
+  Adicionar localização de um novo pedido SAML
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 tags:
   - Auth
 security:

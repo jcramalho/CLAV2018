@@ -1,5 +1,8 @@
 summary: Devolve a informação base do PCA
-description: Devolve a informação base do PCA
+description: |
+  Devolve a informação base do PCA
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

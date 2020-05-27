@@ -1,5 +1,8 @@
 summary: Lista todos os elementos de uma entrada de uma classe da documentação de apoio
-description: Lista todos os elementos de uma entrada de uma classe da documentação de apoio
+description: |
+  Lista todos os elementos de uma entrada de uma classe da documentação de apoio
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

@@ -1,5 +1,8 @@
 summary: Renova a chave API
-description: Renova a chave API
+description: |
+  Renova a chave API
+
+  **Acesso permitido a:** Todos
 tags:
   - Chaves
 parameters:

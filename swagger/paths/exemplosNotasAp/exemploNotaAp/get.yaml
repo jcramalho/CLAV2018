@@ -1,5 +1,8 @@
 summary: Verifica se um determinado exemplo de nota de aplicação existe
-description: Verifica se um determinado exemplo de nota de aplicação existe
+description: |
+  Verifica se um determinado exemplo de nota de aplicação existe
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 tags:
   - Exemplos de Notas de Aplicação
 security:

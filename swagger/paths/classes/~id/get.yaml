@@ -6,7 +6,10 @@ security:
   - userAuth: []
 tags:
   - Classes
-description: "Retorna toda a informação relativa a uma classe ou a subárvore de classes com raiz na classe com id igual a 'id'"
+description: |
+  Retorna toda a informação relativa a uma classe ou a subárvore de classes com raiz na classe com id igual a 'id'
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 parameters:
   - name: id
     in: path

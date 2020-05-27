@@ -1,5 +1,8 @@
 summary: Devolve a informação de um auto de eliminação
-description: Devolve a informação de um auto de eliminação
+description: |
+  Devolve a informação de um auto de eliminação
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

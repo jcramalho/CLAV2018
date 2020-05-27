@@ -1,5 +1,8 @@
 summary: Devolve o URL de um pedido SAML
-description: Devolve o URL de um pedido SAML
+description: |
+  Devolve o URL de um pedido SAML
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 tags:
   - Auth
 security:

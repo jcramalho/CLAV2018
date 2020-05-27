@@ -1,5 +1,8 @@
 summary: Lista todos os documentos legislativos
-description: Lista todos os documentos legislativos
+description: |
+  Lista todos os documentos legislativos
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

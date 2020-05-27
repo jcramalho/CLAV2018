@@ -1,5 +1,8 @@
 summary: Devolve o ficheiro de um elemento de uma entrada de uma classe da documentação de apoio
-description: Devolve o ficheiro de um elemento de uma entrada de uma classe da documentação de apoio
+description: |
+  Devolve o ficheiro de um elemento de uma entrada de uma classe da documentação de apoio
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

@@ -1,5 +1,8 @@
 summary: Devolve a informação associada a um documento legislativo
-description: Devolve a informação associada a um documento legislativo
+description: |
+  Devolve a informação associada a um documento legislativo
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

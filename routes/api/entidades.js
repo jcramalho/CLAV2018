@@ -1,5 +1,6 @@
 var Auth = require("../../controllers/auth.js");
 var Entidades = require("../../controllers/api/entidades.js");
+var State = require("../../controllers/state.js");
 var url = require("url");
 
 var express = require("express");
@@ -100,7 +101,11 @@ router.get("/", Auth.isLoggedInKey, [
     }
   } else {
     try {
-      res.locals.dados = await Entidades.listar(filtro);
+      if(filtro == "True"){
+          res.locals.dados = State.getEntidades();
+      }else{
+          res.locals.dados = await Entidades.listar(filtro);
+      }
 
       if (req.query.info == "completa") {
         await Entidades.moreInfoList(res.locals.dados);
@@ -156,7 +161,7 @@ router.get("/:id", Auth.isLoggedInKey, [
   }
 
   try {
-    res.locals.dados = await Entidades.consultar(req.params.id);
+    res.locals.dados = State.getEntidade(req.params.id);
 
     if (req.query.info == "completa") {
       await Entidades.moreInfo(res.locals.dados);
@@ -235,7 +240,11 @@ router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), [
   }
 
   Entidades.criar(req.body)
-    .then(dados => res.jsonp(dados))
+    .then(dados => {
+        State.reloadEntidades()
+            .then(d => res.jsonp(dados))
+            .catch(err => res.status(500).send(`Erro no reload da cache das entidades. A entidade foi criada com sucesso.`))
+    })
     .catch(err => res.status(500).send(`Erro na inserção de uma entidade: ${err}`));
 });
 
@@ -264,7 +273,11 @@ router.put("/:id", Auth.isLoggedInUser, Auth.checkLevel(4), [
   }
 
   Entidades.atualizar(req.params.id, req.body)
-    .then(dados => res.jsonp(dados))
+    .then(dados => {
+        State.reloadEntidades()
+            .then(d => res.jsonp(dados))
+            .catch(err => res.status(500).send(`Erro no reload da cache das entidades. A entidade foi atualizada com sucesso.`))
+    })
     .catch(err => res.status(500).send(`Erro na atualização de uma entidade: ${err}`));
 });
 
@@ -279,7 +292,11 @@ router.put("/:id/extinguir", Auth.isLoggedInUser, Auth.checkLevel(4), [
   }
 
   Entidades.extinguir(req.params.id, req.body.dataExtincao)
-    .then(dados => res.jsonp(dados))
+    .then(dados => {
+        State.reloadEntidades()
+            .then(d => res.jsonp(dados))
+            .catch(err => res.status(500).send(`Erro no reload da cache das entidades. A entidade foi extinguida com sucesso.`))
+    })
     .catch(err => res.status(500).send(`Erro na inserção de uma entidade: ${err}`));
 });
 

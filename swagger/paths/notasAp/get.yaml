@@ -1,5 +1,8 @@
 summary: Devolve a lista de todos as notas de aplicação
-description: Devolve a lista de todas as notas de aplicação
+description: |
+  Devolve a lista de todas as notas de aplicação
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 tags:
   - Notas de Aplicação
 security:
