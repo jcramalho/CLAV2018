@@ -1,5 +1,8 @@
 summary: Lista todas as tipologias podendo a lista ser filtrada
-description: Lista todas as tipologias podendo a lista ser filtrada
+description: |
+  Lista todas as tipologias podendo a lista ser filtrada
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

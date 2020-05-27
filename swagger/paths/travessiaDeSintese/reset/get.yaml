@@ -1,5 +1,8 @@
 summary: Reset das travessias de síntese
-description: Carrega as travessias de síntese para cache
+description: |
+  Carrega as travessias de síntese para cache
+
+  **Acesso permitido a:** Utilizadores com nível 7
 security:
   - userQuery: []
   - userAuth: []

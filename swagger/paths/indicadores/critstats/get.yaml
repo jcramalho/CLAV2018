@@ -12,6 +12,8 @@ description: |
     - Número total de Critérios de Justificação de Utilidade Administrativa (CriterioJustificacaoUtilidadeAdministrativa)
     - Número total de Critérios de Justificação de Complementariedade Informacional (CriterioJustificacaoComplementaridadeInfo)
     - Número total de Critérios de Justificação de Densidade Informacional (CriterioJustificacaoDensidadeInfo)
+
+  **Acesso permitido a:** Utilizadores com nível 3.5, 4, 5, 6 e 7
 responses:
   200:
     description: Indicadores dos Critérios de Justificação

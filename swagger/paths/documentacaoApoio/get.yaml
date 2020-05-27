@@ -1,5 +1,8 @@
 summary: Devolve toda a documentação de apoio
-description: Devolve toda a documentação de apoio. Permite a filtragem pelo atributo classe
+description: |
+  Devolve toda a documentação de apoio. Permite a filtragem pelo atributo classe
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

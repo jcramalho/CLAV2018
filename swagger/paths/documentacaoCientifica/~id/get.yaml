@@ -1,5 +1,8 @@
 summary: Devolve uma entrada da documentação Científica
-description: Devolve uma entrada da documentação científica
+description: |
+  Devolve uma entrada da documentação científica
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

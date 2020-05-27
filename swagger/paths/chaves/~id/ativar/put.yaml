@@ -1,5 +1,8 @@
 summary: Ativar chave API
-description: Ativar chave API
+description: |
+  Ativar chave API
+
+  **Acesso permitido a:** Utilizadores com nível 7
 security:
   - userQuery: []
   - userAuth: []

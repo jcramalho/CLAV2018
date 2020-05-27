@@ -1,5 +1,8 @@
 summary: Devolve as diferentes classes da documentação cientifica
-description: Devolve as diferentes classes da documentação cientifica
+description: |
+  Devolve as diferentes classes da documentação cientifica
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

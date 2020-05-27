@@ -24,6 +24,8 @@ description: |
     - Número total de relações entre PNs e entidades como participantes do tipo Iniciador (temParticipanteIniciador)
     - Número total de relações entre PNs e entidades como participantes do tipo Executor (temParticipanteExecutor)
     - Número total de relações entre PNs e Legislação (temLegislacao)
+
+  **Acesso permitido a:** Utilizadores com nível 3.5, 4, 5, 6 e 7
 responses:
   200:
     description: Indicadores relacionais dos PNs

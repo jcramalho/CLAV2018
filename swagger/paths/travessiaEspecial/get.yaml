@@ -1,5 +1,8 @@
 summary: Obtém as travessias especiais
-description: Obtém as travessias especiais, ou seja, uma lista em que cada elemento possui o código do processo (campo codigo) e a travessia (lista objetos, em que cada objeto tem o codigo, o tipo de processo, os donos e os participantes)
+description: |
+  Obtém as travessias especiais, ou seja, uma lista em que cada elemento possui o código do processo (campo codigo) e a travessia (lista objetos, em que cada objeto tem o codigo, o tipo de processo, os donos e os participantes)
+
+  **Acesso permitido a:** Utilizadores com nível 1, 3, 3.5, 4, 5, 6 e 7
 security:
   - userQuery: []
   - userAuth: []

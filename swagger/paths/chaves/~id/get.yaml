@@ -1,5 +1,8 @@
 summary: Devolve a informação de uma chave API
-description: Devolve a informação de uma chave API
+description: |
+  Devolve a informação de uma chave API
+
+  **Acesso permitido a:** Utilizadores com nível 7
 security:
   - userQuery: []
   - userAuth: []

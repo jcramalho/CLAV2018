@@ -1,5 +1,8 @@
 summary: Devolve um ficheiro CSV com o formulário das TS
-description: Devolve um ficheiro CSV com o formulário das TS
+description: |
+  Devolve um ficheiro CSV com o formulário das TS
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

@@ -1,5 +1,8 @@
 summary: Verifica se uma sigla já está atribuida a uma entidade
-description: Verifica se a sigla já está presente numa entidade
+description: |
+  Verifica se a sigla já está presente numa entidade
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

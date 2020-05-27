@@ -1,5 +1,8 @@
 summary: Define as travessias
-description: Define as travessias, ou seja, as travessias que estavam anteriormente definidas são descartadas e são consideradas apenas as providenciadas. É contudo depois necessário realizar reset das travessias por forma a estas travessias definidas serem carregadas para cache
+description: |
+  Define as travessias, ou seja, as travessias que estavam anteriormente definidas são descartadas e são consideradas apenas as providenciadas. É contudo depois necessário realizar reset das travessias por forma a estas travessias definidas serem carregadas para cache
+
+  **Acesso permitido a:** Utilizadores com nível 7
 security:
   - userQuery: []
   - userAuth: []

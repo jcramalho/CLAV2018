@@ -1,5 +1,8 @@
 summary: Consulta de uma tipologia
-description: Consulta de uma tipologia
+description: |
+  Consulta de uma tipologia
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

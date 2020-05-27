@@ -1,5 +1,8 @@
 summary: Devolve todos os pedidos realizados agregados por utilizador e chave API ou os pedidos realizados agregados para um utilizador ou chave API
-description: Devolve todos os pedidos realizados agregados por utilizador e chave API. Caso seja enviado o tipo e o id devolve os pedidos realizados agregados para um utilizador ou chave API. Cada entrada tem o seu id (_id), o tipo de acesso (User ou Chave), o id do utilizador ou da chave API, a data do último acesso e o número de pedidos já realizados por verbo HTTP.
+description: |
+  Devolve todos os pedidos realizados agregados por utilizador e chave API. Caso seja enviado o tipo e o id devolve os pedidos realizados agregados para um utilizador ou chave API. Cada entrada tem o seu id (_id), o tipo de acesso (User ou Chave), o id do utilizador ou da chave API, a data do último acesso e o número de pedidos já realizados por verbo HTTP.
+
+  **Acesso permitido a:** Utilizadores com nível 6 e 7
 tags:
   - Logs Agregados
 security:

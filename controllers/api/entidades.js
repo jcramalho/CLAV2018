@@ -447,11 +447,9 @@ Entidades.moreInfoList = async ents => {
 
 //Obtém o resto da info da Entidade
 Entidades.moreInfo = async ent => {
-  var id = "ent_" + ent.sigla;
-
-  ent.tipologias = await Entidades.tipologias(id);
-  ent.dono = await Entidades.dono(id);
-  ent.participante = await Entidades.participante(id);
+  ent.tipologias = await Entidades.tipologias(ent.id);
+  ent.dono = await Entidades.dono(ent.id);
+  ent.participante = await Entidades.participante(ent.id);
 };
 
 //Criar entidade

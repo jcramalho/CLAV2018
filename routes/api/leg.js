@@ -88,7 +88,7 @@ router.get("/", [
     }
   } else {
     try {
-      res.locals.dados = await Leg.listar();
+      res.locals.dados = State.getLegislacoes();
 
       if (req.query.info == "completa") {
         await Leg.moreInfoList(res.locals.dados);
@@ -188,9 +188,10 @@ router.post("/", [
   }
 
   Leg.criar(req.body)
-    .then(async dados => {
-        await State.reloadLegislacao()
-        res.jsonp(dados)
+    .then(dados => {
+        State.reloadLegislacao()
+            .then(d => res.jsonp(dados))
+            .catch(err => res.status(500).send(`Erro no reload da cache da legislação. A legislação foi criada com sucesso.`))
     })
     .catch(err => res.status(500).send(`Erro na inserção de uma legislação: ${err}`));
 });
@@ -223,9 +224,10 @@ router.put("/:id", [
   }
 
   Leg.atualizar(req.params.id, req.body)
-    .then(async dados => {
-        await State.reloadLegislacao()
-        res.jsonp(dados)
+    .then(dados => {
+        State.reloadLegislacao()
+            .then(d => res.jsonp(dados))
+            .catch(err => res.status(500).send(`Erro no reload da cache da legislação. A legislação foi atualizada com sucesso.`))
     })
     .catch(err => res.status(500).send(`Erro na atualização de uma legislação: ${err}`));
 });

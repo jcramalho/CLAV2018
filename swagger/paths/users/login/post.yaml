@@ -1,5 +1,8 @@
 summary: Efetua login de um utilizador
-description: Efetua login de um utilizador
+description: |
+  Efetua login de um utilizador
+
+  **Acesso permitido a:** Todos
 tags:
   - Utilizadores
 requestBody:

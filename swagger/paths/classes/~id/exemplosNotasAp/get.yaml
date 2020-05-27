@@ -1,5 +1,8 @@
 summary: Devolve a lista de exemplos das notas de aplicação de uma classe
-description: Devolve a lista de exemplos das notas de aplicação de uma classe
+description: |
+  Devolve a lista de exemplos das notas de aplicação de uma classe
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []
