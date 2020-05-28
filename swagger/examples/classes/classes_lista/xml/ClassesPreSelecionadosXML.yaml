@@ -1,0 +1,43 @@
+value: |
+  <?xml version="1.0" encoding="utf-8"?>
+  <root>
+    <item index="0" type="object">
+        <codigo type="string">100</codigo>
+        <titulo type="string">ORDENAMENTO JURÍDICO E NORMATIVO</titulo>
+        <descricao type="string">Relativo à construção e interpretação das Normas, no sentido lato do termo (com e sem caráter coercivo): elaboração, aprovação e publicitação dos atos de caráter dispositivo e de caráter orientador que regulam as ações e relações entre os diversos atores sociais - da legislação aos regulamentos, regras internas de funcionamento, instruções procedimentais e normas técnicas.Inclui os processos de vinculação do Estado português a convenções internacionais, bem como os avisos relativos à vinculação dos restantes Estados-parte naquelas convenções.</descricao>
+        <status type="string">A</status>
+        <dono type="string"></dono>
+        <participante type="string"></participante>
+        <pca type="string"></pca>
+        <df type="string">NE</df>
+    </item>
+    <item index="1" type="object">
+        <codigo type="string">100.10</codigo>
+        <titulo type="string">Elaboração de diplomas jurídico-normativos e de normas técnicas</titulo>
+        <descricao type="string">Compreende os processos de elaboração/alteração de legislação, de regulamentos e de diretivas políticas ou operacionais portuguesas, independentemente da forma, do assunto ou do tipo de participação no processo.Inclui o depósito dos instrumentos de regulação (por exemplo, instrumentos de gestão territorial) nas entidades competentes.Abrange os diplomas jurídico-normativos da competência dos órgãos de soberania (Presidente da República, Assembleia da República, Governo e Tribunais) ou dos órgãos de poder político (regiões autónomas e autarquias), bem como os atos da Administração que têm caráter normativo.Compreende, igualmente, a elaboração ou colaboração na elaboração de normas técnicas nacionais.</descricao>
+        <status type="string">A</status>
+        <dono type="string"></dono>
+        <participante type="string"></participante>
+        <pca type="string"></pca>
+        <df type="string">NE</df>
+    </item>
+    <item index="2" type="object">
+      <codigo type="string">100.10.001</codigo>
+      <titulo type="string">Produção e comunicação de atos legislativos</titulo>
+      <descricao type="string">Elaboração ou participação na elaboração de atos legislativos conduzidos por iniciativa das autoridades competentes para a definição do regime jurídico aplicável.Inicia com a apresentação de um projeto acompanhado dos documentos que o fundamentam e justificam à entidade com competência para legislar e termina com a respetiva publicação ou publicitação.Inclui verificação jurídica, apreciação, discussão e votação conducentes à elaboração do texto final, aprovação da iniciativa, ratificação pelas entidades competentes e promulgação.</descricao>
+      <dono type="string">Sim</dono>
+      <participante type="string">Não</participante>
+      <pca type="string">5</pca>
+      <df type="string">C</df>
+    </item>
+    <item index="3" type="object">
+      <codigo type="string">100.10.002</codigo>
+      <titulo type="string">Aprovação e comunicação de convenções internacionais</titulo>
+      <descricao type="string">Manifestação do consentimento à vinculação nacional de convenções (tratados e acordos) internacionais, entrando no ordenamento jurídico português.Inicia com a necessidade ou vontade de vinculação e termina com a publicação.Inclui parecer do MNE antes da ratificação, aprovação parlamentar ou governamental, através de resolução ou decreto, respetivamente, a vinculação internacional mediante assinatura ou ratificação presidencial e a comunicação dos avisos de depósito de instrumento de vinculação ou outros respeitantes às convenções.</descricao>
+      <dono type="string">Não</dono>
+      <participante type="string">Assessor</participante>
+      <pca type="string">5</pca>
+      <df type="string">C</df>
+    </item>
+  </root>
+summary: Exemplo de parte dos Pré Selecionados
