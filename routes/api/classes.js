@@ -36,6 +36,19 @@ router.get('/', Auth.isLoggedInKey, [
             res.locals.dados = await State.getAllClassesInfo()
             res.locals.tipo = "pesquisaClasses"
             next()
+        }else if(req.query.info == "pre-selecionados"){
+            if(req.query.ents){
+                var ents = req.query.ents.split(',');
+                if(ents.length == 1){
+                    res.locals.dados = await State.getPreSelecionados(ents)
+                }else{
+                    res.locals.dados = await State.getEsqueleto()
+                }
+            }else{
+                res.locals.dados = await State.getEsqueleto()
+            }
+            res.locals.tipo = "classes"
+            next()
         }
         // Devolve a lista dos processos comuns
         else if(req.query.tipo == "comum"){

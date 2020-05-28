@@ -201,6 +201,38 @@ exports.subarvore = async id => {
     return ret
 }
 
+//função auxiliar para pre selecionados, verifica se uma ent é dona
+function isDono(donos, entId){
+    return donos.filter(e => e.idDono == entId).length > 0 ? "Sim" : "Não"
+}
+
+//função auxiliar para pre selecionados, verifica se uma ent é participante e devolve o tipo de participação
+function isParticipante(participantes, entId){
+    var found = "Não"
+
+    for(var i = 0; i < participantes.length && found == "Não"; i++){
+        if(participantes[i].idParticipante == entId){
+            found = participantes[i].participLabel
+        }
+    }
+
+    return found
+}
+
+//função auxiliar para esqueleto e pre selecionados, transforma uma classe
+function getClasseEsq(classe, entId){
+    return {
+        codigo: classe.codigo,
+        titulo: classe.titulo,
+        descricao: classe.descricao,
+        status: classe.status,
+        dono: entId ? isDono(classe.donos, entId) : "",
+        participante: entId ? isParticipante(classe.participantes, entId) : "",
+        pca: classe.pca.valores,
+        df: classe.df.valor
+    }
+}
+
 //Devolve o esqueleto que serve de formulário para a criação de uma TS
 exports.getEsqueleto = () => {
     var ret = []
@@ -208,27 +240,29 @@ exports.getEsqueleto = () => {
     classTreeInfo.forEach(c1 => {
         c1.filhos.forEach(c2 => {
             c2.filhos.forEach(c3 => {
-                ret.push({
-                    codigo: c3.codigo,
-                    titulo: c3.titulo,
-                    descricao: c3.descricao,
-                    status: c3.status,
-                    dono: "",
-                    participante: "",
-                    pca: c3.pca.valores,
-                    df: c3.df.valor
-                })
+                ret.push(getClasseEsq(c3, null))
                 c3.filhos.forEach(c4 => {
-                    ret.push({
-                        codigo: c4.codigo,
-                        titulo: c4.titulo,
-                        descricao: c4.descricao,
-                        status: c4.status,
-                        dono: "",
-                        participante: "",
-                        pca: c4.pca.valores,
-                        df: c4.df.valor
-                    })
+                    ret.push(getClasseEsq(c4, null))
+                })
+            })
+        })
+    })
+
+    return ret
+}
+
+//Devolve para uma entidade o esqueleto pre selecionado
+exports.getPreSelecionados = (entId) => {
+    var ret = []
+
+    classTreeInfo.forEach(c1 => {
+        ret.push(getClasseEsq(c1, null))
+        c1.filhos.forEach(c2 => {
+            ret.push(getClasseEsq(c2, null))
+            c2.filhos.forEach(c3 => {
+                ret.push(getClasseEsq(c3, entId))
+                c3.filhos.forEach(c4 => {
+                    ret.push(getClasseEsq(c4, entId))
                 })
             })
         })

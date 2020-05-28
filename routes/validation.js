@@ -353,7 +353,7 @@ module.exports.vcVerbo = ['GET', 'POST', 'PUT', 'DELETE']
 module.exports.vcTipoAE = ["PGD", "RADA", "PGD_LC"]
 
 //classes
-module.exports.vcClassesInfo = ['completa', 'esqueleto', 'pesquisa']
+module.exports.vcClassesInfo = ['completa', 'esqueleto', 'pesquisa', 'pre-selecionados']
 module.exports.vcClassesStruct = ['arvore', 'lista']
 module.exports.vcClassesTipo = ['comum', 'especifico']
 module.exports.vcClassesNiveis = ["1", "2", "3", "4"]
