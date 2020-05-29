@@ -51,6 +51,7 @@ Pedidos.criar = async function (pedidoParams) {
       tipo: pedidoParams.tipoObjeto,
       acao: pedidoParams.tipoPedido,
     },
+    historico: pedidoParams.historico,
     distribuicao: [
       {
         estado: "Submetido",
@@ -95,7 +96,7 @@ Pedidos.atualizar = async function (id, pedidoParams) {
         novoPedido.distribuicao.push(pedidoParams.distribuicao);
 
         try {
-          novoPedido = await novoPedido.save()
+          novoPedido = await novoPedido.save();
           resolve(novoPedido.codigo);
         } catch (err) {
           console.log(err);
@@ -103,7 +104,7 @@ Pedidos.atualizar = async function (id, pedidoParams) {
         }
       }
     });
-  })
+  });
 };
 
 /**
@@ -121,6 +122,6 @@ Pedidos.adicionarDistribuicao = (codigo, distribuicao) => {
  *
  */
 Pedidos.apagarTodos = async function () {
-    await Pedido.deleteMany({}).exec()
-    return "Todos os pedidos removidos com sucesso"
-}
+  await Pedido.deleteMany({}).exec();
+  return "Todos os pedidos removidos com sucesso";
+};
