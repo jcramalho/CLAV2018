@@ -78,12 +78,17 @@ AutosEliminacao.consultar = async function(id) {
     		OPTIONAL {
         			?zonaControlo clav:UIOutros ?UIoutros ;
     		} .
-    		?classe clav:codigo ?codigo ;
-              		clav:titulo ?titulo ;
+    		?classe clav:titulo ?titulo ;
                 	clav:temDF ?destino;
                  	clav:temPCA ?prazo .
     		?destino clav:dfValor ?df .
-    		?prazo clav:pcaValor ?pca .   
+            ?prazo clav:pcaValor ?pca . 
+            OPTIONAL {
+                ?classe clav:codigo ?codigo .
+            } .
+            OPTIONAL {
+                ?classe clav:referencia ?referencia .
+            } .
 }
         `
         var response2 = await execQuery("query",query2);
@@ -98,6 +103,7 @@ AutosEliminacao.consultar = async function(id) {
                 UIdigital: zonaControlo.UIdigital,
                 UIoutros: zonaControlo.UIoutros,
                 codigo: zonaControlo.codigo,
+                referencia: zonaControlo.referencia,
                 titulo: zonaControlo.titulo,
                 destino: zonaControlo.df,
                 pca: zonaControlo.pca,
@@ -164,7 +170,8 @@ AutosEliminacao.adicionar = async function (auto) {
         SELECT * WHERE {
             ?leg a clav:Legislacao;
                 clav:diplomaTipo "${tipo}";
-                clav:diplomaNumero "${numero}" .
+                clav:diplomaNumero "${numero}" ;
+                clav:diplomaFonte ?fonte .
         }
     `
     var queryNum = `
@@ -204,9 +211,17 @@ AutosEliminacao.adicionar = async function (auto) {
                 query += `
                     clav:${id} clav:temZonaControlo clav:${idZona} .
                 `
+                if(resultLeg[0].fonte=="PGD/LC") 
+                    query += `
+                    clav:${idZona} clav:temClasseControlo clav:c${zona.codigo} .
+                    `
+                else if(resultLeg[0].fonte=="PGD")
+                    query += `
+                    clav:${idZona} clav:temClasseControlo clav:${zona.idClasse} ;
+                    ` 
+
                 query += `
                     clav:${idZona} a clav:ZonaControlo ;
-                        clav:temClasseControlo clav:c${zona.codigo} ;
                         clav:dataInicio "${zona.dataInicio}" ;
                         clav:dataFim "${zona.dataFim}" .
                 `
