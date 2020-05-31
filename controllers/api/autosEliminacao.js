@@ -211,15 +211,16 @@ AutosEliminacao.adicionar = async function (auto) {
                 query += `
                     clav:${id} clav:temZonaControlo clav:${idZona} .
                 `
-                if(resultLeg[0].fonte=="PGD/LC") 
+                if(resultLeg[0].fonte=="PGD/LC")  {
                     query += `
                     clav:${idZona} clav:temClasseControlo clav:c${zona.codigo} .
                     `
-                else if(resultLeg[0].fonte=="PGD")
+                }
+                else if(resultLeg[0].fonte=="PGD") {
                     query += `
-                    clav:${idZona} clav:temClasseControlo clav:${zona.idClasse} ;
+                    clav:${idZona} clav:temClasseControlo clav:${zona.idClasse} .
                     ` 
-
+                }
                 query += `
                     clav:${idZona} a clav:ZonaControlo ;
                         clav:dataInicio "${zona.dataInicio}" ;
