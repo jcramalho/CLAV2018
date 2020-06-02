@@ -343,7 +343,7 @@ module.exports.eExpiresTime = function(location, field, ifF){
 //Vocabulários
 module.exports.vcBoolean = ["Sim", "Não"]
 module.exports.vcEstado = ["Ativa", "Harmonização", "Inativa"]
-module.exports.vcFonte = ["PGD", "PGD/LC", "RADA"]
+module.exports.vcFonte = ["PGD", "PGD/LC", "RADA", "TS/LC"]
 
 //aggregateLogs e logs
 module.exports.vcTipoUser = ['User', 'Chave', 'Desconhecido']
@@ -400,6 +400,7 @@ module.exports.vcPedidoTipo = [
     "Legislação",
     "Termo de Indice",
     "Auto de Eliminação",
+    "AE TS/LC",
     "AE PGD/LC",
     "AE PGD",
     "AE RADA",

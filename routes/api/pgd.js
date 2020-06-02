@@ -19,10 +19,19 @@ router.get('/', Auth.isLoggedInKey, (req, res) => {
       .catch(erro => res.status(404).jsonp("Erro na listagem das PGDs: " + erro))
 })
 
+
+router.get('/lc', Auth.isLoggedInKey, (req, res) => {
+  PGD.listarLC()
+      .then(dados => res.jsonp(dados))
+      .catch(erro => res.status(404).jsonp("Erro na listagem das PGDs: " + erro))
+})
+
+
 router.get('/:idPGD', Auth.isLoggedInKey, (req, res) => {
   PGD.consultar(req.params.idPGD)
       .then(dados => res.jsonp(dados))
       .catch(erro => res.status(404).jsonp("Erro na listagem das PGDs: " + erro))
 })
+
 
 module.exports = router;

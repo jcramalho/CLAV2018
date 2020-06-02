@@ -14,20 +14,33 @@ PGD.listar = async function() {
          clav:diplomaNumero ?numero;
          clav:diplomaTipo ?tipo;
          clav:diplomaSumario ?sumario ;
+         clav:diplomaFonte "PGD" ;
          clav:diplomaLink ?link .
     BIND(STRAFTER(STR(?uri), 'clav#') AS ?idPGD).
     BIND(STRAFTER(STR(?l), 'clav#') AS ?idLeg).
   } 
   `
-    const campos = [
-      "idPGD",
-      "idLeg",
-      "data",
-      "numero",
-      "tipo",
-      "sumario",
-      "link"
-    ];
+
+    return execQuery("query", query).then(response => {
+      return normalize(response);
+    });
+}
+
+PGD.listarLC = async function() {
+  let query = `
+  select ?idPGD ?idLeg ?data ?numero ?tipo ?sumario ?link where { 
+    ?uri a clav:PGD ;
+        clav:temLegislacao ?l .
+      ?l clav:diplomaData ?data;
+         clav:diplomaNumero ?numero;
+         clav:diplomaTipo ?tipo;
+         clav:diplomaSumario ?sumario ;
+         clav:diplomaFonte "PGD/LC" ;
+         clav:diplomaLink ?link .
+    BIND(STRAFTER(STR(?uri), 'clav#') AS ?idPGD).
+    BIND(STRAFTER(STR(?l), 'clav#') AS ?idLeg).
+  } 
+  `
 
     return execQuery("query", query).then(response => {
       return normalize(response);
@@ -36,7 +49,7 @@ PGD.listar = async function() {
 
 PGD.consultar = async function (idPGD) {
   let query = `
-  select ?classe ?nivel ?codigo ?referencia ?titulo ?descricao ?df ?notaDF ?pca ?notaPCA ?classePai where {
+  select ?classe ?nivel ?codigo ?referencia ?titulo ?descricao ?df ?notaDF ?pca ?notaPCA ?formaContagem ?subFormaContagem ?designacaoParticipante ?designacaoDono ?classePai where {
     ?uriClasse clav:pertencePGD clav:${idPGD} ;
                clav:nivel ?nivel ;
     OPTIONAL { ?uriClasse clav:codigo ?codigo; }
@@ -51,24 +64,27 @@ PGD.consultar = async function (idPGD) {
         OPTIONAL { ?uriPCA clav:pcaValor ?pca }
         OPTIONAL { ?uriPCA clav:pcaNota ?notaPCA} 
     }
+    OPTIONAL { 
+      ?uriClasse clav:temDono ?entDono .
+      ?entDono clav:entDesignacao ?designacaoDono .
+    }
+    OPTIONAL { 
+      ?uriClasse clav:temParticipante ?entParticipante .
+      ?entParticipante clav:entDesignacao ?designacaoParticipante .
+    }
+    OPTIONAL { 
+      ?uriClasse clav:pcaFormaContagemNormalizada ?uriFormaContagem .
+      ?uriFormaContagem skos:prefLabel ?formaContagem .
+      OPTIONAL { 
+        ?uriClasse clav:pcaSubformaContagem ?uriSubFormaContagem .
+        ?uriSubFormaContagem skos:prefLabel ?subFormaContagem .
+      }
+    }
     OPTIONAL { ?uriClasse clav:temPai ?uriClassePai }
 	BIND(STRAFTER(STR(?uriClasse), 'clav#') AS ?classe).
 	BIND(STRAFTER(STR(?uriClassePai), 'clav#') AS ?classePai).
 }
   `
-  const campos = [
-    "classe",
-    "nivel",
-    "codigo",
-    "referencia",
-    "titulo",
-    "descricao",
-    "df",
-    "notaDF",
-    "pca",
-    "notaPCA",
-    "classePai",
-  ]
 
   return execQuery("query", query).then(response => {
     return normalize(response);
