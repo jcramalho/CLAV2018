@@ -9,6 +9,7 @@ value: |
         <dono type="string"></dono>
         <participante type="string"></participante>
         <pca type="string"></pca>
+        <formaContagem type="string"></formaContagem>
         <df type="string">NE</df>
     </item>
     <item index="1" type="object">
@@ -19,6 +20,7 @@ value: |
         <dono type="string"></dono>
         <participante type="string"></participante>
         <pca type="string"></pca>
+        <formaContagem type="string"></formaContagem>
         <df type="string">NE</df>
     </item>
     <item index="2" type="object">
@@ -28,6 +30,7 @@ value: |
       <dono type="string">Sim</dono>
       <participante type="string">Não</participante>
       <pca type="string">5</pca>
+      <formaContagem type="string">Data de conclusão do procedimento</formaContagem>
       <df type="string">C</df>
     </item>
     <item index="3" type="object">
@@ -37,6 +40,7 @@ value: |
       <dono type="string">Não</dono>
       <participante type="string">Assessor</participante>
       <pca type="string">5</pca>
+      <formaContagem type="string">Data de conclusão do procedimento</formaContagem>
       <df type="string">C</df>
     </item>
   </root>

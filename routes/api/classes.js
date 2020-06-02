@@ -30,7 +30,7 @@ router.get('/', Auth.isLoggedInKey, [
     try {
         if(req.query.info == "esqueleto"){
             res.locals.dados = await State.getEsqueleto()
-            res.locals.tipo = "classes"
+            res.locals.tipo = "esqueletoClasses"
             next()
         }else if(req.query.info == "pesquisa"){
             res.locals.dados = await State.getAllClassesInfo()
@@ -41,13 +41,15 @@ router.get('/', Auth.isLoggedInKey, [
                 var ents = req.query.ents.split(',');
                 if(ents.length == 1){
                     res.locals.dados = await State.getPreSelecionados(ents)
+                    res.locals.tipo = "preselecionadoClasses"
                 }else{
                     res.locals.dados = await State.getEsqueleto()
+                    res.locals.tipo = "esqueletoClasses"
                 }
             }else{
                 res.locals.dados = await State.getEsqueleto()
+                res.locals.tipo = "esqueletoClasses"
             }
-            res.locals.tipo = "classes"
             next()
         }
         // Devolve a lista dos processos comuns

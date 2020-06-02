@@ -219,8 +219,22 @@ function isParticipante(participantes, entId){
     return found
 }
 
-//função auxiliar para esqueleto e pre selecionados, transforma uma classe
-function getClasseEsq(classe, entId){
+//função auxiliar para esqueleto, transforma uma classe
+function getClasseEsq(classe){
+    return {
+        codigo: classe.codigo,
+        titulo: classe.titulo,
+        descricao: classe.descricao,
+        status: classe.status,
+        dono: "",
+        participante: "",
+        pca: classe.pca.valores,
+        df: classe.df.valor
+    }
+}
+
+//função auxiliar para pre selecionados, transforma uma classe
+function getClassePreSel(classe, entId){
     return {
         codigo: classe.codigo,
         titulo: classe.titulo,
@@ -229,6 +243,7 @@ function getClasseEsq(classe, entId){
         dono: entId ? isDono(classe.donos, entId) : "",
         participante: entId ? isParticipante(classe.participantes, entId) : "",
         pca: classe.pca.valores,
+        formaContagem: classe.pca.formaContagem,
         df: classe.df.valor
     }
 }
@@ -240,9 +255,9 @@ exports.getEsqueleto = () => {
     classTreeInfo.forEach(c1 => {
         c1.filhos.forEach(c2 => {
             c2.filhos.forEach(c3 => {
-                ret.push(getClasseEsq(c3, null))
+                ret.push(getClasseEsq(c3))
                 c3.filhos.forEach(c4 => {
-                    ret.push(getClasseEsq(c4, null))
+                    ret.push(getClasseEsq(c4))
                 })
             })
         })
@@ -256,13 +271,13 @@ exports.getPreSelecionados = (entId) => {
     var ret = []
 
     classTreeInfo.forEach(c1 => {
-        ret.push(getClasseEsq(c1, null))
+        ret.push(getClassePreSel(c1, null))
         c1.filhos.forEach(c2 => {
-            ret.push(getClasseEsq(c2, null))
+            ret.push(getClassePreSel(c2, null))
             c2.filhos.forEach(c3 => {
-                ret.push(getClasseEsq(c3, entId))
+                ret.push(getClassePreSel(c3, entId))
                 c3.filhos.forEach(c4 => {
-                    ret.push(getClasseEsq(c4, entId))
+                    ret.push(getClassePreSel(c4, entId))
                 })
             })
         })

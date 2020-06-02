@@ -1,2 +1,2 @@
 type: string
-enum: [C, E, CP]
+enum: [C, E, CP, NE]

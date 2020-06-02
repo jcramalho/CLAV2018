@@ -16,6 +16,8 @@ items:
       enum: [Apreciador, Assessor, Comunicador, Decisor, Executor, Iniciador, Não]
     pca:
       $ref: '#/components/schemas/PCAValor'
+    formaContagem:
+      $ref: '#/components/schemas/FormaContagem'
     df:
       $ref: '#/components/schemas/DFValor'
   required:
@@ -25,4 +27,5 @@ items:
     - dono
     - participante
     - pca
+    - formaContagem
     - df
