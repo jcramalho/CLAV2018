@@ -366,6 +366,23 @@ function filterEntsTips(classe, ent_tip){
     return donos.length > 0 || parts.length > 0
 }
 
+//função auxiliar recursiva para obter apenas codigo, titulo, status e filhos dos filhos
+function getFilhosBase(filhos){
+    var ret = []
+
+    for(var i=0; i < filhos.length; i++){
+        ret.push({
+            id: filhos[i].id,
+            codigo: filhos[i].codigo,
+            titulo: filhos[i].titulo,
+            status: filhos[i].status,
+            filhos: getFilhosBase(filhos[i].filhos)
+        })
+    }
+
+    return ret
+}
+
 //Função auxiliar recursiva para getProcEntsTips
 function getProcEntsTipsRec(classes, ent_tip, allInfo, nivelFilter){
     var ret = []
@@ -374,7 +391,11 @@ function getProcEntsTipsRec(classes, ent_tip, allInfo, nivelFilter){
         if(nivelFilter > 0){
             var filhos = getProcEntsTipsRec(classes[i].filhos, ent_tip, allInfo, nivelFilter - 1)
         }else{
-            var filhos = JSON.parse(JSON.stringify(classes[i].filhos))
+            if(allInfo){
+                var filhos = JSON.parse(JSON.stringify(classes[i].filhos))
+            }else{
+                var filhos = getFilhosBase(classes[i].filhos)
+            }
         }
         
         if(filterEntsTips(classes[i], ent_tip) || (nivelFilter != 0 && filhos && filhos.length > 0)){
