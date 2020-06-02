@@ -166,6 +166,7 @@ router.get("/:id/processos", Auth.isLoggedInKey, [
 
 // Insere uma legislação na BD
 router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), [
+    verificaLegId("body", "id").optional(),
     verificaNumeroLeg("body", "numero")
         .custom(naoExisteNumero)
         .withMessage("Número já em uso"),
