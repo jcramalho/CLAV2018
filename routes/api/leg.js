@@ -165,6 +165,7 @@ router.get("/:id/processos", [
 
 // Insere uma legislação na BD
 router.post("/", [
+    verificaLegId("body", "id").optional(),
     verificaNumeroLeg("body", "numero")
         .custom(naoExisteNumero)
         .withMessage("Número já em uso"),

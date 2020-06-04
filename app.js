@@ -170,6 +170,7 @@ mainRouter.use('/tabelasSelecao',require('./routes/api/tabsSel'));
 mainRouter.use('/termosIndice',require('./routes/api/termosIndice'));
 mainRouter.use('/vocabularios',require('./routes/api/vocabularios'));
 mainRouter.use('/autosEliminacao',require('./routes/api/autosEliminacao'));
+mainRouter.use('/pgd',require('./routes/api/pgd'));
 mainRouter.use('/pedidos',require('./routes/api/pedidos'));
 mainRouter.use('/pendentes',require('./routes/api/pendentes'));
 mainRouter.use('/users',require('./routes/api/users'));

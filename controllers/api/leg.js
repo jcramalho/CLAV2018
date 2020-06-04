@@ -506,7 +506,7 @@ function queryLeg(id, leg){
 
 //Criar legislação
 Leg.criar = async leg => {
-  const baseQuery = queryLeg(undefined, leg)
+  const baseQuery = queryLeg(leg.id, leg)
   const query = `INSERT DATA {${baseQuery}}`;
   const ask = `ASK {${baseQuery}}`;
 
