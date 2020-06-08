@@ -1,4 +1,7 @@
 const mongoose = require("mongoose");
+var vcPedidoTipo = require("../routes/validation").vcPedidoTipo;
+var vcPedidoAcao = require("../routes/validation").vcPedidoAcao;
+var vcPedidoEstado = require("../routes/validation").vcPedidoEstado;
 
 const PedidoSchema = new mongoose.Schema({
   codigo: {
@@ -33,41 +36,24 @@ const PedidoSchema = new mongoose.Schema({
     },
     tipo: {
       type: String,
-      enum: [
-        "Classe",
-        "TS Organizacional",
-        "TS Pluriorganizacional",
-        "TS Pluriorganizacional web",
-        "Entidade",
-        "Tipologia",
-        "Legislação",
-        "Termo de Indice",
-        "Auto de Eliminação",
-        "AE PGD/LC",
-        "AE PGD",
-        "AE RADA",
-        "RADA",
-        "PGD"
-      ],
+      enum: vcPedidoTipo,
       required: true,
     },
     acao: {
       type: String,
-      enum: ["Criação", "Alteração", "Remoção", "Importação", "Extinção"],
+      enum: vcPedidoAcao,
       required: true,
     },
+  },
+  historico: {
+    type: Array,
+    required: false,
   },
   distribuicao: [
     {
       estado: {
         type: String,
-        enum: [
-          "Submetido",
-          "Distribuído",
-          "Apreciado",
-          "Validado",
-          "Devolvido",
-        ],
+        enum: vcPedidoEstado,
         required: true,
       },
       responsavel: {
@@ -75,14 +61,14 @@ const PedidoSchema = new mongoose.Schema({
       },
       proximoResponsavel: {
         nome: {
-          type: String
+          type: String,
         },
         entidade: {
-          type: String
+          type: String,
         },
         email: {
-          type: String
-        }
+          type: String,
+        },
       },
       data: {
         type: Date,
@@ -102,15 +88,14 @@ const PedidoSchema = new mongoose.Schema({
 
 PedidoSchema.pre("validate", async function (next) {
   if (!this.codigo) {
-    const year = new Date().getFullYear()
-    const pattern = "^" + year + "-.*"
-    var pedidos = await mongoose.model("Pedido").find(
-        {codigo: {$regex: pattern}},
-        {codigo: 1, _id: 0}
-    );
-    pedidos = pedidos.map(p => Number(p.codigo.split("-")[1]))
-    let count = pedidos.reduce((a,b) => Math.max(a, b), 0) + 1
-    this.codigo = `${year}-${count.toString().padStart(7, '0')}`;
+    const year = new Date().getFullYear();
+    const pattern = "^" + year + "-.*";
+    var pedidos = await mongoose
+      .model("Pedido")
+      .find({ codigo: { $regex: pattern } }, { codigo: 1, _id: 0 });
+    pedidos = pedidos.map((p) => Number(p.codigo.split("-")[1]));
+    let count = pedidos.reduce((a, b) => Math.max(a, b), 0) + 1;
+    this.codigo = `${year}-${count.toString().padStart(7, "0")}`;
   }
   next();
 });

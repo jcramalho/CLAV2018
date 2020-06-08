@@ -75,7 +75,7 @@ function unic(field){
     }
 }
 
-router.get('/', Auth.isLoggedInUser, Auth.checkLevel(5), [
+router.get('/', Auth.isLoggedInUser, Auth.checkLevel(3.5), [
     verificaEntId('query', 'entidade').optional(),
     estaEm('query', 'formato', vcUsersFormato).optional()
 ], (req, res) => {

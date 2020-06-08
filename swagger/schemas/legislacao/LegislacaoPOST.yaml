@@ -1,5 +1,7 @@
 type: object
 properties:
+  id:
+    $ref: '#/components/schemas/LegislacaoId'
   numero:
     $ref: '#/components/schemas/NumeroLeg'
   sumario:
