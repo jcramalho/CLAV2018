@@ -191,7 +191,7 @@ router.post("/login", [
                 if (isMatch) {
                     if(user.level==-1){
                         //Utilizador desativado
-                        return res.status(500).send("Não foi possível proceder a autenticação!")
+                        return res.status(401).send("Credenciais inválidas")
                     }else{
                         try{
                             var token = await Auth.generateTokenUser(user);
