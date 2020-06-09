@@ -2,10 +2,9 @@ var express = require("express");
 var router = express.Router();
 
 var RADA = require("../../controllers/api/rada.js");
-var Auth = require("../../controllers/auth.js");
 
 // Insere um RADA na BD
-router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), (req, res) => {
+router.post("/", (req, res) => {
   RADA.criar(req.body.triplos)
     .then(dados => {
         res.status(200).jsonp(dados);
@@ -13,7 +12,7 @@ router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), (req, res) => {
     .catch(err => res.status(500).send(`Erro na inserção de um RADA: ${err}`));
 }); 
 
-router.get("/", Auth.isLoggedInUser, Auth.checkLevel(4), (req, res) => {
+router.get("/", (req, res) => {
   RADA.listar()
     .then(dados => {
         res.status(200).jsonp(dados);
@@ -21,7 +20,7 @@ router.get("/", Auth.isLoggedInUser, Auth.checkLevel(4), (req, res) => {
     .catch(err => res.status(500).send(`Erro na listagem dos RADA: ${err}`));
 }); 
 
-router.get("/:id", Auth.isLoggedInUser, Auth.checkLevel(4), (req, res) => {
+router.get("/:id", (req, res) => {
   RADA.consulta(req.params.id)
     .then(dados => {
         res.status(200).jsonp(dados);
