@@ -434,7 +434,7 @@ module.exports.vcTipsInfo = ["completa"]
 
 
 //Users
-module.exports.vcUserLevels = [1, 2, 3, 3.5, 4, 5, 6, 7]
+module.exports.vcUserLevels = [-1, 1, 2, 3, 3.5, 4, 5, 6, 7]
 module.exports.vcUsersFormato = ["normalizado"]
 
 //OutputFormat
