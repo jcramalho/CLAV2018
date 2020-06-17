@@ -282,11 +282,6 @@
                     "idInv": "inv_3",
                     "desc": "Se um PN é eSintetizadoPor -> DF é de eliminação",
                     "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c ?c_titulo ?ca ?ca_titulo ?df ?dfv where{\n    ?c rdf:type :Classe_N3 .\n    ?c :eSintetizadoPor ?ca .\n    ?c :temDF ?df .\n    ?df :dfValor ?dfv .\n\n    ?c :titulo ?c_titulo .\n    ?ca :titulo ?ca_titulo .\n\n    minus {\n        ?c :temFilho ?f .\n        ?c :eComplementarDe ?cb .\n        ?c :eSinteseDe ?cc .\n    }\n\n    FILTER ( ?dfv != \"E\" )\n}" 
-                },
-                {
-                    "idInv": "inv_4",
-                    "desc": "Se um PN é nenhuma das acima -> DF é NE (Não especificado)",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c ?c_titulo ?df ?dfv where{\n    ?c rdf:type :Classe_N3 .\n    ?c :temDF ?df .\n    ?df :dfValor ?dfv .\n\n    ?c :titulo ?c_titulo .\n\n    minus {\n        ?c :temFilho ?cf .\n        ?c :eComplementarDe ?ca .\n        ?c :eSintetizadoPor ?cb .\n        ?c :eSinteseDe ?cc .\n    }\n\n    FILTER ( ?dfv != \"NE\" )\n}" 
                 }
             ]
         }
