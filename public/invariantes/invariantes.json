@@ -224,7 +224,7 @@
                 {
                     "idInv": "inv_4",
                     "desc": "Todos os processos relacionados por uma <b>relação de síntese</b> deverão estar relacionados com o <b>critério de densidade informacional da respetiva justificação</b>",
-                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?s ?s_titulo ?o ?o_titulo where { \n    {\n        {\n            ?s clav:eSinteseDe ?o .\n            ?s :titulo ?s_titulo .\n            ?o :titulo ?o_titulo .\n        }\n        union\n        {\n            ?s clav:eSintetizadoPor ?o .\n            ?s :titulo ?s_titulo .\n            ?o :titulo ?o_titulo .\n        }\n    }\n    minus {\n        {?s :temFilho ?f}\n    union\n        {\n        ?s :temDF ?df.\n        ?df :temJustificacao ?dfjust.\n        ?dfjust :temCriterio ?crit.\n        ?crit rdf:type :CriterioJustificacaoDensidadeInfo.\n        ?crit :critTemProcRel ?o\n}\n    }\n}",
+                    "query": "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?s ?s_titulo ?o ?o_titulo where { \n    {\n        {\n            ?s clav:eSinteseDe ?o .\n            ?s :titulo ?s_titulo .\n            ?o :titulo ?o_titulo .\n        }\n        union\n        {\n            ?s clav:eSintetizadoPor ?o .\n            ?s :titulo ?s_titulo .\n            ?o :titulo ?o_titulo .\n        }\n    }\n    minus {\n        {?s :temFilho ?f}\n    union { ?s :temDF ?df. \n ?df :dfValor \"C\". \n }\n    union\n        {\n        ?s :temDF ?df.\n        ?df :temJustificacao ?dfjust.\n        ?dfjust :temCriterio ?crit.\n        ?crit rdf:type :CriterioJustificacaoDensidadeInfo.\n        ?crit :critTemProcRel ?o\n}\n    }\n}",
                     "checked": true
                 }
             ]
