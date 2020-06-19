@@ -1,0 +1,32 @@
+summary: Consulta da TS de determinada Portaria
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
+tags:
+  - PGD
+description: Consulta da TS de determinada Portaria
+parameters:
+  - name: idPGD
+    in: path
+    description: Identificador de uma PGD
+    schema:
+      $ref: '#/components/schemas/PGDId'
+    required: true
+responses:
+  200:
+    description: Consulta da TS de determinada Portaria
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/pgd_ts'
+        example: !!inc/file '/examples/pgd/pgd_ts.yaml'
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
+  500:
+    description: Erro

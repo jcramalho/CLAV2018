@@ -18,9 +18,9 @@ requestBody:
       schema:
         $ref: '#/components/schemas/AuthCall'
       examples:
-        Exemplo Local:
+        ExemploLocal:
           $ref: '#/components/examples/auth_post_local'
-        Exemplo CLAV:
+        ExemploCLAV:
           $ref: '#/components/examples/auth_post_clav'
 responses:
   200:
@@ -30,9 +30,9 @@ responses:
          schema:
            $ref: '#/components/schemas/AuthCall'
          examples:
-           Exemplo Local:
+           ExemploLocal:
              $ref: '#/components/examples/auth_post_local'
-           Exemplo CLAV:
+           ExemploCLAV:
              $ref: '#/components/examples/auth_post_clav'
   401:
     $ref: '#/components/responses/UnauthorizedKey'

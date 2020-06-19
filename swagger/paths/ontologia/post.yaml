@@ -40,11 +40,12 @@ responses:
             - $ref: '#/components/schemas/OntologiaPOSTNotNorm'
             - $ref: '#/components/schemas/OntologiaPOSTNorm'
         examples:
-          Exemplo de uma query do tipo update que executou com sucesso:
+          ExemploUpdateSucesso:
             value: "Sucesso na query de update"
-          Exemplo de uma query do tipo query não normalizada:
+            summary: Exemplo de uma query do tipo update que executou com sucesso
+          ExemploQueryNaoNormalizada:
             $ref: '#/components/examples/OntologiaPOSTNotNorm'
-          Exemplo de uma query do tipo query normalizada:
+          ExemploQueryNormalizada:
             $ref: '#/components/examples/OntologiaPOSTNorm'
   401:
     $ref: '#/components/responses/UnauthorizedKey'

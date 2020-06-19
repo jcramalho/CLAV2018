@@ -29,9 +29,9 @@ responses:
             - $ref: '#/components/schemas/LogsAgregados'
             - $ref: '#/components/schemas/LogAgregado'
         examples:
-          Logs Agregados de todos os utilizadores:
+          LogsAgregadosTodosUtilizadores:
             $ref: '#/components/examples/logsAgregados_get_all'
-          Logs Agregados de um utilizador:
+          LogsAgregadosUtilizador:
             $ref: '#/components/examples/logsAgregados_get_one'
   401:
     $ref: '#/components/responses/UnauthorizedUser'

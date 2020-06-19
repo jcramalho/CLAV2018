@@ -1,0 +1,15 @@
+type: string
+enum: [
+  http://jcr.di.uminho.pt/m51-clav#vc_pcaSubformaContagem_F01.01,
+  http://jcr.di.uminho.pt/m51-clav#vc_pcaSubformaContagem_F01.02,
+  http://jcr.di.uminho.pt/m51-clav#vc_pcaSubformaContagem_F01.03,
+  http://jcr.di.uminho.pt/m51-clav#vc_pcaSubformaContagem_F01.04,
+  http://jcr.di.uminho.pt/m51-clav#vc_pcaSubformaContagem_F01.05,
+  http://jcr.di.uminho.pt/m51-clav#vc_pcaSubformaContagem_F01.06,
+  http://jcr.di.uminho.pt/m51-clav#vc_pcaSubformaContagem_F01.07,
+  http://jcr.di.uminho.pt/m51-clav#vc_pcaSubformaContagem_F01.08,
+  http://jcr.di.uminho.pt/m51-clav#vc_pcaSubformaContagem_F01.09,
+  http://jcr.di.uminho.pt/m51-clav#vc_pcaSubformaContagem_F01.10,
+  http://jcr.di.uminho.pt/m51-clav#vc_pcaSubformaContagem_F01.11,
+  http://jcr.di.uminho.pt/m51-clav#vc_pcaSubformaContagem_F01.12
+]
