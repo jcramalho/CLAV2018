@@ -4,8 +4,18 @@ var router = express.Router();
 var RADA = require("../../controllers/api/rada.js");
 var Auth = require("../../controllers/auth.js");
 
+const { validationResult } = require('express-validator');
+const { existe } = require('../validation')
+
 // Insere um RADA na BD
-router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), (req, res) => {
+router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), [
+    existe('body', 'triplos')
+], (req, res) => {
+  const errors = validationResult(req)
+  if(!errors.isEmpty()){
+      return res.status(422).jsonp(errors.array())
+  }
+
   RADA.criar(req.body.triplos)
     .then(dados => {
         res.status(200).jsonp(dados);

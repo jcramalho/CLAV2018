@@ -1,0 +1,309 @@
+type: object
+properties:
+  hist_cust:
+    type: string
+  medicaoUI_digital:
+    type: string
+  codigo:
+    type: string
+  dataAprovacao:
+    type: string
+  nUI:
+    type: string
+  nSubseries:
+    type: string
+  medicaoUI_outros:
+    type: string
+  hist_admin:
+    type: string
+  nSeries:
+    type: string
+  re:
+    type: string
+  tituloTS:
+    type: string
+  est_conser:
+    type: string
+  dataInicial:
+    $ref: '#/components/schemas/Data'
+  dataFinal:
+    $ref: '#/components/schemas/Data'
+  sist_org:
+    type: string
+  ts:
+    type: string
+  entResp:
+    type: array
+    items:
+      type: object
+      properties:
+        sigla:
+          type: string
+        designacao:
+          type: string
+      required:
+        - sigla
+        - designacao
+  produtoras:
+    type: array
+    items:
+      type: object
+      properties:
+        sigla:
+          type: string
+        ent_or_tip:
+          oneOf:
+            - $ref: '#/components/schemas/EntidadeIdCompleto'
+            - $ref: '#/components/schemas/TipologiaIdCompleto'
+        designacao:
+          type: string
+      required:
+        - sigla
+        - designacao
+        - ent_or_tip
+  tsRada:
+    type: array
+    items:
+      type: object
+      properties:
+        codigo:
+          type: string
+        nivel:
+          type: string
+        df:
+          type: object
+          properties:
+            df:
+              $ref: '#/components/schemas/DFValor'
+            notasdf:
+              type: string
+            justificacaoDF:
+              type: object
+              properties:
+                tipo:
+                  $ref: '#/components/schemas/TipoJustificacaoDF'
+                conteudo:
+                  type: string
+                criterio:
+                  type: string
+                relacoes:
+                  type: array
+                  items:
+                    oneOf:
+                      - type: object
+                        properties:
+                          tipo:
+                            $ref: '#/components/schemas/TipoLegislacao'
+                          sumario:
+                            type: string
+                          numero:
+                            $ref: '#/components/schemas/NumeroLeg'
+                          data:
+                            $ref: '#/components/schemas/Data'
+                          legislacao:
+                            $ref: '#/components/schemas/LegislacaoIdCompleto'
+                        required:
+                          - tipo
+                          - sumario
+                          - numero
+                          - data
+                          - legislacao
+                      - type: object
+                        properties:
+                          codigo:
+                            type: string
+                          titulo:
+                            type: string
+                        required:
+                          - codigo
+                          - titulo
+              required:
+                - tipo
+                - conteudo
+                - criterio
+                - relacoes
+          required:
+            - df
+            - notasdf
+            - justificacaoDF
+        localizacao:
+          type: string
+        classes:
+          type: string
+        medicao:
+          type: string
+        titulo:
+          type: string
+        tipoSerie:
+          type: string
+        tipoUA:
+          type: string
+        descricao:
+          type: string
+        pca:
+          type: object
+          properties:
+            pca:
+              $ref: '#/components/schemas/PCAValor'
+            notaPCA:
+              type: string
+            justificacaoPCA:
+              type: object
+              properties:
+                tipo:
+                  $ref: '#/components/schemas/TipoJustificacaoPCA'
+                conteudo:
+                  type: string
+                criterio:
+                  type: string
+                relacoes:
+                  type: array
+                  items:
+                    oneOf:
+                      - type: object
+                        properties:
+                          tipo:
+                            $ref: '#/components/schemas/TipoLegislacao'
+                          sumario:
+                            type: string
+                          numero:
+                            $ref: '#/components/schemas/NumeroLeg'
+                          data:
+                            $ref: '#/components/schemas/Data'
+                          legislacao:
+                            $ref: '#/components/schemas/LegislacaoIdCompleto'
+                        required:
+                          - tipo
+                          - sumario
+                          - numero
+                          - data
+                          - legislacao
+                      - type: object
+                        properties:
+                          codigo:
+                            type: string
+                          titulo:
+                            type: string
+                        required:
+                          - codigo
+                          - titulo
+              required:
+                - tipo
+                - conteudo
+                - criterio
+                - relacoes
+            formaContagem:
+              $ref: '#/components/schemas/FormaContagemIdCompleto'
+            formaLabel:
+              $ref: '#/components/schemas/FormaContagem'
+            subformaContagem:
+              $ref: '#/components/schemas/SubFormaContagemIdCompleto'
+            subformaLabel:
+              $ref: '#/components/schemas/SubFormaContagem'
+          required:
+            - pca
+            - notaPCA
+            - justificacaoPCA
+            - formaContagem
+            - formaLabel
+        suporte:
+          type: string
+        pai:
+          type: string
+        dataInicial:
+          $ref: '#/components/schemas/Data'
+        dataFinal:
+          $ref: '#/components/schemas/Data'
+        produtoras:
+          type: array
+          items:
+            type: object
+            properties:
+              sigla:
+                type: string
+              ent_or_tip:
+                oneOf:
+                  - $ref: '#/components/schemas/EntidadeIdCompleto'
+                  - $ref: '#/components/schemas/TipologiaIdCompleto'
+              designacao:
+                type: string
+            required:
+              - sigla
+              - designacao
+              - ent_or_tip
+        legislacao:
+          type: array
+          items:
+            type: object
+            properties:
+              tipo:
+                $ref: '#/components/schemas/TipoLegislacao'
+              sumario:
+                type: string
+              numero:
+                $ref: '#/components/schemas/NumeroLeg'
+              data:
+                $ref: '#/components/schemas/Data'
+              leg:
+                $ref: '#/components/schemas/LegislacaoIdCompleto'
+            required:
+              - tipo
+              - sumario
+              - numero
+              - data
+              - leg
+        UIs:
+          type: array
+          items:
+            type: object
+            properties:
+              codigo:
+                type: string
+              titulo:
+                type: string
+            required:
+              - codigo
+              - titulo
+        relacoes:
+          type: array
+          items:
+            type: object
+            properties:
+              codigo:
+                type: string
+              rel:
+                $ref: '#/components/schemas/TipoRelacao'
+              titulo:
+                type: string
+              id:
+                type: string
+            required:
+              - codigo
+              - rel
+              - titulo
+              - id
+      required:
+        - codigo
+        - classes
+        - titulo
+        - descricao
+required:
+  - hist_cust
+  - medicaoUI_digital
+  - codigo
+  - dataAprovacao
+  - nUI
+  - nSubseries
+  - medicaoUI_outros
+  - hist_admin
+  - nSeries
+  - re
+  - tituloTS
+  - est_conser
+  - dataInicial
+  - dataFinal
+  - sist_org
+  - ts
+  - entResp
+  - produtoras
+  - tsRada

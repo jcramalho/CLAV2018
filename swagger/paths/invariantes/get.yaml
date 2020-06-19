@@ -35,9 +35,9 @@ responses:
             - $ref: '#/components/schemas/InvariantesLista'
             - $ref: '#/components/schemas/InvarianteErros'
         examples:
-          Exemplo da lista de todos os invariantes:
+          ExemploInvariantes:
             $ref: '#/components/examples/InvariantesLista'
-          Exemplo dos erros de um invariante:
+          ExemploErrosInvariante:
             $ref: '#/components/examples/InvarianteErros'
   401:
     $ref: '#/components/responses/UnauthorizedUser'

@@ -24,3 +24,4 @@ value:
         o:
           type: "uri"
           value: "http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"
+summary: Exemplo de uma query do tipo query não normalizada
