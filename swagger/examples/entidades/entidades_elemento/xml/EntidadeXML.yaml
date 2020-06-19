@@ -8,3 +8,4 @@ value: |
       <designacao type="string">Autoridade Aeronáutica Nacional</designacao>
       <internacional type="string"></internacional>
   </root>
+summary: Exemplo de uma Entidade

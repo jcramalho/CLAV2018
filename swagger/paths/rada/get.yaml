@@ -1,0 +1,21 @@
+summary: Listagem dos RADA 
+security:
+  - userQuery: []
+  - userAuth: []
+tags:
+  - RADA
+description: Listagem dos RADA
+responses:
+  200:
+    description: Lista com os RADA
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/radas'
+        example: !!inc/file '/examples/rada/radas.yaml'
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  500:
+    description: Erro

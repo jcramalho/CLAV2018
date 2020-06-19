@@ -24,9 +24,9 @@ responses:
             - $ref: '#/components/schemas/LogAgregadoRotas'
             - $ref: '#/components/schemas/LogAgregadoRota'
         examples:
-          Logs Agregados das bases das rotas:
+          LogsAgregadosBasesRotas:
             $ref: '#/components/examples/logAgregadoRotas'
-          Logs Agregados para a base de uma rota:
+          LogsAgregadosBaseRota:
             $ref: '#/components/examples/logAgregadoRota'
   401:
     $ref: '#/components/responses/UnauthorizedUser'
