@@ -22,7 +22,7 @@ module.exports.userDB = process.env.MONGODB ? 'mongodb://' + process.env.MONGODB
 
 module.exports.interfaceHosts = [
     "http://localhost:8080",
-    "http://clav.dglab.gov.pt",
+    "http://clav.di.uminho.pt",
     "http://epl.di.uminho.pt:7780",
     "http://epl.di.uminho.pt:7781"
 ]
