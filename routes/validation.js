@@ -224,6 +224,12 @@ module.exports.verificaTSId = function (location, field, ifF){
     return module.exports.match(location, field, '^.+$', ifF)
 }
 
+//Valida o id de uma possível PGD
+module.exports.verificaPGDId = function (location, field, ifF){
+    ifF = ifF || undefined
+    return module.exports.comecaPorEMatch(location, field, 'pgd_', '^pgd_.+$', ifF)
+}
+
 //Valida um conjunto de ids de possiveis entidades
 module.exports.verificaEnts = function (location, field, ifF){
     ifF = ifF || undefined
@@ -434,7 +440,7 @@ module.exports.vcTipsInfo = ["completa"]
 
 
 //Users
-module.exports.vcUserLevels = [1, 2, 3, 3.5, 4, 5, 6, 7]
+module.exports.vcUserLevels = [-1, 1, 2, 3, 3.5, 4, 5, 6, 7]
 module.exports.vcUsersFormato = ["normalizado"]
 
 //OutputFormat

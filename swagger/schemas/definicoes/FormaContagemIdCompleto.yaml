@@ -1,0 +1,10 @@
+type: string
+enum: [
+  http://jcr.di.uminho.pt/m51-clav#vc_pcaFormaContagem_cessacaoVigencia,
+  http://jcr.di.uminho.pt/m51-clav#vc_pcaFormaContagem_conclusaoProcedimento,
+  http://jcr.di.uminho.pt/m51-clav#vc_pcaFormaContagem_disposicaoLegal,
+  http://jcr.di.uminho.pt/m51-clav#vc_pcaFormaContagem_emissaoTitulo,
+  http://jcr.di.uminho.pt/m51-clav#vc_pcaFormaContagem_extincaoDireito,
+  http://jcr.di.uminho.pt/m51-clav#vc_pcaFormaContagem_extincaoEntidade,
+  http://jcr.di.uminho.pt/m51-clav#vc_pcaFormaContagem_inicioProcedimento
+]

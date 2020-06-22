@@ -35,9 +35,9 @@ responses:
             - $ref: '#/components/schemas/LogsPaginados'
             - $ref: '#/components/schemas/Logs'
         examples:
-          Exemplo de uma página dos logs:
+          ExemploPaginaLogs:
             $ref: '#/components/examples/LogsPaginados'
-          Exemplo do log para um determinado id e tipo:
+          ExemploLogParaIdTipo:
             $ref: '#/components/examples/LogsId'
   401:
     $ref: '#/components/responses/UnauthorizedUser'
