@@ -105,8 +105,6 @@ RADA.consulta = async id => {
                 clav:dataFinal ?dataFinal;
                 clav:tipoUA ?tipoUA ;
                 clav:tipoSerie ?tipoSerie ;
-                clav:suporte ?suporte ;
-                clav:medicao ?medicao ;
                 clav:localizacao ?localizacao ;
                 clav:temPai ?pai.
           		  
@@ -152,6 +150,17 @@ RADA.consulta = async id => {
 
     for (let i = 0; i < rada.tsRada.length; i++) {
       if (!!rada.tsRada[i].tipoSerie) {
+        // SUPORTE E MEDICAO
+        let query_suporte_medicao = `select ?suporte ?medicao where {
+          clav:rada_${rada.codigo}_serie_${rada.tsRada[i].codigo} clav:temSuporteMedicao ?suporte_e_medicao.
+            
+            ?suporte_e_medicao clav:medicao ?medicao;
+                               clav:suporte ?suporte.
+        }`
+
+        let result_suporte_medicao  = await execQuery("query", query_suporte_medicao);
+        rada.tsRada[i]["suporte_e_medicao"] = normalize(result_suporte_medicao);
+        
         // QUERY PARA IR BUSCAR AS ENTIDADES PRODUTORAS DA SERIE
         let query_produtoras_serie = `select ?ent_or_tip ?sigla ?designacao where {
 
@@ -324,7 +333,7 @@ RADA.consulta = async id => {
       }
     }
 
-    return [rada];
+    return rada;
   }
   catch (erro) { throw (erro); }
 }; 
