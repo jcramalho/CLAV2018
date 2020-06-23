@@ -35,7 +35,7 @@ envIH = envIH ? envIH.split(" ") : null
 
 module.exports.interfaceHosts = envIH || [
     "http://localhost:8080",
-    "https://clav.dglab.gov.pt",
+    "https://clav.di.uminho.pt",
     "https://epl.di.uminho.pt:7780",
     "https://epl.di.uminho.pt:7781"
 ]
