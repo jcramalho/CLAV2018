@@ -139,12 +139,6 @@ module.exports.verificaPedidoCodigo = function(location, field, ifF){
     return module.exports.match(location, field, regex, ifF)
 }
 
-module.exports.verificaNumeroLeg = function(location, field, ifF){
-    const regex = "^\\d+(-\\w)?\\/\\d+$"
-    ifF = ifF || undefined
-    return module.exports.match(location, field, regex, ifF)
-}
-
 module.exports.verificaLegId = function(location, field, ifF){
     ifF = ifF || undefined
     return module.exports.comecaPorEMatch(location, field, 'leg_', '^leg_.+$', ifF)
