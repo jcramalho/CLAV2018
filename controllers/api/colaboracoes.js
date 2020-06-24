@@ -45,3 +45,56 @@ Creditos.eliminar = function(id, callback){
         }
     });
 }
+
+
+Creditos.append = async function(dados){ 
+    // Converter IDs para o tipo do mongoose
+    dados.forEach(elem => {
+        elem._id = mongoose.Types.ObjectId(elem._id.$oid);
+    })
+    try{
+        await new Promise((resolve, reject) => {
+            // ordered a false permite que caso aconteça erro a inserir o elemento N, os restantes elementos podem ser inseridos
+            Credito.insertMany(dados, { ordered : false }, function(err,result) {
+                if (err) {
+                    reject(err)
+                } else {
+                    resolve(result);
+                }
+            })
+        })
+    }catch(err){
+        throw(`Erro na importação das colaborações. Apenas foram registadas as colaborações sem erros. Foram inseridas ${err.insertedDocs.length} colaborações de ${dados.length}.`);
+    }
+    return "Colaborações importadas com sucesso!"
+}
+
+Creditos.replace = async function(dados){
+    // Converter IDs para o tipo do mongoose
+    dados.forEach(elem => {
+        elem._id = mongoose.Types.ObjectId(elem._id.$oid);
+    })
+    // Apaga todos os registos
+    try {
+        await new Promise((resolve, reject) => {
+            Credito.deleteMany({}, function(err) {
+                if(err){
+                    reject(err)
+                }
+                else {
+                    // ordered a false permite que caso aconteça erro a inserir o elemento N, os restantes elementos podem ser inseridos
+                    Credito.insertMany(dados, { ordered : false }, function(err,result) {
+                        if (err) {
+                            reject(err)
+                        } else {
+                            resolve(result);
+                        }
+                    })
+                }
+            });
+        })
+    }catch(err){
+        throw(`Erro na importação das colaborações. Apenas foram registadas as colaborações sem erros. Foram inseridas ${err.insertedDocs.length} colaborações de ${dados.length}.`);
+    }
+    return "Colaborações importadas com sucesso!"
+}
