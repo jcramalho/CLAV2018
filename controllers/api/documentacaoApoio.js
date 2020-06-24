@@ -1,6 +1,8 @@
 const DocApoio = require('../../models/documentacaoApoio');
 const DocumentacaoApoio = module.exports;
 var mongoose = require('mongoose');
+var path = require('path');
+var fs = require('fs');
 
 // -------------------------------------- Consultas --------------------------------
 
@@ -226,6 +228,18 @@ DocumentacaoApoio.eliminar = function(id, callback){
 }
 
 // -------------------------------------- Importação -----------------------------------
+
+function create_folders(lista){
+    let classes = lista.map(x => x.classe.replace(/ /g, '_'));
+    classes.forEach(classe => {
+        let dbpath = '/public/documentacao_apoio/' + classe;
+        let full_path = path.resolve(__dirname + '/../../' + dbpath);
+        if(!fs.existsSync(full_path)){
+            fs.mkdirSync(path.resolve(full_path))
+        }
+    })
+}
+
 DocumentacaoApoio.append = async function(dados){ 
     // Converter IDs para o tipo do mongoose
     dados.forEach(elem => {
@@ -238,6 +252,7 @@ DocumentacaoApoio.append = async function(dados){
                 if (err) {
                     reject(err)
                 } else {
+                    create_folders(result);
                     resolve(result);
                 }
             })
@@ -266,6 +281,7 @@ DocumentacaoApoio.replace = async function(dados){
                         if (err) {
                             reject(err)
                         } else {
+                            create_folders(result);
                             resolve(result);
                         }
                     })
