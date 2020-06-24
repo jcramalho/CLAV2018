@@ -71,7 +71,7 @@ DocumentacaoCientifica.append = async function(dados){
             })
         })
     }catch(err){
-        throw(`Erro na importação dos documentos. Apenas foram registados os documentos sem erros.`);
+        throw(`Erro na importação dos documentos. Apenas foram registados os documentos sem erros. Foram inseridos ${err.insertedDocs.length} documentos de ${dados.length}.`);
     }
     return "Documentação importada com sucesso!"
 }
@@ -101,7 +101,7 @@ DocumentacaoCientifica.replace = async function(dados){
             });
         })
     }catch(err){
-        throw(`Erro na importação dos documentos. Apenas foram registados os documentos sem erros.`);
+        throw(`Erro na importação dos documentos. Apenas foram registados os documentos sem erros. Foram inseridos ${err.insertedDocs.length} documentos de ${dados.length}.`);
     }
     return "Documentação importada com sucesso!"
 }

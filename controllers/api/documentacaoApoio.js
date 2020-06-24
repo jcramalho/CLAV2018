@@ -224,3 +224,56 @@ DocumentacaoApoio.eliminar = function(id, callback){
         }
     });
 }
+
+// -------------------------------------- Importação -----------------------------------
+DocumentacaoApoio.append = async function(dados){ 
+    // Converter IDs para o tipo do mongoose
+    dados.forEach(elem => {
+        elem._id = mongoose.Types.ObjectId(elem._id.$oid);
+    })
+    try{
+        await new Promise((resolve, reject) => {
+            // ordered a false permite que caso aconteça erro a inserir o elemento N, os restantes elementos podem ser inseridos
+            DocApoio.insertMany(dados, { ordered : false }, function(err,result) {
+                if (err) {
+                    reject(err)
+                } else {
+                    resolve(result);
+                }
+            })
+        })
+    }catch(err){
+        throw(`Erro na importação dos documentos. Apenas foram registados os documentos sem erros. Foram inseridos ${err.insertedDocs.length} documentos de ${dados.length}.`);
+    }
+    return "Documentação importada com sucesso!"
+}
+
+DocumentacaoApoio.replace = async function(dados){
+    // Converter IDs para o tipo do mongoose
+    dados.forEach(elem => {
+        elem._id = mongoose.Types.ObjectId(elem._id.$oid);
+    })
+    // Apaga todos os registos
+    try {
+        await new Promise((resolve, reject) => {
+            DocApoio.deleteMany({}, function(err) {
+                if(err){
+                    reject(err)
+                }
+                else {
+                    // ordered a false permite que caso aconteça erro a inserir o elemento N, os restantes elementos podem ser inseridos
+                    DocApoio.insertMany(dados, { ordered : false }, function(err,result) {
+                        if (err) {
+                            reject(err)
+                        } else {
+                            resolve(result);
+                        }
+                    })
+                }
+            });
+        })
+    }catch(err){
+        throw(`Erro na importação dos documentos. Apenas foram registados os documentos sem erros. Foram inseridos ${err.insertedDocs.length} documentos de ${dados.length}.`);
+    }
+    return "Documentação importada com sucesso!"
+}
