@@ -230,14 +230,18 @@ DocumentacaoApoio.eliminar = function(id, callback){
 // -------------------------------------- Importação -----------------------------------
 
 function create_folders(lista){
-    let classes = lista.map(x => x.classe.replace(/ /g, '_'));
-    classes.forEach(classe => {
-        let dbpath = '/public/documentacao_apoio/' + classe;
-        let full_path = path.resolve(__dirname + '/../../' + dbpath);
-        if(!fs.existsSync(full_path)){
-            fs.mkdirSync(path.resolve(full_path))
-        }
-    })
+    try {
+        let classes = lista.map(x => x.classe.replace(/ /g, '_'));
+        classes.forEach(classe => {
+            let dbpath = '/public/documentacao_apoio/' + classe;
+            let full_path = path.resolve(__dirname + '/../../' + dbpath);
+            if(!fs.existsSync(full_path)){
+                fs.mkdirSync(path.resolve(full_path))
+            }
+        })
+    } catch(e){
+
+    }
 }
 
 DocumentacaoApoio.append = async function(dados){ 
@@ -250,6 +254,7 @@ DocumentacaoApoio.append = async function(dados){
             // ordered a false permite que caso aconteça erro a inserir o elemento N, os restantes elementos podem ser inseridos
             DocApoio.insertMany(dados, { ordered : false }, function(err,result) {
                 if (err) {
+                    create_folders(err.insertedDocs);
                     reject(err)
                 } else {
                     create_folders(result);
@@ -279,6 +284,7 @@ DocumentacaoApoio.replace = async function(dados){
                     // ordered a false permite que caso aconteça erro a inserir o elemento N, os restantes elementos podem ser inseridos
                     DocApoio.insertMany(dados, { ordered : false }, function(err,result) {
                         if (err) {
+                            create_folders(err.insertedDocs);
                             reject(err)
                         } else {
                             create_folders(result);
