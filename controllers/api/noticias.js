@@ -38,15 +38,6 @@ Noticias.criar = n => {
     n._id = mongoose.Types.ObjectId()
     var newNoticia = new Noticia(n);
 
-    /*return newNoticia.save(function (err) {
-        if (err) {
-            console.log(err);
-            return ('Ocorreu um erro a submeter a notícia! Tente novamente mais tarde');
-        }
-        else{
-            return(newNoticia._id);
-        }
-    }); */
     return newNoticia.save(); 
 }
 
@@ -71,4 +62,56 @@ Noticias.eliminar = function(id, callback){
 		    callback(null, noticia);
         }
     });
+}
+
+Noticias.append = async function(dados){ 
+    // Converter IDs para o tipo do mongoose
+    dados.forEach(elem => {
+        elem._id = mongoose.Types.ObjectId(elem._id.$oid);
+    })
+    try{
+        await new Promise((resolve, reject) => {
+            // ordered a false permite que caso aconteça erro a inserir o elemento N, os restantes elementos podem ser inseridos
+            Noticia.insertMany(dados, { ordered : false }, function(err,result) {
+                if (err) {
+                    reject(err)
+                } else {
+                    resolve(result);
+                }
+            })
+        })
+    }catch(err){
+        throw(`Erro na importação das notícias. Apenas foram registadas as notícias sem erros. Foram inseridas ${err.insertedDocs.length} notícias de ${dados.length}.`);
+    }
+    return "Notícias importadas com sucesso!"
+}
+
+Noticias.replace = async function(dados){
+    // Converter IDs para o tipo do mongoose
+    dados.forEach(elem => {
+        elem._id = mongoose.Types.ObjectId(elem._id.$oid);
+    })
+    // Apaga todos os registos
+    try {
+        await new Promise((resolve, reject) => {
+            Noticia.deleteMany({}, function(err) {
+                if(err){
+                    reject(err)
+                }
+                else {
+                    // ordered a false permite que caso aconteça erro a inserir o elemento N, os restantes elementos podem ser inseridos
+                    Noticia.insertMany(dados, { ordered : false }, function(err,result) {
+                        if (err) {
+                            reject(err)
+                        } else {
+                            resolve(result);
+                        }
+                    })
+                }
+            });
+        })
+    }catch(err){
+        throw(`Erro na importação das notícias. Apenas foram registadas as notícias sem erros. Foram inseridas ${err.insertedDocs.length} notícias de ${dados.length}.`);
+    }
+    return "Notícias importadas com sucesso!"
 }

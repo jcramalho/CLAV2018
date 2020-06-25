@@ -199,7 +199,7 @@ router.post('/importar', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), (re
                 });
             }
             else {
-                res.status(500).json(`Erro nos campos da importação: deve fornecer um ficheiro e a opção`)
+                res.status(500).json(`Erro nos campos da importação: deve fornecer um ficheiro e a opção.`)
             }
         }
         else {
