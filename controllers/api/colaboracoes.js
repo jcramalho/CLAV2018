@@ -17,9 +17,9 @@ Creditos.criar = n => {
     return newCredito.save(); 
 }
 
-Creditos.update = function(id, name, fili, fun, description){
+Creditos.update = function(id, novo){
     return Credito
-        .update({_id : id}, {$set : {nome : name, filiacao : fili, funcao : fun, desc : description}})
+        .update({_id : id}, novo, {overwrite: true })
         .exec()
 }
 
