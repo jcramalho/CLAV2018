@@ -16,6 +16,14 @@ const CreditoSchema = new mongoose.Schema({
     desc : {
         type : String, 
         required : false
+    },
+    data_inicio: {
+        type: String,
+        required: false
+    },
+    data_fim: {
+        type: String,
+        required: false
     }
 })
 

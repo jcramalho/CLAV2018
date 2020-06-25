@@ -12,7 +12,7 @@ var path = require('path')
 var express = require('express')
 var router = express.Router()
 
-var validKeys = ["nome", "filiacao", "funcao", "desc"];
+var validKeys = ["nome", "filiacao", "funcao", "desc", "data_inicio", "data_fim"];
 const { validationResult } = require('express-validator');
 const { existe, estaEm, dataValida, eMongoId, vcNotRec } = require('../validation')
 
@@ -21,7 +21,9 @@ router.get('/', Auth.isLoggedInKey, [
     existe("query", "nome").optional(),
     existe("query", "filiacao").optional(),
     existe("query", "funcao").optional(),
-    existe("query", "desc").optional()
+    existe("query", "desc").optional(),
+    dataValida("query", "data_inicio").optional(),
+    dataValida("query", "data_fim").optional()
 ], (req, res) => {
     const errors = validationResult(req)
     if(!errors.isEmpty()){
@@ -41,7 +43,7 @@ router.get('/', Auth.isLoggedInKey, [
 })
 
 // Devolve um ficheiro com todos os registos em formato pronto a importar no MongoDB
-router.get('/exportar',/* Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]),*/ (req, res) => {
+router.get('/exportar', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), (req, res) => {
     Creditos.listar({})
         .then(function(dados){
             // Tratamento do formato do ID
@@ -83,10 +85,11 @@ router.post('/', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), [
     existe("body", "nome"),
     existe("body", "filiacao"),
     existe("body", "funcao"),
-    //existe("body", "desc").optional()
+    existe("body", "desc").optional(),
+    dataValida("body", "data_inicio").optional(),
+    dataValida("body", "data_fim").optional()
 ], (req, res) => {
     const errors = validationResult(req)
-    
     if(!errors.isEmpty()){
         return res.status(422).jsonp(errors.array())
     }
@@ -150,18 +153,16 @@ router.put('/:id', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), [
     existe("body", "nome"),
     existe("body", "filiacao"),
     existe("body", "funcao"),
-    //existe("body", "desc").optional()
+    existe("body", "desc").optional(),
+    dataValida("body", "data_inicio").optional(),
+    dataValida("body", "data_fim").optional()
 ], (req, res) => {
     const errors = validationResult(req)
 
     if(!errors.isEmpty()){
         return res.status(422).jsonp(errors.array())
     }
-    let desc = "";
-    if (req.body.desc !== undefined){
-        desc = req.body.desc;
-    }
-    Creditos.update(req.params.id, req.body.nome, req.body.filiacao, req.body.funcao, desc)
+    Creditos.update(req.params.id, req.body)
         .then(dados => {
             if(dados) res.jsonp("Colaboração modificada com sucesso.")
             else res.status(500).jsonp("Erro na modificação da colaboração com identificador: " + req.params.id)
