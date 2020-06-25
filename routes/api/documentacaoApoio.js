@@ -63,7 +63,7 @@ router.get('/classes', (req, res) => {
 })
 
 // Devolve um ficheiro com todos os registos em formato pronto a importar no MongoDB
-router.get('/exportar', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), (req, res) => {
+router.get('/exportar', (req, res) => {
     DocumentacaoApoio.listar({})
         .then(function(dados){
             // Tratamento do formato do ID
@@ -207,7 +207,7 @@ router.post('/', [
 })
 
 // Importação de um ficheiro com registos - Pode ser adição (append) à BD ou substituição (drop)
-router.post('/importar', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), (req, res) => {
+router.post('/importar', (req, res) => {
     var form = new formidable.IncomingForm()
     form.parse(req, async (error, fields, formData) => {
         if(!error){

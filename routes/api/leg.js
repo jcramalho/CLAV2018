@@ -104,7 +104,6 @@ router.get("/", [
 
 // Verifica a existência do número de um diploma/legislacao
 router.get("/numero", [
-    verificaNumeroLeg("query", "valor")
     existe("query", "valor")
 ], (req, res, next) => {
   const errors = validationResult(req)
