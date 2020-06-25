@@ -163,6 +163,7 @@ mainRouter.use('/classes',require('./routes/api/classes'), outputFormat);
 mainRouter.use('/noticias',require('./routes/api/noticias'));
 mainRouter.use('/documentacaoApoio',require('./routes/api/documentacaoApoio'));
 mainRouter.use('/documentacaoCientifica',require('./routes/api/documentacaoCientifica'));
+mainRouter.use('/colaboracoes',require('./routes/api/colaboracoes'));
 mainRouter.use('/notasAp',require('./routes/api/notasAp'));
 mainRouter.use('/exemplosNotasAp',require('./routes/api/exemplosNotasAp'));
 mainRouter.use('/indicePesquisa',require('./routes/api/indicePesquisa'));

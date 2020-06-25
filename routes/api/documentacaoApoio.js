@@ -62,6 +62,31 @@ router.get('/classes', (req, res) => {
         .catch(erro => res.status(500).send(`Erro na listagem das classes da Documentação de Apoio: ${erro}`))
 })
 
+// Devolve um ficheiro com todos os registos em formato pronto a importar no MongoDB
+router.get('/exportar', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), (req, res) => {
+    DocumentacaoApoio.listar({})
+        .then(function(dados){
+            // Tratamento do formato do ID
+            var output = dados.map(obj => {
+                return {
+                    ...obj._doc,
+                    _id: {
+                        $oid : obj._doc._id
+                    }
+                    
+                }
+            });
+            // Encoding 
+            var data = JSON.stringify(output, null, 2);
+            res.setHeader('Content-disposition', 'attachment; filename= doc_apoio.json');
+            res.setHeader('Content-type', 'application/json');
+            res.write(data, function (err) {
+                res.end()
+            })
+        })
+        .catch(erro => res.status(500).send(`Erro na exportação da Documentação de Apoio: ${erro}`))
+})
+
 // Retorna uma só classe e o seu conteúdo com base no id
 router.get('/:id', [
     eMongoId('params', 'id')
@@ -179,6 +204,50 @@ router.post('/', [
                 .catch(erro => res.status(500).jsonp("Erro na adição da classe à documentação de apoio: " + erro))
                 }
      });
+})
+
+// Importação de um ficheiro com registos - Pode ser adição (append) à BD ou substituição (drop)
+router.post('/importar', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), (req, res) => {
+    var form = new formidable.IncomingForm()
+    form.parse(req, async (error, fields, formData) => {
+        if(!error){
+            // Verificar os operacao e ficheiro
+            if(fields.opcao && formData.file && formData.file.type && formData.file.path){
+                fs.readFile(formData.file.path, 'utf8', function read(err, data) {
+                    if (err) {
+                        res.status(500).json(`Erro na importação da Documentação: ${err}`)
+                    }
+                    else {
+                        if(fields.opcao === 'adição'){
+                            // Parsing dos dados
+                            var dados = JSON.parse(data)
+                            // Chamada do controlador de append 
+                            DocumentacaoApoio.append(dados)
+                                .then(dados => res.jsonp(dados))
+                                .catch(erro => res.status(500).jsonp(erro))
+                        }
+                        else if(fields.opcao === 'substituição'){
+                            // Parsing dos dados
+                            var dados = JSON.parse(data)
+                            // Chamada do controlador de drop e povoamento da BD
+                            DocumentacaoApoio.replace(dados)
+                                .then(dados => res.jsonp(dados))
+                                .catch(erro => res.status(500).jsonp(erro))
+                        }
+                        else{
+                            res.status(500).json(`Erro na importação: as opções são "adição" ou "substituição."`)
+                        } 
+                    }
+                });
+            }
+            else {
+                res.status(500).json(`Erro nos campos da importação: deve fornecer um ficheiro e a opção.`)
+            }
+        }
+        else {
+            res.status(500).json(`Erro na importação da Documentação: ${error}`)
+        }
+    })
 })
 
 // Criar entrada dentro de uma classe - apenas recebe a descrição, elementos são inicializados com lista vazia

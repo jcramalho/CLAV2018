@@ -6,7 +6,7 @@ var express = require("express");
 var router = express.Router();
 
 const { validationResult } = require('express-validator');
-const { existe, estaEm, eFS, dataValida, verificaNumeroLeg, verificaLegId, verificaLista, estaAtiva, verificaExisteEnt, verificaExisteClasse, vcLegTipo, vcFonte, vcLegEstado, vcLegProcs, vcLegInfo } = require('../validation')
+const { existe, estaEm, eFS, dataValida, verificaLegId, verificaLista, estaAtiva, verificaExisteEnt, verificaExisteClasse, vcLegTipo, vcFonte, vcLegEstado, vcLegProcs, vcLegInfo } = require('../validation')
 
 async function naoExisteNumero(valor) {
     if(await Leg.existe(valor))
@@ -105,6 +105,7 @@ router.get("/", [
 // Verifica a existência do número de um diploma/legislacao
 router.get("/numero", [
     verificaNumeroLeg("query", "valor")
+    existe("query", "valor")
 ], (req, res, next) => {
   const errors = validationResult(req)
   if(!errors.isEmpty()){
@@ -166,7 +167,7 @@ router.get("/:id/processos", [
 // Insere uma legislação na BD
 router.post("/", [
     verificaLegId("body", "id").optional(),
-    verificaNumeroLeg("body", "numero")
+    existe("body", "numero")
         .custom(naoExisteNumero)
         .withMessage("Número já em uso"),
     estaEm("body", "tipo", vcLegTipo),
@@ -202,7 +203,7 @@ router.put("/:id", [
     verificaLegId("param", "id")
         .custom(estaAtiva)
         .withMessage("Só é possível editar diplomas legislativos ativos"),
-    verificaNumeroLeg("body", "numero")
+    existe("body", "numero")
         .custom(naoExisteNumeroSelf)
         .withMessage("Número já em uso"),
     estaEm("body", "tipo", vcLegTipo),
