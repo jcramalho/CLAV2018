@@ -253,7 +253,7 @@ AutosEliminacao.adicionar = async function (auto) {
                     clav:dataInicio "${zona.dataInicio}" ;
                     clav:dataFim "${zona.dataFim}" .
             `
-            if(zona.destino=="C") {
+            if(zona.destino=="C" || zona.destino=="Conservação" || zona.destino =="NE") {
                 query += `
                     clav:${idZona} clav:temNI clav:vc_participante .
                 `
