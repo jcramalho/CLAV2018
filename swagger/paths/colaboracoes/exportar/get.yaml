@@ -1,0 +1,24 @@
+summary: Exportação das colaborações
+description: |
+  Exportação das colaborações
+
+  **Acesso permitido a:** Utilizadores com nível 4, 5, 6 e 7
+security:
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Colaborações
+responses:
+  200:
+    description: 'Exportação das colaboracões realizada com sucesso. Devolve um ficheiro JSON com a seguinte estrutura:'
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/ColaboracoesExportacao'
+        example: !!inc/file '/examples/colaboracoes/ColaboracoesExportacao.yaml'
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  500:
+    description: Erro

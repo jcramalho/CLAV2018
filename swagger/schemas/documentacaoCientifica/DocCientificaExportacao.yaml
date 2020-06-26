@@ -7,6 +7,8 @@ items:
       properties:
         $oid:
           type: string
+      required:
+        - $oid
     ano:
       type: string
       pattern: '^\d{4,}$'
