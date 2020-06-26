@@ -15,7 +15,7 @@ info:
 
     Os métodos de autenticação disponíveis podem ser acedidos ao carregar num dos cadeados. Ao carregar no botão 'Authorize' irá aparecer todos os métodos de autenticação. Se carregar no cadeado de uma rota irá apenas aparecer os métodos de autenticação que a rota suporta (permite/autoriza).
     
-    **Última alteração: 19/06/2020**
+    **Última alteração: 26/06/2020**
   version: 2.0.0
   title: CLAV API
   contact:
@@ -98,6 +98,8 @@ tags:
     description: "Portarias de Gestão de Documentos"
   - name: RADA
     description: "Relatórios de Avaliação de Documentação Acumulada"
+  - name: Colaborações
+    description: "As colaborações são constituídas por um grupo de pessoas que participaram no desenvolvimento da plataforma CLAV"
 paths: !!inc/dir [ 'paths' ] 
 components: 
   schemas: !!inc/dir [ 'schemas', { excludeTopLevelDirSeparator: true, recursive: false }]
@@ -229,6 +231,10 @@ components:
         'examples/pgd/pgds.yaml',
         'examples/pgd/pgd_ts.yaml',
         'examples/rada/radas.yaml',
-        'examples/rada/rada.yaml'
+        'examples/rada/rada.yaml',
+        'examples/colaboracoes/Colaboracao.yaml',
+        'examples/colaboracoes/ColaboracaoPOST.yaml',
+        'examples/colaboracoes/Colaboracoes.yaml',
+        'examples/colaboracoes/ColaboracoesExportacao.yaml'
       ]
   }]

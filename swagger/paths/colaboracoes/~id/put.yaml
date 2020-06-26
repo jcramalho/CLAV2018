@@ -1,0 +1,36 @@
+summary: Alterar uma colaboração
+description: |
+  Alterar uma colaboração
+
+  **Acesso permitido a:** Utilizadores com nível 4, 5, 6 e 7
+security:
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Colaborações
+parameters:
+  - name: id
+    in: path
+    description: 'Identificador de uma colaboração'
+    schema:
+      type: string
+    required: true
+requestBody:
+  description: 'Colaboração a usar'
+  required: true
+  content:
+    application/json:
+      schema:
+        $ref: '#/components/schemas/ColaboracaoPOST'
+      example: !!inc/file '/examples/colaboracoes/ColaboracaoPOST.yaml'
+responses:
+  200:
+    description: Alterada a colaboração
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
+  500:
+    description: Erro
