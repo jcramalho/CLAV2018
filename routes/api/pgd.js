@@ -2,7 +2,7 @@ var Auth = require('../../controllers/auth.js');
 var PGD = require('../../controllers/api/pgd.js');
 
 const { validationResult } = require('express-validator');
-const { verificaPGDId } = require('../validation')
+const { verificaPGDId, verificaPGDRADAId } = require('../validation')
 
 var express = require('express');
 var router = express.Router();
@@ -26,7 +26,14 @@ router.get('/rada', Auth.isLoggedInKey, (req, res) => {
         .catch(erro => res.status(404).jsonp("Erro na listagem das RADAs: " + erro))
 })
 
-router.get('/rada/:idRADA', Auth.isLoggedInKey, (req, res) => {
+router.get('/rada/:idRADA', Auth.isLoggedInKey, [
+    verificaPGDRADAId('param', 'idRADA')
+], (req, res) => {
+  const errors = validationResult(req)
+  if(!errors.isEmpty()){
+      return res.status(422).jsonp(errors.array())
+  }
+
   PGD.consultarRADA(req.params.idRADA)
       .then(dados => res.jsonp(dados))
       .catch(erro => res.status(404).jsonp("Erro na listagem das RADAs: " + erro))
