@@ -1,0 +1,65 @@
+summary: Devolve todas as colaborações
+description: |
+  Devolve todas as colaborações. Permite a filtragem pelo nome, filiação, função, descrição, data inicial e data final.
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Colaborações
+parameters:
+  - in: query
+    name: nome
+    schema:
+      type: string
+    description: Permite filtrar por nome
+    required: false
+  - in: query
+    name: filiacao
+    schema:
+      type: string
+    description: Permite filtrar por filiação
+    required: false
+  - in: query
+    name: funcao
+    schema:
+      type: string
+    description: Permite filtrar por função
+    required: false
+  - in: query
+    name: desc
+    schema:
+      type: string
+    description: Permite filtrar por descrição
+    required: false
+  - in: query
+    name: data_inicio
+    schema:
+      $ref: '#/components/schemas/Data'
+    description: Permite filtrar por data inicial
+    required: false
+  - in: query
+    name: data_fim
+    schema:
+      $ref: '#/components/schemas/Data'
+    description: Permite filtrar por data final
+    required: false
+responses:
+  200:
+    description: Lista todas as colaborações
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/Colaboracoes'
+        example: !!inc/file '/examples/colaboracoes/Colaboracoes.yaml'
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
+  500:
+    description: Erro

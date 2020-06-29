@@ -1,0 +1,25 @@
+type: array
+items:
+  type: object
+  properties:
+    _id:
+      type: object
+      properties:
+        $oid:
+          type: string
+      required:
+        - $oid
+    titulo:
+      type: string
+    data:
+      $ref: "#/components/schemas/Data"
+    desc:
+      type: string
+    ativa:
+      type: boolean
+  required:
+    - _id
+    - titulo
+    - data
+    - desc
+    - ativa

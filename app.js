@@ -180,7 +180,7 @@ app.use('/' + dataBases.apiVersion, mainRouter);
 
 //Quando o user pede a home redireciona para a documentação mais recente
 app.get('/', (req, res) => {
-    res.redirect('/' + dataBases.apiVersion + '/docs')
+    res.redirect('/' + dataBases.apiVersion + '/docs/')
 })
 
 // catch 404 and forward to error handler
