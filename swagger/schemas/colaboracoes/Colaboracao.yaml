@@ -1,0 +1,21 @@
+type: object
+properties:
+  _id:
+    type: string
+  nome:
+    type: string
+  filiacao:
+    type: string
+  funcao:
+    type: string
+  desc:
+    type: string
+  data_inicio:
+    $ref: '#/components/schemas/Data'
+  data_fim:
+    $ref: '#/components/schemas/Data'
+required:
+  - _id
+  - nome
+  - filiacao
+  - funcao

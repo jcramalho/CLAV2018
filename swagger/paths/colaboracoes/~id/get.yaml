@@ -1,0 +1,37 @@
+summary: Devolve uma colaboração
+description: |
+  Devolve uma colaboração.
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Colaborações
+parameters:
+  - name: id
+    in: path
+    description: 'Identificador de uma colaboração'
+    schema:
+      type: string
+    required: true
+responses:
+  200:
+    description: Devolve a informação de uma colaboração com id igual ao do campo 'id'
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/Colaboracao'
+        example: !!inc/file '/examples/colaboracoes/Colaboracao.yaml'
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  404:
+    description: Esta colaboração não existe
+  422:
+    $ref: '#/components/responses/ValidationParameters'
+  500:
+    description: Erro
