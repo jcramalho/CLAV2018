@@ -1,0 +1,39 @@
+type: array
+items:
+  type: object
+  properties:
+    classe:
+      type: string
+    codigo:
+      type: string
+    classePai:
+      type: string
+    titulo:
+      type: string
+    nivel:
+      $ref: '#/components/schemas/Nivel'
+    descricao:
+      type: string
+    referencia:
+      type: string
+    df:
+      $ref: '#/components/schemas/DFValor'
+    pca:
+      $ref: '#/components/schemas/PCAValor'
+    notaDF:
+      type: string
+    notaPCA:
+      type: string
+    formaContagem:
+      $ref: string 
+    diplomas:
+      type: string
+    justificacaoDF:
+      type: string
+    justificacaoPCA:
+      type: string
+  required:
+    - classe
+    - codigo
+    - titulo
+    - nivel
