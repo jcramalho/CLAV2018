@@ -18,6 +18,18 @@ router.get('/lc', (req, res) => {
       .catch(erro => res.status(404).jsonp("Erro na listagem das PGDs: " + erro))
 })
 
+router.get('/rada', (req, res) => {
+    PGD.listarRADA()
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.status(404).jsonp("Erro na listagem das RADAs: " + erro))
+})
+
+router.get('/rada/:idRADA', (req, res) => {
+  PGD.consultarRADA(req.params.idRADA)
+      .then(dados => res.jsonp(dados))
+      .catch(erro => res.status(404).jsonp("Erro na listagem das RADAs: " + erro))
+})
+
 router.get('/:idPGD', [
     verificaPGDId('param', 'idPGD')
 ], (req, res) => {

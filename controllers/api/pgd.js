@@ -47,6 +47,59 @@ PGD.listarLC = async function() {
     });
 }
 
+PGD.listarRADA = async function() {
+  let query = `
+  select ?rada ?entidade where { 
+    ?uri a clav:Antigo_RADA ;
+        clav:temEntidadeResponsavel ?e .
+    BIND(STRAFTER(STR(?uri), 'clav#') AS ?rada).
+    BIND(STRAFTER(STR(?e), 'clav#') AS ?entidade).
+  } 
+  `
+
+    return execQuery("query", query).then(response => {
+      return normalize(response);
+    });
+}
+
+PGD.consultarRADA = async function (id) {
+  let query = `
+  select ?classe ?nivel ?codigo ?referencia ?titulo ?descricao ?diplomas ?df ?notaDF ?pca ?notaPCA ?formaContagem ?justificacaoPCA ?justificacaoDF ?classePai where {
+    ?uriClasse clav:pertenceAntigoRada clav:${id} ;
+               clav:nivel ?nivel ;
+    OPTIONAL { ?uriClasse clav:codigo ?codigo; }
+    OPTIONAL { ?uriClasse clav:referencia ?referencia; }
+    OPTIONAL { ?uriClasse clav:titulo ?titulo; }
+    OPTIONAL { ?uriClasse clav:descricao ?descricao; }
+    OPTIONAL { ?uriClasse clav:diplomas ?diplomas; }
+    OPTIONAL { ?uriClasse clav:formaContagemDesnormalizada ?formaContagem; }
+    OPTIONAL { ?uriClasse clav:temDF ?uriDF.
+        OPTIONAL { ?uriDF clav:dfValor ?df }
+        OPTIONAL { ?uriDF clav:dfNota ?notaDF} 
+        OPTIONAL { ?uriDF clav:temJustificacao ?uriJustDF .
+          ?uriJustDF clav:temCriterio ?critDF .
+          ?critDF clav:conteudo ?justificacaoDF .
+        }
+    }
+    OPTIONAL { ?uriClasse clav:temPCA ?uriPCA.
+        OPTIONAL { ?uriPCA clav:pcaValor ?pca }
+        OPTIONAL { ?uriPCA clav:pcaNota ?notaPCA} 
+        OPTIONAL { ?uriPCA clav:temJustificacao ?uriJustPCA .
+          ?uriJustPCA clav:temCriterio ?critPCA .
+          ?critPCA clav:conteudo ?justificacaoPCA .
+        }
+    }
+    OPTIONAL { ?uriClasse clav:temPai ?uriClassePai }
+	BIND(STRAFTER(STR(?uriClasse), 'clav#') AS ?classe).
+	BIND(STRAFTER(STR(?uriClassePai), 'clav#') AS ?classePai).
+}
+  `
+
+  return execQuery("query", query).then(response => {
+    return normalize(response);
+  });
+}
+
 PGD.consultar = async function (idPGD) {
   let query = `
   select ?classe ?nivel ?codigo ?referencia ?titulo ?descricao ?df ?notaDF ?pca ?notaPCA ?formaContagem ?subFormaContagem ?designacaoParticipante ?designacaoDono ?classePai where {
