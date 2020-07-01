@@ -8,10 +8,12 @@ pedido:
     dados: {}
     tipo: "Classe"
     acao: "Criação"
+  historico: []
   distribuicao:
     estado: "Submetido"
     responsavel: "example2@example.com"
     data: "2020-04-13T19:24:58.278Z"
+    _id: "5ef60cc62a11bf60134caf9f"
   entidade: "ent_DGLAB"
 distribuicao:
   estado: "Submetido"

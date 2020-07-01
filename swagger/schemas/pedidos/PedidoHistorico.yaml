@@ -1,0 +1,17 @@
+type: array
+items:
+  type: object
+  additionalProperties:
+    type: object
+    properties:
+      cor:
+        type: string
+      dados:
+        type: string
+      nota:
+        type: string
+        nullable: true
+    required:
+      - cor
+      - dados
+      - nota

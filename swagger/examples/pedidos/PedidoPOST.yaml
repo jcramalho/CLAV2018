@@ -1,6 +1,7 @@
 tipoPedido: "Criação"
 tipoObjeto: "Classe"
 novoObjeto: {}
+historico: []
 user:
   email: "example2@example.com"
 entidade: "ent_DGLAB"
