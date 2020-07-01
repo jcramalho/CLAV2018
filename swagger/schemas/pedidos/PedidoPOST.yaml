@@ -8,6 +8,8 @@ properties:
     $ref: '#/components/schemas/PedidoDados'
   objetoOriginal:
     $ref: '#/components/schemas/PedidoDados'
+  historico:
+    $ref: '#/components/schemas/PedidoHistorico'
   user:
     type: object
     properties:
@@ -26,3 +28,4 @@ required:
   - novoObjeto
   - user
   - entidade
+  - historico

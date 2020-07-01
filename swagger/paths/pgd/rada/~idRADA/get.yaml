@@ -1,0 +1,32 @@
+summary: Consulta da TS de 'antigo RADA' não inserido pela plataforma
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
+tags:
+  - PGD
+description: Consulta da TS de 'antigo RADA' não inserido pela plataforma
+parameters:
+  - name: idRADA
+    in: path
+    description: Identificador de um 'antigo RADA' não inserido pela plataforma
+    schema:
+      $ref: '#/components/schemas/PGDRADAId'
+    required: true
+responses:
+  200:
+    description: Consulta da TS de um 'antigo RADA' não inserido pela plataforma
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/pgdRADA_ts'
+        example: !!inc/file '/examples/pgd/pgdRADA_ts.yaml'
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
+  500:
+    description: Erro

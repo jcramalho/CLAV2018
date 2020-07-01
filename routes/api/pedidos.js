@@ -5,7 +5,7 @@ var router = express.Router();
 
 var validKeys = ["criadoPor", "codigo", "tipo", "acao"];
 const { body, validationResult } = require('express-validator');
-const { existe, estaEm, verificaPedidoCodigo, verificaExisteEnt, eMongoId, vcPedidoTipo, vcPedidoAcao, vcPedidoEstado } = require('../validation')
+const { existe, estaEm, verificaPedidoCodigo, verificaExisteEnt, eMongoId, vcPedidoTipo, vcPedidoAcao, vcPedidoEstado, verificaLista } = require('../validation')
 
 // Lista todos os pedidos que statisfazem uma condição
 router.get('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
@@ -63,6 +63,7 @@ router.post('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), 
     estaEm('body', 'tipoObjeto', vcPedidoTipo),
     estaEm('body', 'tipoPedido', vcPedidoAcao),
     verificaExisteEnt('body', 'entidade'),
+    verificaLista('body', 'historico'),
     body('despacho').customSanitizer(v => {
         return !!v ? v : "Submissão inicial"
     })
@@ -98,6 +99,7 @@ router.put('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
     existe('body', 'pedido.objeto.dados').optional(),
     estaEm('body', 'pedido.objeto.tipo', vcPedidoTipo),
     estaEm('body', 'pedido.objeto.acao', vcPedidoAcao),
+    verificaLista('body', 'pedido.historico'),
     existe('body', 'distribuicao'),
     estaEm('body', 'distribuicao.estado', vcPedidoEstado),
     existe('body', 'distribuicao.responsavel')

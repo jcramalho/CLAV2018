@@ -224,6 +224,12 @@ module.exports.verificaPGDId = function (location, field, ifF){
     return module.exports.comecaPorEMatch(location, field, 'pgd_', '^pgd_.+$', ifF)
 }
 
+//Valida o id de uma possível PGD RADA
+module.exports.verificaPGDRADAId = function (location, field, ifF){
+    ifF = ifF || undefined
+    return module.exports.comecaPorEMatch(location, field, 'tsRada_', '^tsRada_.+$', ifF)
+}
+
 //Valida um conjunto de ids de possiveis entidades
 module.exports.verificaEnts = function (location, field, ifF){
     ifF = ifF || undefined
