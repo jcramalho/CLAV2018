@@ -33,7 +33,7 @@ services:
       - API_VERSION=${API_VERSION}
       - INTERFACE_HOSTS=${INTERFACE_HOSTS}
   nginx:
-    image: nginx
+    image: nginx:1.19
     container_name: clav_nginx
     restart: always
     environment:
