@@ -1,4 +1,4 @@
-var Notificacao = require('../../controllers/api/notificacao.js')
+var Notificacao = require('../../controllers/api/notificacoes.js')
 var Auth = require('../../controllers/auth.js');
 
 var express = require('express');

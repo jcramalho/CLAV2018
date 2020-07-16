@@ -44,11 +44,7 @@ var UserSchema = mongoose.Schema({
 		password: {
 			type: String
 		}
-	},
-	notificacoes: [{
-			type: String
-		}
-	]
+	}
 });
 
 module.exports = mongoose.model('User', UserSchema, 'users');

@@ -1,5 +1,6 @@
 var User = require('../../models/user');
 var AuthCall = require('../../models/auth');
+const Notifier = require('../../config/Notifier');
 var bcrypt = require('bcryptjs');
 var xml2js = require('xml2js');
 var mongoose = require('mongoose');
@@ -13,6 +14,7 @@ Users.createUser = function (newUser, callback) {
 		bcrypt.hash(newUser.local.password, salt, async function (err, hash) {
 			newUser.local.password = hash;
             try{
+                Notifier.bind(newUser.email, newUser.entidade)
 			    newUser = await newUser.save()
                 callback(null, newUser)
             }catch(err){
