@@ -19,12 +19,13 @@ Notificacoes.getByEnt = async function(ent){
 
 Notificacoes.criar = async function(n){
     try{    
-        console.log(n)
         var newNotificacao = new Notificacao(n);
-        Notifier.pubUsr(n.responsavel, n)
-        Notifier.pubEnt(n.entidade, n)
+        
+        if(n.responsavel) Notifier.pubUsr(n.responsavel, newNotificacao)
+        Notifier.pubEnt(n.entidade, newNotificacao)
 
         newNotificacao = await newNotificacao.save();
+
         return newNotificacao;
     }catch(err) {
         console.log(err)

@@ -77,8 +77,7 @@ router.post('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), 
                 pedido: req.body.novoObjeto.codigo,
                 acao: req.body.tipoPedido,
                 tipo: req.body.tipoObjeto,
-                novoEstado: "Submetido",
-                responsavel: req.body.user.email
+                novoEstado: "Submetido"
             }
             Notificacao.criar(notificacao);
 
