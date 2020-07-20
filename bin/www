@@ -7,6 +7,8 @@
 var app = require('../app');
 var debug = require('debug')('M51-CLAV_WEB:server');
 var http = require('http');
+var socket = require('socket.io');
+var open = require('amqplib').connect('amqp://localhost');
 
 /**
  * Get port from environment and store in Express.
@@ -20,6 +22,36 @@ app.set('port', port);
  */
 
 var server = http.createServer(app);
+
+/**
+ * RabbitMQ WebSockets
+ */
+var io = socket(server);
+
+io.on('connection', (socket) => {
+    console.log('made socket connection', socket.id);
+
+    // Handle eamil event
+    socket.on('email', (data) => {
+        q = data.email;
+        console.log(data.email)
+        // Consumer
+        open.then((conn) => conn.createChannel())
+            .then((ch) => {
+                return ch.assertQueue(q)
+                    .then((ok) => {
+                        channel = ch
+                        ch.consume(q, (msg) => {
+                            io.sockets.emit(q, msg.content.toString());
+                            ms = msg;
+                            console.log(" [x] %s:'%s'", msg.fields.routingKey, msg.content.toString());
+                        }, {
+                            noAck: false
+                        });
+                    });
+            }).catch(console.warn);
+    });
+});
 
 /**
  * Listen on provided port, on all network interfaces.
