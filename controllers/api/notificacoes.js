@@ -21,8 +21,9 @@ Notificacoes.criar = async function(n){
     try{    
         var newNotificacao = new Notificacao(n);
         
-        if(n.responsavel) Notifier.pubUsr(n.responsavel, newNotificacao)
-        Notifier.pubEnt(n.entidade, newNotificacao)
+        if (n.novoEstado === "Validado" || n.novoEstado === "Devolvido" || n.novoEstado === "Submetido") Notifier.pubEnt(n.entidade, newNotificacao)
+        
+        else Notifier.pubUsr(n.responsavel, newNotificacao)
 
         newNotificacao = await newNotificacao.save();
 
