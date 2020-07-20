@@ -66,5 +66,3 @@ Notifier.pubEnt = function (ent, msg){
 function closeConnection () {
     connection.close();
 }
-
-//setTimeout(function() {closeConnection()},2000)
