@@ -1,4 +1,6 @@
 var mongoose = require('mongoose');
+var vcTipoUser = require('../routes/validation').vcTipoUser
+var vcVerbo = require('../routes/validation').vcVerbo
 
 var LogSchema = new mongoose.Schema({
     route: {
@@ -7,12 +9,12 @@ var LogSchema = new mongoose.Schema({
     },
     method: {
         type: String,
-        enum: ["GET", "POST", "PUT", "DELETE"],
+        enum: vcVerbo,
         required: true
     },
     type: {
         type: String,
-        enum: ["User", "Chave", "Desconhecido"],
+        enum: vcTipoUser,
         required: true
     },
     id: {

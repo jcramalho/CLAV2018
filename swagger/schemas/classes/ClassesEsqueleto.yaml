@@ -1,0 +1,26 @@
+type: array
+items:
+  type: object
+  properties:
+    codigo:
+      $ref: '#/components/schemas/Codigo'
+    titulo:
+      type: string
+    descricao:
+      type: string
+    dono:
+      type: string
+    participante:
+      type: string
+    pca:
+      $ref: '#/components/schemas/PCAValor'
+    df:
+      $ref: '#/components/schemas/DFValor'
+  required:
+    - codigo
+    - titulo
+    - descricao
+    - dono
+    - participante
+    - pca
+    - df

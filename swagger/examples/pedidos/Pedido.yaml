@@ -1,12 +1,12 @@
-codigo: "2020-11"
+codigo: "2020-0000011"
 estado: "Submetido"
 data: "2020-04-13T19:13:09.802Z"
 criadoPor: "example@example.com"
 objeto:
-  codigo: "c100"
+  codigo: "ent_DGLAB"
   dados: {}
-  tipo: "Classe"
-  acao: "Criação"
+  tipo: "Entidade"
+  acao: "Alteração"
 distribuicao:
   - estado: "Submetido"
     responsavel: "example2@example.com"
@@ -16,4 +16,15 @@ distribuicao:
       email: "example@example.com"
     data: "2020-04-19T19:13:09.802Z"
     despacho: "Despacho a inserir"
+    _id: "5ef60cc62a11bf60134caf9f"
+historico:
+  - designacao:
+      cor: "amarelo"
+      dados: "Agência para a Gestão Integrada de Fogos Rurais, IP "
+      nota: null
+    internacional:
+      cor: "amarelo"
+      dados: "Sim"
+      nota: null
 entidade: "ent_DGLAB"
+_id: "5ef60cc62a11bf60134caf9e"

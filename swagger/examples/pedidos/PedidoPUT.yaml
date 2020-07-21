@@ -1,6 +1,6 @@
 pedido:
   _id: "5e947eeb7872b62b2b7c2754"
-  codigo: "2020-11"
+  codigo: "2020-0000011"
   estado: "Submetido"
   data: "2020-04-18T19:24:58.278Z"
   criadoPor: "example@example.com"
@@ -8,10 +8,12 @@ pedido:
     dados: {}
     tipo: "Classe"
     acao: "Criação"
+  historico: []
   distribuicao:
     estado: "Submetido"
     responsavel: "example2@example.com"
     data: "2020-04-13T19:24:58.278Z"
+    _id: "5ef60cc62a11bf60134caf9f"
   entidade: "ent_DGLAB"
 distribuicao:
   estado: "Submetido"

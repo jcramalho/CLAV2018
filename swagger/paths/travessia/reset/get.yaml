@@ -1,5 +1,8 @@
 summary: Reset das travessias
-description: Carrega as travessias para cache
+description: |
+  Carrega as travessias para cache
+
+  **Acesso permitido a:** Utilizadores com nível 7
 security:
   - userQuery: []
   - userAuth: []

@@ -17,3 +17,4 @@ value:
         desc: "DF distinto:<ul><li>Deve haver uma relação de sintese (de ou por) entre as classes 4 filhas.</li></ul>"
         idInv: "inv_3"
         query: "PREFIX : <http://jcr.di.uminho.pt/m51-clav#>\nselect ?c ?c_titulo ?cf1 ?cf1_titulo ?df1 ?dfv1 ?cf2 ?cf2_titulo ?df2 ?dfv2 where {\n    ?c rdf:type :Classe_N3 .\n    ?c :temFilho ?cf1 .\n    ?c :temFilho ?cf2 .\n    ?c :titulo ?c_titulo .\n    ?cf1 :titulo ?cf1_titulo .\n    ?cf2 :titulo ?cf2_titulo .\n\n ?cf1 :temDF ?df1 .\n    ?cf2 :temDF ?df2 .\n    ?df1 :dfValor ?dfv1 .\n    ?df2 :dfValor ?dfv2 .\n\n    FILTER (\n        ?cf1 != ?cf2\n        && ?dfv1 != ?dfv2\n    && NOT EXISTS { ?cf1 :eSinteseDe ?cf2 . }\n    && NOT EXISTS { ?cf2 :eSinteseDe ?cf1 . }\n    )\n}"
+summary: Exemplo da lista de todos os invariantes

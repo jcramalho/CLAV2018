@@ -1,5 +1,8 @@
 summary: Exporta todos os triplos do repositório
-description: Exporta todos os triplos do repositório
+description: |
+  Exporta todos os triplos do repositório
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []
@@ -16,10 +19,10 @@ parameters:
     required: false
   - in: query
     name: fs
-    description: "Formato em que é devolvido os triplos. Pode ser um dos seguintes valores: turtle (text/turtle), json-ld (application/ld+json) ou rdf-xml (application/rdf+xml). No caso de não ser passado nenhum formato ou o que é colocado não é suportado é devolvido turtle. O formato também pode ser indicado na header 'Accept' sofrendo das mesmas restrições que se for indicado por query. Caso seja definido das duas formas a fornecida pela query string é a que é usada."
+    description: "Formato em que é devolvido os triplos. Pode ser um dos seguintes valores: Turtle (text/turtle), JSON-LD (application/ld+json) ou RDF-XML (application/rdf+xml). No caso de não ser passado nenhum formato ou o que é colocado não é suportado é devolvido turtle. O formato também pode ser indicado na header 'Accept' sofrendo das mesmas restrições que se for indicado por query. Caso seja definido das duas formas a fornecida pela query string é a que é usada."
     schema:
       type: string
-      enum: [turtle, text/turtle, json-ld, application/ld+json, rdf-xml, application/rdf+xml]
+      enum: [text/turtle, application/ld+json, application/rdf+xml]
     required: false
 responses:
   200:
@@ -30,27 +33,12 @@ responses:
           type: string
           format: binary
         example: !!inc/file '/examples/ontologia/Turtle.yaml'
-      turtle:
-        schema:
-          type: string
-          format: binary
-        example: !!inc/file '/examples/ontologia/Turtle.yaml'
       application/ld+json:
         schema:
           type: string
           format: binary
         example: !!inc/file '/examples/ontologia/JSONLD.yaml'
-      json-ld:
-        schema:
-          type: string
-          format: binary
-        example: !!inc/file '/examples/ontologia/JSONLD.yaml'
       application/rdf+xml:
-        schema:
-          type: string
-          format: binary
-        example: !!inc/file '/examples/ontologia/RDFXML.yaml'
-      rdf-xml:
         schema:
           type: string
           format: binary

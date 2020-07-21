@@ -4,6 +4,8 @@ properties:
     type: string
   dados:
     $ref: '#/components/schemas/PedidoDados'
+  dadosOriginais:
+    $ref: '#/components/schemas/PedidoDados'
   tipo:
     $ref: '#/components/schemas/PedidoTipo'
   acao:

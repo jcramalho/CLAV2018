@@ -38,17 +38,14 @@ function getAcceptExtension(format){
 
     switch(format){
         case 'text/turtle':
-        case "turtle":
             accept = 'text/turtle'
             extension = 'ttl'
             break
         case 'application/ld+json':
-        case "json-ld":
             accept = 'application/ld+json'
             extension = 'jsonld'
             break
         case 'application/rdf+xml':
-        case "rdf-xml":
             accept = 'application/rdf+xml'
             extension = 'rdf'
             break
@@ -179,7 +176,6 @@ Ontologia.atualizaData = async function() {
 
     var cDate = currentDate()
     if(date != cDate){
-        console.log("AQUI")
         const deleteQuery = `DELETE DATA {
             <http://jcr.di.uminho.pt/m51-clav> <http://purl.org/dc/elements/1.1#date> "${date}" .
         }`

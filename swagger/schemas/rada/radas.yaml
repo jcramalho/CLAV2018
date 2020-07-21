@@ -1,0 +1,27 @@
+type: array
+items:
+  type: object
+  properties:
+    codigo:
+      type: string
+    dataAprovacao:
+      type: string
+    titulo:
+      type: string
+    entResp:
+      type: array
+      items:
+        type: object
+        properties:
+          sigla:
+            type: string
+          designacao:
+            type: string
+        required:
+          - sigla
+          - designacao
+  required:
+    - codigo
+    - dataAprovacao
+    - titulo
+    - entResp

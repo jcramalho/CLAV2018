@@ -1,5 +1,8 @@
 summary: Devolve a(s) entidade(s) participante(s) do processo
-description: Devolve a(s) entidade(s) participante(s) do processo
+description: |
+  Devolve a(s) entidade(s) participante(s) do processo
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

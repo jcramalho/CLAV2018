@@ -1,0 +1,30 @@
+summary: Devolve as diferentes classes da documentação cientifica
+description: |
+  Devolve as diferentes classes da documentação cientifica
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Documentação Científica
+responses:
+  200:
+    description: Lista as diferentes classes da documentação científica
+    content:
+      application/json:
+        schema:
+          type: array
+          items:
+            type: string
+        example:
+          - Provas Académicas
+          - Comunicação e Artigos
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  500:
+    description: Erro

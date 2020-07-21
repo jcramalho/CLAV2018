@@ -1,0 +1,69 @@
+type: object
+properties:
+  id:
+    $ref: '#/components/schemas/Codigo'
+  nome:
+    type: string
+  titulo:
+    type: string
+  status:
+    $ref: '#/components/schemas/Status'
+  tp:
+    $ref: '#/components/schemas/TipoProcesso'
+  pt:
+    $ref: '#/components/schemas/ProcessoTransversal'
+  na:
+    type: string
+  exemploNa:
+    type: string
+  ne:
+    type: string
+  ti:
+    type: string
+  pca:
+    $ref: '#/components/schemas/PCAValor'
+  fc_pca:
+    $ref: '#/components/schemas/FormaContagem'
+  sfc_pca:
+    $ref: '#/components/schemas/SubFormaContagem'
+  crit_pca:
+    type: array
+    items:
+      $ref: '#/components/schemas/TipoJustificacaoPCA'
+  df:
+    $ref: '#/components/schemas/DFValor'
+  crit_df:
+    type: array
+    items:
+      $ref: '#/components/schemas/TipoJustificacaoDF'
+  donos:
+    type: array
+    items:
+      oneOf:
+        - $ref: '#/components/schemas/EntidadeId'
+        - $ref: '#/components/schemas/TipologiaId'
+  participantes:
+    type: array
+    items:
+      oneOf:
+        - $ref: '#/components/schemas/EntidadeId'
+        - $ref: '#/components/schemas/TipologiaId'
+required:
+  - id
+  - nome
+  - titulo
+  - status
+  - tp
+  - pt
+  - na
+  - exemploNa
+  - ne
+  - ti
+  - pca
+  - fc_pca
+  - sfc_pca
+  - crit_pca
+  - df
+  - crit_df
+  - donos
+  - participantes

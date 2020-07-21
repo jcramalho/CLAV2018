@@ -162,17 +162,14 @@ module.exports.outputFormat = async (req, res, next) => {
 
         switch (outF) {
             case 'application/json':
-            case 'json':
                 res.jsonp(res.locals.dados)
                 break
             case 'application/xml':
-            case 'xml':
                 res.setHeader('content-type', 'application/xml')
                 res.send(json2xml(res.locals.dados))
                 break
             case 'text/csv':
             case 'excel/csv':
-            case 'csv':
                 if(res.locals.tipo){
                     res.setHeader('content-type', 'text/csv')
                     var csv = json2csv(res.locals.dados, res.locals.tipo)

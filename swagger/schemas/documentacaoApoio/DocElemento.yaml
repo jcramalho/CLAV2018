@@ -1,0 +1,33 @@
+type: object
+properties:
+  _id:
+    type: string
+  texto:
+    type: string
+  visivel:
+    type: boolean
+  ficheiro:
+    type: object
+    properties:
+      _id:
+        type: string
+      data:
+        type: string
+      nome:
+        type: string
+      path:
+        type: string
+      mimetype:
+        type: string
+      size:
+        type: integer
+    required:
+      - _id
+      - nome
+      - path
+      - mimetype
+      - size
+required:
+  - _id
+  - texto
+  - visivel

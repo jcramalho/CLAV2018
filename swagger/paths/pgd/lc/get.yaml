@@ -1,0 +1,23 @@
+summary: Listagem das Legislações do tipo Portaria em que existem TS derivadas da LC
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
+tags:
+  - PGD
+description: Listagem das Legislações do tipo Portaria em que existem TS derivadas da LC
+responses:
+  200:
+    description: Lista com as Legislações do tipo Portaria em que existem TS derivadas da LC
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/pgds'
+        example: !!inc/file '/examples/pgd/pgds.yaml'
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  500:
+    description: Erro

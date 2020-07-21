@@ -1,0 +1,6 @@
+type: object
+additionalProperties:
+  description: "A chave é o código de um processo"
+  type: array
+  items:
+    $ref: '#/components/schemas/Codigo'

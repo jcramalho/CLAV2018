@@ -41,4 +41,17 @@ value: |
               <id type="string">c800.20.500</id>
           </item>
       </participante>
+      <entidades type="array">
+           <item index="0" type="object">
+              <designacao type="string">Autoridade Aeronáutica Nacional</designacao>
+              <sigla type="string">AAN</sigla>
+              <id type="string">ent_AAN</id>
+          </item>
+          <item index="1" type="object">
+              <designacao type="string">Colégio Militar</designacao>
+              <sigla type="string">CMil</sigla>
+              <id type="string">ent_CMil</id>
+          </item>
+      </entidades>
   </root>
+summary: Exemplo de uma tipologia completa

@@ -1,5 +1,8 @@
 summary: Verifica a existência do número de um documento legislativo
-description: Verifica a existência do número de um documento legislativo
+description: |
+  Verifica a existência do número de um documento legislativo
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

@@ -1,0 +1,24 @@
+summary: Exportação das notícias
+description: |
+  Exportação das notícias
+
+  **Acesso permitido a:** Utilizadores com nível 4, 5, 6 e 7
+security:
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Notícias
+responses:
+  200:
+    description: 'Exportação das notícias realizada com sucesso. Devolve um ficheiro JSON com a seguinte estrutura:'
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/NoticiasExportacao'
+        example: !!inc/file '/examples/noticias/NoticiasExportacao.yaml'
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  500:
+    description: Erro

@@ -1,0 +1,28 @@
+summary: Consulta de um RADA
+security:
+  - userQuery: []
+  - userAuth: []
+tags:
+  - RADA
+description: Consulta de um RADA
+parameters:
+  - name: id
+    in: path
+    description: Identificador de um RADA
+    schema:
+      type: string
+    required: true
+responses:
+  200:
+    description: Consulta de um RADA
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/rada'
+        example: !!inc/file '/examples/rada/rada.yaml'
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  500:
+    description: Erro

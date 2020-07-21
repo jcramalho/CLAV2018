@@ -1,0 +1,10 @@
+type: array
+items:
+  properties:
+    codigo:
+      $ref: '#/components/schemas/Codigo'
+    fecho:
+      $ref: '#/components/schemas/TravessiaEspecial'
+  required:
+    - codigo
+    - fecho

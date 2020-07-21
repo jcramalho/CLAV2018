@@ -1,5 +1,8 @@
 summary: Devolve a lista de todos os autos de eliminação
-description: Devolve a lista de todos os autos de eliminação
+description: |
+  Devolve a lista de todos os autos de eliminação
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

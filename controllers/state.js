@@ -6,9 +6,11 @@ var fs = require('fs')
  */
 var Classes = require('./api/classes.js')
 var Legs = require('./api/leg.js')
+var Entidades = require('./api/entidades.js')
 var NotasAp = require('./api/notasAp.js')
 var ExemplosNotasAp = require('./api/exemplosNotasAp.js')
 var TermosIndice = require('./api/termosIndice.js')
+var TravessiaEspecial = require('./travessiaEspecial.js')
 
 var classTree = []
 var classList = []
@@ -22,8 +24,26 @@ var termosInd = []
 
 var legislacao = []
 
+var entidades = []
+
 // Índice de pesquisa para v-trees: 
 var indicePesquisa = []
+
+//reload/reset
+
+exports.reloadLegislacao = async () => {
+    console.debug("A carregar a legislação da BD para a cache...")
+    legislacao = []
+    legislacao = await loadLegs();
+    console.debug("Terminei de carregar a legislação.")
+}
+
+exports.reloadEntidades = async () => {
+    console.debug("A carregar as entidades da BD para a cache...")
+    entidades = []
+    entidades = await loadEntidades();
+    console.debug("Terminei de carregar as entidades.")
+}
 
 exports.reset = async () => { 
     try {
@@ -36,13 +56,16 @@ exports.reset = async () => {
         classTreeInfo = JSON.parse(fs.readFileSync('./public/classes/classesInfo.json'))
         console.debug("Terminei de carregar a informação completa das classes.")
 
-        console.debug("A carregar a legislação da BD para a cache...")
-        legislacao = await loadLegs();
-        console.debug("Terminei de carregar a legislação.")
+        await exports.reloadLegislacao()
+
+        await exports.reloadEntidades()
 
         console.debug("A criar o índice de pesquisa...")
         indicePesquisa = await criaIndicePesquisa()
         console.debug("Índice de pesquisa criado com " + indicePesquisa.length + " entradas.")
+
+        //dicionário da travessia especial
+        await TravessiaEspecial.reset()
     } catch(err) {
         throw err
     }
@@ -57,30 +80,33 @@ exports.reload = async () => {
         exemplosNotasAplicacao = []
         termosInd = []
 
-        legislacao = []
-
         classTree = await loadClasses();
         classList = [].concat.apply([], levelClasses)
         console.debug("Informação base das classes carregada...")
 
-        console.debug("A carregar a legislação da BD para a cache...")
-        legislacao = await loadLegs();
-        console.debug("Terminei de carregar a legislação.")
+        await exports.reloadLegislacao()
+
+        await exports.reloadEntidades()
 
         console.debug("A criar o índice de pesquisa...")
         indicePesquisa = await criaIndicePesquisa()
         console.debug("Índice de pesquisa criado com " + indicePesquisa.length + " entradas.")
 
-        //Carrega a info completa de todas as classes de forma assincrona
+        //Carrega a info completa de todas as classes
         console.debug("A obter a informação completa das classes...")
         classTreeInfo = await loadClassesInfo()
         console.debug("a guardar a informação num ficheiro...")
         fs.writeFileSync('./public/classes/classesInfo.json', JSON.stringify(classTreeInfo, null, 4))
         console.debug("Terminei de carregar a informação completa das classes.")
+
+        //dicionário da travessia especial
+        await TravessiaEspecial.reset()
     } catch(err) {
         throw err
     }
 }
+
+//classes
 
 exports.getAllClasses = async () => { return classTree }
 exports.getClassesFlatList = async () => { return classList }
@@ -175,6 +201,53 @@ exports.subarvore = async id => {
     return ret
 }
 
+//função auxiliar para pre selecionados, verifica se uma ent é dona
+function isDono(donos, entId){
+    return donos.filter(e => e.idDono == entId).length > 0 ? "Sim" : "Não"
+}
+
+//função auxiliar para pre selecionados, verifica se uma ent é participante e devolve o tipo de participação
+function isParticipante(participantes, entId){
+    var found = "Não"
+
+    for(var i = 0; i < participantes.length && found == "Não"; i++){
+        if(participantes[i].idParticipante == entId){
+            found = participantes[i].participLabel
+        }
+    }
+
+    return found
+}
+
+//função auxiliar para esqueleto, transforma uma classe
+function getClasseEsq(classe){
+    return {
+        codigo: classe.codigo,
+        titulo: classe.titulo,
+        descricao: classe.descricao,
+        status: classe.status,
+        dono: "",
+        participante: "",
+        pca: classe.pca.valores,
+        df: classe.df.valor
+    }
+}
+
+//função auxiliar para pre selecionados, transforma uma classe
+function getClassePreSel(classe, entId){
+    return {
+        codigo: classe.codigo,
+        titulo: classe.titulo,
+        descricao: classe.descricao,
+        status: classe.status,
+        dono: entId ? isDono(classe.donos, entId) : "",
+        participante: entId ? isParticipante(classe.participantes, entId) : "",
+        pca: classe.pca.valores,
+        formaContagem: classe.pca.formaContagem,
+        df: classe.df.valor
+    }
+}
+
 //Devolve o esqueleto que serve de formulário para a criação de uma TS
 exports.getEsqueleto = () => {
     var ret = []
@@ -182,27 +255,9 @@ exports.getEsqueleto = () => {
     classTreeInfo.forEach(c1 => {
         c1.filhos.forEach(c2 => {
             c2.filhos.forEach(c3 => {
-                ret.push({
-                    codigo: c3.codigo,
-                    titulo: c3.titulo,
-                    descricao: c3.descricao,
-                    status: c3.status,
-                    dono: "",
-                    participante: "",
-                    pca: c3.pca.valores,
-                    df: c3.df.valor
-                })
+                ret.push(getClasseEsq(c3))
                 c3.filhos.forEach(c4 => {
-                    ret.push({
-                        codigo: c4.codigo,
-                        titulo: c4.titulo,
-                        descricao: c4.descricao,
-                        status: c4.status,
-                        dono: "",
-                        participante: "",
-                        pca: c4.pca.valores,
-                        df: c4.df.valor
-                    })
+                    ret.push(getClasseEsq(c4))
                 })
             })
         })
@@ -211,15 +266,24 @@ exports.getEsqueleto = () => {
     return ret
 }
 
-exports.getIndicePesquisa = async () => { return indicePesquisa }
+//Devolve para uma entidade o esqueleto pre selecionado
+exports.getPreSelecionados = (entId) => {
+    var ret = []
 
-exports.getLegislacao = (id) => {
-    let res = legislacao.filter(l => l.id == id)
-    if (res.length > 0) {
-        return JSON.parse(JSON.stringify(res[0]))
-    }
-    else
-        return null
+    classTreeInfo.forEach(c1 => {
+        ret.push(getClassePreSel(c1, null))
+        c1.filhos.forEach(c2 => {
+            ret.push(getClassePreSel(c2, null))
+            c2.filhos.forEach(c3 => {
+                ret.push(getClassePreSel(c3, entId))
+                c3.filhos.forEach(c4 => {
+                    ret.push(getClassePreSel(c4, entId))
+                })
+            })
+        })
+    })
+
+    return ret
 }
 
 // Verifica a existência do código de uma classe: true == existe, false == não existe
@@ -317,14 +381,39 @@ function filterEntsTips(classe, ent_tip){
     return donos.length > 0 || parts.length > 0
 }
 
+//função auxiliar recursiva para obter apenas codigo, titulo, status e filhos dos filhos
+function getFilhosBase(filhos){
+    var ret = []
+
+    for(var i=0; i < filhos.length; i++){
+        ret.push({
+            id: filhos[i].id,
+            codigo: filhos[i].codigo,
+            titulo: filhos[i].titulo,
+            status: filhos[i].status,
+            filhos: getFilhosBase(filhos[i].filhos)
+        })
+    }
+
+    return ret
+}
+
 //Função auxiliar recursiva para getProcEntsTips
-function getProcEntsTipsRec(classes, ent_tip, allInfo){
+function getProcEntsTipsRec(classes, ent_tip, allInfo, nivelFilter){
     var ret = []
 
     for(var i = 0; i < classes.length; i++){
-        var filhos = getProcEntsTipsRec(classes[i].filhos, ent_tip, allInfo)
+        if(nivelFilter > 0){
+            var filhos = getProcEntsTipsRec(classes[i].filhos, ent_tip, allInfo, nivelFilter - 1)
+        }else{
+            if(allInfo){
+                var filhos = JSON.parse(JSON.stringify(classes[i].filhos))
+            }else{
+                var filhos = getFilhosBase(classes[i].filhos)
+            }
+        }
         
-        if(filterEntsTips(classes[i], ent_tip) || (filhos && filhos.length > 0)){
+        if(filterEntsTips(classes[i], ent_tip) || (nivelFilter != 0 && filhos && filhos.length > 0)){
             var classe
             if(allInfo){
                 classe = JSON.parse(JSON.stringify(classes[i]))
@@ -353,71 +442,10 @@ exports.getProcEntsTips = (entidades, tipologias, allInfo) => {
     var ret = []
 
     if(ent_tip.length > 0){
-        ret = getProcEntsTipsRec(classTreeInfo, ent_tip, allInfo)
+        ret = getProcEntsTipsRec(classTreeInfo, ent_tip, allInfo, 2)
     }
 
     return ret;
-}
-
-async function criaIndicePesquisa(){
-    let notas = await NotasAp.todasNotasAp()
-    let exemplos = await ExemplosNotasAp.todosExemplosNotasAp()
-    let tis = await TermosIndice.listar()
-    let indice = []
-    
-    //  [ {codigo:"cxxx", titulo:"...", notas: [], exemplos:[], tis:[]}, ...]
-    indice = indice.concat(classList.map(c => ({codigo: c.codigo, titulo: c.titulo, notas:[], exemplos:[], tis:[]})))
-    // Vamos colocar as notas no processo certo
-    notas.forEach(n => {
-        var index = indice.findIndex(c => {
-            return ('c'+c.codigo) == n.cProc
-        })
-        if(index != -1){
-            indice[index].notas.push(n.nota)
-        }
-        else{
-            console.log('Cálculo do índice::Notas:: não encontrei a classe com código: ' + n.cProc)
-        }
-    })
-    
-    // Vamos fazer o mesmo para os exemplos
-    exemplos.forEach(e => {
-        var index = indice.findIndex(c => {
-            return ('c'+c.codigo) == e.cProc
-        })
-        if(index != -1){
-            indice[index].exemplos.push(e.exemplo)
-        }
-        else{
-            console.log('Cálculo do índice::Exemplos:: não encontrei a classe com código: ' + e.cProc)
-        }
-    })
-    // Vamos fazer o mesmo para os tis
-    tis.forEach(t => {
-        var index = indice.findIndex(c => {
-            return ('c'+c.codigo) == t.codigoClasse
-        })
-        if(index != -1){
-            indice[index].tis.push(t.termo)
-        }
-        else{
-            console.log('Cálculo do índice::Termos:: não encontrei a classe com código: ' + t.codigoClasse)
-        }
-    }) 
-    
-    return indice
-}
-
-// Carrega o catálogo legislativo na cache
-
-async function loadLegs() {
-    try{
-        let legs = await Legs.listar()
-        return legs
-    }
-    catch(err) {
-        throw err;
-    }
 }
 
 async function loadClasses() {
@@ -499,4 +527,110 @@ async function loadClassesInfo() {
     }catch(err){
         throw err
     }   
+}
+
+//indice de pesquisa
+
+exports.getIndicePesquisa = async () => { return indicePesquisa }
+
+async function criaIndicePesquisa(){
+    let notas = await NotasAp.todasNotasAp()
+    let exemplos = await ExemplosNotasAp.todosExemplosNotasAp()
+    let tis = await TermosIndice.listar()
+    let indice = []
+
+    //  [ {codigo:"cxxx", titulo:"...", notas: [], exemplos:[], tis:[]}, ...]
+    indice = indice.concat(classList.map(c => ({codigo: c.codigo, titulo: c.titulo, notas:[], exemplos:[], tis:[]})))
+    // Vamos colocar as notas no processo certo
+    notas.forEach(n => {
+        var index = indice.findIndex(c => {
+            return ('c'+c.codigo) == n.cProc
+        })
+        if(index != -1){
+            indice[index].notas.push(n.nota)
+        }
+        else{
+            console.log('Cálculo do índice::Notas:: não encontrei a classe com código: ' + n.cProc)
+        }
+    })
+
+    // Vamos fazer o mesmo para os exemplos
+    exemplos.forEach(e => {
+        var index = indice.findIndex(c => {
+            return ('c'+c.codigo) == e.cProc
+        })
+        if(index != -1){
+            indice[index].exemplos.push(e.exemplo)
+        }
+        else{
+            console.log('Cálculo do índice::Exemplos:: não encontrei a classe com código: ' + e.cProc)
+        }
+    })
+    // Vamos fazer o mesmo para os tis
+    tis.forEach(t => {
+        var index = indice.findIndex(c => {
+            return ('c'+c.codigo) == t.codigoClasse
+        })
+        if(index != -1){
+            indice[index].tis.push(t.termo)
+        }
+        else{
+            console.log('Cálculo do índice::Termos:: não encontrei a classe com código: ' + t.codigoClasse)
+        }
+    })
+
+    return indice
+}
+
+//legislacao
+
+exports.getLegislacoes = () => {
+    return JSON.parse(JSON.stringify(legislacao))
+}
+
+exports.getLegislacao = (id) => {
+    let res = legislacao.filter(l => l.id == id)
+    if (res.length > 0) {
+        return JSON.parse(JSON.stringify(res[0]))
+    }
+    else
+        return null
+}
+
+// Carrega o catálogo legislativo na cache
+async function loadLegs() {
+    try{
+        let legs = await Legs.listar()
+        return legs
+    }
+    catch(err) {
+        throw err;
+    }
+}
+
+
+//entidades
+
+exports.getEntidades = () => {
+    return JSON.parse(JSON.stringify(entidades))
+}
+
+exports.getEntidade = (id) => {
+    let res = entidades.filter(e => e.id == id)
+    if (res.length > 0) {
+        return JSON.parse(JSON.stringify(res[0]))
+    }
+    else
+        return null
+}
+
+// Carrega as entidades para cache
+async function loadEntidades() {
+    try{
+        let ents = await Entidades.listar("True")
+        return ents
+    }
+    catch(err) {
+        throw err;
+    }
 }

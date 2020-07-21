@@ -64,13 +64,17 @@ properties:
             - titulo
             - dataInicio
             - dataFim
-            - uiPapel
-            - uiDigital
-            - uiOutros
             - agregacoes
+      entidade:
+        $ref: '#/components/schemas/EntidadeId'
+      responsavel:
+        type: string
+        format: email
     required:
       - fundo
       - legislacao
       - zonaControlo
+      - entidade
+      - responsavel
 required:
   - auto

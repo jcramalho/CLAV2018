@@ -6,7 +6,10 @@ security:
   - userAuth: []
 tags:
   - Classes
-description: "Retorna toda a informação relativa a uma classe ou a subárvore de classes com raiz na classe com id igual a 'id'"
+description: |
+  Retorna toda a informação relativa a uma classe ou a subárvore de classes com raiz na classe com id igual a 'id'
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 parameters:
   - name: id
     in: path
@@ -36,35 +39,13 @@ responses:
             $ref: '#/components/examples/ClasseJSON'
           jsonSubarvore:
             $ref: '#/components/examples/ClasseSubarvoreJSON'
-      json:
-        schema:
-          oneOf:
-            - $ref: '#/components/schemas/ClasseCompletaSubArvore'
-            - $ref: '#/components/schemas/ClasseCompleta'
-        examples:
-          jsonClasse:
-            $ref: '#/components/examples/ClasseJSON'
-          jsonSubarvore:
-            $ref: '#/components/examples/ClasseSubarvoreJSON'
       application/xml:
         examples:
           xmlClasse:
             $ref: '#/components/examples/ClasseXML'
           xmlSubarvore:
             $ref: '#/components/examples/ClasseSubarvoreXML'
-      xml:
-        examples:
-          xmlClasse:
-            $ref: '#/components/examples/ClasseXML'
-          xmlSubarvore:
-            $ref: '#/components/examples/ClasseSubarvoreXML'
       text/csv:
-        examples:
-          csvClasse:
-            $ref: '#/components/examples/ClasseCSV'
-          csvSubarvore:
-            $ref: '#/components/examples/ClasseSubarvoreCSV'
-      csv:
         examples:
           csvClasse:
             $ref: '#/components/examples/ClasseCSV'

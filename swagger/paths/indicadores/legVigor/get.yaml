@@ -4,7 +4,10 @@ security:
   - userAuth: []
 tags:
   - Indicadores Estatísticos
-description: Número total de diplomas legislativos em vigor e revogadas
+description: |
+  Número total de diplomas legislativos em vigor e revogadas
+
+  **Acesso permitido a:** Utilizadores com nível 3.5, 4, 5, 6 e 7
 responses:
   200:
     description: Número total de diplomas legislativos em vigor e revogadas

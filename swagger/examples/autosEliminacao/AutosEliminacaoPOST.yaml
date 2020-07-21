@@ -1,5 +1,6 @@
 auto:
   entidade: "ent_A3ES"
+  responsavel: "example@example.com"
   legislacao: "Portaria 11/2019"
   fundo: "Secretaria Geral do Ministério dos Negócios Estrangeiros"
   zonaControlo:

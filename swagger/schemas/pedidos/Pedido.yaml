@@ -1,5 +1,7 @@
 type: object
 properties:
+  _id:
+    type: string
   codigo:
     $ref: '#/components/schemas/PedidoCodigo'
   estado:
@@ -12,13 +14,23 @@ properties:
     format: email
   objeto:
     $ref: '#/components/schemas/PedidoObjeto'
+  historico:
+    $ref: '#/components/schemas/PedidoHistorico'
   distribuicao:
     type: array
     items:
-      $ref: '#/components/schemas/PedidoDistribuicao'
+      allOf:
+        - type: object
+          properties:
+            _id:
+              type: string
+          required:
+            - _id
+        - $ref: '#/components/schemas/PedidoDistribuicao'
   entidade:
     $ref: '#/components/schemas/EntidadeId'
 required:
+  - _id
   - codigo
   - estado
   - criadoPor
@@ -26,3 +38,4 @@ required:
   - objeto
   - distribuicao
   - entidade
+  - historico

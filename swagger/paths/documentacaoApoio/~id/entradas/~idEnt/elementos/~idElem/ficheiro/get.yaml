@@ -1,0 +1,49 @@
+summary: Devolve o ficheiro de um elemento de uma entrada de uma classe da documentação de apoio
+description: |
+  Devolve o ficheiro de um elemento de uma entrada de uma classe da documentação de apoio
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Documentação de Apoio
+parameters:
+  - name: id
+    in: path
+    description: 'Identificador de uma classe na documentação de apoio'
+    schema:
+      type: string
+    required: true
+  - name: idEnt
+    in: path
+    description: 'Identificador de uma entrada da classe na documentação de apoio'
+    schema:
+      type: string
+    required: true
+  - name: idElem
+    in: path
+    description: 'Identificador de um elemento da entrada da classe na documentação de apoio'
+    schema:
+      type: string
+    required: true
+responses:
+  200:
+    description: Devolve o ficheiro de um elemento da entrada da classe da documentação de apoio com id igual ao do campo 'id', a entrada com id igual ao do campo 'idEnt' e o elemento com id igual ao do campo 'idElem'
+    content:
+      '*/*':
+        schema:
+          type: string
+          format: binary
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  404:
+    description: O ficheiro do elemento não existe na entrada da classe da documentação de apoio
+  422:
+    $ref: '#/components/responses/ValidationParameters'
+  500:
+    description: Erro

@@ -93,4 +93,11 @@ router.delete('/:id', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 
         .catch(erro => res.status(500).send(`Erro na remoção de um trabalho pendente ' ${req.params.id}': ${erro}`));
 })
 
+// Apaga todos trabalhos pendentes
+router.delete('/', Auth.isLoggedInUser, Auth.checkLevel(7), (req, res) => {
+    Pendentes.apagarTodos()
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.status(500).send(`Erro na remoção de todos os trabalhos pendentes: ${erro}`));
+})
+
 module.exports = router;

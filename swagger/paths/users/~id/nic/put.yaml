@@ -1,5 +1,8 @@
 summary: Altera o NIC de um utilizador
-description: Altera o NIC de um utilizador
+description: |
+  Altera o NIC de um utilizador
+
+  **Acesso permitido a:** Utilizadores com nível 7
 security:
   - userQuery: []
   - userAuth: []

@@ -1,0 +1,12 @@
+type: object
+properties:
+  _id:
+    type: string
+  classe:
+    type: string
+  entradas:
+    $ref: '#/components/schemas/DocEntradas'
+required:
+  - _id
+  - classe
+  - entradas

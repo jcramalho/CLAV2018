@@ -1,7 +1,7 @@
 //CSV separator to use
 const separator = ';'
 //Entity types that is possible to convert to CSV
-const types = ["classes", "classe", "pesquisaClasses", "entidades", "entidade", "tipologias", "tipologia",  "legislacoes", "legislacao"]
+const types = ["classes", "classe", "pesquisaClasses", "preselecionadoClasses", "esqueletoClasses", "entidades", "entidade", "tipologias", "tipologia",  "legislacoes", "legislacao"]
 //How is converted each field of each entities, format:
 // entity : {
 //      field: [title_to_use, func_to_aplicate to field value],
@@ -18,8 +18,6 @@ const convert_to = {
         "termosInd": ["Termos Indice", map_value("termo")],
         "tipoProc": ["Tipo de processo", v => v],
         "procTrans": ["Processo transversal (S/N)", v => v],
-        "dono": ["Dono", v => v], //caso do esqueleto
-        "participante": ["Participante", v => v], //caso do esqueleto
         "donos": ["Donos do processo", map_value("sigla")],
         "participantes_sigla": ["Participante no processo", map_value("sigla")],
         "participantes_participLabel": ["Tipo de intervenção do participante", map_value("participLabel")],
@@ -28,9 +26,28 @@ const convert_to = {
         "processosRelacionados_idRel": ["Tipo de relação entre processos", map_value("idRel")],
         "legislacao_idLeg": ["Diplomas jurídico-administrativos REF Ids", map_value("idLeg")],
         "legislacao_titulos": ["Diplomas jurídico-administrativos REF Títulos", leg_titulos],
-        "pca": ["", pca_df("pca")],
-        "df": ["", pca_df("df")],
+        "pca": ["", v => convertOne(v, "pca")],
+        "df": ["", v => convertOne(v, "df")],
         "filhos": [null, filhos("classe")]
+    },
+    "preselecionadoClasse": {
+        "codigo": ["Código", v => v],
+        "titulo": ["Título", v => v],
+        "descricao": ["Descrição", v => v],
+        "dono": ["Dono", v => v],
+        "participante": ["Participante", v => v],
+        "pca": ["PCA", v => v],
+        "formaContagem": ["Forma de contagem do PCA", v => v],
+        "df": ["DF", v => v]
+    },
+    "esqueletoClasse": {
+        "codigo": ["Código", v => v],
+        "titulo": ["Título", v => v],
+        "descricao": ["Descrição", v => v],
+        "dono": ["Dono", v => v],
+        "participante": ["Participante", v => v],
+        "pca": ["PCA", v => v],
+        "df": ["DF", v => v]
     },
     "pesquisaClasse": {
         "id": ["Código", v => v],
@@ -45,7 +62,7 @@ const convert_to = {
         "fc_pca": ["Forma de contagem do PCA", v => v],
         "sfc_pca": ["Sub Forma de contagem do PCA", v => v],
         "crit_pca": ["Critério PCA", join],
-        "df": ["Destino final", destino_final],
+        "df": ["Destino final", v => v],
         "crit_df": ["Critério DF", join],
         "donos": ["Donos do processo", join],
         "participantes": ["Participantes do processo", join],
@@ -66,6 +83,7 @@ const convert_to = {
         "sigla": ["Sigla", v => v],
         "designacao": ["Designação", v => v],
         "estado": ["Estado", v => v],
+        "entidades": ["Entidades da tipologia", map_value("sigla")],
         "dono": ["Dono no processo", map_value("codigo")],
         "participante_codigo": ["Participante no processo", map_value("codigo")],
         "participante_tipoPar": ["Tipo de intervenção no processo", map_value("tipoPar")]
@@ -89,7 +107,7 @@ const convert_to = {
         "justificacao_refs": ["ProcRefs/LegRefs PCA", refs]
     },
     "df": {
-        "valor": ["Destino final", destino_final],
+        "valor": ["Destino final", v => v],
         "notas": ["Notas ao DF", v => v],
         "justificacao_criterio": ["Critério DF", map_value("tipoId")],
         "justificacao_refs": ["ProcRefs/LegRefs DF", refs]
@@ -121,14 +139,6 @@ function leg_titulos(value){
     return join(value.map(l => l.tipo + ' ' + l.numero))
 }
 
-//if DF is equal to "NE" should be empty
-function destino_final(value){
-    if(value == "NE")
-        value = ""
-
-    return value 
-}
-
 //get legislacao references (processos references e legislacao references)
 function refs(value){
     var procs_legs = []
@@ -143,21 +153,6 @@ function refs(value){
     })
 
     return join(procs_legs)
-}
-
-//parse PCA or DF according to the key ("pca" or "df")
-function pca_df(key){
-    return function(value){
-        var csvLines = [[], []]
-
-        if(typeof value == "string"){ //caso do esqueleto
-            csvLines[0].push(protect(key.toUpperCase()))
-            csvLines[1].push(protect(value))
-        }else
-            csvLines = convertOne(value, key)
-
-        return csvLines
-    }
 }
 
 //parse filhos (children) of a classe

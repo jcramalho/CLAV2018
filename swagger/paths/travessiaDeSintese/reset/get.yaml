@@ -1,0 +1,19 @@
+summary: Reset das travessias de síntese
+description: |
+  Carrega as travessias de síntese para cache
+
+  **Acesso permitido a:** Utilizadores com nível 7
+security:
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Travessias De Síntese
+responses:
+  200:
+    description: Travessias de síntese carregadas para cache
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro

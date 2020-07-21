@@ -1,5 +1,8 @@
 summary: Atualiza uma tipologia
-description: Atualiza uma tipologia a partir da informação enviada no pedido
+description: |
+  Atualiza uma tipologia a partir da informação enviada no pedido
+
+  **Acesso permitido a:** Utilizadores com nível 4, 5, 6 e 7
 tags:
   - Tipologias
 security:

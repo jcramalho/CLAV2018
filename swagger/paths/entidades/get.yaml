@@ -1,5 +1,8 @@
 summary: Lista todas as entidades
-description: Lista todas as entidades
+description: |
+  Lista todas as entidades
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []
@@ -70,49 +73,27 @@ responses:
             - $ref: '#/components/schemas/EntidadeSimplesLista'
             - $ref: '#/components/schemas/EntidadeCompletaLista'
         examples:
-          Exemplo de Entidades:
+          ExemploEntidades:
             $ref: '#/components/examples/EntidadesJSON'
-          Exemplo de Entidades Completas:
-            $ref: '#/components/examples/EntidadesCompletasJSON'
-      json:
-        schema:
-          oneOf:
-            - $ref: '#/components/schemas/EntidadeSimplesLista'
-            - $ref: '#/components/schemas/EntidadeCompletaLista'
-        examples:
-          Exemplo de Entidades:
-            $ref: '#/components/examples/EntidadesJSON'
-          Exemplo de Entidades Completas:
+          ExemploEntidadesCompletas:
             $ref: '#/components/examples/EntidadesCompletasJSON'
       application/xml:
         examples:
-          Exemplo de Entidades:
+          ExemploEntidades:
             $ref: '#/components/examples/EntidadesXML'
-          Exemplo de Entidades Completas:
-            $ref: '#/components/examples/EntidadesCompletasXML'
-      xml:
-        examples:
-          Exemplo de Entidades:
-            $ref: '#/components/examples/EntidadesXML'
-          Exemplo de Entidades Completas:
+          ExemploEntidadesCompletas:
             $ref: '#/components/examples/EntidadesCompletasXML'
       text/csv:
         examples:
-          Exemplo de Entidades:
+          ExemploEntidades:
             $ref: '#/components/examples/EntidadesCSV'
-          Exemplo de Entidades Completas:
-            $ref: '#/components/examples/EntidadesCompletasCSV'
-      csv:
-        examples:
-          Exemplo de Entidades:
-            $ref: '#/components/examples/EntidadesCSV'
-          Exemplo de Entidades Completas:
+          ExemploEntidadesCompletas:
             $ref: '#/components/examples/EntidadesCompletasCSV'
       excel/csv:
         examples:
-          Exemplo de Entidades:
+          ExemploEntidades:
             $ref: '#/components/examples/EntidadesExcelCSV'
-          Exemplo de Entidades Completas:
+          ExemploEntidadesCompletas:
             $ref: '#/components/examples/EntidadesCompletasExcelCSV'
   401:
     $ref: '#/components/responses/UnauthorizedKey'

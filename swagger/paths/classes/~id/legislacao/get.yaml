@@ -1,5 +1,8 @@
 summary: Devolve a legislação associada ao contexto de avaliação
-description: Devolve a legislação associada ao contexto de avaliação
+description: |
+  Devolve a legislação associada ao contexto de avaliação
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

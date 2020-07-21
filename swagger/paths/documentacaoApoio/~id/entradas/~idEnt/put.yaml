@@ -1,0 +1,46 @@
+summary: Alterar a descrição da entrada na classe na documentação de apoio
+description: |
+  Alterar a descrição da entrada na classe na documentação de apoio
+
+  **Acesso permitido a:** Utilizadores com nível 4, 5, 6 e 7
+security:
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Documentação de Apoio
+parameters:
+  - name: id
+    in: path
+    description: 'Identificador de uma classe na documentação de apoio'
+    schema:
+      type: string
+    required: true
+  - name: idEnt
+    in: path
+    description: 'Identificador de uma entrada da classe na documentação de apoio'
+    schema:
+      type: string
+    required: true
+requestBody:
+  description: 'Descrição a usar'
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          descricao:
+            type: string
+        required:
+          - descricao
+responses:
+  200:
+    description: Alterada a descrição da entrada na classe da documentação de apoio
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
+  500:
+    description: Erro

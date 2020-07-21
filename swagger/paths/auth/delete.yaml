@@ -1,0 +1,19 @@
+summary: Elimina todas as entradas desta coleção
+description: |
+  Elimina todas as entradas desta coleção
+
+  **Acesso permitido a:** Utilizadores com nível 7
+security:
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Auth
+responses:
+  200:
+    description: Eliminadas todas as entradas desta coleção
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro

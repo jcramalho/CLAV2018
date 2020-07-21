@@ -4,8 +4,8 @@ var express = require('express');
 var router = express.Router();
 
 var validKeys = ["criadoPor", "codigo", "tipo", "acao"];
-const { validationResult } = require('express-validator');
-const { existe, estaEm, verificaPedidoCodigo, verificaExisteEnt, eMongoId, vcPedidoTipo, vcPedidoAcao, vcPedidoEstado } = require('../validation')
+const { body, validationResult } = require('express-validator');
+const { existe, estaEm, verificaPedidoCodigo, verificaExisteEnt, eMongoId, vcPedidoTipo, vcPedidoAcao, vcPedidoEstado, verificaLista } = require('../validation')
 
 // Lista todos os pedidos que statisfazem uma condição
 router.get('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
@@ -62,7 +62,11 @@ router.post('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), 
     existe('body', 'objetoOriginal').optional(),
     estaEm('body', 'tipoObjeto', vcPedidoTipo),
     estaEm('body', 'tipoPedido', vcPedidoAcao),
-    verificaExisteEnt('body', 'entidade')
+    verificaExisteEnt('body', 'entidade'),
+    verificaLista('body', 'historico'),
+    body('despacho').customSanitizer(v => {
+        return !!v ? v : "Submissão inicial"
+    })
 ], (req, res) => {
     const errors = validationResult(req)
     if(!errors.isEmpty()){
@@ -105,6 +109,7 @@ router.put('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
     existe('body', 'pedido.objeto.dados').optional(),
     estaEm('body', 'pedido.objeto.tipo', vcPedidoTipo),
     estaEm('body', 'pedido.objeto.acao', vcPedidoAcao),
+    verificaLista('body', 'pedido.historico'),
     existe('body', 'distribuicao'),
     estaEm('body', 'distribuicao.estado', vcPedidoEstado),
     existe('body', 'distribuicao.responsavel')
@@ -175,5 +180,12 @@ router.post('/:codigo/distribuicao', Auth.isLoggedInUser, Auth.checkLevel([1, 3,
         .then(dados => dados ? res.jsonp(dados.codigo) : res.status(404).send(`Erro. O pedido '${req.params.codigo}' não existe`))
         .catch(erro => res.status(500).send(`Erro na distribuição do pedido: ${erro}`));
 });
+
+// Apaga todos pedidos
+router.delete('/', Auth.isLoggedInUser, Auth.checkLevel(7), (req, res) => {
+    Pedidos.apagarTodos()
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.status(500).send(`Erro na remoção de todos os pedidos: ${erro}`));
+})
 
 module.exports = router;

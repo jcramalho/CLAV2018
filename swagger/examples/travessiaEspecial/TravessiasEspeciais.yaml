@@ -1,0 +1,48 @@
+- codigo: "100.10.001"
+  fecho:
+    - codigo: "100.10.001"
+      tipoProc: "Processo Comum"
+      donos:
+        - "ent_ALRAA"
+        - "ent_ALRAM"
+        - "ent_AR"
+        - "tip_Gov"
+      participantes: 
+        - "ent_ACT"
+        - "tip_AP"
+        - "ent_PR"
+        - "ent_SGMTSSS"
+        - "ent_SGPCM"
+    - codigo: "100.10.002"
+      tipoProc: "Processo Específico"
+      donos:
+        - "ent_AR"
+        - "tip_Gov"
+      participantes:
+        - "tip_CCDR"
+        - "ent_CNPDPCJ"
+        - "ent_DGERT"
+        - "ent_DGSS"
+        - "ent_IMT"
+        - "ent_INCM"
+        - "ent_ISS"
+        - "ent_PR"
+        - "ent_SGPCM"
+- codigo: "100.10.002"
+  fecho:
+    - codigo: "100.10.001"
+      tipoProc: "Processo Comum"
+      donos:
+        - "ent_ALRAA"
+        - "ent_ALRAM"
+        - "ent_AR"
+        - "tip_Gov"
+      participantes:
+        - "ent_ACT"
+        - "tip_AP"
+        - "ent_CASES"
+        - "tip_CCDR"
+        - "ent_CGA"
+        - "ent_CITE"
+        - "ent_CNPDPCJ"
+        - "ent_CP"

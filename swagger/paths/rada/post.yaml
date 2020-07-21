@@ -1,0 +1,27 @@
+summary: Inserção de um RADA
+security:
+  - userQuery: []
+  - userAuth: []
+tags:
+  - RADA
+description: Inserção de um RADA
+requestBody:
+  description: Dados necessários para criar um RADA
+  required: true
+  content:
+    application/json:
+      schema:
+        properties:
+          triplos:
+            type: string
+responses:
+  200:
+    description: RADA inserido com sucesso
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
+  500:
+    description: Erro

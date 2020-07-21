@@ -1,4 +1,4 @@
-- codigo: "2020-11"
+- codigo: "2020-0000011"
   estado: "Submetido"
   data: "2020-04-13T19:13:09.802Z"
   criadoPor: "example@example.com"
@@ -16,8 +16,11 @@
         email: "example@example.com"
       data: "2020-04-19T19:13:09.802Z"
       despacho: "Despacho a inserir"
+      _id: "5ef60cc62a11bf60134caf9f"
+  historico: []
   entidade: "ent_DGLAB"
-- codigo: "2020-12"
+  _id: "5ead0cc12a11bfsf134car4d"
+- codigo: "2020-0000012"
   estado: "Submetido"
   data: "2020-04-20T19:13:09.802Z"
   criadoPor: "example3@example.com"
@@ -31,4 +34,15 @@
       responsavel: "example7@example.com"
       data: "2020-04-24T19:13:09.802Z"
       despacho: "Despacho a inserir"
+      _id: "5df60dd62a11bf60134sss9r"
+  historico:
+    - designacao:
+        cor: "amarelo"
+        dados: "Agência para a Gestão Integrada de Fogos Rurais, IP "
+        nota: null
+      internacional:
+        cor: "amarelo"
+        dados: "Sim"
+        nota: null
   entidade: "ent_DGLAB"
+  _id: "5ef60cc62a11bf60134caf9e"

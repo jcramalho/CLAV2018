@@ -11,19 +11,24 @@ properties:
     type: boolean
   level:
     $ref: '#/components/schemas/UserLevel'
-  local:
+  temPass:
     type: boolean
   nCalls:
     type: integer
     minimum: 0
   name:
     type: string
+  local:
+    type: object
+    properties:
+      password:
+        type: string
 required:
   - _id
   - email
   - entidade
   - internal
   - level
-  - local
+  - temPass
   - nCalls
   - name

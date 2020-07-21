@@ -1,5 +1,8 @@
 summary: Lista legislações do tipo Portaria
-description: Lista legislações do tipo Portaria
+description: |
+  Lista legislações do tipo Portaria
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

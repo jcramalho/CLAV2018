@@ -1,5 +1,8 @@
 summary: Devolve a informação associada a um documento legislativo
-description: Devolve a informação associada a um documento legislativo
+description: |
+  Devolve a informação associada a um documento legislativo
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []
@@ -32,49 +35,27 @@ responses:
             - $ref: '#/components/schemas/LegislacaoSimples'
             - $ref: '#/components/schemas/LegislacaoCompleta'
         examples:
-          Exemplo de um documento legislativo:
+          ExemploDocumentoLegislativo:
             $ref: '#/components/examples/LegislacaoSimplesJSON'
-          Exemplo de um documento legislativo completo:
-            $ref: '#/components/examples/LegislacaoCompletaJSON'
-      json:
-        schema:
-          oneOf:
-            - $ref: '#/components/schemas/LegislacaoSimples'
-            - $ref: '#/components/schemas/LegislacaoCompleta'
-        examples:
-          Exemplo de um documento legislativo:
-            $ref: '#/components/examples/LegislacaoSimplesJSON'
-          Exemplo de um documento legislativo completo:
+          ExemploDocumentoLegislativoCompleto:
             $ref: '#/components/examples/LegislacaoCompletaJSON'
       application/xml:
         examples:
-          Exemplo de um documento legislativo:
+          ExemploDocumentoLegislativo:
             $ref: '#/components/examples/LegislacaoSimplesXML'
-          Exemplo de um documento legislativo completo:
-            $ref: '#/components/examples/LegislacaoCompletaXML'
-      xml:
-        examples:
-          Exemplo de um documento legislativo:
-            $ref: '#/components/examples/LegislacaoSimplesXML'
-          Exemplo de um documento legislativo completo:
+          ExemploDocumentoLegislativoCompleto:
             $ref: '#/components/examples/LegislacaoCompletaXML'
       text/csv:
         examples:
-          Exemplo de um documento legislativo:
+          ExemploDocumentoLegislativo:
             $ref: '#/components/examples/LegislacaoSimplesCSV'
-          Exemplo de um documento legislativo completo:
-            $ref: '#/components/examples/LegislacaoCompletaCSV'
-      csv:
-        examples:
-          Exemplo de um documento legislativo:
-            $ref: '#/components/examples/LegislacaoSimplesCSV'
-          Exemplo de um documento legislativo completo:
+          ExemploDocumentoLegislativoCompleto:
             $ref: '#/components/examples/LegislacaoCompletaCSV'
       excel/csv:
         examples:
-          Exemplo de um documento legislativo:
+          ExemploDocumentoLegislativo:
             $ref: '#/components/examples/LegislacaoSimplesExcelCSV'
-          Exemplo de um documento legislativo completo:
+          ExemploDocumentoLegislativoCompleto:
             $ref: '#/components/examples/LegislacaoCompletaExcelCSV'
   401:
     $ref: '#/components/responses/UnauthorizedKey'

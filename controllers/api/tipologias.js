@@ -141,6 +141,56 @@ Tipologias.listarParticipantes = async () => {
   }
 };
 
+//Lista elementos de todas as tipologias
+Tipologias.listarElementos = async () => {
+  const query = `SELECT ?sigla
+                        (GROUP_CONCAT(?parId; SEPARATOR="#") AS ?idE)
+                        (GROUP_CONCAT(?parSigla; SEPARATOR="#") AS ?siglaE)
+                        (GROUP_CONCAT(?parDesignacao; SEPARATOR="#") AS ?designacaoE){
+        ?uri rdf:type clav:TipologiaEntidade ;
+            clav:tipSigla ?sigla .
+
+        OPTIONAL{
+            ?uriP clav:entEstado "Ativa";
+                clav:entSigla ?parSigla;
+                clav:entDesignacao ?parDesignacao.
+
+            BIND(STRAFTER(STR(?uriP), 'clav#') AS ?parId)
+        }
+    }
+    group by ?sigla`;
+
+  try {
+    var response = await execQuery("query", query);
+    var res = normalize(response);
+
+    for (var i = 0; i < res.length; i++) {
+      res[i].entidades = [];
+      if (res[i].idE != "") {
+        var ids = res[i].idE.split("#");
+        var siglas = res[i].siglaE.split("#");
+        var designacoes = res[i].designacaoE.split("#");
+
+        for (var j = 0; j < ids.length; j++) {
+          res[i].entidades.push({
+            id: ids[j],
+            sigla: siglas[j],
+            designacao: designacoes[j]
+          });
+        }
+      }
+
+      delete res[i].idE;
+      delete res[i].siglaE;
+      delete res[i].designacaoE;
+    }
+
+    return res;
+  } catch (erro) {
+    throw erro;
+  }
+};
+
 /**
  * Consulta a meta informação relativa a uma tipologia entidade
  * (sigla, designação e estado).
@@ -467,7 +517,7 @@ Tipologias.updateTipologia = function(dataObj) {
 
 //Obtém o resto da info das Tipologias
 Tipologias.moreInfoList = async tips => {
-  //obtém os donos para todas as entidades
+  //obtém os processos donos para todas as Tipologias
   var data = await Tipologias.listarDonos();
   var donos = [];
 
@@ -477,7 +527,7 @@ Tipologias.moreInfoList = async tips => {
     };
   }
 
-  //obtém os participantes e o tipo de participação para todas as entidades
+  //obtém os processos participantes e o tipo de participação para todas as tipologias
   data = await Tipologias.listarParticipantes();
   var parts = [];
 
@@ -488,10 +538,21 @@ Tipologias.moreInfoList = async tips => {
     };
   }
 
+  //obtém as entidades para todas as Tipologias
+  data = await Tipologias.listarElementos();
+  var elementos = [];
+
+  for (var i = 0; i < data.length; i++) {
+    elementos[data[i].sigla] = {
+      entidades: data[i].entidades
+    };
+  }
+
   for (i = 0; i < tips.length; i++) {
     tips[i].dono = donos[tips[i].sigla].dono;
     tips[i].participante = parts[tips[i].sigla].participante;
     tips[i].tipoPar = parts[tips[i].sigla].tipoPar;
+    tips[i].entidades = elementos[tips[i].sigla].entidades;
   }
 };
 
@@ -499,6 +560,7 @@ Tipologias.moreInfoList = async tips => {
 Tipologias.moreInfo = async tip => {
   var id = "tip_" + tip.sigla;
 
+  tip.entidades = await Tipologias.elementos(id);
   tip.dono = await Tipologias.dono(id);
   tip.participante = await Tipologias.participante(id);
 };

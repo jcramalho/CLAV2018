@@ -1,0 +1,13 @@
+type: array
+items:
+  type: object
+  properties:
+    entidade:
+      oneOf:
+        - $ref: '#/components/schemas/EntidadeId'
+        - $ref: '#/components/schemas/TipologiaId'
+    rada:
+      $ref: '#/components/schemas/PGDRADAId'
+  required:
+    - entidade
+    - rada

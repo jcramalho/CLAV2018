@@ -1,5 +1,8 @@
 summary: Lista todos os documentos legislativos
-description: Lista todos os documentos legislativos
+description: |
+  Lista todos os documentos legislativos
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []
@@ -42,49 +45,27 @@ responses:
             - $ref: '#/components/schemas/LegislacaoSimplesLista'
             - $ref: '#/components/schemas/LegislacaoCompletaLista'
         examples:
-          Exemplo de lista de legislação:
+          ExemploLegislacao:
             $ref: '#/components/examples/LegislacaoSimplesListaJSON'
-          Exemplo de lista de legislação completas:
-            $ref: '#/components/examples/LegislacaoCompletaListaJSON'
-      json:
-        schema:
-          oneOf:
-            - $ref: '#/components/schemas/LegislacaoSimplesLista'
-            - $ref: '#/components/schemas/LegislacaoCompletaLista'
-        examples:
-          Exemplo de lista de legislação:
-            $ref: '#/components/examples/LegislacaoSimplesListaJSON'
-          Exemplo de lista de legislação completas:
+          ExemploLegislacaoCompleta:
             $ref: '#/components/examples/LegislacaoCompletaListaJSON'
       application/xml:
         examples:
-          Exemplo de lista de legislação:
+          ExemploLegislacao:
             $ref: '#/components/examples/LegislacaoSimplesListaXML'
-          Exemplo de lista de legislação completas:
-            $ref: '#/components/examples/LegislacaoCompletaListaXML'
-      xml:
-        examples:
-          Exemplo de lista de legislação:
-            $ref: '#/components/examples/LegislacaoSimplesListaXML'
-          Exemplo de lista de legislação completas:
+          ExemploLegislacaoCompleta:
             $ref: '#/components/examples/LegislacaoCompletaListaXML'
       text/csv:
         examples:
-          Exemplo de lista de legislação:
+          ExemploLegislacao:
             $ref: '#/components/examples/LegislacaoSimplesListaCSV'
-          Exemplo de lista de legislação completas:
-            $ref: '#/components/examples/LegislacaoCompletaListaCSV'
-      csv:
-        examples:
-          Exemplo de lista de legislação:
-            $ref: '#/components/examples/LegislacaoSimplesListaCSV'
-          Exemplo de lista de legislação completas:
+          ExemploLegislacaoCompleta:
             $ref: '#/components/examples/LegislacaoCompletaListaCSV'
       excel/csv:
         examples:
-          Exemplo de lista de legislação:
+          ExemploLegislacao:
             $ref: '#/components/examples/LegislacaoSimplesListaExcelCSV'
-          Exemplo de lista de legislação completas:
+          ExemploLegislacaoCompleta:
             $ref: '#/components/examples/LegislacaoCompletaListaExcelCSV'
   401:
     $ref: '#/components/responses/UnauthorizedKey'

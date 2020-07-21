@@ -1,5 +1,8 @@
 summary: Envia um email ao utilizador de forma a puder recuperar a conta
-description: Envia um email ao utilizador de forma a puder recuperar a conta
+description: |
+  Envia um email ao utilizador de forma a puder recuperar a conta
+
+  **Acesso permitido a:** Todos
 tags:
   - Utilizadores
 requestBody:
