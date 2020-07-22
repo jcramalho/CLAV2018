@@ -13,7 +13,8 @@ async function main(){
         Notifier.bind(user.email, user.entidade)
     })
     mongoose.connection.close()
-    process.exit()
 }
 
 main();
+
+setTimeout(function() {process.exit()},60000)
