@@ -27,7 +27,7 @@ AutosEliminacao.listar = async function() {
     catch(erro) { throw (erro);}
 }
 
-AutosEliminacao.consultar = async function(id) {
+AutosEliminacao.consultar = async function(id,userEnt) {
     var query = `
     select * where {
         clav:${id} a clav:AutoEliminacao;
@@ -53,11 +53,11 @@ AutosEliminacao.consultar = async function(id) {
         let response = await execQuery("query",query);
         if(normalize(response).length === 0) return null;
         var autos = normalize(response)
-        
+        var ent = autos[0].entResponsavel.split("#")[1]
         var res = {
             id: id,
             data: autos[0].data,
-            entidade: autos[0].entResponsavel.split("#")[1],
+            entidade: ent,
             entidadeNome: autos[0].entidadeNome,
             responsavel: autos[0].responsavel,
             tipo: autos[0].fonte,
@@ -148,27 +148,30 @@ AutosEliminacao.consultar = async function(id) {
                     })
                 }
             }
-            var query4 = `
-            select * where {
-                clav:${res2.id} clav:temAgregacao ?ag .
-                ?ag clav:agregacaoCodigo ?codigo ;
-                    clav:agregacaoTitulo ?titulo ;
-                    clav:agregacaoDataContagem ?data .
-                OPTIONAL {    
-                    ?ag clav:temNI ?ni .
-                }
-            }
-            `
-            var response4 = await execQuery("query",query4)
-            var agregacoes = normalize(response4)
             
-            for(ag of agregacoes) {
-                res2.agregacoes.push({
-                    codigo: ag.codigo,
-                    titulo: ag.titulo,
-                    dataContagem: ag.data,
-                    ni: ag.ni.split("_")[1]
-                })
+            if(ent==userEnt || userEnt=="ent_DGLAB") {
+                var query4 = `
+                select * where {
+                    clav:${res2.id} clav:temAgregacao ?ag .
+                    ?ag clav:agregacaoCodigo ?codigo ;
+                        clav:agregacaoTitulo ?titulo ;
+                        clav:agregacaoDataContagem ?data .
+                    OPTIONAL {    
+                        ?ag clav:temNI ?ni .
+                    }
+                }
+                `
+                var response4 = await execQuery("query",query4)
+                var agregacoes = normalize(response4)
+                
+                for(ag of agregacoes) {
+                    res2.agregacoes.push({
+                        codigo: ag.codigo,
+                        titulo: ag.titulo,
+                        dataContagem: ag.data,
+                        ni: ag.ni.split("_")[1]
+                    })
+                }
             }
 
             res.zonaControlo.push(res2)

@@ -49,11 +49,17 @@ PGD.listarLC = async function() {
 
 PGD.listarRADA = async function() {
   let query = `
-  select ?rada ?entidade where { 
+  select ?idRADA ?idLeg ?data ?numero ?tipo ?sumario ?link where { 
     ?uri a clav:Antigo_RADA ;
-        clav:temEntidadeResponsavel ?e .
-    BIND(STRAFTER(STR(?uri), 'clav#') AS ?rada).
-    BIND(STRAFTER(STR(?e), 'clav#') AS ?entidade).
+        clav:temLegislacao ?l .
+      ?l clav:diplomaData ?data;
+         clav:diplomaNumero ?numero;
+         clav:diplomaTipo ?tipo;
+         clav:diplomaSumario ?sumario ;
+         clav:diplomaFonte "RADA" ;
+         clav:diplomaLink ?link .
+    BIND(STRAFTER(STR(?uri), 'clav#') AS ?idRADA).
+    BIND(STRAFTER(STR(?l), 'clav#') AS ?idLeg).
   } 
   `
 
