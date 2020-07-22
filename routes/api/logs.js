@@ -59,4 +59,11 @@ router.get('/:verbo', Auth.isLoggedInUser, Auth.checkLevel(6), [
         .catch(error => res.status(500).send(`Erro ao obter os logs da rota ${req.query.rota} com o método ${req.params.verbo}: ${error}`))
 })
 
+// Apaga todos os logs
+router.delete('/', Auth.isLoggedInUser, Auth.checkLevel(7), (req, res) => {
+    Logs.deleteAllLogs()
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.status(500).send(`Erro na remoção de todos os logs: ${erro}`));
+})
+
 module.exports = router;

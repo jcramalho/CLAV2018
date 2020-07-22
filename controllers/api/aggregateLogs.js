@@ -135,3 +135,9 @@ AggregateLogs.totalAggregateLogs = async function(){
     var ret = agg.reduce((a, b) => a + b, 0)
     return ret
 }
+
+//delete all agg logs
+AggregateLogs.deleteAllAggLogs = async function () {
+    await AggregateLog.deleteMany({}).exec()
+    return "Todos os logs agregados removidos com sucesso"
+}

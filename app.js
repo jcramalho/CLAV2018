@@ -110,6 +110,10 @@ mongoose.connect(dataBases.userDB, {
             var travessia = require('./controllers/travessia.js')
             travessia.reset()
 
+            //loads APP travessia de sintese
+            var travessiaDeSintese = require('./controllers/travessiaDeSintese.js')
+            travessiaDeSintese.reset()
+
             //clean old logs
             Logs.removeOldLogs()
             //clean old logs periodically
@@ -143,6 +147,9 @@ mainRouter.use('/tipologias',require('./routes/api/tipologias'), outputFormat);
 mainRouter.use('/legislacao',require('./routes/api/leg'), outputFormat);
 mainRouter.use('/classes',require('./routes/api/classes'), outputFormat);
 mainRouter.use('/noticias',require('./routes/api/noticias'));
+mainRouter.use('/documentacaoApoio',require('./routes/api/documentacaoApoio'));
+mainRouter.use('/documentacaoCientifica',require('./routes/api/documentacaoCientifica'));
+mainRouter.use('/colaboracoes',require('./routes/api/colaboracoes'));
 mainRouter.use('/notasAp',require('./routes/api/notasAp'));
 mainRouter.use('/exemplosNotasAp',require('./routes/api/exemplosNotasAp'));
 mainRouter.use('/indicePesquisa',require('./routes/api/indicePesquisa'));
@@ -150,11 +157,15 @@ mainRouter.use('/tabelasSelecao',require('./routes/api/tabsSel'));
 mainRouter.use('/termosIndice',require('./routes/api/termosIndice'));
 mainRouter.use('/vocabularios',require('./routes/api/vocabularios'));
 mainRouter.use('/autosEliminacao',require('./routes/api/autosEliminacao'));
+mainRouter.use('/pgd',require('./routes/api/pgd'));
 mainRouter.use('/pedidos',require('./routes/api/pedidos'));
 mainRouter.use('/pendentes',require('./routes/api/pendentes'));
 mainRouter.use('/users',require('./routes/api/users'));
 mainRouter.use('/chaves',require('./routes/api/chaves'));
+mainRouter.use('/travessiaV2',require('./routes/api/travessiaV2'));
 mainRouter.use('/travessia',require('./routes/api/travessia'));
+mainRouter.use('/travessiaDeSintese',require('./routes/api/travessiaDeSintese'));
+mainRouter.use('/travessiaEspecial',require('./routes/api/travessiaEspecial'));
 mainRouter.use('/invariantes',require('./routes/api/invariantes'));
 mainRouter.use('/auth', require('./routes/api/auth'));
 mainRouter.use('/ontologia', require('./routes/api/ontologia'));
@@ -163,8 +174,15 @@ mainRouter.use('/logsAgregados', require('./routes/api/aggregateLogs'));
 mainRouter.use('/logs', require('./routes/api/logs'));
 mainRouter.use('/indicadores', require('./routes/api/indicadores'));
 mainRouter.use('/notificacoes', require('./routes/api/notificacoes'));
+mainRouter.use('/parametros', require('./routes/api/parametros'));
+mainRouter.use('/rada', require('./routes/api/rada'));
 
 app.use('/' + dataBases.apiVersion, mainRouter);
+
+//Quando o user pede a home redireciona para a documentação mais recente
+app.get('/', (req, res) => {
+    res.redirect('/' + dataBases.apiVersion + '/docs/')
+})
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

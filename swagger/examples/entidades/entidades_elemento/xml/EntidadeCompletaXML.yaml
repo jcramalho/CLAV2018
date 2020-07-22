@@ -3,6 +3,7 @@ value: |
   <root>
       <estado type="string">Ativa</estado>
       <sigla type="string">AAN</sigla>
+      <id type="string">ent_AAN</id>
       <sioe type="string">875780390</sioe>
       <designacao type="string">Autoridade Aeronáutica Nacional</designacao>
       <internacional type="string"></internacional>
@@ -39,3 +40,4 @@ value: |
           </item>
       </participante>
   </root>
+summary: Exemplo de uma Entidade Completa

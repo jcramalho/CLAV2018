@@ -1,0 +1,10 @@
+{
+    "userExpires": {
+        "valor": "8h",
+        "desc": "Tempo de expiração dos tokens dos utilizadores"
+    },
+    "keyExpires": {
+        "valor": "30d",
+        "desc": "Tempo de expiração das Chaves API"
+    }
+}

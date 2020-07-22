@@ -1,0 +1,37 @@
+summary: Devolve uma entrada da documentação Científica
+description: |
+  Devolve uma entrada da documentação científica
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Documentação Científica
+parameters:
+  - name: id
+    in: path
+    description: 'Identificador de uma entrada na documentação científica'
+    schema:
+      type: string
+    required: true
+responses:
+  200:
+    description: Devolve a informação da entrada da documentação científica com id igual ao do campo 'id'
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/DocCientifica'
+        example: !!inc/file '/examples/documentacaoCientifica/DocCientifica.yaml'
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  404:
+    description: Esta entrada da documentação científica não existe
+  422:
+    $ref: '#/components/responses/ValidationParameters'
+  500:
+    description: Erro

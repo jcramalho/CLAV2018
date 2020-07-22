@@ -6,7 +6,10 @@ security:
   - userAuth: []
 tags:
   - Classes
-description: "Devolve as classes em vários formatos podendo ser filtradas por nível, por tipo e se uma entidade/tipologia é dona/participante da classe. Existe uma hierarquia nestas possibilidades. Caso a info seja 'esqueleto' ou 'pesquisa' as query string tipo, nivel, estrutura, ents e tips não são consideradas. Caso o tipo seja definido as query strings nivel e estrutura não são consideradas. Caso tipo não seja definido mas ents e/ou tips sejam, é devolvido os processos que tem como donos ou participantes as entidade e/ou tipologias selecionadas. Caso tipo não seja definido, nem ents e nem tips e o nível seja definido, a query string estrutura não é considerada. Por fim se não for definido tipo, nem ents, nem tips e nem nivel e for definido estrutura esta é a query string considerada."
+description: |
+  Devolve as classes em vários formatos podendo ser filtradas por nível, por tipo e se uma entidade/tipologia é dona/participante da classe. Existe uma hierarquia nestas possibilidades. Caso a info seja 'esqueleto' ou 'pesquisa' as query string tipo, nivel, estrutura, ents e tips não são consideradas. Caso a info seja 'pre-selecionados' caso não seja inserida uma entidade em 'ents' (uma e só uma) é devolvido como 'esqueleto' não sendo consideradas as query string tipo, nivel, estrutura e tips. Caso o tipo seja definido as query strings nivel e estrutura não são consideradas. Caso tipo não seja definido mas ents e/ou tips sejam, é devolvido os processos que tem como donos ou participantes as entidade e/ou tipologias selecionadas. Caso tipo não seja definido, nem ents e nem tips e o nível seja definido, a query string estrutura não é considerada. Por fim se não for definido tipo, nem ents, nem tips e nem nivel e for definido estrutura esta é a query string considerada.
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 parameters:
   - in: query
     name: estrutura
@@ -45,8 +48,8 @@ parameters:
     name: info
     schema:
       type: string
-      enum: [completa, esqueleto, pesquisa]
-    description: "Caso seja um valor que não 'completa', 'esqueleto' e 'pesquisa' devolve apenas o código, a descrição e o título das classes. Caso o valor seja 'completa' devolve toda a informação de cada classe. Caso o valor seja 'esqueleto' devolve numa estrutura pronta a ser preenchida para a criação de uma Tabela de Seleção, devolve os campos: código, título, descrição, PCA, DF dono (a ser preenchido pelo utilizador) e participante (a ser preenchido pelo utilizador). Caso o valor seja 'pesquisa', devolve todas as classes num formato pronto a ser usado para a pesquisa avançada da interface CLAV."
+      enum: [completa, esqueleto, pesquisa, pre-selecionados]
+    description: "Caso seja um valor que não 'completa', 'esqueleto' e 'pesquisa' devolve apenas o código, a descrição e o título das classes. Caso o valor seja 'completa' devolve toda a informação de cada classe. Caso o valor seja 'esqueleto' devolve numa estrutura pronta a ser preenchida para a criação de uma Tabela de Seleção, devolve os campos: código, título, descrição, PCA, DF dono (a ser preenchido pelo utilizador) e participante (a ser preenchido pelo utilizador). Caso o valor seja 'pesquisa', devolve todas as classes num formato pronto a ser usado para a pesquisa avançada da interface CLAV. Caso o valor seja 'pre-selecionados' devolve os campos: código, título, descrição, PCA, DF, dono e participante."
     required: false
   - $ref: '#/components/parameters/OutputFormatWithCSV'
 responses:
@@ -60,6 +63,9 @@ responses:
             - $ref: '#/components/schemas/ClasseSimplesLista'
             - $ref: '#/components/schemas/ClasseCompletaArvore'
             - $ref: '#/components/schemas/ClasseCompletaLista'
+            - $ref: '#/components/schemas/ClassesEsqueleto'
+            - $ref: '#/components/schemas/ClassesPesquisa'
+            - $ref: '#/components/schemas/ClassesPreSelecionados'
         examples:
           jsonClassesSimplesArvore:
             $ref: '#/components/examples/ClassesSimplesArvoreJSON'
@@ -69,22 +75,12 @@ responses:
             $ref: '#/components/examples/ClassesCompletaArvoreJSON'
           jsonClassesCompletaLista:
             $ref: '#/components/examples/ClassesCompletaListaJSON'
-      json:
-        schema:
-          oneOf:
-            - $ref: '#/components/schemas/ClasseSimplesArvore'
-            - $ref: '#/components/schemas/ClasseSimplesLista'
-            - $ref: '#/components/schemas/ClasseCompletaArvore'
-            - $ref: '#/components/schemas/ClasseCompletaLista'
-        examples:
-          jsonClassesSimplesArvore:
-            $ref: '#/components/examples/ClassesSimplesArvoreJSON'
-          jsonClassesSimplesLista:
-            $ref: '#/components/examples/ClassesSimplesListaJSON'
-          jsonClassesCompletaArvore:
-            $ref: '#/components/examples/ClassesCompletaArvoreJSON'
-          jsonClassesCompletaLista:
-            $ref: '#/components/examples/ClassesCompletaListaJSON'
+          jsonClassesEsqueleto:
+            $ref: '#/components/examples/ClassesEsqueletoJSON'
+          jsonClassesPesquisa:
+            $ref: '#/components/examples/ClassesPesquisaJSON'
+          jsonClassesPreSelecionados:
+            $ref: '#/components/examples/ClassesPreSelecionadosJSON'
       application/xml:
         examples:
           xmlClassesSimplesArvore:
@@ -95,16 +91,12 @@ responses:
             $ref: '#/components/examples/ClassesCompletaArvoreXML'
           xmlClassesCompletaLista:
             $ref: '#/components/examples/ClassesCompletaListaXML'
-      xml:
-        examples:
-          xmlClassesSimplesArvore:
-            $ref: '#/components/examples/ClassesSimplesArvoreXML'
-          xmlClassesSimplesLista:
-            $ref: '#/components/examples/ClassesSimplesListaXML'
-          xmlClassesCompletaArvore:
-            $ref: '#/components/examples/ClassesCompletaArvoreXML'
-          xmlClassesCompletaLista:
-            $ref: '#/components/examples/ClassesCompletaListaXML'
+          xmlClassesEsqueleto:
+            $ref: '#/components/examples/ClassesEsqueletoXML'
+          xmlClassesPesquisa:
+            $ref: '#/components/examples/ClassesPesquisaXML'
+          xmlClassesPreSelecionados:
+            $ref: '#/components/examples/ClassesPreSelecionadosXML'
       text/csv:
         examples:
           csvClassesSimplesArvore:
@@ -115,26 +107,28 @@ responses:
             $ref: '#/components/examples/ClassesCompletaArvoreCSV'
           csvClassesCompletaLista:
             $ref: '#/components/examples/ClassesCompletaListaCSV'
-      csv:
-        examples:
-          csvClassesSimplesArvore:
-            $ref: '#/components/examples/ClassesSimplesArvoreCSV'
-          csvClassesSimplesLista:
-            $ref: '#/components/examples/ClassesSimplesListaCSV'
-          csvClassesCompletaArvore:
-            $ref: '#/components/examples/ClassesCompletaArvoreCSV'
-          csvClassesCompletaLista:
-            $ref: '#/components/examples/ClassesCompletaListaCSV'
+          csvClassesEsqueleto:
+            $ref: '#/components/examples/ClassesEsqueletoCSV'
+          csvClassesPesquisa:
+            $ref: '#/components/examples/ClassesPesquisaCSV'
+          csvClassesPreSelecionados:
+            $ref: '#/components/examples/ClassesPreSelecionadosCSV'
       excel/csv:
         examples:
-          csvClassesSimplesArvore:
+          excelcsvClassesSimplesArvore:
             $ref: '#/components/examples/ClassesSimplesArvoreExcelCSV'
-          csvClassesSimplesLista:
+          excelcsvClassesSimplesLista:
             $ref: '#/components/examples/ClassesSimplesListaExcelCSV'
-          csvClassesCompletaArvore:
+          excelcsvClassesCompletaArvore:
             $ref: '#/components/examples/ClassesCompletaArvoreExcelCSV'
-          csvClassesCompletaLista:
+          excelcsvClassesCompletaLista:
             $ref: '#/components/examples/ClassesCompletaListaExcelCSV'
+          excelcsvClassesEsqueleto:
+            $ref: '#/components/examples/ClassesEsqueletoExcelCSV'
+          excelcsvClassesPesquisa:
+            $ref: '#/components/examples/ClassesPesquisaExcelCSV'
+          excelcsvClassesPreSelecionados:
+            $ref: '#/components/examples/ClassesPreSelecionadosExcelCSV'
   401:
     $ref: '#/components/responses/UnauthorizedKey'
   403:

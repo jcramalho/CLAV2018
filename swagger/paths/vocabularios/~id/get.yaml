@@ -1,5 +1,8 @@
 summary: Devolve a lista de termos de um vocabulario
-description: Devolve a lista de termos de um vocabulario
+description: |
+  Devolve a lista de termos de um vocabulario
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

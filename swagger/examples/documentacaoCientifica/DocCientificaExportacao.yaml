@@ -1,0 +1,28 @@
+- autores:
+    - "Ana Oliveira"
+    - "Rita Costa"
+  _id:
+    $oid: "5ea761f0c3d612b78fc60600"
+  ano: "2020"
+  classe: "Comunicações e Artigos"
+  local: "12º Congresso da Associação Nacional de Bibliotecários, Arquivistas e Documentalistas (21 a 23 Out. 2015)"
+  titulo: "A caminho da ASIA – Avaliação Suprainstitucional da Informação Arquivística"
+  url: "FICHEIRO"
+  visivel: true
+  ficheiro:
+    _id: "5ea761f0c3d612b78fc60602"
+    nome: "RT-indicadores.tex"
+    path: "/public/documentacao_apoio/Produção_Técnica_e_Científica/Comunicações_e_Artigos/RT-indicadores.tex"
+    mimetype: "text/x-tex"
+    size: 5842
+- autores:
+    - "Ana Oliveira"
+    - "Rita Costa"
+  _id:
+    $oid: "5ea76205c3d612b78fc60605"
+  ano: "2020"
+  classe: "Comunicações e Artigos"
+  local: "12º Congresso da Associação Nacional de Bibliotecários, Arquivistas e Documentalistas (21 a 23 Out. 2015)"
+  titulo: "A caminho da ASIA – Avaliação Suprainstitucional da Informação Arquivística"
+  url: "http://www.bad.pt/publicacoes/index.php/congressosbad/article/view/1458"
+  visivel: false

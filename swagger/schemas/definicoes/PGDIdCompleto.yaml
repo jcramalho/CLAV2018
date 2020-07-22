@@ -1,0 +1,3 @@
+type: string
+pattern: '^http://jcr.di.uminho.pt/m51-clav#pgd_.+$'
+example: http://jcr.di.uminho.pt/m51-clav#pgd_leg_CCi_oocB_QM0hr-2y2t_B

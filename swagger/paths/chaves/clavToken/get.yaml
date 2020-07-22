@@ -1,5 +1,8 @@
 summary: Devolve a chave API criada para as interfaces do CLAV
-description: Devolve a chave API criada para as interfaces do CLAV. Caso não exista cria-a. Caso tenha expirado renova-a. Por fim devolve a chave API. Os únicos domínios que podem realizar este pedido são as interfaces do CLAV, ou seja, apenas é permitido este pedido aos domínios definidos na API como possuidores de uma interface do CLAV.
+description: |
+  Devolve a chave API criada para as interfaces do CLAV. Caso não exista cria-a. Caso tenha expirado renova-a. Por fim devolve a chave API. Os únicos domínios que podem realizar este pedido são as interfaces do CLAV, ou seja, apenas é permitido este pedido aos domínios definidos na API como possuidores de uma interface do CLAV.
+
+  **Acesso permitido a:** Todos
 tags:
   - Chaves
 responses:

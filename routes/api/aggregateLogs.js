@@ -66,4 +66,11 @@ router.get('/total', Auth.isLoggedInUser, Auth.checkLevel(6), (req, res) => {
         .catch(error => res.status(500).send(`Erro ao obter o número total de acessos à API: ${error}`))
 })
 
+// Delete all agg logs
+router.delete('/', Auth.isLoggedInUser, Auth.checkLevel(7), (req, res) => {
+    AggregateLogs.deleteAllAggLogs()
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.status(500).send(`Erro na remoção de todos os logs agregados: ${erro}`));
+})
+
 module.exports = router;

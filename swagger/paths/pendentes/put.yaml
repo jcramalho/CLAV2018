@@ -1,5 +1,8 @@
 summary: Atualiza um trabalho previamente guardado como pendente
-description: Atualiza um trabalho previamente guardado como pendente
+description: |
+  Atualiza um trabalho previamente guardado como pendente
+
+  **Acesso permitido a:** Utilizadores com nível 1, 3, 3.5, 4, 5, 6 e 7
 security:
   - userQuery: []
   - userAuth: []
@@ -16,6 +19,11 @@ requestBody:
 responses:
   200:
     description: Atualizado um trabalho previamente guardado como pendente
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/PendenteRes'
+        example: !!inc/file '/examples/pendentes/PendenteRes.yaml'
   401:
     $ref: '#/components/responses/UnauthorizedUser'
   403:

@@ -1,5 +1,8 @@
-summary: 'callback após login através de Autenticação.gov'
-description: callback após login através de Autenticação.gov
+summary: 'Callback após login através de Autenticação.gov'
+description: |
+  Callback após login através de Autenticação.gov
+
+  **Acesso permitido a:** Todos
 tags:
   - Utilizadores
 requestBody:

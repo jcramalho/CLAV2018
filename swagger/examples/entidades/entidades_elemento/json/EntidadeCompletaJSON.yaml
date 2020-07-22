@@ -15,6 +15,7 @@ value:
       tipoPar: "temParticipanteAssessor"
       titulo: "Vigilância da fronteira"
   sigla: "AAN"
+  id: "ent_AAN"
   sioe: "875780390"
   tipologias:
     - designacao: "Autoridades de supervisão e fiscalização"
@@ -23,3 +24,4 @@ value:
     - designacao: "Forças Armadas"
       id: "tip_FA"
       sigla: "FA"
+summary: Exemplo de uma Entidade Completa

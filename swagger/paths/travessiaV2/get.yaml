@@ -1,0 +1,24 @@
+summary: Obtém as travessias em dicionário
+description: |
+  Obtém as travessias em dicionário, ou seja, um dicionário em que cada chave é o código do processo e o valor da chave é a travessia (lista de códigos de processos)
+
+  **Acesso permitido a:** Utilizadores com nível 1, 3, 3.5, 4, 5, 6 e 7
+security:
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Travessias
+responses:
+  200:
+    description: Obtém as travessias em dicionário
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/TravessiasV2'
+        example: !!inc/file '/examples/travessiaV2/TravessiasV2.yaml'
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro

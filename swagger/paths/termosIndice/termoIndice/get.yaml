@@ -1,5 +1,8 @@
 summary: Verifica se um determinado termo índice existe
-description: Verifica se um determinado termo índice existe
+description: |
+  Verifica se um determinado termo índice existe
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

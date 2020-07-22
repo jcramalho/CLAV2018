@@ -75,7 +75,7 @@ function unic(field){
     }
 }
 
-router.get('/', Auth.isLoggedInUser, Auth.checkLevel(5), [
+router.get('/', Auth.isLoggedInUser, Auth.checkLevel(3.5), [
     verificaEntId('query', 'entidade').optional(),
     estaEm('query', 'formato', vcUsersFormato).optional()
 ], (req, res) => {
@@ -84,7 +84,7 @@ router.get('/', Auth.isLoggedInUser, Auth.checkLevel(5), [
         return res.status(422).jsonp(errors.array())
     }
 
-    Users.listar(req.query.entidade, req.query.formato, function(err, result){
+    Users.listar(req.query.entidade, req.query.formato, req.user.level, function(err, result){
         if(err){
             //res.status(500).send(`Erro: ${err}`);
             res.status(500).send("Não foi possível obter os utilizadores!");
@@ -395,7 +395,10 @@ router.get('/:id', Auth.isLoggedInUser, [
                 //res.status(500).send(`Erro: ${err}`);
                 res.status(500).send("Não foi possível obter o utilizador!");
             }else{
-                result._doc.local = result._doc.local.password ? true : false
+                result._doc.temPass = result._doc.local.password ? true : false
+                if(req.user.level < 7){
+                    delete result._doc.local
+                }
                 res.json(result);
             }
         });

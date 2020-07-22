@@ -1,1 +1,2 @@
 value: !!inc/file '/examples/logs/Logs.yaml'
+summary: Exemplo do log para um determinado id e tipo

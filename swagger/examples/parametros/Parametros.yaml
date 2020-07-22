@@ -1,0 +1,6 @@
+keyExpires:
+  desc: "Tempo de expiração das Chaves API"
+  valor: "30d"
+userExpires:
+  desc: "Tempo de expiração dos tokens dos utilizadores"
+  valor: "8h"

@@ -134,13 +134,7 @@ module.exports.verificaClasseCodigo = function(location, field, ifF){
 }
 
 module.exports.verificaPedidoCodigo = function(location, field, ifF){
-    const regex = "^\\d{4}-\\d+$"
-    ifF = ifF || undefined
-    return module.exports.match(location, field, regex, ifF)
-}
-
-module.exports.verificaNumeroLeg = function(location, field, ifF){
-    const regex = "^\\d+(-\\w)?\\/\\d+$"
+    const regex = "^\\d{4}-\\d{7}$"
     ifF = ifF || undefined
     return module.exports.match(location, field, regex, ifF)
 }
@@ -222,6 +216,18 @@ module.exports.verificaAEId = function (location, field, ifF){
 module.exports.verificaTSId = function (location, field, ifF){
     ifF = ifF || undefined
     return module.exports.match(location, field, '^.+$', ifF)
+}
+
+//Valida o id de uma possível PGD
+module.exports.verificaPGDId = function (location, field, ifF){
+    ifF = ifF || undefined
+    return module.exports.comecaPorEMatch(location, field, 'pgd_', '^pgd_.+$', ifF)
+}
+
+//Valida o id de uma possível PGD RADA
+module.exports.verificaPGDRADAId = function (location, field, ifF){
+    ifF = ifF || undefined
+    return module.exports.comecaPorEMatch(location, field, 'tsRada_', '^tsRada_.+$', ifF)
 }
 
 //Valida um conjunto de ids de possiveis entidades
@@ -334,10 +340,16 @@ module.exports.eNIC = function(location, field, ifF){
     return module.exports.match(location, field, '^[0-9]{7,}$', ifF)
 }
 
+module.exports.eExpiresTime = function(location, field, ifF){
+    ifF = ifF || undefined
+    var regex = '^\\d+(ms|s|m|h|d|y)$'
+    return module.exports.match(location, field, regex, ifF)
+}
+
 //Vocabulários
 module.exports.vcBoolean = ["Sim", "Não"]
 module.exports.vcEstado = ["Ativa", "Harmonização", "Inativa"]
-module.exports.vcFonte = ["PGD", "PGD/LC", "RADA"]
+module.exports.vcFonte = ["PGD", "PGD/LC", "RADA", "TS/LC"]
 
 //aggregateLogs e logs
 module.exports.vcTipoUser = ['User', 'Chave', 'Desconhecido']
@@ -347,7 +359,7 @@ module.exports.vcVerbo = ['GET', 'POST', 'PUT', 'DELETE']
 module.exports.vcTipoAE = ["PGD", "RADA", "PGD_LC"]
 
 //classes
-module.exports.vcClassesInfo = ['completa', 'esqueleto', 'pesquisa']
+module.exports.vcClassesInfo = ['completa', 'esqueleto', 'pesquisa', 'pre-selecionados']
 module.exports.vcClassesStruct = ['arvore', 'lista']
 module.exports.vcClassesTipo = ['comum', 'especifico']
 module.exports.vcClassesNiveis = ["1", "2", "3", "4"]
@@ -375,16 +387,17 @@ module.exports.vcNotRec = ["sim"]
 //Ontologia
 module.exports.vcOntoFormats = [
     "text/turtle",
-    "turtle",
     "application/ld+json",
-    "json-ld",
-    "application/rdf+xml",
-    "rdf-xml"
+    "application/rdf+xml"
 ]
 
 //Pedidos
 module.exports.vcPedidoTipo = [
     "Classe",
+    "Classe_N1",
+    "Classe_N2",
+    "Classe_N3",
+    "Classe_N4",
     "TS Organizacional",
     "TS Pluriorganizacional",
     "TS Pluriorganizacional web",
@@ -393,10 +406,12 @@ module.exports.vcPedidoTipo = [
     "Legislação",
     "Termo de Indice",
     "Auto de Eliminação",
+    "AE TS/LC",
     "AE PGD/LC",
     "AE PGD",
     "AE RADA",
-    "RADA"
+    "RADA",
+    "PGD"
 ]
 module.exports.vcPedidoAcao = ["Criação", "Alteração", "Remoção", "Importação", "Extinção"]
 module.exports.vcPedidoEstado = ["Submetido", "Distribuído", "Apreciado", "Validado", "Devolvido"]
@@ -404,6 +419,10 @@ module.exports.vcPedidoEstado = ["Submetido", "Distribuído", "Apreciado", "Vali
 //Pendentes
 module.exports.vcPendenteTipo = [
     "Classe",
+    "Classe_N1",
+    "Classe_N2",
+    "Classe_N3",
+    "Classe_N4",
     "TS Organizacional",
     "TS Pluriorganizacional",
     "Entidade",
@@ -411,7 +430,8 @@ module.exports.vcPendenteTipo = [
     "Legislação",
     "Termo de Indice",
     "Auto de Eliminação",
-    "RADA"
+    "RADA",
+    "PGD"
 ]
 module.exports.vcPendenteAcao = ["Criação", "Alteração", "Remoção"]
 
@@ -420,16 +440,22 @@ module.exports.vcTipsInfo = ["completa"]
 
 
 //Users
-module.exports.vcUserLevels = [1, 2, 3, 3.5, 4, 5, 6, 7]
+module.exports.vcUserLevels = [-1, 1, 2, 3, 3.5, 4, 5, 6, 7]
 module.exports.vcUsersFormato = ["normalizado"]
 
 //OutputFormat
 module.exports.vcFormats = [
     'application/json',
-    'json',
     'application/xml',
-    'xml',
     'text/csv',
-    'excel/csv',
-    'csv'
+    'excel/csv'
 ]
+
+//Parametros
+module.exports.vcParametrosExpires = [
+    'userExpires',
+    'keyExpires'
+]
+module.exports.vcParametros = module.exports.vcParametrosExpires.concat([
+    //adicionar mais parametros caso seja necessário
+])

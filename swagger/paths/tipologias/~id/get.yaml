@@ -1,5 +1,8 @@
 summary: Consulta de uma tipologia
-description: Consulta de uma tipologia
+description: |
+  Consulta de uma tipologia
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []
@@ -32,49 +35,27 @@ responses:
             - $ref: '#/components/schemas/TipologiaSimples'
             - $ref: '#/components/schemas/TipologiaCompleta'
         examples:
-          Exemplo de uma tipologia:
+          ExemploTipologia:
             $ref: '#/components/examples/TipologiaSimplesJSON'
-          Exemplo de uma tipologia completa:
-            $ref: '#/components/examples/TipologiaCompletaJSON'
-      json:
-        schema:
-          oneOf:
-            - $ref: '#/components/schemas/TipologiaSimples'
-            - $ref: '#/components/schemas/TipologiaCompleta'
-        examples:
-          Exemplo de uma tipologia:
-            $ref: '#/components/examples/TipologiaSimplesJSON'
-          Exemplo de uma tipologia completa:
+          ExemploTipologiaCompleta:
             $ref: '#/components/examples/TipologiaCompletaJSON'
       application/xml:
         examples:
-          Exemplo de uma tipologia:
+          ExemploTipologia:
             $ref: '#/components/examples/TipologiaSimplesXML'
-          Exemplo de uma tipologia completa:
-            $ref: '#/components/examples/TipologiaCompletaXML'
-      xml:
-        examples:
-          Exemplo de uma tipologia:
-            $ref: '#/components/examples/TipologiaSimplesXML'
-          Exemplo de uma tipologia completa:
+          ExemploTipologiaCompleta:
             $ref: '#/components/examples/TipologiaCompletaXML'
       text/csv:
         examples:
-          Exemplo de uma tipologia:
+          ExemploTipologia:
             $ref: '#/components/examples/TipologiaSimplesCSV'
-          Exemplo de uma tipologia completa:
-            $ref: '#/components/examples/TipologiaCompletaCSV'
-      csv:
-        examples:
-          Exemplo de uma tipologia:
-            $ref: '#/components/examples/TipologiaSimplesCSV'
-          Exemplo de uma tipologia completa:
+          ExemploTipologiaCompleta:
             $ref: '#/components/examples/TipologiaCompletaCSV'
       excel/csv:
         examples:
-          Exemplo de uma tipologia:
+          ExemploTipologia:
             $ref: '#/components/examples/TipologiaSimplesExcelCSV'
-          Exemplo de uma tipologia completa:
+          ExemploTipologiaCompleta:
             $ref: '#/components/examples/TipologiaCompletaExcelCSV'
   401:
     $ref: '#/components/responses/UnauthorizedKey'

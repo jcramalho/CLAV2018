@@ -8,6 +8,8 @@ properties:
     $ref: '#/components/schemas/PedidoDados'
   objetoOriginal:
     $ref: '#/components/schemas/PedidoDados'
+  historico:
+    $ref: '#/components/schemas/PedidoHistorico'
   user:
     type: object
     properties:
@@ -18,9 +20,12 @@ properties:
       - email
   entidade:
     $ref: '#/components/schemas/EntidadeId'
+  despacho:
+    type: string
 required:
   - tipoPedido
   - tipoObjeto
   - novoObjeto
   - user
   - entidade
+  - historico

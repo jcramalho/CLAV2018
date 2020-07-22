@@ -1,0 +1,29 @@
+summary: Cria uma colaboração
+description: |
+  Cria uma colaboração
+
+  **Acesso permitido a:** Utilizadores com nível 4, 5, 6 e 7
+security:
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Colaborações
+requestBody:
+  description: 'Colaboração a criar'
+  required: true
+  content:
+    application/json:
+      schema:
+        $ref: '#/components/schemas/ColaboracaoPOST'
+      example: !!inc/file '/examples/colaboracoes/ColaboracaoPOST.yaml'
+responses:
+  200:
+    description: Colaboração criada com sucesso
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
+  500:
+    description: Erro

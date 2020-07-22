@@ -1,5 +1,8 @@
 summary: Devolve o número de termos índice
-description: Devolve o número de termos índice
+description: |
+  Devolve o número de termos índice
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

@@ -61,7 +61,7 @@ Users.comparePassword = function (candidatePassword, hash, callback) {
 	});
 }
 
-Users.listar = function(entidade, normalizado, callback){
+Users.listar = function(entidade, normalizado, userLevel, callback){
     var filtro = {}
     if(entidade)
         filtro.entidade = entidade
@@ -111,7 +111,9 @@ Users.listar = function(entidade, normalizado, callback){
                 }
                 callback(null, listaNormalizada);
             }else{
-                users.map(u => delete u._doc.local);
+                if(userLevel < 7){
+                    users.map(u => delete u._doc.local);
+                }
                 callback(null, users);
             }
         }

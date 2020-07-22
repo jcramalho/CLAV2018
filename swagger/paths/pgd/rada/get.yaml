@@ -1,0 +1,23 @@
+summary: Listagem dos 'antigos RADAs' nãos inseridos pela plataforma
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
+tags:
+  - PGD
+description: Listagem dos 'antigos RADAs' nãos inseridos pela plataforma
+responses:
+  200:
+    description: Lista com os 'antigos RADAs' nãos inseridos pela plataforma 
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/pgdsRADA'
+        example: !!inc/file '/examples/pgd/pgdsRADA.yaml'
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  500:
+    description: Erro

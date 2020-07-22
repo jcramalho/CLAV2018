@@ -21,7 +21,7 @@ Pendentes.listar = (filtro) => {
 };
 
 Pendentes.listarTodos = () => {
-    return Pendente.find().sort({ data: -1 });
+    return Pendente.find();
 };
 
 // Recupera a lista de trabalhos pendentes de determinado tipo
@@ -91,8 +91,17 @@ Pendentes.atualizar = async function (pendente) {
         oldPendente.dataAtualizacao = Date.now()
 
         try {
-            await oldPendente.save()
-            return "Pendente atualizado com sucesso"
+            let novoPendente = await oldPendente.save()
+            return {
+                _id: novoPendente._id,
+                numInterv: novoPendente.numInterv,
+                acao: novoPendente.acao,
+                tipo: novoPendente.tipo,
+                criadoPor: novoPendente.criadoPor,
+                dataCriacao: novoPendente.dataCriacao,
+                dataAtualizacao: novoPendente.dataAtualizacao
+            }
+            //return "Pendente atualizado com sucesso"
         } catch (err) {
             console.log(err)
             throw err
@@ -107,17 +116,33 @@ Pendentes.atualizar = async function (pendente) {
  * Apaga um pendente no sistema.
  * 
  * @param pendente a apagar no sistema.
- * @return {Pendente} pendente atualizado.
  */
 Pendentes.apagar = async function (pendente) {
     return new Promise((resolve, reject) => {
-        Pendente.findByIdAndRemove({ _id: pendente }, function (err, updatedPendente) {
+        Pendente.findByIdAndRemove({ _id: pendente }, function (err, delPendente) {
             if (err) {
                 reject(err);
             } else {
-                //resolve(updatedPendente)
-                resolve("Pendente removido")
+                resolve({
+                    _id: delPendente._id,
+                    numInterv: delPendente.numInterv,
+                    acao: delPendente.acao,
+                    tipo: delPendente.tipo,
+                    criadoPor: delPendente.criadoPor,
+                    dataCriacao: delPendente.dataCriacao,
+                    dataAtualizacao: delPendente.dataAtualizacao
+                })
+                //resolve("Pendente removido")
             }
         })
     })
+}
+
+/**
+ * Apaga todos os pendentes no sistema.
+ *
+ */
+Pendentes.apagarTodos = async function () {
+    await Pendente.deleteMany({}).exec()
+    return "Todos os trabalhos pendentes removidos com sucesso"
 }

@@ -1,5 +1,8 @@
 summary: Criar chave API
-description: Criar Chave API
+description: |
+  Criar Chave API
+
+  **Acesso permitido a:** Todos
 tags:
   - Chaves
 requestBody:

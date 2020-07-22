@@ -1,0 +1,27 @@
+value: |
+  <?xml version="1.0" encoding="utf-8"?>
+  <root>
+    <item index="0" type="object">
+      <codigo type="string">100.10.001</codigo>
+      <titulo type="string">Produção e comunicação de atos legislativos</titulo>
+      <descricao type="string">Elaboração ou participação na elaboração de atos legislativos conduzidos por iniciativa das autoridades competentes para a definição do regime jurídico aplicável.Inicia com a apresentação de um projeto acompanhado dos documentos que o fundamentam e justificam à entidade com competência para legislar e termina com a respetiva publicação ou publicitação.Inclui verificação jurídica, apreciação, discussão e votação conducentes à elaboração do texto final, aprovação da iniciativa, ratificação pelas entidades competentes e promulgação.</descricao>
+      <dono type="string">
+      </dono>
+      <participante type="string">
+      </participante>
+      <pca type="string">5</pca>
+      <df type="string">C</df>
+    </item>
+    <item index="1" type="object">
+      <codigo type="string">100.10.002</codigo>
+      <titulo type="string">Aprovação e comunicação de convenções internacionais</titulo>
+      <descricao type="string">Manifestação do consentimento à vinculação nacional de convenções (tratados e acordos) internacionais, entrando no ordenamento jurídico português.Inicia com a necessidade ou vontade de vinculação e termina com a publicação.Inclui parecer do MNE antes da ratificação, aprovação parlamentar ou governamental, através de resolução ou decreto, respetivamente, a vinculação internacional mediante assinatura ou ratificação presidencial e a comunicação dos avisos de depósito de instrumento de vinculação ou outros respeitantes às convenções.</descricao>
+      <dono type="string">
+      </dono>
+      <participante type="string">
+      </participante>
+      <pca type="string">5</pca>
+      <df type="string">C</df>
+    </item>
+  </root>
+summary: Exemplo de parte do Esqueleto

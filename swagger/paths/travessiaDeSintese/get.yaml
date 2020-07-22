@@ -1,0 +1,24 @@
+summary: Obtém as travessias de síntese
+description: |
+  Obtém as travessias de síntese, ou seja, uma lista em que cada elemento possui o código do processo (campo processo) e a travessia (lista de códigos de processos)
+
+  **Acesso permitido a:** Utilizadores com nível 1, 3, 3.5, 4, 5, 6 e 7
+security:
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Travessias De Síntese
+responses:
+  200:
+    description: Obtém as travessias de síntese
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/Travessias'
+        example: !!inc/file '/examples/travessia/Travessias.yaml'
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro

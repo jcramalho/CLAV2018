@@ -1,0 +1,35 @@
+summary: Devolve toda a documentação de apoio
+description: |
+  Devolve toda a documentação de apoio. Permite a filtragem pelo atributo classe
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Documentação de Apoio
+parameters:
+  - in: query
+    name: classe
+    schema:
+      type: string
+    description: Permite filtrar as entradas pela classe
+    required: false
+responses:
+  200:
+    description: Lista toda a documentação de apoio
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/DocApoios'
+        example: !!inc/file '/examples/documentacaoApoio/DocApoios.yaml'
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
+  500:
+    description: Erro

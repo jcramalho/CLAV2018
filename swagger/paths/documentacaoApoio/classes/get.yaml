@@ -1,0 +1,30 @@
+summary: Devolve as diferentes classes da documentação de apoio
+description: |
+  Devolve as diferentes classes da documentação de apoio
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Documentação de Apoio
+responses:
+  200:
+    description: Lista as diferentes classes da documentação de apoio
+    content:
+      application/json:
+        schema:
+          type: array
+          items:
+            type: string
+        example:
+          - Tabelas de Selecao
+          - Autos de Eliminacao
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  500:
+    description: Erro

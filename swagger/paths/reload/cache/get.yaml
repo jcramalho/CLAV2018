@@ -1,5 +1,8 @@
 summary: Realiza reload da cache da API
-description: "CUIDADO: Pedido pesado que deve ser apenas executado quando houver alterações nas classes; deve ser executado fora das 'horas de ponta' do servidor. Realiza reload da cache da API. Faz o reload da cache das classes e da cache do índice de pesquisa e gera o ficheiro com toda a informação das classes."
+description: |
+  **CUIDADO**: Pedido pesado que deve ser apenas executado quando houver alterações nas classes; deve ser executado fora das 'horas de ponta' do servidor. Realiza reload da cache da API. Faz o reload da cache das classes e da cache do índice de pesquisa e gera o ficheiro com toda a informação das classes.
+
+  **Acesso permitido a:** Utilizadores com nível 7
 tags:
   - Diversos
 security:

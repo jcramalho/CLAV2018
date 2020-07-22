@@ -1,5 +1,8 @@
 summary: 'Atualização de um pedido: mais uma etapa na distribuição'
-description: 'Atualização de um pedido: mais uma etapa na distribuição'
+description: |
+  Atualização de um pedido: mais uma etapa na distribuição
+
+  **Acesso permitido a:** Utilizadores com nível 1, 3, 3.5, 4, 5, 6 e 7
 security:
   - userQuery: []
   - userAuth: []
@@ -20,7 +23,7 @@ responses:
       application/json:
         schema:
           $ref: '#/components/schemas/PedidoCodigo'
-        example: 2020-11
+        example: 2020-0000011
   401:
     $ref: '#/components/responses/UnauthorizedUser'
   403:

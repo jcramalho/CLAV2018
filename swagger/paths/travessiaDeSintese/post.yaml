@@ -1,0 +1,29 @@
+summary: Define as travessias de síntese
+description: |
+  Define as travessias de síntese, ou seja, as travessias de síntese que estavam anteriormente definidas são descartadas e são consideradas apenas as providenciadas. É contudo depois necessário realizar reset das travessias de síntese por forma a estas travessias de síntese definidas serem carregadas para cache
+
+  **Acesso permitido a:** Utilizadores com nível 7
+security:
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Travessias De Síntese
+requestBody:
+  description: Travessias de síntese a definir 
+  required: true
+  content:
+    application/json:
+      schema:
+        $ref: '#/components/schemas/Travessias'
+      example: !!inc/file '/examples/travessia/Travessias.yaml'
+responses:
+  200:
+    description: Travessias de síntese definidas
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
+  500:
+    description: Erro

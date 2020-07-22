@@ -1,0 +1,19 @@
+summary: Elimina todos os logs
+description: |
+  Elimina todos os logs
+
+  **Acesso permitido a:** Utilizadores com nível 7
+security:
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Logs
+responses:
+  200:
+    description: Eliminados todos os logs
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro

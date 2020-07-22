@@ -40,3 +40,9 @@ AuthCalls.remove = function(id, callback){
         }
     });
 }
+
+//Apaga todos os pendentes no sistema.
+AuthCalls.removeAll = async function () {
+    await AuthCall.deleteMany({}).exec()
+    return "Todas as Auth Calls removidas com sucesso"
+}

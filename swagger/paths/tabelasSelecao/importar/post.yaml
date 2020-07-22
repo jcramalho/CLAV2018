@@ -18,6 +18,8 @@ description: |
   * Por baixo de cada coluna (exceto a coluna 'Título' e 'Código') deve estar:
       * x ou X os processos selecionados
       * Nada para os processos não selecionados
+
+  **Acesso permitido a:** Utilizadores com nível 1, 3, 3.5, 4, 5, 6 e 7
 security:
   - userQuery: []
   - userAuth: []
@@ -49,9 +51,9 @@ responses:
             - $ref: '#/components/schemas/TabelaSelecaoImportarOrg'
             - $ref: '#/components/schemas/TabelaSelecaoImportarPluri'
         examples:
-          Exemplo da importação de uma TS Organizacional:
+          ExemploTSOrganizacional:
             $ref: '#/components/examples/TabelaSelecaoImportarOrg'
-          Exemplo da importação de uma TS Pluriorganizacional:
+          ExemploTSPluriorganizacional:
             $ref: '#/components/examples/TabelaSelecaoImportarPluri'
   401:
     $ref: '#/components/responses/UnauthorizedUser'

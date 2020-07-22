@@ -1,5 +1,8 @@
 summary: Devolve a informação de uma notícia
-description: Devolve a informação de uma notícia
+description: |
+  Devolve a informação de uma notícia
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

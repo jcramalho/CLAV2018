@@ -1,5 +1,8 @@
 summary: Lista os processos em que uma entidade intervem como participante
-description: Lista os processos em que uma entidade intervem como participante
+description: |
+  Lista os processos em que uma entidade intervem como participante
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

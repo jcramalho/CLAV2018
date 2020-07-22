@@ -1,5 +1,8 @@
 summary: Devolve a lista dos termos de índice
-description: Devolve a lista dos termos de índice
+description: |
+  Devolve a lista dos termos de índice
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []

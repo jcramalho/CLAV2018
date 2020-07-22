@@ -1,5 +1,8 @@
 summary: Devolve a lista utilizadores
-description: Devolve a lista utilizadores
+description: |
+  Devolve a lista utilizadores
+
+  **Acesso permitido a:** Utilizadores com nível 3.5, 4, 5, 6 e 7
 security:
   - userQuery: []
   - userAuth: []
@@ -29,9 +32,9 @@ responses:
             - $ref: '#/components/schemas/Users'
             - $ref: '#/components/schemas/UsersNormalizado'
         examples:
-          Exemplo de uma lista de utilizadores:
+          ExemploListaUtilizadores:
             $ref: '#/components/examples/Users'
-          Exemplo de uma lista de utilizadores normalizada:
+          ExemploListaUtilizadoresNormalizada:
             $ref: '#/components/examples/UsersNormalizado'
   401:
     $ref: '#/components/responses/UnauthorizedUser'

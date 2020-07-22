@@ -1,3 +1,3 @@
 type: string
-pattern: '^\d*$'
+pattern: '^\d*$|^\d+(###\d+)*$|^NE$'
 example: 10

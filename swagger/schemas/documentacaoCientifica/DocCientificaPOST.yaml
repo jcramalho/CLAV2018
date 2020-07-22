@@ -1,0 +1,36 @@
+type: object
+properties:
+  file:
+    type: string
+    format: binary
+  ano:
+    type: string
+    pattern: '^\d{4,}$'
+    example: 2020
+  autores:
+    type: string
+    pattern: '^\w+(,\w+)*$'
+    example: "Ana Oliveira,Rita Costa"
+  classe:
+    type: string
+    example: Comunicações e Artigos
+  local:
+    type: string
+    example: "12º Congresso da Associação Nacional de Bibliotecários, Arquivistas e Documentalistas (21 a 23 Out. 2015)"
+  titulo:
+    type: string
+    example: "A caminho da ASIA – Avaliação Suprainstitucional da Informação Arquivística"
+  url:
+    type: string
+    example: "http://www.bad.pt/publicacoes/index.php/congressosbad/article/view/1458"
+    description: "Se inseriu um ficheiro, coloque 'FICHEIRO'"
+  visivel:
+    type: boolean
+required:
+  - ano
+  - autores
+  - classe
+  - local
+  - titulo
+  - url
+  - visivel

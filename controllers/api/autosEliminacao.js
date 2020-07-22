@@ -6,13 +6,18 @@ var AutosEliminacao = module.exports
 
 AutosEliminacao.listar = async function() {
     let query = `
-    SELECT ?id ?data ?entidade ?tipo ?numero WHERE {
+    SELECT ?id ?data ?entidade ?tipo ?numero ?referencial WHERE {
         ?id a clav:AutoEliminacao;
             clav:autoDataAutenticacao ?data;
-            clav:temEntidadeResponsavel ?entidade;
-            clav:temLegislacao ?legislacao .
-        ?legislacao clav:diplomaFonte ?tipo;
-                    clav:diplomaNumero ?numero
+            clav:temEntidadeResponsavel ?entidade .
+        OPTIONAL {
+            ?id clav:temLegislacao ?legislacao .
+            ?legislacao clav:diplomaFonte ?tipo;
+                    clav:diplomaNumero ?numero .
+        }
+        OPTIONAL {
+            ?id clav:temReferencialClassificativo ?referencial .
+        }
     } 
     `
     try {
@@ -30,12 +35,18 @@ AutosEliminacao.consultar = async function(id) {
                 clav:autoResponsavel ?responsavel;
                 clav:autoDataAutenticacao ?data;
                 clav:temEntidadeResponsavel ?entResponsavel;
-                clav:temLegislacao ?legislacao ;
                 clav:temFundoDe ?fundo .
         ?fundo clav:entDesignacao ?fundoNome .
         ?entResponsavel clav:entDesignacao ?entidadeNome .
-        ?legislacao clav:diplomaFonte ?fonte;
+        OPTIONAL {
+            clav:${id} clav:temLegislacao ?legislacao .
+            ?legislacao clav:diplomaFonte ?fonte;
                       clav:diplomaNumero ?legNumero .
+        }
+        OPTIONAL {
+            clav:${id} clav:temReferencialClassificativo ?referencial .
+            ?referencial rdfs:label ?referencialLabel .
+        }
     }
     `
     try {
@@ -50,12 +61,19 @@ AutosEliminacao.consultar = async function(id) {
             entidadeNome: autos[0].entidadeNome,
             responsavel: autos[0].responsavel,
             tipo: autos[0].fonte,
-            refLegislacao: autos[0].legislacao.split("#")[1],
-            legislacao: "Portaria "+autos[0].legNumero,
             fundo: [],
             zonaControlo: []
         }
         
+        if(autos[0].legislacao) {
+            res.legislacao = "Portaria "+autos[0].legNumero
+            res.refLegislacao = autos[0].legislacao.split("#")[1]
+        }
+        else {
+            res.referencial = autos[0].referencial.split("#")[1]
+            res.referencialLabel = autos[0].referencialLabel
+        }
+
         for(a of autos)
             res.fundo.push({
                fundo: a.fundo.split("#")[1],
@@ -78,12 +96,17 @@ AutosEliminacao.consultar = async function(id) {
     		OPTIONAL {
         			?zonaControlo clav:UIOutros ?UIoutros ;
     		} .
-    		?classe clav:codigo ?codigo ;
-              		clav:titulo ?titulo ;
+    		?classe clav:titulo ?titulo ;
                 	clav:temDF ?destino;
                  	clav:temPCA ?prazo .
     		?destino clav:dfValor ?df .
-    		?prazo clav:pcaValor ?pca .   
+            ?prazo clav:pcaValor ?pca . 
+            OPTIONAL {
+                ?classe clav:codigo ?codigo .
+            } .
+            OPTIONAL {
+                ?classe clav:referencia ?referencia .
+            } .
 }
         `
         var response2 = await execQuery("query",query2);
@@ -98,6 +121,7 @@ AutosEliminacao.consultar = async function(id) {
                 UIdigital: zonaControlo.UIdigital,
                 UIoutros: zonaControlo.UIoutros,
                 codigo: zonaControlo.codigo,
+                referencia: zonaControlo.referencia,
                 titulo: zonaControlo.titulo,
                 destino: zonaControlo.df,
                 pca: zonaControlo.pca,
@@ -157,16 +181,19 @@ AutosEliminacao.consultar = async function(id) {
 
 AutosEliminacao.adicionar = async function (auto) {
     var currentTime = new Date();
+    if(auto.legislacao) {
+        var tipo = auto.legislacao.split(' ')[0]
+        var numero = auto.legislacao.split(' ')[1]
+        var queryLeg = `
+            SELECT * WHERE {
+                ?leg a clav:Legislacao;
+                    clav:diplomaTipo "${tipo}";
+                    clav:diplomaNumero "${numero}" ;
+                    clav:diplomaFonte ?fonte .
+            }
+        `
+    }
 
-    var tipo = auto.legislacao.split(' ')[0]
-    var numero = auto.legislacao.split(' ')[1]
-    var queryLeg = `
-        SELECT * WHERE {
-            ?leg a clav:Legislacao;
-                clav:diplomaTipo "${tipo}";
-                clav:diplomaNumero "${numero}" .
-        }
-    `
     var queryNum = `
         select * where {
             ?ae a clav:AutoEliminacao ;
@@ -174,105 +201,119 @@ AutosEliminacao.adicionar = async function (auto) {
         }
     `
     try {
-        let resultLeg = await execQuery("query", queryLeg);
-        resultLeg = normalize(resultLeg)
         let resultNum = await execQuery("query", queryNum);
         resultNum = normalize(resultNum)
         
-        if(resultLeg.length > 0) {
-            var id = "ae_"+auto.entidade.split("_")[1]+"_"+currentTime.getFullYear()+"_"+(resultNum.length+1)
-            var numero = id.split("ae_")[1].replace(/\_/g,"/")
-            var data = currentTime.getFullYear()+"-"+(currentTime.getMonth()+1)+"-"+currentTime.getDate()
-            var query = `{
-                    clav:${id} a clav:AutoEliminacao ;
-                               clav:autoNumero "${numero}" ;
-                               clav:autoResponsavel "${auto.responsavel}" ;
-                               clav:autoDataAutenticacao "${data}" ;
-                               clav:temEntidadeResponsavel clav:${auto.entidade} ;
-                               clav:temLegislacao clav:${resultLeg[0].leg.split("#")[1]} .
+        var id = "ae_"+auto.entidade.split("_")[1]+"_"+currentTime.getFullYear()+"_"+(resultNum.length+1)
+        var numero = id.split("ae_")[1].replace(/\_/g,"/")
+        var data = currentTime.getFullYear()+"-"+(currentTime.getMonth()+1)+"-"+currentTime.getDate()
+        var query = `{
+                clav:${id} a clav:AutoEliminacao ;
+                            clav:autoNumero "${numero}" ;
+                            clav:autoResponsavel "${auto.responsavel}" ;
+                            clav:autoDataAutenticacao "${data}" ;
+                            clav:temEntidadeResponsavel clav:${auto.entidade} .
+        `
+
+        if(auto.legislacao) {
+            let resultLeg = await execQuery("query", queryLeg);
+            resultLeg = normalize(resultLeg)
+            query += `
+            clav:${id} clav:temLegislacao clav:${resultLeg[0].leg.split("#")[1]} .
+        `
+        }
+        else query += `
+            clav:${id} clav:temReferencialClassificativo clav:${auto.referencial} .
+        ` 
+
+        for(fundo of auto.fundo) {
+            query += `
+                clav:${id} clav:temFundoDe clav:ent_${fundo.split(" - ")[0]} .
             `
-            
-            for(fundo of auto.fundo) {
+        }
+        
+        var indexZona = 1
+        for(zona of auto.zonaControlo) {
+            var idZona = "zc_"+indexZona+"_"+id.split("ae_")[1];
+            query += `
+                clav:${id} clav:temZonaControlo clav:${idZona} .
+            `
+            if(auto.referencial)  {
                 query += `
-                    clav:${id} clav:temFundoDe clav:ent_${fundo.split(" - ")[0]} .
+                clav:${idZona} clav:temClasseControlo clav:c${zona.codigo} .
                 `
             }
-            
-            var indexZona = 1
-            for(zona of auto.zonaControlo) {
-                var idZona = "zc_"+indexZona+"_"+id.split("ae_")[1];
+            else {
                 query += `
-                    clav:${id} clav:temZonaControlo clav:${idZona} .
-                `
-                query += `
-                    clav:${idZona} a clav:ZonaControlo ;
-                        clav:temClasseControlo clav:c${zona.codigo} ;
-                        clav:dataInicio "${zona.dataInicio}" ;
-                        clav:dataFim "${zona.dataFim}" .
-                `
-                if(zona.destino=="C") {
-                    query += `
-                        clav:${idZona} clav:temNI clav:vc_participante .
-                    `
-                    
-                    for(dono of zona.dono)
-                        query += `
-                            clav:${idZona} clav:temDono clav:ent_${dono.split(" - ")[0]} .
-                        `
-                }
-
-                if(zona.uiPapel && zona.uiPapel!="0")
-                    query += `
-                        clav:${idZona} clav:UIpapel "${zona.uiPapel}" .
-                    `
-                if(zona.uiDigital && zona.uiDigital!="0")
-                    query += `
-                        clav:${idZona} clav:UIDigital "${zona.uiDigital}" .
-                    `
-                if(zona.uiOutros && zona.uiOutros!="0")
-                    query += `
-                        clav:${idZona} clav:UIOutros "${zona.uiOutros}" .
-                    `
-                
-                var indexAg = 1;
-                for(agregacao of zona.agregacoes) {
-                    var idAg = "ag_"+indexAg+"_"+idZona
-                    query += `
-                        clav:${idZona} clav:temAgregacao clav:${idAg} .
-                    `
-
-                    query += `
-                        clav:${idAg} a clav:Agregacao ;
-                            clav:agregacaoCodigo "${agregacao.codigo}" ;
-                            clav:agregacaoTitulo "${agregacao.titulo}" ;
-                            clav:agregacaoDataContagem "${agregacao.dataContagem}" .
-                    `
-                    if(agregacao.ni.toLowerCase() === "dono") 
-                        query += `
-                            clav:${idAg} clav:temNI clav:vc_dono .
-                        `
-                    else 
-                        query += `
-                            clav:${idAg} clav:temNI clav:vc_participante .
-                        `
-                    
-                    indexAg++;
-                }
-                indexZona++;
+                clav:${idZona} clav:temClasseControlo clav:${zona.idClasse} .
+                ` 
             }
             query += `
-            }
+                clav:${idZona} a clav:ZonaControlo ;
+                    clav:dataInicio "${zona.dataInicio}" ;
+                    clav:dataFim "${zona.dataFim}" .
             `
-            var inserir = "INSERT DATA "+query;
-            var ask = "ASK "+ query;
+            if(zona.destino=="C" || zona.destino=="Conservação" || zona.destino =="NE") {
+                query += `
+                    clav:${idZona} clav:temNI clav:vc_participante .
+                `
+                
+                for(dono of zona.dono)
+                    query += `
+                        clav:${idZona} clav:temDono clav:ent_${dono.split(" - ")[0]} .
+                    `
+            }
 
-            return execQuery("update", inserir).then(res =>
-                execQuery("query", ask).then(result => {
-                  if (result.boolean) return "Sucesso na inserção do auto de eliminação";
-                  else throw "Insucesso na inserção do auto de eliminação";
-                })
-              );
+            if(zona.uiPapel && zona.uiPapel!="0")
+                query += `
+                    clav:${idZona} clav:UIpapel "${zona.uiPapel}" .
+                `
+            if(zona.uiDigital && zona.uiDigital!="0")
+                query += `
+                    clav:${idZona} clav:UIDigital "${zona.uiDigital}" .
+                `
+            if(zona.uiOutros && zona.uiOutros!="0")
+                query += `
+                    clav:${idZona} clav:UIOutros "${zona.uiOutros}" .
+                `
+            
+            var indexAg = 1;
+            for(agregacao of zona.agregacoes) {
+                var idAg = "ag_"+indexAg+"_"+idZona
+                query += `
+                    clav:${idZona} clav:temAgregacao clav:${idAg} .
+                `
+
+                query += `
+                    clav:${idAg} a clav:Agregacao ;
+                        clav:agregacaoCodigo "${agregacao.codigo}" ;
+                        clav:agregacaoTitulo "${agregacao.titulo}" ;
+                        clav:agregacaoDataContagem "${agregacao.dataContagem}" .
+                `
+                if(agregacao.ni.toLowerCase() === "dono") 
+                    query += `
+                        clav:${idAg} clav:temNI clav:vc_dono .
+                    `
+                else 
+                    query += `
+                        clav:${idAg} clav:temNI clav:vc_participante .
+                    `
+                
+                indexAg++;
+            }
+            indexZona++;
         }
+        query += `
+        }
+        `
+        var inserir = "INSERT DATA "+query;
+        var ask = "ASK "+ query;
+        return execQuery("update", inserir).then(res =>
+            execQuery("query", ask).then(result => {
+                if (result.boolean) return "Sucesso na inserção do auto de eliminação";
+                else throw "Insucesso na inserção do auto de eliminação";
+            })
+        );
     } 
     catch(erro) { throw (erro);}
 }

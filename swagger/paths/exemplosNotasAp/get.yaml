@@ -1,5 +1,8 @@
 summary: Devolve a lista de todos os exemplos de notas de aplicação
-description: Devolve a lista de todas os exemplos de notas de aplicação
+description: |
+  Devolve a lista de todas os exemplos de notas de aplicação
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 tags:
   - Exemplos de Notas de Aplicação
 security:
