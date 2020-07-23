@@ -136,7 +136,6 @@ router.put('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
 
     Pedidos.atualizar(req.body.pedido._id, req.body)
         .then(dados => {
-            
             var notificacao = {
                 entidade : req.body.pedido.entidade,
                 pedido: req.body.pedido.objeto.codigo,

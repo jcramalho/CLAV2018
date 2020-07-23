@@ -7,7 +7,7 @@ const NotificacaoSchema = new mongoose.Schema({
     },
     pedido: {
         type: String,           
-        required: true
+        required: false
     },
     acao: {
         type: String,
