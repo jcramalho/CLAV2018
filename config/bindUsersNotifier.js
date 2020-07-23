@@ -9,8 +9,8 @@ mongoose.connect('mongodb://localhost/m51-clav', {useNewUrlParser: true, useUnif
 async function main(){
     var users = await User.find()
     users.forEach(user => {
-        console.log(`${user.name} Binded to: ${user.email} && ${user.entidade} `)
         Notifier.bind(user.email, user.entidade)
+        console.log(`${user.name} Binded to: ${user.email} && ${user.entidade} `)
     })
     mongoose.connection.close()
 }
