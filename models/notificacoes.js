@@ -22,8 +22,8 @@ const NotificacaoSchema = new mongoose.Schema({
         required: true
     },
     responsavel: { // Email do técnico responsável pelo pedido no novo estado
-        type:String,
-        required: true
+        type: String,
+        required: false
     }
 })
 

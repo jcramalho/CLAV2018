@@ -22,8 +22,8 @@ Notifier.bind = function (usr, ent){
             autoDelete: false
         }))
         .then(() => channel.assertQueue(usr,{durable: true}))
-        .then(() => channel.bindQueue(usr,exchange, 'usr:'+usr))
-        .then(() => channel.bindQueue(usr,exchange, 'ent:'+ent))
+        .then(() => channel.bindQueue(usr,exchange, 'usr:' + usr))
+        .then(() => channel.bindQueue(usr,exchange, 'ent:' + ent))
         .then(() => channel.close())
         .catch(console.warn)
 }

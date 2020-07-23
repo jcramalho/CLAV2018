@@ -28,13 +28,17 @@ var server = http.createServer(app);
  */
 var io = socket(server);
 
+
 io.on('connection', (socket) => {
     console.log('made socket connection', socket.id);
 
-    // Handle eamil event
+    var channel;
+
+    // Handle email event
     socket.on('email', (data) => {
-        q = data.email;
         console.log(data.email)
+
+        q = data.email;
         // Consumer
         open.then((conn) => conn.createChannel())
             .then((ch) => {
@@ -42,16 +46,33 @@ io.on('connection', (socket) => {
                     .then((ok) => {
                         channel = ch
                         ch.consume(q, (msg) => {
-                            io.sockets.emit(q, msg.content.toString());
-                            ms = msg;
-                            console.log(" [x] %s:'%s'", msg.fields.routingKey, msg.content.toString());
+                            var notif = JSON.parse(msg.content.toString())
+                            notif["fields"] = {
+                                deliveryTag: msg.fields.deliveryTag
+                            }
+                            // console.log('delivery:', msg.content)
+                            io.sockets.emit(q, JSON.stringify(notif));
+                            // console.log(" [x] %s:'%s'", msg.fields.routingKey, JSON.stringify(msg.content));
                         }, {
                             noAck: false
                         });
                     });
-            }).catch(console.warn);
+           }).catch(console.warn);
     });
+
+    socket.on('remove', (data) => {
+        if(channel)
+            channel.ack(data); //Buffer.from(JSON.stringify(data)
+    })
+
+    socket.on('disconnect', (data) => {
+        if(channel)
+            channel.close()
+    })
+
 });
+
+
 
 /**
  * Listen on provided port, on all network interfaces.

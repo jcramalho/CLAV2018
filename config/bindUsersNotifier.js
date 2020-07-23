@@ -16,3 +16,5 @@ async function main(){
 }
 
 main();
+
+setTimeout(function() {process.exit()},60000)

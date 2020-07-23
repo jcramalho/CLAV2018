@@ -1,5 +1,6 @@
 var Auth = require('../../controllers/auth.js');
 var Pedidos = require('../../controllers/api/pedidos');
+var Notificacao = require('../../controllers/api/notificacoes')
 var express = require('express');
 var router = express.Router();
 
@@ -75,7 +76,6 @@ router.post('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), 
 
     Pedidos.criar(req.body)
         .then(dados => {
-            
             var notificacao = {
                 entidade : req.body.entidade,
                 pedido: req.body.novoObjeto.codigo,
@@ -84,6 +84,7 @@ router.post('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), 
                 novoEstado: "Submetido",
                 responsavel: req.body.user.email
             }
+
             Notificacao.criar(notificacao);
 
             res.jsonp(dados);
