@@ -76,11 +76,26 @@ router.post('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), 
 
     Pedidos.criar(req.body)
         .then(dados => {
+            var tipo = req.body.tipoObjeto;
+            var pedido = '';
+            switch (tipo.split('_')[0]) {
+                case 'Tipologia': 
+                    pedido = pedido.concat(req.body.novoObjeto.sigla);
+                case 'Entidade':
+                    pedido = pedido.concat(req.body.novoObjeto.sigla);
+                case 'Legislacao':
+                    pedido = pedido.concat(`${req.body.novoObjeto.tipo} ${req.body.novoObjeto.numero}`);
+                case 'Classe':
+                    pedido = pedido.concat(req.body.novoObjeto.codigo);
+                default:
+                    pedido = pedido.concat(req.body.novoObjeto.designacao);
+            }
+
             var notificacao = {
                 entidade : req.body.entidade,
-                pedido: req.body.novoObjeto.codigo,
+                pedido: pedido,
                 acao: req.body.tipoPedido,
-                tipo: req.body.tipoObjeto,
+                tipo: tipo,
                 novoEstado: "Submetido",
                 realizadoPor: req.user.email
             }
@@ -137,11 +152,26 @@ router.put('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
 
     Pedidos.atualizar(req.body.pedido._id, req.body)
         .then(dados => {
+            var tipo = req.body.pedido.objeto.tipo;
+            var pedido = '';
+            switch (tipo.split('_')[0]) {
+                case 'Tipologia': 
+                    pedido = pedido.concat(req.body.pedido.objeto.dados.sigla);
+                case 'Entidade':
+                    pedido = pedido.concat(req.body.pedido.objeto.dados.sigla);
+                case 'Legislacao':
+                    pedido = pedido.concat(`${req.body.pedido.objeto.dados.tipo} ${req.body.pedido.objeto.dados.numero}`);
+                case 'Classe':
+                    pedido = pedido.concat(req.body.pedido.objeto.dados.codigo);
+                default:
+                    pedido = pedido.concat(req.body.pedido.objeto.dados.designacao);
+            }
+            
             var notificacao = {
                 entidade : req.body.pedido.entidade,
-                pedido: req.body.pedido.objeto.codigo,
+                pedido: pedido,
                 acao: req.body.pedido.objeto.acao,
-                tipo: req.body.pedido.objeto.tipo,
+                tipo: tipo,
                 novoEstado: req.body.pedido.estado,
                 responsavel: req.body.distribuicao.proximoResponsavel.email,
                 realizadoPor: req.user.email
