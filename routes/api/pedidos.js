@@ -81,7 +81,8 @@ router.post('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), 
                 pedido: req.body.novoObjeto.codigo,
                 acao: req.body.tipoPedido,
                 tipo: req.body.tipoObjeto,
-                novoEstado: "Submetido"
+                novoEstado: "Submetido",
+                responsavel: req.body.user.email
             }
             Notificacao.criar(notificacao);
 
@@ -142,7 +143,7 @@ router.put('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
                 acao: req.body.pedido.objeto.acao,
                 tipo: req.body.pedido.objeto.tipo,
                 novoEstado: req.body.pedido.estado,
-                responsavel: req.body.pedido.distribuicao[0].responsavel
+                responsavel: req.body.distribuicao.proximoResponsavel.email
             }
             Notificacao.criar(notificacao);
 

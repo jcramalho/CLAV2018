@@ -1,4 +1,5 @@
 const Notificacao = require('../../models/notificacoes');
+const Pedido = require('../../models/pedido');
 const Notifier = require('../../config/Notifier');
 const User = require('../../models/user');
 const Notificacoes = module.exports;
