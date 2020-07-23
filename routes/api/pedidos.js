@@ -80,15 +80,15 @@ router.post('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), 
             var pedido = '';
             switch (tipo.split('_')[0]) {
                 case 'Tipologia': 
-                    pedido = pedido.concat(req.body.novoObjeto.sigla);
+                    pedido = req.body.novoObjeto.sigla;
                 case 'Entidade':
-                    pedido = pedido.concat(req.body.novoObjeto.sigla);
+                    pedido = req.body.novoObjeto.sigla;
                 case 'Legislacao':
-                    pedido = pedido.concat(`${req.body.novoObjeto.tipo} ${req.body.novoObjeto.numero}`);
+                    pedido = `${req.body.novoObjeto.tipo} ${req.body.novoObjeto.numero}`;
                 case 'Classe':
-                    pedido = pedido.concat(req.body.novoObjeto.codigo);
+                    pedido = req.body.novoObjeto.codigo;
                 default:
-                    pedido = pedido.concat(req.body.novoObjeto.designacao);
+                    pedido = req.body.novoObjeto.designacao;
             }
 
             var notificacao = {
@@ -156,15 +156,15 @@ router.put('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
             var pedido = '';
             switch (tipo.split('_')[0]) {
                 case 'Tipologia': 
-                    pedido = pedido.concat(req.body.pedido.objeto.dados.sigla);
+                    pedido = req.body.pedido.objeto.dados.sigla;
                 case 'Entidade':
-                    pedido = pedido.concat(req.body.pedido.objeto.dados.sigla);
+                    pedido = req.body.pedido.objeto.dados.sigla;
                 case 'Legislacao':
-                    pedido = pedido.concat(`${req.body.pedido.objeto.dados.tipo} ${req.body.pedido.objeto.dados.numero}`);
+                    pedido = `${req.body.pedido.objeto.dados.tipo} ${req.body.pedido.objeto.dados.numero}`;
                 case 'Classe':
-                    pedido = pedido.concat(req.body.pedido.objeto.dados.codigo);
+                    pedido = req.body.pedido.objeto.dados.codigo;
                 default:
-                    pedido = pedido.concat(req.body.pedido.objeto.dados.designacao);
+                    pedido = req.body.pedido.objeto.dados.designacao;
             }
             
             var notificacao = {
