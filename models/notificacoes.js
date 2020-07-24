@@ -5,7 +5,7 @@ const NotificacaoSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    pedido: {
+    objeto: {
         type: String,           
         required: false
     },
@@ -26,6 +26,10 @@ const NotificacaoSchema = new mongoose.Schema({
         required: true
     },
     responsavel: { // Email do técnico responsável pelo pedido no novo estado
+        type: String,
+        required: false
+    },
+    pedido: {
         type: String,
         required: false
     }

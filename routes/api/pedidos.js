@@ -76,24 +76,38 @@ router.post('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), 
 
     Pedidos.criar(req.body)
         .then(dados => {
+            console.log(req.body)
             var tipo = req.body.tipoObjeto;
-            var pedido = '';
+            var objeto = '';
             switch (tipo.split('_')[0]) {
                 case 'Tipologia': 
-                    pedido = req.body.novoObjeto.sigla;
+                    objeto = req.body.novoObjeto.sigla;
+                    break;
                 case 'Entidade':
-                    pedido = req.body.novoObjeto.sigla;
-                case 'Legislacao':
-                    pedido = `${req.body.novoObjeto.tipo} ${req.body.novoObjeto.numero}`;
+                    objeto = req.body.novoObjeto.sigla;
+                    break;
+                case 'Legislação':
+                    objeto = `${req.body.novoObjeto.tipo} ${req.body.novoObjeto.numero}`;
+                    break;
                 case 'Classe':
-                    pedido = req.body.novoObjeto.codigo;
+                    objeto = req.body.novoObjeto.codigo;
+                    break;
+                case 'TS Organizacional':
+                    objeto = req.body.novoObjeto.ts.designacao;
+                    break;
+                case 'TS Pluriorganizacional':
+                    objeto = req.body.novoObjeto.designacao;
+                    break;
+                case 'RADA':
+                    objeto = req.body.novoObjeto.titulo;
+                    break;
                 default:
-                    pedido = req.body.novoObjeto.designacao;
+                    objeto = '';
             }
 
             var notificacao = {
                 entidade : req.body.entidade,
-                pedido: pedido,
+                objeto: objeto,
                 acao: req.body.tipoPedido,
                 tipo: tipo,
                 novoEstado: "Submetido",
@@ -152,29 +166,44 @@ router.put('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
 
     Pedidos.atualizar(req.body.pedido._id, req.body)
         .then(dados => {
+            console.log(req.body)
             var tipo = req.body.pedido.objeto.tipo;
-            var pedido = '';
+            var objeto;
             switch (tipo.split('_')[0]) {
                 case 'Tipologia': 
-                    pedido = req.body.pedido.objeto.dados.sigla;
+                    objeto = req.body.pedido.objeto.dados.sigla;
+                    break;
                 case 'Entidade':
-                    pedido = req.body.pedido.objeto.dados.sigla;
-                case 'Legislacao':
-                    pedido = `${req.body.pedido.objeto.dados.tipo} ${req.body.pedido.objeto.dados.numero}`;
+                    objeto = req.body.pedido.objeto.dados.sigla;
+                    break;
+                case 'Legislação':
+                    objeto = `${req.body.pedido.objeto.dados.tipo} ${req.body.pedido.objeto.dados.numero}`;
+                    break;
                 case 'Classe':
-                    pedido = req.body.pedido.objeto.dados.codigo;
+                    objeto = req.body.pedido.objeto.dados.codigo;
+                    break;
+                case 'TS Organizacional':
+                    objeto = req.body.pedido.objeto.dados.ts.designacao;
+                    break;
+                case 'TS Pluriorganizacional':
+                    objeto = req.body.pedido.objeto.dados.designacao;
+                    break;
+                case 'RADA':
+                    objeto = req.body.pedido.objeto.dados.titulo;
+                    break;
                 default:
-                    pedido = req.body.pedido.objeto.dados.designacao;
+                    objeto = '';
             }
             
             var notificacao = {
                 entidade : req.body.pedido.entidade,
-                pedido: pedido,
+                objeto: objeto,
                 acao: req.body.pedido.objeto.acao,
                 tipo: tipo,
                 novoEstado: req.body.pedido.estado,
                 responsavel: req.body.distribuicao.proximoResponsavel.email,
-                realizadoPor: req.user.email
+                realizadoPor: req.user.email,
+                pedido: req.body.pedido.codigo
             }
             Notificacao.criar(notificacao);
 

@@ -6,15 +6,17 @@ mongoose.connect('mongodb://localhost/m51-clav', {useNewUrlParser: true, useUnif
         .then(() => console.log('Mongo Ready: ' + mongoose.connection.readyState))
         .catch((erro) => console.log('Mongo: erro da conexão ' + erro));
 
-async function main(){
+async function RabbitMQ(){
     var users = await User.find()
     users.forEach(user => {
-        Notifier.bind(user.email, user.entidade)
         console.log(`${user.name} Binded to: ${user.email} && ${user.entidade} `)
+        Notifier.bind(user.email, user.entidade)
     })
-    mongoose.connection.close()
 }
 
-main();
+RabbitMQ();
 
-setTimeout(function() {process.exit()},60000)
+setTimeout(() => {
+    mongoose.connection.close()
+    process.exit()
+}, 60000)
