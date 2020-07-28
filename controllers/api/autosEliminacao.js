@@ -6,7 +6,7 @@ var AutosEliminacao = module.exports
 
 AutosEliminacao.listar = async function() {
     let query = `
-    SELECT ?id ?data ?entidade ?tipo ?numero ?referencial WHERE {
+    SELECT ?id ?data ?entidade ?autoTipo ?tipo ?numero ?referencial WHERE {
         ?id a clav:AutoEliminacao;
             clav:autoDataAutenticacao ?data;
             clav:temEntidadeResponsavel ?entidade .
@@ -14,6 +14,9 @@ AutosEliminacao.listar = async function() {
             ?id clav:temLegislacao ?legislacao .
             ?legislacao clav:diplomaFonte ?tipo;
                     clav:diplomaNumero ?numero .
+        }
+        OPTIONAL {
+            ?id clav:autoTipo ?autoTipo .
         }
         OPTIONAL {
             ?id clav:temReferencialClassificativo ?referencial .
@@ -27,7 +30,7 @@ AutosEliminacao.listar = async function() {
     catch(erro) { throw (erro);}
 }
 
-AutosEliminacao.consultar = async function(id) {
+AutosEliminacao.consultar = async function(id,userEnt) {
     var query = `
     select * where {
         clav:${id} a clav:AutoEliminacao;
@@ -45,7 +48,12 @@ AutosEliminacao.consultar = async function(id) {
         }
         OPTIONAL {
             clav:${id} clav:temReferencialClassificativo ?referencial .
-            ?referencial rdfs:label ?referencialLabel .
+            OPTIONAL {
+            	?referencial rdfs:label ?referencialLabel 
+            }.
+            OPTIONAL {
+                ?referencial clav:titulo ?referencialTitulo
+            }.
         }
     }
     `
@@ -53,11 +61,11 @@ AutosEliminacao.consultar = async function(id) {
         let response = await execQuery("query",query);
         if(normalize(response).length === 0) return null;
         var autos = normalize(response)
-        
+        var ent = autos[0].entResponsavel.split("#")[1]
         var res = {
             id: id,
             data: autos[0].data,
-            entidade: autos[0].entResponsavel.split("#")[1],
+            entidade: ent,
             entidadeNome: autos[0].entidadeNome,
             responsavel: autos[0].responsavel,
             tipo: autos[0].fonte,
@@ -66,12 +74,14 @@ AutosEliminacao.consultar = async function(id) {
         }
         
         if(autos[0].legislacao) {
-            res.legislacao = "Portaria "+autos[0].legNumero
+            if(autos[0].fonte == "RADA") res.legislacao = "Despacho "+autos[0].legNumero
+            else res.legislacao = "Portaria "+autos[0].legNumero
             res.refLegislacao = autos[0].legislacao.split("#")[1]
         }
         else {
             res.referencial = autos[0].referencial.split("#")[1]
             res.referencialLabel = autos[0].referencialLabel
+            res.referencialTitulo = autos[0].referencialTitulo
         }
 
         for(a of autos)
@@ -148,27 +158,29 @@ AutosEliminacao.consultar = async function(id) {
                     })
                 }
             }
-            var query4 = `
-            select * where {
-                clav:${res2.id} clav:temAgregacao ?ag .
-                ?ag clav:agregacaoCodigo ?codigo ;
-                    clav:agregacaoTitulo ?titulo ;
-                    clav:agregacaoDataContagem ?data .
-                OPTIONAL {    
-                    ?ag clav:temNI ?ni .
+            if(ent==userEnt || userEnt=="ent_DGLAB") {
+                var query4 = `
+                select * where {
+                    clav:${res2.id} clav:temAgregacao ?ag .
+                    ?ag clav:agregacaoCodigo ?codigo ;
+                        clav:agregacaoTitulo ?titulo ;
+                        clav:agregacaoDataContagem ?data .
+                    OPTIONAL {    
+                        ?ag clav:temNI ?ni .
+                    }
                 }
-            }
-            `
-            var response4 = await execQuery("query",query4)
-            var agregacoes = normalize(response4)
-            
-            for(ag of agregacoes) {
-                res2.agregacoes.push({
-                    codigo: ag.codigo,
-                    titulo: ag.titulo,
-                    dataContagem: ag.data,
-                    ni: ag.ni.split("_")[1]
-                })
+                `
+                var response4 = await execQuery("query",query4)
+                var agregacoes = normalize(response4)
+                
+                for(ag of agregacoes) {
+                    res2.agregacoes.push({
+                        codigo: ag.codigo,
+                        titulo: ag.titulo,
+                        dataContagem: ag.data,
+                        ni: ag.ni.split("_")[1]
+                    })
+                }
             }
 
             res.zonaControlo.push(res2)
@@ -212,6 +224,7 @@ AutosEliminacao.adicionar = async function (auto) {
                             clav:autoNumero "${numero}" ;
                             clav:autoResponsavel "${auto.responsavel}" ;
                             clav:autoDataAutenticacao "${data}" ;
+                            clav:autoTipo "${auto.tipo}" ;
                             clav:temEntidadeResponsavel clav:${auto.entidade} .
         `
 
@@ -222,9 +235,14 @@ AutosEliminacao.adicionar = async function (auto) {
             clav:${id} clav:temLegislacao clav:${resultLeg[0].leg.split("#")[1]} .
         `
         }
-        else query += `
-            clav:${id} clav:temReferencialClassificativo clav:${auto.referencial} .
-        ` 
+        else {
+            if(auto.tipo=="RADA") query += `
+                clav:${id} clav:temReferencialClassificativo clav:rada_${auto.referencial.split("#")[1]} .
+            `
+            else query += `
+                clav:${id} clav:temReferencialClassificativo clav:${auto.referencial.split("#")[1]} .
+            `
+        } 
 
         for(fundo of auto.fundo) {
             query += `
@@ -238,7 +256,7 @@ AutosEliminacao.adicionar = async function (auto) {
             query += `
                 clav:${id} clav:temZonaControlo clav:${idZona} .
             `
-            if(auto.referencial)  {
+            if(auto.referencial && auto.tipo!="RADA")  {
                 query += `
                 clav:${idZona} clav:temClasseControlo clav:c${zona.codigo} .
                 `
