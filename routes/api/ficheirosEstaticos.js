@@ -1,12 +1,10 @@
-var Auth = require('../../controllers/auth.js');
-
 var express = require('express');
 var router = express.Router();
 
 const { validationResult } = require('express-validator');
 const { existe } = require('../validation')
 
-router.get('/', Auth.isLoggedInKey, [
+router.get('/', [
     existe("query", "caminho")
         .bail()
         .customSanitizer(decodeURIComponent)
