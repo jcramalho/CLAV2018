@@ -1,4 +1,4 @@
-summary: Permite aceder os ficheiros estáticos da API de dados 
+summary: Permite aceder os ficheiros estáticos da API de dados
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []
