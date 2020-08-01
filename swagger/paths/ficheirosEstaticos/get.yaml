@@ -1,0 +1,32 @@
+summary: Permite aceder os ficheiros estáticos da API de dados
+security:
+  - apiKeyQuery: []
+  - apiKeyAuth: []
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Diversos
+description: Permite aceder os ficheiros estáticos da API de dados bastando indicar o caminho do ficheiro na pasta dos ficheiros estáticos ('public')
+parameters:
+  - in: query
+    name: caminho
+    schema:
+      $ref: '#/components/schemas/Rota.yaml'
+    description: Caminho do ficheiro na pasta dos ficheiros estáticos ('public') 
+    required: true
+responses:
+  200:
+    description: Devolve as classes
+    content:
+      '*/*':
+        schema:
+          type: string
+          format: binary
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  404:
+    description: Ficheiro não encontrado
+  422:
+    $ref: '#/components/responses/ValidationParameters'
