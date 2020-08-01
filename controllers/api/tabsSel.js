@@ -1,5 +1,8 @@
 const execQuery = require('../../controllers/api/utils').execQuery
+const normalize = require('../../controllers/api/utils').normalize
 var Pedidos = require('../../controllers/api/pedidos');
+const { pca } = require('./classes');
+var Classe = require('../../controllers/api/classes')
 var SelTabs = module.exports
 
 const requisitosFicheiro = "O ficheiro tem de:<ul><li>Possuir uma sheet em que na 1º coluna tenha como header 'Código' e por baixo os códigos dos processos</li><li>Na mesma linha da header 'Código' possuir:<ul><li>Possuir no máximo uma coluna 'Título'</li><li>Pelo menos uma coluna começada por 'Dono' ou 'Participante', no máximo uma de cada (TS Organizacional)</li><li>Pelo menos uma coluna do tipo 'Entidade Dono' ou 'Entidade Participante', no máximo uma de cada para cada entidade (TS Pluriorganizacional)</li><li>Por baixo de cada coluna deve estar:<ul><li>x ou X os processos selecionados</li><li>Nada para os processos não selecionados</li></ul></li></ul></li></ul>"
@@ -723,4 +726,304 @@ SelTabs.criarPedidoDoCSV = async function (workbook, email, entidade_user, entid
     }else{
         throw("Não foi encontrada informação por forma a criar a tabela de seleção.\n" + requisitosFicheiro)
     }
+}
+
+function queryClasse(id, proc) {
+    const nanoid = require('nanoid')
+    var idProc = "c" + proc.codigo +"_"+id
+    console.log(idProc)
+    var query = ""
+    query += `
+        clav:${idProc} a clav:Classe_N${proc.codigo.split(".").length} ;
+                       clav:pertenceTS clav:${id} ;
+                       clav:classeStatus "${proc.status}" ;
+                       clav:codigo "${proc.codigo}" ;
+                       clav:titulo "${proc.titulo}" ;
+                       clav:descricao "${proc.descricao.replace(/"/g,'\"')}" .
+    `
+    if(proc.procTrans) 
+        query += `
+            clav:${idProc} clav:processoTransversal "${proc.procTrans}" .
+        `
+    if(proc.tipoProc=="Processo Comum")
+        query += `
+            clav:${idProc} clav:processoTipoVC clav:vc_processoTipo_pc .
+        `
+    else 
+        query += `
+            clav:${idProc} clav:processoTipoVC clav:vc_processoTipo_pe .
+        `
+
+    for(var nota of proc.notasAp) {
+        const nano = nanoid();
+        var notaId = "na_" + idProc + "_" + nano
+        query += `
+            clav:${idProc} clav:temNotaAplicacao clav:${notaId} .
+            clav:${notaId} a clav:NotaAplicacao ;
+                        clav:conteudo "${nota.nota.replace(/"/g,'\\"')}" .
+        `
+    }
+
+    for(var nota of proc.exemplosNotasAp) {
+        const nano = nanoid();
+        var notaId = "exna_" + idProc + "_" + nano
+        query += `
+            clav:${idProc} clav:temExemploNA clav:${notaId} .
+            clav:${notaId} a clav:ExemploNotaAplicacao ;
+                        clav:conteudo "${nota.exemplo.replace(/"/g,'\\"')}" .
+        `
+    }
+
+    for(var nota of proc.notasEx) {
+        const nano = nanoid();
+        var notaId = "ne_" + idProc + "_" + nano
+        query += `
+            clav:${idProc} clav:temNotaExclusao clav:${notaId} .
+            clav:${notaId} a clav:NotaExclusao ;
+                        clav:conteudo "${nota.nota.replace(/"/g,'\\"')}" .
+        `
+    }
+
+    for(var ti of proc.termosInd) {
+        const nano = nanoid();
+        var tiId = "ti_" + nano;
+        query += `
+            clav:${tiId} a clav:TermoIndice ;
+                         clav:estado "Ativo" ;
+                         clav:termo "${ti.termo}" ;
+                         clav:estaAssocClasse clav:${idProc} .
+        `
+    }
+    
+    for(var dono of proc.donos) 
+        query += `
+            clav:${idProc} clav:temDono clav:${dono.idDono} .
+        `
+
+    for(var part of proc.participantes) 
+        query += `
+            clav:${idProc} clav:temParticipante${part.participLabel} clav:${part.idParticipante} .
+        `
+    
+    for(var leg of proc.legislacao) 
+        query += `
+            clav:${idProc} clav:temLegislacao clav:${leg.idLeg} .
+        `
+    
+    if(proc.pca.valores!="" || proc.pca.notas!="") {
+        var pcaId = "pca_" + idProc
+        query += `
+            clav:${idProc} clav:temPCA clav:${pcaId} .
+            clav:${pcaId} a clav:PCA ;
+                        clav:pcaValor "${!isNaN(proc.pca.valores) ? proc.pca.valores : 'NE'}" .
+        `
+        if(proc.pca.formaContagem == "Data de cessação da vigência") 
+            query += `
+                clav:${pcaId} clav:pcaFormaContragemNormalizada clav:vc_pcaFormaContagem_cessacaoVigencia .
+            `
+        else if(proc.pca.formaContagem == "Data de conclusão do procedimento") 
+            query += `
+                clav:${pcaId} clav:pcaFormaContragemNormalizada clav:vc_pcaFormaContagem_conclusaoProcedimento .
+            `
+        else if(proc.pca.formaContagem == "Conforme disposição legal") { 
+            query += `
+                clav:${pcaId} clav:pcaFormaContragemNormalizada clav:vc_pcaFormaContagem_disposicaoLegal .
+            `
+            if(proc.pca.subFormaContagem == "Data do último assento, respeitando 30 anos para o óbito, 50 anos para o casamento e 100 anos para o nascimento, nos termos do artigo 15.º da Lei n.º 324/2007")
+                query += `
+                    clav:${pcaId} clav:pcaSubformaContagem clav:vc_pcaSubformaContagem_F01.01 .
+                `
+            else if(proc.pca.subFormaContagem == "Data do cumprimento nos termos do artigo 26.º da Lei n.º 5/2008")
+                query += `
+                    clav:${pcaId} clav:pcaSubformaContagem clav:vc_pcaSubformaContagem_F01.02 .
+                `
+            else if(proc.pca.subFormaContagem == "Data da defesa da tese de doutoramento, nos termos do artigo 3.º do Decreto-Lei n.º 52/2002 ou da data do cancelamento prevista no n.º 5 do artigo 5.º da Portaria n.º 285/2015")
+                query += `
+                    clav:${pcaId} clav:pcaSubformaContagem clav:vc_pcaSubformaContagem_F01.03 .
+                `
+            else if(proc.pca.subFormaContagem == "Data do facto que ocorrer em primeiro lugar; a) com o registo da extinção da procuração a que digam respeito; b) decorridos 15 anos a contar da data da outorga da procuração; c) logo que deixem de ser estritamente necessários para os fins para que foram recolhidos, nos termos do n.º 1 do artigo 13.º do Decreto Regulamentar n.º 3/2009")
+                query += `
+                    clav:${pcaId} clav:pcaSubformaContagem clav:vc_pcaSubformaContagem_F01.04 .
+                `
+            else if(proc.pca.subFormaContagem == "Data em que a autorização de introdução no mercado deixe de existir, nos termos do n.º 2 do artigo 12.º do Regulamento de execução (UE) n.º 520/2012")
+                query += `
+                    clav:${pcaId} clav:pcaSubformaContagem clav:vc_pcaSubformaContagem_F01.05 .
+                `
+            else if(proc.pca.subFormaContagem == 'Data da prescrição do procedimento criminal para os inquéritos arquivados nos termos do n.º 2 do artigo 277.º, do n.º 3 do artigo 282.º e do n.º 1 do artigo 277.º do Decreto-Lei n.º 78/87 atualizado e para os inquéritos arquivados com fundamento na recolha de "prova bastante de se não ter verificado o crime", ou "de o arguido não o ter praticado a qualquer título"; data do arquivamento para os inquéritos arquivados com fundamento na inadmissibilidade do procedimento ou outro, nos termos do n.º 1 do artigo 277.º e do n.º 1 do artigo 280.º do Decreto-Lei n.º 78/87 atualizado."')
+                query += `
+                    clav:${pcaId} clav:pcaSubformaContagem clav:vc_pcaSubformaContagem_F01.06 .
+                `
+            else if(proc.pca.subFormaContagem == "Data em que os jovens a quem respeitam completarem 21 anos, nos termos do artigo 132.º da Lei n.º 166/99")
+                query += `
+                    clav:${pcaId} clav:pcaSubformaContagem clav:vc_pcaSubformaContagem_F01.07 .
+                `
+            else if(proc.pca.subFormaContagem == "Data da prescrição do procedimento criminal, nos termos do artigo 118.º do Decreto-Lei n.º 48/95")
+                query += `
+                    clav:${pcaId} clav:pcaSubformaContagem clav:vc_pcaSubformaContagem_F01.08 .
+                `
+            else if(proc.pca.subFormaContagem == "Data em que forem considerados findos para efeitos de arquivo, nos termos do artigo 142.º da Lei n.º 63/2013")
+                query += `
+                    clav:${pcaId} clav:pcaSubformaContagem clav:vc_pcaSubformaContagem_F01.09 .
+                `
+            else if(proc.pca.subFormaContagem == "Data do cancelamento definitivo do registo criminal, nos termos do artigo 11.º da Lei n.º 37/2015")
+                query += `
+                    clav:${pcaId} clav:pcaSubformaContagem clav:vc_pcaSubformaContagem_F01.10 .
+                `
+            else if(proc.pca.subFormaContagem == "Data em que o jovem atinja a maioridade ou, nos casos em que tenha solicitado a continuação da medida para além da maioridade, complete 21 anos ou até aos 25 anos de idade, nos termos da Lei n.º 147/99, alterada pela Lei n.º 23/2017")
+                query += `
+                    clav:${pcaId} clav:pcaSubformaContagem clav:vc_pcaSubformaContagem_F01.11 .
+                `
+            else if(proc.pca.subFormaContagem == 'Maior de idade: data do cancelamento definitivo do registo criminal, nos termos do artigo 11.º da Lei n.º 37/2015; Menor de idade: data em que o respectivo titular completar 21 anos, nos termos do artigo 220.º da Lei n.º 4/2015" - Sempre que as formas de contagem de prazos estipuladas nas alíneas c) e e) do n.º 6 não forem aplicáveis, por o título não ser emitido ou por não se iniciar o período de vigência, compete às entidades previstas no artigo 2.º proceder ao encerramento das agregações, em conformidade com o código do procedimento administrativo, dando início à contagem do prazo de conservação administrativa')
+                query += `
+                    clav:${pcaId} clav:pcaSubformaContagem clav:vc_pcaSubformaContagem_F01.12 .
+                `                           
+        }
+        else if(proc.pca.formaContagem == "Data de emissão do título") 
+            query += `
+                clav:${pcaId} clav:pcaFormaContragemNormalizada clav:vc_pcaFormaContagem_emissaoTitulo .
+            `
+        else if(proc.pca.formaContagem == "Data de extinção do direito") 
+            query += `
+                clav:${pcaId} clav:pcaFormaContragemNormalizada clav:vc_pcaFormaContagem_extincaoDireito .
+            `
+        else if(proc.pca.formaContagem == "Data de extinção da entidade sobre a qual recai o procedimento") 
+            query += `
+                clav:${pcaId} clav:pcaFormaContragemNormalizada clav:vc_pcaFormaContagem_extincaoEntidade .
+            `
+        else if(proc.pca.formaContagem == "Data de início do procedimento") 
+            query += `
+                clav:${pcaId} clav:pcaFormaContragemNormalizada clav:vc_pcaFormaContagem_inicioProcedimento .
+            `
+        
+        if(proc.pca.nota) 
+            query += `
+                clav:${pcaId} clav:pcaNota clav:${proc.pca.nota} .
+            `
+        if(proc.pca.justificacao) 
+            query += `
+                clav:${pcaId} clav:temjustificacao clav:just_${pcaId} .
+            `
+        var justIndex = 1;
+        for(var just of proc.pca.justificacao) {
+            query += `
+                clav:just_${pcaId} clav:temCriterio clav:crit_just_${pcaId}_${justIndex} .
+                clav:crit_just_${pcaId}_${justIndex} a clav:${just.tipoId} ;
+                                                    clav:conteudo "${just.conteudo.replace(/"/g,'\\"')}" .
+            `
+            justIndex++;
+        }
+    }
+    if((proc.df.valor!="" && proc.df.valor!="NE") || proc.df.nota) {
+        var dfId = "df_" + idProc
+        query += `
+            clav:${idProc} clav:temDF clav:${dfId} .
+            clav:${dfId} a clav:DestinoFinal ;
+                        clav:dfValor "${proc.df.valor}" .
+        `
+        if(proc.df.justificacao) 
+            query += `
+                clav:${dfId} clav:temjustificacao clav:just_${dfId} .
+            `
+        justIndex = 1;
+        for(var just of proc.df.justificacao) {
+            query += `
+                clav:just_${dfId} clav:temCriterio clav:crit_just_${dfId}_${justIndex} .
+                clav:crit_just_${dfId}_${justIndex} a clav:${just.tipoId} ;
+                                                    clav:conteudo "${just.conteudo.replace(/"/g,'\\"')}" .
+            `
+            justIndex++;
+        }
+
+    }
+    if(proc.codigo.split('.').length==4)
+        query += `
+            clav:${idProc} clav:temPai clav:${"c"+proc.codigo.split('.')[0]+'.'+proc.codigo.split('.')[1]+'.'+proc.codigo.split('.')[2]+"_ts"+idProc.split("_ts")[1]} .
+        `
+    if(proc.codigo.split('.').length==3)
+        query += `
+            clav:${idProc} clav:temPai clav:${"c"+proc.codigo.split('.')[0]+'.'+proc.codigo.split('.')[1]+"_ts"+idProc.split("_ts")[1]} .
+        `
+    if(proc.codigo.split('.').length==2)
+        query += `
+            clav:${idProc} clav:temPai clav:${"c"+proc.codigo.split('.')[0]+"_ts"+idProc.split("_ts")[1]} .
+        `
+    
+    return query
+}
+
+SelTabs.adicionar = async function(tabela) {
+    var currentTime = new Date();
+    var paiList = [];
+    var queryNum = `
+        select * where {
+            ?ts a clav:TabelaSelecao .
+        }
+    `
+    try {
+        let resultNum = await execQuery("query", queryNum);
+        resultNum = normalize(resultNum)
+        var num = resultNum.length == 0 ? "1" : resultNum[resultNum.length-1].ts.split("ts")[1]
+        num = parseInt(num)+1
+        var id = "ts"+num
+        var data = currentTime.getFullYear()+"-"+(currentTime.getMonth()+1)+"-"+currentTime.getDate()
+
+        var query = `{
+            clav:${id} a clav:TabelaSelecao ;
+                          clav:tsResponsavel "${tabela.criadoPor}" ;
+                          clav:dataAprovacao "${data}" ;
+                          clav:temEntidadeResponsavel clav:${tabela.entidade} .
+        `
+
+        for(var ent of tabela.objeto.dados.entidades)
+            query += `
+                clav:${id} clav:temEntidade clav:${ent.id} .
+            `
+        
+        for(var proc of tabela.objeto.dados.listaProcessos.procs) {
+            
+            query += queryClasse(id, proc)
+            
+            var idProc = "c" + proc.codigo +"_"+id
+            for(var processo of proc.processosRelacionados) {
+                if(tabela.objeto.dados.listaProcessos.procs.find(e => e.codigo == processo.codigo)) {
+                    var idProcAux = "c" + processo.codigo +"_"+id
+                    query += `
+                        clav:${idProc} clav:${processo.idRel} clav:${idProcAux} .
+                    `
+                }
+            }
+
+            if(paiList.indexOf(proc.codigo.split(".")[0]) === -1)
+                paiList.push(proc.codigo.split(".")[0])
+
+            if(paiList.indexOf(proc.codigo.split(".")[0]+"."+proc.codigo.split(".")[1]) === -1)
+                paiList.push(proc.codigo.split(".")[0]+"."+proc.codigo.split(".")[1])
+            
+            var listaFilhos = await Classe.descendencia("c"+proc.codigo)
+            
+            for(var filho of listaFilhos) {
+                var classeFilho = await Classe.retrieve("c"+filho.codigo)
+                query += queryClasse(id, classeFilho) 
+            }
+        }
+
+        for(var pai of paiList) {
+            var classePai = await Classe.retrieve("c"+pai)
+            query += queryClasse(id, classePai)
+        }
+        query += `
+        }
+        `
+        var inserir = "INSERT DATA "+query;
+        var ask = "ASK "+ query;
+        
+        return execQuery("update", inserir).then(res =>
+            execQuery("query", ask).then(result => {
+                if (result.boolean) return "Sucesso na inserção da tabela de seleção";
+                else throw "Insucesso na inserção do tabela de seleção";
+            })
+        );
+
+    } catch(erro) { throw (erro); }
+
 }

@@ -48,6 +48,12 @@ router.get('/:id', Auth.isLoggedInKey, [
         .catch(err => res.status(500).json(`Erro ao obter TS: ${err}`))
 })
 
+router.post('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), async function (req, res){
+    SelTabs.adicionar(req.body.tabela)
+        .then(dados => res.jsonp(dados))
+        .catch(err => res.status(500).send(`Erro na criação de tabela de seleção: ${err}`))
+})
+
 router.post('/importar', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), async function (req, res){
     var form = new formidable.IncomingForm()
     
