@@ -43,7 +43,7 @@ router.get('/:id', Auth.isLoggedInKey, [
         return res.status(422).jsonp(errors.array())
     }
 
-    SelTabs.stats(req.params.id)
+    SelTabs.consultar(req.params.id)
         .then(result => res.send(result))
         .catch(err => res.status(500).json(`Erro ao obter TS: ${err}`))
 })

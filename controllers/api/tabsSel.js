@@ -1,5 +1,6 @@
 const execQuery = require('../../controllers/api/utils').execQuery
 const normalize = require('../../controllers/api/utils').normalize
+const projection = require("../../controllers/api/utils").projection;
 var Pedidos = require('../../controllers/api/pedidos');
 const { pca } = require('./classes');
 var Classe = require('../../controllers/api/classes')
@@ -7,19 +8,71 @@ var SelTabs = module.exports
 
 const requisitosFicheiro = "O ficheiro tem de:<ul><li>Possuir uma sheet em que na 1º coluna tenha como header 'Código' e por baixo os códigos dos processos</li><li>Na mesma linha da header 'Código' possuir:<ul><li>Possuir no máximo uma coluna 'Título'</li><li>Pelo menos uma coluna começada por 'Dono' ou 'Participante', no máximo uma de cada (TS Organizacional)</li><li>Pelo menos uma coluna do tipo 'Entidade Dono' ou 'Entidade Participante', no máximo uma de cada para cada entidade (TS Pluriorganizacional)</li><li>Por baixo de cada coluna deve estar:<ul><li>x ou X os processos selecionados</li><li>Nada para os processos não selecionados</li></ul></li></ul></li></ul>"
 
-SelTabs.list = function () {
-    return execQuery("query",
-        `SELECT * WHERE { 
-            ?id rdf:type clav:TabelaSelecao ;
-                clav:designacao ?Name ;
-                clav:referencialClassificativoStatus 'A';
-        }`
-    )
-        //getting the content we want
-        .then(response => Promise.resolve(response.results.bindings))
-        .catch(function (error) {
-            console.error(error);
-        });
+SelTabs.list = async function () {
+    let query = `
+    SELECT * WHERE { 
+        ?id rdf:type clav:TabelaSelecao ;
+            clav:designacao ?designacao ;
+            clav:dataAprovacao ?data ;
+            clav:temEntidade ?entidades .
+    }
+    `
+    const campos = [
+        "id",
+        "designacao",
+        "data"
+      ];
+    const agrupar = ["entidades"];
+
+    try {
+        let result = await execQuery("query",query);
+        return projection(normalize(result), campos, agrupar);
+    }
+    catch(erro) {throw erro;}
+}
+
+SelTabs.consultar = async function (id) {
+    let query = `
+        select * where {
+            clav:${id} a clav:TabelaSelecao ;
+                    clav:designacao ?designacao ;
+                    clav:dataAprovacao ?data ;
+                    clav:temEntidade ?entidades ;
+                    clav:tsResponsavel ?responsavel ;
+                    clav:temEntidadeResponsavel ?entidade .
+        }
+    `
+    try {
+        let response = await execQuery("query",query);
+        response = normalize(response)
+        
+        var res = {
+            designacao: response[0].designacao,
+            data: response[0].data,
+            entidades: response.map(r=> {return r.entidades.split("#ent_")[1]}),
+            responsavel: response[0].responsavel,
+            entidade: response[0].entidade.split("#ent_")[1],
+            classes: []
+        }
+        
+        query = `
+            select * where {
+                ?classe clav:pertenceTS clav:${id} ;
+                        clav:codigo ?codigo .
+            } order by ?codigo
+        `
+        
+        let listClasses = await execQuery("query",query);
+        listClasses = normalize(listClasses)
+        
+        for(var classe of listClasses) {
+            var c = await Classe.retrieve(classe.classe.split("clav#")[1])
+            res.classes.push(c)
+        }
+        
+        return res
+    }
+    catch(err) {throw err;}
 }
 
 SelTabs.listClasses = function (table) {
@@ -731,7 +784,7 @@ SelTabs.criarPedidoDoCSV = async function (workbook, email, entidade_user, entid
 function queryClasse(id, proc) {
     const nanoid = require('nanoid')
     var idProc = "c" + proc.codigo +"_"+id
-    console.log(idProc)
+    
     var query = ""
     query += `
         clav:${idProc} a clav:Classe_N${proc.codigo.split(".").length} ;
@@ -962,13 +1015,13 @@ SelTabs.adicionar = async function(tabela) {
     try {
         let resultNum = await execQuery("query", queryNum);
         resultNum = normalize(resultNum)
-        var num = resultNum.length == 0 ? "1" : resultNum[resultNum.length-1].ts.split("ts")[1]
-        num = parseInt(num)+1
+        var num = resultNum.length == 0 ? "1" : (parseInt(resultNum[resultNum.length-1].ts.split("ts")[1])+1)
         var id = "ts"+num
         var data = currentTime.getFullYear()+"-"+(currentTime.getMonth()+1)+"-"+currentTime.getDate()
 
         var query = `{
             clav:${id} a clav:TabelaSelecao ;
+                          clav:designacao "${tabela.objeto.dados.designacao}" ;
                           clav:tsResponsavel "${tabela.criadoPor}" ;
                           clav:dataAprovacao "${data}" ;
                           clav:temEntidadeResponsavel clav:${tabela.entidade} .
@@ -1014,13 +1067,24 @@ SelTabs.adicionar = async function(tabela) {
         query += `
         }
         `
+
         var inserir = "INSERT DATA "+query;
-        var ask = "ASK "+ query;
+        
+        var ask = `ASK {
+            clav:${id} a clav:TabelaSelecao ;
+                clav:tsResponsavel "${tabela.criadoPor}" ;
+                clav:dataAprovacao "${data}" ;
+                clav:temEntidadeResponsavel clav:${tabela.entidade} .
+            }
+        `;
         
         return execQuery("update", inserir).then(res =>
             execQuery("query", ask).then(result => {
                 if (result.boolean) return "Sucesso na inserção da tabela de seleção";
-                else throw "Insucesso na inserção do tabela de seleção";
+                else {
+                    execQuery("delete","DELETE DATA "+query)    
+                    throw "Insucesso na inserção do tabela de seleção";
+                }
             })
         );
 
