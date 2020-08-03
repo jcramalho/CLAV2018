@@ -26,7 +26,8 @@ TermosIndice.listar = () => {
                 clav:estado ?estado;
                 clav:estaAssocClasse ?idC .
             ?idC clav:titulo ?tituloClasse ;
-                clav:codigo ?idClasse.
+                clav:codigo ?idClasse ;
+                clav:pertenceLC ?lc .
             BIND(STRAFTER(STR(?idTI), "clav#") AS ?id) .
             BIND(STRAFTER(STR(?idC), "clav#") AS ?codigoClasse)
         }
