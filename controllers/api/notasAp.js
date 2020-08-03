@@ -10,6 +10,7 @@ NotasAp.todasNotasAp = () => {
                 ?idNota clav:conteudo ?nota .
                 ?codigoProc clav:temNotaAplicacao ?idNota .
                 ?codigoProc clav:titulo ?tituloProc .
+                ?codigoProc clav:pertenceLC ?lc .
                 BIND(STRAFTER(STR(?codigoProc), "clav#") AS ?cProc) .
             }`
     return execQuery("query", query)
