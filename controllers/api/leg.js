@@ -26,7 +26,7 @@ const Leg = module.exports;
  * lista das legislacoes existentes que respeitam o filtro dado
  */
 Leg.listar = () => {
-  const query = `SELECT ?id ?data ?numero ?tipo ?sumario ?estado ?entidades ?fonte ?link WHERE {
+  const query = `SELECT ?id ?data ?dataRevogacao ?numero ?tipo ?sumario ?estado ?entidades ?fonte ?link WHERE {
         ?uri rdf:type clav:Legislacao;
              clav:diplomaData ?data;
              clav:diplomaNumero ?numero;
@@ -40,6 +40,9 @@ Leg.listar = () => {
         	?uri clav:diplomaFonte ?fonte.
         }
         OPTIONAL {
+        	?uri clav:diplomaDataRevogacao ?dataRevogacao.
+        }
+        OPTIONAL {
             ?uri clav:temEntidadeResponsavel ?ent.
             ?ent clav:entSigla ?entidades;
         }
@@ -48,6 +51,7 @@ Leg.listar = () => {
   const campos = [
     "id",
     "data",
+    "dataRevogacao",
     "numero",
     "tipo",
     "sumario",
@@ -73,7 +77,7 @@ Leg.listar = () => {
 
 //Lista todas as legislações consoante o estado
 Leg.listarPorEstado = estado => {
-  const query = `SELECT ?id ?data ?numero ?tipo ?sumario ?entidades ?fonte ?link WHERE {
+  const query = `SELECT ?id ?data ?dataRevogacao ?numero ?tipo ?sumario ?entidades ?fonte ?link WHERE {
         ?uri rdf:type clav:Legislacao;
              clav:diplomaData ?data;
              clav:diplomaNumero ?numero;
@@ -85,13 +89,16 @@ Leg.listarPorEstado = estado => {
         	?uri clav:diplomaFonte ?fonte.
         }
         OPTIONAL {
+        	?uri clav:diplomaDataRevogacao ?dataRevogacao.
+        }
+        OPTIONAL {
             ?uri clav:temEntidadeResponsavel ?ent.
             ?ent clav:entSigla ?entidades;
         }
         BIND(STRAFTER(STR(?uri), 'clav#') AS ?id).
 
     } ORDER BY DESC (?data)`;
-  const campos = ["id", "data", "numero", "tipo", "sumario", "fonte", "link"];
+  const campos = ["id", "data", "dataRevogacao", "numero", "tipo", "sumario", "fonte", "link"];
   const agrupar = ["entidades"];
 
   return execQuery("query", query).then(response => {
@@ -111,7 +118,7 @@ Leg.listarPorEstado = estado => {
 
 // Lista todas as legislações com PNs associados
 Leg.listarComPNs = () => {
-  const query = `SELECT ?id ?data ?numero ?tipo ?sumario ?estado ?entidades ?fonte ?link WHERE {
+  const query = `SELECT ?id ?data ?dataRevogacao ?numero ?tipo ?sumario ?estado ?entidades ?fonte ?link WHERE {
         ?uri rdf:type clav:Legislacao;
              clav:diplomaData ?data;
              clav:diplomaNumero ?numero;
@@ -121,7 +128,10 @@ Leg.listarComPNs = () => {
              clav:diplomaLink ?link.
         OPTIONAL {
         	?uri clav:diplomaFonte ?fonte.
-        } 
+        }
+        OPTIONAL {
+        	?uri clav:diplomaDataRevogacao ?dataRevogacao.
+        }
         OPTIONAL {
             ?uri clav:temEntidadeResponsavel ?ent.
             ?ent clav:entSigla ?entidades;
@@ -134,6 +144,7 @@ Leg.listarComPNs = () => {
   const campos = [
     "id",
     "data",
+    "dataRevogacao",
     "numero",
     "tipo",
     "sumario",
@@ -159,7 +170,7 @@ Leg.listarComPNs = () => {
 
 // Lista todas as legislações sem PNs associados
 Leg.listarSemPNs = () => {
-  const query = `SELECT ?id ?data ?numero ?tipo ?sumario ?estado ?entidades ?fonte ?link WHERE {
+  const query = `SELECT ?id ?data ?dataRevogacao ?numero ?tipo ?sumario ?estado ?entidades ?fonte ?link WHERE {
         ?uri rdf:type clav:Legislacao;
              clav:diplomaData ?data;
              clav:diplomaNumero ?numero;
@@ -169,6 +180,9 @@ Leg.listarSemPNs = () => {
              clav:diplomaLink ?link .
         OPTIONAL {
         	?uri clav:diplomaFonte ?fonte.
+        }
+        OPTIONAL {
+        	?uri clav:diplomaDataRevogacao ?dataRevogacao.
         } 
         OPTIONAL {
             ?uri clav:temEntidadeResponsavel ?ent.
@@ -182,6 +196,7 @@ Leg.listarSemPNs = () => {
   const campos = [
     "id",
     "data",
+    "dataRevogacao",
     "numero",
     "tipo",
     "sumario",
@@ -276,7 +291,7 @@ Leg.listarRegulados = async () => {
  * então a promessa conterá o valor `undefined`
  */
 Leg.consultar = id => {
-  const query = `SELECT ?tipo ?data ?numero ?sumario ?link ?estado ?fonte ?entidades WHERE { 
+  const query = `SELECT ?tipo ?data ?dataRevogacao ?numero ?sumario ?link ?estado ?fonte ?entidades WHERE { 
         clav:${id} a clav:Legislacao;
             clav:diplomaData ?data;
             clav:diplomaNumero ?numero;
@@ -288,6 +303,9 @@ Leg.consultar = id => {
         	clav:${id} clav:diplomaFonte ?fonte.
         }
         OPTIONAL {
+        	clav:${id} clav:diplomaDataRevogacao ?dataRevogacao.
+        }
+        OPTIONAL {
             clav:${id} clav:temEntidadeResponsavel ?ent.
             ?ent clav:entSigla ?entidades;
         }
@@ -295,6 +313,7 @@ Leg.consultar = id => {
   const campos = [
     "id",
     "data",
+    "dataRevogacao",
     "numero",
     "tipo",
     "sumario",
@@ -415,7 +434,7 @@ Leg.portarias = () => {
  * lista das legislacoes existentes que respeitam a fonte dada
  */
 Leg.listarFonte = fonte => {
-  const query = `SELECT ?id ?data ?numero ?tipo ?sumario ?entidades ?link WHERE {
+  const query = `SELECT ?id ?data ?dataRevogacao ?numero ?tipo ?sumario ?entidades ?link WHERE {
         ?uri rdf:type clav:Legislacao;
              clav:diplomaData ?data;
              clav:diplomaNumero ?numero;
@@ -428,9 +447,12 @@ Leg.listarFonte = fonte => {
             ?uri clav:temEntidadeResponsavel ?ent.
             ?ent clav:entSigla ?entidades;
         }
+        OPTIONAL {
+        	?uri clav:diplomaDataRevogacao ?dataRevogacao.
+        }
         BIND(STRAFTER(STR(?uri), 'clav#') AS ?id).
     } ORDER BY DESC (?data)`;
-  const campos = ["id", "data", "numero", "tipo", "sumario", "link"];
+  const campos = ["id", "data", "dataRevogacao", "numero", "tipo", "sumario", "link"];
   const agrupar = ["entidades"];
 
   return execQuery("query", query).then(response => {

@@ -10,6 +10,7 @@ ExemplosNotasAp.todosExemplosNotasAp = () => {
         ?idExemplo clav:conteudo ?exemplo .
         ?codigoProc clav:temExemploNA ?idExemplo .
         ?codigoProc clav:titulo ?tituloProc .
+        ?codigoProc clav:pertenceLC ?lc .
         BIND(STRAFTER(STR(?codigoProc), "clav#") AS ?cProc) .
     }`
     return execQuery("query", query)
