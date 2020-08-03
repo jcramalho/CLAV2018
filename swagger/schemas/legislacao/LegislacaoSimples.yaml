@@ -6,6 +6,8 @@ properties:
     type: string
   data:
     $ref: '#/components/schemas/Data'
+  dataRevogacao:
+    $ref: '#/components/schemas/Data'
   tipo:
     $ref: '#/components/schemas/TipoLegislacao'
   link:

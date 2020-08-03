@@ -11,7 +11,7 @@ parameters:
   - in: query
     name: caminho
     schema:
-      $ref: '#/components/schemas/Rota.yaml'
+      $ref: '#/components/schemas/Rota'
     description: Caminho do ficheiro na pasta dos ficheiros estáticos ('public') 
     required: true
 responses:
