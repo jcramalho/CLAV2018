@@ -236,7 +236,7 @@ AutosEliminacao.adicionar = async function (auto) {
         `
         }
         else {
-            if(auto.tipo=="RADA") query += `
+            if(auto.tipo=="RADA_CLAV") query += `
                 clav:${id} clav:temReferencialClassificativo clav:rada_${auto.referencial.split("#")[1]} .
             `
             else query += `
@@ -256,7 +256,7 @@ AutosEliminacao.adicionar = async function (auto) {
             query += `
                 clav:${id} clav:temZonaControlo clav:${idZona} .
             `
-            if(auto.referencial && auto.tipo!="RADA")  {
+            if(auto.referencial && auto.tipo!="RADA_CLAV")  {
                 query += `
                 clav:${idZona} clav:temClasseControlo clav:c${zona.codigo} .
                 `
