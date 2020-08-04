@@ -254,7 +254,9 @@ router.put("/:id", Auth.isLoggedInUser, Auth.checkLevel(4), [
     existe('body', 'sigla')
         .custom(naoExisteSiglaSelf)
         .withMessage("Sigla já existe"),
-    estaEm('body', "estado", vcEstado),
+    estaEm('body', "estado", vcEstado)
+        .custom((v, { req }) => !req.body.dataExtincao || v == "Inativa")
+        .withMessage("Se tem uma dataExtincao então o estado deve ser Inativa"),
     existe('body', 'designacao')
         .custom(naoExisteDesignacaoSelf)
         .withMessage("Designação já existe"),
@@ -262,8 +264,14 @@ router.put("/:id", Auth.isLoggedInUser, Auth.checkLevel(4), [
     body("sioe", "Valor inválido, SIOE é um número")
         .optional()
         .matches(/^\d+$/),
-    dataValida('body', 'dataCriacao').optional(),
-    dataValida('body', 'dataExtincao').optional(),
+    dataValida('body', 'dataCriacao')
+        .custom((v, { req }) => !req.body.dataExtincao || v < req.body.dataExtincao)
+        .withMessage("dataCriacao tem de ser anterior a dataExtincao")
+        .optional(),
+    dataValida('body', 'dataExtincao')
+        .custom((v, { req }) => !req.body.dataCriacao || v > req.body.dataCriacao)
+        .withMessage("dataExtincao tem de ser posterior a dataCriacao")
+        .optional(),
     verificaLista("body", "tipologiasSel"),
     verificaExisteTip("body", "tipologiasSel.*.id")
 ], (req, res) => {
@@ -285,6 +293,15 @@ router.put("/:id", Auth.isLoggedInUser, Auth.checkLevel(4), [
 router.put("/:id/extinguir", Auth.isLoggedInUser, Auth.checkLevel(4), [
     verificaEntId('param', 'id'),
     dataValida('body', 'dataExtincao')
+        .custom((d, {req}) => {
+            let ent = State.getEntidade(req.params.id)
+            if(!ent.dataCriacao || ent.dataCriacao < d){
+                return Promise.resolve()
+            }else{
+                return Promise.reject()
+            }
+        })
+        .withMessage("dataExtincao tem de ser posterior a dataCriacao")
 ], (req, res) => {
   const errors = validationResult(req)
   if(!errors.isEmpty()){
