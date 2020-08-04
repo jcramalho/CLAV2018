@@ -66,24 +66,30 @@ Classes.listarPNsEspecificos = async (entidades, tipologias) => {
         query += `
             { ?id clav:temDono clav:${entidades[0]} } 
             Union { ?id clav:temParticipante clav:${entidades[0]} }
-            `
+        `
         if (entidades.length > 1) {
             for (var i = 1; i < entidades.length; i++) {
                 query += `
                     Union { ?id clav:temDono clav:${entidades[i]} } 
                     Union { ?id clav:temParticipante clav:${entidades[i]} }
-                    `
+                `
             }
         }
 
     }
 
     if (tipologias) {
-        for (var i = 0; i < tipologias.length; i++) {
-            query += `
-                Union { ?id clav:temDono clav:${tipologias[i]}}
-                Union { ?id clav:temParticipante clav:${tipologias[i]}}
+        query += `
+            { ?id clav:temDono clav:${tipologias[0]}}
+            Union { ?id clav:temParticipante clav:${tipologias[0]}}
         `
+        if(tipologias.length > 1) {
+            for (var i = 1; i < tipologias.length; i++) {
+                query += `
+                    Union { ?id clav:temDono clav:${tipologias[i]}}
+                    Union { ?id clav:temParticipante clav:${tipologias[i]}}
+                `
+            }
         }
     }
 

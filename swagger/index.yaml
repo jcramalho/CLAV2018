@@ -14,8 +14,22 @@ info:
     Se tiver um token de um utilizador não necessita de indicar uma chave API para aceder aos GET's que a chave API dá acesso. O token tem a duração de 8h ao fim das quais necessita de realizar uma nova autenticação através da rota [POST /users/login](#/Utilizadores/post_users_login) e usar o novo token em vez do antigo.
 
     Os métodos de autenticação disponíveis podem ser acedidos ao carregar num dos cadeados. Ao carregar no botão 'Authorize' irá aparecer todos os métodos de autenticação. Se carregar no cadeado de uma rota irá apenas aparecer os métodos de autenticação que a rota suporta (permite/autoriza).
+
+    Por fim indica-se os níveis de acesso presentes na API de dados:
+      - Nível -1 = Qualquer pessoa (Todos)
+      - Nível 0 = Chaves API
+      - Nível 1 = Representante da Entidade
+      - Nível 2 = Utilizador Simples
+      - Nível 3 = Utilizador Arquivo Distrital
+      - Nível 3.5 = Utilizador Avançado
+      - Nível 4 = Utilizador Validador
+      - Nível 5 = Utilizador Decisor
+      - Nível 6 = Administrador de Perfil Funcional
+      - Nível 7 = Administrador de Perfil Tecnológico
+
+    Não esquecer que todos os utilizadores (nível 1 a 7) conseguem aceder às rotas que as Chaves API conseguem aceder (nível 0).
     
-    **Última alteração: 01/07/2020**
+    **Última alteração: 03/08/2020**
   version: 2.0.0
   title: CLAV API
   contact:
