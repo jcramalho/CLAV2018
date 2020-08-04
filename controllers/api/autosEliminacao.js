@@ -6,7 +6,7 @@ var AutosEliminacao = module.exports
 
 AutosEliminacao.listar = async function() {
     let query = `
-    SELECT ?id ?data ?entidade ?autoTipo ?tipo ?numero ?referencial WHERE {
+    SELECT ?id ?data ?entidade ?autoTipo ?tipo ?numero ?referencial ?referencialLabel ?referencialTitulo WHERE {
         ?id a clav:AutoEliminacao;
             clav:autoDataAutenticacao ?data;
             clav:temEntidadeResponsavel ?entidade .
@@ -20,6 +20,12 @@ AutosEliminacao.listar = async function() {
         }
         OPTIONAL {
             ?id clav:temReferencialClassificativo ?referencial .
+            OPTIONAL {
+            	?referencial clav:designacao ?referencialLabel 
+            }.
+            OPTIONAL {
+                ?referencial clav:titulo ?referencialTitulo
+            }.
         }
     } 
     `
@@ -49,7 +55,7 @@ AutosEliminacao.consultar = async function(id,userEnt) {
         OPTIONAL {
             clav:${id} clav:temReferencialClassificativo ?referencial .
             OPTIONAL {
-            	?referencial rdfs:label ?referencialLabel 
+            	?referencial clav:designacao ?referencialLabel 
             }.
             OPTIONAL {
                 ?referencial clav:titulo ?referencialTitulo
