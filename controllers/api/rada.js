@@ -282,6 +282,7 @@ RADA.consulta = async id => {
           OPTIONAL{ clav:pca_${rada.tsRada[i].classes.split('#')[1]} clav:pcaSubformaContagem ?subformaContagem.
                       ?subformaContagem skos:scopeNote ?subformaLabel.	 
           }
+          OPTIONAL{ clav:pca_${rada.tsRada[i].classes.split('#')[1]} clav:pcaSubformaContagemNaoNormalizada ?subformaLabel }
           OPTIONAL{ clav:pca_${rada.tsRada[i].classes.split('#')[1]} clav:pcaNota ?notaPCA }
           OPTIONAL{ clav:pca_${rada.tsRada[i].classes.split('#')[1]} clav:temJustificacao ?justificacaoPCA }
         }`
