@@ -135,6 +135,32 @@ Classes.listarPNsEspecificosTipologias = async (tipologias) => {
         .then(response => normalize(response))
 }
 
+// Devolve a lista de classes de nível 3 que são consideradas processos específicos
+Classes.listarPNsEspecificosTodos = async () => {
+    var query = `
+    Select
+            ?id
+            ?codigo
+            ?titulo
+            ?status
+            ?transversal
+        Where {
+            ?id clav:processoTipoVC clav:vc_processoTipo_pe .
+            ?id clav:classeStatus ?status .
+        `
+    query += `
+        ?id clav:codigo ?codigo .
+        ?id clav:titulo ?titulo .
+        ?id clav:processoTransversal ?transversal.
+        }
+        Group by ?codigo ?titulo ?id ?status ?transversal
+        Order by ?codigo
+    `
+
+    return execQuery("query", query)
+        .then(response => normalize(response))
+}
+
 
 // Devolve a lista de classes de nível 3 que são consideradas processos específicos
 // de uma dada entidade e de diferentes tipologias

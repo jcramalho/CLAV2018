@@ -362,6 +362,12 @@ exports.getProcessosEspecificos = async (entidades, tipologias) => {
     return PE;
 }
 
+//Devolve a lista dos processos de negócio especificos, ou seja, aqueles com :processoTipoVC :vc_processoTipo_pc
+exports.getProcessosEspecificosTodos = async () => {
+    let PE = await Classes.listarPNsEspecificosTodos();
+    return PE;
+}
+
 //devolve se uma classe é um processo especifico e se tem como dona ou participante uma das entidades/tipologias selecionadas
 function filterEspEntsTips(classe, ent_tip){
     var ret = classe.tipoProc == "Processo Específico"
