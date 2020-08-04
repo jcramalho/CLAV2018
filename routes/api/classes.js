@@ -87,6 +87,9 @@ router.get('/', Auth.isLoggedInKey, [
                     else if(tips){
                         res.locals.dados = await State.getProcessosEspecificosTipologias(tips);
                     }
+                    else{
+                        res.locals.dados = await State.getProcessosEspecificosTodos();
+                    }
                 }
             }else{
                 res.locals.dados = State.getProcEntsTips(ents, tips, allInfo)
