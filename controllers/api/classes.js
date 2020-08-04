@@ -63,7 +63,7 @@ Classes.listarPNsEspecificos = async (entidades, tipologias) => {
             ?id clav:classeStatus ?status .
         `
     if (entidades) {
-        query += `
+        query += `{
             { ?id clav:temDono clav:${entidades[0]} } 
             Union { ?id clav:temParticipante clav:${entidades[0]} }
         `
@@ -75,11 +75,11 @@ Classes.listarPNsEspecificos = async (entidades, tipologias) => {
                 `
             }
         }
-
+        query += '}';
     }
 
     if (tipologias) {
-        query += `
+        query += `{
             { ?id clav:temDono clav:${tipologias[0]}}
             Union { ?id clav:temParticipante clav:${tipologias[0]}}
         `
@@ -91,6 +91,7 @@ Classes.listarPNsEspecificos = async (entidades, tipologias) => {
                 `
             }
         }
+        query += '}';
     }
 
     query += `
