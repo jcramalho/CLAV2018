@@ -1,7 +1,7 @@
 const execQuery = require("../../controllers/api/utils").execQuery;
 const normalize = require("../../controllers/api/utils").normalize;
 const allTriplesFrom = require("../../controllers/api/utils").allTriplesFrom;
-const allTriplesRel = require("../../controllers/api/utils").allTriplesRel;
+const triplesRelObj = require("../../controllers/api/utils").triplesRelObj;
 const request = require("../../controllers/api/utils").request;
 const Tipologias = module.exports;
 
@@ -604,7 +604,7 @@ Tipologias.atualizar = async (id, tip) => {
   const baseQuery = queryTip(id, tip)
   try{
     var triplesTip = await allTriplesFrom(id);
-    triplesTip += await allTriplesRel("pertenceTipologiaEnt", id);
+    triplesTip += await triplesRelObj("pertenceTipologiaEnt", id);
     var query = `DELETE {${triplesTip}}`;
     query += `INSERT {${baseQuery}}`
     query += `WHERE {${triplesTip}}`
