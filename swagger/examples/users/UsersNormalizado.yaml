@@ -12,6 +12,6 @@ value:
   - id: "1111111"
     email: "exemplo3@exemplo.com"
     entidade: "ent_DGLAB"
-    level: "Utilizador Validador (AD)"
+    level: "Utilizador Arquivo Distrital"
     name: "Jose"
 summary: Exemplo de uma lista de utilizadores normalizada
