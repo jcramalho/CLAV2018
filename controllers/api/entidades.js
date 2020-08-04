@@ -1,7 +1,8 @@
 const execQuery = require("../../controllers/api/utils").execQuery;
 const normalize = require("../../controllers/api/utils").normalize;
 const allTriplesFrom = require("../../controllers/api/utils").allTriplesFrom;
-const allTriplesRel = require("../../controllers/api/utils").allTriplesRel;
+const triplesRelObj = require("../../controllers/api/utils").triplesRelObj;
+const triplesRelSuj = require("../../controllers/api/utils").triplesRelSuj;
 const Entidades = module.exports;
 
 /**
@@ -518,7 +519,7 @@ Entidades.atualizar = async (id, ent) => {
 
   try{
     var triplesEnt = await allTriplesFrom(id);
-    triplesEnt += await allTriplesRel("contemEntidade", id);
+    triplesEnt += await triplesRelObj("contemEntidade", id);
     var query = `DELETE {${triplesEnt}}`;
     query += `INSERT {${queryEnt}}`
     query += `WHERE {${triplesEnt}}`
@@ -530,16 +531,16 @@ Entidades.atualizar = async (id, ent) => {
 };
 
 //Extinguir entidade
-Entidades.extinguir = (id, dataExtincao) => {
-  var deleteEnt = `{
-        clav:${id} clav:entEstado ?o.
-    }`;
+Entidades.extinguir = async (id, dataExtincao) => {
+  var deleteEnt = `clav:${id} clav:entEstado ?o.`;
+  deleteEnt += await triplesRelSuj(id, "entDataExtincao")
+
   var queryEnt = `{ 
         clav:${id} clav:entDataExtincao "${dataExtincao}";
             clav:entEstado "Inativa".
     }`;
   const query =
-    "DELETE " + deleteEnt + " INSERT " + queryEnt + "WHERE " + deleteEnt;
+    "DELETE {" + deleteEnt + "} INSERT " + queryEnt + "WHERE {" + deleteEnt + "}";
   const ask = "ASK " + queryEnt;
 
   return execQuery("update", query).then(res =>

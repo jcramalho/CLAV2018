@@ -72,11 +72,23 @@ router.get('/', [
             }
 
             var allInfo = req.query.info == "completa"
+
             if(req.query.tipo == "especifico"){
                 if(allInfo){
-                    res.locals.dados = await State.getProcessosEspecificosInfo(ents, tips)
+                    res.locals.dados = await State.getProcessosEspecificosInfo(ents, tips);
                 }else{
-                    res.locals.dados = await State.getProcessosEspecificos(ents, tips)
+                    if(ents && tips){
+                        res.locals.dados = await State.getProcessosEspecificos(ents, tips);
+                    }
+                    else if(ents){
+                        res.locals.dados = await State.getProcessosEspecificosEntidades(ents);
+                    }
+                    else if(tips){
+                        res.locals.dados = await State.getProcessosEspecificosTipologias(tips);
+                    }
+                    else{
+                        res.locals.dados = await State.getProcessosEspecificosTodos();
+                    }
                 }
             }else{
                 res.locals.dados = State.getProcEntsTips(ents, tips, allInfo)

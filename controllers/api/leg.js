@@ -1,7 +1,8 @@
 const execQuery = require("../../controllers/api/utils").execQuery;
 const normalize = require("../../controllers/api/utils").normalize;
 const allTriplesFrom = require("../../controllers/api/utils").allTriplesFrom;
-const allTriplesRel = require("../../controllers/api/utils").allTriplesRel;
+const triplesRelObj = require("../../controllers/api/utils").triplesRelObj;
+const triplesRelSuj = require("../../controllers/api/utils").triplesRelSuj;
 const projection = require("../../controllers/api/utils").projection;
 const Leg = module.exports;
 
@@ -542,10 +543,14 @@ Leg.criar = async leg => {
 
 //Atualizar legislação
 Leg.atualizar = async (id, leg) => {
-  const baseQuery = queryLeg(id, leg)
+  let baseQuery = queryLeg(id, leg)
+
+  if(leg.dataRevogacao)
+    baseQuery += `.\nclav:${id} clav:diplomaDataRevogacao "${leg.dataRevogacao}".`
+
   try{
     var triplesLeg = await allTriplesFrom(id);
-    triplesLeg += await allTriplesRel("temLegislacao", id);
+    triplesLeg += await triplesRelObj("temLegislacao", id);
     var query = `DELETE {${triplesLeg}}`;
     query += `INSERT {${baseQuery}}`
     query += `WHERE {${triplesLeg}}`
@@ -555,3 +560,24 @@ Leg.atualizar = async (id, leg) => {
     throw "Insucesso na atualização do diploma legislativo";
   }
 }
+
+//Revogar legislação
+Leg.revogar = async (id, dataRevogacao) => {
+  var deleteLeg = `clav:${id} clav:diplomaEstado ?o.`;
+  deleteLeg += await triplesRelSuj(id, "diplomaDataRevogacao")
+
+  var queryLeg = `{
+        clav:${id} clav:diplomaDataRevogacao "${dataRevogacao}";
+            clav:diplomaEstado "Revogado".
+    }`;
+  const query =
+    "DELETE {" + deleteLeg + "} INSERT " + queryLeg + "WHERE {" + deleteLeg + "}";
+  const ask = "ASK " + queryLeg;
+
+  return execQuery("update", query).then(res =>
+    execQuery("query", ask).then(result => {
+      if (result.boolean) return "Legislação revogada";
+      else throw "Não foi possível revogar a legislação";
+    })
+  );
+};

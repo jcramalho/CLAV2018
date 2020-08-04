@@ -49,7 +49,121 @@ Classes.listarPNsComuns = () => {
         .then(response => normalize(response))
 }
 
-// Devolve a lista de classes de nível 3 que são consideradas processos específicos de uma dada entidade e de diferentes tipologias
+// Devolve a lista de classes de nível 3 que são consideradas processos específicos
+// de uma entidade ou lista de entidades
+Classes.listarPNsEspecificosEntidades = async (entidades) => {
+    var query = `
+    Select
+            ?id
+            ?codigo
+            ?titulo
+            ?status
+            ?transversal
+        Where {
+            ?id clav:processoTipoVC clav:vc_processoTipo_pe .
+            ?id clav:classeStatus ?status .
+        `
+    if (entidades) {
+        query += `{
+            { ?id clav:temDono clav:${entidades[0]} } 
+            Union { ?id clav:temParticipante clav:${entidades[0]} }
+        `
+        if (entidades.length > 1) {
+            for (var i = 1; i < entidades.length; i++) {
+                query += `
+                    Union { ?id clav:temDono clav:${entidades[i]} } 
+                    Union { ?id clav:temParticipante clav:${entidades[i]} }
+                `
+            }
+        }
+        query += '}';
+    }
+
+    query += `
+        ?id clav:codigo ?codigo .
+        ?id clav:titulo ?titulo .
+        ?id clav:processoTransversal ?transversal.
+        }
+        Group by ?codigo ?titulo ?id ?status ?transversal
+        Order by ?codigo
+    `
+
+    return execQuery("query", query)
+        .then(response => normalize(response))
+}
+
+// Devolve a lista de classes de nível 3 que são consideradas processos específicos
+// de uma tipologia ou lista de tipologias
+Classes.listarPNsEspecificosTipologias = async (tipologias) => {
+    var query = `
+    Select
+            ?id
+            ?codigo
+            ?titulo
+            ?status
+            ?transversal
+        Where {
+            ?id clav:processoTipoVC clav:vc_processoTipo_pe .
+            ?id clav:classeStatus ?status .
+        `
+    if (tipologias) {
+        query += `{
+            { ?id clav:temDono clav:${tipologias[0]} } 
+            Union { ?id clav:temParticipante clav:${tipologias[0]} }
+        `
+        if (tipologias.length > 1) {
+            for (var i = 1; i < tipologias.length; i++) {
+                query += `
+                    Union { ?id clav:temDono clav:${tipologias[i]} } 
+                    Union { ?id clav:temParticipante clav:${tipologias[i]} }
+                `
+            }
+        }
+        query += '}';
+    }
+
+    query += `
+        ?id clav:codigo ?codigo .
+        ?id clav:titulo ?titulo .
+        ?id clav:processoTransversal ?transversal.
+        }
+        Group by ?codigo ?titulo ?id ?status ?transversal
+        Order by ?codigo
+    `
+
+    return execQuery("query", query)
+        .then(response => normalize(response))
+}
+
+// Devolve a lista de classes de nível 3 que são consideradas processos específicos
+Classes.listarPNsEspecificosTodos = async () => {
+    var query = `
+    Select
+            ?id
+            ?codigo
+            ?titulo
+            ?status
+            ?transversal
+        Where {
+            ?id clav:processoTipoVC clav:vc_processoTipo_pe .
+            ?id clav:classeStatus ?status .
+        `
+    query += `
+        ?id clav:codigo ?codigo .
+        ?id clav:titulo ?titulo .
+        ?id clav:processoTransversal ?transversal.
+        }
+        Group by ?codigo ?titulo ?id ?status ?transversal
+        Order by ?codigo
+    `
+
+    return execQuery("query", query)
+        .then(response => normalize(response))
+}
+
+
+// Devolve a lista de classes de nível 3 que são consideradas processos específicos
+// de uma dada entidade e de diferentes tipologias
 Classes.listarPNsEspecificos = async (entidades, tipologias) => {
     var query = `
     Select
@@ -63,28 +177,35 @@ Classes.listarPNsEspecificos = async (entidades, tipologias) => {
             ?id clav:classeStatus ?status .
         `
     if (entidades) {
-        query += `
+        query += `{
             { ?id clav:temDono clav:${entidades[0]} } 
             Union { ?id clav:temParticipante clav:${entidades[0]} }
-            `
+        `
         if (entidades.length > 1) {
             for (var i = 1; i < entidades.length; i++) {
                 query += `
                     Union { ?id clav:temDono clav:${entidades[i]} } 
                     Union { ?id clav:temParticipante clav:${entidades[i]} }
-                    `
+                `
             }
         }
-
+        query += '}';
     }
 
     if (tipologias) {
-        for (var i = 0; i < tipologias.length; i++) {
-            query += `
-                Union { ?id clav:temDono clav:${tipologias[i]}}
-                Union { ?id clav:temParticipante clav:${tipologias[i]}}
+        query += `{
+            { ?id clav:temDono clav:${tipologias[0]}}
+            Union { ?id clav:temParticipante clav:${tipologias[0]}}
         `
+        if(tipologias.length > 1) {
+            for (var i = 1; i < tipologias.length; i++) {
+                query += `
+                    Union { ?id clav:temDono clav:${tipologias[i]}}
+                    Union { ?id clav:temParticipante clav:${tipologias[i]}}
+                `
+            }
         }
+        query += '}';
     }
 
     query += `

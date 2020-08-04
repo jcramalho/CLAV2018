@@ -1,0 +1,41 @@
+summary: Revoga um diploma legislativo
+description: |
+  Revoga um diploma legislativo, dada uma data de Revogação
+
+  **Acesso permitido a:** Utilizadores com nível 4, 5, 6 e 7
+tags:
+  - Legislação
+security:
+  - userQuery: []
+  - userAuth: []
+parameters:
+  - name: id
+    in: path
+    description: Identificador de um documento legislativo
+    schema:
+      $ref: '#/components/schemas/LegislacaoId'
+    required: true
+requestBody:
+  description: 'Data de revogação do diploma legislativo'
+  required: true
+  content:
+    application/json:
+      schema:
+        properties:
+          dataRevogacao:
+            $ref: '#/components/schemas/Data'
+        required:
+          - dataRevogacao
+        example:
+          dataRevogacao: "2020-03-31"
+responses:
+  200:
+    description: Diploma legislativo revogado
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
+  500:
+    description: Erro

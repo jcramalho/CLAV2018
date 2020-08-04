@@ -43,11 +43,24 @@ exports.allTriplesFrom = objId => {
 }
 
 /**
- * Obtém todos os triplos de uma relação em que o objeto (entidade, tipologia, legislação, classe, etc) é sujeito
+ * Obtém os triplos de uma relação em que o objeto (entidade, tipologia, legislação, classe, etc) é sujeito
  * @param objId id do objecto
  * @param rel relação
  */
-exports.allTriplesRel = (rel, objId) => {
+exports.triplesRelSuj = (objId, rel) => {
+    const query = `construct FROM noInferences: where {
+        clav:${objId} clav:${rel} ?o .
+    }`
+
+    return exports.execQuery("query", query)
+}
+
+/**
+ * Obtém todos os triplos de uma relação em que o objeto (entidade, tipologia, legislação, classe, etc) é objeto
+ * @param objId id do objecto
+ * @param rel relação
+ */
+exports.triplesRelObj = (rel, objId) => {
     const query = `construct FROM noInferences: where {
         ?s clav:${rel} clav:${objId} .
     }`
