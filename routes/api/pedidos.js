@@ -31,6 +31,11 @@ router.get('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
         if(key == "tipo" || key == "acao") key = "objeto." + key
         filtro[key] = value
     }
+
+    //se o nivel de utilizador é <3 então devolve apenas os pedidos da sua entidade
+    if(req.user.level < 3){
+        filtro["entidade"] = req.user.entidade
+    }
     
     Pedidos.listar(filtro)
         .then(dados => res.jsonp(dados))
@@ -47,7 +52,18 @@ router.get('/:codigo', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6,
     }
 
     Pedidos.consultar(req.params.codigo)
-        .then(dados => dados ? res.jsonp(dados) : res.status(404).send(`Erro. O pedido '${req.params.codigo}' não existe`))
+        .then(dados => {
+            if(dados){
+                //se o nivel de utilizador é <3 então devolve apenas os pedidos da sua entidade
+                if(req.user.level < 3 && req.user.entidade != dados.entidade){
+                    res.status(403).send("Não tem permissões para aceder este pedido")
+                }else{
+                    res.jsonp(dados)
+                }
+            }else{
+                res.status(404).send(`Erro. O pedido '${req.params.codigo}' não existe`)
+            }
+        })
         .catch(erro => res.status(500).send(`Erro na consulta do pedido: ${erro}`));
 });
 
