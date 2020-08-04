@@ -230,7 +230,6 @@ router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), [
         .optional()
         .matches(/^\d+$/),
     dataValida('body', 'dataCriacao').optional(),
-    dataValida('body', 'dataExtincao').optional(),
     verificaLista("body", "tipologiasSel").optional(),
     verificaExisteTip("body", "tipologiasSel.*.id")
 ], (req, res) => {
@@ -314,7 +313,7 @@ router.put("/:id/extinguir", Auth.isLoggedInUser, Auth.checkLevel(4), [
             .then(d => res.jsonp(dados))
             .catch(err => res.status(500).send(`Erro no reload da cache das entidades. A entidade foi extinguida com sucesso.`))
     })
-    .catch(err => res.status(500).send(`Erro na inserção de uma entidade: ${err}`));
+    .catch(err => res.status(500).send(`Erro na extinção da entidade: ${err}`));
 });
 
 module.exports = router;

@@ -207,9 +207,17 @@ router.put("/:id", Auth.isLoggedInUser, Auth.checkLevel(4), [
         .custom(naoExisteNumeroSelf)
         .withMessage("Número já em uso"),
     estaEm("body", "tipo", vcLegTipo),
-    dataValida("body", "data"),
+    dataValida("body", "data")
+        .custom((v, { req }) => !req.body.dataRevogacao || v < req.body.dataRevogacao)
+        .withMessage("data tem de ser anterior a dataRevogacao"),
+    dataValida("body", "dataRevogacao")
+        .custom((v, { req }) => !req.body.data || v > req.body.data)
+        .withMessage("dataRevogacao tem de ser posterior a data")
+        .optional(),
     existe("body", "sumario"),
-    estaEm("body", "estado", vcLegEstado),
+    estaEm("body", "estado", vcLegEstado)
+        .custom((v, { req }) => !req.body.dataRevogacao || v == "Revogado")
+        .withMessage("Se tem uma dataRevogacao então o estado deve ser Revogado"),
     estaEm("body", "diplomaFonte", vcFonte).optional(),
     existe("body", "link")
         .optional()
@@ -232,6 +240,34 @@ router.put("/:id", Auth.isLoggedInUser, Auth.checkLevel(4), [
             .catch(err => res.status(500).send(`Erro no reload da cache da legislação. A legislação foi atualizada com sucesso.`))
     })
     .catch(err => res.status(500).send(`Erro na atualização de uma legislação: ${err}`));
+});
+
+// Revogar uma legislação na BD
+router.put("/:id/revogar", Auth.isLoggedInUser, Auth.checkLevel(4), [
+    verificaLegId('param', 'id'),
+    dataValida('body', 'dataRevogacao')
+        .custom((d, {req}) => {
+            let leg = State.getLegislacao(req.params.id)
+            if(!leg.data || leg.data < d){
+                return Promise.resolve()
+            }else{
+                return Promise.reject()
+            }
+        })
+        .withMessage("dataRevogacao tem de ser posterior a data")
+], (req, res) => {
+  const errors = validationResult(req)
+  if(!errors.isEmpty()){
+      return res.status(422).jsonp(errors.array())
+  }
+
+  Leg.revogar(req.params.id, req.body.dataRevogacao)
+    .then(dados => {
+        State.reloadLegislacao()
+            .then(d => res.jsonp(dados))
+            .catch(err => res.status(500).send(`Erro no reload da cache da legislação. A legislação foi revogada com sucesso.`))
+    })
+    .catch(err => res.status(500).send(`Erro na revogação da legislação: ${err}`));
 });
 
 module.exports = router;
