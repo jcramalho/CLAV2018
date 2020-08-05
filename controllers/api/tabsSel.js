@@ -848,16 +848,6 @@ function queryClasse(id, proc) {
         `
     }
     
-    for(var dono of proc.donos) 
-        query += `
-            clav:${idProc} clav:temDono clav:${dono.idDono} .
-        `
-
-    for(var part of proc.participantes) 
-        query += `
-            clav:${idProc} clav:temParticipante${part.participLabel} clav:${part.idParticipante} .
-        `
-    
     for(var leg of proc.legislacao) 
         query += `
             clav:${idProc} clav:temLegislacao clav:${leg.idLeg} .
@@ -954,7 +944,8 @@ function queryClasse(id, proc) {
             `
         if(proc.pca.justificacao) 
             query += `
-                clav:${pcaId} clav:temjustificacao clav:just_${pcaId} .
+                clav:${pcaId} clav:temJustificacao clav:just_${pcaId} .
+                clav:just_${pcaId} a clav:JustificacaoPCA .
             `
         var justIndex = 1;
         for(var just of proc.pca.justificacao) {
@@ -975,7 +966,8 @@ function queryClasse(id, proc) {
         `
         if(proc.df.justificacao) 
             query += `
-                clav:${dfId} clav:temjustificacao clav:just_${dfId} .
+                clav:${dfId} clav:temJustificacao clav:just_${dfId} .
+                clav:just_${dfId} a clav:JustificacaoDF .
             `
         justIndex = 1;
         for(var just of proc.df.justificacao) {
@@ -1033,7 +1025,7 @@ SelTabs.adicionar = async function(tabela) {
             `
         
         for(var proc of tabela.objeto.dados.listaProcessos.procs) {
-            
+            //Escreve os triplos do proc
             query += queryClasse(id, proc)
             
             var idProc = "c" + proc.codigo +"_"+id
@@ -1045,21 +1037,35 @@ SelTabs.adicionar = async function(tabela) {
                     `
                 }
             }
-
+            //Definição de participação das entidades
+            for(var ent of proc.entidades) {
+                if(ent.dono)
+                    query += `
+                        clav:${idProc} clav:temDono clav:${ent.id} .
+                        clav:c${proc.codigo} clav:temDono clav:${ent.id} .
+                    `
+                
+                if(ent.participante!="NP")
+                    query += `
+                        clav:${idProc} clav:temParticipante${ent.participante} clav:${ent.id} .
+                        clav:c${proc.codigo} clav:temParticipante${ent.participante} clav:${ent.id} .
+                    `
+            }
+            //Adiciona à lista de pais com nivel N1
             if(paiList.indexOf(proc.codigo.split(".")[0]) === -1)
                 paiList.push(proc.codigo.split(".")[0])
-
+            //Adiciona à lista de pois com nivel N2
             if(paiList.indexOf(proc.codigo.split(".")[0]+"."+proc.codigo.split(".")[1]) === -1)
                 paiList.push(proc.codigo.split(".")[0]+"."+proc.codigo.split(".")[1])
-            
+            //Adicona à lista os filhos
             var listaFilhos = await Classe.descendencia("c"+proc.codigo)
-            
+            //Escreve os triplos dos proc filhos
             for(var filho of listaFilhos) {
                 var classeFilho = await Classe.retrieve("c"+filho.codigo)
                 query += queryClasse(id, classeFilho) 
             }
         }
-
+        //Escreve os triplos dos proc pais
         for(var pai of paiList) {
             var classePai = await Classe.retrieve("c"+pai)
             query += queryClasse(id, classePai)
