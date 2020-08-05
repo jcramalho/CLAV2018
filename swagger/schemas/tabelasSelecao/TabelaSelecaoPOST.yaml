@@ -1,0 +1,200 @@
+type: object
+properties:
+  tabela:
+    type: object
+    properties:
+      criadoPor:
+        type: string
+        format: email
+      objeto:
+        type: object
+        properties:
+          dados:
+            type: object
+            properties:
+              designacao:
+                type: string
+              entidades:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      $ref: '#/components/schemas/EntidadeId'
+                  required:
+                    - id
+              listaProcessos:
+                type: object
+                properties:
+                  procs:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        codigo:
+                          $ref: '#/components/schemas/Codigo'
+                        status:
+                          $ref: '#/components/schemas/Status'
+                        titulo:
+                          type: string
+                        descricao:
+                          type: string
+                        procTrans:
+                          $ref: '#/components/schemas/ProcessoTransversal'
+                        tipoProc:
+                          $ref: '#/components/schemas/TipoProcesso'
+                        notasAp:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              nota:
+                                type: string
+                            required:
+                              - nota
+                        exemplosNotasAp:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              exemplo:
+                                type: string
+                            required:
+                              - exemplo
+                        notasEx:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              nota:
+                                type: string
+                            required:
+                              - nota
+                        termosInd:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              termo:
+                                type: string
+                            required:
+                              - termo
+                        legislacao:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              idLeg:
+                                type: string
+                            required:
+                              - idLeg
+                        pca:
+                          type: object
+                          properties:
+                            valores:
+                              $ref: '#/components/schemas/PCAValor'
+                            notas:
+                              type: string
+                            formaContagem:
+                              $ref: '#/components/schemas/FormaContagem'
+                            subFormaContagem:
+                              $ref: '#/components/schemas/SubFormaContagem'
+                            justificacao:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  tipoId:
+                                    $ref: '#/components/schemas/TipoJustificacaoPCA'
+                                  conteudo:
+                                    type: string
+                                required:
+                                  - tipoId
+                                  - conteudo
+                          required:
+                            - valores
+                            - notas
+                            - formaContagem
+                            - justificacao
+                        df:
+                          type: object
+                          properties:
+                            valor:
+                              $ref: '#/components/schemas/DFValor'
+                            nota:
+                              type: string
+                            justificacao:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  tipoId:
+                                    $ref: '#/components/schemas/TipoJustificacaoDF'
+                                  conteudo:
+                                    type: string
+                                required:
+                                  - tipoId
+                                  - conteudo
+                          required:
+                            - valor
+                            - nota
+                            - justificacao
+                        processosRelacionados:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              codigo:
+                                $ref: '#/components/schemas/Codigo'
+                              idRel:
+                                $ref: '#/components/schemas/TipoRelacao'
+                            required:
+                              - codigo
+                              - idRel
+                        entidades:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                $ref: '#/components/schemas/EntidadeId'
+                              dono:
+                                type: boolean
+                              participante:
+                                $ref: '#/components/schemas/TipoParticipacaoVerbo'
+                            required:
+                              - id
+                              - dono
+                              - participante
+                      required:
+                        - codigo
+                        - status
+                        - titulo
+                        - descricao
+                        - procTrans
+                        - tipoProc
+                        - notasAp
+                        - exemplosNotasAp
+                        - notasEx
+                        - termosInd
+                        - legislacao
+                        - pca
+                        - df
+                        - processosRelacionados
+                        - entidades
+                required:
+                  - procs
+            required:
+              - designacao
+              - entidades
+              - listaProcessos
+        required:
+          - dados
+      entidade:
+        $ref: '#/components/schemas/EntidadeId'
+    required:
+      - criadoPor
+      - objeto
+      - entidade
+required:
+  - tabela

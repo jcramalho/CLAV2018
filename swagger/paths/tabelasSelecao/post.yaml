@@ -1,0 +1,29 @@
+summary: Inserir uma tabela de seleção
+description: |
+  Inserir uma tabela de seleção
+
+  **Acesso permitido a:** Utilizadores com nível 1, 3, 3.5, 4, 5, 6 e 7
+security:
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Tabelas de Seleção
+requestBody:
+  description: 'Tabela de Seleção'
+  required: true
+  content:
+    application/json:
+      schema:
+        $ref: '#/components/schemas/TabelaSelecaoPOST'
+      example: !!inc/file '/examples/tabelasSelecao/TabelaSelecaoPOST.yaml'
+responses:
+  200:
+    description: Tabela de seleção inserida com sucesso
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
+  500:
+    description: Erro

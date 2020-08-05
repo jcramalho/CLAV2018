@@ -1,4 +1,6 @@
-- id: ts_dfdrfree3fw
-  Name: TS de DGLAB
-- id: ts_çslfjdslckl
-  Name: TS de DGLAB 2
+- id: "http://jcr.di.uminho.pt/m51-clav#ts1"
+  designacao: "TEstes1"
+  data: "2020-08-05"
+  entidades:
+    - "http://jcr.di.uminho.pt/m51-clav#ent_A3ES"
+    - "http://jcr.di.uminho.pt/m51-clav#ent_AAN"
