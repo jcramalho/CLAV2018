@@ -377,12 +377,12 @@
             {
                 "verbo": "GET",
                 "path": "/{api_version}/tabelasSelecao/:id/",
-                "desc": "Consultar tabela de seleção"
+                "desc": "Consultar uma tabela de seleção"
             },
             {
                 "verbo": "GET",
                 "path": "/{api_version}/tabelasSelecao/",
-                "desc": "Lista as tabelas de seleção"
+                "desc": "Lista as tabelas de seleção criadas na plataforma CLAV"
             },
             {
                 "verbo": "GET",
@@ -803,12 +803,12 @@
             {
                 "verbo": "GET",
                 "path": "/{api_version}/tabelasSelecao/:id/",
-                "desc": "Consultar tabela de seleção"
+                "desc": "Consultar uma tabela de seleção"
             },
             {
                 "verbo": "GET",
                 "path": "/{api_version}/tabelasSelecao/",
-                "desc": "Lista as tabelas de seleção"
+                "desc": "Lista as tabelas de seleção criadas na plataforma CLAV"
             },
             {
                 "verbo": "GET",
@@ -944,6 +944,11 @@
                 "verbo": "POST",
                 "path": "/{api_version}/tabelasSelecao/importar",
                 "desc": "Cria um pedido de criação de uma tabela de seleção a partir de um ficheiro CSV/Excel"
+            },
+            {
+                "verbo": "POST",
+                "path": "/{api_version}/tabelasSelecao/",
+                "desc": "Inserir uma tabela de seleção"
             },
             {
                 "verbo": "POST",
@@ -1319,12 +1324,12 @@
             {
                 "verbo": "GET",
                 "path": "/{api_version}/tabelasSelecao/:id/",
-                "desc": "Consultar tabela de seleção"
+                "desc": "Consultar uma tabela de seleção"
             },
             {
                 "verbo": "GET",
                 "path": "/{api_version}/tabelasSelecao/",
-                "desc": "Lista as tabelas de seleção"
+                "desc": "Lista as tabelas de seleção criadas na plataforma CLAV"
             },
             {
                 "verbo": "GET",
@@ -1405,7 +1410,7 @@
     },
     {
         "nivel": 3,
-        "desc": "Utilizador Avançado",
+        "desc": "Utilizador Arquivo Distrital",
         "ops": [
             {
                 "verbo": "GET",
@@ -1755,12 +1760,12 @@
             {
                 "verbo": "GET",
                 "path": "/{api_version}/tabelasSelecao/:id/",
-                "desc": "Consultar tabela de seleção"
+                "desc": "Consultar uma tabela de seleção"
             },
             {
                 "verbo": "GET",
                 "path": "/{api_version}/tabelasSelecao/",
-                "desc": "Lista as tabelas de seleção"
+                "desc": "Lista as tabelas de seleção criadas na plataforma CLAV"
             },
             {
                 "verbo": "GET",
@@ -1899,6 +1904,11 @@
             },
             {
                 "verbo": "POST",
+                "path": "/{api_version}/tabelasSelecao/",
+                "desc": "Inserir uma tabela de seleção"
+            },
+            {
+                "verbo": "POST",
                 "path": "/{api_version}/vocabularios/termo/:idVC",
                 "desc": "Adiciona um Termo a um vocabulário"
             },
@@ -1941,7 +1951,7 @@
     },
     {
         "nivel": 3.5,
-        "desc": "Utilizador Validador (AD)",
+        "desc": "Utilizador Avançado",
         "ops": [
             {
                 "verbo": "GET",
@@ -2381,12 +2391,12 @@
             {
                 "verbo": "GET",
                 "path": "/{api_version}/tabelasSelecao/:id/",
-                "desc": "Consultar tabela de seleção"
+                "desc": "Consultar uma tabela de seleção"
             },
             {
                 "verbo": "GET",
                 "path": "/{api_version}/tabelasSelecao/",
-                "desc": "Lista as tabelas de seleção"
+                "desc": "Lista as tabelas de seleção criadas na plataforma CLAV"
             },
             {
                 "verbo": "GET",
@@ -2527,6 +2537,11 @@
                 "verbo": "POST",
                 "path": "/{api_version}/tabelasSelecao/importar",
                 "desc": "Cria um pedido de criação de uma tabela de seleção a partir de um ficheiro CSV/Excel"
+            },
+            {
+                "verbo": "POST",
+                "path": "/{api_version}/tabelasSelecao/",
+                "desc": "Inserir uma tabela de seleção"
             },
             {
                 "verbo": "POST",
@@ -3042,12 +3057,12 @@
             {
                 "verbo": "GET",
                 "path": "/{api_version}/tabelasSelecao/:id/",
-                "desc": "Consultar tabela de seleção"
+                "desc": "Consultar uma tabela de seleção"
             },
             {
                 "verbo": "GET",
                 "path": "/{api_version}/tabelasSelecao/",
-                "desc": "Lista as tabelas de seleção"
+                "desc": "Lista as tabelas de seleção criadas na plataforma CLAV"
             },
             {
                 "verbo": "GET",
@@ -3256,6 +3271,11 @@
             },
             {
                 "verbo": "POST",
+                "path": "/{api_version}/tabelasSelecao/",
+                "desc": "Inserir uma tabela de seleção"
+            },
+            {
+                "verbo": "POST",
                 "path": "/{api_version}/tipologias",
                 "desc": "Cria uma tipologia"
             },
@@ -3303,6 +3323,11 @@
                 "verbo": "PUT",
                 "path": "/{api_version}/entidades/:id/",
                 "desc": "Atualiza uma entidade"
+            },
+            {
+                "verbo": "PUT",
+                "path": "/{api_version}/legislacao/:id/revogar",
+                "desc": "Revoga um diploma legislativo"
             },
             {
                 "verbo": "PUT",
@@ -3853,12 +3878,12 @@
             {
                 "verbo": "GET",
                 "path": "/{api_version}/tabelasSelecao/:id/",
-                "desc": "Consultar tabela de seleção"
+                "desc": "Consultar uma tabela de seleção"
             },
             {
                 "verbo": "GET",
                 "path": "/{api_version}/tabelasSelecao/",
-                "desc": "Lista as tabelas de seleção"
+                "desc": "Lista as tabelas de seleção criadas na plataforma CLAV"
             },
             {
                 "verbo": "GET",
@@ -4067,6 +4092,11 @@
             },
             {
                 "verbo": "POST",
+                "path": "/{api_version}/tabelasSelecao/",
+                "desc": "Inserir uma tabela de seleção"
+            },
+            {
+                "verbo": "POST",
                 "path": "/{api_version}/tipologias",
                 "desc": "Cria uma tipologia"
             },
@@ -4129,6 +4159,11 @@
                 "verbo": "PUT",
                 "path": "/{api_version}/entidades/:id/",
                 "desc": "Atualiza uma entidade"
+            },
+            {
+                "verbo": "PUT",
+                "path": "/{api_version}/legislacao/:id/revogar",
+                "desc": "Revoga um diploma legislativo"
             },
             {
                 "verbo": "PUT",
@@ -4729,12 +4764,12 @@
             {
                 "verbo": "GET",
                 "path": "/{api_version}/tabelasSelecao/:id/",
-                "desc": "Consultar tabela de seleção"
+                "desc": "Consultar uma tabela de seleção"
             },
             {
                 "verbo": "GET",
                 "path": "/{api_version}/tabelasSelecao/",
-                "desc": "Lista as tabelas de seleção"
+                "desc": "Lista as tabelas de seleção criadas na plataforma CLAV"
             },
             {
                 "verbo": "GET",
@@ -4948,6 +4983,11 @@
             },
             {
                 "verbo": "POST",
+                "path": "/{api_version}/tabelasSelecao/",
+                "desc": "Inserir uma tabela de seleção"
+            },
+            {
+                "verbo": "POST",
                 "path": "/{api_version}/tipologias",
                 "desc": "Cria uma tipologia"
             },
@@ -5010,6 +5050,11 @@
                 "verbo": "PUT",
                 "path": "/{api_version}/entidades/:id/",
                 "desc": "Atualiza uma entidade"
+            },
+            {
+                "verbo": "PUT",
+                "path": "/{api_version}/legislacao/:id/revogar",
+                "desc": "Revoga um diploma legislativo"
             },
             {
                 "verbo": "PUT",
@@ -5630,12 +5675,12 @@
             {
                 "verbo": "GET",
                 "path": "/{api_version}/tabelasSelecao/:id/",
-                "desc": "Consultar tabela de seleção"
+                "desc": "Consultar uma tabela de seleção"
             },
             {
                 "verbo": "GET",
                 "path": "/{api_version}/tabelasSelecao/",
-                "desc": "Lista as tabelas de seleção"
+                "desc": "Lista as tabelas de seleção criadas na plataforma CLAV"
             },
             {
                 "verbo": "GET",
@@ -5864,6 +5909,11 @@
             },
             {
                 "verbo": "POST",
+                "path": "/{api_version}/tabelasSelecao/",
+                "desc": "Inserir uma tabela de seleção"
+            },
+            {
+                "verbo": "POST",
                 "path": "/{api_version}/tipologias",
                 "desc": "Cria uma tipologia"
             },
@@ -5951,6 +6001,11 @@
                 "verbo": "PUT",
                 "path": "/{api_version}/entidades/:id/",
                 "desc": "Atualiza uma entidade"
+            },
+            {
+                "verbo": "PUT",
+                "path": "/{api_version}/legislacao/:id/revogar",
+                "desc": "Revoga um diploma legislativo"
             },
             {
                 "verbo": "PUT",

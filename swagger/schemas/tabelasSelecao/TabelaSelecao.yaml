@@ -1,6 +1,35 @@
 type: object
 properties:
-  Name:
+  designacao:
     type: string
+  data:
+    $ref: '#/components/schemas/Data'
+  entidades:
+    type: array
+    items:
+      type: string
+  responsavel:
+    type: string
+    format: email
+  entidade:
+    type: string
+  classes:
+    type: array
+    items:
+      allOf:
+        - type: object
+          properties:
+            filhos:
+              type: array
+              items:
+                $ref: '#/components/schemas/ClasseSimples'
+          required:
+            - filhos
+        - $ref: '#/components/schemas/ClasseCompleta'
 required:
-  - Name
+  - designacao
+  - data
+  - entidades
+  - responsavel
+  - entidade
+  - classes

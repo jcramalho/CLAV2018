@@ -29,7 +29,7 @@ info:
 
     Não esquecer que todos os utilizadores (nível 1 a 7) conseguem aceder às rotas que as Chaves API conseguem aceder (nível 0).
     
-    **Última alteração: 05/08/2020**
+    **Última alteração: 06/08/2020**
   version: 2.0.0
   title: CLAV API
   contact:
@@ -219,6 +219,7 @@ components:
         'examples/users/User.yaml',
         'examples/users/UserLogin.yaml',
         'examples/tabelasSelecao/TabelaSelecao.yaml',
+        'examples/tabelasSelecao/TabelaSelecaoPOST.yaml',
         'examples/tabelasSelecao/TabelasSelecao.yaml',
         'examples/tabelasSelecao/TabelaSelecaoClasses.yaml',
         'examples/pedidos/Pedido.yaml',

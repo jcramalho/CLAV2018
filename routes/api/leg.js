@@ -174,10 +174,7 @@ router.post("/", [
     existe("body", "sumario"),
     estaEm("body", "estado", vcLegEstado),
     estaEm("body", "diplomaFonte", vcFonte).optional(),
-    existe("body", "link")
-        .optional()
-        .isURL({require_tld: false})
-        .withMessage("URL inválido"),
+    existe("body", "link").optional(),
     verificaLista("body", "entidadesSel").optional(),
     verificaExisteEnt("body", "entidadesSel.*.id"),
     verificaLista("body", "processosSel").optional(),
@@ -218,10 +215,7 @@ router.put("/:id", [
         .custom((v, { req }) => !req.body.dataRevogacao || v == "Revogado")
         .withMessage("Se tem uma dataRevogacao então o estado deve ser Revogado"),
     estaEm("body", "diplomaFonte", vcFonte).optional(),
-    existe("body", "link")
-        .optional()
-        .isURL({require_tld: false})
-        .withMessage("URL inválido"),
+    existe("body", "link").optional(),
     verificaLista("body", "entidadesSel"),
     verificaExisteEnt("body", "entidadesSel.*.id"),
     verificaLista("body", "processosSel"),

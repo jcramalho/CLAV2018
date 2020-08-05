@@ -4,8 +4,16 @@ items:
   properties:
     id:
       $ref: '#/components/schemas/TSIdCompleto'
-    Name:
+    designacao:
       type: string
+    data:
+      $ref: '#/components/schemas/Data'
+    entidades:
+      type: array
+      items:
+        $ref: '#/components/schemas/EntidadeIdCompleto'
   required:
     - id
-    - Name
+    - designacao
+    - data
+    - entidades
