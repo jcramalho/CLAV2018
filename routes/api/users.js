@@ -112,7 +112,7 @@ router.post('/registar', Auth.isLoggedInUser, Auth.checkLevel(5), [
         return res.status(422).jsonp(errors.array())
     }
 
-    var internal = (req.body.type > 1);
+    var internal = (req.body.type > 3);
     var newUser = new User({
         _id: mongoose.Types.ObjectId(),
         name: req.body.name,
@@ -470,7 +470,7 @@ router.post('/registarCC', Auth.isLoggedInUser, Auth.checkLevel(5), [
         return res.status(422).jsonp(errors.array())
     }
 
-    var internal = (req.body.type > 1);
+    var internal = (req.body.type > 3);
     var newUser = new User({
         _id: req.body.nic,
         name: req.body.name,

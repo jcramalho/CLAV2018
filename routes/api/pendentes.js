@@ -7,7 +7,14 @@ const { validationResult } = require('express-validator');
 const { existe, estaEm, eMongoId, vcPendenteTipo, vcPendenteAcao } = require('../validation')
 
 router.get('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), (req, res) => {
-    Pendentes.listarTodos()
+    let filtro = {}
+
+    //se o nivel de utilizador é <3 então devolve apenas os pendentes do utilizador
+    if(req.user.level < 3){
+        filtro["criadoPor"] = req.user.email
+    }
+
+    Pendentes.listar(filtro)
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na listagem de pendentes: ${erro}`));
 });
@@ -21,7 +28,18 @@ router.get('/:id', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7])
     }
 
     Pendentes.consultar(req.params.id)
-        .then(dados => res.jsonp(dados))
+        .then(dados => {
+            if(dados){
+                //se o nivel de utilizador é <3 então devolve apenas os pendentes do utilizador
+                if(req.user.level < 3 && req.user.email != dados.criadoPor){
+                    res.status(403).send("Não tem permissões para aceder este pendente")
+                }else{
+                    res.jsonp(dados)
+                }
+            }else{
+                res.status(404).send(`Erro. O pendente '${req.params.id}' não existe`)
+            }
+        })
         .catch(erro => res.status(500).send(`Erro ao recuperar trabalho pendente: ${erro}`));
 })
 

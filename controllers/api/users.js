@@ -88,10 +88,10 @@ Users.listar = function(entidade, normalizado, userLevel, callback){
                             item["level"] = 'Utilizador Validador';
                             break;
                         case 3.5:
-                            item["level"] = 'Utilizador Validador (AD)';
+                            item["level"] = 'Utilizador Avançado';
                             break;
                         case 3:
-                            item["level"] = 'Utilizador Avançado';
+                            item["level"] = 'Utilizador Arquivo Distrital';
                             break;
                         case 2:
                             item["level"] = 'Utilizador Simples';
@@ -316,7 +316,7 @@ Users.parseSAMLResponse = function(SAMLResponse, callback){
 
 Users.registarParaEntidade = async function(req, entidade, users){
     for(var i = 0; i < users.length; i++){
-        var internal = (users[i].type > 1);
+        var internal = (users[i].type > 3);
         var newUser = new User({
             _id: users[i].nic,
             name: users[i].name,
