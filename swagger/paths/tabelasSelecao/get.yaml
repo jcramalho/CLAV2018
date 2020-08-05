@@ -1,6 +1,6 @@
-summary: Lista as tabelas de seleção
+summary: Lista as tabelas de seleção criadas na plataforma CLAV
 description: |
-  Lista as tabelas de seleção
+  Lista as tabelas de seleção criadas na plataforma CLAV
 
   **Acesso permitido a:** Chaves API e Todos os Utilizadores
 security:
@@ -12,7 +12,7 @@ tags:
   - Tabelas de Seleção
 responses:
   200:
-    description: Lista todas as tabelas de seleção
+    description: Lista todas as tabelas de seleção criadas na plataforma CLAV
     content:
       application/json:
         schema:

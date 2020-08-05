@@ -1,0 +1,115 @@
+tabela:
+  objeto:
+    dados:
+      designacao: "TEstes1"
+      entidades:
+        - id: "ent_A3ES"
+        - id: "ent_AAN"
+      listaProcessos:
+        procs:
+          - codigo: "100.10.001"
+            titulo: "Produção e comunicação de atos legislativos"
+            descricao: "Elaboração ou participação na elaboração de atos legislativos conduzidos por iniciativa das autoridades competentes para a definição do regime jurídico aplicável.Inicia com a apresentação de um projeto acompanhado dos documentos que o fundamentam e justificam à entidade com competência para legislar e termina com a respetiva publicação ou publicitação.Inclui verificação jurídica, apreciação, discussão e votação conducentes à elaboração do texto final, aprovação da iniciativa, ratificação pelas entidades competentes e promulgação."
+            status: "A"
+            notasAp:
+              - nota: "Leis"
+              - nota: "Decretos-Lei"
+              - nota: "Decretos Legislativos regionais"
+            exemplosNotasAp:
+              - exemplo: "Código da Estrada"
+              - exemplo: "Código Civil"
+            notasEx:
+              - nota: "O impulso legiferante, quando reveste a forma de petição pública sem apresentação de projeto de lei, deve ser considerado em 950.20.001 – Processamento de petições, reclamações e sugestões"
+            termosInd:
+              - termo: "Comunicação de ato legislativo"
+              - termo: "Diretiva comunitária (transposição)"
+              - termo: "Lei (produção e comunicação)"
+              - termo: "Promulgação de diploma"
+            tipoProc: "Processo Comum"
+            procTrans: "S"
+            processosRelacionados:
+              - codigo: "150.10.601"
+                idRel: "eAntecessorDe"
+              - codigo: "150.20.501"
+                idRel: "eAntecessorDe"
+              - codigo: "200.10.001"
+                idRel: "eAntecessorDe"
+              - codigo: "900.20.201"
+                idRel: "eAntecessorDe"
+            legislacao:
+              - idLeg: "leg_DclZVHqF_xUY3E7aU0MHe"
+              - idLeg: "leg_B5KnvXkLljIeqDfKJ4tA6"
+              - idLeg: "leg_k4cW79y3FqC8rrsoS2P7P"
+            pca:
+              formaContagem: "Data de conclusão do procedimento"
+              notas: ""
+              valores: "5"
+              justificacao:
+                - tipoId: "CriterioJustificacaoGestionario"
+                  conteudo: "Prazo para imputação de responsabilidade pela gestão estratégica, decorrente de escrutínio público (eleições).Considerou-se para a definição do prazo o tempo do mandato de maior duração: 5 anos (Presidente da República)."
+            df:
+              valor: "C"
+              justificacao:
+                - tipoId: "CriterioJustificacaoComplementaridadeInfo"
+                  conteudo: "É complementar dos PN 100.10.200 - Produção e comunicação de atos regulamentares gerais; PN 100.10.400 - Produção e comunicação de atos regulamentares locais; PN 100.10.600 - Produção e comunicação de regras institucionais; PN 100.20.001 - Produção de pareceres técnico-jurídicos de interpretação de diplomas jurídico-normativos; PN 100.20.200 - Produção e comunicação de instruções para aplicação de diplomas jurídico-normativos."
+            entidades:
+              - id: "ent_A3ES"
+                dono: true
+                participante: "Apreciar"
+              - id: "ent_AAN"
+                dono: true
+                participante: "Apreciar"
+          - codigo: "100.10.002"
+            titulo: "Aprovação e comunicação de convenções internacionais"
+            descricao: "Manifestação do consentimento à vinculação nacional de convenções (tratados e acordos) internacionais, entrando no ordenamento jurídico português.Inicia com a necessidade ou vontade de vinculação e termina com a publicação.Inclui parecer do MNE antes da ratificação, aprovação parlamentar ou governamental, através de resolução ou decreto, respetivamente, a vinculação internacional mediante assinatura ou ratificação presidencial e a comunicação dos avisos de depósito de instrumento de vinculação ou outros respeitantes às convenções."
+            status: "A"
+            notasAp:
+              - nota: "Aprovação, ratificação e publicação de convenções internacionais"
+              - nota: "Avisos respeitantes às convenções internacionais e relativos a outros Estados contratantes"
+            exemplosNotasAp: []
+            notasEx: []
+            termosInd:
+              - termo: "Aprovação de convenção internacional"
+              - termo: "Comunicação de convenção internacional"
+              - termo: "Depósito de instrumento de regulação"
+              - termo: "Ratificação de convenção internacional"
+            tipoProc: "Processo Restante"
+            procTrans: "S"
+            processosRelacionados:
+              - codigo: "200.10.001"
+                idRel: "eAntecessorDe"
+              - codigo: "200.10.600"
+                idRel: "eComplementarDe"
+              - codigo: "150.10.700"
+                idRel: "eCruzadoCom"
+              - codigo: "150.10.100"
+                idRel: "eSucessorDe"
+            legislacao:
+              - idLeg: "leg_DclZVHqF_xUY3E7aU0MHe"
+              - idLeg: "leg_B5KnvXkLljIeqDfKJ4tA6"
+              - idLeg: "leg_k4cW79y3FqC8rrsoS2P7P"
+              - idLeg: "leg_5kTtGtrLL5JdyR6xVTtQY"
+              - idLeg: "leg_bk2hlNxp1AGmyPJbHYiHc"
+            pca:
+              formaContagem: "Data de conclusão do procedimento"
+              notas: ""
+              valores: "5"
+              justificacao:
+                - tipoId: "CriterioJustificacaoGestionario"
+                  conteudo: "Prazo para imputação de responsabilidade pela gestão estratégica, decorrente de escrutínio público (eleições).Considerou-se para a definição do prazo o tempo do mandato de maior duração: 5 anos (Presidente da República)."
+            df:
+              valor: "C"
+              justificacao:
+                - tipoId: "CriterioJustificacaoDensidadeInfo"
+                  conteudo: " O processo de aprovação não é recuperável noutro PN. O texto final é publicitado no Diário da República.  "
+                - tipoId: "CriterioJustificacaoComplementaridadeInfo"
+                  conteudo: "É complementar de: PN 200.10.600 - Preparação e implementação de políticas e atos da União Europeia."
+            entidades:
+              - id: "ent_A3ES"
+                dono: true
+                participante: "NP"
+              - id: "ent_AAN"
+                dono: true
+                participante: "NP"
+  criadoPor: "exemplo@exemplo.com"
+  entidade: "ent_A3ES"
