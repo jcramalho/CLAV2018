@@ -6,7 +6,10 @@ security:
   - userAuth: []
 tags:
   - PGD
-description: Listagem dos 'antigos RADAs' nãos inseridos pela plataforma
+description: |
+  Listagem dos 'antigos RADAs' nãos inseridos pela plataforma
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 responses:
   200:
     description: Lista com os 'antigos RADAs' nãos inseridos pela plataforma 

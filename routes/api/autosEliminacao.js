@@ -32,7 +32,7 @@ router.get('/:id', [
         return res.status(422).jsonp(errors.array())
     }
     
-    AutosEliminacao.consultar(req.params.id,req.user.entidade)
+    AutosEliminacao.consultar(req.params.id, req.user ? req.user.entidade : null)
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(404).jsonp("Erro na consulta do AE "+req.params.id+": " + erro))
 })

@@ -31,8 +31,8 @@ router.get('/', [
         filtro[key] = value
     }
 
-    //se o nivel de utilizador é <3 então devolve apenas os pedidos da sua entidade
-    if(req.user.level < 3){
+    //se o nivel de utilizador é < 3.5 então devolve apenas os pedidos da sua entidade
+    if(req.user.level < 3.5){
         filtro["entidade"] = req.user.entidade
     }
     
@@ -53,8 +53,8 @@ router.get('/:codigo', [
     Pedidos.consultar(req.params.codigo)
         .then(dados => {
             if(dados){
-                //se o nivel de utilizador é <3 então devolve apenas os pedidos da sua entidade
-                if(req.user.level < 3 && req.user.entidade != dados.entidade){
+                //se o nivel de utilizador é < 3.5 então devolve apenas os pedidos da sua entidade
+                if(req.user.level < 3.5 && req.user.entidade != dados.entidade){
                     res.status(403).send("Não tem permissões para aceder este pedido")
                 }else{
                     res.jsonp(dados)
