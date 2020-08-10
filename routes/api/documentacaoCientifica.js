@@ -55,7 +55,7 @@ router.get('/classes', Auth.isLoggedInKey, (req, res) => {
 })
 
 // Devolve um ficheiro com todos os registos em formato pronto a importar no MongoDB
-router.get('/exportar', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), (req, res) => {
+router.get('/exportar', Auth.isLoggedInUser, Auth.checkLevel([3.5, 4, 5, 6, 7]), (req, res) => {
     DocumentacaoCientifica.listar({})
         .then(function(dados){
             // Tratamento do formato do ID
@@ -108,7 +108,7 @@ router.get('/:id/ficheiro', Auth.isLoggedInKey, [
 })
 
 // POST -> ver se tem ficheiro, se sim inserir + inserir no mongo
-router.post('/', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), function (req, res) {
+router.post('/', Auth.isLoggedInUser, Auth.checkLevel([3.5, 4, 5, 6, 7]), function (req, res) {
     var form = new formidable.IncomingForm()
     form.parse(req, async (error, fields, formData) => {
         if(!error){
@@ -165,7 +165,7 @@ router.post('/', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), function (r
 })
 
 // Importação de um ficheiro com registos - Pode ser adição (append) à BD ou substituição (drop)
-router.post('/importar', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), (req, res) => {
+router.post('/importar', Auth.isLoggedInUser, Auth.checkLevel([3.5, 4, 5, 6, 7]), (req, res) => {
     var form = new formidable.IncomingForm()
     form.parse(req, async (error, fields, formData) => {
         if(!error){
@@ -209,7 +209,7 @@ router.post('/importar', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), (re
 })
 
 // PUT - remover ficheiro antigo se necessario, inserir novo se existente + atualizar objeto
-router.put('/:id', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), [
+router.put('/:id', Auth.isLoggedInUser, Auth.checkLevel([3.5, 4, 5, 6, 7]), [
     eMongoId('params', 'id')
 ], (req, res) => {
     const errors = validationResult(req)
@@ -332,7 +332,7 @@ router.put('/:id', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), [
 
 
 // DELETE -> ver se tem ficheiro, se sim apagar + apagar registo do mongo
-router.delete('/:id', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), [
+router.delete('/:id', Auth.isLoggedInUser, Auth.checkLevel([3.5, 4, 5, 6, 7]), [
     eMongoId('params', 'id')
 ], async function(req, res) {
     const errors = validationResult(req)

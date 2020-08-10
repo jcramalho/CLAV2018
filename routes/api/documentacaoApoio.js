@@ -64,7 +64,7 @@ router.get('/classes', Auth.isLoggedInKey, (req, res) => {
 })
 
 // Devolve um ficheiro com todos os registos em formato pronto a importar no MongoDB
-router.get('/exportar', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), (req, res) => {
+router.get('/exportar', Auth.isLoggedInUser, Auth.checkLevel([3.5, 4, 5, 6, 7]), (req, res) => {
     DocumentacaoApoio.listar({})
         .then(function(dados){
             // Tratamento do formato do ID
@@ -183,7 +183,7 @@ router.get('/:id/entradas/:idEnt/elementos/:idElem/ficheiro', Auth.isLoggedInKey
 // ------------------------------------------ POST ------------------------------------------- 
 
 // Criar uma nova classe com entradas vazias, além de ser criada uma pasta para armazenar os ficheiros da classe
-router.post('/', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), [
+router.post('/', Auth.isLoggedInUser, Auth.checkLevel([3.5, 4, 5, 6, 7]), [
     existe("body", "classe")
 ], (req, res) => {
     const errors = validationResult(req)
@@ -208,7 +208,7 @@ router.post('/', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), [
 })
 
 // Importação de um ficheiro com registos - Pode ser adição (append) à BD ou substituição (drop)
-router.post('/importar', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), (req, res) => {
+router.post('/importar', Auth.isLoggedInUser, Auth.checkLevel([3.5, 4, 5, 6, 7]), (req, res) => {
     var form = new formidable.IncomingForm()
     form.parse(req, async (error, fields, formData) => {
         if(!error){
@@ -252,7 +252,7 @@ router.post('/importar', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), (re
 })
 
 // Criar entrada dentro de uma classe - apenas recebe a descrição, elementos são inicializados com lista vazia
-router.post('/:id', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), [
+router.post('/:id', Auth.isLoggedInUser, Auth.checkLevel([3.5, 4, 5, 6, 7]), [
     eMongoId('params', 'id'),
     existe("body", "descricao")
 ], (req, res) => {
@@ -272,7 +272,7 @@ router.post('/:id', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), [
 })
 
 // Criar elemento dentro de uma entrada numa classe 
-router.post('/:id/entradas/:idEnt', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), [
+router.post('/:id/entradas/:idEnt', Auth.isLoggedInUser, Auth.checkLevel([3.5, 4, 5, 6, 7]), [
     eMongoId('params', 'id'),
     eMongoId('params', 'idEnt')
 ], (req, res) => {
@@ -345,7 +345,7 @@ router.post('/:id/entradas/:idEnt', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 
 // ------------------------------------------- PUT ------------------------------------------- 
 
 // Alterar a designação da classe -> Mudar nome da pasta
-router.put('/:id', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), [
+router.put('/:id', Auth.isLoggedInUser, Auth.checkLevel([3.5, 4, 5, 6, 7]), [
     eMongoId('params', 'id'),
     existe("body", "classe")
 ], (req, res) => {
@@ -390,7 +390,7 @@ router.put('/:id', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), [
 })
 
 // Alterar entrada numa classe
-router.put('/:id/entradas/:idEnt', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), [
+router.put('/:id/entradas/:idEnt', Auth.isLoggedInUser, Auth.checkLevel([3.5, 4, 5, 6, 7]), [
     eMongoId('params', 'id'),
     eMongoId('params', 'idEnt'),
     existe("body", "descricao")
@@ -411,7 +411,7 @@ router.put('/:id/entradas/:idEnt', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6
 })
 
 // Altera um elemento dentro de uma entrada
-router.put('/:id/entradas/:idEnt/elementos/:idElem', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), [
+router.put('/:id/entradas/:idEnt/elementos/:idElem', Auth.isLoggedInUser, Auth.checkLevel([3.5, 4, 5, 6, 7]), [
     eMongoId('params', 'id'),
     eMongoId('params', 'idEnt'),
     eMongoId('params', 'idElem')
@@ -518,7 +518,7 @@ router.put('/:id/entradas/:idEnt/elementos/:idElem', Auth.isLoggedInUser, Auth.c
 // ------------------------------------------- DELETE -------------------------------------------
 
 // Apaga uma classe -> eliminar a pasta
-router.delete('/:id', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), [
+router.delete('/:id', Auth.isLoggedInUser, Auth.checkLevel([3.5, 4, 5, 6, 7]), [
     eMongoId('params', 'id')
 ], (req, res) => {
     const errors = validationResult(req)
@@ -556,7 +556,7 @@ router.delete('/:id', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), [
 })
 
 // Apaga uma entrada -> eliminar ficheiros nos elementos
-router.delete('/:id/entradas/:idEnt', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), [
+router.delete('/:id/entradas/:idEnt', Auth.isLoggedInUser, Auth.checkLevel([3.5, 4, 5, 6, 7]), [
     eMongoId('params', 'id'),
     eMongoId('params', 'idEnt')
 ], (req, res) => {
@@ -597,7 +597,7 @@ router.delete('/:id/entradas/:idEnt', Auth.isLoggedInUser, Auth.checkLevel([4, 5
 })
 
 // Apaga um elemento -> eliminar ficheiro se existir
-router.delete('/:id/entradas/:idEnt/elementos/:idElem', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), [
+router.delete('/:id/entradas/:idEnt/elementos/:idElem', Auth.isLoggedInUser, Auth.checkLevel([3.5, 4, 5, 6, 7]), [
     eMongoId('params', 'id'),
     eMongoId('params', 'idEnt'),
     eMongoId('params', 'idElem')

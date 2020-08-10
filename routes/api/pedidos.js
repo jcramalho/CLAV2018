@@ -32,8 +32,8 @@ router.get('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
         filtro[key] = value
     }
 
-    //se o nivel de utilizador é <3 então devolve apenas os pedidos da sua entidade
-    if(req.user.level < 3){
+    //se o nivel de utilizador é < 3.5 então devolve apenas os pedidos da sua entidade
+    if(req.user.level < 3.5){
         filtro["entidade"] = req.user.entidade
     }
     
@@ -54,8 +54,8 @@ router.get('/:codigo', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6,
     Pedidos.consultar(req.params.codigo)
         .then(dados => {
             if(dados){
-                //se o nivel de utilizador é <3 então devolve apenas os pedidos da sua entidade
-                if(req.user.level < 3 && req.user.entidade != dados.entidade){
+                //se o nivel de utilizador é < 3.5 então devolve apenas os pedidos da sua entidade
+                if(req.user.level < 3.5 && req.user.entidade != dados.entidade){
                     res.status(403).send("Não tem permissões para aceder este pedido")
                 }else{
                     res.jsonp(dados)
@@ -97,7 +97,7 @@ router.post('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), 
 })
 
 // Atualização de um pedido: mais uma etapa na distribuição
-router.put('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
+router.put('/', Auth.isLoggedInUser, Auth.checkLevel([3.5, 4, 5, 6, 7]), [
     existe('body', 'pedido'),
     eMongoId('body', 'pedido._id'),
     verificaPedidoCodigo('body', 'pedido.codigo'),
@@ -147,7 +147,7 @@ router.put('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
 })
 
 // Adição de distribuição 
-router.post('/:codigo/distribuicao', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
+router.post('/:codigo/distribuicao', Auth.isLoggedInUser, Auth.checkLevel([3.5, 4, 5, 6, 7]), [
     verificaPedidoCodigo('param', 'codigo'),
     estaEm('body', 'estado', vcPedidoEstado),
     existe('body', 'responsavel')

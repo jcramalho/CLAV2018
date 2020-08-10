@@ -6,7 +6,10 @@ security:
   - userAuth: []
 tags:
   - Diversos
-description: Permite aceder os ficheiros estáticos da API de dados bastando indicar o caminho do ficheiro na pasta dos ficheiros estáticos ('public')
+description: |
+  Permite aceder os ficheiros estáticos da API de dados bastando indicar o caminho do ficheiro na pasta dos ficheiros estáticos ('public')
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 parameters:
   - in: query
     name: caminho

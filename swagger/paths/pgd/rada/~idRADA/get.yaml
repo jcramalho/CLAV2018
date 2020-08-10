@@ -6,7 +6,10 @@ security:
   - userAuth: []
 tags:
   - PGD
-description: Consulta da TS de 'antigo RADA' não inserido pela plataforma
+description: |
+  Consulta da TS de 'antigo RADA' não inserido pela plataforma
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 parameters:
   - name: idRADA
     in: path

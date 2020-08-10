@@ -48,7 +48,7 @@ router.get('/:id', Auth.isLoggedInKey, [
         .catch(err => res.status(500).json(`Erro ao obter TS: ${err}`))
 })
 
-router.post('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
+router.post('/', Auth.isLoggedInUser, Auth.checkLevel([5, 6, 7]), [
     existe('body', 'tabela')
 ], async function (req, res){
     const errors = validationResult(req)

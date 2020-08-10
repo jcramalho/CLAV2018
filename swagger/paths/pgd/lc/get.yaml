@@ -6,7 +6,10 @@ security:
   - userAuth: []
 tags:
   - PGD
-description: Listagem das Legislações do tipo Portaria em que existem TS derivadas da LC
+description: |
+  Listagem das Legislações do tipo Portaria em que existem TS derivadas da LC
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 responses:
   200:
     description: Lista com as Legislações do tipo Portaria em que existem TS derivadas da LC
