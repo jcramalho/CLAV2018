@@ -8,7 +8,7 @@ const { validationResult } = require('express-validator');
 const { existe } = require('../validation')
 
 // Insere um RADA na BD
-router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), [
+router.post("/", Auth.isLoggedInUser, Auth.checkLevel(5), [
     existe('body', 'triplos')
 ], (req, res) => {
   const errors = validationResult(req)
@@ -23,7 +23,7 @@ router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), [
     .catch(err => res.status(500).send(`Erro na inserção de um RADA: ${err}`));
 }); 
 
-router.get("/", Auth.isLoggedInUser, Auth.checkLevel(4), (req, res) => {
+router.get("/", Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), (req, res) => {
   RADA.listar()
     .then(dados => {
         res.status(200).jsonp(dados);
@@ -31,7 +31,7 @@ router.get("/", Auth.isLoggedInUser, Auth.checkLevel(4), (req, res) => {
     .catch(err => res.status(500).send(`Erro na listagem dos RADA: ${err}`));
 }); 
 
-router.get("/:id", Auth.isLoggedInUser, Auth.checkLevel(4), (req, res) => {
+router.get("/:id", Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), (req, res) => {
   RADA.consulta(req.params.id)
     .then(dados => {
         res.status(200).jsonp(dados);

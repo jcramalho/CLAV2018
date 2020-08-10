@@ -797,6 +797,16 @@
             },
             {
                 "verbo": "GET",
+                "path": "/{api_version}/rada/:id",
+                "desc": "Consulta de um RADA"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/rada/",
+                "desc": "Listagem dos RADA "
+            },
+            {
+                "verbo": "GET",
                 "path": "/{api_version}/tabelasSelecao/:id/classes",
                 "desc": "Lista as classes da tabela de seleção"
             },
@@ -922,16 +932,6 @@
             },
             {
                 "verbo": "POST",
-                "path": "/{api_version}/autosEliminacao/",
-                "desc": "Criação de um auto de eliminação"
-            },
-            {
-                "verbo": "POST",
-                "path": "/{api_version}/pedidos/:codigo/distribuicao",
-                "desc": "Adição de distribuição"
-            },
-            {
-                "verbo": "POST",
                 "path": "/{api_version}/pedidos/",
                 "desc": "Criação de um pedido"
             },
@@ -946,26 +946,6 @@
                 "desc": "Cria um pedido de criação de uma tabela de seleção a partir de um ficheiro CSV/Excel"
             },
             {
-                "verbo": "POST",
-                "path": "/{api_version}/tabelasSelecao/",
-                "desc": "Inserir uma tabela de seleção"
-            },
-            {
-                "verbo": "POST",
-                "path": "/{api_version}/vocabularios/termo/:idVC",
-                "desc": "Adiciona um Termo a um vocabulário"
-            },
-            {
-                "verbo": "POST",
-                "path": "/{api_version}/vocabularios/",
-                "desc": "Adicionar um vocabulário"
-            },
-            {
-                "verbo": "PUT",
-                "path": "/{api_version}/pedidos",
-                "desc": "'Atualização de um pedido: mais uma etapa na distribuição'"
-            },
-            {
                 "verbo": "PUT",
                 "path": "/{api_version}/pendentes",
                 "desc": "Atualiza um trabalho previamente guardado como pendente"
@@ -976,19 +956,9 @@
                 "desc": "Altera a password da conta de um utilizador"
             },
             {
-                "verbo": "PUT",
-                "path": "/{api_version}/vocabularios/:id",
-                "desc": "Atualizar a legenda e descrição de um vocabulário"
-            },
-            {
                 "verbo": "DELETE",
                 "path": "/{api_version}/pendentes/:id",
                 "desc": "Remove um trabalho pendente"
-            },
-            {
-                "verbo": "DELETE",
-                "path": "/{api_version}/vocabularios/termo/:id",
-                "desc": "Apaga um Termo de vocabulário"
             }
         ]
     },
@@ -1644,6 +1614,96 @@
             },
             {
                 "verbo": "GET",
+                "path": "/{api_version}/indicadores/classesN4",
+                "desc": "Número total de classes de nível 4"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/indicadores/classesN3",
+                "desc": "Número total de classes de nível 3"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/indicadores/classesN2",
+                "desc": "Número total de classes de nível 2"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/indicadores/classesN1",
+                "desc": "Número total de classes de nível 1"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/indicadores/classes",
+                "desc": "Número total de classes"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/indicadores/entidadesAtivas",
+                "desc": "Número total de entidades ativas, inativas e em harmonização"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/indicadores/entidades",
+                "desc": "Número total de entidades"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/indicadores/tipologias",
+                "desc": "Número total de tipologias"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/indicadores/legVigor",
+                "desc": "Número total de diplomas legislativos em vigor e revogadas"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/indicadores/leg",
+                "desc": "Número total de diplomas legislativos"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/indicadores/relstats",
+                "desc": "Indicadores relacionais dos PNs"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/indicadores/critstats",
+                "desc": "Indicadores dos Critérios de Justificação"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/indicadores/dfstats",
+                "desc": "Indicadores dos destinos finais (DFs) das classes "
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/indicadores/relacoes/:relacao",
+                "desc": "Número total de relações"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/indicadores/df/:df",
+                "desc": "Número total de PNs com destino final igual a C, CP ou E"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/indicadores/critJust/:critJust",
+                "desc": "Número total de Critérios de Justificação 'critJust'"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/indicadores/critJust/",
+                "desc": "Número total de Critérios de Justificação"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/indicadores/tabela",
+                "desc": "Listagem de vários indicadores"
+            },
+            {
+                "verbo": "GET",
                 "path": "/{api_version}/indicePesquisa",
                 "desc": "Devolve o Índice de Pesquisa para Notas de Aplicação, Exemplos de Notas de Aplicação e Termos de Índice"
             },
@@ -1751,6 +1811,16 @@
                 "verbo": "GET",
                 "path": "/{api_version}/pgd/",
                 "desc": "Listagem das Legislações do tipo Portaria em que existem TS "
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/rada/:id",
+                "desc": "Consulta de um RADA"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/rada/",
+                "desc": "Listagem dos RADA "
             },
             {
                 "verbo": "GET",
@@ -1879,16 +1949,6 @@
             },
             {
                 "verbo": "POST",
-                "path": "/{api_version}/autosEliminacao/",
-                "desc": "Criação de um auto de eliminação"
-            },
-            {
-                "verbo": "POST",
-                "path": "/{api_version}/pedidos/:codigo/distribuicao",
-                "desc": "Adição de distribuição"
-            },
-            {
-                "verbo": "POST",
                 "path": "/{api_version}/pedidos/",
                 "desc": "Criação de um pedido"
             },
@@ -1903,26 +1963,6 @@
                 "desc": "Cria um pedido de criação de uma tabela de seleção a partir de um ficheiro CSV/Excel"
             },
             {
-                "verbo": "POST",
-                "path": "/{api_version}/tabelasSelecao/",
-                "desc": "Inserir uma tabela de seleção"
-            },
-            {
-                "verbo": "POST",
-                "path": "/{api_version}/vocabularios/termo/:idVC",
-                "desc": "Adiciona um Termo a um vocabulário"
-            },
-            {
-                "verbo": "POST",
-                "path": "/{api_version}/vocabularios/",
-                "desc": "Adicionar um vocabulário"
-            },
-            {
-                "verbo": "PUT",
-                "path": "/{api_version}/pedidos",
-                "desc": "'Atualização de um pedido: mais uma etapa na distribuição'"
-            },
-            {
                 "verbo": "PUT",
                 "path": "/{api_version}/pendentes",
                 "desc": "Atualiza um trabalho previamente guardado como pendente"
@@ -1933,19 +1973,9 @@
                 "desc": "Altera a password da conta de um utilizador"
             },
             {
-                "verbo": "PUT",
-                "path": "/{api_version}/vocabularios/:id",
-                "desc": "Atualizar a legenda e descrição de um vocabulário"
-            },
-            {
                 "verbo": "DELETE",
                 "path": "/{api_version}/pendentes/:id",
                 "desc": "Remove um trabalho pendente"
-            },
-            {
-                "verbo": "DELETE",
-                "path": "/{api_version}/vocabularios/termo/:id",
-                "desc": "Apaga um Termo de vocabulário"
             }
         ]
     },
@@ -2060,6 +2090,11 @@
             },
             {
                 "verbo": "GET",
+                "path": "/{api_version}/colaboracoes/exportar",
+                "desc": "Exportação das colaborações"
+            },
+            {
+                "verbo": "GET",
                 "path": "/{api_version}/colaboracoes/:id/",
                 "desc": "Devolve uma colaboração"
             },
@@ -2072,6 +2107,11 @@
                 "verbo": "GET",
                 "path": "/{api_version}/documentacaoCientifica/classes",
                 "desc": "Devolve as diferentes classes da documentação cientifica"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/documentacaoCientifica/exportar",
+                "desc": "Exportação de entradas da documentação científica"
             },
             {
                 "verbo": "GET",
@@ -2097,6 +2137,11 @@
                 "verbo": "GET",
                 "path": "/{api_version}/documentacaoApoio/classes",
                 "desc": "Devolve as diferentes classes da documentação de apoio"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/documentacaoApoio/exportar",
+                "desc": "Exportação de entradas da documentação de apoio"
             },
             {
                 "verbo": "GET",
@@ -2315,6 +2360,11 @@
             },
             {
                 "verbo": "GET",
+                "path": "/{api_version}/noticias/exportar",
+                "desc": "Exportação das notícias"
+            },
+            {
+                "verbo": "GET",
                 "path": "/{api_version}/noticias/:id",
                 "desc": "Devolve a informação de uma notícia"
             },
@@ -2382,6 +2432,16 @@
                 "verbo": "GET",
                 "path": "/{api_version}/pgd/",
                 "desc": "Listagem das Legislações do tipo Portaria em que existem TS "
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/rada/:id",
+                "desc": "Consulta de um RADA"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/rada/",
+                "desc": "Listagem dos RADA "
             },
             {
                 "verbo": "GET",
@@ -2515,8 +2575,53 @@
             },
             {
                 "verbo": "POST",
-                "path": "/{api_version}/autosEliminacao/",
-                "desc": "Criação de um auto de eliminação"
+                "path": "/{api_version}/colaboracoes/importar",
+                "desc": "Importação de colaboracões"
+            },
+            {
+                "verbo": "POST",
+                "path": "/{api_version}/colaboracoes/",
+                "desc": "Cria uma colaboração"
+            },
+            {
+                "verbo": "POST",
+                "path": "/{api_version}/documentacaoCientifica/importar",
+                "desc": "Importação de entradas para a documentação científica"
+            },
+            {
+                "verbo": "POST",
+                "path": "/{api_version}/documentacaoCientifica/",
+                "desc": "Criação de uma nova entrada na documentação científica"
+            },
+            {
+                "verbo": "POST",
+                "path": "/{api_version}/documentacaoApoio/importar",
+                "desc": "Importação de entradas para a documentação de apoio"
+            },
+            {
+                "verbo": "POST",
+                "path": "/{api_version}/documentacaoApoio/:id/entradas/:idEnt/",
+                "desc": "Cria um elemento na entrada da classe na documentação de apoio"
+            },
+            {
+                "verbo": "POST",
+                "path": "/{api_version}/documentacaoApoio/:id/",
+                "desc": "Cria uma entrada na classe na documentação de apoio"
+            },
+            {
+                "verbo": "POST",
+                "path": "/{api_version}/documentacaoApoio/",
+                "desc": "Cria uma classe na documentação de apoio"
+            },
+            {
+                "verbo": "POST",
+                "path": "/{api_version}/noticias/importar",
+                "desc": "Importação das notícias"
+            },
+            {
+                "verbo": "POST",
+                "path": "/{api_version}/noticias/",
+                "desc": "Cria uma notícia"
             },
             {
                 "verbo": "POST",
@@ -2539,19 +2644,34 @@
                 "desc": "Cria um pedido de criação de uma tabela de seleção a partir de um ficheiro CSV/Excel"
             },
             {
-                "verbo": "POST",
-                "path": "/{api_version}/tabelasSelecao/",
-                "desc": "Inserir uma tabela de seleção"
+                "verbo": "PUT",
+                "path": "/{api_version}/colaboracoes/:id/",
+                "desc": "Alterar uma colaboração"
             },
             {
-                "verbo": "POST",
-                "path": "/{api_version}/vocabularios/termo/:idVC",
-                "desc": "Adiciona um Termo a um vocabulário"
+                "verbo": "PUT",
+                "path": "/{api_version}/documentacaoCientifica/:id",
+                "desc": "Atualização de uma entrada na documentação científica"
             },
             {
-                "verbo": "POST",
-                "path": "/{api_version}/vocabularios/",
-                "desc": "Adicionar um vocabulário"
+                "verbo": "PUT",
+                "path": "/{api_version}/documentacaoApoio/:id/entradas/:idEnt/elementos/:idElem/",
+                "desc": "Alterar um elemento de uma entrada de uma classe da documentação de apoio"
+            },
+            {
+                "verbo": "PUT",
+                "path": "/{api_version}/documentacaoApoio/:id/entradas/:idEnt/",
+                "desc": "Alterar a descrição da entrada na classe na documentação de apoio"
+            },
+            {
+                "verbo": "PUT",
+                "path": "/{api_version}/documentacaoApoio/:id/",
+                "desc": "Alterar designação da classe na documentação de apoio"
+            },
+            {
+                "verbo": "PUT",
+                "path": "/{api_version}/noticias/:id",
+                "desc": "Atualiza uma notícia"
             },
             {
                 "verbo": "PUT",
@@ -2569,19 +2689,39 @@
                 "desc": "Altera a password da conta de um utilizador"
             },
             {
-                "verbo": "PUT",
-                "path": "/{api_version}/vocabularios/:id",
-                "desc": "Atualizar a legenda e descrição de um vocabulário"
+                "verbo": "DELETE",
+                "path": "/{api_version}/colaboracoes/:id/",
+                "desc": "Eliminar uma colaboração"
+            },
+            {
+                "verbo": "DELETE",
+                "path": "/{api_version}/documentacaoCientifica/:id",
+                "desc": "Elimina uma entrada da documentação científica"
+            },
+            {
+                "verbo": "DELETE",
+                "path": "/{api_version}/documentacaoApoio/:id/entradas/:idEnt/elementos/:idElem/",
+                "desc": "Eliminar o elemento da entrada da classe da documentação de apoio"
+            },
+            {
+                "verbo": "DELETE",
+                "path": "/{api_version}/documentacaoApoio/:id/entradas/:idEnt/",
+                "desc": "Eliminar a entrada da classe da documentação de apoio"
+            },
+            {
+                "verbo": "DELETE",
+                "path": "/{api_version}/documentacaoApoio/:id/",
+                "desc": "Eliminar uma classe na documentação de apoio"
+            },
+            {
+                "verbo": "DELETE",
+                "path": "/{api_version}/noticias/:id",
+                "desc": "Elimina uma notícia"
             },
             {
                 "verbo": "DELETE",
                 "path": "/{api_version}/pendentes/:id",
                 "desc": "Remove um trabalho pendente"
-            },
-            {
-                "verbo": "DELETE",
-                "path": "/{api_version}/vocabularios/termo/:id",
-                "desc": "Apaga um Termo de vocabulário"
             }
         ]
     },
@@ -3181,11 +3321,6 @@
             },
             {
                 "verbo": "POST",
-                "path": "/{api_version}/autosEliminacao/",
-                "desc": "Criação de um auto de eliminação"
-            },
-            {
-                "verbo": "POST",
                 "path": "/{api_version}/colaboracoes/importar",
                 "desc": "Importação de colaboracões"
             },
@@ -3261,23 +3396,28 @@
             },
             {
                 "verbo": "POST",
-                "path": "/{api_version}/rada/",
-                "desc": "Inserção de um RADA"
-            },
-            {
-                "verbo": "POST",
                 "path": "/{api_version}/tabelasSelecao/importar",
                 "desc": "Cria um pedido de criação de uma tabela de seleção a partir de um ficheiro CSV/Excel"
             },
             {
                 "verbo": "POST",
-                "path": "/{api_version}/tabelasSelecao/",
-                "desc": "Inserir uma tabela de seleção"
+                "path": "/{api_version}/tipologias",
+                "desc": "Cria uma tipologia"
             },
             {
                 "verbo": "POST",
-                "path": "/{api_version}/tipologias",
-                "desc": "Cria uma tipologia"
+                "path": "/{api_version}/users/registarParaEntidade",
+                "desc": "Adiciona/regista utilizadores para uma determinada entidade"
+            },
+            {
+                "verbo": "POST",
+                "path": "/{api_version}/users/registarCC",
+                "desc": "Adiciona/regista um utilizador através de CC"
+            },
+            {
+                "verbo": "POST",
+                "path": "/{api_version}/users/registar",
+                "desc": "Adiciona/regista um utilizador"
             },
             {
                 "verbo": "POST",
@@ -3356,8 +3496,18 @@
             },
             {
                 "verbo": "PUT",
+                "path": "/{api_version}/users/:id/desativar",
+                "desc": "Desativa a conta de um utilizador"
+            },
+            {
+                "verbo": "PUT",
                 "path": "/{api_version}/users/:id/password",
                 "desc": "Altera a password da conta de um utilizador"
+            },
+            {
+                "verbo": "PUT",
+                "path": "/{api_version}/users/:id/",
+                "desc": "Altera os dados da conta de um utilizador"
             },
             {
                 "verbo": "PUT",
@@ -4270,11 +4420,6 @@
                 "verbo": "GET",
                 "path": "/{api_version}/autosEliminacao/",
                 "desc": "Devolve a lista de todos os autos de eliminação"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/chaves/",
-                "desc": "Devolve todas as chaves API"
             },
             {
                 "verbo": "GET",

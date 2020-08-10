@@ -7,7 +7,7 @@ var Mailer = require("../../controllers/api/mailer");
 const { param, header, body, query, validationResult } = require('express-validator');
 const { existe, verificaExisteEnt } = require('../validation')
 
-router.get("/", Auth.isLoggedInUser, Auth.checkLevel(6), (req, res) => {
+router.get("/", Auth.isLoggedInUser, Auth.checkLevel(7), (req, res) => {
   Chaves.listar(function(err, result) {
     if (err) {
       //res.status(500).send(`Erro: ${err}`);

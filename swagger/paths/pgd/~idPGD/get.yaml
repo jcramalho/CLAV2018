@@ -6,7 +6,10 @@ security:
   - userAuth: []
 tags:
   - PGD
-description: Consulta da TS de determinada Portaria
+description: |
+  Consulta da TS de determinada Portaria
+
+  **Acesso permitido a:** Chaves API e Todos os Utilizadores
 parameters:
   - name: idPGD
     in: path

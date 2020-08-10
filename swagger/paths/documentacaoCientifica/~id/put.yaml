@@ -2,7 +2,7 @@ summary: Atualização de uma entrada na documentação científica
 description: |
   Atualização de uma entrada na documentação na documentação científica
 
-  **Acesso permitido a:** Utilizadores com nível 4, 5, 6 e 7
+  **Acesso permitido a:** Utilizadores com nível 3.5, 4, 5, 6 e 7
 security:
   - userQuery: []
   - userAuth: []

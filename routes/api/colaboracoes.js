@@ -43,7 +43,7 @@ router.get('/', Auth.isLoggedInKey, [
 })
 
 // Devolve um ficheiro com todos os registos em formato pronto a importar no MongoDB
-router.get('/exportar', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), (req, res) => {
+router.get('/exportar', Auth.isLoggedInUser, Auth.checkLevel([3.5, 4, 5, 6, 7]), (req, res) => {
     Creditos.listar({})
         .then(function(dados){
             // Tratamento do formato do ID
@@ -81,7 +81,7 @@ router.get('/:id', Auth.isLoggedInKey, [
 })
 
 // Adiciona um crédito
-router.post('/', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), [
+router.post('/', Auth.isLoggedInUser, Auth.checkLevel([3.5, 4, 5, 6, 7]), [
     existe("body", "nome"),
     existe("body", "filiacao"),
     existe("body", "funcao"),
@@ -103,7 +103,7 @@ router.post('/', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), [
 })
 
 // Importação de um ficheiro com registos - Pode ser adição (append) à BD ou substituição (drop)
-router.post('/importar', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), (req, res) => {
+router.post('/importar', Auth.isLoggedInUser, Auth.checkLevel([3.5, 4, 5, 6, 7]), (req, res) => {
     var form = new formidable.IncomingForm()
     form.parse(req, async (error, fields, formData) => {
         if(!error){
@@ -148,7 +148,7 @@ router.post('/importar', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), (re
 
 
 // Update de um crédito
-router.put('/:id', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), [
+router.put('/:id', Auth.isLoggedInUser, Auth.checkLevel([3.5, 4, 5, 6, 7]), [
     eMongoId('param', 'id'),
     existe("body", "nome"),
     existe("body", "filiacao"),
@@ -171,7 +171,7 @@ router.put('/:id', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), [
 })
 
 // Apagar um crédito
-router.delete('/:id', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), [
+router.delete('/:id', Auth.isLoggedInUser, Auth.checkLevel([3.5, 4, 5, 6, 7]), [
     eMongoId('param', 'id')
 ], function(req, res) {
     const errors = validationResult(req)
