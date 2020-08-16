@@ -113,6 +113,7 @@ function getClassesParaPesquisa(classes){
             nome: classes[i].codigo + " - " + classes[i].titulo,
             titulo: classes[i].titulo,
             status: classes[i].status,
+            descricao: classes[i].descricao,
             tp: ternaryOp(classes[i].tipoProc, ""),
             pt: ternaryOp(classes[i].procTrans, ""),
             na: mapJoin(classes[i].notasAp, "nota"),
