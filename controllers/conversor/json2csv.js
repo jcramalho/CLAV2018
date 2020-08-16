@@ -52,6 +52,7 @@ const convert_to = {
     "pesquisaClasse": {
         "id": ["Código", v => v],
         "titulo": ["Título", v => v],
+        "descricao": ["Descrição", v => v],
         "tp": ["Tipo de processo", v => v],
         "pt": ["Processo transversal (S/N)", v => v],
         "na": ["Notas de aplicação", v => v],

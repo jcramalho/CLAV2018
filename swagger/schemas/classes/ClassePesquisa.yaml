@@ -6,6 +6,8 @@ properties:
     type: string
   titulo:
     type: string
+  descricao:
+    type: string
   status:
     $ref: '#/components/schemas/Status'
   tp:
@@ -52,6 +54,7 @@ required:
   - id
   - nome
   - titulo
+  - descricao
   - status
   - tp
   - pt

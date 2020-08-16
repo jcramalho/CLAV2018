@@ -5,6 +5,7 @@ value: |
       <id type="string">100</id>
       <nome type="string">100 - ORDENAMENTO JURÍDICO E NORMATIVO</nome>
       <titulo type="string">ORDENAMENTO JURÍDICO E NORMATIVO</titulo>
+      <descricao type="string">desc1</descricao>
       <status type="string">A</status>
       <tp type="string">
       </tp>
@@ -36,6 +37,7 @@ value: |
           <id type="string">100.10</id>
           <nome type="string">100.10 - Elaboração de diplomas jurídico-normativos e de normas técnicas</nome>
           <titulo type="string">Elaboração de diplomas jurídico-normativos e de normas técnicas</titulo>
+          <descricao type="string">desc2</descricao>
           <status type="string">A</status>
           <tp type="string">
           </tp>
@@ -67,6 +69,7 @@ value: |
               <id type="string">100.10.001</id>
               <nome type="string">100.10.001 - Produção e comunicação de atos legislativos</nome>
               <titulo type="string">Produção e comunicação de atos legislativos</titulo>
+              <descricao type="string">desc3</descricao>
               <status type="string">A</status>
               <tp type="string">Processo Comum</tp>
               <pt type="string">S</pt>
@@ -102,6 +105,7 @@ value: |
               <id type="string">100.10.002</id>
               <nome type="string">100.10.002 - Aprovação e comunicação de convenções internacionais</nome>
               <titulo type="string">Aprovação e comunicação de convenções internacionais</titulo>
+              <descricao type="string">desc4</descricao>
               <status type="string">A</status>
               <tp type="string">Processo Específico</tp>
               <pt type="string">S</pt>
