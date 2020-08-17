@@ -50,6 +50,10 @@ properties:
       oneOf:
         - $ref: '#/components/schemas/EntidadeId'
         - $ref: '#/components/schemas/TipologiaId'
+  tipo_participacao:
+    type: array
+    items:
+      $ref: '#/components/schemas/TipoParticipacao'
 required:
   - id
   - nome
@@ -70,3 +74,4 @@ required:
   - crit_df
   - donos
   - participantes
+  - tipo_participacao
