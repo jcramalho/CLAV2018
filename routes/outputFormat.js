@@ -128,6 +128,7 @@ function getClassesParaPesquisa(classes){
             crit_df: ternaryMap(classes[i].df.justificacao, "tipoId"),
             donos: ternaryMap(classes[i].donos, "idDono"),
             participantes: ternaryMap(classes[i].participantes, "idParticipante"),
+            tipo_participacao: ternaryMap(classes[i].participantes, "participLabel"),
             filhos: getClassesParaPesquisa(classes[i].filhos)
         })
     }

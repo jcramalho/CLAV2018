@@ -32,6 +32,8 @@ value: |
       </donos>
       <participantes type="array">
       </participantes>
+      <tipo_participacao type="array">
+      </tipo_participacao>
       <filhos type="array">
         <item index="0" type="object">
           <id type="string">100.10</id>
@@ -64,6 +66,8 @@ value: |
           </donos>
           <participantes type="array">
           </participantes>
+          <tipo_participacao type="array">
+          </tipo_participacao>
           <filhos type="array">
             <item index="0" type="object">
               <id type="string">100.10.001</id>
@@ -98,6 +102,12 @@ value: |
                 <item index="2" type="string">ent_SGMTSSS</item>
                 <item index="3" type="string">ent_SGPCM</item>
               </participantes>
+              <tipo_participacao type="array">
+                <item index="0" type="string">Apreciador</item>
+                <item index="1" type="string">Assessor</item>
+                <item index="2" type="string">Assessor</item>
+                <item index="3" type="string">Decisor</item>
+              </tipo_participacao>
               <filhos type="array">
               </filhos>
             </item>
@@ -135,6 +145,11 @@ value: |
                 <item index="1" type="string">ent_CNPDPCJ</item>
                 <item index="2" type="string">ent_SGPCM</item>
               </participantes>
+              <tipo_participacao type="array">
+                <item index="0" type="string">Comunicador</item>
+                <item index="1" type="string">Assessor</item>
+                <item index="2" type="string">Apreciador</item>
+              </tipo_participacao>
               <filhos type="array">
               </filhos>
             </item>
