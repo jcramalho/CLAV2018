@@ -67,6 +67,7 @@ const convert_to = {
         "crit_df": ["Critério DF", join],
         "donos": ["Donos do processo", join],
         "participantes": ["Participantes do processo", join],
+        "tipo_participacao": ["Tipo de participação", join],
         "filhos": [null, filhos("pesquisaClasse")]
     },
     "entidade": {
