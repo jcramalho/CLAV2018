@@ -26,86 +26,86 @@ router.get('/', [
         return res.status(422).jsonp(errors.array())
     }
 
-    //obtém as classes com toda a info destas
     try{
+        //obtém as classes com toda a info destas
         res.locals.dados = await State.getAllClassesInfo()
-    } catch(err) {
-        return res.status(500).send(`Erro na listagem geral das classes: ${err}`)
-    }
 
-    //filtrar por tipo
-    if(req.query.tipo){
-        if(req.query.tipo == "comum"){
-            res.locals.dados = State.filterProcessosComuns(res.locals.dados)
-        }else{ //tipo == especifico
-            res.locals.dados = State.filterProcessosEspecificos(res.locals.dados)
-        }
-    }
-
-    let ents = []
-    let tips = []
-    //filtrar por entidades e/ou tipologias
-    if(req.query.ents || req.query.tips){
-        if(req.query.ents){
-            ents = req.query.ents.split(',');
-        }
-        if(req.query.tips){
-            tips = req.query.tips.split(',');
+        //filtrar por tipo
+        if(req.query.tipo){
+            if(req.query.tipo == "comum"){
+                res.locals.dados = State.filterProcessosComuns(res.locals.dados)
+            }else{ //tipo == especifico
+                res.locals.dados = State.filterProcessosEspecificos(res.locals.dados)
+            }
         }
 
-        let ents_tips = ents.concat(tips)
-        res.locals.dados = State.filterEntsTips(res.locals.dados, ents_tips)
-    }
+        let ents = []
+        let tips = []
+        //filtrar por entidades e/ou tipologias
+        if(req.query.ents || req.query.tips){
+            if(req.query.ents){
+                ents = req.query.ents.split(',');
+            }
+            if(req.query.tips){
+                tips = req.query.tips.split(',');
+            }
 
-    //filtrar por nivel
-    if(req.query.nivel){
-        res.locals.dados = State.filterNivel(res.locals.dados, req.query.nivel)
-    }
-
-    //estrutura a devolver
-    if(req.query.estrutura == "lista"){
-        res.locals.dados = State.flatArvore(res.locals.dados)
-    }
-    //else não é necessário já que a outra hipótese é estrutura = arvore
-    //e o objeto já se encontra em arvore, exceto claro o caso em que é filtrado
-    //por nivel que torna a arvore numa lista
-
-    if(req.query.info){
-        if(req.query.info == "esqueleto"){
-            res.locals.dados = State.filterEsqueletoInfo(res.locals.dados)
-            res.locals.tipo = "esqueletoClasses"
-        }else if(req.query.info == "pesquisa"){
-            res.locals.dados = State.filterPesquisaInfo(res.locals.dados)
-            res.locals.tipo = "pesquisaClasses"
-        }else if(req.query.info == "pre-selecionados"){
             let ents_tips = ents.concat(tips)
-            res.locals.dados = State.filterPreSelecionadoInfo(res.locals.dados, ents_tips)
-            res.locals.tipo = "preselecionadoClasses"
-        }else{
-            //info == completa, algo que a arvore já o é, logo
-            //não é necessário alterar nada
+            res.locals.dados = State.filterEntsTips(res.locals.dados, ents_tips)
+        }
+
+        //filtrar por nivel
+        if(req.query.nivel){
+            res.locals.dados = State.filterNivel(res.locals.dados, req.query.nivel)
+        }
+
+        //estrutura a devolver
+        if(req.query.estrutura == "lista"){
+            res.locals.dados = State.flatArvore(res.locals.dados)
+        }
+        //else não é necessário já que a outra hipótese é estrutura = arvore
+        //e o objeto já se encontra em arvore, exceto claro o caso em que é filtrado
+        //por nivel que torna a arvore numa lista
+
+        if(req.query.info){
+            if(req.query.info == "esqueleto"){
+                res.locals.dados = State.filterEsqueletoInfo(res.locals.dados)
+                res.locals.tipo = "esqueletoClasses"
+            }else if(req.query.info == "pesquisa"){
+                res.locals.dados = State.filterPesquisaInfo(res.locals.dados)
+                res.locals.tipo = "pesquisaClasses"
+            }else if(req.query.info == "pre-selecionados"){
+                let ents_tips = ents.concat(tips)
+                res.locals.dados = State.filterPreSelecionadoInfo(res.locals.dados, ents_tips)
+                res.locals.tipo = "preselecionadoClasses"
+            }else{
+                //info == completa, algo que a arvore já o é, logo
+                //não é necessário alterar nada
+                res.locals.tipo = "classes"
+            }
+        }else{ //devolve apenas a info base da classe
+            res.locals.dados = State.filterBaseInfo(res.locals.dados)
             res.locals.tipo = "classes"
         }
-    }else{ //devolve apenas a info base da classe
-        res.locals.dados = State.filterBaseInfo(res.locals.dados)
-        res.locals.tipo = "classes"
-    }
 
-    //filtrar pelo estado das classes
-    //se não for utilizador ou se for com nível inferior a 3.5 ou ainda se for o esqueleto para a criação de uma TS apenas apresentar classes com estado = Ativo
-    if(res.locals.idType != "User" || req.user.level < 3.5 || res.locals.tipo == "esqueletoClasses"){
-        res.locals.dados = State.filterStatus(res.locals.dados, res.locals.dados)
-    }
-
-    //remove o status do esqueleto
-    if(res.locals.tipo == "esqueletoClasses"){
-        for(var i=0; i < res.locals.dados.length; i++){
-            delete res.locals.dados[i].status
+        //filtrar pelo estado das classes
+        //se não for utilizador ou se for com nível inferior a 3.5 ou ainda se for o esqueleto para a criação de uma TS apenas apresentar classes com estado = Ativo
+        if(res.locals.idType != "User" || req.user.level < 3.5 || res.locals.tipo == "esqueletoClasses"){
+            res.locals.dados = State.filterStatus(res.locals.dados, res.locals.dados)
         }
-    }
 
-    //converter para o formato de saída
-    next()
+        //remove o status do esqueleto
+        if(res.locals.tipo == "esqueletoClasses"){
+            for(var i=0; i < res.locals.dados.length; i++){
+                delete res.locals.dados[i].status
+            }
+        }
+
+        //converter para o formato de saída
+        next()
+    } catch(err) {
+        res.status(500).send(`Erro na listagem geral das classes: ${err}`)
+    }
 })
 
 // Verifica se um determinado título de classe já existe
