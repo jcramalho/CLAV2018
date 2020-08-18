@@ -34,11 +34,12 @@ const convert_to = {
         "codigo": ["Código", v => v],
         "titulo": ["Título", v => v],
         "descricao": ["Descrição", v => v],
-        "dono": ["Dono", v => v],
-        "participante": ["Participante", v => v],
+        "dono": ["Dono", join],
+        "participante": ["Participante", join],
         "pca": ["PCA", v => v],
         "formaContagem": ["Forma de contagem do PCA", v => v],
-        "df": ["DF", v => v]
+        "df": ["DF", v => v],
+        "filhos": [null, filhos("preselecionadoClasse")]
     },
     "esqueletoClasse": {
         "codigo": ["Código", v => v],
@@ -47,7 +48,8 @@ const convert_to = {
         "dono": ["Dono", v => v],
         "participante": ["Participante", v => v],
         "pca": ["PCA", v => v],
-        "df": ["DF", v => v]
+        "df": ["DF", v => v],
+        "filhos": [null, filhos("esqueletoClasse")]
     },
     "pesquisaClasse": {
         "id": ["Código", v => v],
