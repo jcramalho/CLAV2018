@@ -528,6 +528,17 @@ exports.filterStatus = (classes, classesI) => {
     return ret
 }
 
+//remove o campo status
+exports.removeStatus = l => {
+    for(let i = 0; i < l.length; i++){
+        delete l[i].status
+
+        if(l[i].filhos){
+            exports.removeStatus(l[i].filhos)
+        }
+    }
+}
+
 async function loadClasses() {
         try {
             let classes = await Classes.listar(null);
