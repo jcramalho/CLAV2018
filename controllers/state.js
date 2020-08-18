@@ -378,7 +378,7 @@ exports.filterPreSelecionadoInfo = (l, ents_tips) => {
         }
 
         if(l[i].filhos){
-            c.filhos = exports.filterPreSelecionadoInfo(l[i].filhos)
+            c.filhos = exports.filterPreSelecionadoInfo(l[i].filhos, ents_tips)
         }
 
         ret.push(c)
