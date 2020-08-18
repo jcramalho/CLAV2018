@@ -3,18 +3,15 @@ value:
     titulo: "ORDENAMENTO JURÍDICO E NORMATIVO"
     id: "http://jcr.di.uminho.pt/m51-clav#c100"
     status: "A"
-    drop: false
     filhos:
       - codigo: "100.10"
         titulo: "Elaboração de diplomas jurídico-normativos e de normas técnicas"
         id: "http://jcr.di.uminho.pt/m51-clav#c100.10"
         status: "A"
-        drop: false
         filhos:
           - codigo: "100.10.001"
             titulo: "Produção e comunicação de atos legislativos"
             id: "http://jcr.di.uminho.pt/m51-clav#c100.10.001"
             status: "A"
-            drop: false
             filhos: []
 summary: Exemplo de parte das classes em árvore
