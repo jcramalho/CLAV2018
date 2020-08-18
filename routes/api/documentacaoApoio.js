@@ -7,6 +7,7 @@ var fsExtra = require('fs.extra')
 var formidable = require("formidable")
 var ncp = require('ncp').ncp;
 ncp.limit = 16;
+var dataBases = require('../../config/database')
 
 var express = require('express')
 var router = express.Router()
@@ -41,7 +42,7 @@ router.get('/', [
 router.get('/formulario', (req, res) => {
     var path = "/classes?info=esqueleto&fs=text/csv";
     
-    axios.get(path)
+    axios.get("http://" + dataBases.host + '/' + dataBases.apiVersion + path)
       .then(function(dados){
         // Encoding 
         var data = dados.data;
