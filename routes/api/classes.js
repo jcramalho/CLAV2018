@@ -96,9 +96,7 @@ router.get('/', [
 
         //remove o status do esqueleto
         if(res.locals.tipo == "esqueletoClasses"){
-            for(var i=0; i < res.locals.dados.length; i++){
-                delete res.locals.dados[i].status
-            }
+            State.removeStatus(res.locals.dados)
         }
 
         //converter para o formato de saída
