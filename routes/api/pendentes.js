@@ -9,8 +9,8 @@ const { existe, estaEm, eMongoId, vcPendenteTipo, vcPendenteAcao } = require('..
 router.get('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), (req, res) => {
     let filtro = {}
 
-    //se o nivel de utilizador é <3 então devolve apenas os pendentes do utilizador
-    if(req.user.level < 3){
+    //se o nivel de utilizador é < 3.5 então devolve apenas os pendentes do utilizador
+    if(req.user.level < 3.5){
         filtro["criadoPor"] = req.user.email
     }
 
@@ -30,8 +30,8 @@ router.get('/:id', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7])
     Pendentes.consultar(req.params.id)
         .then(dados => {
             if(dados){
-                //se o nivel de utilizador é <3 então devolve apenas os pendentes do utilizador
-                if(req.user.level < 3 && req.user.email != dados.criadoPor){
+                //se o nivel de utilizador é < 3.5 então devolve apenas os pendentes do utilizador
+                if(req.user.level < 3.5 && req.user.email != dados.criadoPor){
                     res.status(403).send("Não tem permissões para aceder este pendente")
                 }else{
                     res.jsonp(dados)
@@ -92,8 +92,25 @@ router.put('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
         return res.status(422).jsonp(errors.array())
     }
 
-    Pendentes.atualizar(req.body)
-        .then(dados => res.jsonp(dados))
+    let email = null
+    //se o nivel de utilizador é < 3.5 então só pode atualizar os seus pendentes
+    if(req.user.level < 3.5){
+        email = req.user.email
+    }
+
+    Pendentes.atualizar(req.body, email)
+        .then(dados => {
+            if(dados){
+                //se o nivel de utilizador é < 3.5 então só pode atualizar os seus pendentes
+                if(dados == "sem_permissoes") {
+                    res.status(403).send("Não tem permissões para atualizar este pendente")
+                }else{
+                    res.jsonp(dados)
+                }
+            }else{
+                res.status(404).send(`Erro. O pendente '${req.body._id}' não existe`)
+            }
+        })
         .catch(erro => res.status(500).send(`Erro ao atualizar trabalho pendente: ${erro}`));
 })
 
@@ -106,9 +123,15 @@ router.delete('/:id', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 
         return res.status(422).jsonp(errors.array())
     }
 
-    Pendentes.apagar(req.params.id)
+    let email = null
+    //se o nivel de utilizador é < 3.5 então só pode atualizar os seus pendentes
+    if(req.user.level < 3.5){
+        email = req.user.email
+    }
+
+    Pendentes.apagar(req.params.id, email)
         .then(dados => res.jsonp(dados))
-        .catch(erro => res.status(500).send(`Erro na remoção de um trabalho pendente ' ${req.params.id}': ${erro}`));
+        .catch(erro => res.status(500).send(`Erro na remoção de um trabalho pendente '${req.params.id}': ${erro}`));
 })
 
 // Apaga todos trabalhos pendentes

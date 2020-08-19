@@ -377,12 +377,12 @@
             {
                 "verbo": "GET",
                 "path": "/{api_version}/tabelasSelecao/:id/",
-                "desc": "Consultar tabela de seleção"
+                "desc": "Consultar uma tabela de seleção"
             },
             {
                 "verbo": "GET",
                 "path": "/{api_version}/tabelasSelecao/",
-                "desc": "Lista as tabelas de seleção"
+                "desc": "Lista as tabelas de seleção criadas na plataforma CLAV"
             },
             {
                 "verbo": "GET",
@@ -797,18 +797,28 @@
             },
             {
                 "verbo": "GET",
+                "path": "/{api_version}/rada/:id",
+                "desc": "Consulta de um RADA"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/rada/",
+                "desc": "Listagem dos RADA "
+            },
+            {
+                "verbo": "GET",
                 "path": "/{api_version}/tabelasSelecao/:id/classes",
                 "desc": "Lista as classes da tabela de seleção"
             },
             {
                 "verbo": "GET",
                 "path": "/{api_version}/tabelasSelecao/:id/",
-                "desc": "Consultar tabela de seleção"
+                "desc": "Consultar uma tabela de seleção"
             },
             {
                 "verbo": "GET",
                 "path": "/{api_version}/tabelasSelecao/",
-                "desc": "Lista as tabelas de seleção"
+                "desc": "Lista as tabelas de seleção criadas na plataforma CLAV"
             },
             {
                 "verbo": "GET",
@@ -922,16 +932,6 @@
             },
             {
                 "verbo": "POST",
-                "path": "/{api_version}/autosEliminacao/",
-                "desc": "Criação de um auto de eliminação"
-            },
-            {
-                "verbo": "POST",
-                "path": "/{api_version}/pedidos/:codigo/distribuicao",
-                "desc": "Adição de distribuição"
-            },
-            {
-                "verbo": "POST",
                 "path": "/{api_version}/pedidos/",
                 "desc": "Criação de um pedido"
             },
@@ -946,21 +946,6 @@
                 "desc": "Cria um pedido de criação de uma tabela de seleção a partir de um ficheiro CSV/Excel"
             },
             {
-                "verbo": "POST",
-                "path": "/{api_version}/vocabularios/termo/:idVC",
-                "desc": "Adiciona um Termo a um vocabulário"
-            },
-            {
-                "verbo": "POST",
-                "path": "/{api_version}/vocabularios/",
-                "desc": "Adicionar um vocabulário"
-            },
-            {
-                "verbo": "PUT",
-                "path": "/{api_version}/pedidos",
-                "desc": "'Atualização de um pedido: mais uma etapa na distribuição'"
-            },
-            {
                 "verbo": "PUT",
                 "path": "/{api_version}/pendentes",
                 "desc": "Atualiza um trabalho previamente guardado como pendente"
@@ -971,19 +956,9 @@
                 "desc": "Altera a password da conta de um utilizador"
             },
             {
-                "verbo": "PUT",
-                "path": "/{api_version}/vocabularios/:id",
-                "desc": "Atualizar a legenda e descrição de um vocabulário"
-            },
-            {
                 "verbo": "DELETE",
                 "path": "/{api_version}/pendentes/:id",
                 "desc": "Remove um trabalho pendente"
-            },
-            {
-                "verbo": "DELETE",
-                "path": "/{api_version}/vocabularios/termo/:id",
-                "desc": "Apaga um Termo de vocabulário"
             }
         ]
     },
@@ -1319,12 +1294,12 @@
             {
                 "verbo": "GET",
                 "path": "/{api_version}/tabelasSelecao/:id/",
-                "desc": "Consultar tabela de seleção"
+                "desc": "Consultar uma tabela de seleção"
             },
             {
                 "verbo": "GET",
                 "path": "/{api_version}/tabelasSelecao/",
-                "desc": "Lista as tabelas de seleção"
+                "desc": "Lista as tabelas de seleção criadas na plataforma CLAV"
             },
             {
                 "verbo": "GET",
@@ -1405,543 +1380,7 @@
     },
     {
         "nivel": 3,
-        "desc": "Utilizador Avançado",
-        "ops": [
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/auth/:id",
-                "desc": "Devolve o URL de um pedido SAML"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/autosEliminacao/:id",
-                "desc": "Devolve a informação de um auto de eliminação"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/autosEliminacao/",
-                "desc": "Devolve a lista de todos os autos de eliminação"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/classes/titulo",
-                "desc": "Verifica se um título já está atribuido a uma classe"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/classes/codigo",
-                "desc": "Verifica se um código já está atribuido a uma classe"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/classes/justificacao/:id",
-                "desc": "Devolve uma justificação, PCA ou DF"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/classes/:id/meta",
-                "desc": "Devolve a metainformação de uma classe"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/classes/:id/descendencia",
-                "desc": "Devolve a lista de filhos de uma classe"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/classes/:id/notasAp",
-                "desc": "Devolve a lista de notas de aplicação de uma classe"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/classes/:id/exemplosNotasAp",
-                "desc": "Devolve a lista de exemplos das notas de aplicação de uma classe"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/classes/:id/notasEx",
-                "desc": "Devolve a lista de notas de exclusão de uma classe"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/classes/:id/ti",
-                "desc": "Devolve os termos de índice de uma classe"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/classes/:id/dono",
-                "desc": "Devolve a(s) entidade(s) dona(s) do processo"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/classes/:id/participante",
-                "desc": "Devolve a(s) entidade(s) participante(s) do processo"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/classes/:id/procRel/:idRel",
-                "desc": "Devolve o(s) processo(s) relacionado(s) por uma relação específica"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/classes/:id/procRel/",
-                "desc": "Devolve o(s) processo(s) relacionado(s)"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/classes/:id/legislacao",
-                "desc": "Devolve a legislação associada ao contexto de avaliação"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/classes/:id/pca",
-                "desc": "Devolve a informação base do PCA"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/classes/:id/df",
-                "desc": "Devolve a informação base do DF"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/classes/:id/",
-                "desc": "Retorna toda a informação relativa a uma classe ou a subárvore de classes com raiz nesta"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/classes/",
-                "desc": "Devolve as classes em vários formatos podendo ser filtradas por nível, por tipo e se uma entidade/tipologia é dona/participante da classe"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/colaboracoes/:id/",
-                "desc": "Devolve uma colaboração"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/colaboracoes/",
-                "desc": "Devolve todas as colaborações"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/documentacaoCientifica/classes",
-                "desc": "Devolve as diferentes classes da documentação cientifica"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/documentacaoCientifica/:id/ficheiro",
-                "desc": "Devolve o ficheiro de uma entrada da documentação científica se existir"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/documentacaoCientifica/:id/",
-                "desc": "Devolve uma entrada da documentação Científica"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/documentacaoCientifica/",
-                "desc": "Devolve todas as entradas da documentação Científica"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/documentacaoApoio/formulario",
-                "desc": "Devolve um ficheiro CSV com o formulário das TS"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/documentacaoApoio/classes",
-                "desc": "Devolve as diferentes classes da documentação de apoio"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/documentacaoApoio/:id/entradas/:idEnt/elementos/:idElem/ficheiro",
-                "desc": "Devolve o ficheiro de um elemento de uma entrada de uma classe da documentação de apoio"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/documentacaoApoio/:id/entradas/:idEnt/elementos/:idElem/",
-                "desc": "Devolve um elemento de uma entrada de uma classe da documentação de apoio"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/documentacaoApoio/:id/entradas/:idEnt/elementos/",
-                "desc": "Lista todos os elementos de uma entrada de uma classe da documentação de apoio"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/documentacaoApoio/:id/entradas/:idEnt/",
-                "desc": "Devolve uma entrada de uma classe da documentação de apoio"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/documentacaoApoio/:id/entradas/",
-                "desc": "Lista as entradas de uma classe da documentação de apoio"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/documentacaoApoio/:id/",
-                "desc": "Devolve uma classe da documentação de apoio"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/documentacaoApoio/",
-                "desc": "Devolve toda a documentação de apoio"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/entidades/sigla",
-                "desc": "Verifica se uma sigla já está atribuida a uma entidade"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/entidades/designacao",
-                "desc": "Verifica se uma designação já está atribuida a uma entidade"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/entidades/:id/tipologias",
-                "desc": "Lista as tipologias a que uma entidade pertence"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/entidades/:id/intervencao/dono",
-                "desc": "Lista os processos em que uma entidade intervem como dono"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/entidades/:id/intervencao/participante",
-                "desc": "Lista os processos em que uma entidade intervem como participante"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/entidades/:id/",
-                "desc": "Consulta de uma entidade"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/entidades/",
-                "desc": "Lista todas as entidades"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/exemplosNotasAp/exemploNotaAp",
-                "desc": "Verifica se um determinado exemplo de nota de aplicação existe"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/exemplosNotasAp/",
-                "desc": "Devolve a lista de todos os exemplos de notas de aplicação"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/ficheirosEstaticos/",
-                "desc": "Permite aceder os ficheiros estáticos da API de dados"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/indicePesquisa",
-                "desc": "Devolve o Índice de Pesquisa para Notas de Aplicação, Exemplos de Notas de Aplicação e Termos de Índice"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/legislacao/portarias",
-                "desc": "Lista legislações do tipo Portaria"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/legislacao/numero",
-                "desc": "Verifica a existência do número de um documento legislativo"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/legislacao/:id/processos",
-                "desc": "Devolve a lista de processos regulados pelo documento"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/legislacao/:id/",
-                "desc": "Devolve a informação associada a um documento legislativo"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/legislacao/",
-                "desc": "Lista todos os documentos legislativos"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/notasAp/notaAp",
-                "desc": "Verifica se uma determinada nota de aplicação existe"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/notasAp/",
-                "desc": "Devolve a lista de todos as notas de aplicação"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/noticias/:id",
-                "desc": "Devolve a informação de uma notícia"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/noticias/",
-                "desc": "Devolve todas as notícias"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/ontologia/descricao",
-                "desc": "Devolve a descrição da ontologia"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/ontologia/data",
-                "desc": "Devolve a data da ontologia"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/ontologia/",
-                "desc": "Exporta todos os triplos do repositório"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/pedidos/:codigo",
-                "desc": "Consulta de um pedido"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/pedidos/",
-                "desc": "Lista todos os pedidos que satisfazem uma condição"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/pendentes/:id",
-                "desc": "Consultar trabalho pendente"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/pendentes/",
-                "desc": "Listagem dos trabalhos pendentes"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/pgd/lc",
-                "desc": "Listagem das Legislações do tipo Portaria em que existem TS derivadas da LC"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/pgd/rada",
-                "desc": "Listagem dos 'antigos RADAs' nãos inseridos pela plataforma"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/pgd/rada/:idRADA",
-                "desc": "Consulta da TS de 'antigo RADA' não inserido pela plataforma"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/pgd/:idPGD",
-                "desc": "Consulta da TS de determinada Portaria"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/pgd/",
-                "desc": "Listagem das Legislações do tipo Portaria em que existem TS "
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/tabelasSelecao/:id/classes",
-                "desc": "Lista as classes da tabela de seleção"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/tabelasSelecao/:id/",
-                "desc": "Consultar tabela de seleção"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/tabelasSelecao/",
-                "desc": "Lista as tabelas de seleção"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/termosIndice/quantos",
-                "desc": "Devolve o número de termos índice"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/termosIndice/termoIndice",
-                "desc": "Verifica se um determinado termo índice existe"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/termosIndice/",
-                "desc": "Devolve a lista dos termos de índice"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/tipologias/sigla",
-                "desc": "Verifica se uma sigla já está atribuida a uma tipologia"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/tipologias/designacao",
-                "desc": "Verifica se uma designação já está atribuida a uma tipologia"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/tipologias/:id/intervencao/dono",
-                "desc": "Lista os processos em que uma tipologia intervem como dono"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/tipologias/:id/intervencao/participante",
-                "desc": "Lista os processos em que uma tipologia intervem como participante"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/tipologias/:id/elementos",
-                "desc": "Lista as entidades que pertencem à tipologia"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/tipologias/:id/",
-                "desc": "Consulta de uma tipologia"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/tipologias/",
-                "desc": "Lista todas as tipologias podendo a lista ser filtrada"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/travessiaDeSintese/:id",
-                "desc": "Obtém a travessia de síntese de um processo"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/travessiaDeSintese/",
-                "desc": "Obtém as travessias de síntese"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/travessiaEspecial/:id",
-                "desc": "Obtém a travessia especial de um processo"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/travessiaEspecial/",
-                "desc": "Obtém as travessias especiais"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/travessiaV2",
-                "desc": "Obtém as travessias em dicionário"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/travessia/:id",
-                "desc": "Obtém a travessia de um processo"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/travessia/",
-                "desc": "Obtém as travessias"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/users/:id",
-                "desc": "Consulta um utilizador"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/vocabularios/:id",
-                "desc": "Devolve a lista de termos de um vocabulario"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/vocabularios/",
-                "desc": "Devolve a lista de todos os vocabularios"
-            },
-            {
-                "verbo": "POST",
-                "path": "/{api_version}/auth/adicionar",
-                "desc": "Adicionar localização de um novo pedido SAML"
-            },
-            {
-                "verbo": "POST",
-                "path": "/{api_version}/autosEliminacao/importar",
-                "desc": "Cria um pedido de importação de um auto de eliminação a partir de um ficheiro XML"
-            },
-            {
-                "verbo": "POST",
-                "path": "/{api_version}/autosEliminacao/",
-                "desc": "Criação de um auto de eliminação"
-            },
-            {
-                "verbo": "POST",
-                "path": "/{api_version}/pedidos/:codigo/distribuicao",
-                "desc": "Adição de distribuição"
-            },
-            {
-                "verbo": "POST",
-                "path": "/{api_version}/pedidos/",
-                "desc": "Criação de um pedido"
-            },
-            {
-                "verbo": "POST",
-                "path": "/{api_version}/pendentes",
-                "desc": "Guarda um trabalho pendente"
-            },
-            {
-                "verbo": "POST",
-                "path": "/{api_version}/tabelasSelecao/importar",
-                "desc": "Cria um pedido de criação de uma tabela de seleção a partir de um ficheiro CSV/Excel"
-            },
-            {
-                "verbo": "POST",
-                "path": "/{api_version}/vocabularios/termo/:idVC",
-                "desc": "Adiciona um Termo a um vocabulário"
-            },
-            {
-                "verbo": "POST",
-                "path": "/{api_version}/vocabularios/",
-                "desc": "Adicionar um vocabulário"
-            },
-            {
-                "verbo": "PUT",
-                "path": "/{api_version}/pedidos",
-                "desc": "'Atualização de um pedido: mais uma etapa na distribuição'"
-            },
-            {
-                "verbo": "PUT",
-                "path": "/{api_version}/pendentes",
-                "desc": "Atualiza um trabalho previamente guardado como pendente"
-            },
-            {
-                "verbo": "PUT",
-                "path": "/{api_version}/users/:id/password",
-                "desc": "Altera a password da conta de um utilizador"
-            },
-            {
-                "verbo": "PUT",
-                "path": "/{api_version}/vocabularios/:id",
-                "desc": "Atualizar a legenda e descrição de um vocabulário"
-            },
-            {
-                "verbo": "DELETE",
-                "path": "/{api_version}/pendentes/:id",
-                "desc": "Remove um trabalho pendente"
-            },
-            {
-                "verbo": "DELETE",
-                "path": "/{api_version}/vocabularios/termo/:id",
-                "desc": "Apaga um Termo de vocabulário"
-            }
-        ]
-    },
-    {
-        "nivel": 3.5,
-        "desc": "Utilizador Validador (AD)",
+        "desc": "Utilizador Arquivo Distrital",
         "ops": [
             {
                 "verbo": "GET",
@@ -2375,18 +1814,649 @@
             },
             {
                 "verbo": "GET",
+                "path": "/{api_version}/rada/:id",
+                "desc": "Consulta de um RADA"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/rada/",
+                "desc": "Listagem dos RADA "
+            },
+            {
+                "verbo": "GET",
                 "path": "/{api_version}/tabelasSelecao/:id/classes",
                 "desc": "Lista as classes da tabela de seleção"
             },
             {
                 "verbo": "GET",
                 "path": "/{api_version}/tabelasSelecao/:id/",
-                "desc": "Consultar tabela de seleção"
+                "desc": "Consultar uma tabela de seleção"
             },
             {
                 "verbo": "GET",
                 "path": "/{api_version}/tabelasSelecao/",
-                "desc": "Lista as tabelas de seleção"
+                "desc": "Lista as tabelas de seleção criadas na plataforma CLAV"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/termosIndice/quantos",
+                "desc": "Devolve o número de termos índice"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/termosIndice/termoIndice",
+                "desc": "Verifica se um determinado termo índice existe"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/termosIndice/",
+                "desc": "Devolve a lista dos termos de índice"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/tipologias/sigla",
+                "desc": "Verifica se uma sigla já está atribuida a uma tipologia"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/tipologias/designacao",
+                "desc": "Verifica se uma designação já está atribuida a uma tipologia"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/tipologias/:id/intervencao/dono",
+                "desc": "Lista os processos em que uma tipologia intervem como dono"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/tipologias/:id/intervencao/participante",
+                "desc": "Lista os processos em que uma tipologia intervem como participante"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/tipologias/:id/elementos",
+                "desc": "Lista as entidades que pertencem à tipologia"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/tipologias/:id/",
+                "desc": "Consulta de uma tipologia"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/tipologias/",
+                "desc": "Lista todas as tipologias podendo a lista ser filtrada"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/travessiaDeSintese/:id",
+                "desc": "Obtém a travessia de síntese de um processo"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/travessiaDeSintese/",
+                "desc": "Obtém as travessias de síntese"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/travessiaEspecial/:id",
+                "desc": "Obtém a travessia especial de um processo"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/travessiaEspecial/",
+                "desc": "Obtém as travessias especiais"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/travessiaV2",
+                "desc": "Obtém as travessias em dicionário"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/travessia/:id",
+                "desc": "Obtém a travessia de um processo"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/travessia/",
+                "desc": "Obtém as travessias"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/users/:id",
+                "desc": "Consulta um utilizador"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/vocabularios/:id",
+                "desc": "Devolve a lista de termos de um vocabulario"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/vocabularios/",
+                "desc": "Devolve a lista de todos os vocabularios"
+            },
+            {
+                "verbo": "POST",
+                "path": "/{api_version}/auth/adicionar",
+                "desc": "Adicionar localização de um novo pedido SAML"
+            },
+            {
+                "verbo": "POST",
+                "path": "/{api_version}/autosEliminacao/importar",
+                "desc": "Cria um pedido de importação de um auto de eliminação a partir de um ficheiro XML"
+            },
+            {
+                "verbo": "POST",
+                "path": "/{api_version}/pedidos/",
+                "desc": "Criação de um pedido"
+            },
+            {
+                "verbo": "POST",
+                "path": "/{api_version}/pendentes",
+                "desc": "Guarda um trabalho pendente"
+            },
+            {
+                "verbo": "POST",
+                "path": "/{api_version}/tabelasSelecao/importar",
+                "desc": "Cria um pedido de criação de uma tabela de seleção a partir de um ficheiro CSV/Excel"
+            },
+            {
+                "verbo": "PUT",
+                "path": "/{api_version}/pendentes",
+                "desc": "Atualiza um trabalho previamente guardado como pendente"
+            },
+            {
+                "verbo": "PUT",
+                "path": "/{api_version}/users/:id/password",
+                "desc": "Altera a password da conta de um utilizador"
+            },
+            {
+                "verbo": "DELETE",
+                "path": "/{api_version}/pendentes/:id",
+                "desc": "Remove um trabalho pendente"
+            }
+        ]
+    },
+    {
+        "nivel": 3.5,
+        "desc": "Utilizador Avançado",
+        "ops": [
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/auth/:id",
+                "desc": "Devolve o URL de um pedido SAML"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/autosEliminacao/:id",
+                "desc": "Devolve a informação de um auto de eliminação"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/autosEliminacao/",
+                "desc": "Devolve a lista de todos os autos de eliminação"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/classes/titulo",
+                "desc": "Verifica se um título já está atribuido a uma classe"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/classes/codigo",
+                "desc": "Verifica se um código já está atribuido a uma classe"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/classes/justificacao/:id",
+                "desc": "Devolve uma justificação, PCA ou DF"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/classes/:id/meta",
+                "desc": "Devolve a metainformação de uma classe"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/classes/:id/descendencia",
+                "desc": "Devolve a lista de filhos de uma classe"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/classes/:id/notasAp",
+                "desc": "Devolve a lista de notas de aplicação de uma classe"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/classes/:id/exemplosNotasAp",
+                "desc": "Devolve a lista de exemplos das notas de aplicação de uma classe"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/classes/:id/notasEx",
+                "desc": "Devolve a lista de notas de exclusão de uma classe"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/classes/:id/ti",
+                "desc": "Devolve os termos de índice de uma classe"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/classes/:id/dono",
+                "desc": "Devolve a(s) entidade(s) dona(s) do processo"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/classes/:id/participante",
+                "desc": "Devolve a(s) entidade(s) participante(s) do processo"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/classes/:id/procRel/:idRel",
+                "desc": "Devolve o(s) processo(s) relacionado(s) por uma relação específica"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/classes/:id/procRel/",
+                "desc": "Devolve o(s) processo(s) relacionado(s)"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/classes/:id/legislacao",
+                "desc": "Devolve a legislação associada ao contexto de avaliação"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/classes/:id/pca",
+                "desc": "Devolve a informação base do PCA"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/classes/:id/df",
+                "desc": "Devolve a informação base do DF"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/classes/:id/",
+                "desc": "Retorna toda a informação relativa a uma classe ou a subárvore de classes com raiz nesta"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/classes/",
+                "desc": "Devolve as classes em vários formatos podendo ser filtradas por nível, por tipo e se uma entidade/tipologia é dona/participante da classe"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/colaboracoes/exportar",
+                "desc": "Exportação das colaborações"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/colaboracoes/:id/",
+                "desc": "Devolve uma colaboração"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/colaboracoes/",
+                "desc": "Devolve todas as colaborações"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/documentacaoCientifica/classes",
+                "desc": "Devolve as diferentes classes da documentação cientifica"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/documentacaoCientifica/exportar",
+                "desc": "Exportação de entradas da documentação científica"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/documentacaoCientifica/:id/ficheiro",
+                "desc": "Devolve o ficheiro de uma entrada da documentação científica se existir"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/documentacaoCientifica/:id/",
+                "desc": "Devolve uma entrada da documentação Científica"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/documentacaoCientifica/",
+                "desc": "Devolve todas as entradas da documentação Científica"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/documentacaoApoio/formulario",
+                "desc": "Devolve um ficheiro CSV com o formulário das TS"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/documentacaoApoio/classes",
+                "desc": "Devolve as diferentes classes da documentação de apoio"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/documentacaoApoio/exportar",
+                "desc": "Exportação de entradas da documentação de apoio"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/documentacaoApoio/:id/entradas/:idEnt/elementos/:idElem/ficheiro",
+                "desc": "Devolve o ficheiro de um elemento de uma entrada de uma classe da documentação de apoio"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/documentacaoApoio/:id/entradas/:idEnt/elementos/:idElem/",
+                "desc": "Devolve um elemento de uma entrada de uma classe da documentação de apoio"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/documentacaoApoio/:id/entradas/:idEnt/elementos/",
+                "desc": "Lista todos os elementos de uma entrada de uma classe da documentação de apoio"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/documentacaoApoio/:id/entradas/:idEnt/",
+                "desc": "Devolve uma entrada de uma classe da documentação de apoio"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/documentacaoApoio/:id/entradas/",
+                "desc": "Lista as entradas de uma classe da documentação de apoio"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/documentacaoApoio/:id/",
+                "desc": "Devolve uma classe da documentação de apoio"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/documentacaoApoio/",
+                "desc": "Devolve toda a documentação de apoio"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/entidades/sigla",
+                "desc": "Verifica se uma sigla já está atribuida a uma entidade"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/entidades/designacao",
+                "desc": "Verifica se uma designação já está atribuida a uma entidade"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/entidades/:id/tipologias",
+                "desc": "Lista as tipologias a que uma entidade pertence"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/entidades/:id/intervencao/dono",
+                "desc": "Lista os processos em que uma entidade intervem como dono"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/entidades/:id/intervencao/participante",
+                "desc": "Lista os processos em que uma entidade intervem como participante"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/entidades/:id/",
+                "desc": "Consulta de uma entidade"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/entidades/",
+                "desc": "Lista todas as entidades"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/exemplosNotasAp/exemploNotaAp",
+                "desc": "Verifica se um determinado exemplo de nota de aplicação existe"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/exemplosNotasAp/",
+                "desc": "Devolve a lista de todos os exemplos de notas de aplicação"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/ficheirosEstaticos/",
+                "desc": "Permite aceder os ficheiros estáticos da API de dados"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/indicadores/classesN4",
+                "desc": "Número total de classes de nível 4"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/indicadores/classesN3",
+                "desc": "Número total de classes de nível 3"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/indicadores/classesN2",
+                "desc": "Número total de classes de nível 2"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/indicadores/classesN1",
+                "desc": "Número total de classes de nível 1"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/indicadores/classes",
+                "desc": "Número total de classes"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/indicadores/entidadesAtivas",
+                "desc": "Número total de entidades ativas, inativas e em harmonização"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/indicadores/entidades",
+                "desc": "Número total de entidades"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/indicadores/tipologias",
+                "desc": "Número total de tipologias"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/indicadores/legVigor",
+                "desc": "Número total de diplomas legislativos em vigor e revogadas"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/indicadores/leg",
+                "desc": "Número total de diplomas legislativos"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/indicadores/relstats",
+                "desc": "Indicadores relacionais dos PNs"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/indicadores/critstats",
+                "desc": "Indicadores dos Critérios de Justificação"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/indicadores/dfstats",
+                "desc": "Indicadores dos destinos finais (DFs) das classes "
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/indicadores/relacoes/:relacao",
+                "desc": "Número total de relações"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/indicadores/df/:df",
+                "desc": "Número total de PNs com destino final igual a C, CP ou E"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/indicadores/critJust/:critJust",
+                "desc": "Número total de Critérios de Justificação 'critJust'"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/indicadores/critJust/",
+                "desc": "Número total de Critérios de Justificação"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/indicadores/tabela",
+                "desc": "Listagem de vários indicadores"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/indicePesquisa",
+                "desc": "Devolve o Índice de Pesquisa para Notas de Aplicação, Exemplos de Notas de Aplicação e Termos de Índice"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/legislacao/portarias",
+                "desc": "Lista legislações do tipo Portaria"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/legislacao/numero",
+                "desc": "Verifica a existência do número de um documento legislativo"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/legislacao/:id/processos",
+                "desc": "Devolve a lista de processos regulados pelo documento"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/legislacao/:id/",
+                "desc": "Devolve a informação associada a um documento legislativo"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/legislacao/",
+                "desc": "Lista todos os documentos legislativos"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/notasAp/notaAp",
+                "desc": "Verifica se uma determinada nota de aplicação existe"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/notasAp/",
+                "desc": "Devolve a lista de todos as notas de aplicação"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/noticias/exportar",
+                "desc": "Exportação das notícias"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/noticias/:id",
+                "desc": "Devolve a informação de uma notícia"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/noticias/",
+                "desc": "Devolve todas as notícias"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/ontologia/descricao",
+                "desc": "Devolve a descrição da ontologia"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/ontologia/data",
+                "desc": "Devolve a data da ontologia"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/ontologia/",
+                "desc": "Exporta todos os triplos do repositório"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/pedidos/:codigo",
+                "desc": "Consulta de um pedido"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/pedidos/",
+                "desc": "Lista todos os pedidos que satisfazem uma condição"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/pendentes/:id",
+                "desc": "Consultar trabalho pendente"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/pendentes/",
+                "desc": "Listagem dos trabalhos pendentes"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/pgd/lc",
+                "desc": "Listagem das Legislações do tipo Portaria em que existem TS derivadas da LC"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/pgd/rada",
+                "desc": "Listagem dos 'antigos RADAs' nãos inseridos pela plataforma"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/pgd/rada/:idRADA",
+                "desc": "Consulta da TS de 'antigo RADA' não inserido pela plataforma"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/pgd/:idPGD",
+                "desc": "Consulta da TS de determinada Portaria"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/pgd/",
+                "desc": "Listagem das Legislações do tipo Portaria em que existem TS "
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/rada/:id",
+                "desc": "Consulta de um RADA"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/rada/",
+                "desc": "Listagem dos RADA "
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/tabelasSelecao/:id/classes",
+                "desc": "Lista as classes da tabela de seleção"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/tabelasSelecao/:id/",
+                "desc": "Consultar uma tabela de seleção"
+            },
+            {
+                "verbo": "GET",
+                "path": "/{api_version}/tabelasSelecao/",
+                "desc": "Lista as tabelas de seleção criadas na plataforma CLAV"
             },
             {
                 "verbo": "GET",
@@ -2505,8 +2575,53 @@
             },
             {
                 "verbo": "POST",
-                "path": "/{api_version}/autosEliminacao/",
-                "desc": "Criação de um auto de eliminação"
+                "path": "/{api_version}/colaboracoes/importar",
+                "desc": "Importação de colaboracões"
+            },
+            {
+                "verbo": "POST",
+                "path": "/{api_version}/colaboracoes/",
+                "desc": "Cria uma colaboração"
+            },
+            {
+                "verbo": "POST",
+                "path": "/{api_version}/documentacaoCientifica/importar",
+                "desc": "Importação de entradas para a documentação científica"
+            },
+            {
+                "verbo": "POST",
+                "path": "/{api_version}/documentacaoCientifica/",
+                "desc": "Criação de uma nova entrada na documentação científica"
+            },
+            {
+                "verbo": "POST",
+                "path": "/{api_version}/documentacaoApoio/importar",
+                "desc": "Importação de entradas para a documentação de apoio"
+            },
+            {
+                "verbo": "POST",
+                "path": "/{api_version}/documentacaoApoio/:id/entradas/:idEnt/",
+                "desc": "Cria um elemento na entrada da classe na documentação de apoio"
+            },
+            {
+                "verbo": "POST",
+                "path": "/{api_version}/documentacaoApoio/:id/",
+                "desc": "Cria uma entrada na classe na documentação de apoio"
+            },
+            {
+                "verbo": "POST",
+                "path": "/{api_version}/documentacaoApoio/",
+                "desc": "Cria uma classe na documentação de apoio"
+            },
+            {
+                "verbo": "POST",
+                "path": "/{api_version}/noticias/importar",
+                "desc": "Importação das notícias"
+            },
+            {
+                "verbo": "POST",
+                "path": "/{api_version}/noticias/",
+                "desc": "Cria uma notícia"
             },
             {
                 "verbo": "POST",
@@ -2529,14 +2644,34 @@
                 "desc": "Cria um pedido de criação de uma tabela de seleção a partir de um ficheiro CSV/Excel"
             },
             {
-                "verbo": "POST",
-                "path": "/{api_version}/vocabularios/termo/:idVC",
-                "desc": "Adiciona um Termo a um vocabulário"
+                "verbo": "PUT",
+                "path": "/{api_version}/colaboracoes/:id/",
+                "desc": "Alterar uma colaboração"
             },
             {
-                "verbo": "POST",
-                "path": "/{api_version}/vocabularios/",
-                "desc": "Adicionar um vocabulário"
+                "verbo": "PUT",
+                "path": "/{api_version}/documentacaoCientifica/:id",
+                "desc": "Atualização de uma entrada na documentação científica"
+            },
+            {
+                "verbo": "PUT",
+                "path": "/{api_version}/documentacaoApoio/:id/entradas/:idEnt/elementos/:idElem/",
+                "desc": "Alterar um elemento de uma entrada de uma classe da documentação de apoio"
+            },
+            {
+                "verbo": "PUT",
+                "path": "/{api_version}/documentacaoApoio/:id/entradas/:idEnt/",
+                "desc": "Alterar a descrição da entrada na classe na documentação de apoio"
+            },
+            {
+                "verbo": "PUT",
+                "path": "/{api_version}/documentacaoApoio/:id/",
+                "desc": "Alterar designação da classe na documentação de apoio"
+            },
+            {
+                "verbo": "PUT",
+                "path": "/{api_version}/noticias/:id",
+                "desc": "Atualiza uma notícia"
             },
             {
                 "verbo": "PUT",
@@ -2554,19 +2689,39 @@
                 "desc": "Altera a password da conta de um utilizador"
             },
             {
-                "verbo": "PUT",
-                "path": "/{api_version}/vocabularios/:id",
-                "desc": "Atualizar a legenda e descrição de um vocabulário"
+                "verbo": "DELETE",
+                "path": "/{api_version}/colaboracoes/:id/",
+                "desc": "Eliminar uma colaboração"
+            },
+            {
+                "verbo": "DELETE",
+                "path": "/{api_version}/documentacaoCientifica/:id",
+                "desc": "Elimina uma entrada da documentação científica"
+            },
+            {
+                "verbo": "DELETE",
+                "path": "/{api_version}/documentacaoApoio/:id/entradas/:idEnt/elementos/:idElem/",
+                "desc": "Eliminar o elemento da entrada da classe da documentação de apoio"
+            },
+            {
+                "verbo": "DELETE",
+                "path": "/{api_version}/documentacaoApoio/:id/entradas/:idEnt/",
+                "desc": "Eliminar a entrada da classe da documentação de apoio"
+            },
+            {
+                "verbo": "DELETE",
+                "path": "/{api_version}/documentacaoApoio/:id/",
+                "desc": "Eliminar uma classe na documentação de apoio"
+            },
+            {
+                "verbo": "DELETE",
+                "path": "/{api_version}/noticias/:id",
+                "desc": "Elimina uma notícia"
             },
             {
                 "verbo": "DELETE",
                 "path": "/{api_version}/pendentes/:id",
                 "desc": "Remove um trabalho pendente"
-            },
-            {
-                "verbo": "DELETE",
-                "path": "/{api_version}/vocabularios/termo/:id",
-                "desc": "Apaga um Termo de vocabulário"
             }
         ]
     },
@@ -3042,12 +3197,12 @@
             {
                 "verbo": "GET",
                 "path": "/{api_version}/tabelasSelecao/:id/",
-                "desc": "Consultar tabela de seleção"
+                "desc": "Consultar uma tabela de seleção"
             },
             {
                 "verbo": "GET",
                 "path": "/{api_version}/tabelasSelecao/",
-                "desc": "Lista as tabelas de seleção"
+                "desc": "Lista as tabelas de seleção criadas na plataforma CLAV"
             },
             {
                 "verbo": "GET",
@@ -3166,11 +3321,6 @@
             },
             {
                 "verbo": "POST",
-                "path": "/{api_version}/autosEliminacao/",
-                "desc": "Criação de um auto de eliminação"
-            },
-            {
-                "verbo": "POST",
                 "path": "/{api_version}/colaboracoes/importar",
                 "desc": "Importação de colaboracões"
             },
@@ -3246,11 +3396,6 @@
             },
             {
                 "verbo": "POST",
-                "path": "/{api_version}/rada/",
-                "desc": "Inserção de um RADA"
-            },
-            {
-                "verbo": "POST",
                 "path": "/{api_version}/tabelasSelecao/importar",
                 "desc": "Cria um pedido de criação de uma tabela de seleção a partir de um ficheiro CSV/Excel"
             },
@@ -3258,6 +3403,21 @@
                 "verbo": "POST",
                 "path": "/{api_version}/tipologias",
                 "desc": "Cria uma tipologia"
+            },
+            {
+                "verbo": "POST",
+                "path": "/{api_version}/users/registarParaEntidade",
+                "desc": "Adiciona/regista utilizadores para uma determinada entidade"
+            },
+            {
+                "verbo": "POST",
+                "path": "/{api_version}/users/registarCC",
+                "desc": "Adiciona/regista um utilizador através de CC"
+            },
+            {
+                "verbo": "POST",
+                "path": "/{api_version}/users/registar",
+                "desc": "Adiciona/regista um utilizador"
             },
             {
                 "verbo": "POST",
@@ -3306,6 +3466,11 @@
             },
             {
                 "verbo": "PUT",
+                "path": "/{api_version}/legislacao/:id/revogar",
+                "desc": "Revoga um diploma legislativo"
+            },
+            {
+                "verbo": "PUT",
                 "path": "/{api_version}/legislacao/:id",
                 "desc": "Atualiza um diploma legislativo"
             },
@@ -3331,8 +3496,18 @@
             },
             {
                 "verbo": "PUT",
+                "path": "/{api_version}/users/:id/desativar",
+                "desc": "Desativa a conta de um utilizador"
+            },
+            {
+                "verbo": "PUT",
                 "path": "/{api_version}/users/:id/password",
                 "desc": "Altera a password da conta de um utilizador"
+            },
+            {
+                "verbo": "PUT",
+                "path": "/{api_version}/users/:id/",
+                "desc": "Altera os dados da conta de um utilizador"
             },
             {
                 "verbo": "PUT",
@@ -3853,12 +4028,12 @@
             {
                 "verbo": "GET",
                 "path": "/{api_version}/tabelasSelecao/:id/",
-                "desc": "Consultar tabela de seleção"
+                "desc": "Consultar uma tabela de seleção"
             },
             {
                 "verbo": "GET",
                 "path": "/{api_version}/tabelasSelecao/",
-                "desc": "Lista as tabelas de seleção"
+                "desc": "Lista as tabelas de seleção criadas na plataforma CLAV"
             },
             {
                 "verbo": "GET",
@@ -4067,6 +4242,11 @@
             },
             {
                 "verbo": "POST",
+                "path": "/{api_version}/tabelasSelecao/",
+                "desc": "Inserir uma tabela de seleção"
+            },
+            {
+                "verbo": "POST",
                 "path": "/{api_version}/tipologias",
                 "desc": "Cria uma tipologia"
             },
@@ -4129,6 +4309,11 @@
                 "verbo": "PUT",
                 "path": "/{api_version}/entidades/:id/",
                 "desc": "Atualiza uma entidade"
+            },
+            {
+                "verbo": "PUT",
+                "path": "/{api_version}/legislacao/:id/revogar",
+                "desc": "Revoga um diploma legislativo"
             },
             {
                 "verbo": "PUT",
@@ -4235,11 +4420,6 @@
                 "verbo": "GET",
                 "path": "/{api_version}/autosEliminacao/",
                 "desc": "Devolve a lista de todos os autos de eliminação"
-            },
-            {
-                "verbo": "GET",
-                "path": "/{api_version}/chaves/",
-                "desc": "Devolve todas as chaves API"
             },
             {
                 "verbo": "GET",
@@ -4729,12 +4909,12 @@
             {
                 "verbo": "GET",
                 "path": "/{api_version}/tabelasSelecao/:id/",
-                "desc": "Consultar tabela de seleção"
+                "desc": "Consultar uma tabela de seleção"
             },
             {
                 "verbo": "GET",
                 "path": "/{api_version}/tabelasSelecao/",
-                "desc": "Lista as tabelas de seleção"
+                "desc": "Lista as tabelas de seleção criadas na plataforma CLAV"
             },
             {
                 "verbo": "GET",
@@ -4948,6 +5128,11 @@
             },
             {
                 "verbo": "POST",
+                "path": "/{api_version}/tabelasSelecao/",
+                "desc": "Inserir uma tabela de seleção"
+            },
+            {
+                "verbo": "POST",
                 "path": "/{api_version}/tipologias",
                 "desc": "Cria uma tipologia"
             },
@@ -5010,6 +5195,11 @@
                 "verbo": "PUT",
                 "path": "/{api_version}/entidades/:id/",
                 "desc": "Atualiza uma entidade"
+            },
+            {
+                "verbo": "PUT",
+                "path": "/{api_version}/legislacao/:id/revogar",
+                "desc": "Revoga um diploma legislativo"
             },
             {
                 "verbo": "PUT",
@@ -5630,12 +5820,12 @@
             {
                 "verbo": "GET",
                 "path": "/{api_version}/tabelasSelecao/:id/",
-                "desc": "Consultar tabela de seleção"
+                "desc": "Consultar uma tabela de seleção"
             },
             {
                 "verbo": "GET",
                 "path": "/{api_version}/tabelasSelecao/",
-                "desc": "Lista as tabelas de seleção"
+                "desc": "Lista as tabelas de seleção criadas na plataforma CLAV"
             },
             {
                 "verbo": "GET",
@@ -5864,6 +6054,11 @@
             },
             {
                 "verbo": "POST",
+                "path": "/{api_version}/tabelasSelecao/",
+                "desc": "Inserir uma tabela de seleção"
+            },
+            {
+                "verbo": "POST",
                 "path": "/{api_version}/tipologias",
                 "desc": "Cria uma tipologia"
             },
@@ -5951,6 +6146,11 @@
                 "verbo": "PUT",
                 "path": "/{api_version}/entidades/:id/",
                 "desc": "Atualiza uma entidade"
+            },
+            {
+                "verbo": "PUT",
+                "path": "/{api_version}/legislacao/:id/revogar",
+                "desc": "Revoga um diploma legislativo"
             },
             {
                 "verbo": "PUT",

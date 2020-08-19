@@ -2,6 +2,7 @@ value:
   - id: "100"
     nome: "100 - ORDENAMENTO JURÍDICO E NORMATIVO"
     titulo: "ORDENAMENTO JURÍDICO E NORMATIVO"
+    descricao: "desc1"
     status: "A"
     tp: ""
     pt: ""
@@ -17,10 +18,12 @@ value:
     crit_df: []
     donos: []
     participantes: []
+    tipo_participacao: []
     filhos:
       - id: "100.10"
         nome: "100.10 - Elaboração de diplomas jurídico-normativos e de normas técnicas"
         titulo: "Elaboração de diplomas jurídico-normativos e de normas técnicas"
+        descricao: "desc2"
         status: "A"
         tp: ""
         pt: ""
@@ -36,10 +39,12 @@ value:
         crit_df: []
         donos: []
         participantes: []
+        tipo_participacao: []
         filhos:
           - id: "100.10.001"
             nome: "100.10.001 - Produção e comunicação de atos legislativos"
             titulo: "Produção e comunicação de atos legislativos"
+            descricao: "desc3"
             status: "A"
             tp: "Processo Comum"
             pt: "S"
@@ -63,10 +68,16 @@ value:
               - "ent_PR"
               - "ent_SGMTSSS"
               - "ent_SGPCM"
+            tipo_participacao:
+              - "Apreciador"
+              - "Assessor"
+              - "Assessor"
+              - "Decisor"
             filhos: []
           - id: "100.10.002"
             nome: "100.10.002 - Aprovação e comunicação de convenções internacionais"
             titulo: "Aprovação e comunicação de convenções internacionais"
+            descricao: "desc4"
             status: "A"
             tp: "Processo Específico"
             pt: "S"
@@ -90,5 +101,9 @@ value:
               - "tip_CCDR"
               - "ent_CNPDPCJ"
               - "ent_SGPCM"
+            tipo_participacao:
+              - "Comunicador"
+              - "Assessor"
+              - "Apreciador"
             filhos: []
 summary: Exemplo de parte da informação de classes para a pesquisa avançada

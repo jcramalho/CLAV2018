@@ -1,1 +1,211 @@
-Name: TS de DGLAB
+designacao: "TEstes1"
+data: "2020-8-5"
+entidades:
+  - "A3ES"
+  - "AAN"
+responsavel: "at2@mail.com"
+entidade: "A3ES"
+classes:
+  - nivel: 1
+    pai: {}
+    codigo: "100"
+    titulo: "ORDENAMENTO JURÍDICO E NORMATIVO"
+    descricao: "Relativo à construção e interpretação das Normas, no sentido lato do termo (com e sem caráter coercivo): elaboração, aprovação e publicitação dos atos de caráter dispositivo e de caráter orientador que regulam as ações e relações entre os diversos atores sociais - da legislação aos regulamentos, regras internas de funcionamento, instruções procedimentais e normas técnicas.Inclui os processos de vinculação do Estado português a convenções internacionais, bem como os avisos relativos à vinculação dos restantes Estados-parte naquelas convenções."
+    status: "A"
+    filhos:
+      - codigo: "100.10"
+        titulo: "Elaboração de diplomas jurídico-normativos e de normas técnicas"
+        id: "http://jcr.di.uminho.pt/m51-clav#c100.10_ts1"
+        status: "A"
+      - codigo: "100.20"
+        titulo: "Interpretação da legislação e das normas"
+        id: "http://jcr.di.uminho.pt/m51-clav#c100.20_ts1"
+        status: "A"
+    notasAp:
+      - idNota: "http://jcr.di.uminho.pt/m51-clav#na_c100_ts1_5O9OD8O2_8NDUfuf2coFq"
+        nota: "Os atos de caráter dispositivo podem incidir sobre a sociedade portuguesa em geral, sobre determinados setores de atividade, sobre determinadas parcelas do território ou, ainda, sobre organismos ou serviços singulares"
+    exemplosNotasAp: []
+    notasEx:
+      - idNota: "http://jcr.di.uminho.pt/m51-clav#ne_c100_ts1_kE5CIVYZaWGiPYzJeWvAa"
+        nota: "A negociação de convenções internacionais (tratados, acordos) e a participação na elaboração de normas técnicas internacionais, bem como a participação na elaboração de diretivas e de regulamentos comunitários, devem ser consideradas em \"Execução da política externa/ Definição de políticas conjuntas e dos instrumentos de regulação\" (200.10) - ou seja, na área funcional 100 devem ser considerados apenas os procedimentos de ratificação, transposição e interpretação daquelas disposições comunitárias ou internacionais"
+    termosInd: []
+    temSubclasses4Nivel: false
+    temSubclasses4NivelPCA: false
+    temSubclasses4NivelDF: false
+    subdivisao4Nivel01Sintetiza02: true
+    tipoProc: ""
+    procTrans: ""
+    donos: []
+    participantes: []
+    processosRelacionados: []
+    legislacao: []
+    pca:
+      notas: ""
+      valores: ""
+    df:
+      valor: "NE"
+      nota: null
+      justificacao: []
+    id: "http://jcr.di.uminho.pt/m51-clav#c100"
+  - nivel: 2
+    pai:
+      codigo: "100"
+      titulo: "ORDENAMENTO JURÍDICO E NORMATIVO"
+    codigo: "100.10"
+    titulo: "Elaboração de diplomas jurídico-normativos e de normas técnicas"
+    descricao: "Compreende os processos de elaboração/alteração de legislação, de regulamentos e de diretivas políticas ou operacionais portuguesas, independentemente da forma, do assunto ou do tipo de participação no processo.Inclui o depósito dos instrumentos de regulação (por exemplo, instrumentos de gestão territorial) nas entidades competentes.Abrange os diplomas jurídico-normativos da competência dos órgãos de soberania (Presidente da República, Assembleia da República, Governo e Tribunais) ou dos órgãos de poder político (regiões autónomas e autarquias), bem como os atos da Administração que têm caráter normativo.Compreende, igualmente, a elaboração ou colaboração na elaboração de normas técnicas nacionais."
+    status: "A"
+    filhos:
+      - codigo: "100.10.001"
+        titulo: "Produção e comunicação de atos legislativos"
+        id: "http://jcr.di.uminho.pt/m51-clav#c100.10.001_ts1"
+        status: "A"
+      - codigo: "100.10.002"
+        titulo: "Aprovação e comunicação de convenções internacionais"
+        id: "http://jcr.di.uminho.pt/m51-clav#c100.10.002_ts1"
+        status: "A"
+      - codigo: "100.10.200"
+        titulo: "Produção e comunicação de atos regulamentares gerais"
+        id: "http://jcr.di.uminho.pt/m51-clav#c100.10.200_ts1"
+        status: "A"
+      - codigo: "100.10.400"
+        titulo: "Produção e comunicação de atos regulamentares locais"
+        id: "http://jcr.di.uminho.pt/m51-clav#c100.10.400_ts1"
+        status: "A"
+      - codigo: "100.10.600"
+        titulo: "Produção e comunicação de regras institucionais"
+        id: "http://jcr.di.uminho.pt/m51-clav#c100.10.600_ts1"
+        status: "A"
+    notasAp:
+      - idNota: "http://jcr.di.uminho.pt/m51-clav#na_c100.10_ts1_bAg55I49TTCSxDU2W1W9e"
+        nota: "Atos legislativos"
+      - idNota: "http://jcr.di.uminho.pt/m51-clav#na_c100.10_ts1_NWjVPT1124DFmB_60_DuU"
+        nota: "Decisões dos Tribunais a que a lei confira força obrigatória geral"
+      - idNota: "http://jcr.di.uminho.pt/m51-clav#na_c100.10_ts1_AtAzm3og_-ANGH9H8iQL5"
+        nota: "Qualquer despacho com diretrizes gerais e abstratas"
+    exemplosNotasAp: []
+    notasEx:
+      - idNota: "http://jcr.di.uminho.pt/m51-clav#ne_c100.10_ts1_Nsbfmef3s0PvZM5XU73Le"
+        nota: "- Trabalhos técnicos preparatórios de planos de classificação e de tabelas de seleção devem ser considerados em 300.30 - Identificação e caracterização de bens"
+      - idNota: "http://jcr.di.uminho.pt/m51-clav#ne_c100.10_ts1_zE9sA7FVv_GGtNGpbL3J6"
+        nota: "- Considerar em 200.10 - Definição de políticas conjuntas e de instrumentos de regulação"
+    termosInd: []
+    temSubclasses4Nivel: false
+    temSubclasses4NivelPCA: false
+    temSubclasses4NivelDF: false
+    subdivisao4Nivel01Sintetiza02: true
+    tipoProc: ""
+    procTrans: ""
+    donos: []
+    participantes: []
+    processosRelacionados: []
+    legislacao: []
+    pca:
+      notas: ""
+      valores: ""
+    df:
+      valor: "NE"
+      nota: null
+      justificacao: []
+    id: "http://jcr.di.uminho.pt/m51-clav#c100.10"
+  - nivel: 3
+    pai:
+      codigo: "100.10"
+      titulo: "Elaboração de diplomas jurídico-normativos e de normas técnicas"
+    codigo: "100.10.001"
+    titulo: "Produção e comunicação de atos legislativos"
+    descricao: "Elaboração ou participação na elaboração de atos legislativos conduzidos por iniciativa das autoridades competentes para a definição do regime jurídico aplicável.Inicia com a apresentação de um projeto acompanhado dos documentos que o fundamentam e justificam à entidade com competência para legislar e termina com a respetiva publicação ou publicitação.Inclui verificação jurídica, apreciação, discussão e votação conducentes à elaboração do texto final, aprovação da iniciativa, ratificação pelas entidades competentes e promulgação."
+    status: "A"
+    filhos: []
+    notasAp:
+      - idNota: "http://jcr.di.uminho.pt/m51-clav#na_c100.10.001_ts1_jdeRX119kZTvpQ7iiLQYO"
+        nota: "Leis"
+      - idNota: "http://jcr.di.uminho.pt/m51-clav#na_c100.10.001_ts1_Lb-Mz-m0S-twnt9JTj4ce"
+        nota: "Decretos-Lei"
+      - idNota: "http://jcr.di.uminho.pt/m51-clav#na_c100.10.001_ts1_u2YXzVyQNwGjnSJlor1G7"
+        nota: "Decretos Legislativos regionais"
+    exemplosNotasAp:
+      - idExemplo: "http://jcr.di.uminho.pt/m51-clav#exna_c100.10.001_ts1_0hu-kuk0oU5q0qlm75694"
+        exemplo: "Código da Estrada"
+      - idExemplo: "http://jcr.di.uminho.pt/m51-clav#exna_c100.10.001_ts1_FakxcGiFfjyFTC2Op5ja6"
+        exemplo: "Código Civil"
+    notasEx:
+      - idNota: "http://jcr.di.uminho.pt/m51-clav#ne_c100.10.001_ts1_t3YMlis2g0SFRNfG6VUdj"
+        nota: "O impulso legiferante, quando reveste a forma de petição pública sem apresentação de projeto de lei, deve ser considerado em 950.20.001 – Processamento de petições, reclamações e sugestões"
+    termosInd:
+      - idTI: "http://jcr.di.uminho.pt/m51-clav#ti_9eoDSUYiajLeK6uHMhoP8"
+        termo: "Ato legislativo (produção e comunicação)"
+      - idTI: "http://jcr.di.uminho.pt/m51-clav#ti_QTVtplE3c-3WL3UEUVs8y"
+        termo: "Comunicação de ato legislativo"
+      - idTI: "http://jcr.di.uminho.pt/m51-clav#ti_x6W4UZaviKBr-ZgNptpth"
+        termo: "Decreto-lei (produção e comunicação)"
+      - idTI: "http://jcr.di.uminho.pt/m51-clav#ti_MN0R-JDPypCruC2vpKlDG"
+        termo: "Diploma legislativo (produção e comunicação)"
+      - idTI: "http://jcr.di.uminho.pt/m51-clav#ti_OZEtIWWFJSaWtO5JIX3SB"
+        termo: "Diretiva comunitária (transposição)"
+      - idTI: "http://jcr.di.uminho.pt/m51-clav#ti_ZrnK_5babi97DYmVFdmxM"
+        termo: "Lei orgânica (produção e comunicação)"
+      - idTI: "http://jcr.di.uminho.pt/m51-clav#ti_uskcxSOO9KDsccZCGtVcm"
+        termo: "Lei (produção e comunicação)"
+    temSubclasses4Nivel: false
+    temSubclasses4NivelPCA: false
+    temSubclasses4NivelDF: false
+    subdivisao4Nivel01Sintetiza02: true
+    tipoProc: "Processo Comum"
+    procTrans: "S"
+    donos:
+      - tipo: "http://jcr.di.uminho.pt/m51-clav#Entidade"
+        sigla: "A3ES"
+        idDono: "ent_A3ES"
+        idTipo: "Entidade"
+        designacao: "Agência de Avaliação e Acreditação do Ensino Superior"
+        id: "http://jcr.di.uminho.pt/m51-clav#ent_A3ES"
+      - tipo: "http://jcr.di.uminho.pt/m51-clav#Entidade"
+        sigla: "AAN"
+        idDono: "ent_AAN"
+        idTipo: "Entidade"
+        designacao: "Autoridade Aeronáutica Nacional"
+        id: "http://jcr.di.uminho.pt/m51-clav#ent_AAN"
+    participantes: []
+    processosRelacionados:
+      - codigo: "150.10.601"
+        tipoRel: "http://jcr.di.uminho.pt/m51-clav#eAntecessorDe"
+        idRel: "eAntecessorDe"
+        titulo: "Caracterização de entidades para apoio à definição de políticas"
+        id: "http://jcr.di.uminho.pt/m51-clav#c150.10.601_ts1"
+        status: "A"
+      - codigo: "100.10.200"
+        tipoRel: "http://jcr.di.uminho.pt/m51-clav#eComplementarDe"
+        idRel: "eComplementarDe"
+        titulo: "Produção e comunicação de atos regulamentares gerais"
+        id: "http://jcr.di.uminho.pt/m51-clav#c100.10.200_ts1"
+        status: "A"
+      - codigo: "150.10.001"
+        tipoRel: "http://jcr.di.uminho.pt/m51-clav#eSucessorDe"
+        idRel: "eSucessorDe"
+        titulo: "Definição de políticas globais"
+        id: "http://jcr.di.uminho.pt/m51-clav#c150.10.001_ts1"
+        status: "A"
+    legislacao: []
+    pca:
+      idPCA: "http://jcr.di.uminho.pt/m51-clav#pca_c100.10.001_ts1"
+      idJust: "just_pca_c100.10.001_ts1"
+      notas: ""
+      valores: "5"
+      justificacao:
+        - tipoId: "CriterioJustificacaoGestionario"
+          conteudo: "Prazo para imputação de responsabilidade pela gestão estratégica, decorrente de escrutínio público (eleições).Considerou-se para a definição do prazo o tempo do mandato de maior duração: 5 anos (Presidente da República)."
+          criterio: "http://jcr.di.uminho.pt/m51-clav#crit_just_pca_c100.10.001_ts1_1"
+          processos: []
+          legislacao: []
+    df:
+      idJust: "just_df_c100.10.001_ts1"
+      valor: "C"
+      idDF: "http://jcr.di.uminho.pt/m51-clav#df_c100.10.001_ts1"
+      justificacao:
+        - tipoId: "CriterioJustificacaoComplementaridadeInfo"
+          conteudo: "É complementar dos PN 100.10.200 - Produção e comunicação de atos regulamentares gerais; PN 100.10.400 - Produção e comunicação de atos regulamentares locais; PN 100.10.600 - Produção e comunicação de regras institucionais; PN 100.20.001 - Produção de pareceres técnico-jurídicos de interpretação de diplomas jurídico-normativos; PN 100.20.200 - Produção e comunicação de instruções para aplicação de diplomas jurídico-normativos."
+          criterio: "http://jcr.di.uminho.pt/m51-clav#crit_just_df_c100.10.001_ts1_1"
+          processos: []
+          legislacao: []
+    id: "http://jcr.di.uminho.pt/m51-clav#c100.10.001"

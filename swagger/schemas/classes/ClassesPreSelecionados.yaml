@@ -9,11 +9,15 @@ items:
     descricao:
       type: string
     dono:
-      type: string
-      enum: [Sim, Não]
+      type: array
+      items:
+        type: string
+        enum: [Sim, Não]
     participante:
-      type: string
-      enum: [Apreciador, Assessor, Comunicador, Decisor, Executor, Iniciador, Não]
+      type: array
+      items:
+        type: string
+        enum: [Apreciador, Assessor, Comunicador, Decisor, Executor, Iniciador, Não]
     pca:
       $ref: '#/components/schemas/PCAValor'
     formaContagem:

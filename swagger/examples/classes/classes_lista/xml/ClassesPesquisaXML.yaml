@@ -5,6 +5,7 @@ value: |
       <id type="string">100</id>
       <nome type="string">100 - ORDENAMENTO JURÍDICO E NORMATIVO</nome>
       <titulo type="string">ORDENAMENTO JURÍDICO E NORMATIVO</titulo>
+      <descricao type="string">desc1</descricao>
       <status type="string">A</status>
       <tp type="string">
       </tp>
@@ -31,11 +32,14 @@ value: |
       </donos>
       <participantes type="array">
       </participantes>
+      <tipo_participacao type="array">
+      </tipo_participacao>
       <filhos type="array">
         <item index="0" type="object">
           <id type="string">100.10</id>
           <nome type="string">100.10 - Elaboração de diplomas jurídico-normativos e de normas técnicas</nome>
           <titulo type="string">Elaboração de diplomas jurídico-normativos e de normas técnicas</titulo>
+          <descricao type="string">desc2</descricao>
           <status type="string">A</status>
           <tp type="string">
           </tp>
@@ -62,11 +66,14 @@ value: |
           </donos>
           <participantes type="array">
           </participantes>
+          <tipo_participacao type="array">
+          </tipo_participacao>
           <filhos type="array">
             <item index="0" type="object">
               <id type="string">100.10.001</id>
               <nome type="string">100.10.001 - Produção e comunicação de atos legislativos</nome>
               <titulo type="string">Produção e comunicação de atos legislativos</titulo>
+              <descricao type="string">desc3</descricao>
               <status type="string">A</status>
               <tp type="string">Processo Comum</tp>
               <pt type="string">S</pt>
@@ -95,6 +102,12 @@ value: |
                 <item index="2" type="string">ent_SGMTSSS</item>
                 <item index="3" type="string">ent_SGPCM</item>
               </participantes>
+              <tipo_participacao type="array">
+                <item index="0" type="string">Apreciador</item>
+                <item index="1" type="string">Assessor</item>
+                <item index="2" type="string">Assessor</item>
+                <item index="3" type="string">Decisor</item>
+              </tipo_participacao>
               <filhos type="array">
               </filhos>
             </item>
@@ -102,6 +115,7 @@ value: |
               <id type="string">100.10.002</id>
               <nome type="string">100.10.002 - Aprovação e comunicação de convenções internacionais</nome>
               <titulo type="string">Aprovação e comunicação de convenções internacionais</titulo>
+              <descricao type="string">desc4</descricao>
               <status type="string">A</status>
               <tp type="string">Processo Específico</tp>
               <pt type="string">S</pt>
@@ -131,6 +145,11 @@ value: |
                 <item index="1" type="string">ent_CNPDPCJ</item>
                 <item index="2" type="string">ent_SGPCM</item>
               </participantes>
+              <tipo_participacao type="array">
+                <item index="0" type="string">Comunicador</item>
+                <item index="1" type="string">Assessor</item>
+                <item index="2" type="string">Apreciador</item>
+              </tipo_participacao>
               <filhos type="array">
               </filhos>
             </item>

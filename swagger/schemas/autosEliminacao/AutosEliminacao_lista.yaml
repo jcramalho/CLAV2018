@@ -12,6 +12,12 @@ items:
       $ref: '#/components/schemas/NumeroLeg'
     tipo:
       $ref: '#/components/schemas/Fonte'
+    referencial:
+      $ref: '#/components/schemas/TSIdCompleto'
+    referencialLabel:
+      type: string
+    referencialTitulo:
+      type: string
   required:
     - id
     - data

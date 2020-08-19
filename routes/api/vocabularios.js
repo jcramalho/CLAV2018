@@ -28,7 +28,7 @@ router.get('/:id', Auth.isLoggedInKey, [
 })
 
 //Update da Legenda e da Descrição de um VC
-router.put('/:id', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
+router.put('/:id', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), [
     verificaVCId('param', 'id'),
     existe('body', 'label'),
     existe('body', 'desc')
@@ -47,7 +47,7 @@ router.put('/:id', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7])
 })
 
 //Adiciona um VC
-router.post('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
+router.post('/', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), [
     verificaVCId('body', 'id'),
     existe('body', 'label'),
     existe('body', 'desc')
@@ -66,7 +66,7 @@ router.post('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), 
 })
 
 //Adiciona um Termo a um VC
-router.post('/termo/:idVC', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
+router.post('/termo/:idVC', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), [
     verificaVCId('param', 'idVC'),
     existe('body', 'idtermo'),
     existe('body', 'termo'),
@@ -87,7 +87,7 @@ router.post('/termo/:idVC', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 
 })
 
 //Update da Legenda e da Descrição de um VC
-router.delete('/termo/:id', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
+router.delete('/termo/:id', Auth.isLoggedInUser, Auth.checkLevel([4, 5, 6, 7]), [
     verificaTermoVCId('param', 'id')
 ], (req, res) => {
     const errors = validationResult(req)

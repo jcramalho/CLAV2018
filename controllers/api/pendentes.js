@@ -77,34 +77,43 @@ Pendentes.criar = async function (pendente) {
  * @param pendente a atualizar no sistema.
  * @return {Pendente} pendente atualizado.
  */
-Pendentes.atualizar = async function (pendente) {
+Pendentes.atualizar = async function (pendente, emailUser) {
     try {
         var oldPendente = await Pendente.findOne({ _id: pendente._id })
-        oldPendente.objeto = pendente.objeto
 
-        if (pendente.numInterv != undefined) {
-            oldPendente.numInterv = pendente.numInterv
-        } else {
-            oldPendente.numInterv = oldPendente.numInterv + 1
-        }
-
-        oldPendente.dataAtualizacao = Date.now()
-
-        try {
-            let novoPendente = await oldPendente.save()
-            return {
-                _id: novoPendente._id,
-                numInterv: novoPendente.numInterv,
-                acao: novoPendente.acao,
-                tipo: novoPendente.tipo,
-                criadoPor: novoPendente.criadoPor,
-                dataCriacao: novoPendente.dataCriacao,
-                dataAtualizacao: novoPendente.dataAtualizacao
+        if(oldPendente){
+            if(emailUser && oldPendente.criadoPor != emailUser){
+                return "sem_permissoes"
             }
-            //return "Pendente atualizado com sucesso"
-        } catch (err) {
-            console.log(err)
-            throw err
+
+            oldPendente.objeto = pendente.objeto
+
+            if (pendente.numInterv != undefined) {
+                oldPendente.numInterv = pendente.numInterv
+            } else {
+                oldPendente.numInterv = oldPendente.numInterv + 1
+            }
+
+            oldPendente.dataAtualizacao = Date.now()
+
+            try {
+                let novoPendente = await oldPendente.save()
+                return {
+                    _id: novoPendente._id,
+                    numInterv: novoPendente.numInterv,
+                    acao: novoPendente.acao,
+                    tipo: novoPendente.tipo,
+                    criadoPor: novoPendente.criadoPor,
+                    dataCriacao: novoPendente.dataCriacao,
+                    dataAtualizacao: novoPendente.dataAtualizacao
+                }
+                //return "Pendente atualizado com sucesso"
+            } catch (err) {
+                console.log(err)
+                throw err
+            }
+        }else{
+            return null
         }
     }
     catch (err) {
@@ -117,12 +126,17 @@ Pendentes.atualizar = async function (pendente) {
  * 
  * @param pendente a apagar no sistema.
  */
-Pendentes.apagar = async function (pendente) {
+Pendentes.apagar = async function (pendente, emailUser) {
     return new Promise((resolve, reject) => {
-        Pendente.findByIdAndRemove({ _id: pendente }, function (err, delPendente) {
+        let filtro = { _id: pendente }
+        if(emailUser) {
+            filtro["criadoPor"] = emailUser
+        }
+
+        Pendente.findOneAndDelete(filtro, function (err, delPendente) {
             if (err) {
                 reject(err);
-            } else {
+            } else if(delPendente) {
                 resolve({
                     _id: delPendente._id,
                     numInterv: delPendente.numInterv,
@@ -133,6 +147,8 @@ Pendentes.apagar = async function (pendente) {
                     dataAtualizacao: delPendente.dataAtualizacao
                 })
                 //resolve("Pendente removido")
+            } else {
+                reject(`O pendente não existe ou não tem permissões para o apagar`)
             }
         })
     })

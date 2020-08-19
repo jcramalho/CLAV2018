@@ -48,7 +48,14 @@ router.get('/:id', Auth.isLoggedInKey, [
         .catch(err => res.status(500).json(`Erro ao obter TS: ${err}`))
 })
 
-router.post('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), async function (req, res){
+router.post('/', Auth.isLoggedInUser, Auth.checkLevel([5, 6, 7]), [
+    existe('body', 'tabela')
+], async function (req, res){
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
+    }
+
     SelTabs.adicionar(req.body.tabela)
         .then(dados => res.jsonp(dados))
         .catch(err => res.status(500).send(`Erro na criação de tabela de seleção: ${err}`))

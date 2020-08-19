@@ -114,58 +114,14 @@ exports.getLevelClasses = async (nivel) => {
     var ret = []
 
     if(nivel >= 1 && nivel <= 4){
-        ret = levelClasses[nivel-1] 
+        ret = levelClasses[nivel-1]
     }
 
     return ret
 }
 
 exports.getAllClassesInfo = async () => {
-    return classTreeInfo
-}
-
-exports.getClassesInfoFlatList = async () => { 
-    var ret = JSON.parse(JSON.stringify(classTreeInfo))
-    
-    var len = ret.length
-    for(var i = 0; i < len; i++){
-        ret[i].filhos.forEach(c => {
-            ret.push(c)
-            len++
-        })
-
-        delete ret[i].filhos
-    }
-
-    return ret
-}
-
-exports.getLevelClassesInfo = (nivel) => {
-    var ret = []
-
-    if(nivel >= 1 && nivel <= 4){
-        ret = getLevelClassesInfoRec(nivel-1, classTreeInfo)
-    }
-
-    return ret
-}
-
-function getLevelClassesInfoRec(nivel, classes) {
-    var ret = []
-
-    if(nivel == 0){
-        for(var i = 0; i < classes.length; i++){
-            var classe = JSON.parse(JSON.stringify(classes[i]))
-            delete classe.filhos
-            ret.push(classe)
-        }
-    }else{
-        for(var i = 0; i < classes.length; i++){
-            ret = ret.concat(getLevelClassesInfoRec(nivel-1, classes[i].filhos))
-        }
-    }
-
-    return ret
+    return JSON.parse(JSON.stringify(classTreeInfo))
 }
 
 //Devolve a informação das classes da subárvore com raiz na classe com o id 'id'
@@ -197,91 +153,6 @@ exports.subarvore = async id => {
             ret = []
         }
     }
-
-    return ret
-}
-
-//função auxiliar para pre selecionados, verifica se uma ent é dona
-function isDono(donos, entId){
-    return donos.filter(e => e.idDono == entId).length > 0 ? "Sim" : "Não"
-}
-
-//função auxiliar para pre selecionados, verifica se uma ent é participante e devolve o tipo de participação
-function isParticipante(participantes, entId){
-    var found = "Não"
-
-    for(var i = 0; i < participantes.length && found == "Não"; i++){
-        if(participantes[i].idParticipante == entId){
-            found = participantes[i].participLabel
-        }
-    }
-
-    return found
-}
-
-//função auxiliar para esqueleto, transforma uma classe
-function getClasseEsq(classe){
-    return {
-        codigo: classe.codigo,
-        titulo: classe.titulo,
-        descricao: classe.descricao,
-        status: classe.status,
-        dono: "",
-        participante: "",
-        pca: classe.pca.valores,
-        df: classe.df.valor
-    }
-}
-
-//função auxiliar para pre selecionados, transforma uma classe
-function getClassePreSel(classe, entId){
-    return {
-        codigo: classe.codigo,
-        titulo: classe.titulo,
-        descricao: classe.descricao,
-        status: classe.status,
-        dono: entId ? isDono(classe.donos, entId) : "",
-        participante: entId ? isParticipante(classe.participantes, entId) : "",
-        pca: classe.pca.valores,
-        formaContagem: classe.pca.formaContagem,
-        df: classe.df.valor
-    }
-}
-
-//Devolve o esqueleto que serve de formulário para a criação de uma TS
-exports.getEsqueleto = () => {
-    var ret = []
-
-    classTreeInfo.forEach(c1 => {
-        c1.filhos.forEach(c2 => {
-            c2.filhos.forEach(c3 => {
-                ret.push(getClasseEsq(c3))
-                c3.filhos.forEach(c4 => {
-                    ret.push(getClasseEsq(c4))
-                })
-            })
-        })
-    })
-
-    return ret
-}
-
-//Devolve para uma entidade o esqueleto pre selecionado
-exports.getPreSelecionados = (entId) => {
-    var ret = []
-
-    classTreeInfo.forEach(c1 => {
-        ret.push(getClassePreSel(c1, null))
-        c1.filhos.forEach(c2 => {
-            ret.push(getClassePreSel(c2, null))
-            c2.filhos.forEach(c3 => {
-                ret.push(getClassePreSel(c3, entId))
-                c3.filhos.forEach(c4 => {
-                    ret.push(getClassePreSel(c4, entId))
-                })
-            })
-        })
-    })
 
     return ret
 }
@@ -328,125 +199,328 @@ exports.verificaTI = async (ti) => {
     return r
 }
 
-//Devolve a lista dos processos de negócio comuns, ou seja, aqueles com :processoTipoVC :vc_processoTipo_pc
-exports.getProcessosComuns = async () => {
-    let PC = await Classes.listarPNsComuns();
-    return PC;
-}
+//Devolve os processos de negócio comuns, ou seja, aqueles com :processoTipoVC :vc_processoTipo_pc
+exports.filterProcessosComuns = l => {
+    let ret = []
 
-//Devolve a lista dos processos de negócio comuns, ou seja, aqueles com :processoTipoVC :vc_processoTipo_pc
-exports.getProcessosComunsInfo = async () => {
-    var classListInfo = await this.getClassesInfoFlatList()
-    let PC = classListInfo.filter(c => c.tipoProc == "Processo Comum")
-    return PC;
-}
-
-//Devolve a lista dos processos de negócio especificos, ou seja, aqueles com :processoTipoVC :vc_processoTipo_pc
-// especificos duma entidade ou lista de entidades
-exports.getProcessosEspecificosEntidades = async (entidades) => {
-    let PE = await Classes.listarPNsEspecificosEntidades(entidades);
-    return PE;
-}
-
-//Devolve a lista dos processos de negócio especificos, ou seja, aqueles com :processoTipoVC :vc_processoTipo_pc
-// especificos duma tipologia ou lista de tipologias
-exports.getProcessosEspecificosTipologias = async (tipologias) => {
-    let PE = await Classes.listarPNsEspecificosTipologias(tipologias);
-    return PE;
-}
-
-//Devolve a lista dos processos de negócio especificos, ou seja, aqueles com :processoTipoVC :vc_processoTipo_pc
-// especificos da entidade em causa e das tipologias a que este pertence
-exports.getProcessosEspecificos = async (entidades, tipologias) => {
-    let PE = await Classes.listarPNsEspecificos(entidades, tipologias);
-    return PE;
-}
-
-//Devolve a lista dos processos de negócio especificos, ou seja, aqueles com :processoTipoVC :vc_processoTipo_pc
-exports.getProcessosEspecificosTodos = async () => {
-    let PE = await Classes.listarPNsEspecificosTodos();
-    return PE;
-}
-
-//devolve se uma classe é um processo especifico e se tem como dona ou participante uma das entidades/tipologias selecionadas
-function filterEspEntsTips(classe, ent_tip){
-    var ret = classe.tipoProc == "Processo Específico"
-
-    if(ret && ent_tip.length > 0){
-        var donos = classe.donos.filter(d => ent_tip.includes(d.idDono))
-        var parts = classe.participantes.filter(p => ent_tip.includes(p.idParticipante)) 
-        ret = donos.length > 0 || parts.length > 0
+    for(let i = 0; i < l.length; i++){
+        l[i].filhos = exports.filterProcessosComuns(l[i].filhos)
+        //cumpre o filtro ou é de 1º ou 2º nivel ou 3º com filhos
+        if(l[i].tipoProc == "Processo Comum" || l[i].filhos.length){
+            ret.push(l[i])
+        } 
     }
 
     return ret
 }
 
-//Devolve a lista dos processos de negócio especificos, ou seja, aqueles com :processoTipoVC :vc_processoTipo_pc
-// especificos da entidade em causa e das tipologias a que este pertence
-exports.getProcessosEspecificosInfo = async (entidades, tipologias) => {
-    entidades = entidades || []
-    tipologias = tipologias || []
-    var classListInfo = await this.getClassesInfoFlatList()
+//Devolve os processos de negócio especificos, ou seja, aqueles com :processoTipoVC :vc_processoTipo_pc
+exports.filterProcessosEspecificos = l => {
+    let ret = []
 
-    let ent_tip = entidades.concat(tipologias)
-    let PE = classListInfo.filter(c => filterEspEntsTips(c, ent_tip))
-
-    return PE;
-}
-
-//devolve se uma classe tem como dona ou participante uma das entidades/tipologias selecionadas
-function filterEntsTips(classe, ent_tip){
-    var donos = classe.donos.filter(d => ent_tip.includes(d.idDono))
-    var parts = classe.participantes.filter(p => ent_tip.includes(p.idParticipante)) 
-    return donos.length > 0 || parts.length > 0
-}
-
-//função auxiliar recursiva para obter apenas codigo, titulo, status e filhos dos filhos
-function getFilhosBase(filhos){
-    var ret = []
-
-    for(var i=0; i < filhos.length; i++){
-        ret.push({
-            id: filhos[i].id,
-            codigo: filhos[i].codigo,
-            titulo: filhos[i].titulo,
-            status: filhos[i].status,
-            filhos: getFilhosBase(filhos[i].filhos)
-        })
+    for(let i = 0; i < l.length; i++){
+        l[i].filhos = exports.filterProcessosEspecificos(l[i].filhos)
+        //cumpre o filtro ou é de 1º ou 2º nivel ou 3º com filhos
+        if(l[i].tipoProc == "Processo Específico" || l[i].filhos.length){
+            ret.push(l[i])
+        } 
     }
 
     return ret
 }
 
-//Função auxiliar recursiva para getProcEntsTips
-function getProcEntsTipsRec(classes, ent_tip, allInfo, nivelFilter){
+//devolve as classes que têm como dona ou participante uma das entidades/tipologias selecionadas
+exports.filterEntsTips = (l, ents_tips) => {
+    let ret = []
+
+    for(let i = 0; i < l.length; i++){
+        l[i].filhos = exports.filterEntsTips(l[i].filhos, ents_tips)
+
+        let donos = l[i].donos.filter(d => ents_tips.includes(d.idDono))
+        let parts = l[i].participantes.filter(p => ents_tips.includes(p.idParticipante))
+
+        if(donos.length || parts.length || l[i].filhos.length){
+            ret.push(l[i])
+        } 
+    }
+
+    return ret
+}
+
+//devolve as classes de um nivel 
+exports.filterNivel = (l, nivel) => {
+    let ret = []
+
+    for(let i = 0; i < l.length; i++){
+        if(nivel - 1 == 0){ //estamos no nivel pretendido
+            delete l[i].filhos
+            ret.push(l[i])
+        }else{
+            ret = ret.concat(exports.filterNivel(l[i].filhos, nivel - 1))
+        }
+    }
+
+    return ret
+}
+
+//torna a arvore numa lista
+exports.flatArvore = l => {
+    let ret = []
+
+    for(let i = 0; i < l.length; i++){
+        if(l[i].filhos){
+            let filhos = exports.flatArvore(l[i].filhos)
+            delete l[i].filhos
+            ret.push(l[i])
+            ret = ret.concat(filhos)
+        }else{
+            ret.push(l[i])
+        }
+    }
+
+    return ret
+}
+
+//devolve apenas a info base da classe
+exports.filterBaseInfo = l => {
+    let ret = []
+
+    for(let i = 0; i < l.length; i++){
+        let c = {
+            id: l[i].id,
+            codigo: l[i].codigo,
+            titulo: l[i].titulo,
+            status: l[i].status
+        }
+
+        if(l[i].filhos){
+            c.filhos = exports.filterBaseInfo(l[i].filhos)
+        }
+
+        ret.push(c)
+    }
+
+    return ret
+}
+
+//devolve apenas a info da classe para o caso do esqueleto
+exports.filterEsqueletoInfo = l => {
+    let ret = []
+
+    for(let i = 0; i < l.length; i++){
+        let c = {
+            codigo: l[i].codigo,
+            titulo: l[i].titulo,
+            descricao: l[i].descricao,
+            status: l[i].status,
+            dono: "",
+            participante: "",
+            pca: l[i].pca.valores,
+            df: l[i].df.valor
+        }
+
+        if(l[i].filhos){
+            c.filhos = exports.filterEsqueletoInfo(l[i].filhos)
+        }
+
+        ret.push(c)
+    }
+
+    return ret
+}
+
+//função auxiliar para filterPreSelecionadoInfo, verifica se as entidades e/ou tipologias são donos
+function saoDonos(donos, ents_tips){
+    let ret = []
+
+    for(let ent_tip of ents_tips){
+        let eDono = donos.filter(e => e.idDono == ent_tip).length > 0 ? "Sim" : "Não"
+        ret.push(eDono)
+    }
+
+    return ret
+}
+
+////função auxiliar para filterPreSelecionadoInfo, verifica se as entidades e/ou tipologias são participantes, devolvendo o tipo de participação
+function saoParticipantes(participantes, ents_tips){
+    let ret = []
+
+    for(let ent_tip of ents_tips){
+        let ePart = "Não"
+
+        for(let i = 0; i < participantes.length && ePart == "Não"; i++){
+            if(participantes[i].idParticipante == ent_tip){
+                ePart = participantes[i].participLabel
+            }
+        }
+
+        ret.push(ePart)
+    }
+
+    return ret
+}
+
+//devolve apenas a info da classe para o caso do pre-selecionados
+exports.filterPreSelecionadoInfo = (l, ents_tips) => {
+    let ret = []
+
+    for(let i = 0; i < l.length; i++){
+        let c = {
+            codigo: l[i].codigo,
+            titulo: l[i].titulo,
+            descricao: l[i].descricao,
+            status: l[i].status,
+            dono: saoDonos(l[i].donos, ents_tips),
+            participante: saoParticipantes(l[i].participantes, ents_tips),
+            pca: l[i].pca.valores,
+            formaContagem: l[i].pca.formaContagem,
+            df: l[i].df.valor
+        }
+
+        if(l[i].filhos){
+            c.filhos = exports.filterPreSelecionadoInfo(l[i].filhos, ents_tips)
+        }
+
+        ret.push(c)
+    }
+
+    return ret
+}
+
+//Função auxiliar para filterPesquisaInfo, devolve defaultValue se o objero for null, undefined ou vazio
+function ternaryOp(obj, defaultValue){
+    return obj ? obj : defaultValue
+}
+
+//Função auxiliar para filterPesquisaInfo, obtém o termo 'termo' de cada objeto da lista e realiza depois o join com " ". Caso a lista seja null, undefined ou vazia devolve []
+function mapJoin(list, term){
+    return list ? list.map(e => e[term]).join(" ") : []
+}
+
+//Função auxiliar para filterPesquisaInfo, obtém o termo 'termo' de cada objeto da lista. Caso a lista seja null, undefined ou vazia devolve []
+function ternaryMap(list, term){
+    return list ? list.map(e => e[term]) : []
+}
+
+//devolve apenas a info da classe para o caso da pesquisa avançada
+exports.filterPesquisaInfo = l => {
+    let ret = []
+
+    for(let i = 0; i < l.length; i++){
+        let c = {
+            id: l[i].codigo,
+            nome: l[i].codigo + " - " + l[i].titulo,
+            titulo: l[i].titulo,
+            status: l[i].status,
+            descricao: l[i].descricao,
+            tp: ternaryOp(l[i].tipoProc, ""),
+            pt: ternaryOp(l[i].procTrans, ""),
+            na: mapJoin(l[i].notasAp, "nota"),
+            exemploNa: mapJoin(l[i].exemplosNotasAp, "exemplo"),
+            ne: mapJoin(l[i].notasEx, "nota"),
+            ti: mapJoin(l[i].termosInd, "termo"),
+            pca: ternaryOp(l[i].pca.valores, ""),
+            fc_pca: ternaryOp(l[i].pca.formaContagem, ""),
+            sfc_pca: ternaryOp(l[i].pca.subFormaContagem, ""),
+            crit_pca: ternaryMap(l[i].pca.justificacao, "tipoId"),
+            df: ternaryOp(l[i].df.valor, "NE"),
+            crit_df: ternaryMap(l[i].df.justificacao, "tipoId"),
+            donos: ternaryMap(l[i].donos, "idDono"),
+            participantes: ternaryMap(l[i].participantes, "idParticipante"),
+            tipo_participacao: ternaryMap(l[i].participantes, "participLabel"),
+        }
+
+        if(l[i].filhos){
+            c.filhos = exports.filterPesquisaInfo(l[i].filhos)
+        }
+
+        ret.push(c)
+    }
+
+    return ret
+}
+
+//função auxiliar de filterProcs, obtém o status de uma classe, dado o seu id e a arvore de classes
+function searchClasse(proc, classes){
+    var status = null
+
+    if(classes[0] && classes[0].filhos){
+        var aux = proc.substr(1).split('.')
+        var codigos = [aux[0]]
+
+        for(var w = 1; w < aux.length; w++)
+            codigos.push(codigos[w-1] + "." + aux[w])
+
+        var classe
+        for(var j = 0; j < codigos.length; j++){
+            classe = null
+
+            for(var i=0; i < classes.length && classe == null; i++)
+                if(classes[i].codigo == codigos[j])
+                    classe = classes[i]
+
+            if(classe)
+                classes = classe.filhos
+        }
+
+        if(classe)
+            status = classe.status
+    }else{
+        for(var i=0; i < classes.length && status == null; i++)
+            if('c' + classes[i].codigo == proc)
+                status = classes[i].status
+    }
+
+    return status
+}
+
+//função auxiliar de filterJusts, remove os processos da lista processos que não estão ativos
+function filterProcs(processos, classesI){
+    var procs = []
+
+    for(var i = 0; i < processos.length; i++){
+        var status = searchClasse(processos[i].procId, classesI)
+
+        if(status == "A")
+            procs.push(JSON.parse(JSON.stringify(processos[i])))
+    }
+
+    return procs
+}
+
+//função auxiliar de filterStatus, remove os processos das justificações que não estão ativos
+function filterJusts(justificacao, classesI){
+    var justs = []
+
+    for(var j = 0; j < justificacao.length; j++){
+        var just = JSON.parse(JSON.stringify(justificacao[j]))
+        just.processos = filterProcs(justificacao[j].processos, classesI)
+        justs.push(just)
+    }
+
+    return justs
+}
+
+//Devolve apenas as classes Ativas
+exports.filterStatus = (classes, classesI) => {
     var ret = []
 
     for(var i = 0; i < classes.length; i++){
-        if(nivelFilter > 0){
-            var filhos = getProcEntsTipsRec(classes[i].filhos, ent_tip, allInfo, nivelFilter - 1)
-        }else{
-            if(allInfo){
-                var filhos = JSON.parse(JSON.stringify(classes[i].filhos))
-            }else{
-                var filhos = getFilhosBase(classes[i].filhos)
-            }
-        }
-        
-        if(filterEntsTips(classes[i], ent_tip) || (nivelFilter != 0 && filhos && filhos.length > 0)){
-            var classe
-            if(allInfo){
-                classe = JSON.parse(JSON.stringify(classes[i]))
-                classe.filhos = filhos
-            }else{
-                classe = {
-                    id: classes[i].id,
-                    codigo: classes[i].codigo,
-                    titulo: classes[i].titulo,
-                    status: classes[i].status,
-                    filhos: filhos
-                }
-            }
+        if(classes[i].status == "A"){
+            var classe = JSON.parse(JSON.stringify(classes[i]))
+
+            if(classes[i].filhos)
+                classe.filhos = exports.filterStatus(classes[i].filhos, classesI)
+
+            if(classes[i].processosRelacionados)
+                classe.processosRelacionados = exports.filterStatus(classes[i].processosRelacionados, classesI)
+
+            if(classes[i].pca && classes[i].pca.justificacao)
+                classe.pca.justificacao = filterJusts(classes[i].pca.justificacao, classesI)
+
+            if(classes[i].df && classes[i].df.justificacao)
+                classe.df.justificacao = filterJusts(classes[i].df.justificacao, classesI)
+
             ret.push(classe)
         }
     }
@@ -454,18 +528,15 @@ function getProcEntsTipsRec(classes, ent_tip, allInfo, nivelFilter){
     return ret
 }
 
-//Devolve a lista dos processos das entidades (mantendo os niveis a qual pertence) em causa e das tipologias a que este pertence
-exports.getProcEntsTips = (entidades, tipologias, allInfo) => {
-    entidades = entidades || []
-    tipologias = tipologias || []
-    let ent_tip = entidades.concat(tipologias)
-    var ret = []
+//remove o campo status
+exports.removeStatus = l => {
+    for(let i = 0; i < l.length; i++){
+        delete l[i].status
 
-    if(ent_tip.length > 0){
-        ret = getProcEntsTipsRec(classTreeInfo, ent_tip, allInfo, 2)
+        if(l[i].filhos){
+            exports.removeStatus(l[i].filhos)
+        }
     }
-
-    return ret;
 }
 
 async function loadClasses() {

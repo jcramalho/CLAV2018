@@ -1,6 +1,6 @@
-summary: Consultar tabela de seleção
+summary: Consultar uma tabela de seleção
 description: |
-  Consultar tabela de seleção
+  Consultar uma tabela de seleção
 
   **Acesso permitido a:** Chaves API e Todos os Utilizadores
 security:
@@ -19,7 +19,7 @@ parameters:
     required: true
 responses:
   200:
-    description: Consultar tabela de seleção
+    description: Consulta de uma tabela de seleção
     content:
       application/json:
         schema:

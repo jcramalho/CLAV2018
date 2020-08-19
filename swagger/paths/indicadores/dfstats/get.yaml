@@ -11,7 +11,7 @@ description: |
     - Número total de PNs com destino final igual a E (Eliminação)
     - Número total de PNs com destino final igual a NE (Não Especificado)
 
-  **Acesso permitido a:** Utilizadores com nível 3.5, 4, 5, 6 e 7
+  **Acesso permitido a:** Utilizadores com nível 3, 3.5, 4, 5, 6 e 7
 responses:
   200:
     description: Indicadores dos destinos finais (DFs) das classes

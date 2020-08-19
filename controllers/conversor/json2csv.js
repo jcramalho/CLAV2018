@@ -34,11 +34,12 @@ const convert_to = {
         "codigo": ["Código", v => v],
         "titulo": ["Título", v => v],
         "descricao": ["Descrição", v => v],
-        "dono": ["Dono", v => v],
-        "participante": ["Participante", v => v],
+        "dono": ["Dono", join],
+        "participante": ["Participante", join],
         "pca": ["PCA", v => v],
         "formaContagem": ["Forma de contagem do PCA", v => v],
-        "df": ["DF", v => v]
+        "df": ["DF", v => v],
+        "filhos": [null, filhos("preselecionadoClasse")]
     },
     "esqueletoClasse": {
         "codigo": ["Código", v => v],
@@ -47,11 +48,13 @@ const convert_to = {
         "dono": ["Dono", v => v],
         "participante": ["Participante", v => v],
         "pca": ["PCA", v => v],
-        "df": ["DF", v => v]
+        "df": ["DF", v => v],
+        "filhos": [null, filhos("esqueletoClasse")]
     },
     "pesquisaClasse": {
         "id": ["Código", v => v],
         "titulo": ["Título", v => v],
+        "descricao": ["Descrição", v => v],
         "tp": ["Tipo de processo", v => v],
         "pt": ["Processo transversal (S/N)", v => v],
         "na": ["Notas de aplicação", v => v],
@@ -66,6 +69,7 @@ const convert_to = {
         "crit_df": ["Critério DF", join],
         "donos": ["Donos do processo", join],
         "participantes": ["Participantes do processo", join],
+        "tipo_participacao": ["Tipo de participação", join],
         "filhos": [null, filhos("pesquisaClasse")]
     },
     "entidade": {

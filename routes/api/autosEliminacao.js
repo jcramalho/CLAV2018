@@ -33,13 +33,13 @@ router.get('/:id', Auth.isLoggedInKey, [
         return res.status(422).jsonp(errors.array())
     }
     
-    AutosEliminacao.consultar(req.params.id,req.user.entidade)
+    AutosEliminacao.consultar(req.params.id, req.user ? req.user.entidade : null)
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(404).jsonp("Erro na consulta do AE "+req.params.id+": " + erro))
 })
 
 //Criar um AE && Importar AE
-router.post('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
+router.post('/', Auth.isLoggedInUser, Auth.checkLevel([5, 6, 7]), [
     existe('body', 'auto')
 ], (req, res) => {
     const errors = validationResult(req)

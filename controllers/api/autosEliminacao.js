@@ -164,7 +164,7 @@ AutosEliminacao.consultar = async function(id,userEnt) {
                     })
                 }
             }
-            if(ent==userEnt || userEnt=="ent_DGLAB") {
+            if(userEnt && (ent==userEnt || userEnt=="ent_DGLAB")) {
                 var query4 = `
                 select * where {
                     clav:${res2.id} clav:temAgregacao ?ag .

@@ -1,4 +1,4 @@
-summary: Devolve as classes em vários formatos podendo ser filtradas por nível, por tipo e se uma entidade/tipologia é dona/participante da classe
+summary: Devolve as classes em vários formatos podendo ser filtradas
 security:
   - apiKeyQuery: []
   - apiKeyAuth: []
@@ -7,7 +7,7 @@ security:
 tags:
   - Classes
 description: |
-  Devolve as classes em vários formatos podendo ser filtradas por nível, por tipo e se uma entidade/tipologia é dona/participante da classe. Existe uma hierarquia nestas possibilidades. Caso a info seja 'esqueleto' ou 'pesquisa' as query string tipo, nivel, estrutura, ents e tips não são consideradas. Caso a info seja 'pre-selecionados' caso não seja inserida uma entidade em 'ents' (uma e só uma) é devolvido como 'esqueleto' não sendo consideradas as query string tipo, nivel, estrutura e tips. Caso o tipo seja definido as query strings nivel e estrutura não são consideradas. Caso tipo não seja definido mas ents e/ou tips sejam, é devolvido os processos que tem como donos ou participantes as entidade e/ou tipologias selecionadas. Caso tipo não seja definido, nem ents e nem tips e o nível seja definido, a query string estrutura não é considerada. Por fim se não for definido tipo, nem ents, nem tips e nem nivel e for definido estrutura esta é a query string considerada.
+  Devolve as classes em vários formatos podendo ser filtradas por nível, por tipo e se a(s) entidade(s)/tipologia(s) é(são) dona(s)/participante(s) da classe. A query string 'estrutura' permite devolver as classes em árvore ou lista contudo caso use a filtragem por nível seja usada será devolvida uma lista mesmo que escolha a estrutura em árvore. Quanto à query string 'info' permite definir que dados são devolvidos.
 
   **Acesso permitido a:** Chaves API e Todos os Utilizadores
 parameters:
@@ -17,14 +17,14 @@ parameters:
       type: string
       enum: [arvore, lista]
       default: arvore
-    description: Estrutura. Pode ser em árvore ou em lista. Quanto nenhum parâmetro é definido (estrutura, tipo e nivel) a estrutura de saída em arvore é a predefinida.
+    description: Estrutura. Pode ser em árvore ou em lista. A estrutura em arvore é a predefinida.
     required: false
   - in: query
     name: tipo
     schema:
       type: string
       enum: [comum, especifico]
-    description: Devolve as classes de nível 3 (processos) filtrando pelo tipo de processo (comuns ou especificos).
+    description: Devolve as classes (processos) filtrando pelo tipo de processo (comuns ou especificos).
     required: false
   - in: query
     name: nivel
@@ -36,20 +36,20 @@ parameters:
     name: ents
     schema:
       $ref: '#/components/schemas/Ents'
-    description: "Obtém os processos destas entidades. Quando usado em conjunto com o parâmetro tipo com valor igual a especifico devolve os processos especificos destas entidades. Exemplo: 'ent_AAN,ent_SEF'"
+    description: "Obtém os processos destas entidades. Exemplo: 'ent_AAN,ent_SEF'"
     required: false
   - in: query
     name: tips
     schema:
       $ref: '#/components/schemas/Tips'
-    description: "Obtém os processos destas tipologias. Quando usado em conjunto com o parâmetro tipo com valor igual a especifico devolve os processos especificos destas tipologias. Exemplo: 'tip_AAC,tip_AF'"
+    description: "Obtém os processos destas tipologias. Exemplo: 'tip_AAC,tip_AF'"
     required: false
   - in: query
     name: info
     schema:
       type: string
       enum: [completa, esqueleto, pesquisa, pre-selecionados]
-    description: "Caso seja um valor que não 'completa', 'esqueleto' e 'pesquisa' devolve apenas o código, a descrição e o título das classes. Caso o valor seja 'completa' devolve toda a informação de cada classe. Caso o valor seja 'esqueleto' devolve numa estrutura pronta a ser preenchida para a criação de uma Tabela de Seleção, devolve os campos: código, título, descrição, PCA, DF dono (a ser preenchido pelo utilizador) e participante (a ser preenchido pelo utilizador). Caso o valor seja 'pesquisa', devolve todas as classes num formato pronto a ser usado para a pesquisa avançada da interface CLAV. Caso o valor seja 'pre-selecionados' devolve os campos: código, título, descrição, PCA, DF, dono e participante."
+    description: "Se esta query string não for definida devolve apenas o código, a descrição e o título das classes. Caso o valor seja 'completa' devolve toda a informação de cada classe. Caso o valor seja 'esqueleto' devolve numa estrutura pronta a ser preenchida para a criação de uma Tabela de Seleção, devolve os campos: código, título, descrição, PCA, DF, dono (a ser preenchido pelo utilizador) e participante (a ser preenchido pelo utilizador). Caso o valor seja 'pesquisa', devolve as classes num formato pronto a ser usado para a pesquisa avançada da interface CLAV. Caso o valor seja 'pre-selecionados' devolve os campos: código, título, descrição, PCA, DF, dono e participante. O 'pre-selecionados' no campo dono possui se as entidades e/ou as tipologias são donas. Já no campo participante possui se as entidades e/ou as tipologias são participantes e se forem o tipo de participação. Estes campos são listas, estando os seus valores ordenados primeiramente pelas entidades presentes na query string ents e de seguida pelas tipologias presentes na query string tips."
     required: false
   - $ref: '#/components/parameters/OutputFormatWithCSV'
 responses:
