@@ -5,7 +5,7 @@ security:
   - userQuery: []
   - userAuth: []
 tags:
-  - PGD
+  - RADA
 description: |
   Listagem dos 'antigos RADAs' nãos inseridos pela plataforma
 
