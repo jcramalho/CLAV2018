@@ -19,26 +19,6 @@ router.get('/lc', Auth.isLoggedInKey, (req, res) => {
       .catch(erro => res.status(404).jsonp("Erro na listagem das PGDs: " + erro))
 })
 
-
-router.get('/rada', Auth.isLoggedInKey, (req, res) => {
-    PGD.listarRADA()
-        .then(dados => res.jsonp(dados))
-        .catch(erro => res.status(404).jsonp("Erro na listagem das RADAs: " + erro))
-})
-
-router.get('/rada/:idRADA', Auth.isLoggedInKey, [
-    verificaPGDRADAId('param', 'idRADA')
-], (req, res) => {
-  const errors = validationResult(req)
-  if(!errors.isEmpty()){
-      return res.status(422).jsonp(errors.array())
-  }
-
-  PGD.consultarRADA(req.params.idRADA)
-      .then(dados => res.jsonp(dados))
-      .catch(erro => res.status(404).jsonp("Erro na listagem das RADAs: " + erro))
-})
-
 router.get('/:idPGD', Auth.isLoggedInKey, [
     verificaPGDId('param', 'idPGD')
 ], (req, res) => {
