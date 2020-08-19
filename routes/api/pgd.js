@@ -2,7 +2,7 @@ var Auth = require('../../controllers/auth.js');
 var PGD = require('../../controllers/api/pgd.js');
 
 const { validationResult } = require('express-validator');
-const { verificaPGDId, verificaPGDRADAId } = require('../validation')
+const { verificaPGDId } = require('../validation')
 
 var express = require('express');
 var router = express.Router();

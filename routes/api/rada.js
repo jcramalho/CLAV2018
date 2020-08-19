@@ -6,7 +6,7 @@ var PGD = require('../../controllers/api/pgd.js');
 var Auth = require("../../controllers/auth.js");
 
 const { validationResult } = require('express-validator');
-const { existe } = require('../validation')
+const { existe, verificaPGDRADAId } = require('../validation')
 
 // Insere um RADA na BD
 router.post("/", Auth.isLoggedInUser, Auth.checkLevel(5), [
