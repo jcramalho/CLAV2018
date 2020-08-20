@@ -570,6 +570,8 @@ module.exports.vcPedidoEstado = [
   "Submetido",
   "Distribuído",
   "Apreciado",
+  "Redistribuído",
+  "Reapreciado",
   "Validado",
   "Devolvido",
 ];
