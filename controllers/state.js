@@ -239,7 +239,12 @@ exports.filterEntsTips = (l, ents_tips) => {
         let donos = l[i].donos.filter(d => ents_tips.includes(d.idDono))
         let parts = l[i].participantes.filter(p => ents_tips.includes(p.idParticipante))
 
-        if(donos.length || parts.length || l[i].filhos.length){
+        if(
+            donos.length ||
+            parts.length ||
+            (l[i].filhos.length && l[i].nivel != 3 ) ||
+            l[i].nivel == 4
+        ){
             ret.push(l[i])
         } 
     }
@@ -341,6 +346,19 @@ function saoDonos(donos, ents_tips){
     return ret
 }
 
+//função auxiliar para filterPreSelecionadoInfo, verifica se as entidades e/ou tipologias são donos
+function saoDonosSigla(donos, ents_tips){
+    let ret = []
+
+    for(let ent_tip of ents_tips){
+        if(donos.filter(e => e.idDono == ent_tip).length > 0){
+            ret.push(ent_tip.split(/ent_|tip_/)[1])
+        }
+    }
+
+    return ret
+}
+
 ////função auxiliar para filterPreSelecionadoInfo, verifica se as entidades e/ou tipologias são participantes, devolvendo o tipo de participação
 function saoParticipantes(participantes, ents_tips){
     let ret = []
@@ -360,6 +378,23 @@ function saoParticipantes(participantes, ents_tips){
     return ret
 }
 
+////função auxiliar para filterPreSelecionadoInfo, verifica se as entidades e/ou tipologias são participantes, devolvendo o tipo de participação
+function saoParticipantesSigla(participantes, ents_tips){
+    let siglas = []
+    let parts = []
+
+    for(let ent_tip of ents_tips){
+        for(let i = 0; i < participantes.length; i++){
+            if(participantes[i].idParticipante == ent_tip){
+                siglas.push(ent_tip.split(/ent_|tip_/)[1])
+                parts.push(participantes[i].participLabel)
+            }
+        }
+    }
+
+    return [siglas, parts]
+}
+
 //devolve apenas a info da classe para o caso do pre-selecionados
 exports.filterPreSelecionadoInfo = (l, ents_tips) => {
     let ret = []
@@ -370,11 +405,28 @@ exports.filterPreSelecionadoInfo = (l, ents_tips) => {
             titulo: l[i].titulo,
             descricao: l[i].descricao,
             status: l[i].status,
-            dono: saoDonos(l[i].donos, ents_tips),
-            participante: saoParticipantes(l[i].participantes, ents_tips),
             pca: l[i].pca.valores,
             formaContagem: l[i].pca.formaContagem,
             df: l[i].df.valor
+        }
+
+        if(l[i].nivel == 3){
+            if(ents_tips.length > 1){
+                c.dono = saoDonosSigla(l[i].donos, ents_tips)
+                let aux = saoParticipantesSigla(l[i].participantes, ents_tips)
+                c.participante = aux[0]
+                c.tipo_participacao = aux[1]
+            }else{
+                c.dono = saoDonos(l[i].donos, ents_tips)
+                c.participante = saoParticipantes(l[i].participantes, ents_tips)
+            }
+        }else{
+            c.dono = []
+            c.participante = []
+
+            if(ents_tips.length > 1){
+                c.tipo_participacao = []
+            }
         }
 
         if(l[i].filhos){
