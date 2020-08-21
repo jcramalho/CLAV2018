@@ -19,13 +19,13 @@ const convert_to = {
         "tipoProc": ["Tipo de processo", v => v],
         "procTrans": ["Processo transversal (S/N)", v => v],
         "donos": ["Donos do processo", map_value("sigla")],
-        "participantes_sigla": ["Participante no processo", map_value("sigla")],
-        "participantes_participLabel": ["Tipo de intervenção do participante", map_value("participLabel")],
-        "processosRelacionados_codigo": ["Código do processo relacionado", map_value("codigo")],
-        "processosRelacionados_titulo": ["Título do processo relacionado", map_value("titulo")],
-        "processosRelacionados_idRel": ["Tipo de relação entre processos", map_value("idRel")],
-        "legislacao_idLeg": ["Diplomas jurídico-administrativos REF Ids", map_value("idLeg")],
-        "legislacao_titulos": ["Diplomas jurídico-administrativos REF Títulos", leg_titulos],
+        "participantes^sigla": ["Participante no processo", map_value("sigla")],
+        "participantes^participLabel": ["Tipo de intervenção do participante", map_value("participLabel")],
+        "processosRelacionados^codigo": ["Código do processo relacionado", map_value("codigo")],
+        "processosRelacionados^titulo": ["Título do processo relacionado", map_value("titulo")],
+        "processosRelacionados^idRel": ["Tipo de relação entre processos", map_value("idRel")],
+        "legislacao^idLeg": ["Diplomas jurídico-administrativos REF Ids", map_value("idLeg")],
+        "legislacao^titulos": ["Diplomas jurídico-administrativos REF Títulos", leg_titulos],
         "pca": ["", v => convertOne(v, "pca")],
         "df": ["", v => convertOne(v, "df")],
         "filhos": [null, filhos("classe")]
@@ -36,6 +36,7 @@ const convert_to = {
         "descricao": ["Descrição", v => v],
         "dono": ["Dono", join],
         "participante": ["Participante", join],
+        "tipo_participacao": ["Tipo de participação", join],
         "pca": ["PCA", v => v],
         "formaContagem": ["Forma de contagem do PCA", v => v],
         "df": ["DF", v => v],
@@ -79,8 +80,8 @@ const convert_to = {
         "sioe": ["ID SIOE", v => v],
         "internacional": ["Internacional", internacional],
         "dono": ["Dono no processo", map_value("codigo")],
-        "participante_codigo": ["Participante no processo", map_value("codigo")],
-        "participante_tipoPar": ["Tipo de intervenção no processo", map_value("tipoPar")],
+        "participante^codigo": ["Participante no processo", map_value("codigo")],
+        "participante^tipoPar": ["Tipo de intervenção no processo", map_value("tipoPar")],
         "tipologias": ["Tipologias da entidade", map_value("sigla")]
     },
     "tipologia": {
@@ -89,8 +90,8 @@ const convert_to = {
         "estado": ["Estado", v => v],
         "entidades": ["Entidades da tipologia", map_value("sigla")],
         "dono": ["Dono no processo", map_value("codigo")],
-        "participante_codigo": ["Participante no processo", map_value("codigo")],
-        "participante_tipoPar": ["Tipo de intervenção no processo", map_value("tipoPar")]
+        "participante^codigo": ["Participante no processo", map_value("codigo")],
+        "participante^tipoPar": ["Tipo de intervenção no processo", map_value("tipoPar")]
     },
     "legislacao": {
         "tipo": ["Tipo", v => v],
@@ -107,14 +108,14 @@ const convert_to = {
         "notas": ["Nota ao PCA", v => v],
         "formaContagem": ["Forma de contagem do PCA", v => v],
         "subFormaContagem": ["Sub Forma de contagem do PCA", v => v],
-        "justificacao_criterio": ["Critério PCA", map_value("tipoId")],
-        "justificacao_refs": ["ProcRefs/LegRefs PCA", refs]
+        "justificacao^criterio": ["Critério PCA", map_value("tipoId")],
+        "justificacao^refs": ["ProcRefs/LegRefs PCA", refs]
     },
     "df": {
         "valor": ["Destino final", v => v],
         "notas": ["Notas ao DF", v => v],
-        "justificacao_criterio": ["Critério DF", map_value("tipoId")],
-        "justificacao_refs": ["ProcRefs/LegRefs DF", refs]
+        "justificacao^criterio": ["Critério DF", map_value("tipoId")],
+        "justificacao^refs": ["ProcRefs/LegRefs DF", refs]
     }
 }
 
@@ -197,7 +198,7 @@ function convertOne(json, type){
     var csvLines = [[],[]]
 
     for(var key in convert_to[type]){
-        var k = key.split('_')[0]
+        var k = key.split('^')[0]
         var header = convert_to[type][key][0]
 
         if(k in json){

@@ -12,12 +12,15 @@ items:
       type: array
       items:
         type: string
-        enum: [Sim, Não]
     participante:
       type: array
       items:
         type: string
-        enum: [Apreciador, Assessor, Comunicador, Decisor, Executor, Iniciador, Não]
+    tipo_participacao:
+      type: array
+      items:
+        type: string
+        enum: [Apreciador, Assessor, Comunicador, Decisor, Executor, Iniciador]
     pca:
       $ref: '#/components/schemas/PCAValor'
     formaContagem:
