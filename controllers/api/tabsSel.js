@@ -4,9 +4,9 @@ const projection = require("../../controllers/api/utils").projection;
 var Pedidos = require('../../controllers/api/pedidos');
 const { pca } = require('./classes');
 var Classe = require('../../controllers/api/classes')
+var Tipologias = require('../../controllers/api/tipologias')
+var State = require('../../controllers/state')
 var SelTabs = module.exports
-
-const requisitosFicheiro = "O ficheiro tem de:<ul><li>Possuir uma sheet em que na 1º coluna tenha como header 'Código' e por baixo os códigos dos processos</li><li>Na mesma linha da header 'Código' possuir:<ul><li>Possuir no máximo uma coluna 'Título'</li><li>Pelo menos uma coluna começada por 'Dono' ou 'Participante', no máximo uma de cada (TS Organizacional)</li><li>Pelo menos uma coluna do tipo 'Entidade Dono' ou 'Entidade Participante', no máximo uma de cada para cada entidade (TS Pluriorganizacional)</li><li>Por baixo de cada coluna deve estar:<ul><li>x ou X os processos selecionados</li><li>Nada para os processos não selecionados</li></ul></li></ul></li></ul>"
 
 SelTabs.list = async function () {
     let query = `
@@ -426,208 +426,274 @@ function parseCell(cell){
     return cell
 }
 
-function onlyHasXsOrNulls(worksheet, row, start){
-    var len = row.length
+async function validateColumnsValues(worksheet, start, headers, typeOrg){
+    let ret = []
 
-    for(var i=2; i < len; i++){
-        if(/Dono|Participante/g.test(row[i])){
-            var c = worksheet.getColumn(i).values
-            c = c.map(e => parseCell(e))
-            var cLen = c.length
-            
-            for(var j=start; j < cLen; j++){
-                if(c[j] != null && !/^\s*[xX]\s*$/g.test(c[j])){
-                    throw(`Célula inválida na linha ${j} e coluna ${i} da tabela!\nApenas deve conter x ou X (processo selecionado) ou nada (processo não selecionado).`)
-                }
-            }
-        }
-    }
+    //codigos
+    var c = worksheet.getColumn(headers.codigos).values
+    c = c.map(e => parseCell(e))
 
-    return true
-}
-
-function onlyCodigos(codigos, start){
-    var len = codigos.length
-
-    for(var i = 0; i < len; i++){
-        if(!/^\s*\d{3}(\.\d{2}(\.\d{3}(\.\d{2})?)?)?\s*$/g.test(codigos[i])){
+    for(let i = start; i < c.length; i++){
+        if(!/^\s*\d{3}(\.\d{2}(\.\d{3}(\.\d{2})?)?)?\s*$/g.test(c[i])){
             throw(`Código inválido na linha ${start+i} da tabela!\nO código para ser válido deve ser, por exemplo, no seguinte formato: 100 ou 150.01 ou 200.20.002 ou 400.20.100.01`)
         }
     }
 
-    return true
+    //titulos
+    c = worksheet.getColumn(headers.titulos).values
+    c = c.map(e => parseCell(e))
+
+    for(i = start; i < c.length; i++){
+        if(c[i] == null){
+            throw(`Título inválido na linha ${start+i} da tabela!`)
+        }
+    }
+
+    if(typeOrg == "TS Organizacional"){
+        //donos
+        c = worksheet.getColumn(headers.donos).values
+        c = c.map(e => parseCell(e))
+
+        for(i=start; i < c.length; i++){
+            if(c[i] != null && !/^\s*[xX]\s*$/g.test(c[i])){
+                throw(`Célula inválida na linha ${i} e coluna ${headers.donos} da tabela!\nApenas deve conter x ou X (processo selecionado) ou nada (processo não selecionado).`)
+            }
+        }
+
+        //participantes
+        c = worksheet.getColumn(headers.participantes).values
+        c = c.map(e => parseCell(e))
+
+        for(i=start; i < c.length; i++){
+            if(c[i] != null && !/^\s*(Apreciador|Assessor|Comunicador|Decisor|Executor|Iniciador)\s*$/g.test(c[i])){
+                throw(`Célula inválida na linha ${i} e coluna ${headers.participantes} da tabela!\nApenas deve conter o tipo de participação (Apreciador, Assessor, Comunicador, Decisor, Executor ou Iniciador) ou nada (processo não selecionado).`)
+            }
+        }
+    }else if(typeOrg == "TS Pluriorganizacional"){
+        let ents_tips = State.getEntidades().map(e => {return {sigla: e.sigla, designacao: e.designacao}})
+        let tips = await Tipologias.listar('?estado="Ativa"')
+        ents_tips.concat(tips.map(t => {return {sigla: t.sigla, designacao: t.designacao}}))
+
+        //donos
+        c = worksheet.getColumn(headers.donos).values
+        c = c.map(e => parseCell(e))
+
+        for(i=start; i < c.length; i++){
+            if(c[i] != null){
+                if(!/^\s*\w+\s*(#\s*\w+\s*)*$/g.test(c[i])){
+                    throw(`Célula inválida na linha ${i} e coluna ${headers.donos} da tabela!\nApenas deve conter siglas de entidades/tipologias separadas por '#' ou nada (processo não selecionado).`)
+                }else{
+                    let siglas = c[i].split('#')
+                    for(let sigla of siglas){
+                        sigla = sigla.replace(/\s*/g,'')
+                        let aux = ents_tips.filter(e => e.sigla == sigla)
+
+                        if(!aux.length > 0){
+                            throw(`Célula inválida na linha ${i} e coluna ${headers.donos} da tabela!\nA entidade/tipologia ${sigla} não existe.`)
+                        }else{
+                            if(!ret.filter(e => e.sigla == sigla).length > 0){
+                                ret.push(aux[0])
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        //participantes
+        let p = worksheet.getColumn(headers.participantes).values
+        p = p.map(e => parseCell(e))
+
+        for(i=start; i < p.length; i++){
+            if(p[i] != null){
+                if(!/^\s*\w+\s*(#\s*\w+\s*)*$/g.test(p[i])){
+                    throw(`Célula inválida na linha ${i} e coluna ${headers.participantes} da tabela!\nApenas deve conter siglas de entidades/tipologias separadas por '#' ou nada (processo não selecionado).`)
+                }else{
+                    let siglas = p[i].split('#')
+                    for(let sigla of siglas){
+                        sigla = sigla.replace(/\s*/g,'')
+                        let aux = ents_tips.filter(e => e.sigla == sigla)
+
+                        if(!aux.length > 0){
+                            throw(`Célula inválida na linha ${i} e coluna ${headers.participantes} da tabela!\nA entidade/tipologia ${sigla} não existe.`)
+                        }else{
+                            if(!ret.filter(e => e.sigla == sigla).length > 0){
+                                ret.push(aux[0])
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        //tipo participação
+        let tp = worksheet.getColumn(headers.tipo_participacao).values
+        tp = tp.map(e => parseCell(e))
+
+        for(i=start; i < tp.length; i++){
+            if(tp[i] != null && !/^\s*(Apreciador|Assessor|Comunicador|Decisor|Executor|Iniciador)\s*(#\s*(Apreciador|Assessor|Comunicador|Decisor|Executor|Iniciador)\s*)*$/g.test(tp[i])){
+                throw(`Célula inválida na linha ${i} e coluna ${headers.tipo_participacao} da tabela!\nApenas deve conter os tipos de participação (Apreciador, Assessor, Comunicador, Decisor, Executor ou Iniciador) separados por '#' ou nada (processo não selecionado).`)
+            }
+        }
+
+        //match length
+        if(tp.length != p.length)
+            throw(`Os tamanhos das colunas 'Participante' e 'Tipo de participação' não coincidem.`)
+
+        for(i=start; i < p.length; i++){
+            if(p[i] != null && tp[i] != null){
+                let siglas = p[i].split('#')
+                let tps = tp[i].split('#')
+
+                if(siglas.length != tps.length){
+                    throw(`As células das colunas 'Participante' e 'Tipo de participação' na linha ${i} não tem o mesmo número de elementos.`)
+                }
+            }else if(p[i] == null && tp[i] != null){
+                throw(`As células das colunas 'Participante' e 'Tipo de participação' na linha ${i} não tem o mesmo número de elementos.`)
+            }else if(p[i] != null && tp[i] == null){
+                throw(`As células das colunas 'Participante' e 'Tipo de participação' na linha ${i} não tem o mesmo número de elementos.`)
+            }
+        }   
+    }
+
+    return ret
+}
+
+function HeaderException(message, headersValid){
+    this.message = message
+    this.nHeaders = headersValid
+}
+
+function validateHeaders(headers, typeOrg){
+    let codigos = -1
+    let titulos = -1
+    let donos = -1
+    let parts = -1
+    let tipPart = -1
+    let ret = null
+    let nFound = 0
+
+    //typeOrg == "TS Organizacional" ou typeOrg == "TS Pluriorganizacional"
+    for(let i = 1; i < headers.length; i++){
+        if(/^\s*Código\s*$/g.test(headers[i])){
+            codigos = i
+        }else if(/^\s*Título\s*$/g.test(headers[i])){
+            titulos = i
+        }else if(/Dono/g.test(headers[i])){
+            donos = i
+        }else if(/Participante/g.test(headers[i])){
+            parts = i
+        }else if(/^\s*Tipo de participação\s*$/g.test(headers[i])){
+            tipPart = i
+        }
+    }
+
+    if(codigos != -1) nFound++
+    if(titulos != -1) nFound++
+    if(donos != -1) nFound++
+    if(parts != -1) nFound++
+    if(typeOrg == "TS Pluriorganizacional" && tipPart != -1) nFound++
+
+    if(codigos == -1) throw new HeaderException("Não foi possível encontrar a coluna dos códigos.", nFound)
+    if(titulos == -1) throw new HeaderException("Não foi possível encontrar a coluna dos títulos.", nFound)
+    if(donos == -1) throw new HeaderException("Não foi possível encontrar a coluna 'Dono'.", nFound)
+    if(parts == -1) throw new HeaderException("Não foi possível encontrar a coluna 'Participante'.", nFound)
+
+    if(typeOrg == "TS Organizacional"){
+        ret = {
+            codigos: codigos,
+            titulos: titulos,
+            donos: donos,
+            participantes: parts
+        }
+    }else if(typeOrg == "TS Pluriorganizacional"){
+        if(tipPart == -1){
+            throw new HeaderException("Não foi possível encontrar a coluna 'Tipo de participação'.", nFound)
+        }
+
+        ret = {
+            codigos: codigos,
+            titulos: titulos,
+            donos: donos,
+            participantes: parts,
+            tipo_participacao: tipPart
+        }
+    }
+
+    return ret
 }
 
 //Descobrir onde está a tabela de onde se obtém os valores
-function findSheet(workbook){
+async function findSheet(workbook, typeOrg){
     var sheetN = null
     var rowHeaderN = null
     var founded = false
+    var ents_tips = []
+    let headersPos = {}
+    let error = ""
+    let nSuc = 0
 
-    workbook.eachSheet((worksheet, sheetId) => {
+    for(let i = 0; i < workbook.worksheets.length; i++){
+        let worksheet = workbook.worksheets[i]
         var rC = worksheet.rowCount
 
         if(!founded && rC > 0 && worksheet.state == 'visible'){
-            for(var j=1; j <= rC && !founded; j++){
+            for(let j = 1; j <= rC && !founded; j++){
                 var row = worksheet.getRow(j).values
                 row = row.map(e => parseCell(e))
 
-                if(row[1] == 'Código'){
-                    var codigos = worksheet.getColumn(1).values
-                    codigos.splice(0,j+1)
-                    codigos = codigos.map(e => parseCell(e))
-
-                    if(onlyCodigos(codigos, j+1) && onlyHasXsOrNulls(worksheet, row, j+1)){
-                        sheetN = sheetId
-                        rowHeaderN = j
-                        founded = true
+                try{
+                    headersPos = validateHeaders(row, typeOrg)
+                    founded = true
+                    sheetN = i
+                    rowHeaderN = j
+                }catch(e){
+                    if(e.nHeaders > nSuc){
+                        error = e.message
+                        nSuc = e.nHeaders
                     }
                 }
             }
         }
-    })
+    }
 
-    return [sheetN, rowHeaderN, founded]
-}
+    if(error != "") throw("Não foi encontrada a TS: " + error)
 
-function checkHeaders(typeOrg, columns){
-    if(typeOrg == "TS Organizacional"){
-        var ent = {
-            donos: 0,
-            participantes: 0
-        }
-
-        for(var i = 0; i < columns.length && typeOrg != null; i++){
-            //garante que não há colunas de entidades
-            if(columns[i].entidade == null){
-                ent[columns[i].type + 's']++
-            }else{
-                typeOrg = null
-            }
-        }
-
-        if(ent.donos > 1 || ent.participantes > 1){
-            //logo não é válido porque só deve haver no máximo uma coluna Dono e outra Participante
-            typeOrg = null
-        }
-    }else if(typeOrg == "TS Pluriorganizacional"){
-        var ents = {}
-
-        for(var i = 0; i < columns.length && typeOrg != null; i++){
-            //garante que as colunas são de entidades
-            if(columns[i].entidade != null){
-                if(!ents[columns[i].entidade]){
-                    ents[columns[i].entidade] = {
-                        donos: 0,
-                        participantes: 0
-                    }
-                }
-                ents[columns[i].entidade][columns[i].type + 's']++
-            }else{
-                typeOrg = null
-            }
-        }
-
-        if(typeOrg != null){
-            for(var k in ents){
-                if(ents[k].donos > 1 || ents[k].participantes > 1){
-                    //logo não é válido para cada entidade só deve haver no máximo uma coluna Dono e outra Participante
-                    typeOrg = null
-                }           
-            }
+    if(founded){
+        try{
+            ents_tips = await validateColumnsValues(workbook.worksheets[sheetN], rowHeaderN+1, headersPos, typeOrg)
+        }catch(e){
+            throw("A TS não se encontra no formato correto: " + e)
         }
     }
 
-    return typeOrg
+    return [sheetN, rowHeaderN, headersPos, ents_tips]
 }
 
-function parseHeaders(worksheet, rowHeaderN, columns, entidades){
-    var headers = worksheet.getRow(rowHeaderN).values
-    headers = headers.map(e => parseCell(e))
-    var typeOrg = null
-    var titulos = []
-
-    for(var i = 2; i < headers.length; i++){
-        if(headers[i].startsWith('Dono')){
-
-            typeOrg = "TS Organizacional"
-            columns.push({type: "dono", value: i})
-
-        }else if(headers[i].startsWith('Participante')){
-
-            typeOrg = "TS Organizacional"
-            columns.push({type: "participante", value: i})
-
-        }else if(headers[i].includes('Dono')){
-
-            typeOrg = "TS Pluriorganizacional"
-            var entidade = headers[i].split(' Dono')[0]
-            columns.push({type: "dono", entidade: entidade, value: i})
-
-            if(entidades.indexOf(entidade) == -1){
-                entidades.push(entidade)
-            }
-
-        }else if(headers[i].includes('Participante')){
-
-            typeOrg = "TS Pluriorganizacional"
-            var entidade = headers[i].split(' Participante')[0]
-            columns.push({type: "participante", entidade: entidade, value: i})
-
-            if(entidades.indexOf(entidade) == -1){
-                entidades.push(entidade)
-            }
-        }else if(headers[i] == "Título"){
-            titulos.push(i)
-        }
-    }
-
-    switch(titulos.length){
-        case 0:
-            titulos = null
-            break
-        case 1:
-            titulos = titulos[0]
-            break
-        default:
-            titulos = titulos.length
-            typeOrg = null
-            break
-    }
-
-    typeOrg = checkHeaders(typeOrg, columns)
-
-    return [typeOrg, titulos]
-}
-
-function constructTSO(worksheet, columns, codigos, titulos, start, obj, stats){
-    var cLen = columns.length
-
+function constructTSO(worksheet, columns, start, obj, stats){
     for(var i = start + 1; i <= worksheet.rowCount; i++){
         var row = worksheet.getRow(i).values
         var p = {}
 
-        for(var j=0; j < cLen; j++){
-            var type = columns[j].type
-
-            if(/^\s*[xX]\s*$/g.test(parseCell(row[columns[j].value]))){
-                p[type] = true
-                stats[type + 's']++
-            }else{
-                p[type] = false
-            }
+        if(/^\s*[xX]\s*$/g.test(parseCell(row[columns.donos]))){
+            p.dono = true
+            stats.donos++
+        }else{
+            p.dono = false
         }
 
-        if(p.dono || p.participante){
-            p.codigo = codigos[i].replace(/\s*/g,"")
-            
-            if(titulos != null){
-                if(titulos[i] != null){
-                    p.titulo = titulos[i].replace(/^\s*(\S.*\S)\s*$/g,"$1")
-                }else{
-                    p.titulo = ''
-                }
-            }
+        let tipPart = parseCell(row[columns.participantes])
+        if(tipPart){
+            tipPart = tipPart.replace(/\s*/g,"")
+            p.participante = tipPart
+            stats.participantes++
+        }else{
+            p.participante = "NP"
+        }
+
+        if(p.dono || p.participante != "NP"){
+            p.codigo = parseCell(row[columns.codigos]).replace(/\s*/g,"")
+            p.titulo = parseCell(row[columns.titulos]).replace(/^\s*(\S.*\S)\s*$/g,"$1")
 
             stats.processos++
             obj.push(p)
@@ -635,58 +701,70 @@ function constructTSO(worksheet, columns, codigos, titulos, start, obj, stats){
     }
 }
 
-function constructTSP(worksheet, columns, codigos, titulos, start, obj, stats){
-    var cLen = columns.length
-
+function constructTSP(worksheet, columns, start, obj, stats){
     for(var i = start + 1; i <= worksheet.rowCount; i++){
         var row = worksheet.getRow(i).values
         var p = {
             entidades: []
         }
 
-        for(var j=0; j < cLen; j++){
-            var type = columns[j].type
-            var entidade = columns[j].entidade
-            var nEnts = p.entidades.length
+        let donos = parseCell(row[columns.donos])
+        if(donos != null){
+            donos = donos.split('#')
+            for(let dono of donos){
+                var index = -1
+                dono = dono.replace(/\s*/g,"")
 
-            var index = -1
-            for(var w = 0; w < nEnts; w++){
-                if(p.entidades[w].sigla == entidade){
-                    index = w
+                for(var w = 0; w < p.entidades.length && index == -1; w++){
+                    if(p.entidades[w].sigla == dono){
+                        index = w
+                    }
                 }
-            }
 
-            if(index == -1){
-                p.entidades.push({sigla: entidade})
-                index = nEnts
-            }
+                if(index == -1){
+                    index = p.entidades.length
+                    p.entidades.push({sigla: dono})
+                }
 
-            if(/^\s*[xX]\s*$/g.test(parseCell(row[columns[j].value]))){
-                p.entidades[index][type] = true
-                stats[entidade][type + 's']++
-            }else{
-                p.entidades[index][type] = false
+                p.entidades[index].dono = true
+                p.entidades[index].participante = "NP"
+                stats[dono].donos++
             }
         }
 
-        var aux = []
-        for(var w =0; w < p.entidades.length; w++){
-            if(p.entidades[w].dono || p.entidades[w].participante){
-                aux.push(p.entidades[w])
+        let parts = parseCell(row[columns.participantes])
+        if(parts != null){
+            parts = parts.split('#')
+            let tipo_part = parseCell(row[columns.tipo_participacao]).split('#')
+
+            for(let j = 0; j < parts.length; j++){
+                var index = -1
+                parts[j] = parts[j].replace(/\s*/g,"")
+                tipo_part[j] = tipo_part[j].replace(/\s*/g,"")
+
+                for(var w = 0; w < p.entidades.length && index == -1; w++){
+                    if(p.entidades[w].sigla == parts[j]){
+                        index = w
+                    }
+                }
+
+                if(index == -1){
+                    index = p.entidades.length
+                    p.entidades.push({sigla: parts[j]})
+                }
+
+                if(p.entidades[index].dono == null)
+                    p.entidades[index].dono = false
+
+                p.entidades[index].participante = tipo_part[j]
+                stats[parts[j]].participantes++
             }
         }
-        p.entidades = aux
 
         if(p.entidades.length > 0){
-            p.codigo = codigos[i].replace(/\s*/g,"")
-            
-            if(titulos != null){
-                if(titulos[i] != null){
-                    p.titulo = titulos[i].replace(/^\s*(\S.*\S)\s*$/g,"$1")
-                }else{
-                    p.titulo = ''
-                }
-            }
+            p.codigo = parseCell(row[columns.codigos]).replace(/\s*/g,"")
+            p.titulo = parseCell(row[columns.titulos]).replace(/^\s*(\S.*\S)\s*$/g,"$1")
+            p.edited = true
             
             for(var w = 0; w < p.entidades.length; w++){
                 stats[p.entidades[w].sigla].processos++
@@ -697,88 +775,65 @@ function constructTSP(worksheet, columns, codigos, titulos, start, obj, stats){
     }
 }
 
-SelTabs.criarPedidoDoCSV = async function (workbook, email, entidade_user, entidade_ts, tipo_ts) {
-    var aux = findSheet(workbook)
+SelTabs.criarPedidoDoCSV = async function (workbook, email, entidade_user, entidade_ts, tipo_ts, designacao) {
+    var aux = await findSheet(workbook, tipo_ts)
     var sheetN = aux[0]
     var rowHeaderN = aux[1]
-    var founded = aux[2]
+    var columns = aux[2]
+    var ents_tips = aux[3]
 
-    if(founded){
-        var worksheet = workbook.getWorksheet(sheetN)
-        var columns = [] 
-        var entidades = []
+    var worksheet = workbook.worksheets[sheetN]
+    var obj = {}
+    var stats = {}
+    var list = []
 
-        aux = parseHeaders(worksheet, rowHeaderN, columns, entidades)
-        var typeOrg = aux[0]
-        var cTitulos = aux[1]
+    if(tipo_ts == "TS Organizacional"){
+        stats = {
+            processos: 0,
+            donos: 0,
+            participantes: 0
+        }
 
-        if(typeOrg != null){
-            if(tipo_ts == typeOrg){ 
-                var obj
-                var stats = {}
-
-                if(typeOrg == "TS Organizacional"){
-                    stats = {
-                        processos: 0,
-                        donos: 0,
-                        participantes: 0
-                    }
-                }else{
-
-                    entidades.forEach(e => {
-                        stats[e] = {
-                            processos: 0,
-                            donos: 0,
-                            participantes: 0
-                        }
-                    })
-                }
-
-                var codigos = worksheet.getColumn(1).values
-                codigos = codigos.map(e => parseCell(e))
-
-                var titulos = null
-                if(cTitulos != null){
-                    titulos = worksheet.getColumn(cTitulos).values
-                    titulos = titulos.map(e => parseCell(e))
-                }
-
-                if(typeOrg == "TS Organizacional"){
-                    var list = [] 
-                    constructTSO(worksheet, columns, codigos, titulos, rowHeaderN, list, stats)
-                    obj = {
-                        processos: list,
-                        entidade: entidade_ts
-                    }
-                }else{
-                    obj = []
-                    constructTSP(worksheet, columns, codigos, titulos, rowHeaderN, obj, stats)
-                }
-
-                var pedido = {
-                    tipoPedido: "Criação",
-                    tipoObjeto: typeOrg,
-                    novoObjeto: {ts: obj},
-                    user: {email: email},
-                    //Adiciona a entidade do utilizador criador do pedido
-                    entidade: entidade_user
-                }
-
-                try{
-                    var pedido = await Pedidos.criar(pedido)
-                    return {codigo: pedido.codigo, stats: stats}
-                }catch(e){
-                    throw(e)
-                }
-            }else{
-                throw(`Tipo de Tabela de Seleção escolhida não coincide com o tipo de tabela de seleção presente no ficheiro.`)
-            }
-        }else{
-            throw(`Não contém informação suficiente ou contém colunas a mais na linha ${rowHeaderN}.\nNão é possível distinguir se é TS Organizacional ou TS Pluriorganizacional.\n` + requisitosFicheiro)
+        constructTSO(worksheet, columns, rowHeaderN, list, stats)
+        obj.ts = {
+            designacao: designacao,
+            processos: list,
+            entidade: entidade_ts
         }
     }else{
-        throw("Não foi encontrada informação por forma a criar a tabela de seleção.\n" + requisitosFicheiro)
+        obj.entidades = []
+        ents_tips.forEach(e => {
+            stats[e.sigla] = {
+                processos: 0,
+                donos: 0,
+                participantes: 0
+            }
+
+            obj.entidades.push({
+                sigla: e.sigla,
+                designacao: e.designacao,
+                label: e.sigla + " - " + e.designacao
+            })
+        })
+
+        constructTSP(worksheet, columns, rowHeaderN, list, stats)
+        obj.designacao = designacao
+        obj.listaProcessos = {
+            procs: list
+        }
     }
+
+    var pedido = {
+        tipoPedido: "Criação",
+        tipoObjeto: tipo_ts,
+        novoObjeto: obj,
+        user: {email: email},
+        //Adiciona a entidade do utilizador criador do pedido
+        entidade: entidade_user
+    }
+
+    var pedido = await Pedidos.criar(pedido)
+    return {codigo: pedido, stats: stats}
 }
 
 function queryClasse(id, proc) {
