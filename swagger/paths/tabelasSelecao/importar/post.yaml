@@ -8,16 +8,33 @@ description: |
   * O quote e o escape são realizados através de '\"'
   * O encoding do ficheiro tem de ser UTF-8
 
-  O ficheiro (seja CSV ou Excel(xslx)) tem de:
+  O ficheiro (seja CSV ou Excel(xslx)) tem de possuir uma sheet em que tenha:
 
-  * Possuir uma sheet em que na 1º coluna tenha como header 'Código' e por baixo os códigos dos processos
-  * Na mesma linha da header 'Código' possuir:
-    * No máximo uma coluna 'Título'
-    * Pelo menos uma coluna começada por 'Dono' ou 'Participante', no máximo uma de cada (TS Organizacional)
-    * Pelo menos uma coluna do tipo 'Entidade Dono' ou 'Entidade Participante', no máximo uma de cada para cada entidade (TS Pluriorganizacional)
-  * Por baixo de cada coluna (exceto a coluna 'Título' e 'Código') deve estar:
-      * x ou X os processos selecionados
+  * Uma coluna 'Código' com os códigos dos processos
+  * Uma coluna 'Título' com os títulos dos processos
+  * Se for uma TS Organizacional:
+    * Uma coluna 'Dono' com:
+      * x ou X nos processos selecionados
       * Nada para os processos não selecionados
+    * Uma coluna 'Participante' com o tipo de participação:
+      * Apreciador
+      * Assessor
+      * Comunicador
+      * Decisor
+      * Executor
+      * Iniciador
+      * Nada para os processos não selecionados
+  * Se for uma TS Pluriorganizacional:
+    * Uma coluna 'Dono' com as siglas das entidades/tipologias que são donas separadas por '#'
+    * Uma coluna 'Participante' com as siglas das entidades/tipologias que são donas separadas por '#'
+    * Uma coluna 'Tipo de participação' com os tipos de participação das entidades/tipologias referidas na coluna 'Participante' separados por '#'
+    * Os tipos de participação válidos são:
+      * Apreciador
+      * Assessor
+      * Comunicador
+      * Decisor
+      * Executor
+      * Iniciador
 
   **Acesso permitido a:** Utilizadores com nível 1, 3, 3.5, 4, 5, 6 e 7
 security:
@@ -26,7 +43,7 @@ security:
 tags:
   - Tabelas de Seleção
 requestBody:
-  description: 'FormData com o ficheiro (file), o tipo de TS a criar (tipo_ts) e, caso o tipo de TS seja "TS Organizacional", a sigla da entidade da TS (entidade_ts)'
+  description: 'FormData com o ficheiro (file), a designação da TS, o tipo de TS a criar (tipo_ts) e, caso o tipo de TS seja "TS Organizacional", a sigla da entidade da TS (entidade_ts)'
   required: true
   content:
     multipart/form-data:
@@ -36,6 +53,8 @@ requestBody:
           file:
             type: string
             format: binary
+          designacao:
+            type: string
           tipo_ts:
             type: string
             enum: ['TS Organizacional', 'TS Pluriorganizacional']
