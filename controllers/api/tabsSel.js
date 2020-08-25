@@ -470,25 +470,30 @@ async function validateColumnsValues(worksheet, start, headers, typeOrg){
             }
         }
     }else if(typeOrg == "TS Pluriorganizacional"){
-        let ents_tips = State.getEntidades().map(e => e.sigla)
+        let ents_tips = State.getEntidades().map(e => {return {sigla: e.sigla, designacao: e.designacao}})
         let tips = await Tipologias.listar('?estado="Ativa"')
-        ents_tips.concat(tips.map(t => t.sigla))
+        ents_tips.concat(tips.map(t => {return {sigla: t.sigla, designacao: t.designacao}}))
 
         //donos
         c = worksheet.getColumn(headers.donos).values
         c = c.map(e => parseCell(e))
 
         for(i=start; i < c.length; i++){
-            if(c[i] != null && !/^\s*\w+\s*(#\s*\w+\s*)*$/g.test(c[i])){
-                throw(`Célula inválida na linha ${i} e coluna ${headers.donos} da tabela!\nApenas deve conter siglas de entidades/tipologias separadas por '#' ou nada (processo não selecionado).`)
-            }else{
-                let siglas = c[i].split('#')
-                for(let sigla of siglas){
-                    if(!ents_tips.includes(sigla)){
-                        throw(`Célula inválida na linha ${i} e coluna ${headers.donos} da tabela!\nA entidade/tipologia ${sigla} não existe.`)
-                    }else{
-                        if(ret.includes(sigla)){
-                            ret.push(sigla)
+            if(c[i] != null){
+                if(!/^\s*\w+\s*(#\s*\w+\s*)*$/g.test(c[i])){
+                    throw(`Célula inválida na linha ${i} e coluna ${headers.donos} da tabela!\nApenas deve conter siglas de entidades/tipologias separadas por '#' ou nada (processo não selecionado).`)
+                }else{
+                    let siglas = c[i].split('#')
+                    for(let sigla of siglas){
+                        sigla = sigla.replace(/\s*/g,'')
+                        let aux = ents_tips.filter(e => e.sigla == sigla)
+
+                        if(!aux.length > 0){
+                            throw(`Célula inválida na linha ${i} e coluna ${headers.donos} da tabela!\nA entidade/tipologia ${sigla} não existe.`)
+                        }else{
+                            if(!ret.filter(e => e.sigla == sigla).length > 0){
+                                ret.push(aux[0])
+                            }
                         }
                     }
                 }
@@ -500,16 +505,21 @@ async function validateColumnsValues(worksheet, start, headers, typeOrg){
         p = p.map(e => parseCell(e))
 
         for(i=start; i < p.length; i++){
-            if(p[i] != null && !/^\s*\w+\s*(#\s*\w+\s*)*$/g.test(p[i])){
-                throw(`Célula inválida na linha ${i} e coluna ${headers.participantes} da tabela!\nApenas deve conter siglas de entidades/tipologias separadas por '#' ou nada (processo não selecionado).`)
-            }else{
-                let siglas = p[i].split('#')
-                for(let sigla of siglas){
-                    if(!ents_tips.includes(sigla)){
-                        throw(`Célula inválida na linha ${i} e coluna ${headers.participantes} da tabela!\nA entidade/tipologia ${sigla} não existe.`)
-                    }else{
-                        if(ret.includes(sigla)){
-                            ret.push(sigla)
+            if(p[i] != null){
+                if(!/^\s*\w+\s*(#\s*\w+\s*)*$/g.test(p[i])){
+                    throw(`Célula inválida na linha ${i} e coluna ${headers.participantes} da tabela!\nApenas deve conter siglas de entidades/tipologias separadas por '#' ou nada (processo não selecionado).`)
+                }else{
+                    let siglas = p[i].split('#')
+                    for(let sigla of siglas){
+                        sigla = sigla.replace(/\s*/g,'')
+                        let aux = ents_tips.filter(e => e.sigla == sigla)
+
+                        if(!aux.length > 0){
+                            throw(`Célula inválida na linha ${i} e coluna ${headers.participantes} da tabela!\nA entidade/tipologia ${sigla} não existe.`)
+                        }else{
+                            if(!ret.filter(e => e.sigla == sigla).length > 0){
+                                ret.push(aux[0])
+                            }
                         }
                     }
                 }
@@ -531,10 +541,16 @@ async function validateColumnsValues(worksheet, start, headers, typeOrg){
             throw(`Os tamanhos das colunas 'Participante' e 'Tipo de participação' não coincidem.`)
 
         for(i=start; i < p.length; i++){
-            let siglas = p[i].split('#')
-            let tps = tp[i].split('#')
+            if(p[i] != null && tp[i] != null){
+                let siglas = p[i].split('#')
+                let tps = tp[i].split('#')
 
-            if(siglas.length != tps.length){
+                if(siglas.length != tps.length){
+                    throw(`As células das colunas 'Participante' e 'Tipo de participação' na linha ${i} não tem o mesmo número de elementos.`)
+                }
+            }else if(p[i] == null && tp[i] != null){
+                throw(`As células das colunas 'Participante' e 'Tipo de participação' na linha ${i} não tem o mesmo número de elementos.`)
+            }else if(p[i] != null && tp[i] == null){
                 throw(`As células das colunas 'Participante' e 'Tipo de participação' na linha ${i} não tem o mesmo número de elementos.`)
             }
         }   
@@ -668,6 +684,7 @@ function constructTSO(worksheet, columns, start, obj, stats){
 
         let tipPart = parseCell(row[columns.participantes])
         if(tipPart){
+            tipPart = tipPart.replace(/\s*/g,"")
             p.participante = tipPart
             stats.participantes++
         }else{
@@ -691,50 +708,63 @@ function constructTSP(worksheet, columns, start, obj, stats){
             entidades: []
         }
 
-        let donos = parseCell(row[columns.donos]).split('#')
-        for(let dono of donos){
-            var index = -1
-            for(var w = 0; w < p.entidades.length && index == -1; w++){
-                if(p.entidades[w].sigla == dono){
-                    index = w
+        let donos = parseCell(row[columns.donos])
+        if(donos != null){
+            donos = donos.split('#')
+            for(let dono of donos){
+                var index = -1
+                dono = dono.replace(/\s*/g,"")
+
+                for(var w = 0; w < p.entidades.length && index == -1; w++){
+                    if(p.entidades[w].sigla == dono){
+                        index = w
+                    }
                 }
-            }
 
-            if(index == -1){
-                p.entidades.push({sigla: dono})
-                index = p.entidades.length - 1
-            }
+                if(index == -1){
+                    index = p.entidades.length
+                    p.entidades.push({sigla: dono})
+                }
 
-            p.entidades[index].dono = true
-            p.entidades[index].participante = "NP"
-            stats[dono].donos++
+                p.entidades[index].dono = true
+                p.entidades[index].participante = "NP"
+                stats[dono].donos++
+            }
         }
 
-        let parts = parseCell(row[columns.donos]).split('#')
-        let tipo_part = parseCell(row[columns.tipo_participacao]).split('#')
-        for(let j = 0; j < parts.length; j++){
-            var index = -1
-            for(var w = 0; w < p.entidades.length && index == -1; w++){
-                if(p.entidades[w].sigla == parts[j]){
-                    index = w
+        let parts = parseCell(row[columns.participantes])
+        if(parts != null){
+            parts = parts.split('#')
+            let tipo_part = parseCell(row[columns.tipo_participacao]).split('#')
+
+            for(let j = 0; j < parts.length; j++){
+                var index = -1
+                parts[j] = parts[j].replace(/\s*/g,"")
+                tipo_part[j] = tipo_part[j].replace(/\s*/g,"")
+
+                for(var w = 0; w < p.entidades.length && index == -1; w++){
+                    if(p.entidades[w].sigla == parts[j]){
+                        index = w
+                    }
                 }
+
+                if(index == -1){
+                    index = p.entidades.length
+                    p.entidades.push({sigla: parts[j]})
+                }
+
+                if(p.entidades[index].dono == null)
+                    p.entidades[index].dono = false
+
+                p.entidades[index].participante = tipo_part[j]
+                stats[parts[j]].participantes++
             }
-
-            if(index == -1){
-                p.entidades.push({sigla: parts[j]})
-                index = p.entidades.length - 1
-            }
-
-            if(!"dono" in p.entidades[index])
-                p.entidades[index].dono = false
-
-            p.entidades[index].participante = tipo_part[j]
-            stats[parts[j]].participantes++
         }
 
         if(p.entidades.length > 0){
             p.codigo = parseCell(row[columns.codigos]).replace(/\s*/g,"")
             p.titulo = parseCell(row[columns.titulos]).replace(/^\s*(\S.*\S)\s*$/g,"$1")
+            p.edited = true
             
             for(var w = 0; w < p.entidades.length; w++){
                 stats[p.entidades[w].sigla].processos++
@@ -771,12 +801,19 @@ SelTabs.criarPedidoDoCSV = async function (workbook, email, entidade_user, entid
             entidade: entidade_ts
         }
     }else{
+        obj.entidades = []
         ents_tips.forEach(e => {
-            stats[e] = {
+            stats[e.sigla] = {
                 processos: 0,
                 donos: 0,
                 participantes: 0
             }
+
+            obj.entidades.push({
+                sigla: e.sigla,
+                designacao: e.designacao,
+                label: e.sigla + " - " + e.designacao
+            })
         })
 
         constructTSP(worksheet, columns, rowHeaderN, list, stats)
