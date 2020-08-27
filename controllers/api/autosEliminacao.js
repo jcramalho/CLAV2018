@@ -222,7 +222,8 @@ AutosEliminacao.adicionar = async function (auto) {
         let resultNum = await execQuery("query", queryNum);
         resultNum = normalize(resultNum)
         
-        var id = "ae_"+auto.entidade.split("_")[1]+"_"+currentTime.getFullYear()+"_"+(resultNum.length+1)
+        var num = resultNum.length == 0 ? "1" : (parseInt(resultNum[resultNum.length-1].ae.split("_")[3])+1)
+        var id = "ae_"+auto.entidade.split("_")[1]+"_"+currentTime.getFullYear()+"_"+num
         var numero = id.split("ae_")[1].replace(/\_/g,"/")
         var data = currentTime.getFullYear()+"-"+(currentTime.getMonth()+1)+"-"+currentTime.getDate()
         var query = `{
@@ -302,29 +303,7 @@ AutosEliminacao.adicionar = async function (auto) {
                 `
             
             var indexAg = 1;
-            for(agregacao of zona.agregacoes) {
-                var idAg = "ag_"+indexAg+"_"+idZona
-                query += `
-                    clav:${idZona} clav:temAgregacao clav:${idAg} .
-                `
-
-                query += `
-                    clav:${idAg} a clav:Agregacao ;
-                        clav:agregacaoCodigo "${agregacao.codigo}" ;
-                        clav:agregacaoTitulo "${agregacao.titulo}" ;
-                        clav:agregacaoDataContagem "${agregacao.dataContagem}" .
-                `
-                if(agregacao.ni.toLowerCase() === "dono") 
-                    query += `
-                        clav:${idAg} clav:temNI clav:vc_dono .
-                    `
-                else 
-                    query += `
-                        clav:${idAg} clav:temNI clav:vc_participante .
-                    `
-                
-                indexAg++;
-            }
+             
             indexZona++;
         }
         query += `
@@ -532,17 +511,17 @@ AutosEliminacao.adicionarRADA = async function (auto) {
  */
 AutosEliminacao.importar = async (auto, tipo, user) => {    
     auto.entidade = user.entidade
-    auto.responsavel = user.name
+    auto.responsavel = user.email
+    auto.tipo = tipo
     var pedido = {
         tipoPedido: "Importação",
-        tipoObjeto: tipo,
-        novoObjeto: {
-            ae: auto
-        },
-        user: {
-            email: user.email
-        },
-        entidade: user.entidade
+        tipoObjeto: "Auto de Eliminação",
+        novoObjeto: auto,
+        user: {email: user.email},
+        entidade: user.entidade,
+        token: user.token,
+        historico: [],
+        objetoOriginal: auto
     }
     var pedido = await Pedidos.criar(pedido)
     return {codigo: pedido.codigo, auto: auto }
