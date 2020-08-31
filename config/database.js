@@ -1,5 +1,5 @@
 // const ip = '192.168.85.197'
-const ip = process.env.IP || '192.168.85.197'//'localhost'
+const ip = process.env.IP || 'localhost' //'192.168.85.197'
 const port = process.env.PORT || '7779'
 module.exports.apiVersion = process.env.API_VERSION || 'v2'
 
@@ -16,7 +16,7 @@ module.exports.prefixes = `
 
 module.exports.host = 'http://'+ip+':'+port
 
-module.exports.swaggerURL = process.env.SWAGGER_URL || /*this.host*/'http://clav-api.dglab.gov.pt'
+module.exports.swaggerURL = process.env.SWAGGER_URL || 'http://' + ip + ":" + port //'http://clav-api.dglab.gov.pt'
 
 module.exports.userDB = process.env.MONGODB ? 'mongodb://' + process.env.MONGODB + '/m51-clav' : 'mongodb://localhost/m51-clav'
 
