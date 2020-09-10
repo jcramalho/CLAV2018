@@ -6,13 +6,14 @@ var AutosEliminacao = module.exports
 
 AutosEliminacao.listar = async function() {
     let query = `
-    SELECT ?id ?data ?entidade ?autoTipo ?tipo ?numero ?referencial ?referencialLabel ?referencialTitulo WHERE {
+    SELECT ?id ?data ?entidade ?autoTipo ?tipo ?fonte ?numero ?referencial ?referencialLabel ?referencialTitulo WHERE {
         ?id a clav:AutoEliminacao;
             clav:autoDataAutenticacao ?data;
             clav:temEntidadeResponsavel ?entidade .
         OPTIONAL {
             ?id clav:temLegislacao ?legislacao .
-            ?legislacao clav:diplomaFonte ?tipo;
+            ?legislacao clav:diplomaFonte ?fonte;
+                    clav:diplomaTipo ?tipo;
                     clav:diplomaNumero ?numero .
         }
         OPTIONAL {
@@ -50,6 +51,7 @@ AutosEliminacao.consultar = async function(id,userEnt) {
         OPTIONAL {
             clav:${id} clav:temLegislacao ?legislacao .
             ?legislacao clav:diplomaFonte ?fonte;
+                      clav:diplomaTipo ?tipo;
                       clav:diplomaNumero ?legNumero .
         }
         OPTIONAL {
@@ -80,8 +82,7 @@ AutosEliminacao.consultar = async function(id,userEnt) {
         }
         
         if(autos[0].legislacao) {
-            if(autos[0].fonte == "RADA") res.legislacao = "Despacho "+autos[0].legNumero
-            else res.legislacao = "Portaria "+autos[0].legNumero
+            res.legislacao = autos[0].tipo+" "+autos[0].legNumero
             res.refLegislacao = autos[0].legislacao.split("#")[1]
         }
         else {
@@ -201,7 +202,15 @@ AutosEliminacao.adicionar = async function (auto) {
     var currentTime = new Date();
     if(auto.legislacao) {
         var tipo = auto.legislacao.split(' ')[0]
-        var numero = auto.legislacao.split(' ')[1]
+        var tamanho = auto.legislacao.split(' - ')[0].split(' ').length
+        console.log(tamanho)
+        if(tamanho == 2)
+            var numero = auto.legislacao.split(' ')[1]
+        else {
+            for(var i=1;i<tamanho-1;i++)
+                tipo = tipo + " " + auto.legislacao.split(' ')[i]; 
+            var numero = auto.legislacao.split(' ')[tamanho-1]
+        }
         var queryLeg = `
             SELECT * WHERE {
                 ?leg a clav:Legislacao;
