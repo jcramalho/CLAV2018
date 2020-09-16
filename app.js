@@ -20,9 +20,8 @@ const corsOpts = {
     methods: ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Accept', 'Authorization', 'Cache-Control', 'Content-Type', 'DNT', 'If-Modified-Since', 'Keep-Alive', 'Origin', 'User-Agent', 'X-Requested-With', 'Content-Length']
 }
-//app.use(cors(corsOpts))
-app.use(cors())
-//app.options('*', cors(corsOpts))
+app.use(cors(corsOpts))
+app.options('*', cors(corsOpts))
 
 // Logging na consola do admin
 var logger = require('morgan')
