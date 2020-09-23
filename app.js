@@ -176,6 +176,7 @@ mainRouter.use('/indicadores', require('./routes/api/indicadores'));
 mainRouter.use('/parametros', require('./routes/api/parametros'));
 mainRouter.use('/rada', require('./routes/api/rada'));
 mainRouter.use('/ficheirosEstaticos', require('./routes/api/ficheirosEstaticos'));
+mainRouter.use('/ppds', require('./routes/api/ppds'));
 
 app.use('/' + dataBases.apiVersion, mainRouter);
 
