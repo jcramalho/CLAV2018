@@ -51,6 +51,7 @@ RADA.consulta = async id => {
       clav:codigo ?codigo;
       clav:titulo ?titulo;
       clav:dataAprovacao ?dataAprovacao;
+      clav:aprovadoPorLeg ?despachoAprovacao;
       clav:contemRE ?re;
       clav:contemTS ?ts.
     
