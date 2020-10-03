@@ -196,9 +196,6 @@ router.post("/", [
 
 // Atualiza uma legislação na BD
 router.put("/:id", [
-    verificaLegId("param", "id")
-        .custom(estaAtiva)
-        .withMessage("Só é possível editar diplomas legislativos ativos"),
     existe("body", "numero")
         .custom(naoExisteNumeroSelf)
         .withMessage("Número já em uso"),

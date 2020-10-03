@@ -66,9 +66,7 @@ router.post('/importar', [
         if(error) res.status(500).send(`Erro ao importar Auto de Eliminação: ${error}`)
         else if(!formData.file || !formData.file.path) res.status(500).send(`Erro ao importar Auto de Eliminação: É necessário o campo file`)
         else if(formData.file.type=="application/xml") {
-            if(req.query.tipo === "AE PGD/LC") {
-                var schemaPath = __dirname+"/../../public/schema/autoEliminacao.xsd"
-            }else var schemaPath = __dirname+"/../../public/schema/autoEliminacao_s_lc.xsd"
+            var schemaPath = __dirname+"/../../public/schema/autoEliminacao.xsd"
 
             var schema = await fs.readFileSync(schemaPath)
             var xsl = xml.parseXml(schema)
