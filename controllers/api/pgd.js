@@ -108,7 +108,7 @@ PGD.consultarRADA = async function (id) {
 
 PGD.consultar = async function (idPGD) {
   let query = `
-  select ?classe ?nivel ?codigo ?referencia ?titulo ?descricao ?df ?notaDF ?pca ?notaPCA ?formaContagem ?subFormaContagem ?designacaoParticipante ?designacaoDono ?classePai where {
+  select ?classe ?nivel ?codigo ?referencia ?titulo ?descricao ?df ?notaDF ?pca ?notaPCA ?formaContagem ?subFormaContagem ?classePai where {
     ?uriClasse clav:pertencePGD clav:${idPGD} ;
                clav:nivel ?nivel ;
     OPTIONAL { ?uriClasse clav:codigo ?codigo; }
@@ -124,14 +124,6 @@ PGD.consultar = async function (idPGD) {
         OPTIONAL { ?uriPCA clav:pcaNota ?notaPCA} 
     }
     OPTIONAL { 
-      ?uriClasse clav:temDono ?entDono .
-      ?entDono clav:entDesignacao ?designacaoDono .
-    }
-    OPTIONAL { 
-      ?uriClasse clav:temParticipante ?entParticipante .
-      ?entParticipante clav:entDesignacao ?designacaoParticipante .
-    }
-    OPTIONAL { 
       ?uriClasse clav:pcaFormaContagemNormalizada ?uriFormaContagem .
       ?uriFormaContagem skos:prefLabel ?formaContagem .
       OPTIONAL { 
@@ -140,12 +132,44 @@ PGD.consultar = async function (idPGD) {
       }
     }
     OPTIONAL { ?uriClasse clav:temPai ?uriClassePai }
-	BIND(STRAFTER(STR(?uriClasse), 'clav#') AS ?classe).
-	BIND(STRAFTER(STR(?uriClassePai), 'clav#') AS ?classePai).
-}
+    BIND(STRAFTER(STR(?uriClasse), 'clav#') AS ?classe).
+    BIND(STRAFTER(STR(?uriClassePai), 'clav#') AS ?classePai).
+  }
   `
 
-  return execQuery("query", query).then(response => {
-    return normalize(response);
-  });
+  try {
+    let result = await execQuery("query", query);
+    result = normalize(result)
+
+    for(var r of result) {
+      if(r.nivel>2) {
+        var queryDonos = `
+          SELECT ?entDono ?designacaoDono WHERE {
+            clav:${r.classe} clav:temDono ?uriEntDono .
+            ?uriEntDono clav:entDesignacao ?designacaoDono .
+            BIND(STRAFTER(STR(?uriEntDono), 'clav#') AS ?entDono).
+          }
+        `
+        var resultDonos = await execQuery("query", queryDonos);
+        resultDonos = normalize(resultDonos);
+        if(resultDonos && resultDonos.length>0)
+          r.donos = resultDonos
+
+        var queryParts = `
+          SELECT ?entParticipante ?designacaoParticipante WHERE {
+            clav:${r.classe} clav:temParticipante ?uriEntParticipante .
+            ?uriEntParticipante clav:entDesignacao ?designacaoParticipante .
+            BIND(STRAFTER(STR(?uriEntParticipante), 'clav#') AS ?entParticipante).
+          }
+        `
+        var resultParts = await execQuery("query", queryParts);
+        resultParts = normalize(resultParts);
+        if(resultParts && resultParts.length>0)
+          r.participantes = resultParts
+      }
+    }
+
+    return result
+  }
+  catch (erro) { throw (erro); }
 }
