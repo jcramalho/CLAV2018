@@ -16,10 +16,11 @@ RADA.criar = async rada => {
 };
 
 RADA.listar = async () => {
-  let query = `select ?titulo ?codigo ?dataAprovacao where { 
+  let query = `select ?titulo ?codigo ?dataAprovacao ?estado where { 
     ?s rdf:type clav:RADA;
       clav:codigo ?codigo;
       clav:titulo ?titulo;
+      clav:estado ?estado;
       clav:dataAprovacao ?dataAprovacao.
   }`
   try {
@@ -50,11 +51,13 @@ RADA.consulta = async id => {
     clav:rada_${id} rdf:type clav:RADA;
       clav:codigo ?codigo;
       clav:titulo ?titulo;
+      clav:estado ?estado;
       clav:dataAprovacao ?dataAprovacao;
-      clav:dataRevogacao ?dataRevogacao;
       clav:aprovadoPorLeg ?despachoAprovacao;
       clav:contemRE ?re;
       clav:contemTS ?ts.
+
+      OPTIONAL { clav:rada_${id} clav:dataRevogacao ?dataRevogacao. }
 
       ?despachoAprovacao clav:diplomaSumario ?despachoSumario;
                 clav:diplomaNumero ?despachoNumero.
