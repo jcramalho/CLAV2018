@@ -64,6 +64,10 @@ Pedidos.criar = async function (pedidoParams) {
   if (pedidoParams.novoObjeto.codigo) {
     pedido.objeto.codigo = pedidoParams.novoObjeto.codigo;
   }
+  
+  if(pedidoParams.pedidos_dependentes) {
+    pedido.pedidos_dependentes = pedidoParams.pedidos_dependentes;
+  }
 
   if (pedidoParams.entidade) {
     pedido.entidade = pedidoParams.entidade;
