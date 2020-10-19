@@ -847,7 +847,7 @@ function queryClasse(id, proc) {
                        clav:classeStatus "${proc.status}" ;
                        clav:codigo "${proc.codigo}" ;
                        clav:titulo "${proc.titulo}" ;
-                       clav:descricao "${proc.descricao.replace(/"/g, '\"')}" .
+                       clav:descricao "${proc.descricao.replace(/(\r\n|\n|\r)/gm, "").replace(/"/g, '\\"')}" .
     `
     if (proc.procTrans)
         query += `
@@ -1066,7 +1066,7 @@ SelTabs.adicionar = async function (tabela) {
         var id = "ts" + num
         var data = currentTime.getFullYear() + "-" + (currentTime.getMonth() + 1) + "-" + currentTime.getDate()
         var entID = ""
-        if (tabela.objeto.tipo.includes('TS Pluri')) {
+        if (tabela.objeto.tipo === ('TS Pluriorganizacional')) {
 
 
             var query = `{
@@ -1151,7 +1151,7 @@ SelTabs.adicionar = async function (tabela) {
             query += `
                     clav:${id} clav:temEntidade clav:${entID} .
                 `
-
+            
             for (var proc of tabela.objeto.dados.ts.listaProcessos.procs) {
                 //Escreve os triplos do proc
 
@@ -1218,7 +1218,7 @@ SelTabs.adicionar = async function (tabela) {
 
         return execQuery("update", inserir).then(res =>
             execQuery("query", ask).then(result => {
-                if (result.boolean) return "Sucesso na inserção da tabela de seleção";
+                if (result.boolean) return {msg: "Sucesso na inserção da tabela de seleção", id: id}
                 else {
                     execQuery("delete", "DELETE DATA " + query)
                     throw "Insucesso na inserção do tabela de seleção";
