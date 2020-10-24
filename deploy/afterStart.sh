@@ -125,3 +125,5 @@ installCertificate() {
 downloadInstallScript
 getCertificate
 installCertificate
+#start cron
+service cron start
