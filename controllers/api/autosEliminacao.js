@@ -6,13 +6,14 @@ var AutosEliminacao = module.exports
 
 AutosEliminacao.listar = async function() {
     let query = `
-    SELECT ?id ?data ?entidade ?autoTipo ?tipo ?numero ?referencial ?referencialLabel ?referencialTitulo WHERE {
+    SELECT ?id ?data ?entidade ?autoTipo ?tipo ?fonte ?numero ?referencial ?referencialLabel ?referencialTitulo WHERE {
         ?id a clav:AutoEliminacao;
             clav:autoDataAutenticacao ?data;
             clav:temEntidadeResponsavel ?entidade .
         OPTIONAL {
             ?id clav:temLegislacao ?legislacao .
-            ?legislacao clav:diplomaFonte ?tipo;
+            ?legislacao clav:diplomaFonte ?fonte;
+                    clav:diplomaTipo ?tipo;
                     clav:diplomaNumero ?numero .
         }
         OPTIONAL {
@@ -50,6 +51,7 @@ AutosEliminacao.consultar = async function(id,userEnt) {
         OPTIONAL {
             clav:${id} clav:temLegislacao ?legislacao .
             ?legislacao clav:diplomaFonte ?fonte;
+                      clav:diplomaTipo ?tipo;
                       clav:diplomaNumero ?legNumero .
         }
         OPTIONAL {
@@ -80,8 +82,7 @@ AutosEliminacao.consultar = async function(id,userEnt) {
         }
         
         if(autos[0].legislacao) {
-            if(autos[0].fonte == "RADA") res.legislacao = "Despacho "+autos[0].legNumero
-            else res.legislacao = "Portaria "+autos[0].legNumero
+            res.legislacao = autos[0].tipo+" "+autos[0].legNumero
             res.refLegislacao = autos[0].legislacao.split("#")[1]
         }
         else {
@@ -104,8 +105,11 @@ AutosEliminacao.consultar = async function(id,userEnt) {
                     	  clav:dataFim ?dataFim ;
                        	  clav:temClasseControlo ?classe .
             OPTIONAL {
-        			?zonaControlo clav:UIpapel ?UIpapel ;
-    		} .
+        			?zonaControlo clav:nrAgregacoes ?nrAgregacoes ;
+            } .
+            OPTIONAL {
+                ?zonaControlo clav:UIpapel ?UIpapel ;
+            } .
     		OPTIONAL {
         			?zonaControlo clav:UIDigital ?UIdigital ;
     		} .
@@ -133,6 +137,7 @@ AutosEliminacao.consultar = async function(id,userEnt) {
                 id: zonaControlo.zonaControlo.split("#")[1],
                 dataInicio: zonaControlo.dataInicio,
                 dataFim: zonaControlo.dataFim,
+                nrAgregacoes: zonaControlo.nrAgregacoes,
                 UIpapel: zonaControlo.UIpapel,
                 UIdigital: zonaControlo.UIdigital,
                 UIoutros: zonaControlo.UIoutros,
@@ -201,7 +206,15 @@ AutosEliminacao.adicionar = async function (auto) {
     var currentTime = new Date();
     if(auto.legislacao) {
         var tipo = auto.legislacao.split(' ')[0]
-        var numero = auto.legislacao.split(' ')[1]
+        var tamanho = auto.legislacao.split(' - ')[0].split(' ').length
+        
+        if(tamanho == 2)
+            var numero = auto.legislacao.split(' ')[1]
+        else {
+            for(var i=1;i<tamanho-1;i++)
+                tipo = tipo + " " + auto.legislacao.split(' ')[i]; 
+            var numero = auto.legislacao.split(' ')[tamanho-1]
+        }
         var queryLeg = `
             SELECT * WHERE {
                 ?leg a clav:Legislacao;
@@ -222,7 +235,8 @@ AutosEliminacao.adicionar = async function (auto) {
         let resultNum = await execQuery("query", queryNum);
         resultNum = normalize(resultNum)
         
-        var id = "ae_"+auto.entidade.split("_")[1]+"_"+currentTime.getFullYear()+"_"+(resultNum.length+1)
+        var num = resultNum.length == 0 ? "1" : (parseInt(resultNum[resultNum.length-1].ae.split("_")[3])+1)
+        var id = "ae_"+auto.entidade.split("_")[1]+"_"+currentTime.getFullYear()+"_"+num
         var numero = id.split("ae_")[1].replace(/\_/g,"/")
         var data = currentTime.getFullYear()+"-"+(currentTime.getMonth()+1)+"-"+currentTime.getDate()
         var query = `{
@@ -277,6 +291,15 @@ AutosEliminacao.adicionar = async function (auto) {
                     clav:dataInicio "${zona.dataInicio}" ;
                     clav:dataFim "${zona.dataFim}" .
             `
+            if(zona.agregacoes.length==0) 
+                query += `
+                    clav:${idZona} clav:nrAgregacoes "${zona.nrAgregacoes}" .
+                `
+            else 
+                query += `
+                    clav:${idZona} clav:nrAgregacoes "${zona.agregacoes.length}" .
+                `
+            
             if(zona.destino=="C" || zona.destino=="Conservação" || zona.destino =="NE") {
                 query += `
                     clav:${idZona} clav:temNI clav:vc_participante .
@@ -322,7 +345,7 @@ AutosEliminacao.adicionar = async function (auto) {
                     query += `
                         clav:${idAg} clav:temNI clav:vc_participante .
                     `
-                
+
                 indexAg++;
             }
             indexZona++;
@@ -532,17 +555,17 @@ AutosEliminacao.adicionarRADA = async function (auto) {
  */
 AutosEliminacao.importar = async (auto, tipo, user) => {    
     auto.entidade = user.entidade
-    auto.responsavel = user.name
+    auto.responsavel = user.email
+    auto.tipo = tipo
     var pedido = {
         tipoPedido: "Importação",
-        tipoObjeto: tipo,
-        novoObjeto: {
-            ae: auto
-        },
-        user: {
-            email: user.email
-        },
-        entidade: user.entidade
+        tipoObjeto: "Auto de Eliminação",
+        novoObjeto: auto,
+        user: {email: user.email},
+        entidade: user.entidade,
+        token: user.token,
+        historico: [],
+        objetoOriginal: auto
     }
     var pedido = await Pedidos.criar(pedido)
     return {codigo: pedido.codigo, auto: auto }
