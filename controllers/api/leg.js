@@ -27,13 +27,17 @@ const Leg = module.exports;
  * lista das legislacoes existentes que respeitam o filtro dado
  */
 Leg.listar = () => {
-  const query = `SELECT ?id ?data ?dataRevogacao ?numero ?tipo ?sumario ?estado ?entidades ?fonte ?link WHERE {
+  const query = `SELECT ?id ?data ?dataRevogacao ?numero ?tipo ?sumario ?estado ?entidades ?fonte ?link ?aprovou WHERE {
         ?uri rdf:type clav:Legislacao;
              clav:diplomaData ?data;
              clav:diplomaNumero ?numero;
              clav:diplomaTipo ?tipo;
              clav:diplomaSumario ?sumario;
              clav:diplomaEstado ?estado.
+
+        OPTIONAL {
+            ?uri clav:aprovou ?aprovou.
+        }
         OPTIONAL {
           ?uri clav:diplomaLink ?link.
         }
@@ -58,6 +62,7 @@ Leg.listar = () => {
     "sumario",
     "estado",
     "fonte",
+    "aprovou",
     "link"
   ];
   const agrupar = ["entidades"];
