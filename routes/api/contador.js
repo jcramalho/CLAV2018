@@ -14,7 +14,6 @@ router.get("/:codigo", Auth.isLoggedInUser, Auth.checkLevel(5), (req, res) => {
             } else {
                 res.status(404).send(`Contador ${req.params.codigo} não existe`)
             }
-
         })
         .catch(err => res.status(500).send(`Contador ${req.params.codigo} não existe: ${err}`));
 });
