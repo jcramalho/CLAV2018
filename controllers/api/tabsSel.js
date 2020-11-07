@@ -917,15 +917,15 @@ function queryClasse(id, proc) {
         `
         if (proc.pca.formaContagem == "Data de cessação da vigência")
             query += `
-                clav:${pcaId} clav:pcaFormaContragemNormalizada clav:vc_pcaFormaContagem_cessacaoVigencia .
+                clav:${pcaId} clav:pcaFormaContagemNormalizada clav:vc_pcaFormaContagem_cessacaoVigencia .
             `
         else if (proc.pca.formaContagem == "Data de conclusão do procedimento")
             query += `
-                clav:${pcaId} clav:pcaFormaContragemNormalizada clav:vc_pcaFormaContagem_conclusaoProcedimento .
+                clav:${pcaId} clav:pcaFormaContagemNormalizada clav:vc_pcaFormaContagem_conclusaoProcedimento .
             `
         else if (proc.pca.formaContagem == "Conforme disposição legal") {
             query += `
-                clav:${pcaId} clav:pcaFormaContragemNormalizada clav:vc_pcaFormaContagem_disposicaoLegal .
+                clav:${pcaId} clav:pcaFormaContagemNormalizada clav:vc_pcaFormaContagem_disposicaoLegal .
             `
             if (proc.pca.subFormaContagem == "Data do último assento, respeitando 30 anos para o óbito, 50 anos para o casamento e 100 anos para o nascimento, nos termos do artigo 15.º da Lei n.º 324/2007")
                 query += `
@@ -978,19 +978,19 @@ function queryClasse(id, proc) {
         }
         else if (proc.pca.formaContagem == "Data de emissão do título")
             query += `
-                clav:${pcaId} clav:pcaFormaContragemNormalizada clav:vc_pcaFormaContagem_emissaoTitulo .
+                clav:${pcaId} clav:pcaFormaContagemNormalizada clav:vc_pcaFormaContagem_emissaoTitulo .
             `
         else if (proc.pca.formaContagem == "Data de extinção do direito")
             query += `
-                clav:${pcaId} clav:pcaFormaContragemNormalizada clav:vc_pcaFormaContagem_extincaoDireito .
+                clav:${pcaId} clav:pcaFormaContagemNormalizada clav:vc_pcaFormaContagem_extincaoDireito .
             `
         else if (proc.pca.formaContagem == "Data de extinção da entidade sobre a qual recai o procedimento")
             query += `
-                clav:${pcaId} clav:pcaFormaContragemNormalizada clav:vc_pcaFormaContagem_extincaoEntidade .
+                clav:${pcaId} clav:pcaFormaContagemNormalizada clav:vc_pcaFormaContagem_extincaoEntidade .
             `
         else if (proc.pca.formaContagem == "Data de início do procedimento")
             query += `
-                clav:${pcaId} clav:pcaFormaContragemNormalizada clav:vc_pcaFormaContagem_inicioProcedimento .
+                clav:${pcaId} clav:pcaFormaContagemNormalizada clav:vc_pcaFormaContagem_inicioProcedimento .
             `
 
         if (proc.pca.nota)
