@@ -668,14 +668,13 @@ Classes.criar = function (classe) {
     `;
   });
 
-  var myClassePaiCodigo = classe.pai.codigo ? classe.pai.codigo : "lc1"
   var query = ` INSERT DATA {
     ${notas}
     clav:c${classe.codigo} clav:classeStatus "A";
         clav:codigo "${classe.codigo}";
         clav:descricao "${classe.descricao}";
         clav:pertenceLC clav:lc1;
-        clav:temPai clav:${myClassePaiCodigo};
+        clav:temPai clav:${classe.pai.codigo ? "c" + classe.pai.codigo : "lc1"};
         clav:titulo "${classe.titulo}";
         a clav:Classe_N${classe.nivel};
         a owl:NamedIndividual.

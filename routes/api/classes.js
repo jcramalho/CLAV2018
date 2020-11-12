@@ -494,7 +494,7 @@ router.post("/", Auth.isLoggedInKey, Auth.checkLevel(4), (req, res) => {
   Classes.criar(req.body)
     .then(() => {
       res.jsonp(req.body);
-      State.reload();
+      State.reloadClasses();
     })
     .catch(erro => res.status(500).send(`Erro a inserir classe: ${erro}`));
 });
