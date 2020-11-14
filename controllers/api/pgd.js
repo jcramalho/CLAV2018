@@ -50,7 +50,7 @@ PGD.listarLC = async function() {
 PGD.listarRADA = async function() {
   let query = `
   select ?idRADA ?idLeg ?data ?numero ?tipo ?sumario ?link where { 
-    ?uri a clav:Antigo_RADA ;
+    ?uri a clav:RADA_Antigo ;
         clav:temLegislacao ?l .
       ?l clav:diplomaData ?data;
          clav:diplomaNumero ?numero;
