@@ -494,7 +494,7 @@ router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), (req, res) => {
   Classes.criar(req.body)
     .then((dados) => {
       State.reloadClasses()
-        .then(d => res.jsonp(dados) )
+        .then(d => res.status(201).jsonp(dados) )
         .catch(err => res.status(500).send('Erro no reload da cache das classes. A classe foi criada com sucesso.'))
     })
     .catch(erro => res.status(500).send(`Erro a inserir a classe: ${erro}`));
