@@ -485,18 +485,19 @@ router.get("/:id/df", Auth.isLoggedInKey, [verificaId()], (req, res) => {
  * Insere uma Classe L1/L2 na base de dados
  * TODO: Validacao dos campos
  */
-router.post("/", Auth.isLoggedInKey, Auth.checkLevel(4), (req, res) => {
+router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).jsonp(errors.array());
   }
 
   Classes.criar(req.body)
-    .then(() => {
-      res.jsonp(req.body);
-      State.reloadClasses();
+    .then((dados) => {
+      State.reloadClasses()
+        .then(d => res.jsonp(dados) )
+        .catch(err => res.status(500).send('Erro no reload da cache das classes. A classe foi criada com sucesso.'))
     })
-    .catch(erro => res.status(500).send(`Erro a inserir classe: ${erro}`));
+    .catch(erro => res.status(500).send(`Erro a inserir a classe: ${erro}`));
 });
 
 module.exports = router;
