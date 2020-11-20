@@ -43,7 +43,7 @@ servers:
         description: Domínio
         enum:
           - "http://localhost:7779"
-          - "https://clav-test.di.uminho.pt"
+          - "http://clav-test.di.uminho.pt"
       versao:
         description: Versão da API
         default: "v2"
