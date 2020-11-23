@@ -514,7 +514,7 @@ exports.filterPesquisaInfo = l => {
       fc_pca: ternaryOp(l[i].pca.formaContagem, ""),
       sfc_pca: ternaryOp(l[i].pca.subFormaContagem, ""),
       crit_pca: ternaryMap(l[i].pca.justificacao, "tipoId"),
-      df: ternaryOp(l[i].df.valor, "NE"),
+      df: ternaryOp(l[i].df.valor, ""),
       crit_df: ternaryMap(l[i].df.justificacao, "tipoId"),
       donos: ternaryMap(l[i].donos, "idDono"),
       participantes: ternaryMap(l[i].participantes, "idParticipante"),
