@@ -851,3 +851,30 @@ async function loadEntidades() {
     throw err;
   }
 }
+
+exports.updateClasseTreeInfo = classe => {
+  classe.status = "A";
+  classe.filhos = [];
+  classe.tipoProc = "";
+  classe.procTrans = "";
+  classe.id = `http://jcr.di.uminho.pt/m51-clav#c${classe.codigo}`;
+
+  let pai, i;
+  if (classe.pai.codigo) {
+    pai = classTreeInfo.findIndex(c => classe.pai.codigo === c.codigo);
+    i = classTreeInfo[pai].filhos.findIndex(c => classe.codigo < c.codigo);
+    if (i !== -1) {
+      classTreeInfo[pai].filhos.splice(i, 0, classe);
+    } else {
+      classTreeInfo[pai].filhos.push(classe);
+    }
+  } else {
+    i = classTreeInfo.findIndex(c => classe.codigo < c.codigo);
+    if (i !== -1) {
+      classe.pai = {};
+      classTreeInfo.splice(i, 0, classe);
+    } else {
+      classTreeInfo.push(classe);
+    }
+  }
+};
