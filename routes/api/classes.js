@@ -140,21 +140,23 @@ router.get(
 );
 
 // Verifica se um determinado título de classe já existe
-router.get("/titulo", Auth.isLoggedInKey, [existe("query", "valor")], function (
-  req,
-  res
-) {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(422).jsonp(errors.array());
-  }
+router.get(
+  "/titulo",
+  Auth.isLoggedInKey,
+  [existe("query", "valor")],
+  function (req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).jsonp(errors.array());
+    }
 
-  State.verificaTitulo(req.query.valor)
-    .then(data => res.jsonp(data))
-    .catch(err =>
-      res.status(500).send(`Erro na verificação do título: ${err}`)
-    );
-});
+    State.verificaTitulo(req.query.valor)
+      .then(data => res.jsonp(data))
+      .catch(err =>
+        res.status(500).send(`Erro na verificação do título: ${err}`)
+      );
+  }
+);
 
 // Verifica se um determinado código de classe já existe
 router.get(
@@ -205,44 +207,48 @@ router.get(
 );
 
 // Devolve a metainformação de uma classe: codigo, titulo, status, desc, codigoPai?, tituloPai?, procTrans?, procTipo?
-router.get("/:id/meta", Auth.isLoggedInKey, [verificaId()], function (
-  req,
-  res
-) {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(422).jsonp(errors.array());
-  }
+router.get(
+  "/:id/meta",
+  Auth.isLoggedInKey,
+  [verificaId()],
+  function (req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).jsonp(errors.array());
+    }
 
-  Classes.consultar(req.params.id)
-    .then(dados => res.jsonp(dados[0]))
-    .catch(erro =>
-      res
-        .status(500)
-        .send(`Erro na consulta da classe ${req.params.id}: ${erro}`)
-    );
-});
+    Classes.consultar(req.params.id)
+      .then(dados => res.jsonp(dados[0]))
+      .catch(erro =>
+        res
+          .status(500)
+          .send(`Erro na consulta da classe ${req.params.id}: ${erro}`)
+      );
+  }
+);
 
 // Devolve a lista de filhos de uma classe: id, codigo, titulo, nFilhos
-router.get("/:id/descendencia", Auth.isLoggedInKey, [verificaId()], function (
-  req,
-  res
-) {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(422).jsonp(errors.array());
-  }
+router.get(
+  "/:id/descendencia",
+  Auth.isLoggedInKey,
+  [verificaId()],
+  function (req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).jsonp(errors.array());
+    }
 
-  Classes.descendencia(req.params.id)
-    .then(dados => res.jsonp(dados))
-    .catch(erro =>
-      res
-        .status(500)
-        .send(
-          `Erro na consulta da descendência da classe ${req.params.id}: ${erro}`
-        )
-    );
-});
+    Classes.descendencia(req.params.id)
+      .then(dados => res.jsonp(dados))
+      .catch(erro =>
+        res
+          .status(500)
+          .send(
+            `Erro na consulta da descendência da classe ${req.params.id}: ${erro}`
+          )
+      );
+  }
+);
 
 // Devolve a lista de notas de aplicação de uma classe: idNota, nota
 router.get("/:id/notasAp", Auth.isLoggedInKey, [verificaId()], (req, res) => {
@@ -492,12 +498,19 @@ router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), (req, res) => {
   }
 
   Classes.criar(req.body)
-    .then((dados) => {
-      State.reloadClasses()
-        .then(d => res.status(201).jsonp(dados) )
-        .catch(err => res.status(500).send('Erro no reload da cache das classes. A classe foi criada com sucesso.'))
+    .then(dados => {
+      State.updateClasseTreeInfo(req.body);
+
+      res.jsonp(req.body);
     })
-    .catch(erro => res.status(500).send(`Erro a inserir a classe: ${erro}`));
+    .catch(erro => {
+      console.log(erro);
+      res
+        .status(500)
+        .send(
+          "Erro no reload da cache das classes. A classe foi criada com sucesso."
+        );
+    });
 });
 
 module.exports = router;
