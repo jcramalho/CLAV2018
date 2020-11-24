@@ -287,7 +287,7 @@ Classes.retrieve = async id => {
       }, // criterio = {tipo, notas, [proc], [leg]}
 
       df: {
-        valor: "NE",
+        valor: "",
         nota: null,
         justificacao: [],
       },
@@ -645,7 +645,7 @@ Classes.df = function (id) {
   return execQuery("query", query).then(response => normalize(response));
 };
 
-// Devolve a informação base do DF: idDF, valor, idJustificacao
+// -----------------------------------------------------------------------
 Classes.criar = function (classe) {
   let notas = "";
   let noteRel = "";
