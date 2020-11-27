@@ -66,7 +66,7 @@ router.post('/importar', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 
     form.parse(req, async (error, fields, formData) => {
         if(error) res.status(500).send(`Erro ao importar Auto de Eliminação: ${error}`)
         else if(!formData.file || !formData.file.path) res.status(500).send(`Erro ao importar Auto de Eliminação: É necessário o campo file`)
-        else if(formData.file.type=="application/xml") {
+        else if(formData.file.type=="text/xml") {
             var schemaPath = __dirname+"/../../public/schema/autoEliminacao.xsd"
 
             var schema = await fs.readFileSync(schemaPath)
