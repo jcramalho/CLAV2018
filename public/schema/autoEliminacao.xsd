@@ -1,35 +1,221 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <xs:element name="auto">
+  <xs:annotation>
+    <xs:documentation>Projeto CLAV
+Criado por jcr
+Em 2020-11-17</xs:documentation>
+  </xs:annotation>
+  <xs:element name="autoEliminação">
+    <xs:annotation>
+      <xs:documentation>Elemento principal</xs:documentation>
+    </xs:annotation>
     <xs:complexType>
       <xs:sequence>
-          <xs:element name="legislacao" type="xs:string" minOccurs="0" maxOccurs="1"/>
-          <xs:element name="referencial" type="xs:string" minOccurs="0" maxOccurs="1"/>
-          <xs:element name="fundo" type="xs:string" minOccurs="1" maxOccurs="unbounded"/>
-          <xs:element name="zonaControlo" maxOccurs="unbounded">
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element name="codigo" type="xs:string" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="referencia" type="xs:string" minOccurs="0" maxOccurs="1"/>
-                <xs:element name="dataInicio" type="xs:string"/>
-                <xs:element name="dataFim" type="xs:string"/>
-                <xs:element name="dono" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
-                <xs:element name="medicaoPapel" type="xs:string" minOccurs="0" maxOccurs="1" />
-                <xs:element name="medicaoDigital" type="xs:string" minOccurs="0" maxOccurs="1" />
-                <xs:element name="medicaoOutros" type="xs:string" minOccurs="0" maxOccurs="1" />
-                <xs:element name="agregacao" maxOccurs="unbounded">
-                  <xs:complexType>
-                    <xs:sequence>
-                      <xs:element name="codigo" type="xs:string"/>
-                      <xs:element name="titulo" type="xs:string"/>
-                      <xs:element name="dataContagem" type="xs:string"/>
-                      <xs:element name="ni" type="xs:string" minOccurs="0" maxOccurs="1"/>
-                    </xs:sequence>
-                  </xs:complexType>
-                </xs:element>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
+        <xs:element name="fonteLegitimação">
+          <xs:annotation>
+            <xs:documentation>Identificação do diploma que regulamenta a eliminação que se propõe e com o qual será validado o AE.</xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="diploma">
+                <xs:annotation>
+                  <xs:documentation>Deverá identificar a fonte numa das seguintes formas: 1) LC, 2) Portaria número/ano, ou 3) Despacho DGLAB número/ano. A primeira forma deverá ser usada para fins de teste e enquanto a entidade não possuir um instrumento classificativo aprovado.</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:pattern
+                      value="(LC|(Portaria\ [0-9]+\/[0-9]+)|(Despacho\ DGLAB\ [0-9]+\/[0-9]+))"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+            </xs:sequence>
+            <xs:attribute name="tipo" type="atributoTipo"/>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="fundos" minOccurs="1">
+          <xs:annotation>
+            <xs:documentation>Identificação das entidades produtoras</xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" name="fundo" type="xs:string">
+                <xs:annotation>
+                  <xs:documentation>Deve ser preenchido com a sigla da entidade conforme catálogo disponibilizado na CLAV. Exemplos: DGLAB, SEF, UTAD, ...</xs:documentation>
+                </xs:annotation>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="classes">
+          <xs:annotation>
+            <xs:documentation>Identificação dos processos onde se deseja proceder a eliminações.</xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" name="classe">
+                <xs:annotation>
+                  <xs:documentation>Caraterização da classe/processo</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="código" type="xs:string" minOccurs="0" maxOccurs="1">
+                      <xs:annotation>
+                        <xs:documentation>Conforme consta da fonte de legitimação identificada.</xs:documentation>
+                      </xs:annotation>
+                    </xs:element>
+                    <xs:element name="referência" type="xs:string" minOccurs="0" maxOccurs="1">
+                      <xs:annotation>
+                        <xs:documentation>Número de referência</xs:documentation>
+                      </xs:annotation>
+                    </xs:element>
+                    <xs:element name="pca">
+                      <xs:annotation>
+                        <xs:documentation>Prazo de conservação administrativa: se o valor não for preenchido a nota terá de estar preenchida</xs:documentation>
+                      </xs:annotation>
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="valor" type="xs:int">
+                            <xs:annotation>
+                              <xs:documentation>Número de anos</xs:documentation>
+                            </xs:annotation>
+                          </xs:element>
+                          <xs:element name="nota" type="xs:string"/>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="df">
+                      <xs:annotation>
+                        <xs:documentation>Destino final: o seu valor poderá ficar vazio se a nota for preenchida</xs:documentation>
+                      </xs:annotation>
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="valor" type="TvalorDF">
+                            <xs:annotation>
+                              <xs:documentation>Vocabulário controlado: vazio, Conservação, Eliminação, Conservação Parcial ou Não Especificado</xs:documentation>
+                            </xs:annotation>
+                          </xs:element>
+                          <xs:element name="nota" type="xs:string"/>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="naturezaIntervenção" type="TnaturezaIntervenção">
+                      <xs:annotation>
+                        <xs:documentation>Vocabulário controlado: Participante ou Dono. Se for "Participante" terá de ser identificado o(s) dono(s) no campo seguinte.</xs:documentation>
+                      </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="donos">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="dono" type="xs:string">
+                            <xs:annotation>
+                              <xs:documentation>Identificação de uma das entidades dona do processo: deve ser preenchido com a sigla conforme o catálogo de entidades na CLAV.</xs:documentation>
+                            </xs:annotation>
+                          </xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="anoInício" type="xs:int"/>
+                    <xs:element name="anoFim" type="xs:int"/>
+                    <xs:element name="dimensãoSuporte">
+                      <xs:annotation>
+                        <xs:documentation>Pelo menos um dos tipos deve ser preenchido podendo os restantes ficar vazios.</xs:documentation>
+                      </xs:annotation>
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="papel" type="xs:int">
+                            <xs:annotation>
+                              <xs:documentation>Número de metros lineares</xs:documentation>
+                            </xs:annotation>
+                          </xs:element>
+                          <xs:element name="digital" type="xs:int">
+                            <xs:annotation>
+                              <xs:documentation>Número de Gigabytes</xs:documentation>
+                            </xs:annotation>
+                          </xs:element>
+                          <xs:element minOccurs="0" name="outro">
+                            <xs:annotation>
+                              <xs:documentation>Caraterização de outro suporte que não seja papel ou digital</xs:documentation>
+                            </xs:annotation>
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="valor" type="xs:int"/>
+                                <xs:element name="unidade" type="xs:string">
+                                  <xs:annotation>
+                                    <xs:documentation>Unidade de medida do novo suporte: metros, Kg, bytes, ...</xs:documentation>
+                                  </xs:annotation>
+                                </xs:element>
+                              </xs:sequence>
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="númeroAgregações" type="xs:int">
+                      <xs:annotation>
+                        <xs:documentation>Número total de agregações que se pretendem eliminar; deve ser preenchido mesmo quando não houver identificação das agregações.</xs:documentation>
+                      </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="agregações">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element maxOccurs="unbounded" name="agregação">
+                            <xs:annotation>
+                              <xs:documentation>Caraterização da agregação</xs:documentation>
+                            </xs:annotation>
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="código" type="xs:string">
+                                  <xs:annotation>
+                                    <xs:documentation>Código da agregação</xs:documentation>
+                                  </xs:annotation>
+                                </xs:element>
+                                <xs:element name="título" type="xs:string"/>
+                                <xs:element name="ano" type="xs:int"/>
+                                <xs:element minOccurs="0" name="naturezaIntervenção"
+                                  type="TnaturezaIntervenção">
+                                  <xs:annotation>
+                                    <xs:documentation>Vocabulário controlado: Participante ou Dono.</xs:documentation>
+                                  </xs:annotation>
+                                </xs:element>
+                              </xs:sequence>
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
+  <xs:simpleType name="atributoTipo">
+    <xs:annotation>
+      <xs:documentation>Tipos de fontes de legitimação: TS/LC, PGD/LC, PGD, RADA, RADA/CLAV.</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="TS/LC"/>
+      <xs:enumeration value="PGD/LC"/>
+      <xs:enumeration value="PGD"/>
+      <xs:enumeration value="RADA"/>
+      <xs:enumeration value="RADA/CLAV"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="TvalorDF">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value=""/>
+      <xs:enumeration value="Conservação"/>
+      <xs:enumeration value="Eliminação"/>
+      <xs:enumeration value="Conservação Parcial"/>
+      <xs:enumeration value="Não Especificado"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="TnaturezaIntervenção">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Participante"/>
+      <xs:enumeration value="Dono"/>
+    </xs:restriction>
+  </xs:simpleType>
 </xs:schema>
