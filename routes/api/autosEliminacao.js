@@ -9,11 +9,6 @@ var fs = require("fs")
 
 const { validationResult } = require('express-validator');
 const { existe, estaEm, verificaAEId, vcTipoAE } = require('../validation')
-var tipoSanitizer = value => {
-    if(value == "PGD_LC") value = "PGD/LC"
-    value = "AE " + value
-    return value
-}
 
 var express = require('express');
 var router = express.Router();
@@ -55,7 +50,7 @@ router.post('/', Auth.isLoggedInUser, Auth.checkLevel([5, 6, 7]), [
 
 //Importar um AE (Inserir ficheiro diretamente pelo Servidor)
 router.post('/importar', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
-    estaEm('query', 'tipo', vcTipoAE).customSanitizer(tipoSanitizer)
+    estaEm('query', 'tipo', vcFonte)
 ], (req, res) => {
     const errors = validationResult(req)
     if(!errors.isEmpty()){
@@ -67,7 +62,11 @@ router.post('/importar', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 
         if(error) res.status(500).send(`Erro ao importar Auto de Eliminação: ${error}`)
         else if(!formData.file || !formData.file.path) res.status(500).send(`Erro ao importar Auto de Eliminação: É necessário o campo file`)
         else if(formData.file.type=="text/xml") {
-            var schemaPath = __dirname+"/../../public/schema/autoEliminacao.xsd"
+            var tipoAE = req.query.tipo
+            if((tipoAE == 'TS/LC')||(tipoAE == 'PGD/LC'))
+                var schemaPath = __dirname+"/../../public/schema/autoEliminacao.xsd"
+            else
+                var schemaPath = __dirname+"/../../public/schema/autoEliminacaoOld.xsd"
 
             var schema = await fs.readFileSync(schemaPath)
             var xsl = xml.parseXml(schema)

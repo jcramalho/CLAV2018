@@ -417,14 +417,11 @@ module.exports.eExpiresTime = function (location, field, ifF) {
 //Vocabulários
 module.exports.vcBoolean = ["Sim", "Não"];
 module.exports.vcEstado = ["Ativa", "Harmonização", "Inativa"];
-module.exports.vcFonte = ["PGD", "PGD/LC", "RADA", "TS/LC"];
+module.exports.vcFonte = ["PGD", "PGD/LC", "RADA", "TS/LC", "RADA/CLAV"];
 
 //aggregateLogs e logs
 module.exports.vcTipoUser = ["User", "Chave", "Desconhecido"];
 module.exports.vcVerbo = ["GET", "POST", "PUT", "DELETE"];
-
-//autosEliminacao
-module.exports.vcTipoAE = ["PGD", "RADA", "PGD_LC"];
 
 //classes
 module.exports.vcClassesInfo = [
