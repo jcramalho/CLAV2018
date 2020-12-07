@@ -67,6 +67,7 @@ Em 2020-11-17</xs:documentation>
                         <xs:documentation>Número de referência</xs:documentation>
                       </xs:annotation>
                     </xs:element>
+                    <xs:element name="título" type="xs:string"/>
                     <xs:element name="pca">
                       <xs:annotation>
                         <xs:documentation>Prazo de conservação administrativa: se o valor não for preenchido a nota terá de estar preenchida</xs:documentation>
@@ -78,7 +79,7 @@ Em 2020-11-17</xs:documentation>
                               <xs:documentation>Número de anos</xs:documentation>
                             </xs:annotation>
                           </xs:element>
-                          <xs:element name="nota" type="xs:string"/>
+                          <xs:element name="nota" type="xs:string" minOccurs="0"/>
                         </xs:sequence>
                       </xs:complexType>
                     </xs:element>
@@ -93,7 +94,7 @@ Em 2020-11-17</xs:documentation>
                               <xs:documentation>Vocabulário controlado: vazio, Conservação, Eliminação, Conservação Parcial ou Não Especificado</xs:documentation>
                             </xs:annotation>
                           </xs:element>
-                          <xs:element name="nota" type="xs:string"/>
+                          <xs:element name="nota" type="xs:string" minOccurs="0"/>
                         </xs:sequence>
                       </xs:complexType>
                     </xs:element>
@@ -121,12 +122,12 @@ Em 2020-11-17</xs:documentation>
                       </xs:annotation>
                       <xs:complexType>
                         <xs:sequence>
-                          <xs:element name="papel" type="xs:int">
+                          <xs:element name="papel" type="xs:int" minOccurs="0">
                             <xs:annotation>
                               <xs:documentation>Número de metros lineares</xs:documentation>
                             </xs:annotation>
                           </xs:element>
-                          <xs:element name="digital" type="xs:int">
+                          <xs:element name="digital" type="xs:int" minOccurs="0">
                             <xs:annotation>
                               <xs:documentation>Número de Gigabytes</xs:documentation>
                             </xs:annotation>
