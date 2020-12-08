@@ -477,7 +477,7 @@ async function validateColumnsValues(
   const ret = [];
   let c;
 
-  if (fonteL == "PGD/LC" || fonteL == "PGD") {
+  if (fonteL == "PGD/LC" || fonteL == "PGD" || fonteL == "RADA") {
     // nivel
     nivel = worksheet.getColumn(headers.nivel).values;
     nivel = nivel.map((e) => parseCell(e));
@@ -506,7 +506,7 @@ async function validateColumnsValues(
       if (
         fonteL == "PGD/LC" &&
         cods[i] &&
-        !cods[i].split(".").length == nivel[i]
+        !cods[i].split(".").length == nivel[i + start]
       ) {
         throw `Nível inválido na linha ${
           i + start
@@ -580,7 +580,7 @@ async function validateColumnsValues(
         }
       }
     }
-    if (fonteL == "PGD" || fonteL == "PGD/LC") {
+    if (fonteL == "PGD" || fonteL == "PGD/LC" || fonteL == "RADA") {
       if (fonteL == "PGD") {
         // pca e nota PCA
         const pcas = [];
@@ -613,7 +613,10 @@ async function validateColumnsValues(
         }
       } else {
         // pca, nota PCA e Forma de contagem do PCA
-        let lvl4 = cods.filter((c) => c.split(".").length == 4);
+        let lvl4 = [];
+        if (fonteL == "PGD/LC") {
+          lvl4 = cods.filter((c) => c.split(".").length == 4);
+        }
         const pcas = [];
         worksheet
           .getColumn(headers.pca)
@@ -637,28 +640,54 @@ async function validateColumnsValues(
 
         for (let i = 0; i < pcas.length; i++) {
           if (
-            (cods[i].split(".").length == 3 &&
+            (fonteL == "PGD/LC" &&
+              cods[i].split(".").length == 3 &&
               !lvl4.some((c) => c.includes(cods[i])) &&
               notas[i] == null &&
               pcas[i] == null) ||
-            (cods[i].split(".").length == 4 && pcas[i] == null)
+            (fonteL == "PGD/LC" &&
+              cods[i].split(".").length == 4 &&
+              pcas[i] == null)
           ) {
             throw `O campo PCA e a Nota do PCA não estão preenchidos na linha ${
               i + start
             } da Tabela!\n Pelo menos um dos campos tem de estar preenchido`;
           }
           if (
-            (cods[i].split(".").length == 3 &&
+            (fonteL == "RADA" &&
+              nivel[i + start] == 3 &&
+              pcas[i] == null &&
+              notas[i] == null &&
+              nivel[i + start + 1] != 4 &&
+              nivel[i + start + 2] != 4) ||
+            (fonteL == "RADA" &&
+              nivel[i + start] == 4 &&
+              pcas[i] == null &&
+              notas[i] == null)
+          ) {
+            throw `O campo PCA e a Nota do PCA não estão preenchidos na linha ${
+              i + start
+            } da Tabela!\n Pelo menos um dos campos tem de estar preenchido`;
+          }
+          if (
+            (fonteL == "PGD/LC" &&
+              cods[i].split(".").length == 3 &&
               !lvl4.some((c) => c.includes(cods[i])) &&
               pcas[i] != null &&
               !/^\s*F[0-9]{2}\s*$/g.test(formas[i])) ||
-            (cods[i].split(".").length == 4 &&
+            (fonteL == "PGD/LC" &&
+              cods[i].split(".").length == 4 &&
               pcas[i] != null &&
               !/^\s*F[0-9]{2}\s*$/g.test(formas[i]))
           ) {
             throw `O campo Forma de contagem é ínválido na linha ${
               i + start
             } da Tabela!\n O campo tem de estar preenchido se o PCA também estiver.\n A Forma de contagem, para ser válida deve ser, por exemplo, no seguinte formato: F01,F02...`;
+          }
+          if (fonteL == "RADA" && nivel[i + start] < 3 && formas[i] != null) {
+            throw `O campo Forma de contagem é ínválido na linha ${
+              i + start
+            } da Tabela!\n O campo não deve estar preenchido para classes abaixo do 3º nível.\n`;
           }
         }
       }
@@ -699,7 +728,7 @@ async function validateColumnsValues(
             }.\nO campo tem de ser: C, CP ou E`;
           }
         }
-      } else if (fonteL == "PGD") {
+      } else if (fonteL == "PGD" || fonteL == "RADA") {
         for (let i = 0; i < dfs.length; i++) {
           if (
             (nivel[i + start] == 3 &&
@@ -852,7 +881,7 @@ function validateHeaders(headers, typeOrg, fonteL) {
       parts = i;
     } else if (/^\s*Tipo de participação\s*$/g.test(headers[i])) {
       tipPart = i;
-    } else if (/N\.º\sReferência/g.test(headers[i])) {
+    } else if (/N(\.)?º(\sde)?\sRef(erência)?/g.test(headers[i])) {
       nRef = i;
     } else if (/Nível/g.test(headers[i])) {
       nivel = i;
@@ -864,9 +893,9 @@ function validateHeaders(headers, typeOrg, fonteL) {
       notaPCA = i;
     } else if (/^\s*DF\s*$/g.test(headers[i])) {
       df = i;
-    } else if (/Nota DF/g.test(headers[i])) {
+    } else if (/Nota (ao )?DF/g.test(headers[i])) {
       notaDF = i;
-    } else if (/Forma de contagem PCA/g.test(headers[i])) {
+    } else if (/Forma de contagem (do )?PCA/g.test(headers[i])) {
       formaContagem = i;
     }
   }
@@ -876,21 +905,46 @@ function validateHeaders(headers, typeOrg, fonteL) {
   if ((fonteL == "TS/LC" || fonteL == "PGD/LC") && donos != -1) nFound++;
   if ((fonteL == "TS/LC" || fonteL == "PGD/LC") && parts != -1) nFound++;
   if (typeOrg == "TS Pluriorganizacional" && tipPart != -1) nFound++;
-  if ((fonteL == "PGD" || fonteL == "PGD/LC") && nRef != -1) nFound++;
-  if ((fonteL == "PGD" || fonteL == "PGD/LC") && nivel != -1) nFound++;
-  if ((fonteL == "PGD" || fonteL == "PGD/LC") && descricao != -1) nFound++;
-  if ((fonteL == "PGD" || fonteL == "PGD/LC") && pca != -1) nFound++;
-  if ((fonteL == "PGD" || fonteL == "PGD/LC") && notaPCA != -1) nFound++;
-  if ((fonteL == "PGD" || fonteL == "PGD/LC") && df != -1) nFound++;
-  if ((fonteL == "PGD" || fonteL == "PGD/LC") && notaDF != -1) nFound++;
-  if (fonteL == "PGD/LC" && formaContagem != -1) nFound++;
+  if ((fonteL == "PGD" || fonteL == "PGD/LC" || fonteL == "RADA") && nRef != -1)
+    nFound++;
+  if (
+    (fonteL == "PGD" || fonteL == "PGD/LC" || fonteL == "RADA") &&
+    nivel != -1
+  )
+    nFound++;
+  if (
+    (fonteL == "PGD" || fonteL == "PGD/LC" || fonteL == "RADA") &&
+    descricao != -1
+  )
+    nFound++;
+  if ((fonteL == "PGD" || fonteL == "PGD/LC" || fonteL == "RADA") && pca != -1)
+    nFound++;
+  if (
+    (fonteL == "PGD" || fonteL == "PGD/LC" || fonteL == "RADA") &&
+    notaPCA != -1
+  )
+    nFound++;
+  if ((fonteL == "PGD" || fonteL == "PGD/LC" || fonteL == "RADA") && df != -1)
+    nFound++;
+  if (
+    (fonteL == "PGD" || fonteL == "PGD/LC" || fonteL == "RADA") &&
+    notaDF != -1
+  )
+    nFound++;
+  if ((fonteL == "PGD/LC" || fonteL == "RADA") && formaContagem != -1) nFound++;
 
-  if (fonteL == "TS/LC" && codigos == -1)
+  if (
+    (fonteL == "TS/LC" || fonteL == "RADA" || fonteL == "PGD/LC") &&
+    codigos == -1
+  )
     throw new HeaderException(
       "Não foi possível encontrar a coluna dos códigos.",
       nFound
     );
-  if ((fonteL == "PGD" || fonteL == "PGD/LC") && (codigos == -1 || nRef == -1))
+  if (
+    (fonteL == "PGD" || fonteL == "PGD/LC" || fonteL == "RADA") &&
+    (codigos == -1 || nRef == -1)
+  )
     throw new HeaderException(
       "Não foi possível encontrar as colunas 'Código' e 'N.º Referência' - Necessita de ter pelo menos uma delas.",
       nFound
@@ -910,37 +964,49 @@ function validateHeaders(headers, typeOrg, fonteL) {
       "Não foi possível encontrar a coluna 'Participante'.",
       nFound
     );
-  if ((fonteL == "PGD" || fonteL == "PGD/LC") && nivel == -1)
+  if (
+    (fonteL == "PGD" || fonteL == "PGD/LC" || fonteL == "RADA") &&
+    nivel == -1
+  )
     throw new HeaderException(
       "Não foi possível encontrar a coluna 'Nível'.",
       nFound
     );
-  if ((fonteL == "PGD" || fonteL == "PGD/LC") && descricao == -1)
+  if (
+    (fonteL == "PGD" || fonteL == "PGD/LC" || fonteL == "RADA") &&
+    descricao == -1
+  )
     throw new HeaderException(
       "Não foi possível encontrar a coluna 'Descrição'.",
       nFound
     );
-  if ((fonteL == "PGD" || fonteL == "PGD/LC") && pca == -1)
+  if ((fonteL == "PGD" || fonteL == "PGD/LC" || fonteL == "RADA") && pca == -1)
     throw new HeaderException(
       "Não foi possível encontrar a coluna 'PCA'.",
       nFound
     );
-  if ((fonteL == "PGD" || fonteL == "PGD/LC") && notaPCA == -1)
+  if (
+    (fonteL == "PGD" || fonteL == "PGD/LC" || fonteL == "RADA") &&
+    notaPCA == -1
+  )
     throw new HeaderException(
       "Não foi possível encontrar a coluna 'Nota PCA'.",
       nFound
     );
-  if ((fonteL == "PGD" || fonteL == "PGD/LC") && df == -1)
+  if ((fonteL == "PGD" || fonteL == "PGD/LC" || fonteL == "RADA") && df == -1)
     throw new HeaderException(
       "Não foi possível encontrar a coluna 'DF'.",
       nFound
     );
-  if ((fonteL == "PGD" || fonteL == "PGD/LC") && notaDF == -1)
+  if (
+    (fonteL == "PGD" || fonteL == "PGD/LC" || fonteL == "RADA") &&
+    notaDF == -1
+  )
     throw new HeaderException(
       "Não foi possível encontrar a coluna 'Nota DF'.",
       nFound
     );
-  if (fonteL == "PGD/LC" && formaContagem == -1)
+  if ((fonteL == "PGD/LC" || fonteL == "RADA") && formaContagem == -1)
     throw new HeaderException(
       "Não foi possível encontrar a coluna 'Forma de contagem PCA'.",
       nFound
@@ -975,6 +1041,19 @@ function validateHeaders(headers, typeOrg, fonteL) {
         descricao,
         donos,
         participantes: parts,
+        pca,
+        notaPCA,
+        formaContagem,
+        df,
+        notaDF,
+      };
+    } else if (fonteL == "RADA") {
+      ret = {
+        codigos,
+        nRef,
+        nivel,
+        titulos,
+        descricao,
         pca,
         notaPCA,
         formaContagem,
@@ -1055,6 +1134,168 @@ async function findSheet(workbook, typeOrg, fonteL) {
   return [sheetN, rowHeaderN, headersPos, ents_tips];
 }
 
+async function constructRADAO(worksheet, file, stats, code) {
+  //Carregar as Legislações
+  let leg = await State.getLegislacoes();
+  //Carregar as Entidades
+  let ents = await State.getEntidades();
+  //Carregar as Tipologias
+  let tipEnts = await Tipologias.listar('?estado="Ativa"');
+  const regexRADA = RegExp("_RADA_");
+  const regexTS = RegExp("_TS");
+  if (
+    !file.startsWith("Despacho") ||
+    !regexRADA.test(file) ||
+    !regexTS.test(file)
+  ) {
+    throw file + " não será processado, o nome não segue a convenção...";
+  } else {
+    var legId = file.split("Despacho_")[1];
+    legId = legId.split("_RADA")[0];
+    var legislacao = leg.filter(
+      (l) => l.tipo == "Despacho" && l.numero == legId
+    )[0];
+
+    var entidadeId = file.split("_RADA_")[1];
+    entidadeId = entidadeId.split("_TS")[0];
+
+    var entidade = ents.filter((e) => e.sigla == entidadeId)[0];
+    if (entidade) entidade = "ent_" + entidade.sigla;
+    else
+      entidade = "tip_" + tipEnts.filter((e) => e.sigla == entidadeId)[0].sigla;
+
+    if (legislacao && entidade) {
+      code.codigo = "tsRada_" + legislacao.id;
+      var rada = [];
+      var pais = [];
+      var n = 0;
+
+      var currentStatements =
+        "\n###  http://jcr.di.uminho.pt/m51-clav#rada_" + legislacao.id + "\n";
+      currentStatements +=
+        "clav:tsRada_" + legislacao.id + " rdf:type owl:NamedIndividual ,\n";
+      currentStatements += "\t\tclav:RADA_Antigo ;\n";
+      currentStatements +=
+        "\tclav:temEntidadeResponsavel clav:" + entidade + " ;\n";
+      currentStatements +=
+        "\tclav:temLegislacao clav:" + legislacao.id + " .\n";
+      currentStatements += extraStatements =
+        "clav:" +
+        entidade +
+        " clav:eResponsavelPor " +
+        "clav:tsRada_" +
+        legislacao.id +
+        " .\n";
+
+      worksheet.eachRow((row, rowNumber) => {
+        if (rowNumber == 1) return;
+
+        var codigo = row.getCell(1).text || "";
+        var referencia = row.getCell(2).text || "";
+        var nivel = row.getCell(3).value || "";
+        var titulo = row.getCell(4).text || "";
+        var descricao = row.getCell(5).text || "";
+        var pca = row.getCell(6).value || "";
+        var notasPCA = row.getCell(7).text || "";
+        var formaContagem = row.getCell(8).text || "";
+        var df = row.getCell(9).text || "";
+        var notasDF = row.getCell(10).text || "";
+
+        codigo = codigo.replace(/\r?\n|\r/g, " ").replace(/["]/g, '\\"');
+        titulo = titulo.replace(/\r?\n|\r/g, " ").replace(/["]/g, '\\"');
+        descricao = descricao.replace(/\r?\n|\r/g, " ").replace(/["]/g, '\\"');
+        notasPCA = notasPCA.replace(/\r?\n|\r/g, " ").replace(/["]/g, '\\"');
+        formaContagem = formaContagem
+          .replace(/\r?\n|\r/g, " ")
+          .replace(/["]/g, '\\"');
+        notasDF = notasDF.replace(/\r?\n|\r/g, " ").replace(/["]/g, '\\"');
+
+        var classeId = "classe_" + nanoid() + "_tsRada_" + legislacao.id;
+        currentStatements +=
+          "\n###  http://jcr.di.uminho.pt/m51-clav#" + classeId + "\n";
+        currentStatements +=
+          "clav:" + classeId + " rdf:type owl:NamedIndividual ,\n";
+        currentStatements += "\t\tclav:Classe_Antigo_RADA ;\n";
+        currentStatements +=
+          "\tclav:pertenceAntigoRada clav:tsRada_" + legislacao.id + " ;\n";
+
+        //Quando nivel é 1 necessita reiniciar a identificação de pai
+        if (nivel == 1) {
+          pais = [];
+          pais.push(classeId);
+          n = nivel;
+        } else if (nivel > n) {
+          currentStatements +=
+            "\tclav:temPai clav:" + pais[pais.length - 1] + " ;\n";
+          pais.push(classeId);
+          n = nivel;
+        } else if (n == nivel) {
+          pais.pop();
+          currentStatements +=
+            "\tclav:temPai clav:" + pais[pais.length - 1] + " ;\n";
+          pais.push(classeId);
+          n = nivel;
+        } else {
+          var nPops = n - nivel + 1;
+          for (var i = 0; i < nPops; i++) pais.pop();
+          currentStatements +=
+            "\tclav:temPai clav:" + pais[pais.length - 1] + " ;\n";
+          pais.push(classeId);
+          n = nivel;
+        }
+        if (codigo || referencia) stats.processos++;
+        if (codigo) currentStatements += '\tclav:codigo "' + codigo + '" ;\n';
+        if (referencia)
+          currentStatements +=
+            '\tclav:referencia "' + referencia.replace(/\n/, "") + '" ;\n';
+        if (titulo) currentStatements += '\tclav:titulo "' + titulo + '" ;\n';
+        if (descricao)
+          currentStatements += '\tclav:descricao "' + descricao + '" ;\n';
+        currentStatements += "\tclav:nivel " + nivel + " .\n";
+
+        if (pca || notasPCA) {
+          currentStatements +=
+            "clav:" + classeId + " clav:temPCA clav:pca_" + classeId + " .\n";
+          currentStatements +=
+            "\n###  http://jcr.di.uminho.pt/m51-clav#pca_" + classeId + "\n";
+          currentStatements += "clav:pca_" + classeId + " a clav:PCA .\n";
+          if (pca && pca != "Não aplicável")
+            currentStatements +=
+              "clav:pca_" + classeId + " clav:pcaValor " + pca + " .\n";
+          if (notasPCA)
+            currentStatements +=
+              "clav:pca_" + classeId + ' clav:pcaNota "' + notasPCA + '" .\n';
+        }
+        if (df || notasDF) {
+          currentStatements +=
+            "clav:" + classeId + " clav:temDF clav:df_" + classeId + " .\n";
+          currentStatements +=
+            "\n###  http://jcr.di.uminho.pt/m51-clav#df_" + classeId + "\n";
+          currentStatements +=
+            "clav:df_" + classeId + " a clav:DestinoFinal .\n";
+          if (df)
+            currentStatements +=
+              "clav:df_" +
+              classeId +
+              ' clav:dfValor "' +
+              df.replace(/\n/, "") +
+              '" .\n';
+          if (notasDF)
+            currentStatements +=
+              "clav:df_" + classeId + ' clav:dfNota "' + notasDF + '" .\n';
+        }
+      });
+      return currentStatements;
+    } else {
+      var error = "RADA: Erro a proccessar " + file;
+      if (!legislacao) error += " (Leg inexistente: " + legId + ")";
+      if (entidade == "tip_undefined")
+        error += " (Entidade ou Tipologia inexistente: " + entidadeId + ")";
+      throw error;
+    }
+  }
+}
+
 function constructPGDO(worksheet, file, stats, code) {
   //Carregar as Legislações
   let leg = State.getLegislacoes();
@@ -1095,10 +1336,10 @@ function constructPGDO(worksheet, file, stats, code) {
       var df = row.getCell(8).text || "";
       var notasDF = row.getCell(9).text || "";
 
-      titulo = titulo.replace(/\n/g, " ").replace(/["]/g, '\\"');
-      descricao = descricao.replace(/\n/g, " ").replace(/["]/g, '\\"');
-      notasPCA = notasPCA.replace(/\n/g, " ").replace(/["]/g, '\\"');
-      notasDF = notasDF.replace(/\n/g, " ").replace(/["]/g, '\\"');
+      titulo = titulo.replace(/\r?\n|\r/g, " ").replace(/["]/g, '\\"');
+      descricao = descricao.replace(/\r?\n|\r/g, " ").replace(/["]/g, '\\"');
+      notasPCA = notasPCA.replace(/\r?\n|\r/g, " ").replace(/["]/g, '\\"');
+      notasDF = notasDF.replace(/\r?\n|\r/g, " ").replace(/["]/g, '\\"');
 
       var classeId = "classe_" + nanoid() + "_pgd_" + legislacao.id;
       currentStatements +=
@@ -1174,7 +1415,7 @@ function constructPGDO(worksheet, file, stats, code) {
     });
     return currentStatements;
   } else {
-    console.error("PGD: Erro a proccessar " + file + " (Leg não existente)");
+    throw "PGD: Erro a proccessar " + file + " (Leg não existente)";
   }
 }
 
@@ -1327,7 +1568,7 @@ function constructPGDLCO(worksheet, file, stats, code) {
     });
     return currentStatements;
   } else {
-    console.error("PGD/LC: Erro a proccessar " + file + " (Leg não existente)");
+    throw "PGD/LC: Erro a proccessar " + file + " (Leg não existente)";
   }
 }
 
@@ -1538,6 +1779,21 @@ SelTabs.criarPedidoDoCSV = async function (
       var code = { codigo: "" };
       let pgd = constructPGDO(worksheet, file, stats, code);
       return execQuery("update", `INSERT DATA {${pgd}}`)
+        .then((res) => {
+          return { codigo: code.codigo, stats };
+        })
+        .catch((err) => {
+          throw "Insucesso na inserção do tabela de seleção\n" + err;
+        });
+    }
+  } else if (fonteL == "RADA") {
+    if (tipo_ts == "TS Organizacional") {
+      stats = {
+        processos: 0,
+      };
+      var code = { codigo: "" };
+      let rada = await constructRADAO(worksheet, file, stats, code);
+      return execQuery("update", `INSERT DATA {${rada}}`)
         .then((res) => {
           return { codigo: code.codigo, stats };
         })
