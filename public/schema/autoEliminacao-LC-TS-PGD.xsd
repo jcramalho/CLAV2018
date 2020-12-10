@@ -98,7 +98,7 @@ Em 2020-11-17</xs:documentation>
                         </xs:sequence>
                       </xs:complexType>
                     </xs:element>
-                    <xs:element name="naturezaIntervenção" type="TnaturezaIntervenção">
+                    <xs:element name="naturezaIntervenção" type="TnaturezaIntervenção" minOccurs="0">
                       <xs:annotation>
                         <xs:documentation>Vocabulário controlado: Participante ou Dono. Se for "Participante" terá de ser identificado o(s) dono(s) no campo seguinte.</xs:documentation>
                       </xs:annotation>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<autoEliminação xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="file:/Users/jcr/Documents/WebApps/NodeJS/docker-clav/CLAV2018/public/schema/autoEliminacao-LC-TS-PGD.xsd">
+    <fonteLegitimação>
+        <diploma>Portaria 381/2019</diploma>
+    </fonteLegitimação>
+    <fundos>
+        <fundo>DGLAB</fundo>
+    </fundos>
+    <classes>
+        <classe>
+            <código>100.10.001</código>
+            <título>Produção e comunicação de atos legislativos</título>
+            <pca>
+                <valor>5</valor>
+                <nota></nota>
+            </pca>
+            <df>
+                <valor>Conservação</valor>
+                <nota></nota>
+            </df>
+            <naturezaIntervenção>Participante</naturezaIntervenção>
+            <donos>
+                <dono>AR</dono>
+            </donos>
+            <anoInício>1980</anoInício>
+            <anoFim>1990</anoFim>
+            <dimensãoSuporte>
+                <papel>123</papel>
+                <digital>123</digital>
+            </dimensãoSuporte>
+            <númeroAgregações>85</númeroAgregações>
+        </classe>
+        <classe>
+            <código>150.10.701.01</código>
+            <título>Reunião de órgãos executivos: preparação</título>
+            <pca>
+                <valor>10</valor>
+                <nota></nota>
+            </pca>
+            <df>
+                <valor>Eliminação</valor>
+                <nota></nota>
+            </df>
+            <anoInício>1985</anoInício>
+            <anoFim>1995</anoFim>
+            <dimensãoSuporte>
+                <digital>1000</digital>
+            </dimensãoSuporte>
+            <númeroAgregações>100</númeroAgregações>
+        </classe>
+    </classes>
+</autoEliminação>
