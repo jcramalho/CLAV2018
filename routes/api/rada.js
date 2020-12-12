@@ -58,7 +58,7 @@ router.get('/old', Auth.isLoggedInKey, (req, res) => {
         .catch(erro => res.status(404).jsonp("Erro na listagem das RADAs: " + erro))
 })
 
-router.get("/:id", Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), (req, res) => {
+router.get("/:id", Auth.isLoggedInUser, Auth.checkLevel([1, 2, 3, 3.5, 4, 5, 6, 7]), (req, res) => {
     RADA.consulta(req.params.id)
         .then(dados => {
             res.status(200).jsonp(dados);
