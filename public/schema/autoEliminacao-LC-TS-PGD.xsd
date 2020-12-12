@@ -37,7 +37,7 @@ Em 2020-11-17</xs:documentation>
           </xs:annotation>
           <xs:complexType>
             <xs:sequence>
-              <xs:element maxOccurs="unbounded" name="fundo" type="xs:string">
+              <xs:element name="fundo" type="xs:string">
                 <xs:annotation>
                   <xs:documentation>Deve ser preenchido com a sigla da entidade conforme catálogo disponibilizado na CLAV. Exemplos: DGLAB, SEF, UTAD, ...</xs:documentation>
                 </xs:annotation>

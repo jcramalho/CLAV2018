@@ -66,7 +66,7 @@ router.get("/:id", Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7])
         .catch(err => res.status(500).send(`Erro na consulta do RADA: ${err}`));
 });
 
-router.get("/", Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), (req, res) => {
+router.get("/", Auth.isLoggedInUser, Auth.checkLevel([1, 2, 3, 3.5, 4, 5, 6, 7]), (req, res) => {
     RADA.listar()
         .then(dados => {
             res.status(200).jsonp(dados);
