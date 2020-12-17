@@ -494,7 +494,8 @@ async function validateColumnsValues(
     worksheet
       .getColumn(headers.codigos)
       .eachCell({ includeEmpty: true }, (cell, rowNumber) => {
-        if (rowNumber >= start) cods.push(parseCell(cell.value));
+        if (rowNumber >= start)
+          cods.push(parseCell(cell.value).replace(/\s*/g, ""));
       });
 
     for (let i = 0; i < cods.length; i++) {
@@ -580,176 +581,6 @@ async function validateColumnsValues(
         }
       }
     }
-    if (fonteL == "PGD" || fonteL == "PGD/LC" || fonteL == "RADA") {
-      if (fonteL == "PGD") {
-        // pca e nota PCA
-        const pcas = [];
-        worksheet
-          .getColumn(headers.pca)
-          .eachCell({ includeEmpty: true }, (cell, rowNumber) => {
-            if (rowNumber >= start) pcas.push(parseCell(cell.value));
-          });
-
-        const notas = [];
-        worksheet
-          .getColumn(headers.notaPCA)
-          .eachCell({ includeEmpty: true }, (cell, rowNumber) => {
-            if (rowNumber >= start) notas.push(parseCell(cell.value));
-          });
-
-        for (let i = 0; i < pcas.length; i++) {
-          if (
-            (nivel[i + start] == 3 &&
-              pcas[i] == null &&
-              notas[i] == null &&
-              nivel[i + start + 1] != 4 &&
-              nivel[i + start + 2] != 4) ||
-            (nivel[i + start] == 4 && pcas[i] == null && notas[i] == null)
-          ) {
-            throw `O campo PCA e a Nota do PCA não estão preenchidos na linha ${
-              i + start
-            } da Tabela!\n Pelo menos um dos campos tem de estar preenchido`;
-          }
-        }
-      } else {
-        // pca, nota PCA e Forma de contagem do PCA
-        let lvl4 = [];
-        if (fonteL == "PGD/LC") {
-          lvl4 = cods.filter((c) => c.split(".").length == 4);
-        }
-        const pcas = [];
-        worksheet
-          .getColumn(headers.pca)
-          .eachCell({ includeEmpty: true }, (cell, rowNumber) => {
-            if (rowNumber >= start) pcas.push(parseCell(cell.value));
-          });
-
-        const notas = [];
-        worksheet
-          .getColumn(headers.notaPCA)
-          .eachCell({ includeEmpty: true }, (cell, rowNumber) => {
-            if (rowNumber >= start) notas.push(parseCell(cell.value));
-          });
-
-        const formas = [];
-        worksheet
-          .getColumn(headers.formaContagem)
-          .eachCell({ includeEmpty: true }, (cell, rowNumber) => {
-            if (rowNumber >= start) formas.push(parseCell(cell.value));
-          });
-
-        for (let i = 0; i < pcas.length; i++) {
-          if (
-            (fonteL == "PGD/LC" &&
-              cods[i].split(".").length == 3 &&
-              !lvl4.some((c) => c.includes(cods[i])) &&
-              notas[i] == null &&
-              pcas[i] == null) ||
-            (fonteL == "PGD/LC" &&
-              cods[i].split(".").length == 4 &&
-              pcas[i] == null)
-          ) {
-            throw `O campo PCA e a Nota do PCA não estão preenchidos na linha ${
-              i + start
-            } da Tabela!\n Pelo menos um dos campos tem de estar preenchido`;
-          }
-          if (
-            (fonteL == "RADA" &&
-              nivel[i + start] == 3 &&
-              pcas[i] == null &&
-              notas[i] == null &&
-              nivel[i + start + 1] != 4 &&
-              nivel[i + start + 2] != 4) ||
-            (fonteL == "RADA" &&
-              nivel[i + start] == 4 &&
-              pcas[i] == null &&
-              notas[i] == null)
-          ) {
-            throw `O campo PCA e a Nota do PCA não estão preenchidos na linha ${
-              i + start
-            } da Tabela!\n Pelo menos um dos campos tem de estar preenchido`;
-          }
-          if (
-            (fonteL == "PGD/LC" &&
-              cods[i].split(".").length == 3 &&
-              !lvl4.some((c) => c.includes(cods[i])) &&
-              pcas[i] != null &&
-              !/^\s*F[0-9]{2}\s*$/g.test(formas[i])) ||
-            (fonteL == "PGD/LC" &&
-              cods[i].split(".").length == 4 &&
-              pcas[i] != null &&
-              !/^\s*F[0-9]{2}\s*$/g.test(formas[i]))
-          ) {
-            throw `O campo Forma de contagem é ínválido na linha ${
-              i + start
-            } da Tabela!\n O campo tem de estar preenchido se o PCA também estiver.\n A Forma de contagem, para ser válida deve ser, por exemplo, no seguinte formato: F01,F02...`;
-          }
-          if (fonteL == "RADA" && nivel[i + start] < 3 && formas[i] != null) {
-            throw `O campo Forma de contagem é ínválido na linha ${
-              i + start
-            } da Tabela!\n O campo não deve estar preenchido para classes abaixo do 3º nível.\n`;
-          }
-        }
-      }
-
-      // df e nota DF
-
-      const dfs = [];
-      worksheet
-        .getColumn(headers.df)
-        .eachCell({ includeEmpty: true }, (cell, rowNumber) => {
-          if (rowNumber >= start) dfs.push(parseCell(cell.value));
-        });
-
-      const dfNotas = [];
-      worksheet
-        .getColumn(headers.notaDF)
-        .eachCell({ includeEmpty: true }, (cell, rowNumber) => {
-          if (rowNumber >= start) dfNotas.push(parseCell(cell.value));
-        });
-
-      if (fonteL == "PGD/LC") {
-        let lvl4 = cods.filter((c) => c.split(".").length == 4);
-        for (let i = 0; i < dfs.length; i++) {
-          if (
-            (cods[i].split(".").length == 3 &&
-              !lvl4.some((c) => c.includes(cods[i])) &&
-              dfs[i] == null &&
-              dfNotas[i] == null) ||
-            (cods[i].split(".").length == 4 && dfs[i] == null)
-          ) {
-            throw `O campo DF e a Nota do DF não estão preenchidos na linha ${
-              i + start
-            } da Tabela!\n Pelo menos um dos campos tem de estar preenchido`;
-          }
-          if (dfs[i] != null && !/^\s*(C|CP|E)\s*$/g.test(dfs[i])) {
-            throw `O campo DF é inválido na linha ${
-              i + start
-            }.\nO campo tem de ser: C, CP ou E`;
-          }
-        }
-      } else if (fonteL == "PGD" || fonteL == "RADA") {
-        for (let i = 0; i < dfs.length; i++) {
-          if (
-            (nivel[i + start] == 3 &&
-              dfs[i] == null &&
-              dfNotas[i] == null &&
-              nivel[i + start + 1] != 4 &&
-              nivel[i + start + 2] != 4) ||
-            (nivel[i + start] == 4 && dfs[i] == null && dfNotas[i] == null)
-          ) {
-            throw `O campo DF e a Nota do DF não estão preenchidos na linha ${
-              i + start
-            } da Tabela!\n Pelo menos um dos campos tem de estar preenchido`;
-          }
-          if (dfs[i] != null && !/^\s*(C|CP|E)\s*$/g.test(dfs[i])) {
-            throw `O campo DF é inválido na linha ${
-              i + start
-            }.\nO campo tem de ser: C, CP ou E`;
-          }
-        }
-      }
-    }
   } else if (typeOrg == "TS Pluriorganizacional") {
     const ents_tips = State.getEntidades().map((e) => ({
       sigla: e.sigla,
@@ -766,15 +597,16 @@ async function validateColumnsValues(
 
     for (let i = start; i < c.length; i++) {
       if (c[i] != null) {
-        if (!/^\s*\w+\s*(#\s*\w+\s*)*$/g.test(c[i])) {
+        if (!/^\s*\w+\s*(#\s*\w+\s*)*#*$/g.test(c[i])) {
           throw `Célula inválida na linha ${i} e coluna ${headers.donos} da tabela!\nApenas deve conter siglas de entidades/tipologias separadas por '#' ou nada (processo não selecionado).`;
         } else {
           const siglas = c[i].split("#");
+          siglas[siglas.length - 1] == "" ? siglas.pop() : "";
           for (let sigla of siglas) {
             sigla = sigla.replace(/\s*/g, "");
             const aux = ents_tips.filter((e) => e.sigla == sigla);
 
-            if (!aux.length > 0) {
+            if (!sigla === undefined && !aux.length > 0) {
               throw `Célula inválida na linha ${i} e coluna ${headers.donos} da tabela!\nA entidade/tipologia ${sigla} não existe.`;
             } else if (!ret.filter((e) => e.sigla == sigla).length > 0) {
               ret.push(aux[0]);
@@ -790,14 +622,14 @@ async function validateColumnsValues(
 
     for (let i = start; i < p.length; i++) {
       if (p[i] != null) {
-        if (!/^\s*\w+\s*(#\s*\w+\s*)*$/g.test(p[i])) {
+        if (!/^\s*\w+\s*(#\s*\w+\s*)*#*$/g.test(p[i])) {
           throw `Célula inválida na linha ${i} e coluna ${headers.participantes} da tabela!\nApenas deve conter siglas de entidades/tipologias separadas por '#' ou nada (processo não selecionado).`;
         } else {
           const siglas = p[i].split("#");
+          siglas[siglas.length - 1] == "" ? siglas.pop() : "";
           for (let sigla of siglas) {
             sigla = sigla.replace(/\s*/g, "");
             const aux = ents_tips.filter((e) => e.sigla == sigla);
-
             if (!aux.length > 0) {
               throw `Célula inválida na linha ${i} e coluna ${headers.participantes} da tabela!\nA entidade/tipologia ${sigla} não existe.`;
             } else if (!ret.filter((e) => e.sigla == sigla).length > 0) {
@@ -807,39 +639,212 @@ async function validateColumnsValues(
         }
       }
     }
+    if (fonteL == "TS/LC") {
+      // tipo participação
+      let tp = worksheet.getColumn(headers.tipo_participacao).values;
+      tp = tp.map((e) => parseCell(e));
 
-    // tipo participação
-    let tp = worksheet.getColumn(headers.tipo_participacao).values;
-    tp = tp.map((e) => parseCell(e));
+      for (let i = start; i < tp.length; i++) {
+        if (
+          tp[i] != null &&
+          !/^\s*(Apreciador|Assessor|Comunicador|Decisor|Executor|Iniciador)\s*(#\s*(Apreciador|Assessor|Comunicador|Decisor|Executor|Iniciador)\s*)*$/g.test(
+            tp[i]
+          )
+        ) {
+          throw `Célula inválida na linha ${i} e coluna ${headers.tipo_participacao} da tabela!\nApenas deve conter os tipos de participação (Apreciador, Assessor, Comunicador, Decisor, Executor ou Iniciador) separados por '#' ou nada (processo não selecionado).`;
+        }
+      }
 
-    for (let i = start; i < tp.length; i++) {
-      if (
-        tp[i] != null &&
-        !/^\s*(Apreciador|Assessor|Comunicador|Decisor|Executor|Iniciador)\s*(#\s*(Apreciador|Assessor|Comunicador|Decisor|Executor|Iniciador)\s*)*$/g.test(
-          tp[i]
-        )
-      ) {
-        throw `Célula inválida na linha ${i} e coluna ${headers.tipo_participacao} da tabela!\nApenas deve conter os tipos de participação (Apreciador, Assessor, Comunicador, Decisor, Executor ou Iniciador) separados por '#' ou nada (processo não selecionado).`;
+      // match length
+      if (tp.length != p.length) {
+        throw "Os tamanhos das colunas 'Participante' e 'Tipo de participação' não coincidem.";
+      }
+
+      for (let i = start; i < p.length; i++) {
+        if (p[i] != null && tp[i] != null) {
+          const siglas = p[i].split("#");
+          const tps = tp[i].split("#");
+
+          if (siglas.length != tps.length) {
+            throw `As células das colunas 'Participante' e 'Tipo de participação' na linha ${i} não tem o mesmo número de elementos.`;
+          }
+        } else if (p[i] == null && tp[i] != null) {
+          throw `As células das colunas 'Participante' e 'Tipo de participação' na linha ${i} não tem o mesmo número de elementos.`;
+        } else if (p[i] != null && tp[i] == null) {
+          throw `As células das colunas 'Participante' e 'Tipo de participação' na linha ${i} não tem o mesmo número de elementos.`;
+        }
+      }
+    }
+  }
+
+  if (fonteL == "PGD" || fonteL == "PGD/LC" || fonteL == "RADA") {
+    if (fonteL == "PGD") {
+      // pca e nota PCA
+      const pcas = [];
+      worksheet
+        .getColumn(headers.pca)
+        .eachCell({ includeEmpty: true }, (cell, rowNumber) => {
+          if (rowNumber >= start) pcas.push(parseCell(cell.value));
+        });
+
+      const notas = [];
+      worksheet
+        .getColumn(headers.notaPCA)
+        .eachCell({ includeEmpty: true }, (cell, rowNumber) => {
+          if (rowNumber >= start) notas.push(parseCell(cell.value));
+        });
+
+      for (let i = 0; i < pcas.length; i++) {
+        if (
+          (nivel[i + start] == 3 &&
+            pcas[i] == null &&
+            notas[i] == null &&
+            nivel[i + start + 1] != 4 &&
+            nivel[i + start + 2] != 4) ||
+          (nivel[i + start] == 4 && pcas[i] == null && notas[i] == null)
+        ) {
+          throw `O campo PCA e a Nota do PCA não estão preenchidos na linha ${
+            i + start
+          } da Tabela!\n Pelo menos um dos campos tem de estar preenchido`;
+        }
+      }
+    } else {
+      // pca, nota PCA e Forma de contagem do PCA
+      let lvl4 = [];
+      if (fonteL == "PGD/LC") {
+        lvl4 = cods.filter((c) => c.split(".").length == 4);
+      }
+      const pcas = [];
+      worksheet
+        .getColumn(headers.pca)
+        .eachCell({ includeEmpty: true }, (cell, rowNumber) => {
+          if (rowNumber >= start) pcas.push(parseCell(cell.value));
+        });
+
+      const notas = [];
+      worksheet
+        .getColumn(headers.notaPCA)
+        .eachCell({ includeEmpty: true }, (cell, rowNumber) => {
+          if (rowNumber >= start) notas.push(parseCell(cell.value));
+        });
+
+      const formas = [];
+      worksheet
+        .getColumn(headers.formaContagem)
+        .eachCell({ includeEmpty: true }, (cell, rowNumber) => {
+          if (rowNumber >= start) formas.push(parseCell(cell.value));
+        });
+
+      for (let i = 0; i < pcas.length; i++) {
+        if (
+          (fonteL == "PGD/LC" &&
+            cods[i].split(".").length == 3 &&
+            !lvl4.some((c) => c.includes(cods[i])) &&
+            notas[i] == null &&
+            pcas[i] == null) ||
+          (fonteL == "PGD/LC" &&
+            cods[i].split(".").length == 4 &&
+            pcas[i] == null)
+        ) {
+          throw `O campo PCA e a Nota do PCA não estão preenchidos na linha ${
+            i + start
+          } da Tabela!\n Pelo menos um dos campos tem de estar preenchido`;
+        }
+        if (
+          (fonteL == "RADA" &&
+            nivel[i + start] == 3 &&
+            pcas[i] == null &&
+            notas[i] == null &&
+            nivel[i + start + 1] != 4 &&
+            nivel[i + start + 2] != 4) ||
+          (fonteL == "RADA" &&
+            nivel[i + start] == 4 &&
+            pcas[i] == null &&
+            notas[i] == null)
+        ) {
+          throw `O campo PCA e a Nota do PCA não estão preenchidos na linha ${
+            i + start
+          } da Tabela!\n Pelo menos um dos campos tem de estar preenchido`;
+        }
+
+        if (
+          (fonteL == "PGD/LC" &&
+            cods[i].split(".").length == 3 &&
+            !lvl4.some((c) => c.includes(cods[i])) &&
+            pcas[i] != null &&
+            !/^\s*F[0-9]{2}\s*$|^\s*F01\.[0-9]{2}\s*$/g.test(formas[i])) ||
+          (fonteL == "PGD/LC" &&
+            cods[i].split(".").length == 4 &&
+            pcas[i] != null &&
+            !/^\s*F[0-9]{2}\s*$|^\s*F01\.[0-9]{2}\s*$/g.test(formas[i]))
+        ) {
+          throw `O campo Forma de contagem é ínválido na linha ${
+            i + start
+          } da Tabela!\n O campo tem de estar preenchido se o PCA também estiver.\n A Forma de contagem, para ser válida deve ser, por exemplo, no seguinte formato: F01,F02...`;
+        }
+        if (fonteL == "RADA" && nivel[i + start] < 3 && formas[i] != null) {
+          throw `O campo Forma de contagem é ínválido na linha ${
+            i + start
+          } da Tabela!\n O campo não deve estar preenchido para classes abaixo do 3º nível.\n`;
+        }
       }
     }
 
-    // match length
-    if (tp.length != p.length) {
-      throw "Os tamanhos das colunas 'Participante' e 'Tipo de participação' não coincidem.";
-    }
+    // df e nota DF
 
-    for (let i = start; i < p.length; i++) {
-      if (p[i] != null && tp[i] != null) {
-        const siglas = p[i].split("#");
-        const tps = tp[i].split("#");
+    const dfs = [];
+    worksheet
+      .getColumn(headers.df)
+      .eachCell({ includeEmpty: true }, (cell, rowNumber) => {
+        if (rowNumber >= start) dfs.push(parseCell(cell.value));
+      });
 
-        if (siglas.length != tps.length) {
-          throw `As células das colunas 'Participante' e 'Tipo de participação' na linha ${i} não tem o mesmo número de elementos.`;
+    const dfNotas = [];
+    worksheet
+      .getColumn(headers.notaDF)
+      .eachCell({ includeEmpty: true }, (cell, rowNumber) => {
+        if (rowNumber >= start) dfNotas.push(parseCell(cell.value));
+      });
+
+    if (fonteL == "PGD/LC") {
+      let lvl4 = cods.filter((c) => c.split(".").length == 4);
+      for (let i = 0; i < dfs.length; i++) {
+        if (
+          (cods[i].split(".").length == 3 &&
+            !lvl4.some((c) => c.includes(cods[i])) &&
+            dfs[i] == null &&
+            dfNotas[i] == null) ||
+          (cods[i].split(".").length == 4 && dfs[i] == null)
+        ) {
+          throw `O campo DF e a Nota do DF não estão preenchidos na linha ${
+            i + start
+          } da Tabela!\n Pelo menos um dos campos tem de estar preenchido`;
         }
-      } else if (p[i] == null && tp[i] != null) {
-        throw `As células das colunas 'Participante' e 'Tipo de participação' na linha ${i} não tem o mesmo número de elementos.`;
-      } else if (p[i] != null && tp[i] == null) {
-        throw `As células das colunas 'Participante' e 'Tipo de participação' na linha ${i} não tem o mesmo número de elementos.`;
+        if (dfs[i] != null && !/^\s*(C|CP|E)\s*$/g.test(dfs[i])) {
+          throw `O campo DF é inválido na linha ${
+            i + start
+          }.\nO campo tem de ser: C, CP ou E`;
+        }
+      }
+    } else if (fonteL == "PGD" || fonteL == "RADA") {
+      for (let i = 0; i < dfs.length; i++) {
+        if (
+          (nivel[i + start] == 3 &&
+            dfs[i] == null &&
+            dvalidateCfNotas[i] == null &&
+            nivel[i + start + 1] != 4 &&
+            nivel[i + start + 2] != 4) ||
+          (nivel[i + start] == 4 && dfs[i] == null && dfNotas[i] == null)
+        ) {
+          throw `O campo DF e a Nota do DF não estão preenchidos na linha ${
+            i + start
+          } da Tabela!\n Pelo menos um dos campos tem de estar preenchido`;
+        }
+        if (dfs[i] != null && !/^\s*(C|CP|E)\s*$/g.test(dfs[i])) {
+          throw `O campo DF é inválido na linha ${
+            i + start
+          }.\nO campo tem de ser: C, CP ou E`;
+        }
       }
     }
   }
@@ -895,7 +900,7 @@ function validateHeaders(headers, typeOrg, fonteL) {
       df = i;
     } else if (/Nota (ao )?DF/g.test(headers[i])) {
       notaDF = i;
-    } else if (/Forma de contagem (do )?PCA/g.test(headers[i])) {
+    } else if (/Forma (de )?[cC]ontagem\s+(do )?PCA/g.test(headers[i])) {
       formaContagem = i;
     }
   }
@@ -904,7 +909,8 @@ function validateHeaders(headers, typeOrg, fonteL) {
   if (titulos != -1) nFound++;
   if ((fonteL == "TS/LC" || fonteL == "PGD/LC") && donos != -1) nFound++;
   if ((fonteL == "TS/LC" || fonteL == "PGD/LC") && parts != -1) nFound++;
-  if (typeOrg == "TS Pluriorganizacional" && tipPart != -1) nFound++;
+  if (fonteL == "TS/LC" && typeOrg == "TS Pluriorganizacional" && tipPart != -1)
+    nFound++;
   if ((fonteL == "PGD" || fonteL == "PGD/LC" || fonteL == "RADA") && nRef != -1)
     nFound++;
   if (
@@ -1062,20 +1068,50 @@ function validateHeaders(headers, typeOrg, fonteL) {
       };
     }
   } else if (typeOrg == "TS Pluriorganizacional") {
-    if (tipPart == -1) {
+    if (fonteL == "TS/LC" && tipPart == -1) {
       throw new HeaderException(
         "Não foi possível encontrar a coluna 'Tipo de participação'.",
         nFound
       );
+    } else if (fonteL == "TS/LC") {
+      ret = {
+        codigos,
+        titulos,
+        donos,
+        participantes: parts,
+        tipo_participacao: tipPart,
+      };
+    } else if (fonteL == "PGD/LC") {
+      ret = {
+        codigos,
+        nRef,
+        nivel,
+        titulos,
+        descricao,
+        donos,
+        participantes: parts,
+        pca,
+        notaPCA,
+        formaContagem,
+        df,
+        notaDF,
+      };
+    } else if (fonteL == "PGD") {
+      ret = {
+        codigos,
+        nRef,
+        nivel,
+        titulos,
+        descricao,
+        donos,
+        participantes: parts,
+        pca,
+        notaPCA,
+        formaContagem,
+        df,
+        notaDF,
+      };
     }
-
-    ret = {
-      codigos,
-      titulos,
-      donos,
-      participantes: parts,
-      tipo_participacao: tipPart,
-    };
   }
 
   return ret;
@@ -1134,7 +1170,7 @@ async function findSheet(workbook, typeOrg, fonteL) {
   return [sheetN, rowHeaderN, headersPos, ents_tips];
 }
 
-async function constructRADAO(worksheet, file, stats, code) {
+async function constructRADAO(worksheet, file, stats, code, columns) {
   //Carregar as Legislações
   let leg = await State.getLegislacoes();
   //Carregar as Entidades
@@ -1190,16 +1226,16 @@ async function constructRADAO(worksheet, file, stats, code) {
       worksheet.eachRow((row, rowNumber) => {
         if (rowNumber == 1) return;
 
-        var codigo = row.getCell(1).text || "";
-        var referencia = row.getCell(2).text || "";
-        var nivel = row.getCell(3).value || "";
-        var titulo = row.getCell(4).text || "";
-        var descricao = row.getCell(5).text || "";
-        var pca = row.getCell(6).value || "";
-        var notasPCA = row.getCell(7).text || "";
-        var formaContagem = row.getCell(8).text || "";
-        var df = row.getCell(9).text || "";
-        var notasDF = row.getCell(10).text || "";
+        var codigo = row.getCell(columns.codigos).text || "";
+        var referencia = row.getCell(columns.nRef).text || "";
+        var nivel = row.getCell(columns.nivel).value || "";
+        var titulo = row.getCell(columns.titulos).text || "";
+        var descricao = row.getCell(columns.descricao).text || "";
+        var pca = row.getCell(columns.pca).value || "";
+        var notasPCA = row.getCell(columns.notaPCA).text || "";
+        var formaContagem = row.getCell(columns.formaContagem).text || "";
+        var df = row.getCell(columns.df).text || "";
+        var notasDF = row.getCell(columns.notaDF).text || "";
 
         codigo = codigo.replace(/\r?\n|\r/g, " ").replace(/["]/g, '\\"');
         titulo = titulo.replace(/\r?\n|\r/g, " ").replace(/["]/g, '\\"');
@@ -1296,7 +1332,7 @@ async function constructRADAO(worksheet, file, stats, code) {
   }
 }
 
-function constructPGDO(worksheet, file, stats, code) {
+function constructPGDO(worksheet, file, stats, code, columns) {
   //Carregar as Legislações
   let leg = State.getLegislacoes();
   if (file == "lc") return;
@@ -1326,15 +1362,15 @@ function constructPGDO(worksheet, file, stats, code) {
 
     worksheet.eachRow((row, rowNumber) => {
       if (rowNumber == 1) return;
-      var codigo = row.getCell(1).text || "";
-      var referencia = row.getCell(2).text || "";
-      var nivel = row.getCell(3).value || "";
-      var titulo = row.getCell(4).text || "";
-      var descricao = row.getCell(5).text || "";
-      var pca = row.getCell(6).value || "";
-      var notasPCA = row.getCell(7).text || "";
-      var df = row.getCell(8).text || "";
-      var notasDF = row.getCell(9).text || "";
+      var codigo = row.getCell(columns.codigos).text || "";
+      var referencia = row.getCell(columns.nRef).text || "";
+      var nivel = row.getCell(columns.nivel).value || "";
+      var titulo = row.getCell(columns.titulos).text || "";
+      var descricao = row.getCell(columns.descricao).text || "";
+      var pca = row.getCell(columns.pca).value || "";
+      var notasPCA = row.getCell(columns.notaPCA).text || "";
+      var df = row.getCell(columns.df).text || "";
+      var notasDF = row.getCell(columns.notaDF).text || "";
 
       titulo = titulo.replace(/\r?\n|\r/g, " ").replace(/["]/g, '\\"');
       descricao = descricao.replace(/\r?\n|\r/g, " ").replace(/["]/g, '\\"');
@@ -1419,14 +1455,14 @@ function constructPGDO(worksheet, file, stats, code) {
   }
 }
 
-function constructPGDLCO(worksheet, file, stats, code) {
+function constructPGDLCO(worksheet, file, stats, code, columns) {
   //Carregar as Legislações
   let leg = State.getLegislacoes();
   var ano = parseInt(file.split("_")[3]);
   if (ano < 2000) ano -= 1900;
   var legId = file.split("_")[2] + "/" + ano;
   var entidade = file.split("_")[4];
-  entidade = "ent_" + entidade.split(",")[0].replace(/ /g, "_");
+  entidade = "ent_" + entidade.split(",")[0].split(".")[0].replace(/ /g, "_");
   var legislacao = leg.filter(
     (l) => l.tipo == "Portaria" && l.numero == legId
   )[0];
@@ -1443,18 +1479,18 @@ function constructPGDLCO(worksheet, file, stats, code) {
 
     worksheet.eachRow((row, rowNumber) => {
       if (rowNumber == 1) return;
-      var codigo = row.getCell(1).text || "";
-      var referencia = row.getCell(2).text || "";
-      var nivel = row.getCell(3).value || "";
-      var titulo = row.getCell(4).text || "";
-      var descricao = row.getCell(5).text || "";
-      var dono = row.getCell(6).text || "";
-      var participante = row.getCell(7).text || "";
-      var pca = row.getCell(8).value || "";
-      var notasPCA = row.getCell(9).text || "";
-      var formaContagem = row.getCell(10).text || "";
-      var df = row.getCell(11).text || "";
-      var notasDF = row.getCell(12).text || "";
+      var codigo = row.getCell(columns.codigos).text || "";
+      var referencia = row.getCell(columns.nRef).text || "";
+      var nivel = row.getCell(columns.nivel).value || "";
+      var titulo = row.getCell(columns.titulos).text || "";
+      var descricao = row.getCell(columns.descricao).text || "";
+      var dono = row.getCell(columns.donos).text || "";
+      var participante = row.getCell(columns.participantes).text || "";
+      var pca = row.getCell(columns.pca).value || "";
+      var notasPCA = row.getCell(columns.notaPCA).text || "";
+      var formaContagem = row.getCell(columns.formaContagem).text || "";
+      var df = row.getCell(columns.df).text || "";
+      var notasDF = row.getCell(columns.notaDF).text || "";
 
       titulo = titulo.replace(/\r?\n|\r/g, " ").replace(/["]/g, '\\"');
       descricao = descricao.replace(/\r?\n|\r/g, " ").replace(/["]/g, '\\"');
@@ -1699,7 +1735,6 @@ SelTabs.criarPedidoDoCSV = async function (
   const rowHeaderN = aux[1];
   const columns = aux[2];
   const ents_tips = aux[3];
-
   const worksheet = workbook.worksheets[sheetN];
   const obj = {};
   let stats = {};
@@ -1762,7 +1797,7 @@ SelTabs.criarPedidoDoCSV = async function (
         participantes: 0,
       };
       var code = { codigo: "" };
-      let pgd = constructPGDLCO(worksheet, file, stats, code);
+      let pgd = constructPGDLCO(worksheet, file, stats, code, columns);
       return execQuery("update", `INSERT DATA {${pgd}}`)
         .then((res) => {
           return { codigo: code.codigo, stats };
@@ -1777,7 +1812,7 @@ SelTabs.criarPedidoDoCSV = async function (
         processos: 0,
       };
       var code = { codigo: "" };
-      let pgd = constructPGDO(worksheet, file, stats, code);
+      let pgd = constructPGDO(worksheet, file, stats, code, columns);
       return execQuery("update", `INSERT DATA {${pgd}}`)
         .then((res) => {
           return { codigo: code.codigo, stats };
@@ -1792,7 +1827,7 @@ SelTabs.criarPedidoDoCSV = async function (
         processos: 0,
       };
       var code = { codigo: "" };
-      let rada = await constructRADAO(worksheet, file, stats, code);
+      let rada = await constructRADAO(worksheet, file, stats, code, columns);
       return execQuery("update", `INSERT DATA {${rada}}`)
         .then((res) => {
           return { codigo: code.codigo, stats };

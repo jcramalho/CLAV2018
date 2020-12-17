@@ -1,11 +1,10 @@
-const execQuery = require('../../controllers/api/utils').execQuery
-const normalize = require('../../controllers/api/utils').normalize
-var Pedidos = require('../../controllers/api/pedidos');
+const execQuery = require("../../controllers/api/utils").execQuery;
+const normalize = require("../../controllers/api/utils").normalize;
+var Pedidos = require("../../controllers/api/pedidos");
 
+var PGD = module.exports;
 
-var PGD = module.exports
-
-PGD.listar = async function() {
+PGD.listar = async function () {
   let query = `
   select ?idPGD ?idLeg ?data ?numero ?tipo ?sumario ?link where { 
     ?uri a clav:PGD ;
@@ -19,14 +18,14 @@ PGD.listar = async function() {
     BIND(STRAFTER(STR(?uri), 'clav#') AS ?idPGD).
     BIND(STRAFTER(STR(?l), 'clav#') AS ?idLeg).
   } 
-  `
+  `;
 
-    return execQuery("query", query).then(response => {
-      return normalize(response);
-    });
-}
+  return execQuery("query", query).then((response) => {
+    return normalize(response);
+  });
+};
 
-PGD.listarLC = async function() {
+PGD.listarLC = async function () {
   let query = `
   select ?idPGD ?idLeg ?data ?numero ?tipo ?sumario ?link where { 
     ?uri a clav:PGD ;
@@ -40,14 +39,14 @@ PGD.listarLC = async function() {
     BIND(STRAFTER(STR(?uri), 'clav#') AS ?idPGD).
     BIND(STRAFTER(STR(?l), 'clav#') AS ?idLeg).
   } 
-  `
+  `;
 
-    return execQuery("query", query).then(response => {
-      return normalize(response);
-    });
-}
+  return execQuery("query", query).then((response) => {
+    return normalize(response);
+  });
+};
 
-PGD.listarRADA = async function() {
+PGD.listarRADA = async function () {
   let query = `
   select ?idRADA ?idLeg ?data ?numero ?tipo ?sumario ?link where { 
     ?uri a clav:RADA_Antigo ;
@@ -61,12 +60,12 @@ PGD.listarRADA = async function() {
     BIND(STRAFTER(STR(?uri), 'clav#') AS ?idRADA).
     BIND(STRAFTER(STR(?l), 'clav#') AS ?idLeg).
   } 
-  `
+  `;
 
-    return execQuery("query", query).then(response => {
-      return normalize(response);
-    });
-}
+  return execQuery("query", query).then((response) => {
+    return normalize(response);
+  });
+};
 
 PGD.consultarRADA = async function (id) {
   let query = `
@@ -99,12 +98,12 @@ PGD.consultarRADA = async function (id) {
 	BIND(STRAFTER(STR(?uriClasse), 'clav#') AS ?classe).
 	BIND(STRAFTER(STR(?uriClassePai), 'clav#') AS ?classePai).
 }
-  `
+  `;
 
-  return execQuery("query", query).then(response => {
+  return execQuery("query", query).then((response) => {
     return normalize(response);
   });
-}
+};
 
 PGD.consultar = async function (idPGD) {
   let query = `
@@ -135,41 +134,38 @@ PGD.consultar = async function (idPGD) {
     BIND(STRAFTER(STR(?uriClasse), 'clav#') AS ?classe).
     BIND(STRAFTER(STR(?uriClassePai), 'clav#') AS ?classePai).
   }
-  `
+  `;
 
   try {
     let result = await execQuery("query", query);
-    result = normalize(result)
+    result = normalize(result);
 
-    for(var r of result) {
-      if(r.nivel>2) {
+    for (var r of result) {
+      if (r.nivel > 2) {
         var queryDonos = `
-          SELECT ?entDono ?designacaoDono WHERE {
+          SELECT ?entDono WHERE {
             clav:${r.classe} clav:temDono ?uriEntDono .
-            ?uriEntDono clav:entDesignacao ?designacaoDono .
-            BIND(STRAFTER(STR(?uriEntDono), 'clav#') AS ?entDono).
+            BIND(STRAFTER(STR(?uriEntDono), 'ent_') AS ?entDono).
           }
-        `
+        `;
         var resultDonos = await execQuery("query", queryDonos);
         resultDonos = normalize(resultDonos);
-        if(resultDonos && resultDonos.length>0)
-          r.donos = resultDonos
+        if (resultDonos && resultDonos.length > 0) r.donos = resultDonos;
 
         var queryParts = `
-          SELECT ?entParticipante ?designacaoParticipante WHERE {
+          SELECT ?entParticipante WHERE {
             clav:${r.classe} clav:temParticipante ?uriEntParticipante .
-            ?uriEntParticipante clav:entDesignacao ?designacaoParticipante .
-            BIND(STRAFTER(STR(?uriEntParticipante), 'clav#') AS ?entParticipante).
+            BIND(STRAFTER(STR(?uriEntParticipante), 'ent_') AS ?entParticipante).
           }
-        `
+        `;
         var resultParts = await execQuery("query", queryParts);
         resultParts = normalize(resultParts);
-        if(resultParts && resultParts.length>0)
-          r.participantes = resultParts
+        if (resultParts && resultParts.length > 0)
+          r.participantes = resultParts;
       }
     }
-
-    return result
+    return result;
+  } catch (erro) {
+    throw erro;
   }
-  catch (erro) { throw (erro); }
-}
+};
