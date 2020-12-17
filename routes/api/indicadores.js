@@ -33,8 +33,6 @@ var relacaoSanitizer = (value) => {
 
 router.get(
   "/classesN4",
-  Auth.isLoggedInUser,
-  Auth.checkLevel(3),
   (req, res) => {
     Indicadores.totalClassesN(4)
       .then((dados) => {
@@ -54,8 +52,6 @@ router.get(
 
 router.get(
   "/classesN3",
-  Auth.isLoggedInUser,
-  Auth.checkLevel(3),
   (req, res) => {
     Indicadores.totalClassesN(3)
       .then((dados) => {
@@ -75,8 +71,6 @@ router.get(
 
 router.get(
   "/classesN2",
-  Auth.isLoggedInUser,
-  Auth.checkLevel(3),
   (req, res) => {
     Indicadores.totalClassesN(2)
       .then((dados) => {
@@ -96,8 +90,6 @@ router.get(
 
 router.get(
   "/classesN1",
-  Auth.isLoggedInUser,
-  Auth.checkLevel(3),
   (req, res) => {
     Indicadores.totalClassesN(1)
       .then((dados) => {
@@ -115,7 +107,7 @@ router.get(
   }
 );
 
-router.get("/classes", Auth.isLoggedInUser, Auth.checkLevel(0), (req, res) => {
+router.get("/classes", Auth.isLoggedInUser, Auth.checkLevel(3), (req, res) => {
   Indicadores.totalClasses()
     .then((dados) => {
       var result = {
@@ -134,7 +126,7 @@ router.get("/classes", Auth.isLoggedInUser, Auth.checkLevel(0), (req, res) => {
 router.get(
   "/entidadesAtivas",
   Auth.isLoggedInUser,
-  Auth.checkLevel(0),
+  Auth.checkLevel(3),
   (req, res) => {
     Indicadores.totalEntidadesAtivas()
       .then((dados) => res.jsonp(dados))
@@ -148,8 +140,6 @@ router.get(
 
 router.get(
   "/entidades",
-  Auth.isLoggedInUser,
-  Auth.checkLevel(0),
   (req, res) => {
     Indicadores.totalEntidades()
       .then((dados) => {
@@ -171,8 +161,6 @@ router.get(
 
 router.get(
   "/tipologias",
-  Auth.isLoggedInUser,
-  Auth.checkLevel(0),
   (req, res) => {
     Indicadores.totalTipologias()
       .then((dados) => {
@@ -192,7 +180,7 @@ router.get(
 
 //Legislacao
 
-router.get("/legVigor", Auth.isLoggedInUser, Auth.checkLevel(0), (req, res) => {
+router.get("/legVigor", Auth.isLoggedInUser, Auth.checkLevel(3), (req, res) => {
   Indicadores.totalLegislacaoAtivos()
     .then((dados) => res.jsonp(dados))
     .catch((err) =>
@@ -204,7 +192,7 @@ router.get("/legVigor", Auth.isLoggedInUser, Auth.checkLevel(0), (req, res) => {
     );
 });
 
-router.get("/leg", Auth.isLoggedInUser, Auth.checkLevel(0), (req, res) => {
+router.get("/leg", (req, res) => {
   Indicadores.totalLegislacao()
     .then((dados) => {
       var result = {
@@ -223,7 +211,7 @@ router.get("/leg", Auth.isLoggedInUser, Auth.checkLevel(0), (req, res) => {
 //Relacoes
 
 // Devolve as estatísticas relacionais dos Processos
-router.get("/relstats", Auth.isLoggedInUser, Auth.checkLevel(0), (req, res) => {
+router.get("/relstats", Auth.isLoggedInUser, Auth.checkLevel(3), (req, res) => {
   Indicadores.relStats()
     .then((dados) => res.jsonp(dados))
     .catch((erro) =>
@@ -238,8 +226,6 @@ router.get("/relstats", Auth.isLoggedInUser, Auth.checkLevel(0), (req, res) => {
 // Devolve as estatísticas relativas aos Critérios de Justificação
 router.get(
   "/critstats",
-  Auth.isLoggedInUser,
-  Auth.checkLevel(0),
   (req, res) => {
     Indicadores.critStats()
       .then((dados) => res.jsonp(dados))
@@ -254,7 +240,7 @@ router.get(
 );
 
 // Devolve as estatísticas relativas aos Destinos finais
-router.get("/dfstats", Auth.isLoggedInUser, Auth.checkLevel(0), (req, res) => {
+router.get("/dfstats", Auth.isLoggedInUser, Auth.checkLevel(3), (req, res) => {
   Indicadores.dfStats()
     .then((dados) => res.jsonp(dados))
     .catch((erro) =>
@@ -377,7 +363,7 @@ router.get("/critJust", Auth.isLoggedInUser, Auth.checkLevel(3), (req, res) => {
 router.get(
   "/tabela",
   Auth.isLoggedInUser,
-  Auth.checkLevel(0),
+  Auth.checkLevel(3),
   async (req, res) => {
     try {
       var nClasses1 = await Indicadores.totalClassesN(1);
