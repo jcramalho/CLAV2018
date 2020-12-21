@@ -139,7 +139,8 @@ PGD.consultar = async function (idPGD) {
   try {
     let result = await execQuery("query", query);
     result = normalize(result);
-
+    pca = [];
+    i = 0;
     for (var r of result) {
       if (r.nivel > 2) {
         var queryDonos = `
@@ -162,7 +163,16 @@ PGD.consultar = async function (idPGD) {
         resultParts = normalize(resultParts);
         if (resultParts && resultParts.length > 0)
           r.participantes = resultParts;
+
+        if (r.codigo == "400.10.001") {
+          pca.push(r.pca);
+          if (result[i + 1].codigo != "400.10.001") {
+            result.splice(i - 2, 2);
+            r.pca = pca.join();
+          }
+        }
       }
+      i++;
     }
     return result;
   } catch (erro) {

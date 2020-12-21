@@ -97,12 +97,16 @@ router.post(
               fields.tipo_ts &&
               fields.designacao &&
               fields.fonteL &&
-              (fields.entidade_ts || fields.tipo_ts == "TS Pluriorganizacional")
+              fields.entidades_ts
             ) {
               var workbook = new Excel.Workbook();
 
-              if (!fields.entidade_ts) {
-                fields.entidade_ts = null;
+              if (!fields.entidades_ts) {
+                res
+                  .status(500)
+                  .json(
+                    `Erro ao importar CSV: Não foram escolhidas entidades para a TS. Necessita de ter um array denominado entidades_ts com pelo menos uma sigla de uma entidade da TS.`
+                  );
               }
 
               if (formData.file.type == "text/csv") {
@@ -148,7 +152,7 @@ router.post(
                     workbook,
                     user.email,
                     req.user.entidade,
-                    fields.entidade_ts,
+                    fields.entidades_ts,
                     fields.tipo_ts,
                     fields.designacao,
                     fields.fonteL,
@@ -170,16 +174,22 @@ router.post(
                       workbook,
                       user.email,
                       req.user.entidade,
-                      fields.entidade_ts,
+                      fields.entidades_ts,
                       fields.tipo_ts,
                       fields.designacao,
                       fields.fonteL,
                       formData.file.name
                     )
                       .then((dados) => res.json(dados))
-                      .catch((erro) =>
-                        res.status(500).json(`Erro ao importar Excel: ${erro}`)
-                      );
+                      .catch((erro) => {
+                        if (erro.entidades) {
+                          res.status(500).json(erro);
+                        } else {
+                          res
+                            .status(500)
+                            .json(`Erro ao importar Excel: ${erro}`);
+                        }
+                      });
                   })
                   .catch((erro) =>
                     res.status(500).json(`Erro ao importar Excel: ${erro}`)
@@ -195,7 +205,7 @@ router.post(
               res
                 .status(500)
                 .json(
-                  `Erro ao importar CSV/Excel: O FormData deve possuir três campos: um ficheiro em file, o tipo de TS em tipo_ts e a designação em designacao. Caso o tipo de TS seja 'TS Organizacional' deve possuir outro campo: a sigla da entidade da TS em entidade_ts.`
+                  `Erro ao importar CSV/Excel: O FormData deve possuir quatro campos: um ficheiro em file, o tipo de TS em tipo_ts, a designação em designacao e a sigla da entidade(s) da TS entidade em entidades_ts.`
                 );
             }
           } else {

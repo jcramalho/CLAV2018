@@ -469,7 +469,8 @@ async function validateColumnsValues(
   start,
   headers,
   typeOrg,
-  fonteL
+  fonteL,
+  entidades_ts
 ) {
   let cods = [];
   let refs = [];
@@ -582,12 +583,12 @@ async function validateColumnsValues(
       }
     }
   } else if (typeOrg == "TS Pluriorganizacional") {
-    const ents_tips = State.getEntidades().map((e) => ({
+    let ents_tips = State.getEntidades().map((e) => ({
       sigla: e.sigla,
       designacao: e.designacao,
     }));
-    const tips = await Tipologias.listar('?estado="Ativa"');
-    ents_tips.concat(
+    let tips = await Tipologias.listar('?estado="Ativa"');
+    ents_tips = ents_tips.concat(
       tips.map((t) => ({ sigla: t.sigla, designacao: t.designacao }))
     );
 
@@ -603,10 +604,10 @@ async function validateColumnsValues(
           const siglas = c[i].split("#");
           siglas[siglas.length - 1] == "" ? siglas.pop() : "";
           for (let sigla of siglas) {
-            sigla = sigla.replace(/\s*/g, "");
+            sigla = sigla.replace(/\r?\n|\r|\s*/g, "");
             const aux = ents_tips.filter((e) => e.sigla == sigla);
 
-            if (!sigla === undefined && !aux.length > 0) {
+            if (!aux.length > 0) {
               throw `Célula inválida na linha ${i} e coluna ${headers.donos} da tabela!\nA entidade/tipologia ${sigla} não existe.`;
             } else if (!ret.filter((e) => e.sigla == sigla).length > 0) {
               ret.push(aux[0]);
@@ -628,7 +629,7 @@ async function validateColumnsValues(
           const siglas = p[i].split("#");
           siglas[siglas.length - 1] == "" ? siglas.pop() : "";
           for (let sigla of siglas) {
-            sigla = sigla.replace(/\s*/g, "");
+            sigla = sigla.replace(/\r?\n|\r|\s*/g, "");
             const aux = ents_tips.filter((e) => e.sigla == sigla);
             if (!aux.length > 0) {
               throw `Célula inválida na linha ${i} e coluna ${headers.participantes} da tabela!\nA entidade/tipologia ${sigla} não existe.`;
@@ -639,6 +640,24 @@ async function validateColumnsValues(
         }
       }
     }
+    let erro = [];
+
+    ret.map((e) => (!entidades_ts.includes(e.sigla) ? erro.push(e) : ""));
+    if (erro.length > 0) {
+      throw { entidades: erro, acrescenta: true };
+    }
+
+    entidades_ts.map((e) => {
+      !ret.some(function (ent) {
+        return ent.sigla == e;
+      })
+        ? erro.push(ents_tips.find((ent) => ent.sigla == e))
+        : "";
+    });
+    if (erro.length > 0) {
+      throw { entidades: erro, acrescenta: false };
+    }
+
     if (fonteL == "TS/LC") {
       // tipo participação
       let tp = worksheet.getColumn(headers.tipo_participacao).values;
@@ -706,6 +725,14 @@ async function validateColumnsValues(
           throw `O campo PCA e a Nota do PCA não estão preenchidos na linha ${
             i + start
           } da Tabela!\n Pelo menos um dos campos tem de estar preenchido`;
+        }
+        if (
+          pcas[i] != null &&
+          !/^\s*[1-9]\s*$|^\s*[1-9][0-9]\s*$|^\s*1[0-9][0-9]\s*$/g.test(pcas[i])
+        ) {
+          throw `O campo PCA é ínválido na linha ${
+            i + start
+          } da Tabela!\n O campo tem de ser composto por até 3 algarismos (de 1 a 199).\n`;
         }
       }
     } else {
@@ -776,6 +803,7 @@ async function validateColumnsValues(
           (fonteL == "PGD/LC" &&
             cods[i].split(".").length == 4 &&
             pcas[i] != null &&
+            cods[i] != "400.10.001" &&
             !/^\s*F[0-9]{2}\s*$|^\s*F01\.[0-9]{2}\s*$/g.test(formas[i]))
         ) {
           throw `O campo Forma de contagem é ínválido na linha ${
@@ -786,6 +814,15 @@ async function validateColumnsValues(
           throw `O campo Forma de contagem é ínválido na linha ${
             i + start
           } da Tabela!\n O campo não deve estar preenchido para classes abaixo do 3º nível.\n`;
+        }
+        if (
+          pcas[i] != null &&
+          cods[i] != "400.10.001" &&
+          !/^\s*[1-9]\s*$|^\s*[1-9][0-9]\s*$|^\s*1[0-9][0-9]\s*$/g.test(pcas[i])
+        ) {
+          throw `O campo PCA é ínválido na linha ${
+            i + start
+          } da Tabela!\n O campo tem de ser composto por até 3 algarismos (de 1 a 199).\n`;
         }
       }
     }
@@ -1118,7 +1155,7 @@ function validateHeaders(headers, typeOrg, fonteL) {
 }
 
 // Descobrir onde está a tabela de onde se obtém os valores
-async function findSheet(workbook, typeOrg, fonteL) {
+async function findSheet(workbook, typeOrg, fonteL, entidades_ts) {
   let sheetN = null;
   let rowHeaderN = null;
   let founded = false;
@@ -1160,9 +1197,11 @@ async function findSheet(workbook, typeOrg, fonteL) {
         rowHeaderN + 1,
         headersPos,
         typeOrg,
-        fonteL
+        fonteL,
+        entidades_ts
       );
     } catch (e) {
+      if (e.entidades) throw e;
       throw `A TS não se encontra no formato correto: ${e}`;
     }
   }
@@ -1582,8 +1621,196 @@ function constructPGDLCO(worksheet, file, stats, code, columns) {
           "\n###  http://jcr.di.uminho.pt/m51-clav#pca_" + classeId + "\n";
         currentStatements += "clav:pca_" + classeId + " a clav:PCA .\n";
         if (pca && pca != "Não aplicável")
+          if (codigo == "400.10.001") {
+            let pcas = pca.split("#");
+            pcas[pcas.length - 1] == "" ? pcas.pop() : "";
+            pcas.map(
+              (p) =>
+                (currentStatements +=
+                  "clav:pca_" + classeId + " clav:pcaValor " + p + " .\n")
+            );
+          } else {
+            currentStatements +=
+              "clav:pca_" + classeId + " clav:pcaValor " + pca + " .\n";
+          }
+        if (notasPCA)
           currentStatements +=
-            "clav:pca_" + classeId + " clav:pcaValor " + pca + " .\n";
+            "clav:pca_" + classeId + ' clav:pcaNota "' + notasPCA + '" .\n';
+      }
+      if (df || notasDF) {
+        currentStatements +=
+          "clav:" + classeId + " clav:temDF clav:df_" + classeId + " .\n";
+        currentStatements +=
+          "\n###  http://jcr.di.uminho.pt/m51-clav#df_" + classeId + "\n";
+        currentStatements += "clav:df_" + classeId + " a clav:DestinoFinal .\n";
+        if (df)
+          currentStatements +=
+            "clav:df_" + classeId + ' clav:dfValor "' + df + '" .\n';
+        if (notasDF)
+          currentStatements +=
+            "clav:df_" + classeId + ' clav:dfNota "' + notasDF + '" .\n';
+      }
+    });
+    return currentStatements;
+  } else {
+    throw "PGD/LC: Erro a proccessar " + file + " (Leg não existente)";
+  }
+}
+
+function constructPGDLCP(worksheet, file, stats, code, columns) {
+  //Carregar as Legislações
+  let leg = State.getLegislacoes();
+  var ano = parseInt(file.split("_")[3]);
+  if (ano < 2000) ano -= 1900;
+  var legId = file.split("_")[2] + "/" + ano;
+
+  var legislacao = leg.filter(
+    (l) => l.tipo == "Portaria" && l.numero == legId
+  )[0];
+  if (legislacao) {
+    var pais = [];
+    var n = 0;
+    code.codigo = "pgd_lc_" + legislacao.id;
+    var currentStatements =
+      "\n###  http://jcr.di.uminho.pt/m51-clav#pgd_lc_" + legislacao.id + "\n";
+    currentStatements +=
+      "clav:pgd_lc_" + legislacao.id + " rdf:type owl:NamedIndividual ,\n";
+    currentStatements += "\t\tclav:PGD ;\n";
+    currentStatements += "\tclav:temLegislacao clav:" + legislacao.id + " .\n";
+
+    worksheet.eachRow((row, rowNumber) => {
+      if (rowNumber == 1) return;
+      var codigo = row.getCell(columns.codigos).text || "";
+      var referencia = row.getCell(columns.nRef).text || "";
+      var nivel = row.getCell(columns.nivel).value || "";
+      var titulo = row.getCell(columns.titulos).text || "";
+      var descricao = row.getCell(columns.descricao).text || "";
+      var dono = row.getCell(columns.donos).text || "";
+      var participante = row.getCell(columns.participantes).text || "";
+      var pca = row.getCell(columns.pca).value || "";
+      var notasPCA = row.getCell(columns.notaPCA).text || "";
+      var formaContagem = row.getCell(columns.formaContagem).text || "";
+      var df = row.getCell(columns.df).text || "";
+      var notasDF = row.getCell(columns.notaDF).text || "";
+
+      titulo = titulo.replace(/\r?\n|\r/g, " ").replace(/["]/g, '\\"');
+      descricao = descricao.replace(/\r?\n|\r/g, " ").replace(/["]/g, '\\"');
+      notasPCA = notasPCA.replace(/\r?\n|\r/g, " ").replace(/["]/g, '\\"');
+      notasDF = notasDF.replace(/\r?\n|\r/g, " ").replace(/["]/g, '\\"');
+
+      var classeId = "classe_" + nanoid() + "_pgd_" + legislacao.id;
+      currentStatements +=
+        "\n###  http://jcr.di.uminho.pt/m51-clav#" + classeId + "\n";
+      currentStatements +=
+        "clav:" + classeId + " rdf:type owl:NamedIndividual ,\n";
+      currentStatements += "\t\tclav:Classe_PGD ;\n";
+      currentStatements +=
+        "\tclav:pertencePGD clav:pgd_lc_" + legislacao.id + " ;\n";
+      //Quando nivel é 1 necessita reiniciar a identificação de pai
+      if (nivel == 1) {
+        pais = [];
+        pais.push(classeId);
+        n = nivel;
+      } else if (nivel > n) {
+        currentStatements +=
+          "\tclav:temPai clav:" + pais[pais.length - 1] + " ;\n";
+        pais.push(classeId);
+        n = nivel;
+      } else if (n == nivel) {
+        pais.pop();
+        currentStatements +=
+          "\tclav:temPai clav:" + pais[pais.length - 1] + " ;\n";
+        pais.push(classeId);
+        n = nivel;
+      } else {
+        var nPops = n - nivel + 1;
+        for (var i = 0; i < nPops; i++) pais.pop();
+        currentStatements +=
+          "\tclav:temPai clav:" + pais[pais.length - 1] + " ;\n";
+        pais.push(classeId);
+        n = nivel;
+      }
+      if (codigo) {
+        currentStatements += '\tclav:codigo "' + codigo + '" ;\n';
+        stats.processos++;
+      }
+      if (referencia)
+        currentStatements += '\tclav:referencia "' + referencia + '" ;\n';
+      if (titulo) currentStatements += '\tclav:titulo "' + titulo + '" ;\n';
+      if (descricao)
+        currentStatements += '\tclav:descricao "' + descricao + '" ;\n';
+      if (dono) {
+        let donos = dono.split("#");
+        donos[donos.length - 1] == "" ? donos.pop() : "";
+        donos.map(
+          (d) =>
+            (currentStatements +=
+              "\tclav:temDono clav:ent_" + d.replace(/\s*/g, "") + " ;\n")
+        );
+        stats.donos++;
+      }
+      if (participante) {
+        let participantes = participante.split("#");
+        participantes[participantes.length - 1] == ""
+          ? participantes.pop()
+          : "";
+        participantes.map(
+          (p) =>
+            (currentStatements +=
+              "\tclav:temParticipante clav:ent_" +
+              p.replace(/\s*/g, "") +
+              ";\n")
+        );
+        stats.participantes++;
+      }
+      if (formaContagem) {
+        if (formaContagem == "F04")
+          currentStatements +=
+            "\tclav:pcaFormaContagemNormalizada clav:vc_pcaFormaContagem_conclusaoProcedimento ;\n";
+        else if (formaContagem == "F02")
+          currentStatements +=
+            "\tclav:pcaFormaContagemNormalizada clav:vc_pcaFormaContagem_inicioProcedimento ;\n";
+        else if (formaContagem == "F03")
+          currentStatements +=
+            "\tclav:pcaFormaContagemNormalizada clav:vc_pcaFormaContagem_emissaoTitulo ;\n";
+        else if (formaContagem == "F05")
+          currentStatements +=
+            "\tclav:pcaFormaContagemNormalizada clav:vc_pcaFormaContagem_cessacaoVigencia ;\n";
+        else if (formaContagem == "F06")
+          currentStatements +=
+            "\tclav:pcaFormaContagemNormalizada clav:vc_pcaFormaContagem_extincaoEntidade ;\n";
+        else if (formaContagem == "F07")
+          currentStatements +=
+            "\tclav:pcaFormaContagemNormalizada clav:vc_pcaFormaContagem_extincaoDireito ;\n";
+        else {
+          currentStatements +=
+            "\tclav:pcaFormaContagemNormalizada clav:vc_pcaFormaContagem_disposicaoLegal ;\n";
+          currentStatements +=
+            "\tclav:pcaSubformaContagem clav:vc_pcaSubformaContagem_" +
+            formaContagem +
+            ";\n";
+        }
+      }
+      currentStatements += "\tclav:nivel " + nivel + " .\n";
+      if (pca || notasPCA) {
+        currentStatements +=
+          "clav:" + classeId + " clav:temPCA clav:pca_" + classeId + " .\n";
+        currentStatements +=
+          "\n###  http://jcr.di.uminho.pt/m51-clav#pca_" + classeId + "\n";
+        currentStatements += "clav:pca_" + classeId + " a clav:PCA .\n";
+        if (pca && pca != "Não aplicável")
+          if (codigo == "400.10.001") {
+            let pcas = pca.split("#");
+            pcas[pcas.length - 1] == "" ? pcas.pop() : "";
+            pcas.map(
+              (p) =>
+                (currentStatements +=
+                  "clav:pca_" + classeId + " clav:pcaValor " + p + " .\n")
+            );
+          } else {
+            currentStatements +=
+              "clav:pca_" + classeId + " clav:pcaValor " + pca + " .\n";
+          }
         if (notasPCA)
           currentStatements +=
             "clav:pca_" + classeId + ' clav:pcaNota "' + notasPCA + '" .\n';
@@ -1724,13 +1951,14 @@ SelTabs.criarPedidoDoCSV = async function (
   workbook,
   email,
   entidade_user,
-  entidade_ts,
+  entidades_ts,
   tipo_ts,
   designacao,
   fonteL,
   file
 ) {
-  const aux = await findSheet(workbook, tipo_ts, fonteL);
+  entidades_ts = JSON.parse(entidades_ts);
+  const aux = await findSheet(workbook, tipo_ts, fonteL, entidades_ts);
   const sheetN = aux[0];
   const rowHeaderN = aux[1];
   const columns = aux[2];
@@ -1752,7 +1980,7 @@ SelTabs.criarPedidoDoCSV = async function (
       obj.ts = {
         designacao,
         processos: list,
-        entidade: entidade_ts,
+        entidade: entidades_ts[0],
       };
     } else {
       obj.entidades = [];
@@ -1798,6 +2026,21 @@ SelTabs.criarPedidoDoCSV = async function (
       };
       var code = { codigo: "" };
       let pgd = constructPGDLCO(worksheet, file, stats, code, columns);
+      return execQuery("update", `INSERT DATA {${pgd}}`)
+        .then((res) => {
+          return { codigo: code.codigo, stats };
+        })
+        .catch((err) => {
+          throw "Insucesso na inserção do tabela de seleção\n" + err;
+        });
+    } else {
+      stats = {
+        processos: 0,
+        donos: 0,
+        participantes: 0,
+      };
+      var code = { codigo: "" };
+      let pgd = constructPGDLCP(worksheet, file, stats, code, columns);
       return execQuery("update", `INSERT DATA {${pgd}}`)
         .then((res) => {
           return { codigo: code.codigo, stats };
