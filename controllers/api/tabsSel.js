@@ -728,7 +728,9 @@ async function validateColumnsValues(
         }
         if (
           pcas[i] != null &&
-          !/^\s*[1-9]\s*$|^\s*[1-9][0-9]\s*$|^\s*1[0-9][0-9]\s*$/g.test(pcas[i])
+          !/^\s*[1-9]\s*$|^\s*[1-9][0-9]\s*$|^\s*1[0-9][0-9]\s*$|^\s*[0-9]{1,3}[\.\,][0-9]{1,2}\s*$/g.test(
+            pcas[i]
+          )
         ) {
           throw `O campo PCA é ínválido na linha ${
             i + start
@@ -818,7 +820,9 @@ async function validateColumnsValues(
         if (
           pcas[i] != null &&
           cods[i] != "400.10.001" &&
-          !/^\s*[1-9]\s*$|^\s*[1-9][0-9]\s*$|^\s*1[0-9][0-9]\s*$/g.test(pcas[i])
+          !/^\s*[1-9]\s*$|^\s*[1-9][0-9]\s*$|^\s*1[0-9][0-9]\s*$|^\s*[0-9]{1,3}[\.\,][0-9]{1,2}\s*$/g.test(
+            pcas[i]
+          )
         ) {
           throw `O campo PCA é ínválido na linha ${
             i + start
@@ -917,9 +921,9 @@ function validateHeaders(headers, typeOrg, fonteL) {
       codigos = i;
     } else if (/^\s*Título\s*$/g.test(headers[i])) {
       titulos = i;
-    } else if (/Dono[\sPN]/g.test(headers[i])) {
+    } else if (/Dono( PN)?/g.test(headers[i])) {
       donos = i;
-    } else if (/Participante[\sPN]/g.test(headers[i])) {
+    } else if (/Participante( PN)?/g.test(headers[i])) {
       parts = i;
     } else if (/^\s*Tipo de participação\s*$/g.test(headers[i])) {
       tipPart = i;
@@ -986,7 +990,8 @@ function validateHeaders(headers, typeOrg, fonteL) {
     );
   if (
     (fonteL == "PGD" || fonteL == "PGD/LC" || fonteL == "RADA") &&
-    (codigos == -1 || nRef == -1)
+    codigos == -1 &&
+    nRef == -1
   )
     throw new HeaderException(
       "Não foi possível encontrar as colunas 'Código' e 'N.º Referência' - Necessita de ter pelo menos uma delas.",
