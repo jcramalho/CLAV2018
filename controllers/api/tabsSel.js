@@ -532,10 +532,8 @@ async function validateColumnsValues(
       for (let i = 0; i < cods.length; i++) {
         if (
           nivel[i + start] >= 3 &&
-          !/^\s*\d{1,3}(\.\d{1,2}(\.\d{1,3}(\.\d{1,2})?)?)?\s*$/g.test(
-            cods[i]
-          ) &&
-          !/^\s*[\d\w\.]+\s*$/g.test(refs[i])
+          !/^\s*[\d\w\.\:\-]+\s*$/g.test(cods[i]) &&
+          !/^\s*[\d\w\.\:\-]+\s*$/g.test(refs[i])
         ) {
           throw `Código e Nº. Referência não encontrados na linha ${
             i + start
@@ -728,13 +726,13 @@ async function validateColumnsValues(
         }
         if (
           pcas[i] != null &&
-          !/^\s*[1-9]\s*$|^\s*[1-9][0-9]\s*$|^\s*1[0-9][0-9]\s*$|^\s*[0-9]{1,3}[\.\,][0-9]{1,2}\s*$/g.test(
+          !/^\s*[0-9]\s*$|^\s*[1-9][0-9]\s*$|^\s*1[0-9][0-9]\s*$|^\s*[0-9]{1,3}[\.\,][0-9]{1,2}\s*$/g.test(
             pcas[i]
           )
         ) {
           throw `O campo PCA é ínválido na linha ${
             i + start
-          } da Tabela!\n O campo tem de ser composto por até 3 algarismos (de 1 a 199).\n`;
+          } da Tabela!\n O campo tem de ser composto por algarismos podendo ter até duas casas decimais (0 a 199).\n`;
         }
       }
     } else {
@@ -820,13 +818,13 @@ async function validateColumnsValues(
         if (
           pcas[i] != null &&
           cods[i] != "400.10.001" &&
-          !/^\s*[1-9]\s*$|^\s*[1-9][0-9]\s*$|^\s*1[0-9][0-9]\s*$|^\s*[0-9]{1,3}[\.\,][0-9]{1,2}\s*$/g.test(
+          !/^\s*[0-9]\s*$|^\s*[1-9][0-9]\s*$|^\s*1[0-9][0-9]\s*$|^\s*[0-9]{1,3}[\.\,][0-9]{1,2}\s*$/g.test(
             pcas[i]
           )
         ) {
           throw `O campo PCA é ínválido na linha ${
             i + start
-          } da Tabela!\n O campo tem de ser composto por até 3 algarismos (de 1 a 199).\n`;
+          } da Tabela!\n O campo tem de ser composto por algarismos podendo ter até duas casas decimais (0 a 199).\n`;
         }
       }
     }
