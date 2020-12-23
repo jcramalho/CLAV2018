@@ -868,7 +868,7 @@ async function validateColumnsValues(
         if (
           (nivel[i + start] == 3 &&
             dfs[i] == null &&
-            dvalidateCfNotas[i] == null &&
+            dfNotas[i] == null &&
             nivel[i + start + 1] != 4 &&
             nivel[i + start + 2] != 4) ||
           (nivel[i + start] == 4 && dfs[i] == null && dfNotas[i] == null)
