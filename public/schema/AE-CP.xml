@@ -4,109 +4,113 @@
     <fonteLegitimação>
         <diploma>Portaria 39/2019</diploma>
     </fonteLegitimação>
-    <fundos>
-        <fundo>DGLAB</fundo>
-    </fundos>
+
+    <fundo>DGLAB</fundo>
+
     <classes>
         <classe>
             <código>150.20.001</código>
-            <título>Preparação de regras e orientações internas</título>
+            
             <pca>
                 <valor>10</valor>
             </pca>
             <df>
-                <valor>Eliminação</valor>
+                <valor>E</valor>
             </df>
             <anoInício>1970</anoInício>
             <anoFim>2000</anoFim>
-            <dimensãoSuporte><papel>10000</papel></dimensãoSuporte>
+            <dimensãoSuporte>
+                <papel>10000</papel>
+            </dimensãoSuporte>
             <númeroAgregações>6</númeroAgregações>
             <agregações>
                 <agregação>
                     <código>Ab6</código>
                     <título>Processos de preparação de regras 6</título>
                     <ano>1991</ano>
-                    <naturezaIntervenção>Dono</naturezaIntervenção>
+                    <naturezaIntervenção>DONO</naturezaIntervenção>
                 </agregação>
                 <agregação>
                     <código>Ab5</código>
                     <título>Processos de preparação de regras 5</título>
                     <ano>1991</ano>
-                    <naturezaIntervenção>Dono</naturezaIntervenção>
+                    <naturezaIntervenção>DONO</naturezaIntervenção>
                 </agregação>
                 <agregação>
                     <código>Ab4</código>
                     <título>Processos de preparação de regras 4</título>
                     <ano>1990</ano>
-                    <naturezaIntervenção>Dono</naturezaIntervenção>
+                    <naturezaIntervenção>DONO</naturezaIntervenção>
                 </agregação>
                 <agregação>
                     <código>Ab3</código>
                     <título>Processos de preparação de regras 3</título>
                     <ano>1990</ano>
-                    <naturezaIntervenção>Dono</naturezaIntervenção>
+                    <naturezaIntervenção>DONO</naturezaIntervenção>
                 </agregação>
                 <agregação>
                     <código>Ab2</código>
                     <título>Processos de preparação de regras 2</título>
                     <ano>1985</ano>
-                    <naturezaIntervenção>Dono</naturezaIntervenção>
+                    <naturezaIntervenção>DONO</naturezaIntervenção>
                 </agregação>
                 <agregação>
                     <código>Ab1</código>
                     <título>Processos de preparação de regras</título>
                     <ano>1980</ano>
-                    <naturezaIntervenção>Dono</naturezaIntervenção>
+                    <naturezaIntervenção>DONO</naturezaIntervenção>
                 </agregação>
             </agregações>
         </classe>
         <classe>
             <código>150.20.202</código>
-            <título>Preparação do orçamento</título>
+            
             <pca>
                 <valor>10</valor>
             </pca>
             <df>
-                <valor>Conservação</valor>
+                <valor>C</valor>
             </df>
-            <naturezaIntervenção>Participante</naturezaIntervenção>
+            <naturezaIntervenção>PARTICIPANTE</naturezaIntervenção>
             <donos>
                 <dono>PCM</dono>
             </donos>
             <anoInício>1975</anoInício>
             <anoFim>1995</anoFim>
-            <dimensãoSuporte><papel>10</papel></dimensãoSuporte>
+            <dimensãoSuporte>
+                <papel>10</papel>
+            </dimensãoSuporte>
             <númeroAgregações>5</númeroAgregações>
             <agregações>
                 <agregação>
                     <código>Orç 1</código>
                     <título>Contas prévias</título>
                     <ano>1975</ano>
-                    <naturezaIntervenção>Participante</naturezaIntervenção>
+                    <naturezaIntervenção>PARTICIPANTE</naturezaIntervenção>
                 </agregação>
                 <agregação>
                     <código>Orç 2</código>
                     <título>Preparação do orçamento</título>
                     <ano>1975</ano>
-                    <naturezaIntervenção>Participante</naturezaIntervenção>
+                    <naturezaIntervenção>PARTICIPANTE</naturezaIntervenção>
                 </agregação>
                 <agregação>
                     <código>Orç 3</código>
                     <título>Antecipação de duodécimos</título>
                     <ano>1975</ano>
-                    <naturezaIntervenção>Participante</naturezaIntervenção>
+                    <naturezaIntervenção>PARTICIPANTE</naturezaIntervenção>
                 </agregação>
                 <agregação>
                     <código>Orç 4</código>
                     <título>Alteração orçamental</título>
                     <ano>1980</ano>
-                    <naturezaIntervenção>Participante</naturezaIntervenção>
+                    <naturezaIntervenção>PARTICIPANTE</naturezaIntervenção>
                 </agregação>
                 <agregação>
                     <código>Orç 5</código>
                     <título>II Alteração orçamental</título>
                     <ano>1980</ano>
-                    <naturezaIntervenção>Participante</naturezaIntervenção>
+                    <naturezaIntervenção>PARTICIPANTE</naturezaIntervenção>
                 </agregação>
             </agregações>
         </classe>

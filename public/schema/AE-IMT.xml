@@ -4,22 +4,22 @@
     <fonteLegitimação>
         <diploma>Portaria 381/2019</diploma>
     </fonteLegitimação>
-    <fundos>
+    
         <fundo>DGLAB</fundo>
-    </fundos>
+    
     <classes>
         <classe>
             <código>100.10.001</código>
-            <título>Produção e comunicação de atos legislativos</título>
+            
             <pca>
                 <valor>5</valor>
                 <nota></nota>
             </pca>
             <df>
-                <valor>Conservação</valor>
+                <valor>C</valor>
                 <nota></nota>
             </df>
-            <naturezaIntervenção>Participante</naturezaIntervenção>
+            <naturezaIntervenção>PARTICIPANTE</naturezaIntervenção>
             <donos>
                 <dono>AR</dono>
             </donos>
@@ -33,13 +33,13 @@
         </classe>
         <classe>
             <código>150.10.701.01</código>
-            <título>Reunião de órgãos executivos: preparação</título>
+            
             <pca>
                 <valor>10</valor>
                 <nota></nota>
             </pca>
             <df>
-                <valor>Eliminação</valor>
+                <valor>E</valor>
                 <nota></nota>
             </df>
             <anoInício>1985</anoInício>

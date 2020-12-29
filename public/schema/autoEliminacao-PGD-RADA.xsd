@@ -1,10 +1,17 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:annotation>
-    <xs:documentation>Projeto CLAV
+    <xs:appinfo>Projeto CLAV
 Criado por jcr
 Em 2020-11-17
 
-Este Schema deve ser usado para a criação offline de AE relacionados com fontes TS/LC ou PGD/LC.</xs:documentation>
+</xs:appinfo>
+    <xs:documentation>Objetivo: apoiar a produção de autos de eliminação através da API de Dados da Plataforma CLAV – Classificação e Avaliação da Informação Pública.</xs:documentation>
+    <xs:documentation>Âmbito de aplicação: aplica-se aos autos de eliminação submetidos na Plataforma para a Classificação e Avaliação da Informação Pública baseados nas seguintes fontes de legitimação: 
+1)	PGD: Sigla de Portaria de Gestão de Documentos. Abrange as tabelas de seleção, não derivadas da Lista Consolidada, inseridas em portarias de gestão de documentos, publicadas em Diário da República. 
+2)	RADA: Sigla de Relatório de Avaliação de Documentação Acumulada. Abrange as tabelas de seleção, inseridas em Relatórios de Avaliação de Documentação Acumulada, que não foram submetidos na CLAV. Não obstante, as respetivas tabelas de seleção foram importadas e estão disponíveis na Plataforma. 
+3)	RADA/CLAV: Sigla de Relatório de Avaliação de Documentação Acumulada / Plataforma para a Classificação e Avaliação da Informação Pública. Abrange as tabelas de seleção, inseridas em Relatórios de Avaliação de Documentação Acumulada, que foram submetidos na CLAV.
+</xs:documentation>
+    <xs:documentation>Destinatários: entidades produtoras de informação pública e empresas produtoras de software para a gestão de informação pública.</xs:documentation>
   </xs:annotation>
   <xs:element name="autoEliminação">
     <xs:annotation>
@@ -14,13 +21,20 @@ Este Schema deve ser usado para a criação offline de AE relacionados com fonte
       <xs:sequence>
         <xs:element name="fonteLegitimação">
           <xs:annotation>
-            <xs:documentation>Identificação do diploma que regulamenta a eliminação que se propõe e com o qual será validado o AE.</xs:documentation>
+            <xs:documentation>Identificação da portaria, no caso das portarias de gestão de documentos, ou do despacho, no caso dos Relatórios de Avaliação de Documentação Acumulada (RADA), que estabelece as decisões de avaliação que fundamentam a avaliação e possibilitam a eliminação da informação.</xs:documentation>
           </xs:annotation>
           <xs:complexType>
             <xs:sequence>
               <xs:element name="diploma">
                 <xs:annotation>
-                  <xs:documentation>Deverá identificar a fonte numa das seguintes formas: 1) LC, 2) Portaria número/ano, ou 3) Despacho DGLAB número/ano. A primeira forma deverá ser usada para fins de teste e enquanto a entidade não possuir um instrumento classificativo aprovado.</xs:documentation>
+                  <xs:documentation>Deve identificar a FONTE DE LEGITIMAÇÃO numa de três formas, conforme o caso:  
+1) Portaria número/ano
+2) Despacho DGLAB número/ano
+</xs:documentation>
+                  <xs:documentation>Exemplos: 
+1) Portaria 414/2005
+2) Despacho DGLAB 223/2021
+</xs:documentation>
                 </xs:annotation>
                 <xs:simpleType>
                   <xs:restriction base="xs:string">
@@ -33,19 +47,13 @@ Este Schema deve ser usado para a criação offline de AE relacionados com fonte
             <xs:attribute name="tipo" type="atributoTipo"/>
           </xs:complexType>
         </xs:element>
-        <xs:element name="fundos" minOccurs="1">
+        <xs:element name="fundo" type="xs:string">
           <xs:annotation>
-            <xs:documentation>Identificação das entidades produtoras</xs:documentation>
+            <xs:documentation>Identificação da(s) entidade(s) produtora(s) da documentação que pretende eliminar.</xs:documentation>
+            <xs:documentation>No caso dos RADA pode existir mais de uma entidade produtora. </xs:documentation>
+            <xs:documentation>Deve preencher o campo com a(s) sigla(s) da entidade, conforme catálogo de entidades disponibilizado na CLAV. </xs:documentation>
+            <xs:documentation>Exemplos: DGLAB, AdC, ADC, Alentejo 2020, DGAEs, DGAEu</xs:documentation>
           </xs:annotation>
-          <xs:complexType>
-            <xs:sequence>
-              <xs:element maxOccurs="unbounded" name="fundo" type="xs:string">
-                <xs:annotation>
-                  <xs:documentation>Deve ser preenchido com a sigla da entidade conforme catálogo disponibilizado na CLAV. Exemplos: DGLAB, SEF, UTAD, ...</xs:documentation>
-                </xs:annotation>
-              </xs:element>
-            </xs:sequence>
-          </xs:complexType>
         </xs:element>
         <xs:element name="classes">
           <xs:annotation>
@@ -61,65 +69,61 @@ Este Schema deve ser usado para a criação offline de AE relacionados com fonte
                   <xs:sequence>
                     <xs:element name="código" type="xs:string" minOccurs="0" maxOccurs="1">
                       <xs:annotation>
-                        <xs:documentation>Conforme consta da fonte de legitimação identificada.</xs:documentation>
+                        <xs:documentation>Identificação da classe / série que pretende eliminar, conforme consta da fonte de legitimação. </xs:documentation>
+                        <xs:documentation>Um dos dois campos CLASSE ou NÚMERO DE REFERÊNCIA tem de estar obrigatoriamente preenchido. </xs:documentation>
+                        <xs:documentation>Deve colocar o código da classe / série, conforme consta da fonte de legitimação. </xs:documentation>
+                        <xs:documentation>Exemplos: 001, 002, 003, 060.10.15, 060.10.16</xs:documentation>
                       </xs:annotation>
                     </xs:element>
                     <xs:element name="referência" type="xs:string" minOccurs="0" maxOccurs="1">
                       <xs:annotation>
-                        <xs:documentation>Número de referência</xs:documentation>
+                        <xs:documentation>Identificação da classe / série que pretende eliminar, conforme consta da fonte de legitimação.</xs:documentation>
+                        <xs:documentation>Um dos dois campos CLASSE ou NÚMERO DE REFERÊNCIA tem de estar obrigatoriamente preenchido. </xs:documentation>
+                        <xs:documentation>Deve colocar o código da classe / série, conforme consta da fonte de legitimação. </xs:documentation>
+                        <xs:documentation>Exemplos: 1, 2, 3, 4, 5</xs:documentation>
                       </xs:annotation>
                     </xs:element>
-                    <xs:element name="pca">
+                    <xs:element name="anoInício" type="xs:int">
                       <xs:annotation>
-                        <xs:documentation>Prazo de conservação administrativa: se o valor não for preenchido a nota terá de estar preenchida</xs:documentation>
+                        <xs:documentation>Registo do ano inicial de produção da informação a eliminar. </xs:documentation>
+                        <xs:documentation>Deve preencher o campo com o ano inicial da informação a eliminar. </xs:documentation>
+                        <xs:documentation>A data de início tem de ser anterior à data de fim. </xs:documentation>
+                        <xs:documentation>Não pode introduzir um valor superior a 100 anos a contar do ano corrente. </xs:documentation>
+                        <xs:documentation>Exemplo: Se o ano corrente é 2020, não pode introduzir como DATA DE INÍCIO o ano de 1919. </xs:documentation>
                       </xs:annotation>
-                      <xs:complexType>
-                        <xs:sequence>
-                          <xs:element name="valor" type="xs:int">
-                            <xs:annotation>
-                              <xs:documentation>Número de anos</xs:documentation>
-                            </xs:annotation>
-                          </xs:element>
-                          <xs:element name="nota" type="xs:string"/>
-                        </xs:sequence>
-                      </xs:complexType>
                     </xs:element>
-                    <xs:element name="df">
+                    <xs:element name="anoFim" type="xs:int">
                       <xs:annotation>
-                        <xs:documentation>Destino final: o seu valor poderá ficar vazio se a nota for preenchida</xs:documentation>
+                        <xs:documentation>Registo do ano final de produção da informação a eliminar.</xs:documentation>
+                        <xs:documentation>Deve preencher o campo com o ano final da informação a eliminar. </xs:documentation>
+                        <xs:documentation>A data de fim tem de ser posterior à data de início. </xs:documentation>
+                        <xs:documentation>Não pode introduzir um valor superior a 100 anos a contar do ano corrente. </xs:documentation>
+                        <xs:documentation>Exemplo: Se o ano corrente é 2020, não pode introduzir como DATA DE FIM o ano de 1919. </xs:documentation>
                       </xs:annotation>
-                      <xs:complexType>
-                        <xs:sequence>
-                          <xs:element name="valor" type="TvalorDF">
-                            <xs:annotation>
-                              <xs:documentation>Vocabulário controlado: vazio, Conservação, Eliminação, Conservação Parcial ou Não Especificado</xs:documentation>
-                            </xs:annotation>
-                          </xs:element>
-                          <xs:element name="nota" type="xs:string"/>
-                        </xs:sequence>
-                      </xs:complexType>
                     </xs:element>
-                    <xs:element name="anoInício" type="xs:int"/>
-                    <xs:element name="anoFim" type="xs:int"/>
                     <xs:element name="dimensãoSuporte">
                       <xs:annotation>
-                        <xs:documentation>Pelo menos um dos tipos deve ser preenchido podendo os restantes ficar vazios.</xs:documentation>
+                        <xs:documentation>Pelo menos um dos campos relativos à medição tem de ser preenchido, podendo os restantes ficar vazios. </xs:documentation>
                       </xs:annotation>
                       <xs:complexType>
                         <xs:sequence>
-                          <xs:element name="papel" type="xs:int">
+                          <xs:element name="papel" type="xs:int" minOccurs="0">
                             <xs:annotation>
-                              <xs:documentation>Número de metros lineares</xs:documentation>
+                              <xs:documentation>Registo dos metros lineares da informação a eliminar. </xs:documentation>
+                              <xs:documentation/>
+                              <xs:documentation>Deve preencher o campo com o número de metros lineares da informação a eliminar.</xs:documentation>
                             </xs:annotation>
                           </xs:element>
-                          <xs:element name="digital" type="xs:int">
+                          <xs:element name="digital" type="xs:int" minOccurs="0">
                             <xs:annotation>
-                              <xs:documentation>Número de Gigabytes</xs:documentation>
+                              <xs:documentation>Registo dos gigabites da informação a eliminar.</xs:documentation>
+                              <xs:documentation>Deve preencher o campo com a unidade de medida do novo suporte da informação a eliminar. </xs:documentation>
                             </xs:annotation>
                           </xs:element>
                           <xs:element minOccurs="0" name="outro">
                             <xs:annotation>
-                              <xs:documentation>Caraterização de outro suporte que não seja papel ou digital</xs:documentation>
+                              <xs:documentation>Registo da dimensão noutros suportes da informação a eliminar. </xs:documentation>
+                              <xs:documentation>Deve preencher o campo com a unidade de medida do novo suporte da informação a eliminar. </xs:documentation>
                             </xs:annotation>
                             <xs:complexType>
                               <xs:sequence>
@@ -137,7 +141,9 @@ Este Schema deve ser usado para a criação offline de AE relacionados com fonte
                     </xs:element>
                     <xs:element name="númeroAgregações" type="xs:int">
                       <xs:annotation>
-                        <xs:documentation>Número total de agregações que se pretendem eliminar; deve ser preenchido mesmo quando não houver identificação das agregações.</xs:documentation>
+                        <xs:documentation>Registo do número total de agregações / unidades de instalação referentes à classe / série, que se pretende eliminar</xs:documentation>
+                        <xs:documentation>Deve preencher o campo mesmo quando não houver identificação das agregações. </xs:documentation>
+                        <xs:documentation>Número total de agregações / unidades de instalação relativas à classe / série que está a identificar.</xs:documentation>
                       </xs:annotation>
                     </xs:element>
                     <xs:element minOccurs="0" name="agregações">
@@ -151,13 +157,25 @@ Este Schema deve ser usado para a criação offline de AE relacionados com fonte
                               <xs:sequence>
                                 <xs:element name="código" type="xs:string">
                                   <xs:annotation>
-                                    <xs:documentation>Código da agregação</xs:documentation>
+                                    <xs:documentation>Indicação do código da agregação / unidade de instalação a eliminar. </xs:documentation>
+                                    <xs:documentation>Deve preencher o campo com o código da agregação que a eliminar. </xs:documentation>
+                                    <xs:documentation>Na mesma classe não podem existir agregações com o mesmo código. </xs:documentation>
+                                    <xs:documentation>Exemplos: DPP/PTCD/2020/123; 123 – 2018</xs:documentation>
                                   </xs:annotation>
                                 </xs:element>
-                                <xs:element name="título" type="xs:string"/>
+                                <xs:element name="título" type="xs:string">
+                                  <xs:annotation>
+                                    <xs:documentation>Indicação do título da agregação / unidade de instalação a eliminar.</xs:documentation>
+                                    <xs:documentation>Deve preencher o campo com o título da agregação a eliminar. </xs:documentation>
+                                    <xs:documentation>Exemplos: Contratos de Empreitadas; Auditorias externas</xs:documentation>
+                                  </xs:annotation>
+                                </xs:element>
                                 <xs:element name="ano" type="xs:int">
                                   <xs:annotation>
-                                    <xs:documentation>Ano em que iniciou a contagem do PCA</xs:documentation>
+                                    <xs:documentation>Registo do ano de início de contagem do prazo de conservação administrativa (PCA).</xs:documentation>
+                                    <xs:documentation>A DATA DE INÍCIO DE CONTAGEM DO PCA é igual ou inferior à subtração do valor existente no campo PCA ao ano corrente. Para garantia do cumprimento integral do PCA é aconselhável adicionar 1 ano. </xs:documentation>
+                                    <xs:documentation>A DATA DE INÍCIO DE CONTAGEM DO PCA pode não coincidir com a data de produção dado que deve atender à forma de contagem do PCA, por exemplo, se a forma de contagem for a data de cessação da vigência apenas quando cessa a vigência poderá ser iniciada a contagem do PCA. </xs:documentation>
+                                    <xs:documentation>Exemplo: Se a data de início de contagem é 2010 e se o PCA for de 10 anos, então 2010+10+1, então só será possível eliminar em 2021. </xs:documentation>
                                   </xs:annotation>
                                 </xs:element>
                               </xs:sequence>
@@ -177,11 +195,9 @@ Este Schema deve ser usado para a criação offline de AE relacionados com fonte
   </xs:element>
   <xs:simpleType name="atributoTipo">
     <xs:annotation>
-      <xs:documentation>Tipos de fontes de legitimação: TS/LC, PGD/LC, PGD, RADA, RADA/CLAV.</xs:documentation>
+      <xs:documentation>Tipos de fontes de legitimação: PGD, RADA, RADA/CLAV.</xs:documentation>
     </xs:annotation>
     <xs:restriction base="xs:string">
-      <xs:enumeration value="TS/LC"/>
-      <xs:enumeration value="PGD/LC"/>
       <xs:enumeration value="PGD"/>
       <xs:enumeration value="RADA"/>
       <xs:enumeration value="RADA/CLAV"/>
@@ -190,16 +206,9 @@ Este Schema deve ser usado para a criação offline de AE relacionados com fonte
   <xs:simpleType name="TvalorDF">
     <xs:restriction base="xs:string">
       <xs:enumeration value=""/>
-      <xs:enumeration value="Conservação"/>
-      <xs:enumeration value="Eliminação"/>
-      <xs:enumeration value="Conservação Parcial"/>
-      <xs:enumeration value="Não Especificado"/>
-    </xs:restriction>
-  </xs:simpleType>
-  <xs:simpleType name="TnaturezaIntervenção">
-    <xs:restriction base="xs:string">
-      <xs:enumeration value="Participante"/>
-      <xs:enumeration value="Dono"/>
+      <xs:enumeration value="C"/>
+      <xs:enumeration value="E"/>
+      <xs:enumeration value="CP"/>
     </xs:restriction>
   </xs:simpleType>
 </xs:schema>
