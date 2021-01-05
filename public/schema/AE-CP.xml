@@ -1,22 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <autoEliminação xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="file:/Users/jcr/Documents/WebApps/NodeJS/docker-clav/CLAV2018/public/schema/autoEliminacao-LC-TS-PGD.xsd">
-    <fonteLegitimação>
+    xsi:noNamespaceSchemaLocation="file:/Users/jcr/Documents/WebApps/NodeJS/docker-clav/CLAV2018/public/schema/autoEliminacao.xsd">
+    <fonteLegitimação tipo="RADA">
         <diploma>Portaria 39/2019</diploma>
     </fonteLegitimação>
-
-    <fundo>DGLAB</fundo>
-
+    <fundos>
+        <fundo>DGLAB</fundo>
+    </fundos>
     <classes>
         <classe>
             <código>150.20.001</código>
-            
-            <pca>
-                <valor>10</valor>
-            </pca>
-            <df>
-                <valor>E</valor>
-            </df>
             <anoInício>1970</anoInício>
             <anoFim>2000</anoFim>
             <dimensãoSuporte>
@@ -64,13 +57,6 @@
         </classe>
         <classe>
             <código>150.20.202</código>
-            
-            <pca>
-                <valor>10</valor>
-            </pca>
-            <df>
-                <valor>C</valor>
-            </df>
             <naturezaIntervenção>PARTICIPANTE</naturezaIntervenção>
             <donos>
                 <dono>PCM</dono>
