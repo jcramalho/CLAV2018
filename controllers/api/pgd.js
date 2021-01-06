@@ -8,7 +8,7 @@ PGD.listar = async function () {
   let query = `
   select ?idPGD ?idLeg ?data ?numero ?tipo ?sumario ?link where { 
     ?uri a clav:PGD ;
-        clav:temLegislacao ?l .
+        clav:eRepresentacaoDe ?l .
       ?l clav:diplomaData ?data;
          clav:diplomaNumero ?numero;
          clav:diplomaTipo ?tipo;
@@ -29,7 +29,7 @@ PGD.listarLC = async function () {
   let query = `
   select ?idPGD ?idLeg ?data ?numero ?tipo ?sumario ?link where { 
     ?uri a clav:PGD ;
-        clav:temLegislacao ?l .
+        clav:eRepresentacaoDe ?l .
       ?l clav:diplomaData ?data;
          clav:diplomaNumero ?numero;
          clav:diplomaTipo ?tipo;
@@ -51,7 +51,7 @@ PGD.listarRADA = async function () {
   select ?idRADA ?idLeg ?data ?numero ?tipo ?ent ?sumario ?estado ?link where { 
     ?uri a clav:RADA_Antigo ;
         clav:temEntidadeResponsavel ?ent;
-        clav:temLegislacao ?l .
+        clav:eRepresentacaoDe ?l .
       ?l clav:diplomaData ?data;
          clav:diplomaEstado ?estado;
          clav:diplomaNumero ?numero;

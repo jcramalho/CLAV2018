@@ -590,72 +590,81 @@ async function validateColumnsValues(
       tips.map((t) => ({ sigla: t.sigla, designacao: t.designacao }))
     );
 
-    // donos
-    c = worksheet.getColumn(headers.donos).values;
-    c = c.map((e) => parseCell(e));
+    if (fonteL == "PGD/LC") {
+      // donos
+      c = worksheet.getColumn(headers.donos).values;
+      c = c.map((e) => parseCell(e));
 
-    for (let i = start; i < c.length; i++) {
-      if (c[i] != null) {
-        if (!/^\s*\w+\s*(#\s*\w+\s*)*#*$/g.test(c[i])) {
-          throw `Célula inválida na linha ${i} e coluna ${headers.donos} da tabela!\nApenas deve conter siglas de entidades/tipologias separadas por '#' ou nada (processo não selecionado).`;
-        } else {
-          const siglas = c[i].split("#");
-          siglas[siglas.length - 1] == "" ? siglas.pop() : "";
-          for (let sigla of siglas) {
-            sigla = sigla.replace(/\r?\n|\r|\s*/g, "");
-            const aux = ents_tips.filter((e) => e.sigla == sigla);
+      for (let i = start; i < c.length; i++) {
+        if (c[i] != null) {
+          if (!/^\s*\w+\s*(#\s*\w+\s*)*#*$/g.test(c[i])) {
+            throw `Célula inválida na linha ${i} e coluna ${headers.donos} da tabela!\nApenas deve conter siglas de entidades/tipologias separadas por '#' ou nada (processo não selecionado).`;
+          } else {
+            const siglas = c[i].split("#");
+            siglas[siglas.length - 1] == "" ? siglas.pop() : "";
+            for (let sigla of siglas) {
+              sigla = sigla.replace(/\r?\n|\r|\s*/g, "");
+              const aux = ents_tips.filter((e) => e.sigla == sigla);
 
-            if (!aux.length > 0) {
-              throw `Célula inválida na linha ${i} e coluna ${headers.donos} da tabela!\nA entidade/tipologia ${sigla} não existe.`;
-            } else if (!ret.filter((e) => e.sigla == sigla).length > 0) {
-              ret.push(aux[0]);
+              if (!aux.length > 0) {
+                throw `Célula inválida na linha ${i} e coluna ${headers.donos} da tabela!\nA entidade/tipologia ${sigla} não existe.`;
+              } else if (!ret.filter((e) => e.sigla == sigla).length > 0) {
+                ret.push(aux[0]);
+              }
             }
           }
         }
       }
-    }
 
-    // participantes
-    let p = worksheet.getColumn(headers.participantes).values;
-    p = p.map((e) => parseCell(e));
+      // participantes
+      let p = worksheet.getColumn(headers.participantes).values;
+      p = p.map((e) => parseCell(e));
 
-    for (let i = start; i < p.length; i++) {
-      if (p[i] != null) {
-        if (!/^\s*\w+\s*(#\s*\w+\s*)*#*$/g.test(p[i])) {
-          throw `Célula inválida na linha ${i} e coluna ${headers.participantes} da tabela!\nApenas deve conter siglas de entidades/tipologias separadas por '#' ou nada (processo não selecionado).`;
-        } else {
-          const siglas = p[i].split("#");
-          siglas[siglas.length - 1] == "" ? siglas.pop() : "";
-          for (let sigla of siglas) {
-            sigla = sigla.replace(/\r?\n|\r|\s*/g, "");
-            const aux = ents_tips.filter((e) => e.sigla == sigla);
-            if (!aux.length > 0) {
-              throw `Célula inválida na linha ${i} e coluna ${headers.participantes} da tabela!\nA entidade/tipologia ${sigla} não existe.`;
-            } else if (!ret.filter((e) => e.sigla == sigla).length > 0) {
-              ret.push(aux[0]);
+      for (let i = start; i < p.length; i++) {
+        if (p[i] != null) {
+          if (!/^\s*\w+\s*(#\s*\w+\s*)*#*$/g.test(p[i])) {
+            throw `Célula inválida na linha ${i} e coluna ${headers.participantes} da tabela!\nApenas deve conter siglas de entidades/tipologias separadas por '#' ou nada (processo não selecionado).`;
+          } else {
+            const siglas = p[i].split("#");
+            siglas[siglas.length - 1] == "" ? siglas.pop() : "";
+            for (let sigla of siglas) {
+              sigla = sigla.replace(/\r?\n|\r|\s*/g, "");
+              const aux = ents_tips.filter((e) => e.sigla == sigla);
+              if (!aux.length > 0) {
+                throw `Célula inválida na linha ${i} e coluna ${headers.participantes} da tabela!\nA entidade/tipologia ${sigla} não existe.`;
+              } else if (!ret.filter((e) => e.sigla == sigla).length > 0) {
+                ret.push(aux[0]);
+              }
             }
           }
         }
       }
-    }
-    let erro = [];
+      let erro = [];
 
-    ret.map((e) => (!entidades_ts.includes(e.sigla) ? erro.push(e) : ""));
-    if (erro.length > 0) {
-      throw { entidades: erro, acrescenta: true };
-    }
+      ret.map((e) => (!entidades_ts.includes(e.sigla) ? erro.push(e) : ""));
+      if (erro.length > 0) {
+        throw new EntidadesException(
+          "Erro ao inserir a Tabela de Seleção: As seguintes entidades estão presentes no ficheiro mas não foram selecionadas.\n",
+          erro,
+          true
+        );
+      }
 
-    entidades_ts.map((e) => {
-      !ret.some(function (ent) {
-        return ent.sigla == e;
-      })
-        ? erro.push(ents_tips.find((ent) => ent.sigla == e))
-        : "";
-    });
-    if (erro.length > 0) {
-      throw { entidades: erro, acrescenta: false };
+      entidades_ts.map((e) => {
+        !ret.some(function (ent) {
+          return ent.sigla == e;
+        })
+          ? erro.push(ents_tips.find((ent) => ent.sigla == e))
+          : "";
+      });
+      if (erro.length > 0) {
+        throw new EntidadesException(
+          "Erro ao inserir a Tabela de Seleção: As seguintes entidades foram selecionadas mas não se encontram presentes no ficheiro.\n",
+          erro,
+          false
+        );
+      }
     }
-
     if (fonteL == "TS/LC") {
       // tipo participação
       let tp = worksheet.getColumn(headers.tipo_participacao).values;
@@ -887,7 +896,6 @@ async function validateColumnsValues(
       }
     }
   }
-
   return ret;
 }
 
@@ -896,7 +904,13 @@ function HeaderException(message, headersValid) {
   this.nHeaders = headersValid;
 }
 
-function validateHeaders(headers, typeOrg, fonteL) {
+function EntidadesException(message, entidades, acrescenta) {
+  this.message = message;
+  this.entidades = entidades;
+  this.acrescenta = acrescenta;
+}
+
+async function validateHeaders(headers, typeOrg, fonteL, entidades_ts, file) {
   let codigos = -1;
   let titulos = -1;
   let donos = -1;
@@ -919,27 +933,31 @@ function validateHeaders(headers, typeOrg, fonteL) {
       codigos = i;
     } else if (/^\s*Título\s*$/g.test(headers[i])) {
       titulos = i;
-    } else if (/Dono( PN)?/g.test(headers[i])) {
+    } else if (/^\s*Dono( PN)?\s*$/g.test(headers[i])) {
       donos = i;
-    } else if (/Participante( PN)?/g.test(headers[i])) {
+    } else if (/^\s*Participante( PN)?\s*$/g.test(headers[i])) {
       parts = i;
     } else if (/^\s*Tipo de participação\s*$/g.test(headers[i])) {
       tipPart = i;
-    } else if (/N(\.)?º(\sde)?\sRef(erência)?/g.test(headers[i])) {
+    } else if (/^\s*N(\.)?º(\sde)?\sRef(erência)?\s*$/g.test(headers[i])) {
       nRef = i;
-    } else if (/Nível/g.test(headers[i])) {
+    } else if (/^\s*Nível\s*$/g.test(headers[i])) {
       nivel = i;
-    } else if (/Descrição/g.test(headers[i])) {
+    } else if (/^\s*Descrição\s*$/g.test(headers[i])) {
       descricao = i;
     } else if (/^\s*PCA\s*$/g.test(headers[i])) {
       pca = i;
-    } else if (/Nota PCA/g.test(headers[i])) {
+    } else if (
+      /^\s*([Nn][Oo][Tt][Aa](\n|\r|\r\n|\s)?PCA)\s*$/g.test(headers[i])
+    ) {
       notaPCA = i;
     } else if (/^\s*DF\s*$/g.test(headers[i])) {
       df = i;
-    } else if (/Nota (ao )?DF/g.test(headers[i])) {
+    } else if (/^\s*(Nota (ao )?DF|NOTA (AO )?DF)\s*$/g.test(headers[i])) {
       notaDF = i;
-    } else if (/Forma (de )?[cC]ontagem\s+(do )?PCA/g.test(headers[i])) {
+    } else if (
+      /^\s*Forma (de )?[cC]ontagem\s+(do )?PCA\s*$/g.test(headers[i])
+    ) {
       formaContagem = i;
     }
   }
@@ -995,6 +1013,7 @@ function validateHeaders(headers, typeOrg, fonteL) {
       "Não foi possível encontrar as colunas 'Código' e 'N.º Referência' - Necessita de ter pelo menos uma delas.",
       nFound
     );
+
   if (titulos == -1)
     throw new HeaderException(
       "Não foi possível encontrar a coluna dos títulos.",
@@ -1058,6 +1077,18 @@ function validateHeaders(headers, typeOrg, fonteL) {
       nFound
     );
 
+  /*Verificação da existência das siglas das entidades no título dos ficheiro
+    PGD (Organizacionais/Pluriorganizacionais), PGD/LC (Organizacional), RADA 
+  */
+  let ents_tips = State.getEntidades().map((e) => ({
+    sigla: e.sigla,
+    designacao: e.designacao,
+  }));
+  let tips = await Tipologias.listar('?estado="Ativa"');
+  ents_tips = ents_tips.concat(
+    tips.map((t) => ({ sigla: t.sigla, designacao: t.designacao }))
+  );
+
   if (typeOrg == "TS Organizacional") {
     if (fonteL == "TS/LC") {
       ret = {
@@ -1067,6 +1098,27 @@ function validateHeaders(headers, typeOrg, fonteL) {
         participantes: parts,
       };
     } else if (fonteL == "PGD") {
+      let ent = file.split("_")[4].split(".")[0].replace(" ", "_");
+
+      if (
+        ents_tips.some((e) => {
+          return e.sigla == ent;
+        })
+      ) {
+        if (ent != entidades_ts) {
+          throw new EntidadesException(
+            `Erro ao inserir a Tabela de Seleção: A sigla da entidade/tipologia que consta no nome do ficheiro (${ent}) não é a mesma da entidade/tipologia selecionada.\n`,
+            [ents_tips.find((e) => e.sigla == ent)],
+            true
+          );
+        }
+      } else {
+        throw new HeaderException(
+          `A sigla da entidade/tipologia que consta no nome do ficheiro (${ent}) não existe.\nCertifique-se que a mesma está corretamente escrita e que o ficheiro segue na nomenclatura correta: TS_TipoLegislação ou PGD_NºLegislação_anoLegislação_Entidade`,
+          nFound
+        );
+      }
+
       ret = {
         codigos,
         nRef,
@@ -1079,6 +1131,27 @@ function validateHeaders(headers, typeOrg, fonteL) {
         notaDF,
       };
     } else if (fonteL == "PGD/LC") {
+      let ent = file.split("_")[4].split(".")[0].replace(" ", "_");
+
+      if (
+        ents_tips.some((e) => {
+          return e.sigla == ent;
+        })
+      ) {
+        if (ent != entidades_ts) {
+          throw new EntidadesException(
+            `Erro ao inserir a Tabela de Seleção: A sigla da entidade/tipologia que consta no nome do ficheiro (${ent}) não é a mesma da entidade/tipologia selecionada.\n`,
+            [ents_tips.find((e) => e.sigla == ent)],
+            true
+          );
+        }
+      } else {
+        throw new HeaderException(
+          `A sigla da entidade/tipologia que consta no nome do ficheiro (${ent}) não existe.\nCertifique-se que a mesma está corretamente escrita e que o ficheiro segue na nomenclatura correta: TS_TipoLegislação ou PGD_NºLegislação_anoLegislação_Entidade`,
+          nFound
+        );
+      }
+
       ret = {
         codigos,
         nRef,
@@ -1094,6 +1167,26 @@ function validateHeaders(headers, typeOrg, fonteL) {
         notaDF,
       };
     } else if (fonteL == "RADA") {
+      ent = file.split("_RADA_")[1].split(".")[0].replace(" ", "_");
+
+      if (
+        ents_tips.some((e) => {
+          return e.sigla == ent;
+        })
+      ) {
+        if (ent != entidades_ts) {
+          throw new EntidadesException(
+            `Erro ao inserir a Tabela de Seleção: A sigla da entidade/tipologia que consta no nome do ficheiro (${ent}) não é a mesma da entidade/tipologia selecionada.\n`,
+            [ents_tips.find((e) => e.sigla == ent)],
+            true
+          );
+        }
+      } else {
+        throw new HeaderException(
+          `A sigla da entidade/tipologia que consta no nome do ficheiro (${ent}) não existe.\nCertifique-se que a mesma está corretamente escrita e que o ficheiro segue na nomenclatura correta: Despacho_NºLegislação_RADA_Entidade`,
+          nFound
+        );
+      }
       ret = {
         codigos,
         nRef,
@@ -1137,6 +1230,55 @@ function validateHeaders(headers, typeOrg, fonteL) {
         notaDF,
       };
     } else if (fonteL == "PGD") {
+      let aux = file.split("_");
+      aux[aux.length - 1] = aux[aux.length - 1].split(".")[0];
+      let ents = [];
+      for (var i = aux.length - 1; !/\d+/.test(aux[i]); i--) {
+        ents.push(aux[i].replace(" ", "_"));
+      }
+
+      let erro = [];
+
+      ents.map((ent) => {
+        if (
+          !ents_tips.some((e) => {
+            return e.sigla == ent;
+          })
+        )
+          erro.push(ent);
+      });
+      if (erro.length > 0) {
+        throw new HeaderException(
+          `As siglas das entidades/tipologias que constam no nome do ficheiro (${erro}) não existem.\nCertifique-se que a mesma está corretamente escrita e que o ficheiro segue na nomenclatura correta: TS_TipoLegislação ou PGD_NºLegislação_anoLegislação_Entidade1_Entidade2_EntidadeN`,
+          nFound
+        );
+      }
+
+      ents.map((e) => {
+        !entidades_ts.includes(e)
+          ? erro.push(ents_tips.find((ent) => ent.sigla == e))
+          : "";
+      });
+      if (erro.length > 0) {
+        throw new EntidadesException(
+          "Erro ao inserir a Tabela de Seleção: As seguintes entidades/tipologias estão presentes no nome do ficheiro mas não foram selecionadas.\n",
+          erro,
+          true
+        );
+      }
+
+      entidades_ts.map((e) => {
+        !ents.includes(e)
+          ? erro.push(ents_tips.find((ent) => ent.sigla == e))
+          : "";
+      });
+      if (erro.length > 0) {
+        throw new EntidadesException(
+          "Erro ao inserir a Tabela de Seleção: As seguintes entidades/tipologias foram selecionadas mas não se encontram presentes no nome do ficheiro.\n",
+          erro,
+          false
+        );
+      }
       ret = {
         codigos,
         nRef,
@@ -1153,12 +1295,11 @@ function validateHeaders(headers, typeOrg, fonteL) {
       };
     }
   }
-
   return ret;
 }
 
 // Descobrir onde está a tabela de onde se obtém os valores
-async function findSheet(workbook, typeOrg, fonteL, entidades_ts) {
+async function findSheet(workbook, typeOrg, fonteL, entidades_ts, file) {
   let sheetN = null;
   let rowHeaderN = null;
   let founded = false;
@@ -1175,14 +1316,21 @@ async function findSheet(workbook, typeOrg, fonteL, entidades_ts) {
       for (let j = 1; j <= rC && !founded; j++) {
         let row = worksheet.getRow(j).values;
         row = row.map((e) => parseCell(e));
-
         try {
-          headersPos = validateHeaders(row, typeOrg, fonteL);
+          headersPos = await validateHeaders(
+            row,
+            typeOrg,
+            fonteL,
+            entidades_ts,
+            file
+          );
           founded = true;
           sheetN = i;
           rowHeaderN = j;
         } catch (e) {
-          if (e.nHeaders > nSuc) {
+          if (e.entidades) {
+            throw e;
+          } else if (e.nHeaders > nSuc) {
             error = e.message;
             nSuc = e.nHeaders;
           }
@@ -1190,7 +1338,6 @@ async function findSheet(workbook, typeOrg, fonteL, entidades_ts) {
       }
     }
   }
-
   if (error != "") throw `Não foi encontrada a TS: ${error}`;
 
   if (founded) {
@@ -1212,38 +1359,30 @@ async function findSheet(workbook, typeOrg, fonteL, entidades_ts) {
   return [sheetN, rowHeaderN, headersPos, ents_tips];
 }
 
-async function constructRADAO(worksheet, file, stats, code, columns) {
+function constructRADAO(worksheet, file, stats, code, columns, entidades) {
   //Carregar as Legislações
-  let leg = await State.getLegislacoes();
+  let leg = State.getLegislacoes();
   //Carregar as Entidades
-  let ents = await State.getEntidades();
-  //Carregar as Tipologias
-  let tipEnts = await Tipologias.listar('?estado="Ativa"');
+  let ents = State.getEntidades();
+
   const regexRADA = RegExp("_RADA_");
-  const regexTS = RegExp("_TS");
-  if (
-    !file.startsWith("Despacho") ||
-    !regexRADA.test(file) ||
-    !regexTS.test(file)
-  ) {
+  if (!file.startsWith("Despacho") || !regexRADA.test(file)) {
     throw file + " não será processado, o nome não segue a convenção...";
   } else {
     var legId = file.split("Despacho_")[1];
     legId = legId.split("_RADA")[0];
+
     var legislacao = leg.filter(
       (l) => l.tipo == "Despacho" && l.numero == legId
     )[0];
 
-    var entidadeId = file.split("_RADA_")[1];
-    entidadeId = entidadeId.split("_TS")[0];
-
-    var entidade = ents.filter((e) => e.sigla == entidadeId)[0];
+    var entidade = ents.filter((e) => e.sigla == entidades[0])[0];
     if (entidade) entidade = "ent_" + entidade.sigla;
-    else
-      entidade = "tip_" + tipEnts.filter((e) => e.sigla == entidadeId)[0].sigla;
+    else entidade = "tip_" + entidades[0];
 
     if (legislacao && entidade) {
       code.codigo = "tsRada_" + legislacao.id;
+      code.leg = legislacao.id;
       var rada = [];
       var pais = [];
       var n = 0;
@@ -1256,14 +1395,16 @@ async function constructRADAO(worksheet, file, stats, code, columns) {
       currentStatements +=
         "\tclav:temEntidadeResponsavel clav:" + entidade + " ;\n";
       currentStatements +=
-        "\tclav:temLegislacao clav:" + legislacao.id + " .\n";
-      currentStatements += extraStatements =
+        "\tclav:eRepresentacaoDe clav:" + legislacao.id + " .\n";
+      currentStatements +=
         "clav:" +
         entidade +
-        " clav:eResponsavelPor " +
+        "clav:eResponsavelPor " +
         "clav:tsRada_" +
         legislacao.id +
         " .\n";
+
+      currentStatements += `clav:${legislacao.id} clav:temEntidadeResponsavel clav:${entidade} .\n`;
 
       worksheet.eachRow((row, rowNumber) => {
         if (rowNumber == 1) return;
@@ -1374,33 +1515,46 @@ async function constructRADAO(worksheet, file, stats, code, columns) {
   }
 }
 
-function constructPGDO(worksheet, file, stats, code, columns) {
+function constructPGD(worksheet, file, stats, code, columns, entidades) {
   //Carregar as Legislações
   let leg = State.getLegislacoes();
+  //Carregar as Entidades
+  let ents = State.getEntidades();
   if (file == "lc") return;
   var ano = parseInt(file.split("_")[3]);
   if (ano < 2000) ano -= 1900;
   var legId = file.split("_")[2] + "/" + ano;
   var tipoPGD = file.split("_")[1];
+
   if (tipoPGD == "PGD")
     var legislacao = leg.filter(
       (l) => l.tipo == "Portaria" && l.numero == legId
     )[0];
   else
     var legislacao = leg.filter(
-      (l) => l.fonte == tipoPGD && l.numero == legId
+      (l) => l.tipo == tipoPGD && l.numero == legId
     )[0];
 
   if (legislacao) {
     var pais = [];
     var n = 0;
     code.codigo = "pgd_" + legislacao.id;
+    code.leg = legislacao.id;
     var currentStatements =
       "\n###  http://jcr.di.uminho.pt/m51-clav#pgd_" + legislacao.id + "\n";
     currentStatements +=
       "clav:pgd_" + legislacao.id + " rdf:type owl:NamedIndividual ,\n";
     currentStatements += "\t\tclav:PGD ;\n";
-    currentStatements += "\tclav:temLegislacao clav:" + legislacao.id + " .\n";
+    currentStatements +=
+      "\tclav:eRepresentacaoDe clav:" + legislacao.id + " .\n";
+
+    entidades.forEach((ent) => {
+      ents.some((e) => {
+        return e.sigla == ent;
+      })
+        ? (currentStatements += `clav:${legislacao.id} clav:temEntidadeResponsavel clav:ent_${ent} .\n`)
+        : (currentStatements += `clav:${legislacao.id} clav:temEntidadeResponsavel clav:tip_${ent} .\n`);
+    });
 
     worksheet.eachRow((row, rowNumber) => {
       if (rowNumber == 1) return;
@@ -1451,7 +1605,7 @@ function constructPGDO(worksheet, file, stats, code, columns) {
         pais.push(classeId);
         n = nivel;
       }
-      if (codigo || referencia) stats.processos++;
+      if (codigo || referencia || titulo) stats.processos++;
       if (codigo) currentStatements += '\tclav:codigo "' + codigo + '" ;\n';
       if (referencia)
         currentStatements +=
@@ -1497,14 +1651,16 @@ function constructPGDO(worksheet, file, stats, code, columns) {
   }
 }
 
-function constructPGDLCO(worksheet, file, stats, code, columns) {
+function constructPGDLCO(worksheet, file, stats, code, columns, entidades) {
   //Carregar as Legislações
   let leg = State.getLegislacoes();
+  //Carregar as Entidades
+  let ents = State.getEntidades();
+
   var ano = parseInt(file.split("_")[3]);
   if (ano < 2000) ano -= 1900;
   var legId = file.split("_")[2] + "/" + ano;
-  var entidade = file.split("_")[4];
-  entidade = "ent_" + entidade.split(",")[0].split(".")[0].replace(/ /g, "_");
+
   var legislacao = leg.filter(
     (l) => l.tipo == "Portaria" && l.numero == legId
   )[0];
@@ -1512,12 +1668,20 @@ function constructPGDLCO(worksheet, file, stats, code, columns) {
     var pais = [];
     var n = 0;
     code.codigo = "pgd_lc_" + legislacao.id;
+    code.leg = legislacao.id;
     var currentStatements =
       "\n###  http://jcr.di.uminho.pt/m51-clav#pgd_lc_" + legislacao.id + "\n";
     currentStatements +=
       "clav:pgd_lc_" + legislacao.id + " rdf:type owl:NamedIndividual ,\n";
     currentStatements += "\t\tclav:PGD ;\n";
-    currentStatements += "\tclav:temLegislacao clav:" + legislacao.id + " .\n";
+    currentStatements +=
+      "\tclav:eRepresentacaoDe clav:" + legislacao.id + " .\n";
+
+    var entidade = ents.some((e) => e == entidades[0])
+      ? "ent_" + entidades[0]
+      : "tip_" + entidades[0];
+
+    currentStatements += `clav:${legislacao.id} clav:temEntidadeResponsavel clav:${entidade} .\n`;
 
     worksheet.eachRow((row, rowNumber) => {
       if (rowNumber == 1) return;
@@ -1660,9 +1824,12 @@ function constructPGDLCO(worksheet, file, stats, code, columns) {
   }
 }
 
-function constructPGDLCP(worksheet, file, stats, code, columns) {
+function constructPGDLCP(worksheet, file, stats, code, columns, entidades) {
   //Carregar as Legislações
   let leg = State.getLegislacoes();
+  //Carregar as Entidades
+  let ents = State.getEntidades();
+
   var ano = parseInt(file.split("_")[3]);
   if (ano < 2000) ano -= 1900;
   var legId = file.split("_")[2] + "/" + ano;
@@ -1674,12 +1841,23 @@ function constructPGDLCP(worksheet, file, stats, code, columns) {
     var pais = [];
     var n = 0;
     code.codigo = "pgd_lc_" + legislacao.id;
+    code.leg = legislacao.id;
     var currentStatements =
       "\n###  http://jcr.di.uminho.pt/m51-clav#pgd_lc_" + legislacao.id + "\n";
     currentStatements +=
       "clav:pgd_lc_" + legislacao.id + " rdf:type owl:NamedIndividual ,\n";
     currentStatements += "\t\tclav:PGD ;\n";
-    currentStatements += "\tclav:temLegislacao clav:" + legislacao.id + " .\n";
+    //Vai mudar a relação temRepresentacao/eRepresentacaoDe
+    currentStatements +=
+      "\tclav:eRepresentacaoDe clav:" + legislacao.id + " .\n";
+
+    entidades.forEach((ent) => {
+      ents.some((e) => {
+        return e.sigla == ent;
+      })
+        ? (currentStatements += `clav:${legislacao.id} clav:temEntidadeResponsavel clav:ent_${ent} .\n`)
+        : (currentStatements += `clav:${legislacao.id} clav:temEntidadeResponsavel clav:tip_${ent} .\n`);
+    });
 
     worksheet.eachRow((row, rowNumber) => {
       if (rowNumber == 1) return;
@@ -1961,7 +2139,7 @@ SelTabs.criarPedidoDoCSV = async function (
   file
 ) {
   entidades_ts = JSON.parse(entidades_ts);
-  const aux = await findSheet(workbook, tipo_ts, fonteL, entidades_ts);
+  const aux = await findSheet(workbook, tipo_ts, fonteL, entidades_ts, file);
   const sheetN = aux[0];
   const rowHeaderN = aux[1];
   const columns = aux[2];
@@ -2027,63 +2205,142 @@ SelTabs.criarPedidoDoCSV = async function (
         donos: 0,
         participantes: 0,
       };
-      var code = { codigo: "" };
-      let pgd = constructPGDLCO(worksheet, file, stats, code, columns);
-      return execQuery("update", `INSERT DATA {${pgd}}`)
-        .then((res) => {
-          return { codigo: code.codigo, stats };
-        })
-        .catch((err) => {
+      var code = { codigo: "", leg: "" };
+      let pgd = constructPGDLCO(
+        worksheet,
+        file,
+        stats,
+        code,
+        columns,
+        entidades_ts.split()
+      );
+      let parts = partRequest(pgd, 0);
+
+      for (i in parts) {
+        try {
+          await execQuery("update", `INSERT DATA {${parts[i]}}`);
+        } catch (err) {
           throw "Insucesso na inserção do tabela de seleção\n" + err;
-        });
+        }
+      }
+      await State.loadLegislacao(code.leg);
+      return { codigo: code.codigo, stats };
     } else {
       stats = {
         processos: 0,
         donos: 0,
         participantes: 0,
       };
-      var code = { codigo: "" };
-      let pgd = constructPGDLCP(worksheet, file, stats, code, columns);
-      return execQuery("update", `INSERT DATA {${pgd}}`)
-        .then((res) => {
-          return { codigo: code.codigo, stats };
-        })
-        .catch((err) => {
+      var code = { codigo: "", leg: "" };
+      let pgd = constructPGDLCP(
+        worksheet,
+        file,
+        stats,
+        code,
+        columns,
+        entidades_ts
+      );
+      let parts = partRequest(pgd, 0);
+
+      for (i in parts) {
+        try {
+          await execQuery("update", `INSERT DATA {${parts[i]}}`);
+        } catch (err) {
           throw "Insucesso na inserção do tabela de seleção\n" + err;
-        });
+        }
+      }
+      await State.loadLegislacao(code.leg);
+      return { codigo: code.codigo, stats };
     }
   } else if (fonteL == "PGD") {
-    if (tipo_ts == "TS Organizacional") {
-      stats = {
-        processos: 0,
-      };
-      var code = { codigo: "" };
-      let pgd = constructPGDO(worksheet, file, stats, code, columns);
-      return execQuery("update", `INSERT DATA {${pgd}}`)
-        .then((res) => {
-          return { codigo: code.codigo, stats };
-        })
-        .catch((err) => {
-          throw "Insucesso na inserção do tabela de seleção\n" + err;
-        });
+    stats = {
+      processos: 0,
+    };
+    var code = { codigo: "", leg: "" };
+    let pgd = constructPGD(
+      worksheet,
+      file,
+      stats,
+      code,
+      columns,
+      !Array.isArray(entidades_ts) ? entidades_ts.split() : entidades_ts
+    );
+    let parts = partRequest(pgd, 0);
+    for (i in parts) {
+      try {
+        await execQuery("update", `INSERT DATA {${parts[i]}}`);
+      } catch (err) {
+        throw "Insucesso na inserção do tabela de seleção\n" + err;
+      }
     }
+    await State.loadLegislacao(code.leg);
+    return { codigo: code.codigo, stats };
   } else if (fonteL == "RADA") {
     if (tipo_ts == "TS Organizacional") {
       stats = {
         processos: 0,
       };
-      var code = { codigo: "" };
-      let rada = await constructRADAO(worksheet, file, stats, code, columns);
-      return execQuery("update", `INSERT DATA {${rada}}`)
-        .then((res) => {
-          return { codigo: code.codigo, stats };
-        })
-        .catch((err) => {
+      var code = { codigo: "", leg: "" };
+      let rada = constructRADAO(
+        worksheet,
+        file,
+        stats,
+        code,
+        columns,
+        entidades_ts.split()
+      );
+      let parts = partRequest(rada, 0);
+
+      for (i in parts) {
+        try {
+          await execQuery("update", `INSERT DATA {${parts[i]}}`);
+        } catch (err) {
           throw "Insucesso na inserção do tabela de seleção\n" + err;
-        });
+        }
+      }
+      await State.loadLegislacao(code.leg);
+      return { codigo: code.codigo, stats };
     }
   }
 };
+
+function partRequest(req, parts) {
+  let pgdParts = [];
+  let prev = 0;
+  // Partição feita automáticamente quando o argumento parts é = 0
+  if (parts === 0) {
+    let div = Math.floor(req.split(/\r\n|\r|\n/).length / 10000);
+    div < 1 ? (div = 1) : "";
+
+    for (var i = 0; i < div; i++) {
+      let mid = req.length / (div - i) - 1;
+      let index;
+      for (index = mid; index < req.length; index++) {
+        if (/#/g.test(req[index + 1]) && /(\r\n|\n|\r)/g.test(req[index]))
+          break;
+      }
+
+      pgdParts.push(req.slice(prev, index));
+      prev = index;
+    }
+  } else {
+    for (var i = 0; i < parts; i++) {
+      let mid = Math.floor(req.length / (parts - i)) - 1;
+      let index;
+      for (index = mid; index < req.length; index++) {
+        if (/#/g.test(req[index + 1]) && /(\r\n|\n|\r)/g.test(req[index]))
+          break;
+      }
+
+      prev != index ? pgdParts.push(req.slice(prev, index)) : "";
+      prev = index;
+      // Caso o número de partes pedida é superior ao valor de partições possíveis no ficheiro
+      if (index == req.length - 1) break;
+    }
+  }
+
+  return pgdParts;
+}
 
 function queryClasse(id, proc) {
   const idProc = `c${proc.codigo}_${id}`;
