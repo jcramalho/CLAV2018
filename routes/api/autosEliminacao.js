@@ -87,14 +87,8 @@ router.post(
             `Erro ao importar Auto de Eliminação: É necessário o campo file`
           );
       else if (formData.file.type == "text/xml") {
-        var tipoAE = req.query.tipo;
-        if (tipoAE == "TS/LC" || tipoAE == "PGD/LC")
-          var schemaPath =
-            __dirname + "/../../public/schema/autoEliminacao.xsd";
-        else
-          var schemaPath =
-            __dirname + "/../../public/schema/autoEliminacaoOld.xsd";
 
+        var schemaPath = __dirname + "/../../public/schema/autoEliminacao.xsd";
         var schema = await fs.readFileSync(schemaPath);
         var xsl = xml.parseXml(schema);
         var doc = await fs.readFileSync(formData.file.path);
@@ -103,7 +97,7 @@ router.post(
         if (xmlDoc.validate(xsl)) {
           const parser = new xml2js.Parser();
           parser.parseString(doc, (error, result) => {
-            if (error) res.status(500).send("Erro na leitura do ficheiro .xml");
+            if (error) res.status(500).send("Erro na análise estrutural do ficheiro XML: " + error);
             else {
               User.getUserById(req.user.id, function (err, user) {
                 if (err)

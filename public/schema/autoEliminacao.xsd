@@ -33,7 +33,7 @@ Em 2020-11-17</xs:appinfo>
                 </xs:simpleType>
               </xs:element>
             </xs:sequence>
-            <xs:attribute name="tipo" type="atributoTipo"/>
+            <xs:attribute name="tipo" type="atributoTipo" use="required"/>
           </xs:complexType>
         </xs:element>
         <xs:element name="fundos">
@@ -77,15 +77,24 @@ Em 2020-11-17</xs:appinfo>
                     <xs:element name="naturezaIntervenção" type="TnaturezaIntervenção" minOccurs="0">
                       <xs:annotation>
                         <xs:documentation>Indicação do tipo de intervenção da entidade produtora da informação – a entidade selecionada em FUNDO – isto é, se a entidade é dona ou participante do PN referenciado.</xs:documentation>
-                        <xs:documentation>Deve preencher o campo com um de dois valores: PARTICIPANTE ou DONO.</xs:documentation>
+                        <xs:documentation>Se estiver a preencher um AE que tenha como fonte de legitimação uma PGD/LC ou uma TS/LC deve preencher este campo com um de três valores:
+	- DONO;
+	- PARTICIPANTE;
+	- DONO/PARTICIPANTE.</xs:documentation>
+                        <xs:documentation>Se o DESTINO FINAL da classe for CONSERVAÇÃO, o campo NATUREZA DE INTERVENÇÃO tem de ser preenchido.</xs:documentation>
+                        <xs:documentation>Se o DESTINO FINAL da classe for ELIMINAÇÃO ou CONSERVAÇÃO PARCIAL, o campo NATUREZA DE INTERVENÇÃO não tem de ser preenchido.
+</xs:documentation>
                         <xs:documentation>A entidade produtora é participante quando assegura a execução de uma parte do processo de negócio, por exemplo, a emissão de um parecer, encontrando-se o processo na sua completude noutra entidade, a dona do processo.</xs:documentation>
-                        <xs:documentation>Se o valor escolhido for PARTICIPANTE, tem de preencher o campo seguinte, DONO(S) DO PN.</xs:documentation>
-                        <xs:documentation>Se o valor escolhido for DONO, não tem de preencher o campo seguinte, DONO(S) DO PN. </xs:documentation>
+                        <xs:documentation>Se o valor escolhido for PARTICIPANTE ou DONO/PARTICIPANTE, tem de preencher o campo seguinte, DONO(S) DO PN.</xs:documentation>
+                        <xs:documentation>Se o valor escolhido for DONO, não tem de preencher o campo seguinte, DONO(S) DO PN.</xs:documentation>
                       </xs:annotation>
                     </xs:element>
                     <xs:element minOccurs="0" name="donos">
                       <xs:annotation>
                         <xs:documentation>Identificação da(s) entidade(s) responsável(eis) pela condução do PN, pelo respetivo produto final e pela sua guarda ou conservação.</xs:documentation>
+                        <xs:documentation>Se estiver a preencher um AE que tenha como fonte de legitimação uma PGD/LC ou uma TS/LC e se o valor escolhido em NATUREZA DE INTERNVENÇÃO for PARTICIPANTE, o campo DONO(S) DO PN, tem de ser preenchido.</xs:documentation>
+                        <xs:documentation>Deve preencher o campo com a(s) sigla(s) da(s) entidade(s) conforme catálogo de entidades disponibilizado na CLAV.</xs:documentation>
+                        <xs:documentation>Exemplos: DGLAB, AdC, ADC, Alentejo 2020, DGAEs, DGAEu</xs:documentation>
                       </xs:annotation>
                       <xs:complexType>
                         <xs:sequence>
@@ -121,7 +130,7 @@ Em 2020-11-17</xs:appinfo>
                         <xs:documentation>Pelo menos um dos tipos deve ser preenchido podendo os restantes ficar vazios.</xs:documentation>
                       </xs:annotation>
                       <xs:complexType>
-                        <xs:sequence>
+                        <xs:sequence maxOccurs="unbounded">
                           <xs:element name="papel" type="xs:int" minOccurs="0">
                             <xs:annotation>
                               <xs:documentation>Registo dos metros lineares da informação a eliminar. </xs:documentation>
@@ -194,13 +203,13 @@ Em 2020-11-17</xs:appinfo>
                                     <xs:documentation>Exemplo: Se a data de início de contagem é 2010 e se o PCA for de 10 anos, então 2010+10+1, então só será possível eliminar em 2021.</xs:documentation>
                                   </xs:annotation>
                                 </xs:element>
-                                <xs:element name="naturezaIntervenção" type="TnaturezaIntervenção2"
-                                  minOccurs="0">
+                                <xs:element name="naturezaIntervenção"
+                                  type="TnaturezaIntervenção-agregação" minOccurs="0">
                                   <xs:annotation>
-                                    <xs:documentation>Indicação da natureza da intervenção da entidade na agregação a eliminar. </xs:documentation>
-                                    <xs:documentation>Deve preencher o campo com um de dois valores: PARTICIPANTE ou DONO. </xs:documentation>
-                                    <xs:documentation>Quando o DESTINO FINAL da classe é ELIMINAÇÃO, o valor a introduzir pode ser um de dois: DONO ou PARTICIPANTE.</xs:documentation>
-                                    <xs:documentation>Quando o DESTINO FINAL da classe é CONSERVAÇÃO o valor introduzir é PARTICIPANTE.</xs:documentation>
+                                    <xs:documentation>Indicação da natureza da intervenção da entidade na agregação / unidade de instalação a eliminar.</xs:documentation>
+                                    <xs:documentation>Se estiver a preencher um AE que tenha como fonte de legitimação uma PGD/LC ou uma TS/LC deve preencher este campo com um de dois valores: PARTICIPANTE ou DONO.</xs:documentation>
+                                    <xs:documentation>Se o DESTINO FINAL da classe for ELIMINAÇÃO, o valor a introduzir pode ser um de dois: DONO ou PARTICIPANTE.</xs:documentation>
+                                    <xs:documentation>Se o DESTINO FINAL da classe for CONSERVAÇÃO o valor a introduzir é PARTICIPANTE.</xs:documentation>
                                   </xs:annotation>
                                 </xs:element>
                               </xs:sequence>
@@ -220,12 +229,15 @@ Em 2020-11-17</xs:appinfo>
   </xs:element>
   <xs:simpleType name="atributoTipo">
     <xs:annotation>
-      <xs:documentation>Tipos de fontes de legitimação: TS/LC, PGD/LC.</xs:documentation>
+      <xs:documentation>Tipos de fontes de legitimação: TS/LC, PGD/LC, PGD, RADA e RADA/CLAV.</xs:documentation>
     </xs:annotation>
     <xs:restriction base="xs:string">
       <xs:enumeration value="TS/LC"/>
       <xs:enumeration value="PGD/LC"/>
       <xs:enumeration value="LC"/>
+      <xs:enumeration value="PGD"/>
+      <xs:enumeration value="RADA"/>
+      <xs:enumeration value="RADA/CLAV"/>
     </xs:restriction>
   </xs:simpleType>
   <xs:simpleType name="TvalorDF">
@@ -243,10 +255,11 @@ Em 2020-11-17</xs:appinfo>
       <xs:enumeration value="DONO/PARTICIPANTE"/>
     </xs:restriction>
   </xs:simpleType>
-  <xs:simpleType name="TnaturezaIntervenção2">
+  <xs:simpleType name="TnaturezaIntervenção-agregação">
     <xs:restriction base="xs:string">
-      <xs:enumeration value="DONO"/>
       <xs:enumeration value="PARTICIPANTE"/>
+      <xs:enumeration value="DONO"/>
+      <xs:enumeration value="DONO/PARTICIPANTE"/>
     </xs:restriction>
   </xs:simpleType>
 </xs:schema>
