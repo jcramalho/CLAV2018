@@ -1,5 +1,3 @@
-const { tipologias } = require("./entidades");
-
 const execQuery = require("../../controllers/api/utils").execQuery;
 const normalize = require("../../controllers/api/utils").normalize;
 const allTriplesFrom = require("../../controllers/api/utils").allTriplesFrom;
@@ -30,7 +28,7 @@ const Leg = module.exports;
  * lista das legislacoes existentes que respeitam o filtro dado
  */
 Leg.listar = () => {
-  const query = `SELECT ?id ?data ?dataRevogacao ?numero ?tipo ?sumario ?estado ?entidades ?tipologias ?fonte ?link ?aprovou WHERE {
+  const query = `SELECT ?id ?data ?dataRevogacao ?numero ?tipo ?sumario ?estado ?entidades ?fonte ?link ?aprovou WHERE {
         ?uri rdf:type clav:Legislacao;
              clav:diplomaData ?data;
              clav:diplomaNumero ?numero;
@@ -52,12 +50,8 @@ Leg.listar = () => {
         }
         OPTIONAL {
             ?uri clav:temEntidadeResponsavel ?ent.
-            ?ent clav:entSigla ?entidades.
-          }
-        OPTIONAL {
-          ?ent clav:tipSigla ?tipologias;
+            ?ent clav:entSigla ?entidades;
         }
-          
         BIND(STRAFTER(STR(?uri), 'clav#') AS ?id).
     } ORDER BY DESC (?data)`;
   const campos = [
@@ -72,27 +66,16 @@ Leg.listar = () => {
     "aprovou",
     "link",
   ];
-  const agrupar = ["entidades", "tipologias"];
+  const agrupar = ["entidades"];
 
   return execQuery("query", query).then((response) => {
     let legs = projection(normalize(response), campos, agrupar);
 
     for (leg of legs) {
-      leg.entidades = leg.entidades
-        .filter((ent) => {
-          return ent !== undefined && ent !== null;
-        })
-        .map((ent) => {
-          return { id: "ent_" + ent, sigla: ent };
-        });
-
-      leg.tipologias = leg.tipologias
-        .filter((ent) => {
-          return ent !== undefined && ent !== null;
-        })
-        .map((ent) => {
-          return { id: "tip_" + ent, sigla: ent };
-        });
+      leg.entidades = leg.entidades.map((ent) => ({
+        id: `ent_${ent}`,
+        sigla: ent,
+      }));
     }
 
     return legs;
@@ -101,7 +84,7 @@ Leg.listar = () => {
 
 //Lista todas as legislações consoante o estado
 Leg.listarPorEstado = (estado) => {
-  const query = `SELECT ?id ?data ?dataRevogacao ?numero ?tipo ?sumario ?entidades ?tipologias ?fonte ?link WHERE {
+  const query = `SELECT ?id ?data ?dataRevogacao ?numero ?tipo ?sumario ?entidades ?fonte ?link WHERE {
         ?uri rdf:type clav:Legislacao;
              clav:diplomaData ?data;
              clav:diplomaNumero ?numero;
@@ -117,10 +100,7 @@ Leg.listarPorEstado = (estado) => {
         }
         OPTIONAL {
             ?uri clav:temEntidadeResponsavel ?ent.
-            ?ent clav:entSigla ?entidades.
-        }
-        OPTIONAL {
-          ?ent clav:tipSigla ?tipologias;
+            ?ent clav:entSigla ?entidades;
         }
         BIND(STRAFTER(STR(?uri), 'clav#') AS ?id).
 
@@ -135,27 +115,16 @@ Leg.listarPorEstado = (estado) => {
     "fonte",
     "link",
   ];
-  const agrupar = ["entidades", "tipologias"];
+  const agrupar = ["entidades"];
 
   return execQuery("query", query).then((response) => {
     let legs = projection(normalize(response), campos, agrupar);
 
     for (leg of legs) {
-      leg.entidades = leg.entidades
-        .filter((ent) => {
-          return ent !== undefined && ent !== null;
-        })
-        .map((ent) => {
-          return { id: "ent_" + ent, sigla: ent };
-        });
-
-      leg.tipologias = leg.tipologias
-        .filter((ent) => {
-          return ent !== undefined && ent !== null;
-        })
-        .map((ent) => {
-          return { id: "tip_" + ent, sigla: ent };
-        });
+      leg.entidades = leg.entidades.map((ent) => ({
+        id: `ent_${ent}`,
+        sigla: ent,
+      }));
       leg.estado = estado;
     }
 
@@ -165,7 +134,7 @@ Leg.listarPorEstado = (estado) => {
 
 // Lista todas as legislações com PNs associados
 Leg.listarComPNs = () => {
-  const query = `SELECT ?id ?data ?dataRevogacao ?numero ?tipo ?sumario ?estado ?entidades ?tipologias ?fonte ?link WHERE {
+  const query = `SELECT ?id ?data ?dataRevogacao ?numero ?tipo ?sumario ?estado ?entidades ?fonte ?link WHERE {
         ?uri rdf:type clav:Legislacao;
              clav:diplomaData ?data;
              clav:diplomaNumero ?numero;
@@ -181,10 +150,7 @@ Leg.listarComPNs = () => {
         }
         OPTIONAL {
             ?uri clav:temEntidadeResponsavel ?ent.
-            ?ent clav:entSigla ?entidades.
-        }
-        OPTIONAL {
-          ?ent clav:tipSigla ?tipologias.
+            ?ent clav:entSigla ?entidades;
         }
     	FILTER EXISTS {?uri clav:estaAssoc ?pn.}
         BIND(STRAFTER(STR(?uri), 'clav#') AS ?id).
@@ -202,27 +168,16 @@ Leg.listarComPNs = () => {
     "fonte",
     "link",
   ];
-  const agrupar = ["entidades", "tipologias"];
+  const agrupar = ["entidades"];
 
   return execQuery("query", query).then((response) => {
     let legs = projection(normalize(response), campos, agrupar);
 
     for (leg of legs) {
-      leg.entidades = leg.entidades
-        .filter((ent) => {
-          return ent !== undefined && ent !== null;
-        })
-        .map((ent) => {
-          return { id: "ent_" + ent, sigla: ent };
-        });
-
-      leg.tipologias = leg.tipologias
-        .filter((ent) => {
-          return ent !== undefined && ent !== null;
-        })
-        .map((ent) => {
-          return { id: "tip_" + ent, sigla: ent };
-        });
+      leg.entidades = leg.entidades.map((ent) => ({
+        id: `ent_${ent}`,
+        sigla: ent,
+      }));
     }
 
     return legs;
@@ -231,7 +186,7 @@ Leg.listarComPNs = () => {
 
 // Lista todas as legislações sem PNs associados
 Leg.listarSemPNs = () => {
-  const query = `SELECT ?id ?data ?dataRevogacao ?numero ?tipo ?sumario ?estado ?entidades ?tipologias ?fonte ?link WHERE {
+  const query = `SELECT ?id ?data ?dataRevogacao ?numero ?tipo ?sumario ?estado ?entidades ?fonte ?link WHERE {
         ?uri rdf:type clav:Legislacao;
              clav:diplomaData ?data;
              clav:diplomaNumero ?numero;
@@ -247,10 +202,7 @@ Leg.listarSemPNs = () => {
         } 
         OPTIONAL {
             ?uri clav:temEntidadeResponsavel ?ent.
-            ?ent clav:entSigla ?entidades.
-        }
-        OPTIONAL {
-          ?ent clav:tipSigla ?tipologias.
+            ?ent clav:entSigla ?entidades;
         }
     	FILTER NOT EXISTS {?uri clav:estaAssoc ?pn.}
         BIND(STRAFTER(STR(?uri), 'clav#') AS ?id).
@@ -268,27 +220,16 @@ Leg.listarSemPNs = () => {
     "fonte",
     "link",
   ];
-  const agrupar = ["entidades", "tipologias"];
+  const agrupar = ["entidades"];
 
   return execQuery("query", query).then((response) => {
     let legs = projection(normalize(response), campos, agrupar);
 
     for (leg of legs) {
-      leg.entidades = leg.entidades
-        .filter((ent) => {
-          return ent !== undefined && ent !== null;
-        })
-        .map((ent) => {
-          return { id: "ent_" + ent, sigla: ent };
-        });
-
-      leg.tipologias = leg.tipologias
-        .filter((ent) => {
-          return ent !== undefined && ent !== null;
-        })
-        .map((ent) => {
-          return { id: "tip_" + ent, sigla: ent };
-        });
+      leg.entidades = leg.entidades.map((ent) => ({
+        id: `ent_${ent}`,
+        sigla: ent,
+      }));
     }
 
     return legs;
@@ -366,7 +307,7 @@ Leg.listarRegulados = async () => {
  * então a promessa conterá o valor `undefined`
  */
 Leg.consultar = (id) => {
-  const query = `SELECT ?tipo ?data ?dataRevogacao ?numero ?sumario ?link ?estado ?fonte ?entidades ?tipologias WHERE { 
+  const query = `SELECT ?tipo ?data ?dataRevogacao ?numero ?sumario ?link ?estado ?fonte ?entidades WHERE { 
         clav:${id} a clav:Legislacao;
             clav:diplomaData ?data;
             clav:diplomaNumero ?numero;
@@ -382,11 +323,8 @@ Leg.consultar = (id) => {
         }
         OPTIONAL {
             clav:${id} clav:temEntidadeResponsavel ?ent.
-            ?ent clav:entSigla ?entidades.
+            ?ent clav:entSigla ?entidades;
         }
-        OPTIONAL {
-          ?ent clav:tipSigla ?tipologias;
-      }
      }`;
   const campos = [
     "id",
@@ -399,26 +337,11 @@ Leg.consultar = (id) => {
     "estado",
     "fonte",
   ];
-  const agrupar = ["entidades", "tipologias"];
+  const agrupar = ["entidades"];
 
-  return execQuery("query", query).then((response) => {
-    let leg = projection(normalize(response), campos, agrupar)[0];
-    leg.entidades = leg.entidades
-      .filter((ent) => {
-        return ent !== undefined && ent !== null;
-      })
-      .map((ent) => {
-        return { id: "ent_" + ent, sigla: ent };
-      });
-    leg.tipologias = leg.tipologias
-      .filter((ent) => {
-        return ent !== undefined && ent !== null;
-      })
-      .map((ent) => {
-        return { id: "tip_" + ent, sigla: ent };
-      });
-    return leg;
-  });
+  return execQuery("query", query).then(
+    (response) => projection(normalize(response), campos, agrupar)[0]
+  );
 };
 
 /**
@@ -527,7 +450,7 @@ Leg.portarias = () => {
  * lista das legislacoes existentes que respeitam a fonte dada
  */
 Leg.listarFonte = (fonte) => {
-  const query = `SELECT ?id ?data ?dataRevogacao ?numero ?tipo ?sumario ?entidades ?tipologias ?link WHERE {
+  const query = `SELECT ?id ?data ?dataRevogacao ?numero ?tipo ?sumario ?entidades ?link WHERE {
         ?uri rdf:type clav:Legislacao;
              clav:diplomaData ?data;
              clav:diplomaNumero ?numero;
@@ -538,11 +461,8 @@ Leg.listarFonte = (fonte) => {
              clav:diplomaFonte "${fonte}".
         OPTIONAL {
             ?uri clav:temEntidadeResponsavel ?ent.
-            ?ent clav:entSigla ?entidades.
+            ?ent clav:entSigla ?entidades;
         }
-        OPTIONAL {
-          ?ent clav:tipSigla ?tipologias.
-      }
         OPTIONAL {
         	?uri clav:diplomaDataRevogacao ?dataRevogacao.
         }
@@ -557,27 +477,16 @@ Leg.listarFonte = (fonte) => {
     "sumario",
     "link",
   ];
-  const agrupar = ["entidades", "tipologias"];
+  const agrupar = ["entidades"];
 
   return execQuery("query", query).then((response) => {
     let legs = projection(normalize(response), campos, agrupar);
 
     for (leg of legs) {
-      leg.entidades = leg.entidades
-        .filter((ent) => {
-          return ent !== undefined && ent !== null;
-        })
-        .map((ent) => {
-          return { id: "ent_" + ent, sigla: ent };
-        });
-
-      leg.tipologias = leg.tipologias
-        .filter((ent) => {
-          return ent !== undefined && ent !== null;
-        })
-        .map((ent) => {
-          return { id: "tip_" + ent, sigla: ent };
-        });
+      leg.entidades = leg.entidades.map((ent) => ({
+        id: `ent_${ent}`,
+        sigla: ent,
+      }));
       leg.fonte = fonte;
     }
 
