@@ -1382,7 +1382,6 @@ function constructRADAO(worksheet, file, stats, code, columns, entidades) {
 
     if (legislacao && entidade) {
       code.codigo = "tsRada_" + legislacao.id;
-      code.leg = legislacao.id;
       var rada = [];
       var pais = [];
       var n = 0;
@@ -1403,8 +1402,6 @@ function constructRADAO(worksheet, file, stats, code, columns, entidades) {
         "clav:tsRada_" +
         legislacao.id +
         " .\n";
-
-      currentStatements += `clav:${legislacao.id} clav:temEntidadeResponsavel clav:${entidade} .\n`;
 
       worksheet.eachRow((row, rowNumber) => {
         if (rowNumber == 1) return;
@@ -1539,7 +1536,6 @@ function constructPGD(worksheet, file, stats, code, columns, entidades) {
     var pais = [];
     var n = 0;
     code.codigo = "pgd_" + legislacao.id;
-    code.leg = legislacao.id;
     var currentStatements =
       "\n###  http://jcr.di.uminho.pt/m51-clav#pgd_" + legislacao.id + "\n";
     currentStatements +=
@@ -1547,14 +1543,6 @@ function constructPGD(worksheet, file, stats, code, columns, entidades) {
     currentStatements += "\t\tclav:PGD ;\n";
     currentStatements +=
       "\tclav:eRepresentacaoDe clav:" + legislacao.id + " .\n";
-
-    entidades.forEach((ent) => {
-      ents.some((e) => {
-        return e.sigla == ent;
-      })
-        ? (currentStatements += `clav:${legislacao.id} clav:temEntidadeResponsavel clav:ent_${ent} .\n`)
-        : (currentStatements += `clav:${legislacao.id} clav:temEntidadeResponsavel clav:tip_${ent} .\n`);
-    });
 
     worksheet.eachRow((row, rowNumber) => {
       if (rowNumber == 1) return;
@@ -1668,7 +1656,6 @@ function constructPGDLCO(worksheet, file, stats, code, columns, entidades) {
     var pais = [];
     var n = 0;
     code.codigo = "pgd_lc_" + legislacao.id;
-    code.leg = legislacao.id;
     var currentStatements =
       "\n###  http://jcr.di.uminho.pt/m51-clav#pgd_lc_" + legislacao.id + "\n";
     currentStatements +=
@@ -1680,8 +1667,6 @@ function constructPGDLCO(worksheet, file, stats, code, columns, entidades) {
     var entidade = ents.some((e) => e == entidades[0])
       ? "ent_" + entidades[0]
       : "tip_" + entidades[0];
-
-    currentStatements += `clav:${legislacao.id} clav:temEntidadeResponsavel clav:${entidade} .\n`;
 
     worksheet.eachRow((row, rowNumber) => {
       if (rowNumber == 1) return;
@@ -1841,7 +1826,6 @@ function constructPGDLCP(worksheet, file, stats, code, columns, entidades) {
     var pais = [];
     var n = 0;
     code.codigo = "pgd_lc_" + legislacao.id;
-    code.leg = legislacao.id;
     var currentStatements =
       "\n###  http://jcr.di.uminho.pt/m51-clav#pgd_lc_" + legislacao.id + "\n";
     currentStatements +=
@@ -1850,14 +1834,6 @@ function constructPGDLCP(worksheet, file, stats, code, columns, entidades) {
     //Vai mudar a relação temRepresentacao/eRepresentacaoDe
     currentStatements +=
       "\tclav:eRepresentacaoDe clav:" + legislacao.id + " .\n";
-
-    entidades.forEach((ent) => {
-      ents.some((e) => {
-        return e.sigla == ent;
-      })
-        ? (currentStatements += `clav:${legislacao.id} clav:temEntidadeResponsavel clav:ent_${ent} .\n`)
-        : (currentStatements += `clav:${legislacao.id} clav:temEntidadeResponsavel clav:tip_${ent} .\n`);
-    });
 
     worksheet.eachRow((row, rowNumber) => {
       if (rowNumber == 1) return;
@@ -2205,7 +2181,7 @@ SelTabs.criarPedidoDoCSV = async function (
         donos: 0,
         participantes: 0,
       };
-      var code = { codigo: "", leg: "" };
+      var code = { codigo: "" };
       let pgd = constructPGDLCO(
         worksheet,
         file,
@@ -2223,7 +2199,6 @@ SelTabs.criarPedidoDoCSV = async function (
           throw "Insucesso na inserção do tabela de seleção\n" + err;
         }
       }
-      await State.loadLegislacao(code.leg);
       return { codigo: code.codigo, stats };
     } else {
       stats = {
@@ -2231,7 +2206,7 @@ SelTabs.criarPedidoDoCSV = async function (
         donos: 0,
         participantes: 0,
       };
-      var code = { codigo: "", leg: "" };
+      var code = { codigo: "" };
       let pgd = constructPGDLCP(
         worksheet,
         file,
@@ -2249,14 +2224,13 @@ SelTabs.criarPedidoDoCSV = async function (
           throw "Insucesso na inserção do tabela de seleção\n" + err;
         }
       }
-      await State.loadLegislacao(code.leg);
       return { codigo: code.codigo, stats };
     }
   } else if (fonteL == "PGD") {
     stats = {
       processos: 0,
     };
-    var code = { codigo: "", leg: "" };
+    var code = { codigo: "" };
     let pgd = constructPGD(
       worksheet,
       file,
@@ -2273,14 +2247,13 @@ SelTabs.criarPedidoDoCSV = async function (
         throw "Insucesso na inserção do tabela de seleção\n" + err;
       }
     }
-    await State.loadLegislacao(code.leg);
     return { codigo: code.codigo, stats };
   } else if (fonteL == "RADA") {
     if (tipo_ts == "TS Organizacional") {
       stats = {
         processos: 0,
       };
-      var code = { codigo: "", leg: "" };
+      var code = { codigo: "" };
       let rada = constructRADAO(
         worksheet,
         file,
@@ -2298,7 +2271,6 @@ SelTabs.criarPedidoDoCSV = async function (
           throw "Insucesso na inserção do tabela de seleção\n" + err;
         }
       }
-      await State.loadLegislacao(code.leg);
       return { codigo: code.codigo, stats };
     }
   }
