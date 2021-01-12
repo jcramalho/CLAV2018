@@ -8,9 +8,12 @@ var aeConverter = function(obj,tipo) {
   return new Promise(async function(resolve, reject) {
     var currentTime = new Date();
 
-    console.log(typeof(obj))
-    console.dir(obj)
-    console.log(JSON.stringify('Objeto passado: ' + obj))
+    var fonteLeg = obj['fonteLegitimação'];
+    console.log('fonteLeg: ' + fonteLeg)
+    var fundos = obj.fundos
+    console.dir('fundos: ' + fundos)
+    var classes = obj.classes
+    console.dir('classes: ' + classes)
 
     /*if(tipo=="TS/LC") {
       var referencial = obj.referencial[0] || ""
