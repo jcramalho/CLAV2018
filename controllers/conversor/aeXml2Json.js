@@ -8,6 +8,8 @@ var aeConverter = function(obj,tipo) {
   return new Promise(async function(resolve, reject) {
     var currentTime = new Date();
 
+    console.log(typeof(obj))
+    console.dir(obj)
     console.log(JSON.stringify('Objeto passado: ' + obj))
 
     /*if(tipo=="TS/LC") {
