@@ -9,11 +9,11 @@ var aeConverter = function(obj,tipo) {
     var currentTime = new Date();
 
     var fonteLeg = obj['fonteLegitimação'];
-    console.log('fonteLeg: ' + fonteLeg)
+    console.log('fonteLeg: ' + JSON.stringify(fonteLeg))
     var fundos = obj.fundos
-    console.dir('fundos: ' + fundos)
+    console.dir('fundos: ' + JSON.stringify(fundos))
     var classes = obj.classes
-    console.dir('classes: ' + classes)
+    console.dir('classes: ' + JSON.stringify(classes))
 
     /*if(tipo=="TS/LC") {
       var referencial = obj.referencial[0] || ""
