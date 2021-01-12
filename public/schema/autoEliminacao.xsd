@@ -21,16 +21,10 @@ Em 2020-11-17</xs:appinfo>
           </xs:annotation>
           <xs:complexType>
             <xs:sequence>
-              <xs:element name="diploma">
+              <xs:element name="diploma" type="xs:string">
                 <xs:annotation>
                   <xs:documentation>Deverá identificar a fonte numa das seguintes formas: 1) LC, 2) Portaria número/ano, ou 3) Despacho DGLAB número/ano. A primeira forma deverá ser usada para fins de teste e enquanto a entidade não possuir um instrumento classificativo aprovado.</xs:documentation>
                 </xs:annotation>
-                <xs:simpleType>
-                  <xs:restriction base="xs:string">
-                    <xs:pattern
-                      value="(LC|(Portaria\ [0-9]+\/[0-9]+)|(Despacho\ DGLAB\ [0-9]+\/[0-9]+))"/>
-                  </xs:restriction>
-                </xs:simpleType>
               </xs:element>
             </xs:sequence>
             <xs:attribute name="tipo" type="atributoTipo" use="required"/>

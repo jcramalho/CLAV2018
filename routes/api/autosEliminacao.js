@@ -89,12 +89,12 @@ router.post(
       else if (formData.file.type == "text/xml") {
 
         var schemaPath = __dirname + "/../../public/schema/autoEliminacao.xsd";
-        var schema = await fs.readFileSync(schemaPath);
-        var xsl = xml.parseXml(schema);
-        var doc = await fs.readFileSync(formData.file.path);
+        var schema = fs.readFileSync(schemaPath);
+        var xsd = xml.parseXml(schema);
+        var doc = fs.readFileSync(formData.file.path);
         var xmlDoc = xml.parseXml(doc);
 
-        if (xmlDoc.validate(xsl)) {
+        if (xmlDoc.validate(xsd)) {
           const parser = new xml2js.Parser();
           parser.parseString(doc, (error, result) => {
             if (error) res.status(500).send("Erro na análise estrutural do ficheiro XML: " + error);
@@ -107,7 +107,7 @@ router.post(
                       `Erro na consulta de utilizador para importação do AE: ${err}`
                     );
                 else {
-                  xml2Json(result.auto, req.query.tipo)
+                  xml2Json(result.autoEliminação, req.query.tipo)
                     .then((data) => {
                       AutosEliminacao.importar(data.auto, req.query.tipo, user)
                         .then((dados) => {
