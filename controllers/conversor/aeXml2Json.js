@@ -8,7 +8,9 @@ var aeConverter = function(obj,tipo) {
   return new Promise(async function(resolve, reject) {
     var currentTime = new Date();
 
-    if(tipo=="TS/LC") {
+    console.log(JSON.stringify('Objeto passado: ' + obj))
+
+    /*if(tipo=="TS/LC") {
       var referencial = obj.referencial[0] || ""
 
       var classesCompletas = await TS.consultar(referencial)
@@ -132,9 +134,10 @@ var aeConverter = function(obj,tipo) {
       }
       auto.zonaControlo.push(zona)
         
-    }
+    }*/
 
-    resolve({auto: auto, error: err});
+    //resolve({auto: auto, error: err});
+    resolve({auto: {}, error: "Em revisão..."});
   })
 }
 
