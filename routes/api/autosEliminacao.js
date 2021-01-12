@@ -6,6 +6,7 @@ var xml2Json = require("../../controllers/conversor/aeXml2Json");
 var xml = require("libxmljs");
 var xml2js = require("xml2js");
 var fs = require("fs");
+var util = require(util)
 
 const { validationResult } = require("express-validator");
 const {
@@ -97,6 +98,7 @@ router.post(
         if (xmlDoc.validate(xsd)) {
           const parser = new xml2js.Parser();
           parser.parseString(doc, (error, result) => {
+            console.log(util.inspect(result, false, null))
             if (error) res.status(500).send("Erro na análise estrutural do ficheiro XML: " + error);
             else {
               User.getUserById(req.user.id, function (err, user) {
