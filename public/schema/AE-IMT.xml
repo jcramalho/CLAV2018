@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <autoEliminação xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="file:/Users/jcr/Documents/WebApps/NodeJS/docker-clav/CLAV2018/public/schema/autoEliminacao.xsd">
-    <fonteLegitimação tipo="RADA">
+    <fonteLegitimação>
+        <tipo>RADA</tipo>
         <diploma>Portaria 381/2019</diploma>
     </fonteLegitimação>
     <fundos>

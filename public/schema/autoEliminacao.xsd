@@ -21,13 +21,13 @@ Em 2020-11-17</xs:appinfo>
           </xs:annotation>
           <xs:complexType>
             <xs:sequence>
+              <xs:element name="tipo" type="TipoLeg"/>
               <xs:element name="diploma" type="xs:string">
                 <xs:annotation>
                   <xs:documentation>Deverá identificar a fonte numa das seguintes formas: 1) LC, 2) Portaria número/ano, ou 3) Despacho DGLAB número/ano. A primeira forma deverá ser usada para fins de teste e enquanto a entidade não possuir um instrumento classificativo aprovado.</xs:documentation>
                 </xs:annotation>
               </xs:element>
             </xs:sequence>
-            <xs:attribute name="tipo" type="atributoTipo" use="required"/>
           </xs:complexType>
         </xs:element>
         <xs:element name="fundos">
@@ -221,7 +221,7 @@ Em 2020-11-17</xs:appinfo>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:simpleType name="atributoTipo">
+  <xs:simpleType name="TipoLeg">
     <xs:annotation>
       <xs:documentation>Tipos de fontes de legitimação: TS/LC, PGD/LC, PGD, RADA e RADA/CLAV.</xs:documentation>
     </xs:annotation>
