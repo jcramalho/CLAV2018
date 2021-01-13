@@ -14,7 +14,7 @@ var aeConverter = function(obj,tipo) {
     console.log('FL: ' + fonteLegTipo + ', ' + fonteLegDiploma)
     var fundos = obj.fundos.map(f => { return f.fundo[0]})
     console.dir('fundos: ' + JSON.stringify(fundos))
-    var classes = obj.classes.map(c => {return c.classe[0]})
+    var classes = obj.classes.map(c => {return c.classe})
     console.dir('classes: ' + JSON.stringify(classes))
 
     /*if(tipo=="TS/LC") {
