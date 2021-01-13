@@ -450,13 +450,13 @@ Leg.portarias = () => {
  * lista das legislacoes existentes que respeitam a fonte dada
  */
 Leg.listarFonte = (fonte) => {
-  const query = `SELECT ?id ?data ?dataRevogacao ?numero ?tipo ?sumario ?entidades ?link WHERE {
+  const query = `SELECT ?id ?data ?dataRevogacao ?numero ?tipo ?sumario ?estado ?entidades ?link WHERE {
         ?uri rdf:type clav:Legislacao;
              clav:diplomaData ?data;
              clav:diplomaNumero ?numero;
              clav:diplomaTipo ?tipo;
              clav:diplomaSumario ?sumario;
-             clav:diplomaEstado "Ativo";
+             clav:diplomaEstado ?estado;
              clav:diplomaLink ?link;
              clav:diplomaFonte "${fonte}".
         OPTIONAL {
@@ -466,6 +466,8 @@ Leg.listarFonte = (fonte) => {
         OPTIONAL {
         	?uri clav:diplomaDataRevogacao ?dataRevogacao.
         }
+        FILTER (?estado = "Ativo")
+        
         BIND(STRAFTER(STR(?uri), 'clav#') AS ?id).
     } ORDER BY DESC (?data)`;
   const campos = [
@@ -475,6 +477,7 @@ Leg.listarFonte = (fonte) => {
     "numero",
     "tipo",
     "sumario",
+    "estado",
     "link",
   ];
   const agrupar = ["entidades"];

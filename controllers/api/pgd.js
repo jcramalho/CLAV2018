@@ -6,7 +6,7 @@ var PGD = module.exports;
 
 PGD.listar = async function () {
   let query = `
-  select ?idPGD ?idLeg ?data ?numero ?tipo ?sumario ?link where { 
+  select ?idPGD ?idLeg ?data ?numero ?tipo ?sumario ?link ?estado where { 
     ?uri a clav:PGD ;
         clav:eRepresentacaoDe ?l .
       ?l clav:diplomaData ?data;
@@ -14,7 +14,8 @@ PGD.listar = async function () {
          clav:diplomaTipo ?tipo;
          clav:diplomaSumario ?sumario ;
          clav:diplomaFonte "PGD" ;
-         clav:diplomaLink ?link .
+         clav:diplomaLink ?link ;
+         clav:diplomaEstado ?estado .
     BIND(STRAFTER(STR(?uri), 'clav#') AS ?idPGD).
     BIND(STRAFTER(STR(?l), 'clav#') AS ?idLeg).
   } 
@@ -27,7 +28,7 @@ PGD.listar = async function () {
 
 PGD.listarLC = async function () {
   let query = `
-  select ?idPGD ?idLeg ?data ?numero ?tipo ?sumario ?link where { 
+  select ?idPGD ?idLeg ?data ?numero ?tipo ?sumario ?link ?estado where { 
     ?uri a clav:PGD ;
         clav:eRepresentacaoDe ?l .
       ?l clav:diplomaData ?data;
@@ -35,7 +36,8 @@ PGD.listarLC = async function () {
          clav:diplomaTipo ?tipo;
          clav:diplomaSumario ?sumario ;
          clav:diplomaFonte "PGD/LC" ;
-         clav:diplomaLink ?link .
+         clav:diplomaLink ?link ;
+         clav:diplomaEstado ?estado .
     BIND(STRAFTER(STR(?uri), 'clav#') AS ?idPGD).
     BIND(STRAFTER(STR(?l), 'clav#') AS ?idLeg).
   } 
