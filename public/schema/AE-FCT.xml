@@ -15,7 +15,12 @@
             <anoInício>2010</anoInício>
             <anoFim>2012</anoFim>
             <dimensãoSuporte>
+                <papel>10</papel>
                 <digital>1</digital>
+                <outro>
+                    <valor>2</valor>
+                    <unidade>pasta A4</unidade>
+                </outro>
             </dimensãoSuporte>
             <númeroAgregações>5</númeroAgregações>
             <agregações>

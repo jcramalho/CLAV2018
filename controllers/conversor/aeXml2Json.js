@@ -3,6 +3,7 @@ var PGD = require("../api/pgd")
 var Rada = require("../api/rada")
 var TS = require("../api/tabsSel")
 var Leg = require("../api/leg")
+var Ent = require('../api/entidades')
 
 var aeConverter = function(obj,tipo) {
   return new Promise(async function(resolve, reject) {
@@ -12,7 +13,10 @@ var aeConverter = function(obj,tipo) {
     var fonteLegTipo = fonteLeg[0].tipo[0]
     var fonteLegDiploma = fonteLeg[0].diploma[0]
     console.log('FL: ' + fonteLegTipo + ', ' + fonteLegDiploma)
-    var fundos = obj.fundos.map(f => { return f.fundo[0]})
+    var fundos = obj.fundos.map(f => { 
+      var e = await Ent.consultar('ent_' + f.fundo[0]);
+      return e
+    })
     console.dir('fundos: ' + JSON.stringify(fundos))
     var classes = obj.classes[0].classe.map(function(c) {
       return {
@@ -33,6 +37,46 @@ var aeConverter = function(obj,tipo) {
       }})
 
     console.dir('classes: ' + JSON.stringify(classes))
+
+
+    // Construção do objeto interno
+
+    var myAuto = {
+      "id": "ae_A3ES_2021_1",
+      "data": "2021-1-12",
+      "fundo": [
+        {
+          "fundo": "ent_A3ES",
+          "nome": "Agência de Avaliação e Acreditação do Ensino Superior"
+        }
+      ],
+      "zonaControlo": [
+        {
+          "id": "zc_1_A3ES_2021_1",
+          "dataInicio": "1990",
+          "dataFim": "1999",
+          "nrAgregacoes": "1",
+          "UIpapel": "12",
+          "UIdigital": "15,5",
+          "UIoutros": "1",
+          "referencia": "1",
+          "titulo": "Avisos do Presidente do Tribunal de Contas",
+          "destino": "CP",
+          "pca": "10",
+          "dono": [],
+          "agregacoes": [
+            {
+              "codigo": "AS_1/1999",
+              "titulo": "Audituria",
+              "dataContagem": "2001",
+              "ni": "dono"
+            }
+          ]
+        }
+      ],
+      "legislacao": "Despacho Conjunto 340/2004",
+      "refLegislacao": "leg_p3iBWgtWApjBs7H-ztrl9"
+    }
 
     /*if(tipo=="TS/LC") {
       var referencial = obj.referencial[0] || ""
