@@ -13,9 +13,10 @@ var aeConverter = function(obj,tipo) {
     var fonteLegTipo = fonteLeg[0].tipo[0]
     var fonteLegDiploma = fonteLeg[0].diploma[0]
     console.log('FL: ' + fonteLegTipo + ', ' + fonteLegDiploma)
-    var fundos = obj.fundos.map(async f => { 
-      var e = await Ent.consultar('ent_' + f.fundo[0]);
-      return e
+    var fundos = obj.fundos.map(f => { 
+      Ent.consultar('ent_' + f.fundo[0])
+        .then(ent => {return ent})
+        .catch(e => {return {error: e}})
     })
     console.dir('fundos: ' + JSON.stringify(fundos))
     var classes = obj.classes[0].classe.map(function(c) {
