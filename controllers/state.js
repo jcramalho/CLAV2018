@@ -161,7 +161,6 @@ exports.getAllClassesInfo = async () => {
 //Devolve a informação das classes da subárvore com raiz na classe com o id 'id'
 exports.subarvore = async (id) => {
   var ret = JSON.parse(JSON.stringify(classTreeInfo));
-  var finded = null;
 
   var codigo = id.split("c")[1];
   codigos = codigo.split(".");
@@ -819,6 +818,15 @@ exports.getLegislacao = (id) => {
     return JSON.parse(JSON.stringify(res[0]));
   } else return null;
 };
+
+// Devolve o uma legislação a partir do seu tipo e número
+exports.getLegislacaoByTipoNumero = (t, n) => {
+  let res = legislacao.filter((l) => l.tipo == t && l.numero == n);
+  if (res.length > 0) {
+    return JSON.parse(JSON.stringify(res[0]));
+  } else return null;
+};
+
 //Atualiza uma legislação no catálogo
 exports.loadLegislacao = async (id) => {
   try {

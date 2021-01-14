@@ -12,10 +12,11 @@ var aeConverter = function(obj,tipo) {
     var fonteLeg = obj['fonteLegitimação'];
     var fonteLegTipo = fonteLeg[0].tipo[0]
     var fonteLegDiploma = fonteLeg[0].diploma[0]
-    console.log('FL: ' + fonteLegTipo + ', ' + fonteLegDiploma)
+    var legIdent = fonteLegDiploma.split(' ')
+    var leg = State.getLegislacaoByTipoNumero(legIdent[0], legIdent[1])
+    console.log('FL: ' + fonteLegTipo + ', ' + fonteLegDiploma + ', ' + leg.id)
     var fundos = obj.fundos.map(f => { 
       let ent = State.getEntidade('ent_' + f.fundo[0])
-      console.log('debug:' + ent); 
       return ent
     })
     console.log('fundos: ' + JSON.stringify(fundos))
@@ -45,36 +46,13 @@ var aeConverter = function(obj,tipo) {
     var myAuto = {
       "id": "ae_A3ES_2021_1",
       "data": "2021-1-12",
-      "fundo": [
-        {
-          "fundo": "ent_A3ES",
-          "nome": "Agência de Avaliação e Acreditação do Ensino Superior"
-        }
-      ],
-      "zonaControlo": [
-        {
-          "id": "zc_1_A3ES_2021_1",
-          "dataInicio": "1990",
-          "dataFim": "1999",
-          "nrAgregacoes": "1",
-          "UIpapel": "12",
-          "UIdigital": "15,5",
-          "UIoutros": "1",
-          "referencia": "1",
-          "titulo": "Avisos do Presidente do Tribunal de Contas",
-          "destino": "CP",
-          "pca": "10",
-          "dono": [],
-          "agregacoes": [
-            {
-              "codigo": "AS_1/1999",
-              "titulo": "Audituria",
-              "dataContagem": "2001",
-              "ni": "dono"
-            }
-          ]
-        }
-      ],
+      "fundo": fundos.map(e => {return {
+        fundo: e.id,
+        nome: e.designacao
+      }}),
+      "zonaControlo": classes.map(c => {
+        //var classesCompletas = await PGD.consultar("pgd_"+leg[0].id)
+      }),
       "legislacao": "Despacho Conjunto 340/2004",
       "refLegislacao": "leg_p3iBWgtWApjBs7H-ztrl9"
     }
