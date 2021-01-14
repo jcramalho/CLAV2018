@@ -14,7 +14,7 @@ var aeConverter = function(obj,tipo) {
     var fonteLegDiploma = fonteLeg[0].diploma[0]
     console.log('FL: ' + fonteLegTipo + ', ' + fonteLegDiploma)
     var fundos = obj.fundos.map(f => { 
-      State.getEntidade(f.fundo[0])
+      State.getEntidade('ent_' + f.fundo[0])
         .then(ent => { console.log('debug:' + ent); return ent})
         .catch(e => {return {error: e}})
     })
