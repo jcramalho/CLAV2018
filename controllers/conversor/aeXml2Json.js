@@ -14,11 +14,11 @@ var aeConverter = function(obj,tipo) {
     var fonteLegDiploma = fonteLeg[0].diploma[0]
     console.log('FL: ' + fonteLegTipo + ', ' + fonteLegDiploma)
     var fundos = obj.fundos.map(f => { 
-      Ent.consultar('ent_' + f.fundo[0])
+      Ent.consultar(f.fundo[0])
         .then(ent => {return ent})
         .catch(e => {return {error: e}})
     })
-    console.dir('fundos: ' + JSON.stringify(fundos))
+    console.log('fundos: ' + JSON.stringify(fundos))
     var classes = obj.classes[0].classe.map(function(c) {
       return {
         código: c.código[0],
