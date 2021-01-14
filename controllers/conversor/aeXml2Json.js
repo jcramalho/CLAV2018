@@ -15,6 +15,8 @@ var aeConverter = function(obj,tipo) {
     var legIdent = fonteLegDiploma.split(' ')
     var leg = State.getLegislacaoByTipoNumero(legIdent[0], legIdent[1])
     console.log('FL: ' + fonteLegTipo + ', ' + fonteLegDiploma + ', ' + leg.id)
+    var classesCompletas = await PGD.consultar("pgd_"+leg.id)
+    console.log('TS: ' + JSON.stringify(classesCompletas))
     var fundos = obj.fundos.map(f => { 
       let ent = State.getEntidade('ent_' + f.fundo[0])
       return ent
