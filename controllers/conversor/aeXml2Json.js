@@ -21,7 +21,15 @@ var aeConverter = function(obj,tipo) {
         anoInício: c.anoInício[0],
         anoFim: c.anoFim[0],
         dimensãoSuporte: c.dimensãoSuporte,
-        númeroAgregações: c.númeroAgregações[0]
+        númeroAgregações: c.númeroAgregações[0],
+        agregações: c.agregações[0].agregação.map(function(a){
+          return {
+            código: a.código[0],
+            título: a.título[0],
+            ano: a.ano[0],
+            ni: a.naturezaIntervenção[0]
+          }
+        })
       }})
 
     console.dir('classes: ' + JSON.stringify(classes))
