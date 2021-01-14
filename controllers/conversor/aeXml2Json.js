@@ -3,7 +3,7 @@ var PGD = require("../api/pgd")
 var Rada = require("../api/rada")
 var TS = require("../api/tabsSel")
 var Leg = require("../api/leg")
-var Ent = require('../api/entidades')
+var State = require('../state')
 
 var aeConverter = function(obj,tipo) {
   return new Promise(async function(resolve, reject) {
@@ -14,7 +14,7 @@ var aeConverter = function(obj,tipo) {
     var fonteLegDiploma = fonteLeg[0].diploma[0]
     console.log('FL: ' + fonteLegTipo + ', ' + fonteLegDiploma)
     var fundos = obj.fundos.map(f => { 
-      Ent.consultar(f.fundo[0])
+      State.getEntidade(f.fundo[0])
         .then(ent => { console.log('debug:' + ent); return ent})
         .catch(e => {return {error: e}})
     })
