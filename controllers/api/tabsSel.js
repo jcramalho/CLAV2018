@@ -1233,7 +1233,7 @@ async function validateHeaders(headers, typeOrg, fonteL, entidades_ts, file) {
       let aux = file.split("_");
       aux[aux.length - 1] = aux[aux.length - 1].split(".")[0];
       let ents = [];
-      for (var i = aux.length - 1; !/\d+/.test(aux[i]); i--) {
+      for (var i = aux.length - 1; !/^\d+$/.test(aux[i]); i--) {
         ents.push(aux[i].replace(" ", "_"));
       }
 
@@ -2282,14 +2282,12 @@ function partRequest(req, parts) {
   // Partição feita automáticamente quando o argumento parts é = 0
   if (parts === 0) {
     let div = Math.floor(req.split(/\r\n|\r|\n/).length / 10000);
-    div < 1 ? (div = 1) : "";
 
     for (var i = 0; i < div; i++) {
-      let mid = req.length / (div - i) - 1;
+      let mid = Math.floor(req.length / (div - i) - 1);
       let index;
       for (index = mid; index < req.length; index++) {
-        if (/#/g.test(req[index + 1]) && /(\r\n|\n|\r)/g.test(req[index]))
-          break;
+        if (/#/g.test(req[index + 1]) && /\r\n|\n|\r/g.test(req[index])) break;
       }
 
       pgdParts.push(req.slice(prev, index));
