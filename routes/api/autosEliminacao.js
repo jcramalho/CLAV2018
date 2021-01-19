@@ -112,12 +112,11 @@ router.post(
                     .then((data) => {
                       AutosEliminacao.importar(data.auto, req.query.tipo, user)
                         .then((dados) => {
-                          var myData = JSON.parse(dados)
-                          console.log('No router: ' + myData.codigo)
+                          console.log('No router: ' + dados.codigo)
                           res.jsonp(
                             req.query.tipo +
                               " adicionado aos pedidos com sucesso com codigo: " +
-                              myData.codigo
+                              dados.codigo
                           );
                         })
                         .catch((erro) =>
