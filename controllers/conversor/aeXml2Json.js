@@ -22,7 +22,7 @@ var aeConverter = function(obj,tipo) {
       let ent = State.getEntidade('ent_' + f.fundo[0])
       return ent
     })
-    console.log('fundos: ' + JSON.stringify(fundos))
+    //console.log('fundos: ' + JSON.stringify(fundos))
     var classes = obj.classes[0].classe.map(function(c) {
       return {
         código: c.código[0],
@@ -41,7 +41,7 @@ var aeConverter = function(obj,tipo) {
         })
       }})
 
-    console.dir('classes: ' + JSON.stringify(classes))
+    //console.dir('classes: ' + JSON.stringify(classes))
 
 
     // Construção do objeto interno
