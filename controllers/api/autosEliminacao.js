@@ -569,7 +569,7 @@ AutosEliminacao.importar = async (auto, tipo, user) => {
     }
     var pedido = await Pedidos.criar(pedido)
     console.log('PEDIDO: ' + JSON.stringify(pedido))
-    return {codigo: pedido.codigo, auto: auto }
+    return {codigo: pedido, auto: auto }
 };
 
 /**
