@@ -4,6 +4,7 @@ var Rada = require("../api/rada")
 var TS = require("../api/tabsSel")
 var Leg = require("../api/leg")
 var State = require('../state')
+const e = require("express")
 
 var aeConverter = function(obj,tipo) {
   return new Promise(async function(resolve, reject) {
@@ -44,19 +45,27 @@ var aeConverter = function(obj,tipo) {
 
 
     // Construção do objeto interno
-
+    // data do momento
+    var d = new Date().toISOString().substr(0, 16)
     var myAuto = {
-      "id": "ae_A3ES_2021_1",
-      "data": "2021-1-12",
-      "fundo": fundos.map(e => {return {
+      id: "ae_" + fundos.map(f => f.sigla) + "_" + d,
+      data: d,
+      fundo: fundos.map(e => {return {
         fundo: e.id,
         nome: e.designacao
       }}),
-      "zonaControlo": classes.map(c => {
-        //var classesCompletas = await PGD.consultar("pgd_"+leg[0].id)
+      zonaControlo: classes.map(c => {return {
+          id: "zc_",
+          dataInicio: c.anoInício,
+          dataFim: c.anoFim,
+          nrAgregacoes: c.númeroAgregações,
+          agregacoes: [
+
+          ]
+        }
       }),
-      "legislacao": "Despacho Conjunto 340/2004",
-      "refLegislacao": "leg_p3iBWgtWApjBs7H-ztrl9"
+      "legislacao": fonteLegTipo + " " + fonteLegDiploma,
+      "refLegislacao": leg.id
     }
 
     /*if(tipo=="TS/LC") {
@@ -186,7 +195,7 @@ var aeConverter = function(obj,tipo) {
     }*/
 
     //resolve({auto: auto, error: err});
-    resolve({auto: {}, error: "Em revisão..."});
+    resolve({auto: myAuto, error: "Em revisão..."});
   })
 }
 
