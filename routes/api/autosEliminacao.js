@@ -116,7 +116,7 @@ router.post(
                           res.jsonp(
                             req.query.tipo +
                               " adicionado aos pedidos com sucesso com codigo: " +
-                              dados.codigo
+                              JSON.stringify(dados.codigo)
                           );
                         })
                         .catch((erro) =>
