@@ -568,7 +568,6 @@ AutosEliminacao.importar = async (auto, tipo, user) => {
         objetoOriginal: auto
     }
     var pedido = await Pedidos.criar(pedido)
-    console.log('PEDIDO: ' + JSON.stringify(pedido))
     return {codigo: pedido, auto: auto }
 };
 
