@@ -8,21 +8,26 @@ const e = require("express")
 
 var aeConverter = function(obj,tipo) {
   return new Promise(async function(resolve, reject) {
-    var currentTime = new Date();
-
+  
     var fonteLeg = obj['fonteLegitimação'];
     var fonteLegTipo = fonteLeg[0].tipo[0]
     var fonteLegDiploma = fonteLeg[0].diploma[0]
     var legIdent = fonteLegDiploma.split(' ')
     var leg = State.getLegislacaoByTipoNumero(legIdent[0], legIdent[1])
     //console.log('FL: ' + fonteLegTipo + ', ' + fonteLegDiploma + ', ' + leg.id)
-    var classesCompletas = await PGD.consultar("pgd_"+leg.id)
-    //console.log('TS: ' + JSON.stringify(classesCompletas))
+    switch(fonteLegTipo){
+      case "PGD": var classesCompletas = await PGD.consultar("pgd_"+leg.id)
+                  break
+      case "RADA": var classesCompletas = await PGD.consultar("tsRada_"+leg.id)
+                  break
+      default: var classesCompletas = []
+    }
+    
     var fundos = obj.fundos.map(f => { 
       let ent = State.getEntidade('ent_' + f.fundo[0])
       return ent
     })
-    //console.log('fundos: ' + JSON.stringify(fundos))
+    
     var classes = obj.classes[0].classe.map(function(c) {
       return {
         código: c.código[0],
