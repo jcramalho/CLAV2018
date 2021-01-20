@@ -33,11 +33,11 @@ var aeConverter = function(obj,tipo) {
       if(c.hasOwnProperty('código')) resClasse['código'] = c.código[0]
       if(c.hasOwnProperty('referência')) resClasse['referência'] = c.referência[0]
       if(c.hasOwnProperty('naturezaIntervenção')) resClasse['naturezaIntervenção'] = c.naturezaIntervenção[0]
-      resClasse[anoInício] = c.anoInício[0]
-      resClasse[anoFim] = c.anoFim[0]
-      resClasse[dimensãoSuporte] = c.dimensãoSuporte
-      resClasse[númeroAgregações] = c.númeroAgregações[0]
-      resClasse[agregações] = c.agregações[0].agregação.map(function(a){
+      resClasse['anoInício'] = c.anoInício[0]
+      resClasse['anoFim'] = c.anoFim[0]
+      resClasse['dimensãoSuporte'] = c.dimensãoSuporte
+      resClasse['númeroAgregações'] = c.númeroAgregações[0]
+      resClasse['agregações'] = c.agregações[0].agregação.map(function(a){
         return {
           código: a.código[0],
           título: a.título[0],
