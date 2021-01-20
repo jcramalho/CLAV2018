@@ -14,7 +14,7 @@ var aeConverter = function(obj,tipo) {
     var fonteLegDiploma = fonteLeg[0].diploma[0]
     var legIdent = fonteLegDiploma.split(' ')
     var leg = State.getLegislacaoByTipoNumero(legIdent[0], legIdent[1])
-    //console.log('FL: ' + fonteLegTipo + ', ' + fonteLegDiploma + ', ' + leg.id)
+    
     switch(fonteLegTipo){
       case "PGD": var classesCompletas = await PGD.consultar("pgd_"+leg.id)
                   break
@@ -30,9 +30,9 @@ var aeConverter = function(obj,tipo) {
     
     var classes = obj.classes[0].classe.map(function(c) {
       let resClasse = {}
-      if(c.código) resClasse[código] = c.código[0]
-      if(c.referência) resClasse[referência] = c.referência[0]
-      if(c.naturezaIntervenção) resClasse[naturezaIntervenção] = c.naturezaIntervenção[0]
+      if(c.hasOwnProperty('código')) resClasse[código] = c.código[0]
+      if(c.hasOwnProperty('referência')) resClasse[referência] = c.referência[0]
+      if(c.hasOwnProperty('naturezaIntervenção')) resClasse[naturezaIntervenção] = c.naturezaIntervenção[0]
       resClasse[anoInício] = c.anoInício[0]
       resClasse[anoFim] = c.anoFim[0]
       resClasse[dimensãoSuporte] = c.dimensãoSuporte
@@ -49,7 +49,7 @@ var aeConverter = function(obj,tipo) {
       return resClasse
     })
 
-    //console.dir('classes: ' + JSON.stringify(classes))
+    console.log('classes: ' + JSON.stringify(classes))
 
 
     // Construção do objeto interno
