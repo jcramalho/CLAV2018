@@ -29,22 +29,25 @@ var aeConverter = function(obj,tipo) {
     })
     
     var classes = obj.classes[0].classe.map(function(c) {
-      return {
-        código: c.código[0],
-        referência: c.referência[0],
-        anoInício: c.anoInício[0],
-        anoFim: c.anoFim[0],
-        dimensãoSuporte: c.dimensãoSuporte,
-        númeroAgregações: c.númeroAgregações[0],
-        agregações: c.agregações[0].agregação.map(function(a){
-          return {
-            código: a.código[0],
-            título: a.título[0],
-            ano: a.ano[0],
-            ni: a.naturezaIntervenção[0]
-          }
-        })
-      }})
+      let resClasse = {}
+      if(c.código) resClasse[código] = c.código[0]
+      if(c.referência) resClasse[referência] = c.referência[0]
+      if(c.naturezaIntervenção) resClasse[naturezaIntervenção] = c.naturezaIntervenção[0]
+      resClasse[anoInício] = c.anoInício[0]
+      resClasse[anoFim] = c.anoFim[0]
+      resClasse[dimensãoSuporte] = c.dimensãoSuporte
+      resClasse[númeroAgregações] = c.númeroAgregações[0]
+      resClasse[agregações] = c.agregações[0].agregação.map(function(a){
+        return {
+          código: a.código[0],
+          título: a.título[0],
+          ano: a.ano[0],
+          ni: a.naturezaIntervenção? a.naturezaIntervenção[0] : null
+        }
+      })
+
+      return resClasse
+    })
 
     //console.dir('classes: ' + JSON.stringify(classes))
 
