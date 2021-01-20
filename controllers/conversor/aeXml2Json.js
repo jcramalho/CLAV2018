@@ -37,7 +37,7 @@ var aeConverter = function(obj,tipo) {
       resClasse['anoFim'] = c.anoFim[0]
       resClasse['dimensãoSuporte'] = c.dimensãoSuporte
       resClasse['númeroAgregações'] = c.númeroAgregações[0]
-      resClasse['agregações'] = c.agregações[0].agregação.map(function(a){
+      if(c.hasOwnProperty('agregações')) resClasse['agregações'] = c.agregações[0].agregação.map(function(a){
         return {
           código: a.código[0],
           título: a.título[0],
