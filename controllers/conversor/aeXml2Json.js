@@ -30,9 +30,9 @@ var aeConverter = function(obj,tipo) {
     
     var classes = obj.classes[0].classe.map(function(c) {
       let resClasse = {}
-      if(c.hasOwnProperty('código')) resClasse[código] = c.código[0]
-      if(c.hasOwnProperty('referência')) resClasse[referência] = c.referência[0]
-      if(c.hasOwnProperty('naturezaIntervenção')) resClasse[naturezaIntervenção] = c.naturezaIntervenção[0]
+      if(c.hasOwnProperty('código')) resClasse['código'] = c.código[0]
+      if(c.hasOwnProperty('referência')) resClasse['referência'] = c.referência[0]
+      if(c.hasOwnProperty('naturezaIntervenção')) resClasse['naturezaIntervenção'] = c.naturezaIntervenção[0]
       resClasse[anoInício] = c.anoInício[0]
       resClasse[anoFim] = c.anoFim[0]
       resClasse[dimensãoSuporte] = c.dimensãoSuporte
