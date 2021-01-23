@@ -57,13 +57,11 @@ var aeConverter = function(obj,tipo) {
     // número de série
     var cont = await Contador.get('ae')
     var num = cont.valor
-    console.log(typeof(num))
-    console.dir(num)
-    Contador.incrementar('ae')
+    await Contador.incrementar('ae')
     // data do momento
     var d = new Date().toISOString().substr(0, 4)
     var myAuto = {
-      id: "ae_" + fundos.map(f => f.sigla) + "_" + d + num,
+      id: "ae_" + fundos.map(f => f.sigla) + "_" + d + num.toString(),
       data: d,
       fundo: fundos.map(e => {return {
         fundo: e.id,
@@ -83,7 +81,7 @@ var aeConverter = function(obj,tipo) {
       ]
     }})
 
-    //console.log(JSON.stringify(myAuto))
+    console.log(JSON.stringify(myAuto))
 
     /*if(tipo=="TS/LC") {
       var referencial = obj.referencial[0] || ""
