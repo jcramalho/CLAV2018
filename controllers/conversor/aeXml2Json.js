@@ -57,7 +57,10 @@ var aeConverter = function(obj,tipo) {
     // número de série
     var num 
     Contador.get('ae')
-      .then(dados => num = dados.valor)
+      .then(dados => {
+        console.log(JSON.stringify(dados))
+        num = dados.valor
+      })
       .catch(err => num = 1);
     console.log(typeof(num))
     console.dir(num)
