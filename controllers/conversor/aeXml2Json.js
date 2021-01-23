@@ -57,7 +57,7 @@ var aeConverter = function(obj,tipo) {
     // número de série
     var num = Contador.get('ae')
     console.log(typeof(num))
-    console.log(JSON.stringify(num))
+    console.dir(num)
     Contador.incrementar('ae')
     // data do momento
     var d = new Date().toISOString().substr(0, 4)
