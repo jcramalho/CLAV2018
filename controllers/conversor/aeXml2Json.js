@@ -55,7 +55,10 @@ var aeConverter = function(obj,tipo) {
 
     // Construção do objeto interno
     // número de série
-    var num = Contador.get('ae')
+    var num 
+    Contador.get('ae')
+      .then(dados => num = dados.valor)
+      .catch(err => num = 1);
     console.log(typeof(num))
     console.dir(num)
     Contador.incrementar('ae')
