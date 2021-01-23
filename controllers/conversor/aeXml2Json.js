@@ -55,7 +55,7 @@ var aeConverter = function(obj,tipo) {
 
     // Construção do objeto interno
     // número de série
-    var num = Contador.get('ae')
+    var num = Contador.get('ae').valor
     Contador.incrementar('ae')
     // data do momento
     var d = new Date().toISOString().substr(0, 4)
