@@ -55,7 +55,9 @@ var aeConverter = function(obj,tipo) {
 
     // Construção do objeto interno
     // número de série
-    var num = Contador.get('ae').valor
+    var num = Contador.get('ae')
+    console.log(typeof(num))
+    console.log(JSON.stringify(num))
     Contador.incrementar('ae')
     // data do momento
     var d = new Date().toISOString().substr(0, 4)
@@ -80,7 +82,7 @@ var aeConverter = function(obj,tipo) {
       ]
     }})
 
-    console.log(JSON.stringify(myAuto))
+    //console.log(JSON.stringify(myAuto))
 
     /*if(tipo=="TS/LC") {
       var referencial = obj.referencial[0] || ""
