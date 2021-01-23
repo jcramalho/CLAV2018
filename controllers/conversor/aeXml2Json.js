@@ -80,6 +80,8 @@ var aeConverter = function(obj,tipo) {
       ]
     }})
 
+    console.log(JSON.stringify(myAuto))
+
     /*if(tipo=="TS/LC") {
       var referencial = obj.referencial[0] || ""
 
