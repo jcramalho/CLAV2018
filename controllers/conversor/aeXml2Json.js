@@ -59,7 +59,7 @@ var aeConverter = function(obj,tipo) {
     Contador.get('ae')
       .then(dados => {
         console.log(JSON.stringify(dados))
-        num = dados.valor
+        num = JSON.parse(dados).valor
       })
       .catch(err => num = 1);
     console.log(typeof(num))
