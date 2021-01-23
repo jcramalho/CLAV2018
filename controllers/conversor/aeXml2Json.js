@@ -9,6 +9,14 @@ const Contador = require('../../controllers/api/contador')
 
 var aeConverter = function(obj,tipo) {
   return new Promise(async function(resolve, reject) {
+
+    // Construção do objeto interno
+    // número de série
+    var cont = await Contador.get('ae')
+    var num = cont.valor
+    await Contador.incrementar('ae')
+    // data do momento
+    var d = new Date().toISOString().substr(0, 4)
   
     var fonteLeg = obj['fonteLegitimação'];
     var fonteLegTipo = fonteLeg[0].tipo[0]
@@ -29,20 +37,21 @@ var aeConverter = function(obj,tipo) {
       return ent
     })
     
-    var classes = obj.classes[0].classe.map(function(c) {
+    var classes = obj.classes[0].classe.map(function(c,i) {
       let resClasse = {}
-      if(c.hasOwnProperty('código')) resClasse['código'] = c.código[0]
-      if(c.hasOwnProperty('referência')) resClasse['referência'] = c.referência[0]
-      if(c.hasOwnProperty('naturezaIntervenção')) resClasse['naturezaIntervenção'] = c.naturezaIntervenção[0]
-      resClasse['anoInício'] = c.anoInício[0]
-      resClasse['anoFim'] = c.anoFim[0]
+      resClasse['id'] = "zc_" + i + '_' + 'ae' + '_' + d + '_' + num.toString()
+      if(c.hasOwnProperty('código')) resClasse['codigo'] = c.código[0]
+      if(c.hasOwnProperty('referência')) resClasse['referencia'] = c.referência[0]
+      if(c.hasOwnProperty('naturezaIntervenção')) resClasse['ni'] = c.naturezaIntervenção[0]
+      resClasse['dataInicio'] = c.anoInício[0]
+      resClasse['dataFim'] = c.anoFim[0]
       resClasse['dimensãoSuporte'] = c.dimensãoSuporte
-      resClasse['númeroAgregações'] = c.númeroAgregações[0]
-      if(c.hasOwnProperty('agregações')) resClasse['agregações'] = c.agregações[0].agregação.map(function(a){
+      resClasse['nrAgregacoes'] = c.númeroAgregações[0]
+      if(c.hasOwnProperty('agregações')) resClasse['agregacoes'] = c.agregações[0].agregação.map(function(a){
         return {
-          código: a.código[0],
-          título: a.título[0],
-          ano: a.ano[0],
+          codigo: a.código[0],
+          titulo: a.título[0],
+          dataContagem: a.ano[0],
           ni: a.naturezaIntervenção? a.naturezaIntervenção[0] : null
         }
       })
@@ -52,16 +61,9 @@ var aeConverter = function(obj,tipo) {
 
     //console.log('classes: ' + JSON.stringify(classes))
 
-
-    // Construção do objeto interno
-    // número de série
-    var cont = await Contador.get('ae')
-    var num = cont.valor
-    await Contador.incrementar('ae')
-    // data do momento
-    var d = new Date().toISOString().substr(0, 4)
     var myAuto = {
-      id: "ae_" + fundos.map(f => f.sigla) + "_" + d + num.toString(),
+      id: "ae_" + fundos.map(f => f.sigla) + "_" + d + '_' + num.toString(),
+      tipo: fonteLegTipo,
       data: d,
       fundo: fundos.map(e => {return {
         fundo: e.id,
@@ -71,15 +73,7 @@ var aeConverter = function(obj,tipo) {
       "refLegislacao": leg.id
     }
 
-    myAuto['zonaControlo'] = classes.map((c,i) => {return {
-      id: "zc_" + i + '_' + myAuto.id ,
-      dataInicio: c.anoInício,
-      dataFim: c.anoFim,
-      nrAgregacoes: c.númeroAgregações,
-      agregacoes: [
-
-      ]
-    }})
+    myAuto['zonaControlo'] = classes
 
     console.log(JSON.stringify(myAuto))
 
