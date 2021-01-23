@@ -97,7 +97,6 @@ router.post(
         if (xmlDoc.validate(xsd)) {
           const parser = new xml2js.Parser();
           parser.parseString(doc, (error, result) => {
-            console.log(JSON.stringify(result))
             if (error) res.status(500).send("Erro na análise estrutural do ficheiro XML: " + error);
             else {
               User.getUserById(req.user.id, function (err, user) {

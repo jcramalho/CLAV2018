@@ -5,6 +5,7 @@ var TS = require("../api/tabsSel")
 var Leg = require("../api/leg")
 var State = require('../state')
 const e = require("express")
+const Contador = require('../../controllers/api/contador')
 
 var aeConverter = function(obj,tipo) {
   return new Promise(async function(resolve, reject) {
@@ -49,32 +50,35 @@ var aeConverter = function(obj,tipo) {
       return resClasse
     })
 
-    console.log('classes: ' + JSON.stringify(classes))
+    //console.log('classes: ' + JSON.stringify(classes))
 
 
     // Construção do objeto interno
+    // número de série
+    var num = Contador.get('ae')
+    Contador.incrementar('ae')
     // data do momento
-    var d = new Date().toISOString().substr(0, 16)
+    var d = new Date().toISOString().substr(0, 4)
     var myAuto = {
-      id: "ae_" + fundos.map(f => f.sigla) + "_" + d,
+      id: "ae_" + fundos.map(f => f.sigla) + "_" + d + num,
       data: d,
       fundo: fundos.map(e => {return {
         fundo: e.id,
         nome: e.designacao
       }}),
-      zonaControlo: classes.map(c => {return {
-          id: "zc_",
-          dataInicio: c.anoInício,
-          dataFim: c.anoFim,
-          nrAgregacoes: c.númeroAgregações,
-          agregacoes: [
-
-          ]
-        }
-      }),
       "legislacao": fonteLegTipo + " " + fonteLegDiploma,
       "refLegislacao": leg.id
     }
+
+    myAuto['zonaControlo'] = classes.map((c,i) => {return {
+      id: "zc_" + i + '_' + myAuto.id ,
+      dataInicio: c.anoInício,
+      dataFim: c.anoFim,
+      nrAgregacoes: c.númeroAgregações,
+      agregacoes: [
+
+      ]
+    }})
 
     /*if(tipo=="TS/LC") {
       var referencial = obj.referencial[0] || ""
