@@ -45,7 +45,8 @@ var aeConverter = function(obj,tipo) {
       if(c.hasOwnProperty('naturezaIntervenção')) resClasse['ni'] = c.naturezaIntervenção[0]
       resClasse['dataInicio'] = c.anoInício[0]
       resClasse['dataFim'] = c.anoFim[0]
-      resClasse['dimensãoSuporte'] = c.dimensãoSuporte
+      if(c.dimensãoSuporte[0].hasOwnProperty('papel')) resClasse['uiPapel'] = c.dimensãoSuporte[0].papel
+      if(c.dimensãoSuporte[0].hasOwnProperty('digital')) resClasse['uiPapel'] = c.dimensãoSuporte[0].digital
       resClasse['nrAgregacoes'] = c.númeroAgregações[0]
       if(c.hasOwnProperty('agregações')) resClasse['agregacoes'] = c.agregações[0].agregação.map(function(a){
         return {
@@ -63,7 +64,7 @@ var aeConverter = function(obj,tipo) {
 
     var myAuto = {
       id: "ae_" + fundos.map(f => f.sigla) + "_" + d + '_' + num.toString(),
-      tipo: fonteLegTipo,
+      tipo: 'AE_' + fonteLegTipo, // isto é um AE
       data: d,
       fundo: fundos.map(e => {return {
         fundo: e.id,
@@ -75,7 +76,7 @@ var aeConverter = function(obj,tipo) {
 
     myAuto['zonaControlo'] = classes
 
-    console.log(JSON.stringify(myAuto))
+    // console.log(JSON.stringify(myAuto))
 
     /*if(tipo=="TS/LC") {
       var referencial = obj.referencial[0] || ""
