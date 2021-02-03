@@ -2240,6 +2240,8 @@ SelTabs.criarPedidoDoCSV = async function (
       !Array.isArray(entidades_ts) ? entidades_ts.split() : entidades_ts
     );
     let parts = partRequest(pgd, 0);
+    
+    
     for (i in parts) {
       try {
         await execQuery("update", `INSERT DATA {${parts[i]}}`);
@@ -2247,6 +2249,8 @@ SelTabs.criarPedidoDoCSV = async function (
         throw "Insucesso na inserção do tabela de seleção\n" + err;
       }
     }
+
+    //await execQuery("update", `INSERT DATA {${pgd}}`);
     return { codigo: code.codigo, stats };
   } else if (fonteL == "RADA") {
     if (tipo_ts == "TS Organizacional") {
@@ -2282,16 +2286,26 @@ function partRequest(req, parts) {
   // Partição feita automáticamente quando o argumento parts é = 0
   if (parts === 0) {
     let div = Math.floor(req.split(/\r\n|\r|\n/).length / 10000);
+    req.length
+    req.spilt
+    
+    if (div > 0){
 
-    for (var i = 0; i < div; i++) {
-      let mid = Math.floor(req.length / (div - i) - 1);
-      let index;
-      for (index = mid; index < req.length; index++) {
-        if (/#/g.test(req[index + 1]) && /\r\n|\n|\r/g.test(req[index])) break;
+      
+      for (var i = 0; i < div; i++) {
+        let mid = Math.floor(req.length / (div - i) - 1);
+        let index;
+        for (index = mid; index < req.length; index++) {
+          if (/#/g.test(req[index + 1]) && /\r\n|\n|\r/g.test(req[index])) break;
+        }
+        
+        pgdParts.push(req.slice(prev, index));
+        prev = index;
+        
       }
-
-      pgdParts.push(req.slice(prev, index));
-      prev = index;
+    }
+    else {
+      pgdParts.push(req);
     }
   } else {
     for (var i = 0; i < parts; i++) {
