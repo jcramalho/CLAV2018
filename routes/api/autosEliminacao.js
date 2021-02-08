@@ -111,10 +111,11 @@ router.post(
                     .then((data) => {
                       AutosEliminacao.importar(data.auto, req.query.tipo, user)
                         .then((dados) => {
-                          res.jsonp(
-                            req.query.tipo +
-                              " adicionado aos pedidos com sucesso com codigo: " +
-                              dados.codigo
+                          res.jsonp({
+                            tipo: dados.tipo,
+                            codigoPedido: dados.codigo,
+                            mensagem: "Auto de Eliminação importado com sucesso e adicionado aos pedidos com codigo: " + dados.codigo
+                          }
                           );
                         })
                         .catch((erro) =>
