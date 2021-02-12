@@ -16,10 +16,13 @@ SelTabs.list = async function () {
         ?id rdf:type clav:TabelaSelecao ;
             clav:designacao ?designacao ;
             clav:dataAprovacao ?data ;
+            clav:eRepresentacaoDe ?leg;
             clav:temEntidade ?entidades .
+        ?leg clav:diplomaTipo ?tipoLeg ;
+        	   clav:diplomaNumero ?numLeg .
     }
     `;
-  const campos = ["id", "designacao", "data"];
+  const campos = ["id", "designacao", "data","tipoLeg","numLeg"];
   const agrupar = ["entidades"];
 
   try {
@@ -2250,7 +2253,6 @@ SelTabs.criarPedidoDoCSV = async function (
       }
     }
 
-    //await execQuery("update", `INSERT DATA {${pgd}}`);
     return { codigo: code.codigo, stats };
   } else if (fonteL == "RADA") {
     if (tipo_ts == "TS Organizacional") {
@@ -2604,7 +2606,7 @@ function queryClasse(id, proc) {
   return query;
 }
 
-SelTabs.adicionar = async function (tabela) {
+SelTabs.adicionar = async function (tabela,leg) {
   const currentTime = new Date();
   const paiList = [];
   const queryNum = `
@@ -2630,6 +2632,7 @@ SelTabs.adicionar = async function (tabela) {
                           clav:designacao "${tabela.objeto.dados.designacao}" ;
                           clav:tsResponsavel "${tabela.criadoPor}" ;
                           clav:dataAprovacao "${data}" ;
+                          clav:eRepresentacaoDe clav:${leg} ;
                           clav:temEntidadeResponsavel clav:${tabela.entidade} .
         `;
 
@@ -2708,6 +2711,7 @@ SelTabs.adicionar = async function (tabela) {
                               clav:designacao "${tabela.objeto.dados.ts.designacao}" ;
                               clav:tsResponsavel "${tabela.criadoPor}" ;
                               clav:dataAprovacao "${data}" ;
+                              clav:eRepresentacaoDe clav:${leg} ;
                               clav:temEntidadeResponsavel clav:${tabela.entidade} .
             `;
       if (tabela.objeto.dados.ts.idEntidade) {

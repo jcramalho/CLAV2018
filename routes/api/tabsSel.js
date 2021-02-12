@@ -58,14 +58,14 @@ router.post(
   "/",
   Auth.isLoggedInUser,
   Auth.checkLevel([5, 6, 7]),
-  [existe("body", "tabela")],
+  [existe("body", "tabela"),existe("body","leg")],
   async function (req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(422).jsonp(errors.array());
     }
 
-    SelTabs.adicionar(req.body.tabela)
+    SelTabs.adicionar(req.body.tabela,req.body.leg)
       .then((dados) => res.jsonp(dados))
       .catch((err) =>
         res.status(500).send(`Erro na criação de tabela de seleção: ${err}`)
