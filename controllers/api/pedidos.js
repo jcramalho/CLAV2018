@@ -19,9 +19,9 @@ Pedidos.listar = (filtro) => {
 };
 
 // lista dos pedidos apenas com a metainformação
-Pedidos.listarMeta = (filtro) => {
+Pedidos.listarMeta = () => {
   console.log('Controlador')
-  return Pedido.find(filtro, ['codigo','data','estado','criadoPor']);
+  return Pedido.find({}, ['codigo','data','estado','criadoPor']);
 };
 
 // Recupera a lista de pedidos de determinado tipo
