@@ -43,7 +43,7 @@ router.get('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
 });
 
 // Lista todos os pedidos que satisfazem uma condição mas apenas a sua metainformação
-router.get('/meta', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
+router.get('/meta', /*Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]),*/ [
     existe('query', 'criadoPor')
         .bail()
         .isEmail()
