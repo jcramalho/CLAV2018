@@ -20,6 +20,7 @@ Pedidos.listar = (filtro) => {
 
 // lista dos pedidos apenas com a metainformação
 Pedidos.listarMeta = (filtro) => {
+  console.log('Controlador')
   return Pedido.find(filtro, ['codigo','data','estado','criadoPor']);
 };
 
