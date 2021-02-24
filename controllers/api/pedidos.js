@@ -18,6 +18,11 @@ Pedidos.listar = (filtro) => {
   return Pedido.find(filtro);
 };
 
+// lista dos pedidos apenas com a metainformação
+Pedidos.listarMeta = (filtro) => {
+  return Pedido.find(filtro, ['codigo','data','estado','criadoPor']);
+};
+
 // Recupera a lista de pedidos de determinado tipo
 
 Pedidos.getByTipo = function (tipo) {

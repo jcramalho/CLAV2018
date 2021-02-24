@@ -7,7 +7,7 @@ var validKeys = ["criadoPor", "codigo", "tipo", "acao"];
 const { body, validationResult } = require('express-validator');
 const { existe, estaEm, verificaPedidoCodigo, verificaExisteEnt, eMongoId, vcPedidoTipo, vcPedidoAcao, vcPedidoEstado, verificaLista } = require('../validation')
 
-// Lista todos os pedidos que statisfazem uma condição
+// Lista todos os pedidos que satisfazem uma condição
 router.get('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
     existe('query', 'criadoPor')
         .bail()
@@ -38,6 +38,41 @@ router.get('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
     }
     
     Pedidos.listar(filtro)
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.status(500).send(`Erro na listagem de pedidos: ${erro}`));
+});
+
+// Lista todos os pedidos que satisfazem uma condição mas apenas a sua metainformação
+router.get('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
+    existe('query', 'criadoPor')
+        .bail()
+        .isEmail()
+        .withMessage("Email inválido")
+        .optional(),
+    verificaPedidoCodigo('query', 'codigo').optional(),
+    estaEm('query', 'tipo', vcPedidoTipo).optional(),
+    estaEm('query', 'acao', vcPedidoAcao).optional()
+], (req, res) => {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
+    }
+
+    var filtro = {}
+    const entries = Object.entries(req.query)
+        .filter(([k, v]) => validKeys.includes(k))
+
+    for (var [key, value] of entries) {
+        if(key == "tipo" || key == "acao") key = "objeto." + key
+        filtro[key] = value
+    }
+
+    //se o nivel de utilizador é < 3.5 então devolve apenas os pedidos da sua entidade
+    if(req.user.level < 3.5){
+        filtro["entidade"] = req.user.entidade
+    }
+    
+    Pedidos.listarMeta(filtro)
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na listagem de pedidos: ${erro}`));
 });
