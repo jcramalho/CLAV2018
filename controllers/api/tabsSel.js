@@ -563,7 +563,7 @@ async function validateColumnsValues(
       c = c.map((e) => parseCell(e));
 
       for (let i = start; i < c.length; i++) {
-        if (c[i] != null && !/^\s*[xX]\s*$/g.test(c[i])) {
+        if (c[i] != null && !/^\s*[xX]\s*$|\r?\n|\r|\s*/g.test(c[i])) {
           throw `Célula inválida na linha ${i} e coluna ${headers.donos} da tabela!\nApenas deve conter x ou X (processo selecionado) ou nada (processo não selecionado).`;
         }
       }
@@ -783,7 +783,7 @@ async function validateColumnsValues(
             pcas[i] == null) ||
           (fonteL == "PGD/LC" &&
             cods[i].split(".").length == 4 &&
-            pcas[i] == null)
+            pcas[i] == null && notas[i] == null)
         ) {
           throw `O campo PCA e a Nota do PCA não estão preenchidos na linha ${
             i + start
