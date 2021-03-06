@@ -557,6 +557,7 @@ module.exports.vcPedidoTipo = [
   "AE RADA",
   "RADA",
   "PGD",
+  "PPD"
 ];
 module.exports.vcPedidoAcao = [
   "Criação",
@@ -592,6 +593,7 @@ module.exports.vcPendenteTipo = [
   "Auto de Eliminação",
   "RADA",
   "PGD",
+  "PPD"
 ];
 module.exports.vcPendenteAcao = ["Criação", "Alteração", "Remoção"];
 
