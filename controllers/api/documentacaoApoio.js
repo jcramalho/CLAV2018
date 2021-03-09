@@ -26,6 +26,7 @@ DocumentacaoApoio.consultar_entrada = (id, entrada) => {
     //return DocApoio.findOne({ _id: id, "entradas._id" : entrada });
     let idM = mongoose.Types.ObjectId(id);
     let idE = mongoose.Types.ObjectId(entrada);
+    
     return DocApoio.aggregate([ 
         { $match : 
             {"_id" : idM}
@@ -68,6 +69,7 @@ DocumentacaoApoio.consultar_elemento = (id, entrada, elemento) => {
     let idM = mongoose.Types.ObjectId(id);
     let idE = mongoose.Types.ObjectId(entrada);
     let idEle = mongoose.Types.ObjectId(elemento);
+    
     return DocApoio.aggregate([ 
         { $match : 
             {"_id" : idM}
@@ -92,6 +94,7 @@ DocumentacaoApoio.consultar_ficheiro = (id, entrada, elemento) => {
     let idM = mongoose.Types.ObjectId(id);
     let idE = mongoose.Types.ObjectId(entrada);
     let idEle = mongoose.Types.ObjectId(elemento);
+    
     return DocApoio.aggregate([ 
         { $match : 
             {"_id" : idM}

@@ -23,6 +23,33 @@ const corsOpts = {
 app.use(cors(corsOpts))
 app.options('*', cors(corsOpts))
 
+//helmet (sets various HTTP headers to help protect the app)
+var helmet = require('helmet')
+app.use(helmet({
+    //HSTS recommended config
+    hsts: {
+        maxAge: 31536000,
+        includeSubDomains: true,
+        preload: true
+    },
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'none'"]
+        }
+    }
+}))
+
+var swaggerURLs = require('./config/swagger').urls
+//CSP to use in /docs route
+var cspForDocs = helmet.contentSecurityPolicy({
+    directives: {
+        defaultSrc: ["'self'"].concat(swaggerURLs),
+        imgSrc: ["'self'", "https://validator.swagger.io", "data:"].concat(swaggerURLs),
+        styleSrc: ["'self'", "'unsafe-inline'"].concat(swaggerURLs),
+        scriptSrc: ["'self'", "'unsafe-inline'"].concat(swaggerURLs)
+    }
+})
+
 // Logging na consola do admin
 var logger = require('morgan')
 
@@ -136,7 +163,7 @@ var mainRouter = express.Router()
 //Swagger
 const swaggerUi = require('swagger-ui-express');
 const options = require('./config/swagger').options
-mainRouter.use('/docs', swaggerUi.serve, swaggerUi.setup(null, options));
+mainRouter.use('/docs', cspForDocs, swaggerUi.serve, swaggerUi.setup(null, options));
 
 //formatar o resultado consoante a querystring fs
 const { outputFormat } = require('./routes/outputFormat.js')
@@ -175,6 +202,7 @@ mainRouter.use('/logs', require('./routes/api/logs'));
 mainRouter.use('/indicadores', require('./routes/api/indicadores'));
 mainRouter.use('/parametros', require('./routes/api/parametros'));
 mainRouter.use('/rada', require('./routes/api/rada'));
+mainRouter.use('/contador', require('./routes/api/contador'));
 mainRouter.use('/ficheirosEstaticos', require('./routes/api/ficheirosEstaticos'));
 mainRouter.use('/ppds', require('./routes/api/ppds'));
 

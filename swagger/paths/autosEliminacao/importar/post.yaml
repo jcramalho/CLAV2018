@@ -14,7 +14,7 @@ parameters:
     description: 'Tipo do auto de eliminação'
     schema:
       type: string
-      enum: [PGD, RADA, PGD_LC]
+      enum: [PGD, RADA, PGD/LC, TS/LC, RADA/CLAV]
     required: true
 requestBody:
   description: 'Auto de eliminação'

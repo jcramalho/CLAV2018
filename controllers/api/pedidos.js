@@ -18,6 +18,11 @@ Pedidos.listar = (filtro) => {
   return Pedido.find(filtro);
 };
 
+// lista dos pedidos apenas com a metainformação
+Pedidos.listarMeta = () => {
+  return Pedido.find({}, ['codigo','data','estado','criadoPor','entidade']);
+};
+
 // Recupera a lista de pedidos de determinado tipo
 
 Pedidos.getByTipo = function (tipo) {
@@ -63,6 +68,10 @@ Pedidos.criar = async function (pedidoParams) {
 
   if (pedidoParams.novoObjeto.codigo) {
     pedido.objeto.codigo = pedidoParams.novoObjeto.codigo;
+  }
+  
+  if(pedidoParams.pedidos_dependentes) {
+    pedido.pedidos_dependentes = pedidoParams.pedidos_dependentes;
   }
 
   if (pedidoParams.entidade) {

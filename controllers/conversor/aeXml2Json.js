@@ -3,12 +3,82 @@ var PGD = require("../api/pgd")
 var Rada = require("../api/rada")
 var TS = require("../api/tabsSel")
 var Leg = require("../api/leg")
+var State = require('../state')
+const e = require("express")
+const Contador = require('../../controllers/api/contador')
 
 var aeConverter = function(obj,tipo) {
   return new Promise(async function(resolve, reject) {
-    var currentTime = new Date();
 
-    if(tipo=="TS/LC") {
+    // Construção do objeto interno
+    // número de série
+    var cont = await Contador.get('ae')
+    var num = cont.valor
+    await Contador.incrementar('ae')
+    // data do momento
+    var d = new Date().toISOString().substr(0, 4)
+  
+    var fonteLeg = obj['fonteLegitimação'];
+    var fonteLegTipo = fonteLeg[0].tipo[0]
+    var fonteLegDiploma = fonteLeg[0].diploma[0]
+    var legIdent = fonteLegDiploma.split(' ')
+    var leg = State.getLegislacaoByTipoNumero(legIdent[0], legIdent[1])
+    
+    switch(fonteLegTipo){
+      case "PGD": var classesCompletas = await PGD.consultar("pgd_"+leg.id)
+                  break
+      case "RADA": var classesCompletas = await PGD.consultar("tsRada_"+leg.id)
+                  break
+      default: var classesCompletas = []
+    }
+    
+    var fundos = obj.fundos.map(f => { 
+      let ent = State.getEntidade('ent_' + f.fundo[0])
+      return ent
+    })
+    
+    var classes = obj.classes[0].classe.map(function(c,i) {
+      let resClasse = {}
+      resClasse['id'] = "zc_" + i + '_' + 'ae' + '_' + d + '_' + num.toString()
+      if(c.hasOwnProperty('código')) resClasse['codigo'] = c.código[0]
+      if(c.hasOwnProperty('referência')) resClasse['referencia'] = c.referência[0]
+      if(c.hasOwnProperty('naturezaIntervenção')) resClasse['ni'] = c.naturezaIntervenção[0]
+      resClasse['dataInicio'] = c.anoInício[0]
+      resClasse['dataFim'] = c.anoFim[0]
+      if(c.dimensãoSuporte[0].hasOwnProperty('papel')) resClasse['uiPapel'] = c.dimensãoSuporte[0].papel[0]
+      if(c.dimensãoSuporte[0].hasOwnProperty('digital')) resClasse['uiPapel'] = c.dimensãoSuporte[0].digital[0]
+      resClasse['nrAgregacoes'] = c.númeroAgregações[0]
+      if(c.hasOwnProperty('agregações')) resClasse['agregacoes'] = c.agregações[0].agregação.map(function(a){
+        return {
+          codigo: a.código[0],
+          titulo: a.título[0],
+          dataContagem: a.ano[0],
+          ni: a.naturezaIntervenção? a.naturezaIntervenção[0] : null
+        }
+      })
+
+      return resClasse
+    })
+
+    //console.log('classes: ' + JSON.stringify(classes))
+
+    var myAuto = {
+      id: "ae_" + fundos.map(f => f.sigla) + "_" + d + '_' + num.toString(),
+      tipo: 'AE_' + fonteLegTipo, // isto é um AE
+      data: d,
+      fundo: fundos.map(e => {return {
+        fundo: e.id,
+        nome: e.designacao
+      }}),
+      "legislacao": fonteLegTipo + " " + fonteLegDiploma,
+      "refLegislacao": leg.id
+    }
+
+    myAuto['zonaControlo'] = classes
+
+    // console.log(JSON.stringify(myAuto))
+
+    /*if(tipo=="TS/LC") {
       var referencial = obj.referencial[0] || ""
 
       var classesCompletas = await TS.consultar(referencial)
@@ -132,9 +202,10 @@ var aeConverter = function(obj,tipo) {
       }
       auto.zonaControlo.push(zona)
         
-    }
+    }*/
 
-    resolve({auto: auto, error: err});
+    //resolve({auto: auto, error: err});
+    resolve({auto: myAuto, error: "Em revisão..."});
   })
 }
 

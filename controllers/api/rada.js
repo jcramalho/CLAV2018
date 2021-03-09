@@ -15,11 +15,40 @@ RADA.criar = async rada => {
   );
 };
 
+RADA.revogar = async (id, dataRevogacao) => {
+  let query = `DELETE {
+      clav:rada_${id} clav:estado "Em vigor".
+    }
+    INSERT { 
+      clav:rada_${id} clav:estado "Revogado".
+      clav:rada_${id} clav:dataRevogacao "${dataRevogacao}".
+    }
+    WHERE {
+      clav:rada_${id} rdf:type clav:RADA.
+    }`
+  try {
+    return execQuery("update", query).then(res => {
+      let ask = `ASK {
+          clav:rada_${id} clav:estado "Revogado".
+        }`
+      return execQuery("query", ask).then(result => {
+        if (result.boolean) return "Sucesso na revogação do RADA";
+        else return "Insucesso na revogação do RADA";
+      })
+    });
+
+  }
+  catch (erro) { throw (erro); }
+
+
+};
+
 RADA.listar = async () => {
-  let query = `select ?titulo ?codigo ?dataAprovacao where { 
+  let query = `select ?titulo ?codigo ?dataAprovacao ?estado where { 
     ?s rdf:type clav:RADA;
       clav:codigo ?codigo;
       clav:titulo ?titulo;
+      clav:estado ?estado;
       clav:dataAprovacao ?dataAprovacao.
   }`
   try {
@@ -50,9 +79,16 @@ RADA.consulta = async id => {
     clav:rada_${id} rdf:type clav:RADA;
       clav:codigo ?codigo;
       clav:titulo ?titulo;
+      clav:estado ?estado;
       clav:dataAprovacao ?dataAprovacao;
+      clav:aprovadoPorLeg ?despachoAprovacao;
       clav:contemRE ?re;
       clav:contemTS ?ts.
+
+      OPTIONAL { clav:rada_${id} clav:dataRevogacao ?dataRevogacao. }
+
+      ?despachoAprovacao clav:diplomaSumario ?despachoSumario;
+                clav:diplomaNumero ?despachoNumero.
     
       ?re clav:dataInicial ?dataInicial;
           clav:dataFinal ?dataFinal;
@@ -158,9 +194,9 @@ RADA.consulta = async id => {
                                clav:suporte ?suporte.
         }`
 
-        let result_suporte_medicao  = await execQuery("query", query_suporte_medicao);
+        let result_suporte_medicao = await execQuery("query", query_suporte_medicao);
         rada.tsRada[i]["suporte_e_medicao"] = normalize(result_suporte_medicao);
-        
+
         // QUERY PARA IR BUSCAR AS ENTIDADES PRODUTORAS DA SERIE
         let query_produtoras_serie = `select ?ent_or_tip ?sigla ?designacao where {
 

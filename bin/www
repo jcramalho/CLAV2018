@@ -7,12 +7,13 @@
 var app = require('../app');
 var debug = require('debug')('M51-CLAV_WEB:server');
 var http = require('http');
+var databases = require('../config/database')
 
 /**
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '7779');
+var port = normalizePort(databases.port);
 app.set('port', port);
 
 /**

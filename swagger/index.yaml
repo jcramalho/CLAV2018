@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info: 
   description: |
-    Esta é a API do projeto CLAV. Pode encontrar mais informação sobre a CLAV em [http://clav.dglab.gov.pt](http://clav.dglab.gov.pt).
+    Esta é a API do projeto CLAV. Pode encontrar mais informação sobre a CLAV em [https://clav.dglab.gov.pt](https://clav.dglab.gov.pt).
 
     Por forma a usar esta API necessita em grande parte dos pedidos de usar um método de autenticação (Chaves API ou Token de um utilizador).
 

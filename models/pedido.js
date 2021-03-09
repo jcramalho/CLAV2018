@@ -49,6 +49,10 @@ const PedidoSchema = new mongoose.Schema({
     type: Array,
     required: false,
   },
+  pedidos_dependentes: {
+    type: Array,
+    required: false,
+  },
   distribuicao: [
     {
       estado: {

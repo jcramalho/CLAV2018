@@ -17,6 +17,8 @@ swaggerDoc.servers[0].variables.dominio.enum[0] = dataBases.swaggerURL
 //Escrever o ficheiro final da especificação OpenAPI
 fs.writeFileSync("./public/clav.yaml", yaml.dump(swaggerDoc))
 
+module.exports.urls = swaggerDoc.servers[0].variables.dominio.enum
+
 //opções a passar ao Swagger UI
 module.exports.options = {
   explorer: true,

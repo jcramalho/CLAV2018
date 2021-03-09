@@ -105,8 +105,11 @@ AutosEliminacao.consultar = async function(id,userEnt) {
                     	  clav:dataFim ?dataFim ;
                        	  clav:temClasseControlo ?classe .
             OPTIONAL {
-        			?zonaControlo clav:UIpapel ?UIpapel ;
-    		} .
+        			?zonaControlo clav:nrAgregacoes ?nrAgregacoes ;
+            } .
+            OPTIONAL {
+                ?zonaControlo clav:UIpapel ?UIpapel ;
+            } .
     		OPTIONAL {
         			?zonaControlo clav:UIDigital ?UIdigital ;
     		} .
@@ -134,6 +137,7 @@ AutosEliminacao.consultar = async function(id,userEnt) {
                 id: zonaControlo.zonaControlo.split("#")[1],
                 dataInicio: zonaControlo.dataInicio,
                 dataFim: zonaControlo.dataFim,
+                nrAgregacoes: zonaControlo.nrAgregacoes,
                 UIpapel: zonaControlo.UIpapel,
                 UIdigital: zonaControlo.UIdigital,
                 UIoutros: zonaControlo.UIoutros,
@@ -203,7 +207,7 @@ AutosEliminacao.adicionar = async function (auto) {
     if(auto.legislacao) {
         var tipo = auto.legislacao.split(' ')[0]
         var tamanho = auto.legislacao.split(' - ')[0].split(' ').length
-        console.log(tamanho)
+        
         if(tamanho == 2)
             var numero = auto.legislacao.split(' ')[1]
         else {
@@ -287,6 +291,15 @@ AutosEliminacao.adicionar = async function (auto) {
                     clav:dataInicio "${zona.dataInicio}" ;
                     clav:dataFim "${zona.dataFim}" .
             `
+            if(zona.agregacoes.length==0) 
+                query += `
+                    clav:${idZona} clav:nrAgregacoes "${zona.nrAgregacoes}" .
+                `
+            else 
+                query += `
+                    clav:${idZona} clav:nrAgregacoes "${zona.agregacoes.length}" .
+                `
+            
             if(zona.destino=="C" || zona.destino=="Conservação" || zona.destino =="NE") {
                 query += `
                     clav:${idZona} clav:temNI clav:vc_participante .
@@ -312,7 +325,29 @@ AutosEliminacao.adicionar = async function (auto) {
                 `
             
             var indexAg = 1;
-             
+            for(agregacao of zona.agregacoes) {
+                var idAg = "ag_"+indexAg+"_"+idZona
+                query += `
+                    clav:${idZona} clav:temAgregacao clav:${idAg} .
+                `
+
+                query += `
+                    clav:${idAg} a clav:Agregacao ;
+                        clav:agregacaoCodigo "${agregacao.codigo}" ;
+                        clav:agregacaoTitulo "${agregacao.titulo}" ;
+                        clav:agregacaoDataContagem "${agregacao.dataContagem}" .
+                `
+                if(agregacao.ni.toLowerCase() === "dono") 
+                    query += `
+                        clav:${idAg} clav:temNI clav:vc_dono .
+                    `
+                else 
+                    query += `
+                        clav:${idAg} clav:temNI clav:vc_participante .
+                    `
+
+                indexAg++;
+            }
             indexZona++;
         }
         query += `
@@ -521,7 +556,7 @@ AutosEliminacao.adicionarRADA = async function (auto) {
 AutosEliminacao.importar = async (auto, tipo, user) => {    
     auto.entidade = user.entidade
     auto.responsavel = user.email
-    auto.tipo = tipo
+    //auto.tipo = tipo
     var pedido = {
         tipoPedido: "Importação",
         tipoObjeto: "Auto de Eliminação",
@@ -533,7 +568,7 @@ AutosEliminacao.importar = async (auto, tipo, user) => {
         objetoOriginal: auto
     }
     var pedido = await Pedidos.criar(pedido)
-    return {codigo: pedido.codigo, auto: auto }
+    return {codigo: pedido, tipo: auto.tipo, auto: auto }
 };
 
 /**

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<autoEliminação xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="file:/Users/jcr/Documents/WebApps/NodeJS/docker-clav/CLAV2018/public/schema/autoEliminacao.xsd">
+    <fonteLegitimação>
+        <tipo>RADA</tipo>
+        <diploma>Portaria 39/2019</diploma>
+    </fonteLegitimação>
+    <fundos>
+        <fundo>DGLAB</fundo>
+    </fundos>
+    <classes>
+        <classe>
+            <código>150.20.001</código>
+            <anoInício>1970</anoInício>
+            <anoFim>2000</anoFim>
+            <dimensãoSuporte>
+                <papel>10000</papel>
+            </dimensãoSuporte>
+            <númeroAgregações>6</númeroAgregações>
+            <agregações>
+                <agregação>
+                    <código>Ab6</código>
+                    <título>Processos de preparação de regras 6</título>
+                    <ano>1991</ano>
+                    <naturezaIntervenção>DONO</naturezaIntervenção>
+                </agregação>
+                <agregação>
+                    <código>Ab5</código>
+                    <título>Processos de preparação de regras 5</título>
+                    <ano>1991</ano>
+                    <naturezaIntervenção>DONO</naturezaIntervenção>
+                </agregação>
+                <agregação>
+                    <código>Ab4</código>
+                    <título>Processos de preparação de regras 4</título>
+                    <ano>1990</ano>
+                    <naturezaIntervenção>DONO</naturezaIntervenção>
+                </agregação>
+                <agregação>
+                    <código>Ab3</código>
+                    <título>Processos de preparação de regras 3</título>
+                    <ano>1990</ano>
+                    <naturezaIntervenção>DONO</naturezaIntervenção>
+                </agregação>
+                <agregação>
+                    <código>Ab2</código>
+                    <título>Processos de preparação de regras 2</título>
+                    <ano>1985</ano>
+                    <naturezaIntervenção>DONO</naturezaIntervenção>
+                </agregação>
+                <agregação>
+                    <código>Ab1</código>
+                    <título>Processos de preparação de regras</título>
+                    <ano>1980</ano>
+                    <naturezaIntervenção>DONO</naturezaIntervenção>
+                </agregação>
+            </agregações>
+        </classe>
+        <classe>
+            <código>150.20.202</código>
+            <naturezaIntervenção>PARTICIPANTE</naturezaIntervenção>
+            <donos>
+                <dono>PCM</dono>
+            </donos>
+            <anoInício>1975</anoInício>
+            <anoFim>1995</anoFim>
+            <dimensãoSuporte>
+                <papel>10</papel>
+            </dimensãoSuporte>
+            <númeroAgregações>5</númeroAgregações>
+            <agregações>
+                <agregação>
+                    <código>Orç 1</código>
+                    <título>Contas prévias</título>
+                    <ano>1975</ano>
+                    <naturezaIntervenção>PARTICIPANTE</naturezaIntervenção>
+                </agregação>
+                <agregação>
+                    <código>Orç 2</código>
+                    <título>Preparação do orçamento</título>
+                    <ano>1975</ano>
+                    <naturezaIntervenção>PARTICIPANTE</naturezaIntervenção>
+                </agregação>
+                <agregação>
+                    <código>Orç 3</código>
+                    <título>Antecipação de duodécimos</título>
+                    <ano>1975</ano>
+                    <naturezaIntervenção>PARTICIPANTE</naturezaIntervenção>
+                </agregação>
+                <agregação>
+                    <código>Orç 4</código>
+                    <título>Alteração orçamental</título>
+                    <ano>1980</ano>
+                    <naturezaIntervenção>PARTICIPANTE</naturezaIntervenção>
+                </agregação>
+                <agregação>
+                    <código>Orç 5</código>
+                    <título>II Alteração orçamental</título>
+                    <ano>1980</ano>
+                    <naturezaIntervenção>PARTICIPANTE</naturezaIntervenção>
+                </agregação>
+            </agregações>
+        </classe>
+    </classes>
+</autoEliminação>

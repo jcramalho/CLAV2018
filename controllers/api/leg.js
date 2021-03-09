@@ -28,13 +28,17 @@ const Leg = module.exports;
  * lista das legislacoes existentes que respeitam o filtro dado
  */
 Leg.listar = () => {
-  const query = `SELECT ?id ?data ?dataRevogacao ?numero ?tipo ?sumario ?estado ?entidades ?fonte ?link WHERE {
+  const query = `SELECT ?id ?data ?dataRevogacao ?numero ?tipo ?sumario ?estado ?entidades ?fonte ?link ?aprovou WHERE {
         ?uri rdf:type clav:Legislacao;
              clav:diplomaData ?data;
              clav:diplomaNumero ?numero;
              clav:diplomaTipo ?tipo;
              clav:diplomaSumario ?sumario;
              clav:diplomaEstado ?estado.
+
+        OPTIONAL {
+            ?uri clav:aprovou ?aprovou.
+        }
         OPTIONAL {
           ?uri clav:diplomaLink ?link.
         }
@@ -59,17 +63,18 @@ Leg.listar = () => {
     "sumario",
     "estado",
     "fonte",
-    "link"
+    "aprovou",
+    "link",
   ];
   const agrupar = ["entidades"];
 
-  return execQuery("query", query).then(response => {
+  return execQuery("query", query).then((response) => {
     let legs = projection(normalize(response), campos, agrupar);
 
     for (leg of legs) {
-      leg.entidades = leg.entidades.map(ent => ({
+      leg.entidades = leg.entidades.map((ent) => ({
         id: `ent_${ent}`,
-        sigla: ent
+        sigla: ent,
       }));
     }
 
@@ -78,7 +83,7 @@ Leg.listar = () => {
 };
 
 //Lista todas as legislações consoante o estado
-Leg.listarPorEstado = estado => {
+Leg.listarPorEstado = (estado) => {
   const query = `SELECT ?id ?data ?dataRevogacao ?numero ?tipo ?sumario ?entidades ?fonte ?link WHERE {
         ?uri rdf:type clav:Legislacao;
              clav:diplomaData ?data;
@@ -100,16 +105,25 @@ Leg.listarPorEstado = estado => {
         BIND(STRAFTER(STR(?uri), 'clav#') AS ?id).
 
     } ORDER BY DESC (?data)`;
-  const campos = ["id", "data", "dataRevogacao", "numero", "tipo", "sumario", "fonte", "link"];
+  const campos = [
+    "id",
+    "data",
+    "dataRevogacao",
+    "numero",
+    "tipo",
+    "sumario",
+    "fonte",
+    "link",
+  ];
   const agrupar = ["entidades"];
 
-  return execQuery("query", query).then(response => {
+  return execQuery("query", query).then((response) => {
     let legs = projection(normalize(response), campos, agrupar);
 
     for (leg of legs) {
-      leg.entidades = leg.entidades.map(ent => ({
+      leg.entidades = leg.entidades.map((ent) => ({
         id: `ent_${ent}`,
-        sigla: ent
+        sigla: ent,
       }));
       leg.estado = estado;
     }
@@ -152,17 +166,17 @@ Leg.listarComPNs = () => {
     "sumario",
     "estado",
     "fonte",
-    "link"
+    "link",
   ];
   const agrupar = ["entidades"];
 
-  return execQuery("query", query).then(response => {
+  return execQuery("query", query).then((response) => {
     let legs = projection(normalize(response), campos, agrupar);
 
     for (leg of legs) {
-      leg.entidades = leg.entidades.map(ent => ({
+      leg.entidades = leg.entidades.map((ent) => ({
         id: `ent_${ent}`,
-        sigla: ent
+        sigla: ent,
       }));
     }
 
@@ -204,17 +218,17 @@ Leg.listarSemPNs = () => {
     "sumario",
     "estado",
     "fonte",
-    "link"
+    "link",
   ];
   const agrupar = ["entidades"];
 
-  return execQuery("query", query).then(response => {
+  return execQuery("query", query).then((response) => {
     let legs = projection(normalize(response), campos, agrupar);
 
     for (leg of legs) {
-      leg.entidades = leg.entidades.map(ent => ({
+      leg.entidades = leg.entidades.map((ent) => ({
         id: `ent_${ent}`,
-        sigla: ent
+        sigla: ent,
       }));
     }
 
@@ -268,7 +282,7 @@ Leg.listarRegulados = async () => {
           res[i].regula.push({
             codigo: codigos[j],
             titulo: titulos[j],
-            id: "c" + codigos[j]
+            id: "c" + codigos[j],
           });
         }
       }
@@ -292,7 +306,7 @@ Leg.listarRegulados = async () => {
  * legislação que corresponde ao identificador dado. Se a legislação não existir
  * então a promessa conterá o valor `undefined`
  */
-Leg.consultar = id => {
+Leg.consultar = (id) => {
   const query = `SELECT ?tipo ?data ?dataRevogacao ?numero ?sumario ?link ?estado ?fonte ?entidades WHERE { 
         clav:${id} a clav:Legislacao;
             clav:diplomaData ?data;
@@ -321,12 +335,12 @@ Leg.consultar = id => {
     "sumario",
     "link",
     "estado",
-    "fonte"
+    "fonte",
   ];
   const agrupar = ["entidades"];
 
   return execQuery("query", query).then(
-    response => projection(normalize(response), campos, agrupar)[0]
+    (response) => projection(normalize(response), campos, agrupar)[0]
   );
 };
 
@@ -336,12 +350,12 @@ Leg.consultar = id => {
  * @param {Legislacao} legislacao
  * @return {Promise<boolean | Error>}
  */
-Leg.existe = numero => {
+Leg.existe = (numero) => {
   const query = `ASK {
             ?e clav:diplomaNumero '${numero}'
         }`;
 
-  return execQuery("query", query).then(response => response.boolean);
+  return execQuery("query", query).then((response) => response.boolean);
 };
 
 /**
@@ -350,15 +364,15 @@ Leg.existe = numero => {
  * @param {Legislacao} legislacao
  * @return {Promise<boolean | Error>}
  */
-Leg.existeId = numero => {
+Leg.existeId = (numero) => {
   const query = `select ?s where {
             ?s clav:diplomaNumero '${numero}'
         }`;
 
-  return execQuery("query", query).then(response => {
-      var res = normalize(response)[0]
-      if(res) res = res.s.split("#")[1]
-      return res
+  return execQuery("query", query).then((response) => {
+    var res = normalize(response)[0];
+    if (res) res = res.s.split("#")[1];
+    return res;
   });
 };
 
@@ -368,16 +382,16 @@ Leg.existeId = numero => {
  * @param {Legislacao} legislacao
  * @return {Promise<boolean | Error>}
  */
-Leg.temPNs = legislacao => {
+Leg.temPNs = (legislacao) => {
   const query = `ASK {
         ?e clav:temLegislacao clav:'${legislacao.id}'
         }`;
 
-  return execQuery("query", query).then(response => response.boolean);
+  return execQuery("query", query).then((response) => response.boolean);
 };
 
 // Devolve a lista de processos regulados pelo documento: id, codigo, titulo
-Leg.regula = id => {
+Leg.regula = (id) => {
   var query = `
         SELECT DISTINCT ?id ?codigo ?titulo WHERE { 
             {
@@ -403,7 +417,7 @@ Leg.regula = id => {
                 
         } ORDER BY ?codigo
     `;
-  return execQuery("query", query).then(response => normalize(response));
+  return execQuery("query", query).then((response) => normalize(response));
 };
 
 /**
@@ -423,7 +437,7 @@ Leg.portarias = () => {
              clav:diplomaEstado ?estado .
     }`;
 
-  return execQuery("query", query).then(response => normalize(response));
+  return execQuery("query", query).then((response) => normalize(response));
 };
 
 /**
@@ -435,14 +449,14 @@ Leg.portarias = () => {
  * @return {Promise<[Legislacao] | Error>} promessa que quando cumprida contém a
  * lista das legislacoes existentes que respeitam a fonte dada
  */
-Leg.listarFonte = fonte => {
-  const query = `SELECT ?id ?data ?dataRevogacao ?numero ?tipo ?sumario ?entidades ?link WHERE {
+Leg.listarFonte = (fonte) => {
+  const query = `SELECT ?id ?data ?dataRevogacao ?numero ?tipo ?sumario ?estado ?entidades ?link WHERE {
         ?uri rdf:type clav:Legislacao;
              clav:diplomaData ?data;
              clav:diplomaNumero ?numero;
              clav:diplomaTipo ?tipo;
              clav:diplomaSumario ?sumario;
-             clav:diplomaEstado "Ativo";
+             clav:diplomaEstado ?estado;
              clav:diplomaLink ?link;
              clav:diplomaFonte "${fonte}".
         OPTIONAL {
@@ -452,18 +466,29 @@ Leg.listarFonte = fonte => {
         OPTIONAL {
         	?uri clav:diplomaDataRevogacao ?dataRevogacao.
         }
+        FILTER (?estado = "Ativo")
+        
         BIND(STRAFTER(STR(?uri), 'clav#') AS ?id).
     } ORDER BY DESC (?data)`;
-  const campos = ["id", "data", "dataRevogacao", "numero", "tipo", "sumario", "link"];
+  const campos = [
+    "id",
+    "data",
+    "dataRevogacao",
+    "numero",
+    "tipo",
+    "sumario",
+    "estado",
+    "link",
+  ];
   const agrupar = ["entidades"];
 
-  return execQuery("query", query).then(response => {
+  return execQuery("query", query).then((response) => {
     let legs = projection(normalize(response), campos, agrupar);
 
     for (leg of legs) {
-      leg.entidades = leg.entidades.map(ent => ({
+      leg.entidades = leg.entidades.map((ent) => ({
         id: `ent_${ent}`,
-        sigla: ent
+        sigla: ent,
       }));
       leg.fonte = fonte;
     }
@@ -473,7 +498,7 @@ Leg.listarFonte = fonte => {
 };
 
 //Obtém o resto da info das Legislacoes
-Leg.moreInfoList = async legs => {
+Leg.moreInfoList = async (legs) => {
   //obtém os processos regulados para todas as legislações
   var data = await Leg.listarRegulados();
   var regulados = [];
@@ -488,14 +513,14 @@ Leg.moreInfoList = async legs => {
 };
 
 //Obtém o resto da info da Legislacao
-Leg.moreInfo = async leg => {
+Leg.moreInfo = async (leg) => {
   leg.regula = await Leg.regula(leg.id);
 };
 
 //Cria legislação em triplos dado um objeto legislação
-function queryLeg(id, leg){
-  if(!id){
-    const nanoid = require('nanoid')
+function queryLeg(id, leg) {
+  if (!id) {
+    const nanoid = require("nanoid");
     id = "leg_" + nanoid();
   }
 
@@ -513,29 +538,29 @@ function queryLeg(id, leg){
   if (leg.link) baseQuery += ` ;\n\tclav:diplomaLink "${leg.link}"`;
 
   if (leg.entidadesSel && leg.entidadesSel.length > 0) {
-    baseQuery += ` ;\n\tclav:temEntidadeResponsavel ${
-      leg.entidadesSel.map(ent => `clav:${ent.id}`).join(", ")
-    }`;
+    baseQuery += ` ;\n\tclav:temEntidadeResponsavel ${leg.entidadesSel
+      .map((ent) => `clav:${ent.id}`)
+      .join(", ")}`;
   }
 
-  baseQuery += ".\n"
+  baseQuery += ".\n";
   if (leg.processosSel) {
     baseQuery += leg.processosSel
-      .map(proc => `clav:c${proc.codigo} clav:temLegislacao clav:${id}`)
-      .join(".\n")
+      .map((proc) => `clav:c${proc.codigo} clav:temLegislacao clav:${id}`)
+      .join(".\n");
   }
 
   return baseQuery;
 }
 
 //Criar legislação
-Leg.criar = async leg => {
-  const baseQuery = queryLeg(leg.id, leg)
+Leg.criar = async (leg) => {
+  const baseQuery = queryLeg(leg.id, leg);
   const query = `INSERT DATA {${baseQuery}}`;
   const ask = `ASK {${baseQuery}}`;
 
-  return execQuery("update", query).then(res =>
-    execQuery("query", ask).then(result => {
+  return execQuery("update", query).then((res) =>
+    execQuery("query", ask).then((result) => {
       if (result.boolean) return "Sucesso na inserção da legislação";
       else throw "Insucesso na inserção da legislação";
     })
@@ -544,39 +569,45 @@ Leg.criar = async leg => {
 
 //Atualizar legislação
 Leg.atualizar = async (id, leg) => {
-  let baseQuery = queryLeg(id, leg)
+  let baseQuery = queryLeg(id, leg);
 
-  if(leg.dataRevogacao)
-    baseQuery += `.\nclav:${id} clav:diplomaDataRevogacao "${leg.dataRevogacao}".`
+  if (leg.dataRevogacao)
+    baseQuery += `.\nclav:${id} clav:diplomaDataRevogacao "${leg.dataRevogacao}".`;
 
-  try{
+  try {
     var triplesLeg = await allTriplesFrom(id);
     triplesLeg += await triplesRelObj("temLegislacao", id);
     var query = `DELETE {${triplesLeg}}`;
-    query += `INSERT {${baseQuery}}`
-    query += `WHERE {${triplesLeg}}`
+    query += `INSERT {${baseQuery}}`;
+    query += `WHERE {${triplesLeg}}`;
     await execQuery("update", query);
     return "Sucesso na atualização do diploma legislativo";
-  }catch(e){
+  } catch (e) {
     throw "Insucesso na atualização do diploma legislativo";
   }
-}
+};
 
 //Revogar legislação
 Leg.revogar = async (id, dataRevogacao) => {
   var deleteLeg = `clav:${id} clav:diplomaEstado ?o.`;
-  deleteLeg += await triplesRelSuj(id, "diplomaDataRevogacao")
+  deleteLeg += await triplesRelSuj(id, "diplomaDataRevogacao");
 
   var queryLeg = `{
         clav:${id} clav:diplomaDataRevogacao "${dataRevogacao}";
             clav:diplomaEstado "Revogado".
     }`;
   const query =
-    "DELETE {" + deleteLeg + "} INSERT " + queryLeg + "WHERE {" + deleteLeg + "}";
+    "DELETE {" +
+    deleteLeg +
+    "} INSERT " +
+    queryLeg +
+    "WHERE {" +
+    deleteLeg +
+    "}";
   const ask = "ASK " + queryLeg;
 
-  return execQuery("update", query).then(res =>
-    execQuery("query", ask).then(result => {
+  return execQuery("update", query).then((res) =>
+    execQuery("query", ask).then((result) => {
       if (result.boolean) return "Legislação revogada";
       else throw "Não foi possível revogar a legislação";
     })
