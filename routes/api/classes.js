@@ -138,7 +138,6 @@ router.get('/', [
 // Verifica se um determinado título de classe já existe
 router.get(
   "/titulo",
-  Auth.isLoggedInKey,
   [existe("query", "valor")],
   function (req, res) {
     const errors = validationResult(req);
@@ -200,7 +199,6 @@ router.get( "/:id", [verificaId(), eFS(), estaEm("query", "tipo", vcClasseInfo).
 // Devolve a metainformação de uma classe: codigo, titulo, status, desc, codigoPai?, tituloPai?, procTrans?, procTipo?
 router.get(
   "/:id/meta",
-  Auth.isLoggedInKey,
   [verificaId()],
   function (req, res) {
     const errors = validationResult(req);
@@ -221,7 +219,6 @@ router.get(
 // Devolve a lista de filhos de uma classe: id, codigo, titulo, nFilhos
 router.get(
   "/:id/descendencia",
-  Auth.isLoggedInKey,
   [verificaId()],
   function (req, res) {
     const errors = validationResult(req);
@@ -452,7 +449,7 @@ router.get("/:id/df", [verificaId()], (req, res) => {
  * Insere uma Classe L1/L2 na base de dados
  * TODO: Validacao dos campos
  */
-router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), (req, res) => {
+router.post("/", (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).jsonp(errors.array());

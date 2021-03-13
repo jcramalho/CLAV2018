@@ -7,7 +7,7 @@ const { body, validationResult } = require('express-validator');
 const { existe, estaEm, verificaPedidoCodigo, verificaExisteEnt, eMongoId, vcPedidoTipo, vcPedidoAcao, vcPedidoEstado, verificaLista } = require('../validation')
 
 // Lista todos os pedidos que satisfazem uma condição
-router.get('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
+router.get('/', [
     existe('query', 'criadoPor')
         .bail()
         .isEmail()

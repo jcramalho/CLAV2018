@@ -4,7 +4,7 @@ var router = express.Router();
 var Contadores = require("../../controllers/api/contador.js");
 
 // Recupera um contador
-router.get("/:codigo", Auth.isLoggedInUser, Auth.checkLevel(5), (req, res) => {
+router.get("/:codigo", (req, res) => {
     Contadores.get(req.params.codigo)
         .then(dados => {
 
@@ -18,7 +18,7 @@ router.get("/:codigo", Auth.isLoggedInUser, Auth.checkLevel(5), (req, res) => {
 });
 
 // Incrementa um contador
-router.put("/:codigo", Auth.isLoggedInUser, Auth.checkLevel(5), (req, res) => {
+router.put("/:codigo", (req, res) => {
     Contadores.incrementar(req.params.codigo)
         .then(dados => {
             res.status(200).jsonp(dados);
@@ -27,7 +27,7 @@ router.put("/:codigo", Auth.isLoggedInUser, Auth.checkLevel(5), (req, res) => {
 });
 
 // Cria ou inicializa um contador
-router.post("/", Auth.isLoggedInUser, Auth.checkLevel(5), (req, res) => {
+router.post("/", (req, res) => {
     Contadores.criar(req.body)
         .then(dados => {
             res.status(200).jsonp(dados);

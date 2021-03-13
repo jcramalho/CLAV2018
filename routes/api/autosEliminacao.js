@@ -20,13 +20,13 @@ var express = require("express");
 var router = express.Router();
 var formidable = require("formidable");
 
-router.get("/", Auth.isLoggedInKey, (req, res) => {
+router.get("/", (req, res) => {
   AutosEliminacao.listar()
     .then((dados) => res.jsonp(dados))
     .catch((erro) => res.status(404).jsonp("Erro na listagem dos AE: " + erro));
 });
 
-router.get("/:id", Auth.isLoggedInKey, [verificaAEId("param", "id")], function (
+router.get("/:id", [verificaAEId("param", "id")], function (
   req,
   res
 ) {
@@ -47,8 +47,6 @@ router.get("/:id", Auth.isLoggedInKey, [verificaAEId("param", "id")], function (
 //Criar um AE && Importar AE
 router.post(
   "/",
-  Auth.isLoggedInUser,
-  Auth.checkLevel([5, 6, 7]),
   [existe("body", "auto")],
   (req, res) => {
     const errors = validationResult(req);
@@ -67,8 +65,6 @@ router.post(
 //Importar um AE (Inserir ficheiro diretamente pelo Servidor)
 router.post(
   "/importar",
-  Auth.isLoggedInUser,
-  Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]),
   [estaEm("query", "tipo", vcFonte)],
   (req, res) => {
     const errors = validationResult(req);

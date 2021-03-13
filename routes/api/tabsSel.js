@@ -10,7 +10,7 @@ var router = express.Router();
 const { validationResult } = require("express-validator");
 const { existe, verificaTSId } = require("../validation");
 
-router.get("/", Auth.isLoggedInKey, function (req, res) {
+router.get("/", function (req, res) {
   SelTabs.list()
     .then((list) => res.send(list))
     .catch((err) => res.status(500).json(`Erro ao obter TSs: ${err}`));
@@ -24,7 +24,6 @@ router.get("/", Auth.isLoggedInKey, function (req, res) {
 
 router.get(
   "/:id/classes",
-  Auth.isLoggedInKey,
   [verificaTSId("param", "id")],
   function (req, res) {
     const errors = validationResult(req);
@@ -40,7 +39,7 @@ router.get(
   }
 );
 
-router.get("/:id", Auth.isLoggedInKey, [verificaTSId("param", "id")], function (
+router.get("/:id", [verificaTSId("param", "id")], function (
   req,
   res
 ) {
@@ -56,8 +55,6 @@ router.get("/:id", Auth.isLoggedInKey, [verificaTSId("param", "id")], function (
 
 router.post(
   "/",
-  Auth.isLoggedInUser,
-  Auth.checkLevel([5, 6, 7]),
   [existe("body", "tabela"),existe("body","leg")],
   async function (req, res) {
     const errors = validationResult(req);
@@ -75,8 +72,6 @@ router.post(
 
 router.post(
   "/importar",
-  Auth.isLoggedInUser,
-  Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]),
   async function (req, res) {
     var form = new formidable.IncomingForm();
 

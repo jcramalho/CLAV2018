@@ -107,7 +107,7 @@ router.get(
   }
 );
 
-router.get("/classes", Auth.isLoggedInUser, Auth.checkLevel(3), (req, res) => {
+router.get("/classes", (req, res) => {
   Indicadores.totalClasses()
     .then((dados) => {
       var result = {
@@ -125,8 +125,6 @@ router.get("/classes", Auth.isLoggedInUser, Auth.checkLevel(3), (req, res) => {
 
 router.get(
   "/entidadesAtivas",
-  Auth.isLoggedInUser,
-  Auth.checkLevel(3),
   (req, res) => {
     Indicadores.totalEntidadesAtivas()
       .then((dados) => res.jsonp(dados))
@@ -178,7 +176,7 @@ router.get('/tipologias', (req, res) => {
 
 //Legislacao
 
-router.get("/legVigor", Auth.isLoggedInUser, Auth.checkLevel(3), (req, res) => {
+router.get("/legVigor", (req, res) => {
   Indicadores.totalLegislacaoAtivos()
     .then((dados) => res.jsonp(dados))
     .catch((err) =>
@@ -209,7 +207,7 @@ router.get("/leg", (req, res) => {
 //Relacoes
 
 // Devolve as estatísticas relacionais dos Processos
-router.get("/relstats", Auth.isLoggedInUser, Auth.checkLevel(3), (req, res) => {
+router.get("/relstats", (req, res) => {
   Indicadores.relStats()
     .then((dados) => res.jsonp(dados))
     .catch((erro) =>
@@ -238,7 +236,7 @@ router.get(
 );
 
 // Devolve as estatísticas relativas aos Destinos finais
-router.get("/dfstats", Auth.isLoggedInUser, Auth.checkLevel(3), (req, res) => {
+router.get("/dfstats", (req, res) => {
   Indicadores.dfStats()
     .then((dados) => res.jsonp(dados))
     .catch((erro) =>
@@ -252,8 +250,6 @@ router.get("/dfstats", Auth.isLoggedInUser, Auth.checkLevel(3), (req, res) => {
 
 router.get(
   "/relacoes/:relacao",
-  Auth.isLoggedInUser,
-  Auth.checkLevel(3),
   [estaEm("param", "relacao", vcIndicRels).customSanitizer(relacaoSanitizer)],
   (req, res) => {
     const errors = validationResult(req);
@@ -281,8 +277,6 @@ router.get(
 
 router.get(
   "/df/:df",
-  Auth.isLoggedInUser,
-  Auth.checkLevel(3),
   [estaEm("param", "df", vcIndicDfs)],
   (req, res) => {
     const errors = validationResult(req);
@@ -310,8 +304,6 @@ router.get(
 
 router.get(
   "/critJust/:critJust",
-  Auth.isLoggedInUser,
-  Auth.checkLevel(3),
   [estaEm("param", "critJust", vcIndicCrits).customSanitizer(capitalizeFL)],
   (req, res) => {
     const errors = validationResult(req);
@@ -337,7 +329,7 @@ router.get(
   }
 );
 
-router.get("/critJust", Auth.isLoggedInUser, Auth.checkLevel(3), (req, res) => {
+router.get("/critJust", (req, res) => {
   Indicadores.totalCritJust("")
     .then((dados) => {
       var result = {
@@ -360,8 +352,6 @@ router.get("/critJust", Auth.isLoggedInUser, Auth.checkLevel(3), (req, res) => {
 //Devolve lista de todos os indicadores apresentados abaixo
 router.get(
   "/tabela",
-  Auth.isLoggedInUser,
-  Auth.checkLevel(3),
   async (req, res) => {
     try {
       var nClasses1 = await Indicadores.totalClassesN(1);
