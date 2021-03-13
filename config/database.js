@@ -1,5 +1,9 @@
 // const ip = '192.168.85.197'
+<<<<<<< HEAD
 const ip = process.env.IP || /*'192.168.85.197'*/ 'localhost'
+=======
+const ip = process.env.IP || 'localhost' // '192.168.85.197'
+>>>>>>> api
 module.exports.port = process.env.PORT || '7779'
 module.exports.apiVersion = process.env.API_VERSION || 'v2'
 
@@ -16,6 +20,7 @@ module.exports.prefixes = `
 
 module.exports.host = ip+':'+this.port
 
+<<<<<<< HEAD
 var protocolos = process.env.PROTOCOLS ? process.env.PROTOCOLS.split(" ") : null
 module.exports.protocols = protocolos || [
     "http",
@@ -27,6 +32,9 @@ module.exports.domains = domains || [
     this.host,
     'clav-api.dglab.gov.pt'
 ]
+=======
+module.exports.swaggerURL = process.env.SWAGGER_URL || 'http://clav-api.di.uminho.pt' // 'http://' + ip + ":" + this.port 
+>>>>>>> api
 
 module.exports.userDB = process.env.MONGODB ? 'mongodb://' + process.env.MONGODB + '/m51-clav' : 'mongodb://localhost/m51-clav'
 
@@ -36,6 +44,7 @@ envIH = envIH ? envIH.split(" ") : null
 module.exports.interfaceHosts = envIH || [
     "http://localhost:8080",
     "https://clav.di.uminho.pt",
+    "http://clav.di.uminho.pt",
     "https://epl.di.uminho.pt:7780",
     "https://epl.di.uminho.pt:7781"
 ]

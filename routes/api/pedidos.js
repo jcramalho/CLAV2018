@@ -6,8 +6,8 @@ var validKeys = ["criadoPor", "codigo", "tipo", "acao"];
 const { body, validationResult } = require('express-validator');
 const { existe, estaEm, verificaPedidoCodigo, verificaExisteEnt, eMongoId, vcPedidoTipo, vcPedidoAcao, vcPedidoEstado, verificaLista } = require('../validation')
 
-// Lista todos os pedidos que statisfazem uma condição
-router.get('/', [
+// Lista todos os pedidos que satisfazem uma condição
+router.get('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
     existe('query', 'criadoPor')
         .bail()
         .isEmail()
@@ -37,6 +37,13 @@ router.get('/', [
     }
     
     Pedidos.listar(filtro)
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.status(500).send(`Erro na listagem de pedidos: ${erro}`));
+});
+
+// Lista todos os pedidos que satisfazem uma condição mas apenas a sua metainformação
+router.get('/meta', (req, res) => {
+    Pedidos.listarMeta()
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro na listagem de pedidos: ${erro}`));
 });

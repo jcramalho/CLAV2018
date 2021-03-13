@@ -1,0 +1,39 @@
+{
+	"autoEliminação": {
+		"$": {
+			"xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+			"xsi:noNamespaceSchemaLocation": "file:/Users/jcr/Documents/WebApps/NodeJS/docker-clav/CLAV2018/public/schema/autoEliminacao.xsd"
+		},
+		"fonteLegitimação": [{
+			"tipo": ["RADA"],
+			"diploma": ["Portaria 381/2019"]
+		}],
+		"fundos": [{
+			"fundo": ["DGLAB"]
+		}],
+		"classes": [{
+			"classe": [{
+				"código": ["100.10.001"],
+				"naturezaIntervenção": ["PARTICIPANTE"],
+				"donos": [{
+					"dono": ["AR"]
+				}],
+				"anoInício": ["1980"],
+				"anoFim": ["1990"],
+				"dimensãoSuporte": [{
+					"papel": ["123"],
+					"digital": ["123"]
+				}],
+				"númeroAgregações": ["85"]
+			}, {
+				"código": ["150.10.701.01"],
+				"anoInício": ["1985"],
+				"anoFim": ["1995"],
+				"dimensãoSuporte": [{
+					"digital": ["1000"]
+				}],
+				"númeroAgregações": ["100"]
+			}]
+		}]
+	}
+}

@@ -1,0 +1,251 @@
+{
+   "objeto":{
+      "dados":{
+         "id":"ae_DGLAB_2021_2",
+         "tipo":"PGD",
+         "data":"2021",
+         "fundo":[
+            {
+               "fundo":"ent_DGLAB",
+               "nome":"Direção-Geral do Livro, dos Arquivos e das Bibliotecas"
+            }
+         ],
+         "legislacao":"PGD Portaria 194/2011",
+         "refLegislacao":"leg_WUKNlBg1oXYAusq7Xwc-u",
+         "zonaControlo":[
+            {
+               "id":"zc_0_ae_2021_2",
+               "codigo":"070.01.07",
+               "referencia":"55",
+               "dataInicio":"2010",
+               "dataFim":"2012",
+               "dimensãoSuporte":[
+                  {
+                     "papel":[
+                        "10"
+                     ],
+                     "digital":[
+                        "1"
+                     ],
+                     "outro":[
+                        {
+                           "valor":[
+                              "2"
+                           ],
+                           "unidade":[
+                              "pasta A4"
+                           ]
+                        }
+                     ]
+                  }
+               ],
+               "nrAgregacoes":"5",
+               "agregacoes":[
+                  {
+                     "codigo":"MF - DSRICT",
+                     "titulo":"Departamento de Suporte à Rede de Instituições...",
+                     "dataContagem":"2010",
+                     "ni":"DONO"
+                  },
+                  {
+                     "codigo":"MF - DGA",
+                     "titulo":"Departamento de Gestão e Administração",
+                     "dataContagem":"2011",
+                     "ni":"DONO"
+                  },
+                  {
+                     "codigo":"MF - FCCN",
+                     "titulo":"Fundação para a Computação Científica Nacional",
+                     "dataContagem":"2011",
+                     "ni":"DONO"
+                  },
+                  {
+                     "codigo":"MF - DFA",
+                     "titulo":"Departamento de Formação Avançada",
+                     "dataContagem":"2011",
+                     "ni":"DONO"
+                  },
+                  {
+                     "codigo":"MF - DPP",
+                     "titulo":"Departamento de Programas e Projetos",
+                     "dataContagem":"2010",
+                     "ni":"DONO"
+                  }
+               ]
+            },
+            {
+               "id":"zc_1_ae_2021_2",
+               "codigo":"100.05.01.02",
+               "referencia":"103.2",
+               "dataInicio":"1980",
+               "dataFim":"1990",
+               "dimensãoSuporte":[
+                  {
+                     "papel":[
+                        "123"
+                     ]
+                  }
+               ],
+               "nrAgregacoes":"3",
+               "agregacoes":[
+                  {
+                     "codigo":"PNA 1",
+                     "titulo":"Prémios Não Atribuídos",
+                     "dataContagem":"1991",
+                     "ni":"DONO"
+                  },
+                  {
+                     "codigo":"PNA 2",
+                     "titulo":"Prémios Não Atribuídos",
+                     "dataContagem":"1991",
+                     "ni":"DONO"
+                  },
+                  {
+                     "codigo":"PNA 3",
+                     "titulo":"Prémios Não Atribuídos",
+                     "dataContagem":"1991",
+                     "ni":"DONO"
+                  }
+               ]
+            }
+         ],
+         "entidade":"ent_A3ES",
+         "responsavel":"jcr@di.uminho.pt"
+      },
+      "dadosOriginais":{
+         "id":"ae_DGLAB_2021_2",
+         "tipo":"PGD",
+         "data":"2021",
+         "fundo":[
+            {
+               "fundo":"ent_DGLAB",
+               "nome":"Direção-Geral do Livro, dos Arquivos e das Bibliotecas"
+            }
+         ],
+         "legislacao":"PGD Portaria 194/2011",
+         "refLegislacao":"leg_WUKNlBg1oXYAusq7Xwc-u",
+         "zonaControlo":[
+            {
+               "id":"zc_0_ae_2021_2",
+               "codigo":"070.01.07",
+               "referencia":"55",
+               "dataInicio":"2010",
+               "dataFim":"2012",
+               "dimensãoSuporte":[
+                  {
+                     "papel":[
+                        "10"
+                     ],
+                     "digital":[
+                        "1"
+                     ],
+                     "outro":[
+                        {
+                           "valor":[
+                              "2"
+                           ],
+                           "unidade":[
+                              "pasta A4"
+                           ]
+                        }
+                     ]
+                  }
+               ],
+               "nrAgregacoes":"5",
+               "agregacoes":[
+                  {
+                     "codigo":"MF - DSRICT",
+                     "titulo":"Departamento de Suporte à Rede de Instituições...",
+                     "dataContagem":"2010",
+                     "ni":"DONO"
+                  },
+                  {
+                     "codigo":"MF - DGA",
+                     "titulo":"Departamento de Gestão e Administração",
+                     "dataContagem":"2011",
+                     "ni":"DONO"
+                  },
+                  {
+                     "codigo":"MF - FCCN",
+                     "titulo":"Fundação para a Computação Científica Nacional",
+                     "dataContagem":"2011",
+                     "ni":"DONO"
+                  },
+                  {
+                     "codigo":"MF - DFA",
+                     "titulo":"Departamento de Formação Avançada",
+                     "dataContagem":"2011",
+                     "ni":"DONO"
+                  },
+                  {
+                     "codigo":"MF - DPP",
+                     "titulo":"Departamento de Programas e Projetos",
+                     "dataContagem":"2010",
+                     "ni":"DONO"
+                  }
+               ]
+            },
+            {
+               "id":"zc_1_ae_2021_2",
+               "codigo":"100.05.01.02",
+               "referencia":"103.2",
+               "dataInicio":"1980",
+               "dataFim":"1990",
+               "dimensãoSuporte":[
+                  {
+                     "papel":[
+                        "123"
+                     ]
+                  }
+               ],
+               "nrAgregacoes":"3",
+               "agregacoes":[
+                  {
+                     "codigo":"PNA 1",
+                     "titulo":"Prémios Não Atribuídos",
+                     "dataContagem":"1991",
+                     "ni":"DONO"
+                  },
+                  {
+                     "codigo":"PNA 2",
+                     "titulo":"Prémios Não Atribuídos",
+                     "dataContagem":"1991",
+                     "ni":"DONO"
+                  },
+                  {
+                     "codigo":"PNA 3",
+                     "titulo":"Prémios Não Atribuídos",
+                     "dataContagem":"1991",
+                     "ni":"DONO"
+                  }
+               ]
+            }
+         ],
+         "entidade":"ent_A3ES",
+         "responsavel":"jcr@di.uminho.pt"
+      },
+      "tipo":"Auto de Eliminação",
+      "acao":"Importação"
+   },
+   "historico":[
+      
+   ],
+   "pedidos_dependentes":[
+      
+   ],
+   "_id":"600c792eff2ed67c3fd8ce8a",
+   "estado":"Submetido",
+   "criadoPor":"jcr@di.uminho.pt",
+   "distribuicao":[
+      {
+         "data":"2021-01-23T19:29:50.497Z",
+         "_id":"600c792eff2ed67c3fd8ce8b",
+         "estado":"Submetido",
+         "responsavel":"jcr@di.uminho.pt"
+      }
+   ],
+   "entidade":"ent_A3ES",
+   "data":"2021-01-23T19:29:50.497Z",
+   "codigo":"2021-0000018",
+   "__v":0
+}

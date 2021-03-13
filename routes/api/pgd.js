@@ -28,7 +28,7 @@ router.get('/:idPGD', [
 
   PGD.consultar(req.params.idPGD)
       .then(dados => res.jsonp(dados))
-      .catch(erro => res.status(404).jsonp("Erro na listagem das PGDs: " + erro))
+      .catch(erro => res.status(404).jsonp("Erro na listagem da PGD " + req.params.idPGD + ": " + erro))
 })
 
 module.exports = router;

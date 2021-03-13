@@ -3,9 +3,9 @@ var router = express.Router();
 
 var Contadores = require("../../controllers/api/contador.js");
 
-// Insere um RADA na BD
-router.get("/:codigo", (req, res) => {
-    Contadores.listar(req.params.codigo)
+// Recupera um contador
+router.get("/:codigo", Auth.isLoggedInUser, Auth.checkLevel(5), (req, res) => {
+    Contadores.get(req.params.codigo)
         .then(dados => {
 
             if (!!dados) {
@@ -17,12 +17,23 @@ router.get("/:codigo", (req, res) => {
         .catch(err => res.status(500).send(`Contador ${req.params.codigo} não existe: ${err}`));
 });
 
-router.put("/:codigo", (req, res) => {
+// Incrementa um contador
+router.put("/:codigo", Auth.isLoggedInUser, Auth.checkLevel(5), (req, res) => {
     Contadores.incrementar(req.params.codigo)
         .then(dados => {
             res.status(200).jsonp(dados);
         })
         .catch(err => res.status(500).send(`Contador ${req.params.codigo} não existe: ${err}`));
 });
+
+// Cria ou inicializa um contador
+router.post("/", Auth.isLoggedInUser, Auth.checkLevel(5), (req, res) => {
+    Contadores.criar(req.body)
+        .then(dados => {
+            res.status(200).jsonp(dados);
+        })
+        .catch(err => res.status(500).send(`Contador ${req.params.codigo} não foi inicializado: ${err}`));
+});
+
 
 module.exports = router;

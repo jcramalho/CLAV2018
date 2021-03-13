@@ -37,7 +37,7 @@ router.post("/", [
 });
 
 
-router.get('/old/:idRADA', [
+router.get('/old/:idRADA', /*Auth.isLoggedInKey,*/ [
     verificaPGDRADAId('param', 'idRADA')
 ], (req, res) => {
     const errors = validationResult(req)
@@ -50,13 +50,13 @@ router.get('/old/:idRADA', [
         .catch(erro => res.status(404).jsonp("Erro na listagem das RADAs: " + erro))
 })
 
-router.get('/old', (req, res) => {
+router.get('/old', /*Auth.isLoggedInKey,*/ (req, res) => {
     PGD.listarRADA()
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(404).jsonp("Erro na listagem das RADAs: " + erro))
 })
 
-router.get("/:id", (req, res) => {
+router.get("/:id", /* Auth.isLoggedInUser, Auth.checkLevel([0, 1, 2, 3, 3.5, 4, 5, 6, 7]),*/ (req, res) => {
     RADA.consulta(req.params.id)
         .then(dados => {
             res.status(200).jsonp(dados);
@@ -64,7 +64,7 @@ router.get("/:id", (req, res) => {
         .catch(err => res.status(500).send(`Erro na consulta do RADA: ${err}`));
 });
 
-router.get("/", (req, res) => {
+router.get("/", /* Auth.isLoggedInUser, Auth.checkLevel([0, 1, 2, 3, 3.5, 4, 5, 6, 7]), */ (req, res) => {
     RADA.listar()
         .then(dados => {
             res.status(200).jsonp(dados);

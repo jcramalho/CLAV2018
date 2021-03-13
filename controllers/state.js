@@ -161,7 +161,6 @@ exports.getAllClassesInfo = async () => {
 //Devolve a informação das classes da subárvore com raiz na classe com o id 'id'
 exports.subarvore = async id => {
   var ret = JSON.parse(JSON.stringify(classTreeInfo));
-  var finded = null;
 
   var codigo = id.split("c")[1];
   codigos = codigo.split(".");
@@ -514,7 +513,7 @@ exports.filterPesquisaInfo = l => {
       fc_pca: ternaryOp(l[i].pca.formaContagem, ""),
       sfc_pca: ternaryOp(l[i].pca.subFormaContagem, ""),
       crit_pca: ternaryMap(l[i].pca.justificacao, "tipoId"),
-      df: ternaryOp(l[i].df.valor, "NE"),
+      df: ternaryOp(l[i].df.valor, ""),
       crit_df: ternaryMap(l[i].df.justificacao, "tipoId"),
       donos: ternaryMap(l[i].donos, "idDono"),
       participantes: ternaryMap(l[i].participantes, "idParticipante"),
@@ -819,6 +818,29 @@ exports.getLegislacao = id => {
   } else return null;
 };
 
+// Devolve o uma legislação a partir do seu tipo e número
+exports.getLegislacaoByTipoNumero = (t, n) => {
+  let res = legislacao.filter(l => l.tipo == t && l.numero == n);
+  if (res.length > 0) {
+    return JSON.parse(JSON.stringify(res[0]));
+  } else return null;
+};
+
+//Atualiza uma legislação no catálogo
+exports.loadLegislacao = async id => {
+  try {
+    let leg = await Legs.consultar(id);
+    legislacao.splice(
+      legislacao.findIndex(l => l.id == id),
+      1
+    );
+    leg.id = id;
+    legislacao.push(leg);
+  } catch (err) {
+    throw err;
+  }
+};
+
 // Carrega o catálogo legislativo na cache
 async function loadLegs() {
   try {
@@ -851,3 +873,34 @@ async function loadEntidades() {
     throw err;
   }
 }
+
+exports.updateClasseTreeInfo = classe => {
+  classe.status = "A";
+  classe.filhos = [];
+  classe.tipoProc = "";
+  classe.procTrans = "";
+  classe.id = `http://jcr.di.uminho.pt/m51-clav#c${classe.codigo}`;
+
+  let pai, i;
+  if (classe.pai.codigo) {
+    pai = classTreeInfo.findIndex(c => classe.pai.codigo === c.codigo);
+    i = classTreeInfo[pai].filhos.findIndex(c => classe.codigo < c.codigo);
+    if (i !== -1) {
+      classTreeInfo[pai].filhos.splice(i, 0, classe);
+    } else {
+      classTreeInfo[pai].filhos.push(classe);
+    }
+  } else {
+    i = classTreeInfo.findIndex(c => classe.codigo < c.codigo);
+    if (i !== -1) {
+      classe.pai = {};
+      classTreeInfo.splice(i, 0, classe);
+    } else {
+      classTreeInfo.push(classe);
+    }
+  }
+  fs.writeFileSync(
+    "./public/classes/classesInfo.json",
+    JSON.stringify(classTreeInfo, null, 4)
+  );
+};

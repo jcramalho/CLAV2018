@@ -195,12 +195,16 @@ router.post('/', [
     var dbpath = '/public/documentacao_apoio/' + classe.replace(/ /g, '_'); 
     fs.mkdir(path.resolve(__dirname + '/../../' + dbpath),function(err){
         if (err) {
+            console.log('Erro na criação da pasta para a nova classe: ' + err)
             res.status(500).jsonp("Ocorreu um erro na adição da classe à documentação de apoio.")
         } else {
             DocumentacaoApoio.criar_classe(classe)
                 .then(dados => {
                     if(dados) res.jsonp("Classe adicionada com sucesso à documentação de apoio.")
-                    else res.status(500).jsonp("Erro na adição da classe à documentação de apoio.")
+                    else {
+                        console.log('Erro no controlador que cria a classe: ' + err)
+                        res.status(500).jsonp("Erro na adição da classe à documentação de apoio.")
+                    }
                 })
                 .catch(erro => res.status(500).jsonp("Erro na adição da classe à documentação de apoio: " + erro))
                 }

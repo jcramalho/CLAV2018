@@ -29,7 +29,7 @@ info:
 
     Não esquecer que todos os utilizadores (nível 1 a 7) conseguem aceder às rotas que as Chaves API conseguem aceder (nível 0).
     
-    **Última alteração: 25/08/2020**
+    **Última alteração: 12/03/2021**
   version: 2.0.0
   title: CLAV API
   contact:
@@ -46,8 +46,8 @@ servers:
         default: "localhost:7779"
         description: Domínio
         enum:
-          - "localhost:7779"
-          - "clav-test.di.uminho.pt"
+          - "http://localhost:7779"
+          - "http://clav-test.di.uminho.pt"
       versao:
         description: Versão da API
         default: "v2"

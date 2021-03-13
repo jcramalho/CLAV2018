@@ -19,7 +19,7 @@
   "homepage": "https://github.com/jcramalho/CLAV2018#readme",
   "dependencies": {
     "@sendgrid/mail": "^6.5.5",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.2",
     "cookie-parser": "^1.4.5",
@@ -35,6 +35,13 @@
     "morgan": "^1.10.0",
     "nanoid": "^2.1.11",
     "ncp": "^2.0.0",
+<<<<<<< HEAD
+=======
+    "nodemon": "^2.0.4",
+    "passport": "^0.4.1",
+    "passport-jwt": "^4.0.0",
+    "passport-local": "^1.0.0",
+>>>>>>> api
     "swagger-ui-express": "^4.1.4",
     "winston": "^2.4.5",
     "winston-daily-rotate-file": "^2.0.0-beta",

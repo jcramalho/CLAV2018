@@ -556,7 +556,7 @@ AutosEliminacao.adicionarRADA = async function (auto) {
 AutosEliminacao.importar = async (auto, tipo, user) => {    
     auto.entidade = user.entidade
     auto.responsavel = user.email
-    auto.tipo = tipo
+    //auto.tipo = tipo
     var pedido = {
         tipoPedido: "Importação",
         tipoObjeto: "Auto de Eliminação",
@@ -568,7 +568,7 @@ AutosEliminacao.importar = async (auto, tipo, user) => {
         objetoOriginal: auto
     }
     var pedido = await Pedidos.criar(pedido)
-    return {codigo: pedido.codigo, auto: auto }
+    return {codigo: pedido, tipo: auto.tipo, auto: auto }
 };
 
 /**
