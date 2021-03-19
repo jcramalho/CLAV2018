@@ -22,7 +22,7 @@ SelTabs.list = async function () {
         	   clav:diplomaNumero ?numLeg .
     }
     `;
-  const campos = ["id", "designacao", "data","tipoLeg","numLeg"];
+  const campos = ["id", "designacao", "data", "tipoLeg", "numLeg"];
   const agrupar = ["entidades"];
 
   try {
@@ -783,7 +783,8 @@ async function validateColumnsValues(
             pcas[i] == null) ||
           (fonteL == "PGD/LC" &&
             cods[i].split(".").length == 4 &&
-            pcas[i] == null && notas[i] == null)
+            pcas[i] == null &&
+            notas[i] == null)
         ) {
           throw `O campo PCA e a Nota do PCA não estão preenchidos na linha ${
             i + start
@@ -1379,9 +1380,9 @@ function constructRADAO(worksheet, file, stats, code, columns, entidades) {
       (l) => l.tipo == "Despacho" && l.numero == legId
     )[0];
 
-    var entidade = ents.filter((e) => e.sigla == entidades[0])[0];
-    if (entidade) entidade = "ent_" + entidade.sigla;
-    else entidade = "tip_" + entidades[0];
+    var entidade = ents.some((e) => e.sigla == entidades[0])
+      ? "ent_" + entidades[0]
+      : "tip_" + entidades[0];
 
     if (legislacao && entidade) {
       code.codigo = "tsRada_" + legislacao.id;
@@ -1471,6 +1472,7 @@ function constructRADAO(worksheet, file, stats, code, columns, entidades) {
         if (descricao)
           currentStatements += '\tclav:descricao "' + descricao + '" ;\n';
         currentStatements += "\tclav:nivel " + nivel + " .\n";
+        currentStatements += `clav:${legislacao.id} clav:temClasse clav:${classeId} .\n`;
 
         if (pca || notasPCA) {
           currentStatements +=
@@ -1544,6 +1546,15 @@ function constructPGD(worksheet, file, stats, code, columns, entidades) {
     currentStatements +=
       "clav:pgd_" + legislacao.id + " rdf:type owl:NamedIndividual ,\n";
     currentStatements += "\t\tclav:PGD ;\n";
+
+    entidades = entidades.map((ent) => {
+      return ents.some((e) => e.sigla == ent) ? "ent_" + ent : "tip_" + ent;
+    });
+
+    currentStatements += entidades
+      .map((e) => "\tclav:temEntidade clav:" + e + " ;\n")
+      .reduce((prev, ent) => prev + ent);
+
     currentStatements +=
       "\tclav:eRepresentacaoDe clav:" + legislacao.id + " .\n";
 
@@ -1604,7 +1615,10 @@ function constructPGD(worksheet, file, stats, code, columns, entidades) {
       if (titulo) currentStatements += '\tclav:titulo "' + titulo + '" ;\n';
       if (descricao)
         currentStatements += '\tclav:descricao "' + descricao + '" ;\n';
+
       currentStatements += "\tclav:nivel " + nivel + " .\n";
+      currentStatements += `clav:${legislacao.id} clav:temClasse clav:${classeId} .\n`;
+
       if (pca || notasPCA) {
         currentStatements +=
           "clav:" + classeId + " clav:temPCA clav:pca_" + classeId + " .\n";
@@ -1665,11 +1679,13 @@ function constructPGDLCO(worksheet, file, stats, code, columns, entidades) {
       "clav:pgd_lc_" + legislacao.id + " rdf:type owl:NamedIndividual ,\n";
     currentStatements += "\t\tclav:PGD ;\n";
     currentStatements +=
-      "\tclav:eRepresentacaoDe clav:" + legislacao.id + " .\n";
+      "\tclav:eRepresentacaoDe clav:" + legislacao.id + " ;\n";
 
-    var entidade = ents.some((e) => e == entidades[0])
+    var entidade = ents.some((e) => e.sigla == entidades[0])
       ? "ent_" + entidades[0]
       : "tip_" + entidades[0];
+
+    currentStatements += "\tclav:temEntidade clav:" + entidade + " .\n";
 
     worksheet.eachRow((row, rowNumber) => {
       if (rowNumber == 1) return;
@@ -1769,6 +1785,9 @@ function constructPGDLCO(worksheet, file, stats, code, columns, entidades) {
         }
       }
       currentStatements += "\tclav:nivel " + nivel + " .\n";
+
+      currentStatements += `clav:${legislacao.id} clav:temClasse clav:${classeId} .\n`;
+
       if (pca || notasPCA) {
         currentStatements +=
           "clav:" + classeId + " clav:temPCA clav:pca_" + classeId + " .\n";
@@ -1834,7 +1853,15 @@ function constructPGDLCP(worksheet, file, stats, code, columns, entidades) {
     currentStatements +=
       "clav:pgd_lc_" + legislacao.id + " rdf:type owl:NamedIndividual ,\n";
     currentStatements += "\t\tclav:PGD ;\n";
-    //Vai mudar a relação temRepresentacao/eRepresentacaoDe
+
+    entidades = entidades.map((ent) => {
+      return ents.some((e) => e.sigla == ent) ? "ent_" + ent : "tip_" + ent;
+    });
+
+    currentStatements += entidades
+      .map((e) => "\tclav:temEntidade clav:" + e + " ;\n")
+      .reduce((prev, ent) => prev + ent);
+
     currentStatements +=
       "\tclav:eRepresentacaoDe clav:" + legislacao.id + " .\n";
 
@@ -1952,6 +1979,8 @@ function constructPGDLCP(worksheet, file, stats, code, columns, entidades) {
         }
       }
       currentStatements += "\tclav:nivel " + nivel + " .\n";
+
+      currentStatements += `clav:${legislacao.id} clav:temClasse clav:${classeId} .\n`;
       if (pca || notasPCA) {
         currentStatements +=
           "clav:" + classeId + " clav:temPCA clav:pca_" + classeId + " .\n";
@@ -2202,6 +2231,7 @@ SelTabs.criarPedidoDoCSV = async function (
           throw "Insucesso na inserção do tabela de seleção\n" + err;
         }
       }
+      await State.loadLegislacao(code.codigo.split("pgd_lc_")[1]);
       return { codigo: code.codigo, stats };
     } else {
       stats = {
@@ -2227,6 +2257,8 @@ SelTabs.criarPedidoDoCSV = async function (
           throw "Insucesso na inserção do tabela de seleção\n" + err;
         }
       }
+      await State.loadLegislacao(code.codigo.split("pgd_lc_")[1]);
+
       return { codigo: code.codigo, stats };
     }
   } else if (fonteL == "PGD") {
@@ -2243,8 +2275,7 @@ SelTabs.criarPedidoDoCSV = async function (
       !Array.isArray(entidades_ts) ? entidades_ts.split() : entidades_ts
     );
     let parts = partRequest(pgd, 0);
-    
-    
+
     for (i in parts) {
       try {
         await execQuery("update", `INSERT DATA {${parts[i]}}`);
@@ -2252,7 +2283,7 @@ SelTabs.criarPedidoDoCSV = async function (
         throw "Insucesso na inserção do tabela de seleção\n" + err;
       }
     }
-
+    await State.loadLegislacao(code.codigo.split("pgd_")[1]);
     return { codigo: code.codigo, stats };
   } else if (fonteL == "RADA") {
     if (tipo_ts == "TS Organizacional") {
@@ -2277,6 +2308,7 @@ SelTabs.criarPedidoDoCSV = async function (
           throw "Insucesso na inserção do tabela de seleção\n" + err;
         }
       }
+      await State.loadLegislacao(code.codigo.split("tsRada_")[1]);
       return { codigo: code.codigo, stats };
     }
   }
@@ -2288,25 +2320,22 @@ function partRequest(req, parts) {
   // Partição feita automáticamente quando o argumento parts é = 0
   if (parts === 0) {
     let div = Math.floor(req.split(/\r\n|\r|\n/).length / 10000);
-    req.length
-    req.spilt
-    
-    if (div > 0){
+    req.length;
+    req.spilt;
 
-      
+    if (div > 0) {
       for (var i = 0; i < div; i++) {
         let mid = Math.floor(req.length / (div - i) - 1);
         let index;
         for (index = mid; index < req.length; index++) {
-          if (/#/g.test(req[index + 1]) && /\r\n|\n|\r/g.test(req[index])) break;
+          if (/#/g.test(req[index + 1]) && /\r\n|\n|\r/g.test(req[index]))
+            break;
         }
-        
+
         pgdParts.push(req.slice(prev, index));
         prev = index;
-        
       }
-    }
-    else {
+    } else {
       pgdParts.push(req);
     }
   } else {
@@ -2606,7 +2635,7 @@ function queryClasse(id, proc) {
   return query;
 }
 
-SelTabs.adicionar = async function (tabela,leg) {
+SelTabs.adicionar = async function (tabela, leg) {
   const currentTime = new Date();
   const paiList = [];
   const queryNum = `
