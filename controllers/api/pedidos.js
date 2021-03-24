@@ -20,7 +20,7 @@ Pedidos.listar = (filtro) => {
 
 // lista dos pedidos apenas com a metainformação
 Pedidos.listarMeta = () => {
-  return Pedido.find({}, ['codigo','data','estado','criadoPor','entidade']);
+  return Pedido.find({}, ['codigo','data','objeto.tipo', 'objeto.acao','estado','criadoPor','entidade']);
 };
 
 // Recupera a lista de pedidos de determinado tipo
@@ -36,7 +36,7 @@ Pedidos.getByTipo = function (tipo) {
  * @return {Promise<Pedido | Error>} promessa que quando cumprida possui o
  * pedido com o código especificado, ou `undefined` se o pedido não existe.
  */
-Pedidos.consultar = (codigo) => {
+Pedidos.consultar = async (codigo) => {
   return Pedido.findOne({ codigo: codigo });
 };
 
@@ -95,17 +95,26 @@ Pedidos.criar = async function (pedidoParams) {
  * @param pedidoParams novos dados para atualizar o pedido.
  * @return {Pedido} Código do pedido criado.
  */
+function returnString(str){
+  const ano = str.split('-')[0];
+  const codigo = str.split('-')[1];
+  return ano + "-" +codigo;
+}
 Pedidos.atualizar = async function (id, pedidoParams) {
-  return new Promise((resolve, reject) => {
+  return new Promise( async (resolve, reject) => {
+    var pedido = await Pedido.findOne({ codigo: pedidoParams.pedido.codigo});
     Pedido.findByIdAndRemove(id, async function (error) {
       if (error) {
         reject(error);
       } else {
-        var novoPedido = new Pedido(pedidoParams.pedido);
+        var novoPedido = JSON.parse(JSON.stringify(pedido))
+        delete novoPedido._id;
+        novoPedido.estado = pedidoParams.pedido.estado;
+        novoPedido.objeto.acao = pedidoParams.pedido.objeto.acao;
         novoPedido.distribuicao.push(pedidoParams.distribuicao);
-
+        novoPedido.historico.push(novoPedido.historico[novoPedido.historico.length - 1]);
         try {
-          novoPedido = await novoPedido.save();
+          novoPedido = await (new Pedido(novoPedido)).save();
           resolve(novoPedido.codigo);
         } catch (err) {
           console.log(err);
