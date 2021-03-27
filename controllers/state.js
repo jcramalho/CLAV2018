@@ -883,12 +883,28 @@ exports.updateClasseTreeInfo = classe => {
 
   let pai, i;
   if (classe.pai.codigo) {
-    pai = classTreeInfo.findIndex(c => classe.pai.codigo === c.codigo);
-    i = classTreeInfo[pai].filhos.findIndex(c => classe.codigo < c.codigo);
-    if (i !== -1) {
-      classTreeInfo[pai].filhos.splice(i, 0, classe);
+    let classLvl = classe.pai.codigo.split(".");
+    if (classLvl.length === 1) {
+      pai = classTreeInfo.findIndex(c => classe.pai.codigo === c.codigo);
+      i = classTreeInfo[pai].filhos.findIndex(c => classe.codigo < c.codigo);
+      if (i !== -1) {
+        classTreeInfo[pai].filhos.splice(i, 0, classe);
+      } else {
+        classTreeInfo[pai].filhos.push(classe);
+      }
     } else {
-      classTreeInfo[pai].filhos.push(classe);
+      avo = classTreeInfo.findIndex(c => classLvl[0] === c.codigo);
+      pai = classTreeInfo[avo].filhos.findIndex(
+        c => classe.pai.codigo === c.codigo
+      );
+      i = classTreeInfo[avo].filhos[pai].filhos.findIndex(
+        c => classe.codigo < c.codigo
+      );
+      if (i !== -1) {
+        classTreeInfo[avo].filhos[pai].filhos.splice(i, 0, classe);
+      } else {
+        classTreeInfo[avo].filhos[pai].filhos.push(classe);
+      }
     }
   } else {
     i = classTreeInfo.findIndex(c => classe.codigo < c.codigo);

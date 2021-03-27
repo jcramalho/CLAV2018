@@ -653,8 +653,8 @@ Classes.criar = function (classe) {
   classe.notasAp.forEach(note => {
     notas += `
     clav:${note.id} a clav:NotaAplicacao;
-    clav:conteudo "${note.id}";
-    clav:rdfs%3Alabel "Nota de Aplicação".`;
+    clav:conteudo "${note.nota.replace(/"/g,'\\"')}";
+    clav:rdfs:label "Nota de Aplicação".`;
     noteRel += `clav:c${classe.codigo} clav:temNotaAplicacao clav:${note.id}.
     `;
   });
@@ -662,8 +662,8 @@ Classes.criar = function (classe) {
   classe.notasEx.forEach(note => {
     notas += `
     clav:${note.id} a clav:NotaExclusao;
-    clav:conteudo "${note.id}";
-    clav:rdfs%3Alabel "Nota de Exclusão".`;
+    clav:conteudo "${note.nota.replace(/"/g,'\\"')}";
+    clav:rdfs:label "Nota de Exclusão".`;
     noteRel += `clav:c${classe.codigo} clav:temNotaExclusao clav:${note.id}.
     `;
   });
