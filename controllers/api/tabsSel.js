@@ -2698,9 +2698,23 @@ SelTabs.adicionar = async function (tabela, leg) {
           }
 
           if (ent.participante != "NP") {
+            const participacao =
+              ent.participante === "Apreciar"
+                ? "Apreciador"
+                : ent.participante === "Assessorar"
+                ? "Assessor"
+                : ent.participante === "Comunicar"
+                ? "Comunicador"
+                : ent.participante === "Decidir"
+                ? "Decisor"
+                : ent.participante === "Executar"
+                ? "Executor"
+                : ent.participante === "Iniciar"
+                ? "Iniciador"
+                : "";
             query += `
-                        clav:${idProc} clav:temParticipante${ent.participante} clav:${ent.id} .
-                        clav:c${proc.codigo} clav:temParticipante${ent.participante} clav:${ent.id} .
+                        clav:${idProc} clav:temParticipante${participacao} clav:${ent.id} .
+                        clav:c${proc.codigo} clav:temParticipante${participacao} clav:${ent.id} .
                     `;
           }
         }
@@ -2781,8 +2795,22 @@ SelTabs.adicionar = async function (tabela, leg) {
         }
 
         if (proc.participante != "NP") {
-          query += ` clav:${idProc} clav:temParticipante${proc.participante} clav:${entID} .
-                            clav:c${proc.codigo} clav:temParticipante${proc.participante} clav:${entID} .
+          const participacao =
+            proc.participante === "Apreciar"
+              ? "Apreciador"
+              : proc.participante === "Assessorar"
+              ? "Assessor"
+              : proc.participante === "Comunicar"
+              ? "Comunicador"
+              : proc.participante === "Decidir"
+              ? "Decisor"
+              : proc.participante === "Executar"
+              ? "Executor"
+              : proc.participante === "Iniciar"
+              ? "Iniciador"
+              : "";
+          query += ` clav:${idProc} clav:temParticipante${participacao} clav:${entID} .
+                            clav:c${proc.codigo} clav:temParticipante${participacao} clav:${entID} .
                         `;
         }
 
