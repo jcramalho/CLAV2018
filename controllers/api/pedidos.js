@@ -1,4 +1,5 @@
 const Pedido = require("../../models/pedido");
+const Notificacao = require("../../models/notificacoes");
 const Pedidos = module.exports;
 var Logging = require("../logging");
 
@@ -73,7 +74,7 @@ Pedidos.criar = async function (pedidoParams) {
       },
     ],
   };
-
+  
   if (pedidoParams.novoObjeto.codigo) {
     pedido.objeto.codigo = pedidoParams.novoObjeto.codigo;
   }
@@ -88,13 +89,31 @@ Pedidos.criar = async function (pedidoParams) {
 
   var newPedido = new Pedido(pedido);
 
-  try {
-    newPedido = await newPedido.save();
-    return newPedido.codigo;
-  } catch (err) {
-    console.log(err);
-    throw "Ocorreu um erro a submeter o pedido! Tente novamente mais tarde";
-  }
+    try {
+      newPedido = await newPedido.save();
+      const notificacao = {
+        entidade: pedidoParams.entidade,
+        pedido: newPedido.codigo,
+        acao: pedidoParams.tipoPedido,
+        tipo: pedidoParams.tipoObjeto,
+        novoEstado: "Submetido",
+        criadoPor: pedidoParams.user.email,
+      }
+      
+      var newNotificacao = new Notificacao(notificacao);
+
+      try {
+        newNotificacao = await newNotificacao.save();
+      } catch (err) {
+        console.log(err);
+        throw "Ocorreu um erro a submeter a notificação! Tente novamente mais tarde";
+      }
+
+      return newPedido.codigo;
+    } catch (err) {
+      console.log(err);
+      throw "Ocorreu um erro a submeter o pedido! Tente novamente mais tarde";
+    }
 };
 
 /**
@@ -103,11 +122,6 @@ Pedidos.criar = async function (pedidoParams) {
  * @param pedidoParams novos dados para atualizar o pedido.
  * @return {Pedido} Código do pedido criado.
  */
-function returnString(str) {
-  const ano = str.split("-")[0];
-  const codigo = str.split("-")[1];
-  return ano + "-" + codigo;
-}
 Pedidos.atualizar = async function (id, pedidoParams) {
   return new Promise(async (resolve, reject) => {
     var pedido = await Pedido.findOne({ codigo: pedidoParams.pedido.codigo });
@@ -129,13 +143,30 @@ Pedidos.atualizar = async function (id, pedidoParams) {
         }
 
         novoPedido.distribuicao.push(pedidoParams.distribuicao);
+        const notificacao = {
+          entidade: pedidoParams.pedido.entidade,
+          pedido: pedidoParams.pedido.codigo,
+          acao: pedidoParams.pedido.objeto.acao,
+          tipo: pedidoParams.pedido.objeto.tipo,
+          novoEstado: pedidoParams.pedido.estado,
+          criadoPor: pedidoParams.pedido.criadoPor,
+          responsavel: pedidoParams.distribuicao.proximoResponsavel.nome,
+        }
+        var newNotificacao = new Notificacao(notificacao);
 
         try {
-          novoPedido = await new Pedido(novoPedido).save();
-          resolve(novoPedido.codigo);
+          newNotificacao = await newNotificacao.save();
+      
+          try {
+            novoPedido = await new Pedido(novoPedido).save();
+            resolve(novoPedido.codigo);
+          } catch (err) {
+            console.log(err);
+            reject(err);
+          }
         } catch (err) {
           console.log(err);
-          reject(err);
+          throw "Ocorreu um erro a submeter a notificação! Tente novamente mais tarde";
         }
       }
     });
