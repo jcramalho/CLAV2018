@@ -64,7 +64,6 @@ Notificacao.criar = async function(n){
 }
 Notificacao.apagar = async function(id){
     try{    
-        
         newNotificacao = await Notificacao.findOneAndRemove({_id: id});
         return newNotificacao;
     }catch(err) {

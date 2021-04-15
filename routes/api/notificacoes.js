@@ -8,6 +8,7 @@ var router = express.Router();
 // Devolve as notificações do user atual
 router.get('/', Auth.isLoggedInKey, Notificacoes.get);
 
+// Apaga uma notificação pelo id
 router.delete('/:idNotificacao', Auth.isLoggedInKey, Notificacoes.delete);
 
 module.exports = router;
