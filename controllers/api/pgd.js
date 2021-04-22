@@ -215,15 +215,8 @@ PGD.consultar = async function (idPGD) {
       }
       i++;
     }
-    var queryEnts = ` SELECT ?entidades WHERE {
-      clav:${idPGD} clav:temEntidade ?uriEnt .
-      BIND(STRAFTER(STR(?uriEnt), '#') AS ?entidades).
-    } `;
 
-    var resultEnts = await execQuery("query", queryEnts);
-    resultEnts = normalize(resultEnts);
-
-    return [result, resultEnts.map((e) => e.entidades)];
+    return result;
   } catch (erro) {
     throw erro;
   }
