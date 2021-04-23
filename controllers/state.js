@@ -144,7 +144,7 @@ exports.getAllClasses = async () => {
 exports.getClassesFlatList = async () => {
   return classList;
 };
-exports.getLevelClasses = async nivel => {
+exports.getLevelClasses = async (nivel) => {
   var ret = [];
 
   if (nivel >= 1 && nivel <= 4) {
@@ -159,7 +159,7 @@ exports.getAllClassesInfo = async () => {
 };
 
 //Devolve a informação das classes da subárvore com raiz na classe com o id 'id'
-exports.subarvore = async id => {
+exports.subarvore = async (id) => {
   var ret = JSON.parse(JSON.stringify(classTreeInfo));
 
   var codigo = id.split("c")[1];
@@ -191,13 +191,14 @@ exports.subarvore = async id => {
 };
 
 // Verifica a existência do código de uma classe: true == existe, false == não existe
-exports.verificaCodigo = async cod => {
+exports.verificaCodigo = async (cod) => {
   var nivel = cod.split(".").length;
   var r = false;
 
   if (nivel >= 1 && nivel <= 4) {
     r =
-      (await levelClasses[nivel - 1].filter(c => c.codigo == cod).length) != 0;
+      (await levelClasses[nivel - 1].filter((c) => c.codigo == cod).length) !=
+      0;
   } else {
     console.log("Classe de nível inexistente: " + cod);
   }
@@ -206,35 +207,35 @@ exports.verificaCodigo = async cod => {
 };
 
 // Verifica a existência do título de uma classe: true == existe, false == não existe
-exports.verificaTitulo = async titulo => {
+exports.verificaTitulo = async (titulo) => {
   var r = false;
-  r = (await classList.filter(c => c.titulo == titulo).length) != 0;
+  r = (await classList.filter((c) => c.titulo == titulo).length) != 0;
   return r;
 };
 
 // Verifica a existência duma nota de aplicação: true == existe, false == não existe
-exports.verificaNA = async na => {
+exports.verificaNA = async (na) => {
   var r = false;
-  r = (await notasAplicacao.filter(n => n == na).length) != 0;
+  r = (await notasAplicacao.filter((n) => n == na).length) != 0;
   return r;
 };
 
 // Verifica a existência dum exemplo de nota de aplicação: true == existe, false == não existe
-exports.verificaExemploNA = async exemplo => {
+exports.verificaExemploNA = async (exemplo) => {
   var r = false;
-  r = (await exemplosNotasAplicacao.filter(e => e == exemplo).length) != 0;
+  r = (await exemplosNotasAplicacao.filter((e) => e == exemplo).length) != 0;
   return r;
 };
 
 // Verifica a existência dum termo de índice: true == existe, false == não existe
-exports.verificaTI = async ti => {
+exports.verificaTI = async (ti) => {
   var r = false;
-  r = (await termosInd.filter(t => t == ti).length) != 0;
+  r = (await termosInd.filter((t) => t == ti).length) != 0;
   return r;
 };
 
 //Devolve os processos de negócio comuns, ou seja, aqueles com :processoTipoVC :vc_processoTipo_pc
-exports.filterProcessosComuns = l => {
+exports.filterProcessosComuns = (l) => {
   let ret = [];
 
   for (let i = 0; i < l.length; i++) {
@@ -249,7 +250,7 @@ exports.filterProcessosComuns = l => {
 };
 
 //Devolve os processos de negócio especificos, ou seja, aqueles com :processoTipoVC :vc_processoTipo_pc
-exports.filterProcessosEspecificos = l => {
+exports.filterProcessosEspecificos = (l) => {
   let ret = [];
 
   for (let i = 0; i < l.length; i++) {
@@ -270,8 +271,8 @@ exports.filterEntsTips = (l, ents_tips) => {
   for (let i = 0; i < l.length; i++) {
     l[i].filhos = exports.filterEntsTips(l[i].filhos, ents_tips);
 
-    let donos = l[i].donos.filter(d => ents_tips.includes(d.idDono));
-    let parts = l[i].participantes.filter(p =>
+    let donos = l[i].donos.filter((d) => ents_tips.includes(d.idDono));
+    let parts = l[i].participantes.filter((p) =>
       ents_tips.includes(p.idParticipante)
     );
 
@@ -306,7 +307,7 @@ exports.filterNivel = (l, nivel) => {
 };
 
 //torna a arvore numa lista
-exports.flatArvore = l => {
+exports.flatArvore = (l) => {
   let ret = [];
 
   for (let i = 0; i < l.length; i++) {
@@ -324,7 +325,7 @@ exports.flatArvore = l => {
 };
 
 //devolve apenas a info base da classe
-exports.filterBaseInfo = l => {
+exports.filterBaseInfo = (l) => {
   let ret = [];
 
   for (let i = 0; i < l.length; i++) {
@@ -346,7 +347,7 @@ exports.filterBaseInfo = l => {
 };
 
 //devolve apenas a info da classe para o caso do esqueleto
-exports.filterEsqueletoInfo = l => {
+exports.filterEsqueletoInfo = (l) => {
   let ret = [];
 
   for (let i = 0; i < l.length; i++) {
@@ -377,7 +378,7 @@ function saoDonos(donos, ents_tips) {
 
   for (let ent_tip of ents_tips) {
     let eDono =
-      donos.filter(e => e.idDono == ent_tip).length > 0 ? "Sim" : "Não";
+      donos.filter((e) => e.idDono == ent_tip).length > 0 ? "Sim" : "Não";
     ret.push(eDono);
   }
 
@@ -389,7 +390,7 @@ function saoDonosSigla(donos, ents_tips) {
   let ret = [];
 
   for (let ent_tip of ents_tips) {
-    if (donos.filter(e => e.idDono == ent_tip).length > 0) {
+    if (donos.filter((e) => e.idDono == ent_tip).length > 0) {
       ret.push(ent_tip.split(/ent_|tip_/)[1]);
     }
   }
@@ -484,16 +485,16 @@ function ternaryOp(obj, defaultValue) {
 
 //Função auxiliar para filterPesquisaInfo, obtém o termo 'termo' de cada objeto da lista e realiza depois o join com " ". Caso a lista seja null, undefined ou vazia devolve []
 function mapJoin(list, term) {
-  return list ? list.map(e => e[term]).join(" ") : [];
+  return list ? list.map((e) => e[term]).join(" ") : [];
 }
 
 //Função auxiliar para filterPesquisaInfo, obtém o termo 'termo' de cada objeto da lista. Caso a lista seja null, undefined ou vazia devolve []
 function ternaryMap(list, term) {
-  return list ? list.map(e => e[term]) : [];
+  return list ? list.map((e) => e[term]) : [];
 }
 
 //devolve apenas a info da classe para o caso da pesquisa avançada
-exports.filterPesquisaInfo = l => {
+exports.filterPesquisaInfo = (l) => {
   let ret = [];
 
   for (let i = 0; i < l.length; i++) {
@@ -623,7 +624,7 @@ exports.filterStatus = (classes, classesI) => {
 };
 
 //remove o campo status
-exports.removeStatus = l => {
+exports.removeStatus = (l) => {
   for (let i = 0; i < l.length; i++) {
     delete l[i].status;
 
@@ -648,11 +649,11 @@ async function loadClasses() {
 
       let na = await Classes.notasAp(cid);
       notasAplicacao = notasAplicacao.concat(
-        JSON.parse(JSON.stringify(na.map(n => n.nota)))
+        JSON.parse(JSON.stringify(na.map((n) => n.nota)))
       );
       let ex = await Classes.exemplosNotasAp(cid);
       exemplosNotasAplicacao = exemplosNotasAplicacao.concat(
-        JSON.parse(JSON.stringify(ex.map(e => e.exemplo)))
+        JSON.parse(JSON.stringify(ex.map((e) => e.exemplo)))
       );
 
       // Carregamento da informação das classes de nível 2
@@ -666,11 +667,11 @@ async function loadClasses() {
 
         let na = await Classes.notasAp(cid2);
         notasAplicacao = notasAplicacao.concat(
-          JSON.parse(JSON.stringify(na.map(n => n.nota)))
+          JSON.parse(JSON.stringify(na.map((n) => n.nota)))
         );
         let ex = await Classes.exemplosNotasAp(cid2);
         exemplosNotasAplicacao = exemplosNotasAplicacao.concat(
-          JSON.parse(JSON.stringify(ex.map(e => e.exemplo)))
+          JSON.parse(JSON.stringify(ex.map((e) => e.exemplo)))
         );
 
         // Carregamento da informação das classes de nível 3
@@ -684,15 +685,15 @@ async function loadClasses() {
 
           let na = await Classes.notasAp(cid3);
           notasAplicacao = notasAplicacao.concat(
-            JSON.parse(JSON.stringify(na.map(n => n.nota)))
+            JSON.parse(JSON.stringify(na.map((n) => n.nota)))
           );
           let ex = await Classes.exemplosNotasAp(cid3);
           exemplosNotasAplicacao = exemplosNotasAplicacao.concat(
-            JSON.parse(JSON.stringify(ex.map(e => e.exemplo)))
+            JSON.parse(JSON.stringify(ex.map((e) => e.exemplo)))
           );
           let ti3 = await Classes.ti(cid3);
           termosInd = termosInd.concat(
-            JSON.parse(JSON.stringify(ti3.map(t => t.termo)))
+            JSON.parse(JSON.stringify(ti3.map((t) => t.termo)))
           );
 
           // Carregamento dos TI das classes de nível 4
@@ -700,7 +701,7 @@ async function loadClasses() {
             let cid4 = desc3[l].id.split("#")[1];
             let ti4 = await Classes.ti(cid4);
             termosInd = termosInd.concat(
-              JSON.parse(JSON.stringify(ti4.map(t => t.termo)))
+              JSON.parse(JSON.stringify(ti4.map((t) => t.termo)))
             );
           }
 
@@ -750,7 +751,7 @@ async function criaIndicePesquisa() {
 
   //  [ {codigo:"cxxx", titulo:"...", notas: [], exemplos:[], tis:[]}, ...]
   indice = indice.concat(
-    classList.map(c => ({
+    classList.map((c) => ({
       codigo: c.codigo,
       titulo: c.titulo,
       notas: [],
@@ -759,8 +760,8 @@ async function criaIndicePesquisa() {
     }))
   );
   // Vamos colocar as notas no processo certo
-  notas.forEach(n => {
-    var index = indice.findIndex(c => {
+  notas.forEach((n) => {
+    var index = indice.findIndex((c) => {
       return "c" + c.codigo == n.cProc;
     });
     if (index != -1) {
@@ -774,8 +775,8 @@ async function criaIndicePesquisa() {
   });
 
   // Vamos fazer o mesmo para os exemplos
-  exemplos.forEach(e => {
-    var index = indice.findIndex(c => {
+  exemplos.forEach((e) => {
+    var index = indice.findIndex((c) => {
       return "c" + c.codigo == e.cProc;
     });
     if (index != -1) {
@@ -788,8 +789,8 @@ async function criaIndicePesquisa() {
     }
   });
   // Vamos fazer o mesmo para os tis
-  tis.forEach(t => {
-    var index = indice.findIndex(c => {
+  tis.forEach((t) => {
+    var index = indice.findIndex((c) => {
       return "c" + c.codigo == t.codigoClasse;
     });
     if (index != -1) {
@@ -811,8 +812,8 @@ exports.getLegislacoes = () => {
   return JSON.parse(JSON.stringify(legislacao));
 };
 
-exports.getLegislacao = id => {
-  let res = legislacao.filter(l => l.id == id);
+exports.getLegislacao = (id) => {
+  let res = legislacao.filter((l) => l.id == id);
   if (res.length > 0) {
     return JSON.parse(JSON.stringify(res[0]));
   } else return null;
@@ -820,18 +821,18 @@ exports.getLegislacao = id => {
 
 // Devolve o uma legislação a partir do seu tipo e número
 exports.getLegislacaoByTipoNumero = (t, n) => {
-  let res = legislacao.filter(l => l.tipo == t && l.numero == n);
+  let res = legislacao.filter((l) => l.tipo == t && l.numero == n);
   if (res.length > 0) {
     return JSON.parse(JSON.stringify(res[0]));
   } else return null;
 };
 
 //Atualiza uma legislação no catálogo
-exports.loadLegislacao = async id => {
+exports.loadLegislacao = async (id) => {
   try {
     let leg = await Legs.consultar(id);
     legislacao.splice(
-      legislacao.findIndex(l => l.id == id),
+      legislacao.findIndex((l) => l.id == id),
       1
     );
     leg.id = id;
@@ -857,8 +858,8 @@ exports.getEntidades = () => {
   return JSON.parse(JSON.stringify(entidades));
 };
 
-exports.getEntidade = id => {
-  let res = entidades.filter(e => e.id == id);
+exports.getEntidade = (id) => {
+  let res = entidades.filter((e) => e.id == id);
   if (res.length > 0) {
     return JSON.parse(JSON.stringify(res[0]));
   } else return null;
@@ -874,7 +875,7 @@ async function loadEntidades() {
   }
 }
 
-exports.updateClasseTreeInfo = classe => {
+exports.updateClasseTreeInfo = (classe) => {
   classe.status = "A";
   classe.filhos = [];
   classe.tipoProc = "";
@@ -885,20 +886,20 @@ exports.updateClasseTreeInfo = classe => {
   if (classe.pai.codigo) {
     let classLvl = classe.pai.codigo.split(".");
     if (classLvl.length === 1) {
-      pai = classTreeInfo.findIndex(c => classe.pai.codigo === c.codigo);
-      i = classTreeInfo[pai].filhos.findIndex(c => classe.codigo < c.codigo);
+      pai = classTreeInfo.findIndex((c) => classe.pai.codigo === c.codigo);
+      i = classTreeInfo[pai].filhos.findIndex((c) => classe.codigo < c.codigo);
       if (i !== -1) {
         classTreeInfo[pai].filhos.splice(i, 0, classe);
       } else {
         classTreeInfo[pai].filhos.push(classe);
       }
     } else {
-      avo = classTreeInfo.findIndex(c => classLvl[0] === c.codigo);
+      avo = classTreeInfo.findIndex((c) => classLvl[0] === c.codigo);
       pai = classTreeInfo[avo].filhos.findIndex(
-        c => classe.pai.codigo === c.codigo
+        (c) => classe.pai.codigo === c.codigo
       );
       i = classTreeInfo[avo].filhos[pai].filhos.findIndex(
-        c => classe.codigo < c.codigo
+        (c) => classe.codigo < c.codigo
       );
       if (i !== -1) {
         classTreeInfo[avo].filhos[pai].filhos.splice(i, 0, classe);
@@ -907,7 +908,7 @@ exports.updateClasseTreeInfo = classe => {
       }
     }
   } else {
-    i = classTreeInfo.findIndex(c => classe.codigo < c.codigo);
+    i = classTreeInfo.findIndex((c) => classe.codigo < c.codigo);
     if (i !== -1) {
       classe.pai = {};
       classTreeInfo.splice(i, 0, classe);

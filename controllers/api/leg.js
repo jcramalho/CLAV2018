@@ -363,9 +363,34 @@ Leg.consultar = (id) => {
   ];
   const agrupar = ["entidades", "entidades1"];
 
-  return execQuery("query", query).then(
-    (response) => projection(normalize(response), campos, agrupar)[0]
-  );
+  return execQuery("query", query).then((response) => {
+    var leg = projection(normalize(response), campos, agrupar)[0];
+    leg.entidades = leg.entidades
+      .filter((e) => !!e)
+      .map((ent) => {
+        !!ent
+          ? {
+              id: ent,
+              sigla: ent.includes("ent_")
+                ? ent.split("ent_")[1]
+                : ent.split("tip_")[1],
+            }
+          : "";
+      });
+    leg.entidades1 = leg.entidades1
+      .filter((e) => !!e)
+      .map((ent) =>
+        !!ent
+          ? {
+              id: ent,
+              sigla: ent.includes("ent_")
+                ? ent.split("ent_")[1]
+                : ent.split("tip_")[1],
+            }
+          : ""
+      );
+    return leg;
+  });
 };
 
 /**
