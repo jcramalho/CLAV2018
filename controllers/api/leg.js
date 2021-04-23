@@ -76,26 +76,30 @@ Leg.listar = () => {
     let legs = projection(normalize(response), campos, agrupar);
 
     for (leg of legs) {
-      leg.entidades = leg.entidades.map((ent) =>
-        ent
-          ? {
-              id: ent,
-              sigla: ent.includes("ent_")
-                ? ent.split("ent_")[1]
-                : ent.split("tip_")[1],
-            }
-          : ""
-      );
-      leg.entidades1 = leg.entidades1.map((ent) =>
-        ent
-          ? {
-              id: ent,
-              sigla: ent.includes("ent_")
-                ? ent.split("ent_")[1]
-                : ent.split("tip_")[1],
-            }
-          : ""
-      );
+      leg.entidades = leg.entidades
+        .filter((e) => !!e)
+        .map((ent) =>
+          ent
+            ? {
+                id: ent,
+                sigla: ent.includes("ent_")
+                  ? ent.split("ent_")[1]
+                  : ent.split("tip_")[1],
+              }
+            : ""
+        );
+      leg.entidades1 = leg.entidades1
+        .filter((e) => !!e)
+        .map((ent) =>
+          ent
+            ? {
+                id: ent,
+                sigla: ent.includes("ent_")
+                  ? ent.split("ent_")[1]
+                  : ent.split("tip_")[1],
+              }
+            : ""
+        );
     }
 
     return legs;
