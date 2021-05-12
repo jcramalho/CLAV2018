@@ -74,7 +74,7 @@ Pedidos.criar = async function (pedidoParams) {
       },
     ],
   };
-  
+
   if (pedidoParams.novoObjeto.codigo) {
     pedido.objeto.codigo = pedidoParams.novoObjeto.codigo;
   }
@@ -89,31 +89,31 @@ Pedidos.criar = async function (pedidoParams) {
 
   var newPedido = new Pedido(pedido);
 
+  try {
+    newPedido = await newPedido.save();
+    const notificacao = {
+      entidade: pedidoParams.entidade,
+      pedido: newPedido.codigo,
+      acao: pedidoParams.tipoPedido,
+      tipo: pedidoParams.tipoObjeto,
+      novoEstado: "Submetido",
+      criadoPor: pedidoParams.user.email,
+    };
+
+    var newNotificacao = new Notificacao(notificacao);
+
     try {
-      newPedido = await newPedido.save();
-      const notificacao = {
-        entidade: pedidoParams.entidade,
-        pedido: newPedido.codigo,
-        acao: pedidoParams.tipoPedido,
-        tipo: pedidoParams.tipoObjeto,
-        novoEstado: "Submetido",
-        criadoPor: pedidoParams.user.email,
-      }
-      
-      var newNotificacao = new Notificacao(notificacao);
-
-      try {
-        newNotificacao = await newNotificacao.save();
-      } catch (err) {
-        console.log(err);
-        throw "Ocorreu um erro a submeter a notificação! Tente novamente mais tarde";
-      }
-
-      return newPedido.codigo;
+      newNotificacao = await newNotificacao.save();
     } catch (err) {
       console.log(err);
-      throw "Ocorreu um erro a submeter o pedido! Tente novamente mais tarde";
+      throw "Ocorreu um erro a submeter a notificação! Tente novamente mais tarde";
     }
+
+    return newPedido.codigo;
+  } catch (err) {
+    console.log(err);
+    throw "Ocorreu um erro a submeter o pedido! Tente novamente mais tarde";
+  }
 };
 
 /**
@@ -150,13 +150,15 @@ Pedidos.atualizar = async function (id, pedidoParams) {
           tipo: pedidoParams.pedido.objeto.tipo,
           novoEstado: pedidoParams.pedido.estado,
           criadoPor: pedidoParams.pedido.criadoPor,
-          responsavel: pedidoParams.distribuicao.proximoResponsavel.nome,
-        }
+          responsavel: pedidoParams.distribuicao.proximoResponsavel
+            ? pedidoParams.distribuicao.proximoResponsavel.nome
+            : pedidoParams.distribuicao.responsavel,
+        };
         var newNotificacao = new Notificacao(notificacao);
 
         try {
           newNotificacao = await newNotificacao.save();
-      
+
           try {
             novoPedido = await new Pedido(novoPedido).save();
             resolve(novoPedido.codigo);
