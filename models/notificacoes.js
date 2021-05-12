@@ -32,7 +32,12 @@ const NotificacaoSchema = new mongoose.Schema({
     pedido: {
         type: String,
         required: false
-    }
+    },
+    data: {
+        type: Date,
+        default: Date.now,
+        required: true,
+    },
 })
 
 

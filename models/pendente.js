@@ -21,6 +21,10 @@ const PendenteSchema = new mongoose.Schema({
     type: String, // Email do utilizador que criou o pedido
     required: true
   },
+  entidade: {
+    type: String, // Entidade do utilizador que criou o pedido
+    required: true
+  },
   objeto: {
     type: Object
   },
