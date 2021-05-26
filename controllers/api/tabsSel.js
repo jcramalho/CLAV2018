@@ -2442,9 +2442,9 @@ SelTabs.criarPedidoDoCSV = async function (
         code,
         columns,
         entidades_ts.split(),
-        errors.find((e) => e.file === file).errors
+        errors[0].errors
       );
-      if (errors.find((e) => e.file === file).errors.length > 0) throw errors;
+      if (errors[0].errors.length > 0) throw errors;
 
       let parts = partRequest(pgd, 0);
 
@@ -2452,7 +2452,10 @@ SelTabs.criarPedidoDoCSV = async function (
         try {
           await execQuery("update", `INSERT DATA {${parts[i]}}`);
         } catch (err) {
-          throw "Insucesso na inserção do tabela de seleção\n" + err;
+          errors[0].errors.push({
+            msg: "Insucesso na inserção do tabela de seleção\n" + err,
+          });
+          throw errors;
         }
       }
       await State.loadLegislacao(code.codigo.split("pgd_lc_")[1]);
@@ -2472,9 +2475,9 @@ SelTabs.criarPedidoDoCSV = async function (
         code,
         columns,
         ents_tips.map((e) => e.sigla),
-        errors.find((e) => e.file === file).errors
+        errors[0].errors
       );
-      if (errors.find((e) => e.file === file).errors.length > 0) throw errors;
+      if (errors[0].errors.length > 0) throw errors;
 
       let parts = partRequest(pgd, 0);
 
@@ -2482,7 +2485,10 @@ SelTabs.criarPedidoDoCSV = async function (
         try {
           await execQuery("update", `INSERT DATA {${parts[i]}}`);
         } catch (err) {
-          throw "Insucesso na inserção do tabela de seleção\n" + err;
+          errors[0].errors.push({
+            msg: "Insucesso na inserção do tabela de seleção\n" + err,
+          });
+          throw errors;
         }
       }
       await State.loadLegislacao(code.codigo.split("pgd_lc_")[1]);
@@ -2501,9 +2507,9 @@ SelTabs.criarPedidoDoCSV = async function (
       code,
       columns,
       !Array.isArray(entidades_ts) ? entidades_ts.split() : entidades_ts,
-      errors.find((e) => e.file === file).errors
+      errors[0].errors
     );
-    if (errors.find((e) => e.file === file).errors.length > 0) throw errors;
+    if (errors[0].errors.length > 0) throw errors;
 
     let parts = partRequest(pgd, 0);
 
@@ -2511,7 +2517,10 @@ SelTabs.criarPedidoDoCSV = async function (
       try {
         await execQuery("update", `INSERT DATA {${parts[i]}}`);
       } catch (err) {
-        throw "Insucesso na inserção do tabela de seleção\n" + err;
+        errors[0].errors.push({
+          msg: "Insucesso na inserção do tabela de seleção\n" + err,
+        });
+        throw errors;
       }
     }
 
@@ -2531,9 +2540,9 @@ SelTabs.criarPedidoDoCSV = async function (
         code,
         columns,
         entidades_ts.split(),
-        errors.find((e) => e.file === file).errors
+        errors[0].errors
       );
-      if (errors.find((e) => e.file === file).errors.length > 0) throw errors;
+      if (errors[0].errors.length > 0) throw errors;
 
       let parts = partRequest(rada, 0);
 
@@ -2541,7 +2550,10 @@ SelTabs.criarPedidoDoCSV = async function (
         try {
           await execQuery("update", `INSERT DATA {${parts[i]}}`);
         } catch (err) {
-          throw "Insucesso na inserção do tabela de seleção\n" + err;
+          errors[0].errors.push({
+            msg: "Insucesso na inserção do tabela de seleção\n" + err,
+          });
+          throw errors;
         }
       }
       await State.loadLegislacao(code.codigo.split("tsRada_")[1]);
