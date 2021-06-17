@@ -132,7 +132,10 @@ Pedidos.atualizar = async function (id, pedidoParams) {
         var novoPedido = JSON.parse(JSON.stringify(pedido));
         delete novoPedido._id;
         novoPedido.estado = pedidoParams.pedido.estado;
-        if (pedidoParams.pedido.estado == "Distribuído") {
+        if (
+          pedidoParams.pedido.estado == "Distribuído" &&
+          !pedidoParams.pedido.objeto.dados
+        ) {
           novoPedido.historico.push(
             novoPedido.historico[novoPedido.historico.length - 1]
           );
@@ -142,22 +145,34 @@ Pedidos.atualizar = async function (id, pedidoParams) {
           novoPedido.historico = pedidoParams.pedido.historico;
         }
 
-        novoPedido.distribuicao.push(pedidoParams.distribuicao);
-        const notificacao = {
-          entidade: pedidoParams.pedido.entidade,
-          pedido: pedidoParams.pedido.codigo,
-          acao: pedidoParams.pedido.objeto.acao,
-          tipo: pedidoParams.pedido.objeto.tipo,
-          novoEstado: pedidoParams.pedido.estado,
-          criadoPor: pedidoParams.pedido.criadoPor,
-          responsavel: pedidoParams.distribuicao.proximoResponsavel
-            ? pedidoParams.distribuicao.proximoResponsavel.nome
-            : pedidoParams.distribuicao.responsavel,
-        };
-        var newNotificacao = new Notificacao(notificacao);
+        if (
+          !(
+            Object.keys(pedidoParams.distribuicao).length === 1 &&
+            pedidoParams.distribuicao.responsavel
+          )
+        ) {
+          novoPedido.distribuicao.push(pedidoParams.distribuicao);
+          const notificacao = {
+            entidade: pedidoParams.pedido.entidade,
+            pedido: pedidoParams.pedido.codigo,
+            acao: pedidoParams.pedido.objeto.acao,
+            tipo: pedidoParams.pedido.objeto.tipo,
+            novoEstado: pedidoParams.pedido.estado,
+            criadoPor: pedidoParams.pedido.criadoPor,
+            responsavel: pedidoParams.distribuicao.proximoResponsavel
+              ? pedidoParams.distribuicao.proximoResponsavel.nome
+              : pedidoParams.distribuicao.responsavel,
+          };
+          var newNotificacao = new Notificacao(notificacao);
+        }
 
         try {
-          newNotificacao = await newNotificacao.save();
+          !(
+            Object.keys(pedidoParams.distribuicao).length === 1 &&
+            pedidoParams.distribuicao.responsavel
+          )
+            ? (newNotificacao = await newNotificacao.save())
+            : "";
 
           try {
             novoPedido = await new Pedido(novoPedido).save();
