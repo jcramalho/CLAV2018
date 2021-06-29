@@ -132,7 +132,7 @@ Pedidos.atualizar = async function (id, pedidoParams) {
         var novoPedido = JSON.parse(JSON.stringify(pedido));
         delete novoPedido._id;
         novoPedido.estado = pedidoParams.pedido.estado;
-        if (pedidoParams.pedido.estado == "Distribuído") {
+        if (pedidoParams.pedido.estado == "Distribuído" || pedidoParams.pedido.estado == "Devolvido") {
           novoPedido.historico.push(
             novoPedido.historico[novoPedido.historico.length - 1]
           );
