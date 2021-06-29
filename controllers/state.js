@@ -216,21 +216,59 @@ exports.verificaTitulo = async (titulo) => {
 // Verifica a existência duma nota de aplicação: true == existe, false == não existe
 exports.verificaNA = async (na) => {
   var r = false;
-  r = (await notasAplicacao.filter((n) => n == na).length) != 0;
+  r =
+    (await notasAplicacao.filter((n) => n.notas.some((nn) => nn === na))
+      .length) != 0;
   return r;
 };
 
 // Verifica a existência dum exemplo de nota de aplicação: true == existe, false == não existe
 exports.verificaExemploNA = async (exemplo) => {
   var r = false;
-  r = (await exemplosNotasAplicacao.filter((e) => e == exemplo).length) != 0;
+  r =
+    (await exemplosNotasAplicacao.filter((e) =>
+      e.exemplos.some((ex) => ex === exemplo)
+    ).length) != 0;
   return r;
 };
 
 // Verifica a existência dum termo de índice: true == existe, false == não existe
 exports.verificaTI = async (ti) => {
   var r = false;
-  r = (await termosInd.filter((t) => t == ti).length) != 0;
+  r =
+    (await termosInd.filter((t) => t.termos.some((termo) => termo === ti))
+      .length) != 0;
+  return r;
+};
+
+// Verifica a existência duma nota de aplicação: true == existe, false == não existe (Para casos de criação de TSs)
+exports.verificaNATS = async (na, classe) => {
+  var r = false;
+
+  r =
+    (await notasAplicacao.filter(
+      (n) => n.notas.some((naa) => naa === na) && n.classe != classe
+    ).length) > 0;
+  return r;
+};
+
+// Verifica a existência dum exemplo de nota de aplicação: true == existe, false == não existe (Para casos de criação de TSs)
+exports.verificaExemploNATS = async (exemplo, classe) => {
+  var r = false;
+  r =
+    (await exemplosNotasAplicacao.filter(
+      (e) => e.exemplos.some((ex) => ex === exemplo) && e.classe != classe
+    ).length) > 0;
+  return r;
+};
+
+// Verifica a existência dum termo de índice: true == existe, false == não existe (Para casos de criação de TSs)
+exports.verificaTITS = async (ti, classe) => {
+  var r = false;
+  r =
+    (await termosInd.filter(
+      (t) => t.termos.some((tt) => tt === ti) && t.classe != classe
+    ).length) > 0;
   return r;
 };
 
@@ -648,13 +686,15 @@ async function loadClasses() {
       );
 
       let na = await Classes.notasAp(cid);
-      notasAplicacao = notasAplicacao.concat(
-        JSON.parse(JSON.stringify(na.map((n) => n.nota)))
-      );
+      notasAplicacao = notasAplicacao.concat({
+        classe: cid,
+        notas: JSON.parse(JSON.stringify(na.map((n) => n.nota))),
+      });
       let ex = await Classes.exemplosNotasAp(cid);
-      exemplosNotasAplicacao = exemplosNotasAplicacao.concat(
-        JSON.parse(JSON.stringify(ex.map((e) => e.exemplo)))
-      );
+      exemplosNotasAplicacao = exemplosNotasAplicacao.concat({
+        classe: cid,
+        exemplos: JSON.parse(JSON.stringify(ex.map((e) => e.exemplo))),
+      });
 
       // Carregamento da informação das classes de nível 2
       for (var j = 0; j < desc.length; j++) {
@@ -666,43 +706,49 @@ async function loadClasses() {
         );
 
         let na = await Classes.notasAp(cid2);
-        notasAplicacao = notasAplicacao.concat(
-          JSON.parse(JSON.stringify(na.map((n) => n.nota)))
-        );
+        notasAplicacao = notasAplicacao.concat({
+          classe: cid2,
+          notas: JSON.parse(JSON.stringify(na.map((n) => n.nota))),
+        });
         let ex = await Classes.exemplosNotasAp(cid2);
-        exemplosNotasAplicacao = exemplosNotasAplicacao.concat(
-          JSON.parse(JSON.stringify(ex.map((e) => e.exemplo)))
-        );
+        exemplosNotasAplicacao = exemplosNotasAplicacao.concat({
+          classe: cid2,
+          exemplos: JSON.parse(JSON.stringify(ex.map((e) => e.exemplo))),
+        });
 
         // Carregamento da informação das classes de nível 3
         for (var k = 0; k < desc2.length; k++) {
           desc2[k].drop = false;
           let cid3 = desc2[k].id.split("#")[1];
+          if (cid3.includes("_")) continue;
           let desc3 = await Classes.descendencia(cid3);
           levelClasses[3] = levelClasses[3].concat(
             JSON.parse(JSON.stringify(desc3))
           );
-
           let na = await Classes.notasAp(cid3);
-          notasAplicacao = notasAplicacao.concat(
-            JSON.parse(JSON.stringify(na.map((n) => n.nota)))
-          );
+          notasAplicacao = notasAplicacao.concat({
+            classe: cid3,
+            notas: JSON.parse(JSON.stringify(na.map((n) => n.nota))),
+          });
           let ex = await Classes.exemplosNotasAp(cid3);
-          exemplosNotasAplicacao = exemplosNotasAplicacao.concat(
-            JSON.parse(JSON.stringify(ex.map((e) => e.exemplo)))
-          );
+          exemplosNotasAplicacao = exemplosNotasAplicacao.concat({
+            classe: cid3,
+            exemplos: JSON.parse(JSON.stringify(ex.map((e) => e.exemplo))),
+          });
           let ti3 = await Classes.ti(cid3);
-          termosInd = termosInd.concat(
-            JSON.parse(JSON.stringify(ti3.map((t) => t.termo)))
-          );
+          termosInd = termosInd.concat({
+            classe: cid3,
+            termos: JSON.parse(JSON.stringify(ti3.map((t) => t.termo))),
+          });
 
           // Carregamento dos TI das classes de nível 4
           for (var l = 0; l < desc3.length; l++) {
             let cid4 = desc3[l].id.split("#")[1];
             let ti4 = await Classes.ti(cid4);
-            termosInd = termosInd.concat(
-              JSON.parse(JSON.stringify(ti4.map((t) => t.termo)))
-            );
+            termosInd = termosInd.concat({
+              classe: cid4,
+              termos: JSON.parse(JSON.stringify(ti4.map((t) => t.termo))),
+            });
           }
 
           desc2[k].filhos = desc3;

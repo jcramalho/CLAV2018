@@ -1531,7 +1531,15 @@ async function findSheet(
   return [sheetN, rowHeaderN, headersPos, ents_tips, errors];
 }
 
-function constructRADAO(worksheet, file, stats, code, columns, entidades) {
+function constructRADAO(
+  worksheet,
+  file,
+  stats,
+  code,
+  columns,
+  entidades,
+  errors
+) {
   //Carregar as Legislações
   let leg = State.getLegislacoes();
   //Carregar as Entidades
@@ -1676,16 +1684,27 @@ function constructRADAO(worksheet, file, stats, code, columns, entidades) {
       });
       return currentStatements;
     } else {
-      var error = "RADA: Erro a proccessar " + file;
-      if (!legislacao) error += " (Leg inexistente: " + legId + ")";
+      if (!legislacao)
+        errors.push({
+          msg: "Leg inexistente: " + legId,
+        });
       if (entidade == "tip_undefined")
-        error += " (Entidade ou Tipologia inexistente: " + entidadeId + ")";
-      throw error;
+        errors.push({
+          msg: "Entidade ou Tipologia inexistente: " + entidadeId,
+        });
     }
   }
 }
 
-function constructPGD(worksheet, file, stats, code, columns, entidades) {
+function constructPGD(
+  worksheet,
+  file,
+  stats,
+  code,
+  columns,
+  entidades,
+  errors
+) {
   //Carregar as Legislações
   let leg = State.getLegislacoes();
   //Carregar as Entidades
@@ -1820,11 +1839,21 @@ function constructPGD(worksheet, file, stats, code, columns, entidades) {
     });
     return currentStatements;
   } else {
-    throw "PGD: Erro a proccessar " + file + " (Leg não existente)";
+    errors.push({
+      msg: "Leg inexistente: " + legId,
+    });
   }
 }
 
-function constructPGDLCO(worksheet, file, stats, code, columns, entidades) {
+function constructPGDLCO(
+  worksheet,
+  file,
+  stats,
+  code,
+  columns,
+  entidades,
+  errors
+) {
   //Carregar as Legislações
   let leg = State.getLegislacoes();
   //Carregar as Entidades
@@ -1996,11 +2025,19 @@ function constructPGDLCO(worksheet, file, stats, code, columns, entidades) {
     });
     return currentStatements;
   } else {
-    throw "PGD/LC: Erro a proccessar " + file + " (Leg não existente)";
+    errors.push({ msg: "Leg Inexistente: " + legId });
   }
 }
 
-function constructPGDLCP(worksheet, file, stats, code, columns, entidades) {
+function constructPGDLCP(
+  worksheet,
+  file,
+  stats,
+  code,
+  columns,
+  entidades,
+  errors
+) {
   //Carregar as Legislações
   let leg = State.getLegislacoes();
   //Carregar as Entidades
@@ -2191,7 +2228,7 @@ function constructPGDLCP(worksheet, file, stats, code, columns, entidades) {
     });
     return currentStatements;
   } else {
-    throw "PGD/LC: Erro a proccessar " + file + " (Leg não existente)";
+    errors.push({ msg: "Leg Inexistente: " + legId });
   }
 }
 
@@ -2404,15 +2441,21 @@ SelTabs.criarPedidoDoCSV = async function (
         stats,
         code,
         columns,
-        entidades_ts.split()
+        entidades_ts.split(),
+        errors[0].errors
       );
+      if (errors[0].errors.length > 0) throw errors;
+
       let parts = partRequest(pgd, 0);
 
       for (i in parts) {
         try {
           await execQuery("update", `INSERT DATA {${parts[i]}}`);
         } catch (err) {
-          throw "Insucesso na inserção do tabela de seleção\n" + err;
+          errors[0].errors.push({
+            msg: "Insucesso na inserção do tabela de seleção\n" + err,
+          });
+          throw errors;
         }
       }
       await State.loadLegislacao(code.codigo.split("pgd_lc_")[1]);
@@ -2431,15 +2474,21 @@ SelTabs.criarPedidoDoCSV = async function (
         stats,
         code,
         columns,
-        ents_tips.map((e) => e.sigla)
+        ents_tips.map((e) => e.sigla),
+        errors[0].errors
       );
+      if (errors[0].errors.length > 0) throw errors;
+
       let parts = partRequest(pgd, 0);
 
       for (i in parts) {
         try {
           await execQuery("update", `INSERT DATA {${parts[i]}}`);
         } catch (err) {
-          throw "Insucesso na inserção do tabela de seleção\n" + err;
+          errors[0].errors.push({
+            msg: "Insucesso na inserção do tabela de seleção\n" + err,
+          });
+          throw errors;
         }
       }
       await State.loadLegislacao(code.codigo.split("pgd_lc_")[1]);
@@ -2457,15 +2506,21 @@ SelTabs.criarPedidoDoCSV = async function (
       stats,
       code,
       columns,
-      !Array.isArray(entidades_ts) ? entidades_ts.split() : entidades_ts
+      !Array.isArray(entidades_ts) ? entidades_ts.split() : entidades_ts,
+      errors[0].errors
     );
+    if (errors[0].errors.length > 0) throw errors;
+
     let parts = partRequest(pgd, 0);
 
     for (i in parts) {
       try {
         await execQuery("update", `INSERT DATA {${parts[i]}}`);
       } catch (err) {
-        throw "Insucesso na inserção do tabela de seleção\n" + err;
+        errors[0].errors.push({
+          msg: "Insucesso na inserção do tabela de seleção\n" + err,
+        });
+        throw errors;
       }
     }
 
@@ -2484,15 +2539,21 @@ SelTabs.criarPedidoDoCSV = async function (
         stats,
         code,
         columns,
-        entidades_ts.split()
+        entidades_ts.split(),
+        errors[0].errors
       );
+      if (errors[0].errors.length > 0) throw errors;
+
       let parts = partRequest(rada, 0);
 
       for (i in parts) {
         try {
           await execQuery("update", `INSERT DATA {${parts[i]}}`);
         } catch (err) {
-          throw "Insucesso na inserção do tabela de seleção\n" + err;
+          errors[0].errors.push({
+            msg: "Insucesso na inserção do tabela de seleção\n" + err,
+          });
+          throw errors;
         }
       }
       await State.loadLegislacao(code.codigo.split("tsRada_")[1]);
