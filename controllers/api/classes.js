@@ -3,7 +3,7 @@ const normalize = require("../../controllers/api/utils").normalize;
 const Classes = module.exports;
 
 // Devolve a lista de classes de um determinado nível, por omissão do nível 1
-Classes.listar = async nivel => {
+Classes.listar = async (nivel) => {
   if (!nivel) nivel = 1;
 
   var query = `
@@ -46,12 +46,12 @@ Classes.listarPNsComuns = () => {
         }
     `;
 
-  return execQuery("query", query).then(response => normalize(response));
+  return execQuery("query", query).then((response) => normalize(response));
 };
 
 // Devolve a lista de classes de nível 3 que são consideradas processos específicos
 // de uma entidade ou lista de entidades
-Classes.listarPNsEspecificosEntidades = async entidades => {
+Classes.listarPNsEspecificosEntidades = async (entidades) => {
   var query = `
     Select
             ?id
@@ -88,12 +88,12 @@ Classes.listarPNsEspecificosEntidades = async entidades => {
         Order by ?codigo
     `;
 
-  return execQuery("query", query).then(response => normalize(response));
+  return execQuery("query", query).then((response) => normalize(response));
 };
 
 // Devolve a lista de classes de nível 3 que são consideradas processos específicos
 // de uma tipologia ou lista de tipologias
-Classes.listarPNsEspecificosTipologias = async tipologias => {
+Classes.listarPNsEspecificosTipologias = async (tipologias) => {
   var query = `
     Select
             ?id
@@ -130,7 +130,7 @@ Classes.listarPNsEspecificosTipologias = async tipologias => {
         Order by ?codigo
     `;
 
-  return execQuery("query", query).then(response => normalize(response));
+  return execQuery("query", query).then((response) => normalize(response));
 };
 
 // Devolve a lista de classes de nível 3 que são consideradas processos específicos
@@ -155,7 +155,7 @@ Classes.listarPNsEspecificosTodos = async () => {
         Order by ?codigo
     `;
 
-  return execQuery("query", query).then(response => normalize(response));
+  return execQuery("query", query).then((response) => normalize(response));
 };
 
 // Devolve a lista de classes de nível 3 que são consideradas processos específicos
@@ -213,7 +213,7 @@ Classes.listarPNsEspecificos = async (entidades, tipologias) => {
         Order by ?codigo
     `;
 
-  return execQuery("query", query).then(response => normalize(response));
+  return execQuery("query", query).then((response) => normalize(response));
 };
 
 function sortEntsTips(lista) {
@@ -232,7 +232,7 @@ function sortEntsTips(lista) {
 }
 
 // Devolve toda a informação de uma classe
-Classes.retrieve = async id => {
+Classes.retrieve = async (id) => {
   try {
     var classe = {
       // Metainformação e campos da área de Descrição
@@ -304,6 +304,7 @@ Classes.retrieve = async id => {
     classe.status = base[0].status;
     classe.tipoProc = base[0].procTipo || "";
     classe.procTrans = base[0].procTrans || "";
+    classe.pt = base[0].pt || "";
 
     classe.filhos = await Classes.descendencia(id);
     if (classe.filhos.length > 0) {
@@ -339,7 +340,7 @@ Classes.retrieve = async id => {
 };
 
 //Devolve a informação das classes da subárvore com raiz na classe com o id 'id'
-Classes.subarvore = async id => {
+Classes.subarvore = async (id) => {
   var raiz = await Classes.retrieve(id);
 
   for (var i = 0; i < raiz.filhos.length; i++) {
@@ -350,7 +351,7 @@ Classes.subarvore = async id => {
 };
 
 // Devolve a metainformação de uma classe: codigo, titulo, status, desc, codigoPai?, tituloPai?, procTipo?
-Classes.consultar = async id => {
+Classes.consultar = async (id) => {
   var query = `
             SELECT * WHERE {
                 clav:${id} clav:titulo ?titulo;
@@ -377,7 +378,7 @@ Classes.consultar = async id => {
 };
 
 // Devolve a lista de filhos de uma classe: id, codigo, titulo
-Classes.descendencia = async id => {
+Classes.descendencia = async (id) => {
   try {
     var query = `
             SELECT ?id ?codigo ?titulo ?status
@@ -397,48 +398,48 @@ Classes.descendencia = async id => {
 };
 
 // Devolve a lista de notas de aplicação de uma classe: idNota, nota
-Classes.notasAp = id => {
+Classes.notasAp = (id) => {
   var query = `
             SELECT * WHERE {
                 clav:${id} clav:temNotaAplicacao ?idNota.
                 ?idNota clav:conteudo ?nota .
             }`;
-  return execQuery("query", query).then(response => normalize(response));
+  return execQuery("query", query).then((response) => normalize(response));
 };
 
 // Devolve a lista de exemplos de notas de aplicação de uma classe: [exemplo]
-Classes.exemplosNotasAp = id => {
+Classes.exemplosNotasAp = (id) => {
   var query = `
             SELECT ?idExemplo ?exemplo WHERE {
                 clav:${id} clav:temExemploNA ?idExemplo.
                 ?idExemplo clav:conteudo ?exemplo.
             }`;
-  return execQuery("query", query).then(response => normalize(response));
+  return execQuery("query", query).then((response) => normalize(response));
 };
 
 // Devolve a lista de notas de exclusão de uma classe: idNota, nota
-Classes.notasEx = id => {
+Classes.notasEx = (id) => {
   var query = `
             SELECT * WHERE {
                 clav:${id} clav:temNotaExclusao ?idNota.
                 ?idNota clav:conteudo ?nota .
             }`;
-  return execQuery("query", query).then(response => normalize(response));
+  return execQuery("query", query).then((response) => normalize(response));
 };
 
 // Devolve os termos de índice de uma classe: idTI, termo
-Classes.ti = id => {
+Classes.ti = (id) => {
   var query = `
     SELECT * WHERE {
         ?idTI a clav:TermoIndice;
               clav:estaAssocClasse clav:${id} ;
               clav:termo ?termo
     }`;
-  return execQuery("query", query).then(response => normalize(response));
+  return execQuery("query", query).then((response) => normalize(response));
 };
 
 // Devolve a(s) entidade(s) dona(s) do processo: id, tipo, sigla, designacao
-Classes.dono = id => {
+Classes.dono = (id) => {
   var query = `
         SELECT ?id ?idDono ?tipo ?idTipo ?sigla ?designacao WHERE {
             clav:${id} clav:temDono ?id.
@@ -456,11 +457,11 @@ Classes.dono = id => {
             }
         FILTER ( ?tipo NOT IN (owl:NamedIndividual) )
         }`;
-  return execQuery("query", query).then(response => normalize(response));
+  return execQuery("query", query).then((response) => normalize(response));
 };
 
 // Devolve a(s) entidade(s) participante(s) no processo: id, sigla, designacao, tipoParticip
-Classes.participante = id => {
+Classes.participante = (id) => {
   var query = `
         select ?id ?idParticipante ?sigla ?designacao ?idTipo ?tipoParticip ?participLabel where {
             ?particip rdfs:subPropertyOf clav:temParticipante . FILTER(?particip != clav:temParticipante)
@@ -480,11 +481,11 @@ Classes.participante = id => {
                 }
         }
         order by ?participLabel ?idParticipante`;
-  return execQuery("query", query).then(response => normalize(response));
+  return execQuery("query", query).then((response) => normalize(response));
 };
 
 // Devolve o(s) processo(s) relacionado(s): id, codigo, titulo, tipoRel
-Classes.procRel = id => {
+Classes.procRel = (id) => {
   var query = `
         select ?id ?codigo ?titulo ?tipoRel ?idRel ?status WHERE{
             clav:${id} clav:temRelProc ?id;
@@ -498,7 +499,7 @@ Classes.procRel = id => {
         BIND (STRAFTER(STR(?tipoRel), 'clav#') AS ?idRel).
         } Order by ?idRel ?codigo
         `;
-  return execQuery("query", query).then(response => normalize(response));
+  return execQuery("query", query).then((response) => normalize(response));
 };
 
 // Devolve o(s) processo(s) relacionado(s): id, codigo, titulo, tipoRel
@@ -510,11 +511,11 @@ Classes.procRelEspecifico = (id, rel) => {
             ?id clav:codigo ?codigo;
                 clav:titulo ?titulo.
         }`;
-  return execQuery("query", query).then(response => normalize(response));
+  return execQuery("query", query).then((response) => normalize(response));
 };
 
 // Devolve a legislação associada ao contexto de avaliação: id, tipo, numero, sumario
-Classes.legislacao = id => {
+Classes.legislacao = (id) => {
   var query = `
         SELECT ?id ?idLeg ?tipo ?numero ?sumario WHERE {
             clav:${id} clav:temLegislacao ?id.
@@ -523,11 +524,11 @@ Classes.legislacao = id => {
                 clav:diplomaTipo ?tipo.
             BIND (STRAFTER(STR(?id), 'clav#') AS ?idLeg).
         } order by ?tipo ?numero`;
-  return execQuery("query", query).then(response => normalize(response));
+  return execQuery("query", query).then((response) => normalize(response));
 };
 
 // Devolve a informação base do PCA: idPCA, formaContagem, subFormaContagem, idJust, valores, notas
-Classes.pca = id => {
+Classes.pca = (id) => {
   var query = `
         SELECT
             ?idPCA
@@ -558,7 +559,7 @@ Classes.pca = id => {
             }
         }GROUP BY ?idPCA ?formaContagem ?subFormaContagem ?idJust
     `;
-  return execQuery("query", query).then(response => normalize(response));
+  return execQuery("query", query).then((response) => normalize(response));
 };
 
 // Devolve uma justificação, PCA ou DF, que é composta por uma lista de critérios: criterio, tipoLabel, conteudo
@@ -582,7 +583,7 @@ Classes.pca = id => {
 }*/
 
 // Devolve uma justificação, PCA ou DF, que é composta por uma lista de critérios: criterio, tipoLabel, procs relacionados e leg
-Classes.justificacao = async id => {
+Classes.justificacao = async (id) => {
   try {
     var query = `
         SELECT
@@ -642,7 +643,7 @@ Classes.df = function (id) {
                 BIND (STRAFTER(STR(?idJustificacao), 'clav#') AS ?idJust).
             }
         }`;
-  return execQuery("query", query).then(response => normalize(response));
+  return execQuery("query", query).then((response) => normalize(response));
 };
 
 // -----------------------------------------------------------------------
@@ -650,19 +651,19 @@ Classes.criar = function (classe) {
   let notas = "";
   let noteRel = "";
 
-  classe.notasAp.forEach(note => {
+  classe.notasAp.forEach((note) => {
     notas += `
     clav:${note.id} a clav:NotaAplicacao;
-    clav:conteudo "${note.nota.replace(/"/g,'\\"')}";
+    clav:conteudo "${note.nota.replace(/"/g, '\\"')}";
     clav:rdfs:label "Nota de Aplicação".`;
     noteRel += `clav:c${classe.codigo} clav:temNotaAplicacao clav:${note.id}.
     `;
   });
 
-  classe.notasEx.forEach(note => {
+  classe.notasEx.forEach((note) => {
     notas += `
     clav:${note.id} a clav:NotaExclusao;
-    clav:conteudo "${note.nota.replace(/"/g,'\\"')}";
+    clav:conteudo "${note.nota.replace(/"/g, '\\"')}";
     clav:rdfs:label "Nota de Exclusão".`;
     noteRel += `clav:c${classe.codigo} clav:temNotaExclusao clav:${note.id}.
     `;
