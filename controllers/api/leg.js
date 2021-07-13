@@ -347,7 +347,7 @@ Leg.consultar = (id) => {
         }
         OPTIONAL {
             clav:${id} clav:temEntidadeResponsavel ?ent.
-            ?ent clav:entSigla ?entidades;
+            BIND(STRAFTER(STR(?ent), '#') AS ?entidades).
         }
         OPTIONAL {
           clav:${id} clav:temEntidade ?ent1.
@@ -371,20 +371,20 @@ Leg.consultar = (id) => {
     var leg = projection(normalize(response), campos, agrupar)[0];
     leg.entidades = leg.entidades
       .filter((e) => !!e)
-      .map((ent) => {
-        !!ent
+      .map((ent) =>
+        ent
           ? {
               id: ent,
               sigla: ent.includes("ent_")
                 ? ent.split("ent_")[1]
                 : ent.split("tip_")[1],
             }
-          : "";
-      });
+          : ""
+      );
     leg.entidades1 = leg.entidades1
       .filter((e) => !!e)
       .map((ent) =>
-        !!ent
+        ent
           ? {
               id: ent,
               sigla: ent.includes("ent_")
