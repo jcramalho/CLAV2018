@@ -34,8 +34,8 @@ Tipologias.listar = filtro => {
         BIND(STRAFTER(STR(?uri), 'clav#') AS ?id).
 
         FILTER (${filtro}).
-        ORDER by ?sigla
-    }`;
+    }
+    ORDER by ?sigla`;
 
   return execQuery("query", query).then(response => normalize(response));
 };
