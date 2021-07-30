@@ -3,7 +3,7 @@ const { execQuery } = require("./utils");
 const { normalize } = require("./utils");
 const { projection } = require("./utils");
 const Pedidos = require("./pedidos");
-const { pca } = require("./classes");
+const { retrieve } = require("./classes");
 const Classe = require("./classes");
 const Tipologias = require("./tipologias");
 const State = require("../state");
@@ -1845,7 +1845,191 @@ function constructPGD(
   }
 }
 
-function constructPGDLCO(
+async function getClasseInfo(codigos) {
+  var statements = "";
+  for (const { classeId, codigo } of codigos) {
+    var pcaJustId = "";
+    try {
+      var classe = await retrieve("c" + codigo);
+
+      if (classe) {
+        //Justificação do PCA
+        var justPCA = classe.pca.justificacao;
+        if (justPCA && justPCA.length > 0) {
+          pcaJustId = "just_pca_" + classeId;
+          statements +=
+            "\n###  http://jcr.di.uminho.pt/m51-clav#" + pcaJustId + "\n";
+          statements += "clav:" + pcaJustId + " a clav:JustificacaoPCA .\n";
+
+          for (const [i, crit] of justPCA.entries()) {
+            const critId = "crit_just_pca_" + classeId + "_" + (i + 1);
+            statements +=
+              "\n###  http://jcr.di.uminho.pt/m51-clav#" + critId + "\n";
+
+            statements += "clav:" + critId + " a clav:" + crit.tipoId + " .\n";
+            for (const processo of crit.processos) {
+              statements +=
+                "clav:" +
+                critId +
+                " clav:critTemProcRel clav:" +
+                processo.procId +
+                " .\n";
+              statements += "\n###\n";
+            }
+            for (const critLeg of crit.legislacao) {
+              statements +=
+                "clav:" +
+                critId +
+                " clav:critTemLegAssoc clav:" +
+                critLeg.legId +
+                " .\n";
+              statements += "\n###\n";
+            }
+
+            statements +=
+              "clav:" +
+              critId +
+              ' clav:conteudo "' +
+              crit.conteudo.replace(/\r?\n|\r/g, " ").replace(/["]/g, '\\"') +
+              '" .\n';
+            statements += "\n###\n";
+            statements +=
+              "clav:" + pcaJustId + " clav:temCriterio clav:" + critId + " .\n";
+          }
+
+          statements +=
+            "clav:pca_" +
+            classeId +
+            " clav:temJustificacao clav:" +
+            pcaJustId +
+            " .\n";
+        }
+
+        //Justificação do DF
+        var dfJustId = "";
+        var justDF = classe.df.justificacao;
+        if (justDF && justDF.length > 0) {
+          dfJustId = "just_df_" + classeId;
+          statements +=
+            "\n###  http://jcr.di.uminho.pt/m51-clav#" + dfJustId + "\n";
+          statements += "clav:" + dfJustId + " a clav:JustificacaoDF .\n";
+
+          for (const [i, crit] of justDF.entries()) {
+            const critId = "crit_just_df_" + classeId + "_" + (i + 1);
+            statements +=
+              "\n###  http://jcr.di.uminho.pt/m51-clav#" + critId + "\n";
+
+            statements += "clav:" + critId + " a clav:" + crit.tipoId + " .\n";
+            for (const processo of crit.processos) {
+              statements +=
+                "clav:" +
+                critId +
+                " clav:critTemProcRel clav:" +
+                processo.procId +
+                " .\n";
+              statements += "\n###\n";
+            }
+            for (const critLeg of crit.legislacao) {
+              statements +=
+                "clav:" +
+                critId +
+                " clav:critTemLegAssoc clav:" +
+                critLeg.legId +
+                " .\n";
+              statements += "\n###\n";
+            }
+
+            statements +=
+              "clav:" +
+              critId +
+              ' clav:conteudo "' +
+              crit.conteudo.replace(/\r?\n|\r/g, " ").replace(/["]/g, '\\"') +
+              '" .\n';
+            statements += "\n###\n";
+            statements +=
+              "clav:" + dfJustId + " clav:temCriterio clav:" + critId + " .\n";
+          }
+
+          statements +=
+            "clav:df_" +
+            classeId +
+            " clav:temJustificacao clav:" +
+            dfJustId +
+            " .\n";
+        }
+
+        /*
+        Contexto da Classe
+        */
+        //Tipo
+        statements +=
+          classe.pt.trim() != ""
+            ? "clav:" +
+              classeId +
+              " clav:processoTipoVC clav:" +
+              classe.pt.split("#")[1].trim() +
+              " .\n"
+            : "";
+        //Transversalidade
+        statements +=
+          "clav:" +
+          classeId +
+          ' clav:processoTransversal "' +
+          classe.procTrans +
+          '" .\n';
+
+        //Donos
+        for (const dono of classe.donos) {
+          statements +=
+            "clav:" + classeId + " clav:temDono clav:" + dono.idDono + " .\n";
+        }
+
+        //Participantes
+        for (const participante of classe.participantes) {
+          statements +=
+            "clav:" +
+            classeId +
+            " clav:temParticipante" +
+            participante.participLabel +
+            " clav:" +
+            participante.idParticipante +
+            " .\n";
+        }
+
+        statements += "\n###\n";
+        //Processos Relacionados
+        for (const proc of classe.processosRelacionados) {
+          statements +=
+            "clav:" +
+            classeId +
+            " clav:temRelProc clav:c" +
+            proc.codigo +
+            " ;\n\t clav:" +
+            proc.idRel +
+            " clav:c" +
+            proc.codigo +
+            " .\n";
+          statements += "\n###\n";
+        }
+        //Legislação
+        for (const leg of classe.legislacao) {
+          statements +=
+            "clav:" +
+            classeId +
+            " clav:temLegislacao clav:" +
+            leg.idLeg +
+            " .\n";
+          statements += "\n###\n";
+        }
+      }
+    } catch (erro) {
+      throw codigo + "-" + erro;
+    }
+  }
+  return statements;
+}
+
+async function constructPGDLCO(
   worksheet,
   file,
   stats,
@@ -1868,6 +2052,7 @@ function constructPGDLCO(
   )[0];
   if (legislacao) {
     var pais = [];
+    var codigos = [];
     var n = 0;
     code.codigo = "pgd_lc_" + legislacao.id;
     var currentStatements =
@@ -1906,6 +2091,7 @@ function constructPGDLCO(
       notasDF = notasDF.replace(/\r?\n|\r/g, " ").replace(/["]/g, '\\"');
 
       var classeId = "classe_" + nanoid() + "_pgd_" + legislacao.id;
+
       currentStatements +=
         "\n###  http://jcr.di.uminho.pt/m51-clav#" + classeId + "\n";
       currentStatements +=
@@ -2022,14 +2208,27 @@ function constructPGDLCO(
           currentStatements +=
             "clav:df_" + classeId + ' clav:dfNota "' + notasDF + '" .\n';
       }
+      if (nivel === 3 || nivel === 4) {
+        codigos.push({ classeId, codigo });
+      }
     });
+    try {
+      currentStatements += await getClasseInfo(codigos);
+    } catch (erro) {
+      errors.push({
+        msg: `Erro ao processar a Classe ${
+          erro.split("-")[0]
+        }. Verifique se esta existe no Sistema`,
+      });
+    }
+
     return currentStatements;
   } else {
     errors.push({ msg: "Leg Inexistente: " + legId });
   }
 }
 
-function constructPGDLCP(
+async function constructPGDLCP(
   worksheet,
   file,
   stats,
@@ -2052,6 +2251,8 @@ function constructPGDLCP(
   )[0];
   if (legislacao) {
     var pais = [];
+    var codigos = [];
+
     var n = 0;
     code.codigo = "pgd_lc_" + legislacao.id;
     var currentStatements =
@@ -2225,7 +2426,22 @@ function constructPGDLCP(
           currentStatements +=
             "clav:df_" + classeId + ' clav:dfNota "' + notasDF + '" .\n';
       }
+
+      if (nivel === 3 || nivel === 4) {
+        codigos.push({ classeId, codigo });
+      }
     });
+
+    try {
+      currentStatements += await getClasseInfo(codigos);
+    } catch (erro) {
+      errors.push({
+        msg: `Erro ao processar a Classe ${
+          erro.split("-")[0]
+        }. Verifique se esta existe no Sistema`,
+      });
+    }
+
     return currentStatements;
   } else {
     errors.push({ msg: "Leg Inexistente: " + legId });
@@ -2435,7 +2651,7 @@ SelTabs.criarPedidoDoCSV = async function (
         participantes: 0,
       };
       var code = { codigo: "" };
-      let pgd = constructPGDLCO(
+      let pgd = await constructPGDLCO(
         worksheet,
         file,
         stats,
@@ -2468,7 +2684,7 @@ SelTabs.criarPedidoDoCSV = async function (
         participantes: 0,
       };
       var code = { codigo: "" };
-      let pgd = constructPGDLCP(
+      let pgd = await constructPGDLCP(
         worksheet,
         file,
         stats,
@@ -2480,7 +2696,6 @@ SelTabs.criarPedidoDoCSV = async function (
       if (errors[0].errors.length > 0) throw errors;
 
       let parts = partRequest(pgd, 0);
-
       for (i in parts) {
         try {
           await execQuery("update", `INSERT DATA {${parts[i]}}`);
@@ -2568,37 +2783,44 @@ function partRequest(req, parts) {
   // Partição feita automáticamente quando o argumento parts é = 0
   if (parts === 0) {
     let div = Math.floor(req.split(/\r\n|\r|\n/).length / 10000);
-    req.length;
-    req.spilt;
-
     if (div > 0) {
+      let chunk = Math.floor(req.length / div);
+      let index = chunk;
       for (var i = 0; i < div; i++) {
-        let mid = Math.floor(req.length / (div - i) - 1);
-        let index;
-        for (index = mid; index < req.length; index++) {
+        for (; index < req.length; index++) {
+          if (i === div - 1) {
+            index === req.length - 1;
+            break;
+          }
           if (/#/g.test(req[index + 1]) && /\r\n|\n|\r/g.test(req[index]))
             break;
         }
 
         pgdParts.push(req.slice(prev, index));
         prev = index;
+        index += chunk;
       }
     } else {
       pgdParts.push(req);
     }
   } else {
+    let chunk = Math.floor(req.length / parts);
+    let index = chunk;
     for (var i = 0; i < parts; i++) {
-      let mid = Math.floor(req.length / (parts - i)) - 1;
-      let index;
-      for (index = mid; index < req.length; index++) {
+      for (; index < req.length; index++) {
+        if (i === div - 1) {
+          index === req.length - 1;
+          break;
+        }
         if (/#/g.test(req[index + 1]) && /(\r\n|\n|\r)/g.test(req[index]))
           break;
       }
 
       prev != index ? pgdParts.push(req.slice(prev, index)) : "";
       prev = index;
+      index += chunk;
       // Caso o número de partes pedida é superior ao valor de partições possíveis no ficheiro
-      if (index == req.length - 1) break;
+      if (index >= req.length - 1) break;
     }
   }
 

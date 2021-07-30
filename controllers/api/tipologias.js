@@ -31,9 +31,9 @@ Tipologias.listar = filtro => {
             clav:tipEstado ?estado;
             clav:tipDesignacao ?designacao ;
             clav:tipSigla ?sigla .
-        BIND(STRAFTER(STR(?uri), 'clav#') AS ?id)
+        BIND(STRAFTER(STR(?uri), 'clav#') AS ?id).
 
-        FILTER (${filtro})
+        FILTER (${filtro}).
     }`;
 
   return execQuery("query", query).then(response => normalize(response));
