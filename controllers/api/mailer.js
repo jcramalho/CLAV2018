@@ -16,6 +16,22 @@ Mailer.sendEmailRecuperacao = function(destination, link){
     mailer.send(msg);
 }
 
+
+Mailer.sendEmailNovo = function(destination, notificacao){
+  var conteudo = "Pedido nrº: " + notificacao.pedido + ".<br/>" +
+    notificacao.acao + " de " + notificacao.tipo + ".<br/><br/>" +
+    "Movido para " + notificacao.novoEstado + ".<br/>" + 
+    "Entidade responsavel: " + notificacao.entidade.split("_")[1] + ".<br/>"
+
+  const msg = {
+      from: 'clav@dglab.gov.pt',
+      to: destination,
+      subject: 'CLAV: Novo Pedido',
+      html: conteudo,
+  };
+  mailer.send(msg);
+}
+
 Mailer.sendEmailRegistoAPI = function(destination, jwt){
   const msg = {
       from: 'api@clav.dglab.gov.pt',
