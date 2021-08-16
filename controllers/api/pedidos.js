@@ -166,6 +166,7 @@ Pedidos.atualizar = async function (id, pedidoParams) {
               : pedidoParams.distribuicao.responsavel,
           };
           var newNotificacao = new Notificacao(notificacao);
+          if(pedidoParams.pedido.estado == "Devolvido") Mailer.sendEmailDevolvido(pedidoParams.user.email, notificacao);
         }
 
         try {
