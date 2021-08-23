@@ -21,6 +21,19 @@ Mailer.sendEmailRecuperacao = function(destination, link){
   mailer.send(msg);
 }
 
+Mailer.sendEmailRegistoAPI = function(destination, jwt){
+  var conteudo =  templateEmails("Registo chave API", "Obrigado pelo seu registo na plataforma CLAV. Em baixo pode ver a sua chave API, que deve utilizar para qualquer pedido na plataforma."
+  + "<br/><br/><div>" + jwt 
+  + "</div></br></br>" +
+  "Esta chave API pode ser enviada na query string <strong>apikey</strong> ou no campo do cabeçalho <strong>Authorization</strong> com o formato <strong>apikey <chave API></strong> de modo a ser validada na nossa plataforma." + "<div style='color: red; text-align: center;'>Esta chave API é válida por apenas 30 dias após a sua emissão.</div>");
+  const msg = {
+      from: 'api@clav.dglab.gov.pt',
+      to: destination,
+      subject: 'CLAV: Registo chave API',
+      html: conteudo,
+  };
+  mailer.send(msg);
+}
 
 Mailer.sendEmailNovo = function(destination, notificacao){
   var conteudo =  templateEmails("Novo Pedido", "Pedido nrº: " + notificacao.pedido + ".<br/>" +
@@ -47,20 +60,6 @@ Mailer.sendEmailDevolvido = function(destination, notificacao){
       from: 'clav@dglab.gov.pt',
       to: destination,
       subject: 'CLAV: Pedido Devolvido',
-      html: conteudo,
-  };
-  mailer.send(msg);
-}
-
-Mailer.sendEmailRegistoAPI = function(destination, jwt){
-  var conteudo =  templateEmails("Registo chave API", "Obrigado pelo seu registo na plataforma CLAV. Em baixo pode ver a sua chave API, que deve utilizar para qualquer pedido na plataforma."
-  + "<br/><br/><div>" + jwt 
-  + "</div></br></br>" +
-  "Esta chave API pode ser enviada na query string <strong>apikey</strong> ou no campo do cabeçalho <strong>Authorization</strong> com o formato <strong>apikey <chave API></strong> de modo a ser validada na nossa plataforma." + "<div style='color: red; text-align: center;'>Esta chave API é válida por apenas 30 dias após a sua emissão.</div>");
-  const msg = {
-      from: 'api@clav.dglab.gov.pt',
-      to: destination,
-      subject: 'CLAV: Registo chave API',
       html: conteudo,
   };
   mailer.send(msg);

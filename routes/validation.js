@@ -566,6 +566,7 @@ module.exports.vcPedidoAcao = [
 ];
 module.exports.vcPedidoEstado = [
   "Submetido",
+  "Ressubmetido",
   "Distribuído",
   "Apreciado",
   "Redistribuído",
