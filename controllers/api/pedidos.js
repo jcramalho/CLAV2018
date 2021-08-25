@@ -204,6 +204,35 @@ Pedidos.adicionarDistribuicao = (codigo, distribuicao) => {
 };
 
 /**
+ * Apagar um pedido.
+ * @param id Id do pedido a apagar.
+ * @return {Promise<void>}
+ * @throws {Error} Se o pedido não existir.
+ * @throws {Error} Se o pedido não puder ser apagado.
+ */
+ 
+Pedidos.apagar = async function (pedido, emailUser) {
+  return new Promise((resolve, reject) => {
+      let filtro = { codigo: pedido }
+      if(emailUser) {
+          filtro["criadoPor"] = emailUser
+      }
+
+      Pedido.findOneAndDelete(filtro, function (err, delPedido) {
+        console.log(delPedido);
+          if (err) {
+              reject(err);
+          } else if(delPedido) {
+              resolve("Pedido removido com sucesso!")
+              //resolve("Pendente removido")
+          } else {
+              reject(`O pendente não existe ou não tem permissões para o apagar`)
+          }
+      })
+  })
+}
+
+/**
  * Apaga todos os pendentes no sistema.
  *
  */

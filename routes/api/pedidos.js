@@ -153,6 +153,21 @@ router.put('/', Auth.isLoggedInUser, Auth.checkLevel([3.5, 4, 5, 6, 7]), [
         .catch(erro => res.status(500).send(`Erro na atualização do pedido: ${erro}`));
 })
 
+// Apaga um pedido
+router.delete('/:id',
+    Auth.isLoggedInUser,
+    Auth.checkLevel([1, 2, 3, 3.5, 4, 5, 6, 7]), (req, res) => {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        console.log(errors)
+        return res.status(422).jsonp(errors.array())
+    }
+    Pedidos.apagar(req.params.id, req.user.email)
+        .then(dados => res.jsonp(dados))
+        .catch(erro => res.status(500).send(`Erro na remoção do pedido '${req.params._id}': ${erro}`));
+})
+
+
 // Adição de distribuição 
 router.post('/:codigo/distribuicao', Auth.isLoggedInUser, Auth.checkLevel([3.5, 4, 5, 6, 7]), [
     verificaPedidoCodigo('param', 'codigo'),
