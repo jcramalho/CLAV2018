@@ -1,12 +1,13 @@
-const execQuery = require("../../controllers/api/utils").execQuery;
-const normalize = require("../../controllers/api/utils").normalize;
+const { execQuery } = require("./utils");
+const { normalize } = require("./utils");
+const { projection } = require("./utils");
 var Pedidos = require("../../controllers/api/pedidos");
 
 var PGD = module.exports;
 
 PGD.listar = async function () {
   let query = `
-  select ?idPGD ?idLeg ?data ?numero ?tipo ?sumario ?link ?estado where { 
+  select ?idPGD ?idLeg ?data ?numero ?tipo ?sumario ?link ?estado ?entidades where { 
     ?uri a clav:PGD ;
         clav:eRepresentacaoDe ?l .
       ?l clav:diplomaData ?data;
@@ -16,19 +17,37 @@ PGD.listar = async function () {
          clav:diplomaFonte "PGD" ;
          clav:diplomaLink ?link ;
          clav:diplomaEstado ?estado .
+    OPTIONAL {
+          ?uri clav:temEntidade ?entidades .
+    }
     BIND(STRAFTER(STR(?uri), 'clav#') AS ?idPGD).
     BIND(STRAFTER(STR(?l), 'clav#') AS ?idLeg).
   } 
   `;
 
-  return execQuery("query", query).then((response) => {
-    return normalize(response);
-  });
+  const campos = [
+    "idPGD",
+    "idLeg",
+    "data",
+    "numero",
+    "tipo",
+    "sumario",
+    "link",
+    "estado",
+  ];
+  const agrupar = ["entidades"];
+
+  try {
+    const result = await execQuery("query", query);
+    return projection(normalize(result), campos, agrupar);
+  } catch (erro) {
+    throw erro;
+  }
 };
 
 PGD.listarLC = async function () {
   let query = `
-  select ?idPGD ?idLeg ?data ?numero ?tipo ?sumario ?link ?estado where { 
+  select ?idPGD ?idLeg ?data ?numero ?tipo ?sumario ?link ?estado ?entidades where { 
     ?uri a clav:PGD ;
         clav:eRepresentacaoDe ?l .
       ?l clav:diplomaData ?data;
@@ -38,14 +57,32 @@ PGD.listarLC = async function () {
          clav:diplomaFonte "PGD/LC" ;
          clav:diplomaLink ?link ;
          clav:diplomaEstado ?estado .
+         OPTIONAL {
+          ?uri clav:temEntidade ?entidades .
+      }
     BIND(STRAFTER(STR(?uri), 'clav#') AS ?idPGD).
     BIND(STRAFTER(STR(?l), 'clav#') AS ?idLeg).
   } 
   `;
 
-  return execQuery("query", query).then((response) => {
-    return normalize(response);
-  });
+  const campos = [
+    "idPGD",
+    "idLeg",
+    "data",
+    "numero",
+    "tipo",
+    "sumario",
+    "link",
+    "estado",
+  ];
+  const agrupar = ["entidades"];
+
+  try {
+    const result = await execQuery("query", query);
+    return projection(normalize(result), campos, agrupar);
+  } catch (erro) {
+    throw erro;
+  }
 };
 
 PGD.listarRADA = async function () {
@@ -150,7 +187,7 @@ PGD.consultar = async function (idPGD) {
         var queryDonos = `
           SELECT ?entDono WHERE {
             clav:${r.classe} clav:temDono ?uriEntDono .
-            BIND(STRAFTER(STR(?uriEntDono), 'ent_') AS ?entDono).
+            BIND(STRAFTER(STR(?uriEntDono), '#') AS ?entDono).
           }
         `;
         var resultDonos = await execQuery("query", queryDonos);
@@ -160,7 +197,7 @@ PGD.consultar = async function (idPGD) {
         var queryParts = `
           SELECT ?entParticipante WHERE {
             clav:${r.classe} clav:temParticipante ?uriEntParticipante .
-            BIND(STRAFTER(STR(?uriEntParticipante), 'ent_') AS ?entParticipante).
+            BIND(STRAFTER(STR(?uriEntParticipante), '#') AS ?entParticipante).
           }
         `;
         var resultParts = await execQuery("query", queryParts);
@@ -178,6 +215,7 @@ PGD.consultar = async function (idPGD) {
       }
       i++;
     }
+
     return result;
   } catch (erro) {
     throw erro;

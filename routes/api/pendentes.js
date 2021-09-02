@@ -12,6 +12,7 @@ router.get('/', (req, res) => {
     if(req.user.level < 3.5){
         filtro["criadoPor"] = req.user.email
     }
+    filtro["entidade"] = req.user.entidade
 
     Pendentes.listar(filtro)
         .then(dados => res.jsonp(dados))
@@ -71,6 +72,7 @@ router.post('/', [
         return res.status(422).jsonp(errors.array())
     }
 
+    req.body.entidade = req.user.entidade;
     Pendentes.criar(req.body)
         .then(dados => res.jsonp(dados))
         .catch(erro => res.status(500).send(`Erro ao guardar trabalho pendente: ${erro}`));

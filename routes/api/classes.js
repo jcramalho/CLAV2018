@@ -454,7 +454,6 @@ router.post("/", (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(422).jsonp(errors.array());
   }
-
   Classes.criar(req.body)
     .then(dados => {
       State.updateClasseTreeInfo(req.body);

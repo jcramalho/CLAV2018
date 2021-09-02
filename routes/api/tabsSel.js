@@ -48,10 +48,11 @@ router.get("/:id", [verificaTSId("param", "id")], function (
     return res.status(422).jsonp(errors.array());
   }
 
-  SelTabs.consultar(req.params.id)
-    .then((result) => res.send(result))
-    .catch((err) => res.status(500).json(`Erro ao obter TS: ${err}`));
-});
+    SelTabs.consultar(req.params.id)
+      .then((result) => res.send(result))
+      .catch((err) => res.status(500).json(`Erro ao obter TS: ${err}`));
+  }
+);
 
 router.post(
   "/",
@@ -62,7 +63,7 @@ router.post(
       return res.status(422).jsonp(errors.array());
     }
 
-    SelTabs.adicionar(req.body.tabela,req.body.leg)
+    SelTabs.adicionar(req.body.tabela, req.body.leg)
       .then((dados) => res.jsonp(dados))
       .catch((err) =>
         res.status(500).send(`Erro na criação de tabela de seleção: ${err}`)
@@ -85,18 +86,19 @@ router.post(
       } else {
         form.parse(req, async (error, fields, formData) => {
           if (!error) {
+            fields.multImport = fields.multImport === "true";
             if (
               formData.file &&
               formData.file.type &&
               formData.file.path &&
+              ((fields.entidades_ts && fields.designacao) ||
+                fields.multImport) &&
               fields.tipo_ts &&
-              fields.designacao &&
-              fields.fonteL &&
-              fields.entidades_ts
+              fields.fonteL
             ) {
               var workbook = new Excel.Workbook();
 
-              if (!fields.entidades_ts) {
+              if (!fields.multImport && !fields.entidades_ts) {
                 res
                   .status(500)
                   .json(
@@ -147,11 +149,12 @@ router.post(
                     workbook,
                     user.email,
                     req.user.entidade,
-                    fields.entidades_ts,
+                    !fields.multImport ? fields.entidades_ts : "",
+                    !fields.multImport ? fields.designacao : "",
                     fields.tipo_ts,
-                    fields.designacao,
                     fields.fonteL,
-                    formData.file.name
+                    formData.file.name,
+                    fields.multImport
                   )
                     .then((codigoPedido) => res.json(codigoPedido))
                     .catch((erro) =>
@@ -169,15 +172,16 @@ router.post(
                       workbook,
                       user.email,
                       req.user.entidade,
-                      fields.entidades_ts,
+                      !fields.multImport ? fields.entidades_ts : "",
+                      !fields.multImport ? fields.designacao : "",
                       fields.tipo_ts,
-                      fields.designacao,
                       fields.fonteL,
-                      formData.file.name
+                      formData.file.name,
+                      fields.multImport
                     )
                       .then((dados) => res.json(dados))
                       .catch((erro) => {
-                        if (erro.entidades) {
+                        if (erro.length > 0 || erro.entidades) {
                           res.status(500).json(erro);
                         } else {
                           res

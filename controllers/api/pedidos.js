@@ -1,4 +1,5 @@
 const Pedido = require("../../models/pedido");
+const Notificacao = require("../../models/notificacoes");
 const Pedidos = module.exports;
 var Logging = require("../logging");
 
@@ -20,7 +21,15 @@ Pedidos.listar = (filtro) => {
 
 // lista dos pedidos apenas com a metainformação
 Pedidos.listarMeta = () => {
-  return Pedido.find({}, ['codigo','data','estado','criadoPor','entidade']);
+  return Pedido.find({}, [
+    "codigo",
+    "data",
+    "objeto.tipo",
+    "objeto.acao",
+    "estado",
+    "criadoPor",
+    "entidade",
+  ]);
 };
 
 // Recupera a lista de pedidos de determinado tipo
@@ -36,7 +45,7 @@ Pedidos.getByTipo = function (tipo) {
  * @return {Promise<Pedido | Error>} promessa que quando cumprida possui o
  * pedido com o código especificado, ou `undefined` se o pedido não existe.
  */
-Pedidos.consultar = (codigo) => {
+Pedidos.consultar = async (codigo) => {
   return Pedido.findOne({ codigo: codigo });
 };
 
@@ -69,8 +78,8 @@ Pedidos.criar = async function (pedidoParams) {
   if (pedidoParams.novoObjeto.codigo) {
     pedido.objeto.codigo = pedidoParams.novoObjeto.codigo;
   }
-  
-  if(pedidoParams.pedidos_dependentes) {
+
+  if (pedidoParams.pedidos_dependentes) {
     pedido.pedidos_dependentes = pedidoParams.pedidos_dependentes;
   }
 
@@ -82,6 +91,24 @@ Pedidos.criar = async function (pedidoParams) {
 
   try {
     newPedido = await newPedido.save();
+    const notificacao = {
+      entidade: pedidoParams.entidade,
+      pedido: newPedido.codigo,
+      acao: pedidoParams.tipoPedido,
+      tipo: pedidoParams.tipoObjeto,
+      novoEstado: "Submetido",
+      criadoPor: pedidoParams.user.email,
+    };
+
+    var newNotificacao = new Notificacao(notificacao);
+
+    try {
+      newNotificacao = await newNotificacao.save();
+    } catch (err) {
+      console.log(err);
+      throw "Ocorreu um erro a submeter a notificação! Tente novamente mais tarde";
+    }
+
     return newPedido.codigo;
   } catch (err) {
     console.log(err);
@@ -96,20 +123,67 @@ Pedidos.criar = async function (pedidoParams) {
  * @return {Pedido} Código do pedido criado.
  */
 Pedidos.atualizar = async function (id, pedidoParams) {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
+    var pedido = await Pedido.findOne({ codigo: pedidoParams.pedido.codigo });
     Pedido.findByIdAndRemove(id, async function (error) {
       if (error) {
         reject(error);
       } else {
-        var novoPedido = new Pedido(pedidoParams.pedido);
-        novoPedido.distribuicao.push(pedidoParams.distribuicao);
+        var novoPedido = JSON.parse(JSON.stringify(pedido));
+        delete novoPedido._id;
+        novoPedido.estado = pedidoParams.pedido.estado;
+        if (
+          (pedidoParams.pedido.estado == "Distribuído" &&
+          !pedidoParams.pedido.objeto.dados) || pedidoParams.pedido.estado == "Devolvido"
+        ) {
+          novoPedido.historico.push(
+            novoPedido.historico[novoPedido.historico.length - 1]
+          );
+          novoPedido.objeto.acao = pedidoParams.pedido.objeto.acao;
+        } else {
+          novoPedido.objeto = pedidoParams.pedido.objeto;
+          novoPedido.historico = pedidoParams.pedido.historico;
+        }
+
+        if (
+          !(
+            Object.keys(pedidoParams.distribuicao).length === 1 &&
+            pedidoParams.distribuicao.responsavel
+          )
+        ) {
+          novoPedido.distribuicao.push(pedidoParams.distribuicao);
+          const notificacao = {
+            entidade: pedidoParams.pedido.entidade,
+            pedido: pedidoParams.pedido.codigo,
+            acao: pedidoParams.pedido.objeto.acao,
+            tipo: pedidoParams.pedido.objeto.tipo,
+            novoEstado: pedidoParams.pedido.estado,
+            criadoPor: pedidoParams.pedido.criadoPor,
+            responsavel: pedidoParams.distribuicao.proximoResponsavel
+              ? pedidoParams.distribuicao.proximoResponsavel.nome
+              : pedidoParams.distribuicao.responsavel,
+          };
+          var newNotificacao = new Notificacao(notificacao);
+        }
 
         try {
-          novoPedido = await novoPedido.save();
-          resolve(novoPedido.codigo);
+          !(
+            Object.keys(pedidoParams.distribuicao).length === 1 &&
+            pedidoParams.distribuicao.responsavel
+          )
+            ? (newNotificacao = await newNotificacao.save())
+            : "";
+
+          try {
+            novoPedido = await new Pedido(novoPedido).save();
+            resolve(novoPedido.codigo);
+          } catch (err) {
+            console.log(err);
+            reject(err);
+          }
         } catch (err) {
           console.log(err);
-          reject(err);
+          throw "Ocorreu um erro a submeter a notificação! Tente novamente mais tarde";
         }
       }
     });

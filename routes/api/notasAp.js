@@ -1,11 +1,11 @@
 var NotasAp = require('../../controllers/api/notasAp.js');
 var State = require('../../controllers/state.js')
 
-var express = require('express');
+var express = require("express");
 var router = express.Router();
 
-const { validationResult } = require('express-validator');
-const { existe } = require('../validation')
+const { validationResult } = require("express-validator");
+const { existe } = require("../validation");
 
 // Verifica se uma determinada notaAplicação já existe
 router.get('/notaAp', [
@@ -16,10 +16,25 @@ router.get('/notaAp', [
         return res.status(422).jsonp(errors.array())
     }
 
-    State.verificaNA(req.query.valor)
-        .then(dados => res.jsonp(dados))
-        .catch(erro => res.status(500).send(`Erro na verificação de uma nota de aplicação: ${erro}`))
-})
+    if (req.query.classe) {
+      State.verificaNATS(req.query.valor, req.query.classe)
+        .then((dados) => res.jsonp(dados))
+        .catch((erro) =>
+          res
+            .status(500)
+            .send(`Erro na verificação de uma nota de aplicação: ${erro}`)
+        );
+    } else {
+      State.verificaNA(req.query.valor)
+        .then((dados) => res.jsonp(dados))
+        .catch((erro) =>
+          res
+            .status(500)
+            .send(`Erro na verificação de uma nota de aplicação: ${erro}`)
+        );
+    }
+  }
+);
 
 // Devolve a lista de todas as notas de aplicação: idNota, nota, codigoProc, tituloProc
 router.get('/', (req, res) => {

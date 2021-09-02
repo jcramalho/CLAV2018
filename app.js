@@ -192,6 +192,7 @@ mainRouter.use('/rada', require('./routes/api/rada'));
 mainRouter.use('/contador', require('./routes/api/contador'));
 mainRouter.use('/ficheirosEstaticos', require('./routes/api/ficheirosEstaticos'));
 mainRouter.use('/ppds', require('./routes/api/ppds'));
+mainRouter.use('/notificacoes', require('./routes/api/notificacoes'));
 
 app.use('/' + dataBases.apiVersion, mainRouter);
 
