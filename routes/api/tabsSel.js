@@ -222,4 +222,21 @@ router.post(
   }
 );
 
+router.delete(
+  "/:id",
+  Auth.isLoggedInUser,
+  Auth.checkLevel([7]),
+  async function (req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).jsonp(errors.array());
+    }
+    SelTabs.deleteTS(req.params.id, "leg_" + req.params.id.split("_leg_")[1])
+      .then((dados) => res.jsonp(dados))
+      .catch((err) =>
+        res.status(500).send(`Erro na criação de tabela de seleção: ${err}`)
+      );
+  }
+);
+
 module.exports = router;
