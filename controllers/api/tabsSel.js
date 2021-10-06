@@ -1779,7 +1779,10 @@ function constructPGD(
       "\tclav:eRepresentacaoDe clav:" + legislacao.id + " .\n";
 
     currentStatements += entidades
-      .map((e) => `clav:${legislacao.id} clav:temEntidade clav:${e} .\n`)
+      .map(
+        (e) =>
+          `clav:${legislacao.id} clav:temEntidade clav:${e} .\nclav:pgd_${legislacao.id} clav:temEntidade clav:${e} .\n`
+      )
       .reduce((prev, ent) => prev + ent);
 
     worksheet.eachRow((row, rowNumber) => {
@@ -2107,6 +2110,13 @@ async function constructPGDLCO(
     currentStatements +=
       "clav:" + legislacao.id + " clav:temEntidade clav:" + entidade + " .\n";
 
+    currentStatements +=
+      "clav:pgd_lc_" +
+      legislacao.id +
+      " clav:temEntidade clav:" +
+      entidade +
+      " .\n";
+
     worksheet.eachRow((row, rowNumber) => {
       if (rowNumber == 1) return;
       var codigo = row.getCell(columns.codigos).text || "";
@@ -2307,7 +2317,16 @@ async function constructPGDLCP(
 
     currentStatements += entidades
       .map(
-        (e) => "clav:" + legislacao.id + " clav:temEntidade clav:" + e + " .\n"
+        (e) =>
+          "clav:" +
+          legislacao.id +
+          " clav:temEntidade clav:" +
+          e +
+          " .\nclav:pgd_lc_" +
+          legislacao.id +
+          " clav:temEntidade clav:" +
+          e +
+          " .\n"
       )
       .reduce((prev, ent) => prev + ent);
 
