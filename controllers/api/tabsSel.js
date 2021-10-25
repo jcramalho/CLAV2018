@@ -637,7 +637,7 @@ async function validateColumnsValues(
             const siglas = c[i].split("#");
             siglas[siglas.length - 1] == "" ? siglas.pop() : "";
             for (let sigla of siglas) {
-              sigla = sigla.replace(/\r?\n|\r|\s*/g, "");
+              sigla = sigla.replace(/\r?\n|\r|\s*/g, "").normalize("NFC");
               const aux = ents_tips.filter((e) => e.sigla == sigla);
 
               if (!aux.length > 0) {
@@ -666,7 +666,7 @@ async function validateColumnsValues(
             const siglas = p[i].split("#");
             siglas[siglas.length - 1] == "" ? siglas.pop() : "";
             for (let sigla of siglas) {
-              sigla = sigla.replace(/\r?\n|\r|\s*/g, "");
+              sigla = sigla.replace(/\r?\n|\r|\s*/g, "").normalize("NFC");
               const aux = ents_tips.filter((e) => e.sigla == sigla);
               if (!aux.length > 0) {
                 errors.push({
@@ -1236,7 +1236,11 @@ async function validateHeaders(
         participantes: parts,
       };
     } else if (fonteL == "PGD") {
-      let ent = file.split("_")[4].split(".")[0].replace(" ", "_");
+      let ent = file
+        .split("_")[4]
+        .split(".")[0]
+        .replace(" ", "_")
+        .normalize("NFC");
 
       if (
         ents_tips.some((e) => {
@@ -1273,7 +1277,11 @@ async function validateHeaders(
         notaDF,
       };
     } else if (fonteL == "PGD/LC") {
-      let ent = file.split("_")[4].split(".")[0].replace(" ", "_");
+      let ent = file
+        .split("_")[4]
+        .split(".")[0]
+        .replace(" ", "_")
+        .normalize("NFC");
 
       if (
         ents_tips.some((e) => {
@@ -1314,7 +1322,11 @@ async function validateHeaders(
         notaDF,
       };
     } else if (fonteL == "RADA") {
-      ent = file.split("_RADA_")[1].split(".")[0].replace(" ", "_");
+      ent = file
+        .split("_RADA_")[1]
+        .split(".")[0]
+        .replace(" ", "_")
+        .normalize("NFC");
 
       if (
         ents_tips.some((e) => {
@@ -1387,7 +1399,7 @@ async function validateHeaders(
       aux[aux.length - 1] = aux[aux.length - 1].split(".")[0];
       let ents = [];
       for (var i = aux.length - 1; !/^\d+$/.test(aux[i]); i--) {
-        ents.push(aux[i].replace(" ", "_"));
+        ents.push(aux[i].replace(" ", "_").normalize("NFC"));
       }
 
       let erro = [];
@@ -1696,6 +1708,31 @@ function constructRADAO(
   }
 }
 
+SelTabs.deleteTS = function (tsId, legId) {
+  const delQuery = `DELETE { ?uri ?p ?o } 
+  WHERE {
+  ?uri ?p ?o
+  BIND(STRAFTER(STR(?uri), 'clav#') AS ?id1).
+  BIND(STRAFTER(STR(?o), 'clav#') AS ?id2).
+  BIND(STRAFTER(STR(?p), 'clav#') AS ?id3).
+  FILTER((CONTAINS(?id1,"${legId}") && CONTAINS(?id3,"temEntidade")) || 
+  (CONTAINS(?id1,"${legId}") && CONTAINS(?id2,"${tsId}")) || 
+  CONTAINS(?id1,"${tsId}"))
+}
+    `;
+
+  return (
+    execQuery("update", delQuery)
+      // getting the content we want
+      .then((response) => Promise.resolve(response))
+      .catch((error) => {
+        console.error(error);
+      })
+  );
+};
+
+function deleteRADA(radaId, legId) {}
+
 function constructPGD(
   worksheet,
   file,
@@ -1742,7 +1779,10 @@ function constructPGD(
       "\tclav:eRepresentacaoDe clav:" + legislacao.id + " .\n";
 
     currentStatements += entidades
-      .map((e) => `clav:${legislacao.id} clav:temEntidade clav:${e} .\n`)
+      .map(
+        (e) =>
+          `clav:${legislacao.id} clav:temEntidade clav:${e} .\nclav:pgd_${legislacao.id} clav:temEntidade clav:${e} .\n`
+      )
       .reduce((prev, ent) => prev + ent);
 
     worksheet.eachRow((row, rowNumber) => {
@@ -2070,6 +2110,13 @@ async function constructPGDLCO(
     currentStatements +=
       "clav:" + legislacao.id + " clav:temEntidade clav:" + entidade + " .\n";
 
+    currentStatements +=
+      "clav:pgd_lc_" +
+      legislacao.id +
+      " clav:temEntidade clav:" +
+      entidade +
+      " .\n";
+
     worksheet.eachRow((row, rowNumber) => {
       if (rowNumber == 1) return;
       var codigo = row.getCell(columns.codigos).text || "";
@@ -2090,7 +2137,7 @@ async function constructPGDLCO(
       notasPCA = notasPCA.replace(/\r?\n|\r/g, " ").replace(/["]/g, '\\"');
       notasDF = notasDF.replace(/\r?\n|\r/g, " ").replace(/["]/g, '\\"');
 
-      var classeId = "classe_" + nanoid() + "_pgd_" + legislacao.id;
+      var classeId = "classe_" + nanoid() + "_pgd_lc_" + legislacao.id;
 
       currentStatements +=
         "\n###  http://jcr.di.uminho.pt/m51-clav#" + classeId + "\n";
@@ -2270,7 +2317,16 @@ async function constructPGDLCP(
 
     currentStatements += entidades
       .map(
-        (e) => "clav:" + legislacao.id + " clav:temEntidade clav:" + e + " .\n"
+        (e) =>
+          "clav:" +
+          legislacao.id +
+          " clav:temEntidade clav:" +
+          e +
+          " .\nclav:pgd_lc_" +
+          legislacao.id +
+          " clav:temEntidade clav:" +
+          e +
+          " .\n"
       )
       .reduce((prev, ent) => prev + ent);
 
@@ -2294,7 +2350,7 @@ async function constructPGDLCP(
       notasPCA = notasPCA.replace(/\r?\n|\r/g, " ").replace(/["]/g, '\\"');
       notasDF = notasDF.replace(/\r?\n|\r/g, " ").replace(/["]/g, '\\"');
 
-      var classeId = "classe_" + nanoid() + "_pgd_" + legislacao.id;
+      var classeId = "classe_" + nanoid() + "_pgd_lc_" + legislacao.id;
       currentStatements +=
         "\n###  http://jcr.di.uminho.pt/m51-clav#" + classeId + "\n";
       currentStatements +=
