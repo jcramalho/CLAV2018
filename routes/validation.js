@@ -571,10 +571,13 @@ module.exports.vcPedidoEstado = [
   "Apreciado",
   "Redistribuído",
   "Reapreciado",
+  "Apreciado2v",
+  "Reapreciado2v",
   "Em Despacho",
   "Devolvido para validação",
   "Validado",
   "Devolvido",
+  "Cancelado"
 ];
 
 //Pendentes
