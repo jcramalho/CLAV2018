@@ -1,0 +1,173 @@
+{
+    "autoEliminação": {
+        "fonteLegitimação": {
+            "tipo": "PGD",
+            "diploma": "Portaria 194/2011"
+        },
+        "fundos": {
+            "fundo": [
+                "DGLAB"
+            ]
+        },
+        "classes": {
+            "classe": [
+                {
+                    "código": "070.01.07",
+                    "referência": "55",
+                    "anoInício": 2010,
+                    "anoFim": 2012,
+                    "dimensãoSuporte": {
+                        "papelAnddigitalAndoutro": [
+                            {"papel": 10},
+                            {"digital": 1},
+                            {
+                                "outro": {
+                                    "valor": 2,
+                                    "unidade": "pasta A4"
+                                }
+                            }
+                        ]
+                    },
+                    "númeroAgregações": 5,
+                    "agregações": {
+                        "agregação": [
+                            {
+                                "código": "MF - DSRICT",
+                                "título": "Departamento de Suporte à Rede de Instituições...",
+                                "ano": 2010,
+                                "naturezaIntervenção": "DONO"
+                            },
+                            {
+                                "código": "WNEN",
+                                "título": "LTUvIiO",
+                                "ano": 16,
+                                "naturezaIntervenção": "DONO/PARTICIPANTE"
+                            },
+                            {
+                                "código": "MJfkHTW",
+                                "título": "bX",
+                                "ano": 34,
+                                "naturezaIntervenção": "PARTICIPANTE"
+                            },
+                            {
+                                "código": "FJT",
+                                "título": "waZdnlvkHNOhBQaWyd",
+                                "ano": 61,
+                                "naturezaIntervenção": "PARTICIPANTE"
+                            },
+                            {
+                                "código": "ERnD",
+                                "título": "mtsLaJ",
+                                "ano": 64,
+                                "naturezaIntervenção": "DONO"
+                            },
+                            {
+                                "código": "Zv",
+                                "título": "O",
+                                "ano": 25,
+                                "naturezaIntervenção": "DONO/PARTICIPANTE"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "código": "QuhpeA",
+                    "referência": "LddAh",
+                    "naturezaIntervenção": "DONO",
+                    "donos": {"dono": "FTkJxMLKtvrXKsBWgZjE"},
+                    "anoInício": 14,
+                    "anoFim": 61,
+                    "dimensãoSuporte": {
+                        "papelAnddigitalAndoutro": [
+                            {"papel": 62},
+                            {"digital": 10}
+                        ]
+                    },
+                    "númeroAgregações": 64,
+                    "agregações": {
+                        "agregação": [
+                            {
+                                "código": "W",
+                                "título": "RaQPxeGyBc",
+                                "ano": 15,
+                                "naturezaIntervenção": "DONO"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "código": "UNvNEEoJps",
+                    "referência": "XVuKnHIHbSUqPL",
+                    "naturezaIntervenção": "DONO/PARTICIPANTE",
+                    "donos": {"dono": "zruvgSZsljdeyw"},
+                    "anoInício": 37,
+                    "anoFim": 11,
+                    "dimensãoSuporte": {
+                        "papelAnddigitalAndoutro": []
+                    },
+                    "númeroAgregações": 6,
+                    "agregações": {
+                        "agregação": [
+                            {
+                                "código": "NQmjLQC",
+                                "título": "gpxNw",
+                                "ano": 61,
+                                "naturezaIntervenção": "PARTICIPANTE"
+                            },
+                            {
+                                "código": "ywr",
+                                "título": "WtpOYxKzO",
+                                "ano": 47,
+                                "naturezaIntervenção": "DONO/PARTICIPANTE"
+                            },
+                            {
+                                "código": "wl",
+                                "título": "cBDVurKNvwwKCvQpru",
+                                "ano": 71,
+                                "naturezaIntervenção": "PARTICIPANTE"
+                            },
+                            {
+                                "código": "KXdK",
+                                "título": "QlDVse",
+                                "ano": 100,
+                                "naturezaIntervenção": "PARTICIPANTE"
+                            },
+                            {
+                                "código": "W",
+                                "título": "hLLAzKzrtEBRbDjSIcrt",
+                                "ano": 48,
+                                "naturezaIntervenção": "DONO"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "código": "vz",
+                    "referência": "qaXyoRdUePZKPcFJnvf",
+                    "naturezaIntervenção": "PARTICIPANTE",
+                    "donos": {"dono": "CEKlkLOlOj"},
+                    "anoInício": 92,
+                    "anoFim": 9,
+                    "dimensãoSuporte": {
+                        "papelAnddigitalAndoutro": [
+                            {"papel": 94},
+                            {"digital": 35},
+                            {"digital": 24}
+                        ]
+                    },
+                    "númeroAgregações": 78,
+                    "agregações": {
+                        "agregação": [
+                            {
+                                "código": "xRSBXFHwaKgHrDYR",
+                                "título": "i",
+                                "ano": 58,
+                                "naturezaIntervenção": "DONO"
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    }
+}
