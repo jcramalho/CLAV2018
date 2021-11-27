@@ -105,7 +105,8 @@ router.post(
             if (err)
               res.status(500).json(`Erro na consulta de utilizador para importação do AE: ${err}`);
             else {
-              AutosEliminacao.importar(doc, req.query.tipo, user)
+              res.status(500).json(`AE recebido: falta tratar do resto...` +  "JSON: " + JSON.stringify(doc))
+              /*AutosEliminacao.importar(doc, req.query.tipo, user)
                 .then((dados) => {
                   res.jsonp({
                     tipo: dados.tipo,
@@ -116,7 +117,7 @@ router.post(
                 })
                 .catch((erro) =>
                   res.status(500).json(`Erro na adição do AE: ${erro}`)
-                );
+                ); */
             }
           });
         }
