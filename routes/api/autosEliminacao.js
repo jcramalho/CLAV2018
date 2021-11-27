@@ -92,10 +92,12 @@ router.post(
       else if (formData.file.type == "application/json") {
 
         var schemaPath = __dirname + "/../../public/schema/autoEliminacao.json";
-        var schema = fs.readFileSync(schemaPath);
+        var schemaJSON = fs.readFileSync(schemaPath);
+        var schema = JSON.parse(schemaJSON);
 
         const validate = ajv.compile(schema)
-        var doc = fs.readFileSync(formData.file.path);
+        var docJSON = fs.readFileSync(formData.file.path);
+        var doc = JSON.parse(docJSON)
         const valid = validate(doc)
 
         if (!valid) 
