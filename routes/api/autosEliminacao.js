@@ -105,7 +105,7 @@ router.post(
             if (err)
               res.status(500).json(`Erro na consulta de utilizador para importação do AE: ${err}`);
             else {
-              AutosEliminacao.importar(data.auto, req.query.tipo, user)
+              AutosEliminacao.importar(doc, req.query.tipo, user)
                 .then((dados) => {
                   res.jsonp({
                     tipo: dados.tipo,
