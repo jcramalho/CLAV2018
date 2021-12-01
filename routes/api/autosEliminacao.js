@@ -99,7 +99,7 @@ router.post(
               res.status(500).json(`Erro na consulta de utilizador para importação do AE: ${err}`);
             else {
               // Acertos na estrutura
-              myFundos = doc['autoEliminação'].fundos.fundos
+              myFundos = doc['autoEliminação'].fundos.fundo
               doc['autoEliminação'].fundos = myFundos
               myClasses = doc['autoEliminação'].classes.classe
               doc['autoEliminação'].classes = myClasses
