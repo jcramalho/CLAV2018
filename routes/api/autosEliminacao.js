@@ -48,10 +48,7 @@ router.get("/:id", Auth.isLoggedInKey, [verificaAEId("param", "id")], function (
 });
 
 //Criar um AE && Importar AE
-router.post(
-  "/",
-  Auth.isLoggedInUser,
-  Auth.checkLevel([5, 6, 7]),
+router.post("/", Auth.isLoggedInUser, Auth.checkLevel([5, 6, 7]),
   [existe("body", "auto")],
   (req, res) => {
     const errors = validationResult(req);
@@ -84,11 +81,7 @@ router.post(
       if (error)
         res.status(500).send(`Erro ao importar Auto de Eliminação: ${error}`);
       else if (!formData.file || !formData.file.path)
-        res
-          .status(500)
-          .send(
-            `Erro ao importar Auto de Eliminação: o campo file tem de vir preenchido`
-          );
+        res.status(500).send(`Erro ao importar Auto de Eliminação: o campo file tem de vir preenchido`);
       else if (formData.file.type == "application/json") {
 
         var schemaPath = __dirname + "/../../public/schema/autoEliminacao.json";
@@ -108,7 +101,7 @@ router.post(
               res.status(500).json(`Erro na consulta de utilizador para importação do AE: ${err}`);
             else {
               res.status(500).json(`AE recebido: falta tratar do resto...` +  "JSON: " + JSON.stringify(doc))
-              /*AutosEliminacao.importar(doc, req.query.tipo, user)
+              AutosEliminacao.importar(doc, req.query.tipo, user)
                 .then((dados) => {
                   res.jsonp({
                     tipo: dados.tipo,
@@ -118,8 +111,8 @@ router.post(
                   );
                 })
                 .catch((erro) =>
-                  res.status(500).json(`Erro na adição do AE: ${erro}`)
-                ); */
+                  res.status(500).json(`Erro na importação do AE em JSON: ${erro}`)
+                );
             }
           });
         }
@@ -131,10 +124,7 @@ router.post(
 
 
 //Importar um AE (Inserir ficheiro diretamente pelo Servidor)
-router.post(
-  "/importar",
-  Auth.isLoggedInUser,
-  Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]),
+router.post( "/importar", Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]),
   [estaEm("query", "tipo", vcFonte)],
   (req, res) => {
     const errors = validationResult(req);
@@ -147,11 +137,7 @@ router.post(
       if (error)
         res.status(500).send(`Erro ao importar Auto de Eliminação: ${error}`);
       else if (!formData.file || !formData.file.path)
-        res
-          .status(500)
-          .send(
-            `Erro ao importar Auto de Eliminação: o campo file tem de vir preenchido`
-          );
+        res.status(500).send(`Erro ao importar Auto de Eliminação: o campo file tem de vir preenchido`);
       else if (formData.file.type == "text/xml") {
 
         var schemaPath = __dirname + "/../../public/schema/autoEliminacao.xsd";
@@ -167,11 +153,7 @@ router.post(
             else {
               User.getUserById(req.user.id, function (err, user) {
                 if (err)
-                  res
-                    .status(500)
-                    .json(
-                      `Erro na consulta de utilizador para importação do AE: ${err}`
-                    );
+                  res.status(500).json(`Erro na consulta de utilizador para importação do AE: ${err}`);
                 else {
                   xml2Json(result.autoEliminação, req.query.tipo)
                     .then((data) => {
