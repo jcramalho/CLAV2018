@@ -103,10 +103,12 @@ router.post(
               doc['autoEliminação'].fundos = myFundos
               myClasses = doc['autoEliminação'].classes.classe
               doc['autoEliminação'].classes = myClasses
-              if(doc['autoEliminação']['agregações']){
-                myAgregacoes = doc['autoEliminação']['agregações']['agregação']
-                doc['autoEliminação']['agregações'] = myAgregacoes
-              }
+              doc['autoEliminação'].classes.forEach(c => {
+                if(c['agregações']){
+                  myAgregacoes = c['agregações']['agregação']
+                  c['agregações'] = myAgregacoes
+                }
+              });
               
               AutosEliminacao.importar(doc, req.query.tipo, user)
                 .then((dados) => {
