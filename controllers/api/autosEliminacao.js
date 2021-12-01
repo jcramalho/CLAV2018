@@ -566,7 +566,9 @@ AutosEliminacao.importar = async (auto, tipo, user) => {
         historico: [],
         objetoOriginal: auto
     }
+    console.log("A fazer o pedido")
     var pedido = await Pedidos.criar(pedido)
+    console.log("Já realizei o pedido: " + pedido)
     return {codigo: pedido, tipo: tipo, auto: auto }
 };
 
