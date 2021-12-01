@@ -29,10 +29,8 @@ router.get("/", Auth.isLoggedInKey, (req, res) => {
     .catch((erro) => res.status(404).jsonp("Erro na listagem dos AE: " + erro));
 });
 
-router.get("/:id", Auth.isLoggedInKey, [verificaAEId("param", "id")], function (
-  req,
-  res
-) {
+router.get("/:id", Auth.isLoggedInKey, [verificaAEId("param", "id")], 
+  function (req,res) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).jsonp(errors.array());
