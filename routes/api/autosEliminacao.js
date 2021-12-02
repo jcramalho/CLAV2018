@@ -3,6 +3,7 @@ var AutosEliminacao = require("../../controllers/api/autosEliminacao.js");
 var User = require("../../controllers/api/users.js");
 var excel2Json = require("../../controllers/conversor/xslx2json");
 var xml2Json = require("../../controllers/conversor/aeXml2Json");
+var json2Json = require("../../controllers/conversor/aeJSONl2Json");
 var xml = require("libxmljs");
 var xml2js = require("xml2js");
 var fs = require("fs");
@@ -109,19 +110,23 @@ router.post(
                   c['agregações'] = myAgregacoes
                 }
               });
-              
-              AutosEliminacao.importar(doc, req.query.tipo, user)
-                .then((dados) => {
-                  res.jsonp({
-                    tipo: dados.tipo,
-                    codigoPedido: dados.codigo,
-                    mensagem: "Auto de Eliminação importado com sucesso e adicionado aos pedidos com codigo: " + dados.codigo
-                    }
-                  );
-                })
-                .catch((erro) =>
+
+              json2Json(doc, req.query.tipo)
+                .then(data => {
+                  AutosEliminacao.importar(data.auto, req.query.tipo, user)
+                    .then((dados) => {
+                      res.jsonp({
+                        tipo: dados.tipo,
+                        codigoPedido: dados.codigo,
+                        mensagem: "Auto de Eliminação importado com sucesso e adicionado aos pedidos com codigo: " + dados.codigo
+                      }
+                    );
+                  })
+                .catch(erro =>
                   res.status(500).json(`Erro na importação do AE em JSON: ${erro}`)
                 );
+                })
+                .catch(err => res.status(500).send(err))
             }
           });
         }
@@ -130,7 +135,6 @@ router.post(
     });
   }
 )
-
 
 //Importar um AE (Inserir ficheiro diretamente pelo Servidor)
 router.post( "/importar", Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]),
