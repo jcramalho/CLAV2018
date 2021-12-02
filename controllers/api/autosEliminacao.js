@@ -554,7 +554,7 @@ AutosEliminacao.adicionarRADA = async function (auto) {
  * pedido gerado para a criação da nova classe
  */
 AutosEliminacao.importar = async (auto, tipo, user) => {  
-    print(JSON.stringify(auto))  
+    console.log(JSON.stringify(auto))  
     auto.entidade = user.entidade
     auto.responsavel = user.email
     var pedido = {
