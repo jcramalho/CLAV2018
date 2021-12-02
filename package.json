@@ -43,6 +43,7 @@
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
+    "stripe-nanoid": "^0.2.3",
     "swagger-ui-express": "^4.1.4",
     "winston": "^2.4.5",
     "winston-daily-rotate-file": "^2.0.0-beta",

@@ -1,5 +1,9 @@
 var State = require('../state')
-import { customAlphabet } from 'nanoid'
+const stripenanoid = require('stripe-nanoid'); 
+const options = {
+    alphabet: 'abcefghijklmnopqrstuvwxyz0123456789',
+    size: 9
+  };
 
 var aeConverter = function(obj,tipo) {
   return new Promise(async function(resolve, reject) {
@@ -7,8 +11,7 @@ var aeConverter = function(obj,tipo) {
     // Construção do objeto interno
     var myAuto = {}
     // identificador do AE
-    const nanoid = customAlphabet('1234567890abcdef', 10)
-    myAuto.id = "ae_" + nanoid()
+    myAuto.id = stripenanoid('ae_', options);
     myAuto.data = new Date().toISOString().substr(0,10)
     // tipo: AE_...
     var myTipo = obj["autoEliminação"]["fonteLegitimação"]["tipo"]
