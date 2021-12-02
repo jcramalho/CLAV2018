@@ -26,7 +26,7 @@ var aeConverter = function(obj,tipo) {
     // Fundos
     // vou à cache buscar a info das entidades a partir da sigla
     var myFundos = obj["autoEliminação"]["fundos"].map(f => { 
-        let ent = State.getEntidade('ent_' + f.fundo[0])
+        let ent = State.getEntidade('ent_' + f)
         return ent
     })
     myAuto.fundo = myFundos.map(e => {return {
