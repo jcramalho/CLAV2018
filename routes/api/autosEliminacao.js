@@ -8,6 +8,13 @@ var xml = require("libxmljs");
 var xml2js = require("xml2js");
 var fs = require("fs");
 
+var State = require('../state')
+const stripenanoid = require('stripe-nanoid'); 
+const options = {
+    alphabet: 'abcefghijklmnopqrstuvwxyz0123456789',
+    size: 9
+  };
+
 const Ajv = require("ajv")
 const ajv = new Ajv() 
 
@@ -85,11 +92,41 @@ validaEstruturaJSON = function(req, res, next){
           if (!valid) 
             res.status(500).send("Erro(s) na análise estrutural do ficheiro JSON: " + validate.errors);
           else
+            // Se a validação tiver sucesso, o objeto é colocado em req.doc para 
+            // quem vier a seguir...
             req.doc = doc
             next()
         }
       })
 }
+
+convFormatoIntermedio = function(req, res, next){
+  myAuto = req.doc
+
+  // identificador do AE
+  myAuto.id = stripenanoid('ae', options);
+  myAuto.data = new Date().toISOString().substr(0,10)
+  // tipo: AE_...
+  myAuto.tipo = 'AE_' + myAuto.tipo
+  // id da legislação na BD: vou buscar à cache
+  var legIdent = myAuto.legislacao.split(' ')
+  var leg = State.getLegislacaoByTipoNumero(legIdent[0], legIdent[1])
+  myAuto.refLegislacao = leg.id
+  // Entidades
+  // vou à cache buscar a info das entidades a partir da sigla
+  var myEntidades = myAuto.entidades.map(f => { 
+      let ent = State.getEntidade('ent_' + f)
+      return ent
+  })
+  myAuto.entidades = myEntidades.map(e => {return {
+      entidade: e.id,
+      designacao: e.designacao
+  }})
+
+  req.doc = myAuto
+  next()
+}
+  
 
 router.post(
   "/importarJSON",
@@ -97,6 +134,7 @@ router.post(
   Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]),
   // estaEm("query", "tipo", vcFonte),
   validaEstruturaJSON,
+  convFormatoIntermedio,
   // validação estrutural
   // conversão para o formato intermédio
   // validação semântica
