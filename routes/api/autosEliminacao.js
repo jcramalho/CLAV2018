@@ -81,12 +81,11 @@ validaEstruturaJSON = function(req, res, next){
           var docJSON = fs.readFileSync(formData.file.path);
           var doc = JSON.parse(docJSON)
           const valid = validate(doc)
-  
-          console.log("Fiz a validação: " + valid)
 
           if (!valid) 
             res.status(500).send("Erro(s) na análise estrutural do ficheiro JSON: " + validate.errors);
           else
+            req.doc = doc
             next()
         }
       })
@@ -165,7 +164,7 @@ router.post(
       } else
         res.status(500).send(`Erro ao importar Auto de Eliminação, tipo de ficheiro: ${formData.file.type}`);
     });*/
-    res.status(201).send("Passou nas validações estruturais...")
+    res.status(201).send("Passou nas validações estruturais...\n" + JSON.stringify(req.doc))
   }
 )
 
