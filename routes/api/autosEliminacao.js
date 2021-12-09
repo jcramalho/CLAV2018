@@ -64,18 +64,50 @@ router.post("/", Auth.isLoggedInUser, Auth.checkLevel([5, 6, 7]),
 );
 
 //Importar um AE em JSON (Inserir ficheiro diretamente pelo Servidor)
+validaEstruturaJSON = function(){
+    return function(req, res, next) {
+      var form = new formidable.IncomingForm();
+      form.parse(req, async (error, fields, formData) => {
+        if (error)
+          res.status(500).send(`Erro ao importar Auto de Eliminação: ${error}`);
+        else if (!formData.file || !formData.file.path)
+          res.status(500).send(`Erro ao importar Auto de Eliminação: o campo file tem de vir preenchido`);
+        else if (formData.file.type == "application/json") {
+  
+          var schemaPath = __dirname + "/../../public/schema/autoEliminacao.json";
+          var schemaJSON = fs.readFileSync(schemaPath);
+          var schema = JSON.parse(schemaJSON);
+  
+          const validate = ajv.compile(schema)
+          var docJSON = fs.readFileSync(formData.file.path);
+          var doc = JSON.parse(docJSON)
+          const valid = validate(doc)
+  
+          if (!valid) 
+            res.status(500).send("Erro(s) na análise estrutural do ficheiro JSON: " + validate.errors);
+          else
+            next()
+        }
+      })
+    }
+}
+
 router.post(
   "/importarJSON",
   Auth.isLoggedInUser,
   Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]),
-  [estaEm("query", "tipo", vcFonte)],
+  // estaEm("query", "tipo", vcFonte),
+  validaEstruturaJSON,
+  // validação estrutural
+  // conversão para o formato intermédio
+  // validação semântica
   (req, res) => {
-    const errors = validationResult(req);
+    /*const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(422).jsonp(errors.array());
-    }
+    }*/
 
-    var form = new formidable.IncomingForm();
+    /*var form = new formidable.IncomingForm();
     form.parse(req, async (error, fields, formData) => {
       if (error)
         res.status(500).send(`Erro ao importar Auto de Eliminação: ${error}`);
@@ -132,7 +164,8 @@ router.post(
         }
       } else
         res.status(500).send(`Erro ao importar Auto de Eliminação, tipo de ficheiro: ${formData.file.type}`);
-    });
+    });*/
+    res.status(201).send("Passou nas validações estruturais...")
   }
 )
 

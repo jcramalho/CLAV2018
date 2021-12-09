@@ -11,7 +11,7 @@ var aeConverter = function(obj,tipo) {
     // Construção do objeto interno
     var myAuto = {}
     // identificador do AE
-    myAuto.id = stripenanoid('ae_', options);
+    myAuto.id = stripenanoid('ae', options);
     myAuto.data = new Date().toISOString().substr(0,10)
     // tipo: AE_...
     var myTipo = obj["autoEliminação"]["fonteLegitimação"]["tipo"]

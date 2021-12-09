@@ -1,42 +1,26 @@
 {
-    "autoEliminação": {
-        "fonteLegitimação": {
-            "tipo": "RADA",
-            "diploma": "Portaria 381/2019"
+    "tipo": "RADA",
+    "legislacao": "Portaria 381/2019",
+    "entidades": ["DGLAB"],
+    "classes": [
+        {
+            "codigo": "100.10.001",
+            "naturezaIntervencao": "PARTICIPANTE",
+            "donos": ["AR"],
+            "anoInicio": 1980,
+            "anoFim": 1990,
+            "dimensaoSuporte": {
+                "papel": 123,
+                "digital": 123
+            },
+            "numAgregacoes": 85
         },
-        "fundos": {
-            "fundo": [
-                "DGLAB"
-            ]
-        },
-        "classes": {
-            "classe": [
-                {
-                    "código": "100.10.001",
-                    "naturezaIntervenção": "PARTICIPANTE",
-                    "donos": {"dono": "AR"},
-                    "anoInício": 1980,
-                    "anoFim": 1990,
-                    "dimensãoSuporte": {
-                        "papelAnddigitalAndoutro": [
-                            {"papel": 123},
-                            {"digital": 123}
-                        ]
-                    },
-                    "númeroAgregações": 85
-                },
-                {
-                    "código": "150.10.701.01",
-                    "anoInício": 1985,
-                    "anoFim": 1995,
-                    "dimensãoSuporte": {
-                        "papelAnddigitalAndoutro": [
-                            {"digital": 1000}
-                        ]
-                    },
-                    "númeroAgregações": 100
-                }
-            ]
+        {
+            "codigo": "150.10.701.01",
+            "anoInicio": 1985,
+            "anoFim": 1995,
+            "dimensaoSuporte": {"digital": 1000},
+            "numAgregacoes": 100
         }
-    }
+    ]
 }
