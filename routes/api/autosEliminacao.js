@@ -123,6 +123,10 @@ convFormatoIntermedio = function(req, res, next){
       designacao: e.designacao
   }})
 
+  for(i=0; i < myAuto.classes.length; i++){
+    myAuto.classes[i] = myAuto.id + "_classe_" + i
+  }
+
   req.doc = myAuto
   next()
 }
