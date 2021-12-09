@@ -86,7 +86,7 @@ validaEstruturaJSON = function(){
           if (!valid) 
             res.status(500).send("Erro(s) na análise estrutural do ficheiro JSON: " + validate.errors);
           else
-            next()
+            return next()
         }
       })
     }
