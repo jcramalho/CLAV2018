@@ -64,9 +64,8 @@ router.post("/", Auth.isLoggedInUser, Auth.checkLevel([5, 6, 7]),
 );
 
 //Importar um AE em JSON (Inserir ficheiro diretamente pelo Servidor)
-validaEstruturaJSON = function(){
-    return function(req, res, next) {
-      var form = new formidable.IncomingForm();
+validaEstruturaJSON = function(req, res, next){
+  var form = new formidable.IncomingForm();
       form.parse(req, async (error, fields, formData) => {
         if (error)
           res.status(500).send(`Erro ao importar Auto de Eliminação: ${error}`);
@@ -83,13 +82,14 @@ validaEstruturaJSON = function(){
           var doc = JSON.parse(docJSON)
           const valid = validate(doc)
   
+          console.log("Fiz a validação: " + valid)
+
           if (!valid) 
             res.status(500).send("Erro(s) na análise estrutural do ficheiro JSON: " + validate.errors);
           else
-            return next()
+            next()
         }
       })
-    }
 }
 
 router.post(
