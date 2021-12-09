@@ -8,7 +8,7 @@ var xml = require("libxmljs");
 var xml2js = require("xml2js");
 var fs = require("fs");
 
-var State = require('../state')
+var State = require('../../controllers/state')
 const stripenanoid = require('stripe-nanoid'); 
 const options = {
     alphabet: 'abcefghijklmnopqrstuvwxyz0123456789',
