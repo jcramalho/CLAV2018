@@ -158,7 +158,8 @@ router.post(
                   res.status(201).jsonp({
                     tipo: dados.tipo,
                     codigoPedido: dados.codigo,
-                    mensagem: "Auto de Eliminação importado com sucesso e adicionado aos pedidos com codigo: " + dados.codigo
+                    mensagem: "Auto de Eliminação importado com sucesso e adicionado aos pedidos com codigo: " + dados.codigo,
+                    ae: req.doc
                   });
                 })
                 .catch((erro) => res.status(500).json(`Erro na criação do pedido de importação do AE: ${erro}`));
