@@ -78,7 +78,7 @@ router.post(
 router.post(
   "/importar",
   Auth.isLoggedInUser,
-  Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]),
+  Auth.checkLevel([4, 5, 6, 7]),
   async function (req, res) {
     var form = new formidable.IncomingForm();
 
@@ -225,7 +225,7 @@ router.post(
 router.delete(
   "/:id",
   Auth.isLoggedInUser,
-  Auth.checkLevel([7]),
+  Auth.checkLevel([4, 5, 6, 7]),
   async function (req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
