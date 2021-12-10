@@ -130,83 +130,40 @@ convFormatoIntermedio = function(req, res, next){
   req.doc = myAuto
   next()
 }
+
+router.post(
+  "/importarCSV",
+  Auth.isLoggedInUser,
+  Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]),
+  validaEstruturaCSV,
+  (req, res) => {
+    res.status(201).send("Passou nas validações e na conversão...\n" + JSON.stringify(req.doc))
+  }
+)
   
 
 router.post(
   "/importarJSON",
   Auth.isLoggedInUser,
   Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]),
-  // estaEm("query", "tipo", vcFonte),
   validaEstruturaJSON,
   convFormatoIntermedio,
-  // validação estrutural
-  // conversão para o formato intermédio
-  // validação semântica
   (req, res) => {
-    /*const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(422).jsonp(errors.array());
-    }*/
-
-    /*var form = new formidable.IncomingForm();
-    form.parse(req, async (error, fields, formData) => {
-      if (error)
-        res.status(500).send(`Erro ao importar Auto de Eliminação: ${error}`);
-      else if (!formData.file || !formData.file.path)
-        res.status(500).send(`Erro ao importar Auto de Eliminação: o campo file tem de vir preenchido`);
-      else if (formData.file.type == "application/json") {
-
-        var schemaPath = __dirname + "/../../public/schema/autoEliminacao.json";
-        var schemaJSON = fs.readFileSync(schemaPath);
-        var schema = JSON.parse(schemaJSON);
-
-        const validate = ajv.compile(schema)
-        var docJSON = fs.readFileSync(formData.file.path);
-        var doc = JSON.parse(docJSON)
-        const valid = validate(doc)
-
-        if (!valid) 
-          res.status(500).send("Erro(s) na análise estrutural do ficheiro JSON: " + validate.errors);
-        else{
-          User.getUserById(req.user.id, function (err, user) {
-            if (err)
-              res.status(500).json(`Erro na consulta de utilizador para importação do AE: ${err}`);
-            else {
-              // Acertos na estrutura
-              myFundos = doc['autoEliminação'].fundos.fundo
-              doc['autoEliminação'].fundos = myFundos
-              myClasses = doc['autoEliminação'].classes.classe
-              doc['autoEliminação'].classes = myClasses
-              doc['autoEliminação'].classes.forEach(c => {
-                if(c['agregações']){
-                  myAgregacoes = c['agregações']['agregação']
-                  c['agregações'] = myAgregacoes
-                }
-              });
-
-              json2Json(doc, req.query.tipo)
-                .then(data => {
-                  AutosEliminacao.importar(data.auto, req.query.tipo, user)
-                    .then((dados) => {
-                      res.jsonp({
-                        tipo: dados.tipo,
-                        codigoPedido: dados.codigo,
-                        mensagem: "Auto de Eliminação importado com sucesso e adicionado aos pedidos com codigo: " + dados.codigo
-                      }
-                    );
-                  })
-                .catch(erro =>
-                  res.status(500).json(`Erro na importação do AE em JSON: ${erro}`)
-                );
+    User.getUserById(req.user.id, function (err, user) {
+      if (err)
+        res.status(500).json(`Erro na consulta de utilizador para importação do AE: ${err}`);
+      else {
+              AutosEliminacao.importar(req.doc, req.query.tipo, user)
+                .then((dados) => {
+                  res.status(201).jsonp({
+                    tipo: dados.tipo,
+                    codigoPedido: dados.codigo,
+                    mensagem: "Auto de Eliminação importado com sucesso e adicionado aos pedidos com codigo: " + dados.codigo
+                  });
                 })
-                .catch(err => res.status(500).send(err))
+                .catch((erro) => res.status(500).json(`Erro na criação do pedido de importação do AE: ${erro}`));
             }
-          });
-        }
-      } else
-        res.status(500).send(`Erro ao importar Auto de Eliminação, tipo de ficheiro: ${formData.file.type}`);
-    });*/
-    res.status(201).send("Passou nas validações estruturais...\n" + JSON.stringify(req.doc))
+    })
   }
 )
 
