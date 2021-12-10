@@ -131,7 +131,7 @@ convFormatoIntermedio = function(req, res, next){
   next()
 }
 
-router.post(
+/*router.post(
   "/importarCSV",
   Auth.isLoggedInUser,
   Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]),
@@ -139,7 +139,7 @@ router.post(
   (req, res) => {
     res.status(201).send("Passou nas validações e na conversão...\n" + JSON.stringify(req.doc))
   }
-)
+)*/
   
 
 router.post(
