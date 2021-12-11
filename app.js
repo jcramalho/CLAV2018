@@ -204,7 +204,7 @@ mainRouter.use('/parametros', require('./routes/api/parametros'));
 mainRouter.use('/rada', require('./routes/api/rada'));
 mainRouter.use('/contador', require('./routes/api/contador'));
 mainRouter.use('/ficheirosEstaticos', require('./routes/api/ficheirosEstaticos'));
-mainRouter.use('/ppds', require('./routes/api/ppds'));
+mainRouter.use('/ppd', require('./routes/api/ppd'));
 
 app.use('/' + dataBases.apiVersion, mainRouter);
 

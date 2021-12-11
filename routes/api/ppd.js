@@ -1,23 +1,23 @@
 var express = require('express');
 var router = express.Router();
-var PPDs = require('../../controllers/api/ppds');
+var PPD = require('../../controllers/api/ppd');
 
 
-//Retorna todos os PPDs presentes na DB
+//Retorna todos os PPD presentes na DB
 router.get("/", function (req, res) {
-    PPDs.getAllPPDs()
+    PPD.getAllPPD()
         .then((data) => res.jsonp(data))
         .catch((error) => res.status(500).send(`Error: ${error}`));
 });
 
 //Guardar PPD na DB
 router.post("/registar", function (req, res) {
-    PPDs.inserirPPD(req.body)
+    PPD.inserirPPD(req.body)
         .then(dados => {
             if(dados) res.jsonp("PPD adicionado com sucesso")
-            else res.status(500).jsonp("Erro na adição do PPD " + req.body.identificacao.nomeSI)
+            else res.status(500).jsonp("Erro na adição do PPD " + req.body.geral.nomePPD)
         })
-        .catch(erro => res.status(500).jsonp("Erro na adição do PPD "+req.body.identificacao.nomeSI+": " + erro))
+        .catch(erro => res.status(500).jsonp("Erro na adição do PPD "+req.body.geral.nomePPD+": " + erro))
 });
 
 
