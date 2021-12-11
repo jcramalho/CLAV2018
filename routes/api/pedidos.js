@@ -122,7 +122,6 @@ router.put('/', Auth.isLoggedInUser, Auth.checkLevel([3.5, 4, 5, 6, 7]), [
     existe('body', 'pedido.objeto.dados').optional(),
     estaEm('body', 'pedido.objeto.tipo', vcPedidoTipo),
     estaEm('body', 'pedido.objeto.acao', vcPedidoAcao),
-    verificaLista('body', 'pedido.historico'),
     existe('body', 'distribuicao'),
     estaEm('body', 'distribuicao.estado', vcPedidoEstado),
     existe('body', 'distribuicao.responsavel')
@@ -142,6 +141,7 @@ router.put('/', Auth.isLoggedInUser, Auth.checkLevel([3.5, 4, 5, 6, 7]), [
     existe('body', 'distribuicao.despacho').optional()
 ], (req, res) => {
     const errors = validationResult(req)
+    console.log(errors)
     if(!errors.isEmpty()){
         return res.status(422).jsonp(errors.array())
     }

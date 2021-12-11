@@ -125,8 +125,6 @@ router.get("/classes", Auth.isLoggedInUser, Auth.checkLevel(3), (req, res) => {
 
 router.get(
   "/entidadesAtivas",
-  Auth.isLoggedInUser,
-  Auth.checkLevel(3),
   (req, res) => {
     Indicadores.totalEntidadesAtivas()
       .then((dados) => res.jsonp(dados))
@@ -180,7 +178,7 @@ router.get(
 
 //Legislacao
 
-router.get("/legVigor", Auth.isLoggedInUser, Auth.checkLevel(3), (req, res) => {
+router.get("/legVigor", (req, res) => {
   Indicadores.totalLegislacaoAtivos()
     .then((dados) => res.jsonp(dados))
     .catch((err) =>
@@ -211,7 +209,7 @@ router.get("/leg", (req, res) => {
 //Relacoes
 
 // Devolve as estatísticas relacionais dos Processos
-router.get("/relstats", Auth.isLoggedInUser, Auth.checkLevel(3), (req, res) => {
+router.get("/relstats", (req, res) => {
   Indicadores.relStats()
     .then((dados) => res.jsonp(dados))
     .catch((erro) =>
@@ -240,7 +238,7 @@ router.get(
 );
 
 // Devolve as estatísticas relativas aos Destinos finais
-router.get("/dfstats", Auth.isLoggedInUser, Auth.checkLevel(3), (req, res) => {
+router.get("/dfstats",  (req, res) => {
   Indicadores.dfStats()
     .then((dados) => res.jsonp(dados))
     .catch((erro) =>

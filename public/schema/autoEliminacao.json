@@ -1,0 +1,222 @@
+{
+    "definitions": {
+        "autoEliminação.fonteLegitimação": {
+            "type": "object",
+            "required": [
+                "tipo",
+                "diploma"
+            ],
+            "properties": {
+                "tipo": {"$ref": "#/definitions/TipoLeg"},
+                "diploma": {"type": "string"}
+            }
+        },
+        "autoEliminação.fundos": {
+            "type": "object",
+            "required": ["fundo"],
+            "properties": {
+                "fundo": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "minItems": 1
+                }
+            }
+        },
+        "autoEliminação.classes.classe.donos": {
+            "type": "object",
+            "required": ["dono"],
+            "properties": {
+                "dono": {"type": "string"}
+            }
+        },
+        "autoEliminação.classes.classe.dimensãoSuporte.outro": {
+            "type": "object",
+            "required": [
+                "valor",
+                "unidade"
+            ],
+            "properties": {
+                "valor": {"type": "integer"},
+                "unidade": {"type": "string"}
+            }
+        },
+        "autoEliminação.classes.classe.dimensãoSuporte": {
+            "type": "object",
+            "properties": {
+                "papelAnddigitalAndoutro": {
+                    "type": "array",
+                    "items": {
+                        "anyOf": [
+                            {
+                                "type": "object",
+                                "properties": {
+                                    "outro": {"$ref": "#/definitions/autoEliminação.classes.classe.dimensãoSuporte.outro"}
+                                }
+                            },
+                            {
+                                "type": "object",
+                                "properties": {
+                                    "digital": {"type": "integer"}
+                                }
+                            },
+                            {
+                                "type": "object",
+                                "properties": {
+                                    "papel": {"type": "integer"}
+                                }
+                            }
+                        ]
+                    },
+                    "minItems": 0
+                }
+            }
+        },
+        "autoEliminação.classes.classe.agregações.agregação": {
+            "type": "object",
+            "required": [
+                "código",
+                "título",
+                "ano"
+            ],
+            "properties": {
+                "código": {"type": "string"},
+                "título": {"type": "string"},
+                "ano": {"type": "integer"},
+                "naturezaIntervenção": {"$ref": "#/definitions/TnaturezaIntervençãoagregação"}
+            }
+        },
+        "autoEliminação.classes.classe.agregações": {
+            "type": "object",
+            "required": ["agregação"],
+            "properties": {
+                "agregação": {
+                    "type": "array",
+                    "items": {"$ref": "#/definitions/autoEliminação.classes.classe.agregações.agregação"},
+                    "minItems": 1
+                }
+            }
+        },
+        "autoEliminação.classes.classe": {
+            "type": "object",
+            "required": [
+                "anoInício",
+                "anoFim",
+                "dimensãoSuporte",
+                "númeroAgregações"
+            ],
+            "properties": {
+                "código": {"type": "string"},
+                "referência": {"type": "string"},
+                "naturezaIntervenção": {"$ref": "#/definitions/TnaturezaIntervenção"},
+                "donos": {"$ref": "#/definitions/autoEliminação.classes.classe.donos"},
+                "anoInício": {"type": "integer"},
+                "anoFim": {"type": "integer"},
+                "dimensãoSuporte": {"$ref": "#/definitions/autoEliminação.classes.classe.dimensãoSuporte"},
+                "númeroAgregações": {"type": "integer"},
+                "agregações": {"$ref": "#/definitions/autoEliminação.classes.classe.agregações"}
+            }
+        },
+        "autoEliminação.classes": {
+            "type": "object",
+            "required": ["classe"],
+            "properties": {
+                "classe": {
+                    "type": "array",
+                    "items": {"$ref": "#/definitions/autoEliminação.classes.classe"},
+                    "minItems": 1
+                }
+            }
+        },
+        "autoEliminação": {
+            "type": "object",
+            "required": [
+                "fonteLegitimação",
+                "fundos",
+                "classes"
+            ],
+            "properties": {
+                "fonteLegitimação": {"$ref": "#/definitions/autoEliminação.fonteLegitimação"},
+                "fundos": {"$ref": "#/definitions/autoEliminação.fundos"},
+                "classes": {"$ref": "#/definitions/autoEliminação.classes"}
+            }
+        },
+        "TipoLeg": {
+            "allOf": [
+                {"type": "string"},
+                {
+                    "enum": [
+                        "TS/LC",
+                        "PGD/LC",
+                        "LC",
+                        "PGD",
+                        "RADA",
+                        "RADA/CLAV"
+                    ]
+                }
+            ]
+        },
+        "TnaturezaIntervenção": {
+            "allOf": [
+                {"type": "string"},
+                {
+                    "enum": [
+                        "PARTICIPANTE",
+                        "DONO",
+                        "DONO/PARTICIPANTE"
+                    ]
+                }
+            ]
+        },
+        "TnaturezaIntervençãoagregação": {
+            "allOf": [
+                {"type": "string"},
+                {
+                    "enum": [
+                        "PARTICIPANTE",
+                        "DONO",
+                        "DONO/PARTICIPANTE"
+                    ]
+                }
+            ]
+        },
+        "TvalorDF": {
+            "allOf": [
+                {"type": "string"},
+                {
+                    "enum": [
+                        "C",
+                        "E",
+                        "CP",
+                        "NE"
+                    ]
+                }
+            ]
+        }
+    },
+    "anyOf": [
+        {
+            "type": "object",
+            "properties": {
+                "autoEliminação": {"$ref": "#/definitions/autoEliminação"}
+            }
+        },
+        {
+            "type": "object",
+            "properties": {
+                "papel": {"type": "integer"}
+            }
+        },
+        {
+            "type": "object",
+            "properties": {
+                "digital": {"type": "integer"}
+            }
+        },
+        {
+            "type": "object",
+            "properties": {
+                "outro": {"$ref": "#/definitions/autoEliminação.classes.classe.dimensãoSuporte.outro"}
+            }
+        }
+    ]
+}

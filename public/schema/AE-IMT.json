@@ -1,0 +1,26 @@
+{
+    "tipo": "RADA",
+    "legislacao": "Portaria 381/2019",
+    "entidades": ["DGLAB"],
+    "classes": [
+        {
+            "codigo": "100.10.001",
+            "naturezaIntervencao": "PARTICIPANTE",
+            "donos": ["AR"],
+            "anoInicio": 1980,
+            "anoFim": 1990,
+            "dimensaoSuporte": {
+                "papel": 123,
+                "digital": 123
+            },
+            "numAgregacoes": 85
+        },
+        {
+            "codigo": "150.10.701.01",
+            "anoInicio": 1985,
+            "anoFim": 1995,
+            "dimensaoSuporte": {"digital": 1000},
+            "numAgregacoes": 100
+        }
+    ]
+}
