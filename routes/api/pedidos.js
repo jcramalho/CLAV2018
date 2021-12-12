@@ -86,7 +86,7 @@ router.get('/:codigo/estado', Auth.isLoggedInUser, Auth.checkLevel([1, 2, 3, 3.5
     Pedidos.consultar(req.params.codigo)
         .then(dados => {
             if(dados){
-                    d = dados.data.substr(0,10)
+                    d = typeof(dados.data)
                     res.jsonp({
                         pedido: req.params.codigo,
                         data: d,
