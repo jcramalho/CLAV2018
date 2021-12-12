@@ -89,7 +89,7 @@ router.get('/:codigo/estado', Auth.isLoggedInUser, Auth.checkLevel([1, 2, 3, 3.5
                     res.jsonp({
                         pedido: req.params.codigo,
                         data: dados.data.substring(0,9),
-                        mensagem: "O seu pedido foi rececionado em " + dados.data.substring(0,9) +
+                        mensagem: "O seu pedido foi rececionado em " + JSON.stringify(dados) +
                             " e encontra-se em análise."
                     })
             }else{
