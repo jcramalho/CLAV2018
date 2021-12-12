@@ -74,6 +74,26 @@ router.get('/:codigo', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6,
         .catch(erro => res.status(500).send(`Erro na consulta do pedido: ${erro}`));
 });
 
+// Consulta do estado de um pedido
+router.get('/:codigo/estado', Auth.isLoggedInUser, Auth.checkLevel([1, 2, 3, 3.5, 4, 5, 6, 7]), [
+    verificaPedidoCodigo('param', 'codigo')
+], (req, res) => {
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
+    }
+
+    Pedidos.consultar(req.params.codigo)
+        .then(dados => {
+            if(dados){
+                    res.jsonp(dados)
+            }else{
+                res.status(404).send(`Erro. O pedido '${req.params.codigo}' não existe`)
+            }
+        })
+        .catch(erro => res.status(500).send(`Erro na consulta do pedido: ${erro}`));
+});
+
 // Criação de um pedido
 router.post('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), [
     existe('body', 'user'),
