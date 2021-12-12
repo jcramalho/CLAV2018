@@ -1,15 +1,15 @@
 var PPD = require('../../models/ppd');
 
-var PPDs = module.exports
+var PPD_me = module.exports
 
 
-PPDs.getAllPPDs = () => {
+PPD_me.getAllPPDs = () => {
     return PPD
         .find()
         .exec()
 }
 
-PPDs.inserirPPD = async function (ppd) {
+PPD_me.inserirPPD = async function (ppd) {
     console.log('MONGO: insert(' + ppd + ')');
     var newPPD = new PPD(ppd);
     return newPPD.save();
