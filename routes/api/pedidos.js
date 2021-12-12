@@ -88,7 +88,7 @@ router.get('/:codigo/estado', Auth.isLoggedInUser, Auth.checkLevel([1, 2, 3, 3.5
             if(dados){
                     res.jsonp({
                         pedido: req.params.codigo,
-                        data: JSON.stringify(dados),
+                        data: dados,
                         mensagem: "O seu pedido foi rececionado em ???" + 
                             " e encontra-se em análise."
                     })
