@@ -86,7 +86,12 @@ router.get('/:codigo/estado', Auth.isLoggedInUser, Auth.checkLevel([1, 2, 3, 3.5
     Pedidos.consultar(req.params.codigo)
         .then(dados => {
             if(dados){
-                    res.jsonp(dados)
+                    res.jsonp({
+                        pedido: req.params.codigo,
+                        data: dados.data.substring(0,9),
+                        mensagem: "O seu pedido foi rececionado em " + dados.data.substring(0,9) +
+                            " e encontra-se em análise."
+                    })
             }else{
                 res.status(404).send(`Erro. O pedido '${req.params.codigo}' não existe`)
             }
