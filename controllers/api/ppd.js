@@ -14,3 +14,8 @@ PPD_me.inserirPPD = async function (ppd) {
     var newPPD = new PPD(ppd);
     return newPPD.save();
 };
+
+
+PPD_me.getPPD = ( nomePPD ) => {
+    return PPD.findOne({ nomePPD: nomePPD }).exec();
+};
