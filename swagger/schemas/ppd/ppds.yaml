@@ -1,0 +1,46 @@
+type: array
+items:
+  type: object
+  properties:
+    geral:
+      type: object
+      properties:
+        nomePPD:
+          type: string
+        entSel:
+          type: array
+          items:
+            type: object
+            properties:
+              sigla:
+                type: string
+              identificacao:
+                type: string
+              id:
+                type: string
+              label:
+                type: string
+            required:
+              - sigla
+              - identificacao
+              - id
+              - label
+        mencaoResp:
+          type: string
+        tipoFonteL:
+          type: string
+        fonteLegitimacao:
+          type: object
+          properties:
+            id:
+              type: string
+            titulo:
+              type: string
+          required:
+            - id
+            - titulo
+  required:
+    - codigo
+    - dataAprovacao
+    - titulo
+    - entResp

@@ -7,7 +7,7 @@ var router = express.Router();
 const { query, oneOf, validationResult } = require('express-validator');
 const { existe, estaEm, vcTipoUser, vcVerbo } = require('../validation')
 
-router.get('/', Auth.isLoggedInUser, Auth.checkLevel(6), oneOf([
+router.get('/', oneOf([
     [
         estaEm('query', 'tipo', vcTipoUser),
         existe('query', 'id')
