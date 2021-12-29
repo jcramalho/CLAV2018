@@ -1,0 +1,82 @@
+{
+    "tipo": "PGD",
+    "legislacao": "Portaria 194/2011",
+    "entidades": ["DGLAB"],
+    "classes": [
+        {
+            "codigo": "070.01.07",
+            "referencia": "55",
+            "anoInicio": 2010,
+            "anoFim": 2012,
+            "dimensaoSuporte": {
+                "papel": 10,
+                "digital": 1,
+                "outro": {
+                    "valor": 2,
+                    "unidade": "pasta A4"
+                }
+            },
+            "numAgregacoes": 5,
+            "agregacoes": [
+                {
+                    "codigo": "MF - DSRICT",
+                    "titulo": "Departamento de Suporte à Rede de Instituições...",
+                    "ano": 2010,
+                    "naturezaIntervencao": "DONO"
+                },
+                {
+                    "codigo": "MF - DGA",
+                    "titulo": "Departamento de Gestão e Administração",
+                    "ano": 2011,
+                    "naturezaIntervencao": "DONO"
+                },
+                {
+                    "codigo": "MF - FCCN",
+                    "titulo": "Fundação para a Computação Científica Nacional",
+                    "ano": 2011,
+                    "naturezaIntervencao": "DONO"
+                },
+                {
+                    "codigo": "MF - DFA",
+                    "titulo": "Departamento de Formação Avançada",
+                    "ano": 2011,
+                    "naturezaIntervencao": "DONO"
+                },
+                {
+                    "codigo": "MF - DPP",
+                    "titulo": "Departamento de Programas e Projetos",
+                    "ano": 2010,
+                    "naturezaIntervencao": "DONO"
+                }
+            ]
+        },
+        {
+            "codigo": "100.05.01.02",
+            "referencia": "103.2",
+            "anoInicio": 1980,
+            "anoFim": 1990,
+            "dimensaoSuporte": {"papel": 123},
+            "numAgregacoes": 3,
+            "agregacoes": [
+                {
+                    "codigo": "PNA 1",
+                    "titulo": "Prémios Não Atribuídos",
+                    "ano": 1991,
+                    "naturezaIntervencao": "DONO"
+                },
+                {
+                    "codigo": "PNA 2",
+                    "titulo": "Prémios Não Atribuídos",
+                    "ano": 1991,
+                    "naturezaIntervencao": "DONO"
+                },
+                {
+                    "codigo": "PNA 3",
+                    "titulo": "Prémios Não Atribuídos",
+                    "ano": 1991,
+                    "naturezaIntervencao": "DONO"
+                }
+            ]
+        }
+    ]
+}

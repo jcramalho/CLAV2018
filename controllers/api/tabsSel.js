@@ -1543,7 +1543,7 @@ async function findSheet(
   return [sheetN, rowHeaderN, headersPos, ents_tips, errors];
 }
 
-function constructRADAO(
+async function constructRADAO(
   worksheet,
   file,
   stats,
@@ -1573,6 +1573,25 @@ function constructRADAO(
       : "tip_" + entidades[0];
 
     if (legislacao && entidade) {
+      try {
+        var query = await execQuery(
+          "query",
+          `ASK WHERE {?rada clav:eRepresentacaoDe clav:${legislacao.id}}`
+        );
+      } catch (err) {
+        errors.push({
+          msg:
+            "Falha na verificação de duplicação da Tabela de Seleção\n" + err,
+          codigo: "",
+        });
+        throw errors;
+      }
+      if (query.boolean === true)
+        throw {
+          msg: "Tabela de Seleção já inserida no sistema.",
+          id: "tsRada_" + legislacao.id,
+        };
+
       code.codigo = "tsRada_" + legislacao.id;
       var rada = [];
       var pais = [];
@@ -1733,7 +1752,7 @@ SelTabs.deleteTS = function (tsId, legId) {
 
 function deleteRADA(radaId, legId) {}
 
-function constructPGD(
+async function constructPGD(
   worksheet,
   file,
   stats,
@@ -1762,6 +1781,23 @@ function constructPGD(
     )[0];
 
   if (legislacao) {
+    try {
+      var query = await execQuery(
+        "query",
+        `ASK WHERE {?pgd clav:eRepresentacaoDe clav:${legislacao.id}}`
+      );
+    } catch (err) {
+      errors.push({
+        msg: "Falha na verificação de duplicação da Tabela de Seleção\n" + err,
+      });
+      throw errors;
+    }
+    if (query.boolean === true)
+      throw {
+        msg: "Tabela de Seleção já inserida no sistema.",
+        id: "pgd_" + legislacao.id,
+      };
+
     var pais = [];
     var n = 0;
     code.codigo = "pgd_" + legislacao.id;
@@ -2091,6 +2127,23 @@ async function constructPGDLCO(
     (l) => l.tipo == "Portaria" && l.numero == legId
   )[0];
   if (legislacao) {
+    try {
+      var query = await execQuery(
+        "query",
+        `ASK WHERE {?pgd clav:eRepresentacaoDe clav:${legislacao.id}}`
+      );
+    } catch (err) {
+      errors.push({
+        msg: "Falha na verificação de duplicação da Tabela de Seleção\n" + err,
+      });
+      throw errors;
+    }
+    if (query.boolean === true)
+      throw {
+        msg: "Tabela de Seleção já inserida no sistema.",
+        id: "pgd_lc_" + legislacao.id,
+      };
+
     var pais = [];
     var codigos = [];
     var n = 0;
@@ -2297,6 +2350,23 @@ async function constructPGDLCP(
     (l) => l.tipo == "Portaria" && l.numero == legId
   )[0];
   if (legislacao) {
+    try {
+      var query = await execQuery(
+        "query",
+        `ASK WHERE {?pgd clav:eRepresentacaoDe clav:${legislacao.id}}`
+      );
+    } catch (err) {
+      errors.push({
+        msg: "Falha na verificação de duplicação da Tabela de Seleção\n" + err,
+      });
+      throw errors;
+    }
+    if (query.boolean === true)
+      throw {
+        msg: "Tabela de Seleção já inserida no sistema.",
+        id: "pgd_lc_" + legislacao.id,
+      };
+
     var pais = [];
     var codigos = [];
 
@@ -2630,6 +2700,7 @@ SelTabs.criarPedidoDoCSV = async function (
   !multImport
     ? (entidades_ts = JSON.parse(entidades_ts))
     : (entidades_ts = { entidades_ts });
+
   const aux = await findSheet(
     workbook,
     tipo_ts,
@@ -2707,29 +2778,37 @@ SelTabs.criarPedidoDoCSV = async function (
         participantes: 0,
       };
       var code = { codigo: "" };
-      let pgd = await constructPGDLCO(
-        worksheet,
-        file,
-        stats,
-        code,
-        columns,
-        entidades_ts.split(),
-        errors[0].errors
-      );
-      if (errors[0].errors.length > 0) throw errors;
+      try {
+        let pgd = await constructPGDLCO(
+          worksheet,
+          file,
+          stats,
+          code,
+          columns,
+          entidades_ts.split(),
+          errors[0].errors
+        );
 
-      let parts = partRequest(pgd, 0);
+        let parts = partRequest(pgd, 0);
 
-      for (i in parts) {
-        try {
-          await execQuery("update", `INSERT DATA {${parts[i]}}`);
-        } catch (err) {
-          errors[0].errors.push({
-            msg: "Insucesso na inserção do tabela de seleção\n" + err,
-          });
-          throw errors;
+        for (i in parts) {
+          try {
+            await execQuery("update", `INSERT DATA {${parts[i]}}`);
+          } catch (err) {
+            errors[0].errors.push({
+              msg: "Insucesso na inserção do tabela de seleção\n" + err,
+            });
+            throw errors;
+          }
         }
+      } catch (e) {
+        errors[0].errors.push({
+          msg: e.msg,
+          id: e.id,
+        });
       }
+
+      if (errors[0].errors.length > 0) throw errors;
       await State.loadLegislacao(code.codigo.split("pgd_lc_")[1]);
 
       return { codigo: code.codigo, stats };
@@ -2740,28 +2819,36 @@ SelTabs.criarPedidoDoCSV = async function (
         participantes: 0,
       };
       var code = { codigo: "" };
-      let pgd = await constructPGDLCP(
-        worksheet,
-        file,
-        stats,
-        code,
-        columns,
-        ents_tips.map((e) => e.sigla),
-        errors[0].errors
-      );
-      if (errors[0].errors.length > 0) throw errors;
+      try {
+        let pgd = await constructPGDLCP(
+          worksheet,
+          file,
+          stats,
+          code,
+          columns,
+          ents_tips.map((e) => e.sigla),
+          errors[0].errors
+        );
 
-      let parts = partRequest(pgd, 0);
-      for (i in parts) {
-        try {
-          await execQuery("update", `INSERT DATA {${parts[i]}}`);
-        } catch (err) {
-          errors[0].errors.push({
-            msg: "Insucesso na inserção do tabela de seleção\n" + err,
-          });
-          throw errors;
+        let parts = partRequest(pgd, 0);
+        for (i in parts) {
+          try {
+            await execQuery("update", `INSERT DATA {${parts[i]}}`);
+          } catch (err) {
+            errors[0].errors.push({
+              msg: "Insucesso na inserção do tabela de seleção\n" + err,
+            });
+            throw errors;
+          }
         }
+      } catch (e) {
+        errors[0].errors.push({
+          msg: e.msg,
+          id: e.id,
+        });
       }
+
+      if (errors[0].errors.length > 0) throw errors;
       await State.loadLegislacao(code.codigo.split("pgd_lc_")[1]);
 
       return { codigo: code.codigo, stats };
@@ -2771,29 +2858,36 @@ SelTabs.criarPedidoDoCSV = async function (
       processos: 0,
     };
     var code = { codigo: "" };
-    let pgd = constructPGD(
-      worksheet,
-      file,
-      stats,
-      code,
-      columns,
-      !Array.isArray(entidades_ts) ? entidades_ts.split() : entidades_ts,
-      errors[0].errors
-    );
-    if (errors[0].errors.length > 0) throw errors;
+    try {
+      let pgd = await constructPGD(
+        worksheet,
+        file,
+        stats,
+        code,
+        columns,
+        !Array.isArray(entidades_ts) ? entidades_ts.split() : entidades_ts,
+        errors[0].errors
+      );
 
-    let parts = partRequest(pgd, 0);
+      let parts = partRequest(pgd, 0);
 
-    for (i in parts) {
-      try {
-        await execQuery("update", `INSERT DATA {${parts[i]}}`);
-      } catch (err) {
-        errors[0].errors.push({
-          msg: "Insucesso na inserção do tabela de seleção\n" + err,
-        });
-        throw errors;
+      for (i in parts) {
+        try {
+          await execQuery("update", `INSERT DATA {${parts[i]}}`);
+        } catch (err) {
+          throw {
+            msg: "Insucesso na inserção do tabela de seleção\n" + err,
+          };
+        }
       }
+    } catch (e) {
+      errors[0].errors.push({
+        msg: e.msg,
+        id: e.id,
+      });
     }
+
+    if (errors[0].errors.length > 0) throw errors;
 
     await State.loadLegislacao(code.codigo.split("pgd_")[1]);
 
@@ -2804,29 +2898,37 @@ SelTabs.criarPedidoDoCSV = async function (
         processos: 0,
       };
       var code = { codigo: "" };
-      let rada = constructRADAO(
-        worksheet,
-        file,
-        stats,
-        code,
-        columns,
-        entidades_ts.split(),
-        errors[0].errors
-      );
-      if (errors[0].errors.length > 0) throw errors;
+      try {
+        let rada = await constructRADAO(
+          worksheet,
+          file,
+          stats,
+          code,
+          columns,
+          entidades_ts.split(),
+          errors[0].errors
+        );
 
-      let parts = partRequest(rada, 0);
+        let parts = partRequest(rada, 0);
 
-      for (i in parts) {
-        try {
-          await execQuery("update", `INSERT DATA {${parts[i]}}`);
-        } catch (err) {
-          errors[0].errors.push({
-            msg: "Insucesso na inserção do tabela de seleção\n" + err,
-          });
-          throw errors;
+        for (i in parts) {
+          try {
+            await execQuery("update", `INSERT DATA {${parts[i]}}`);
+          } catch (err) {
+            errors[0].errors.push({
+              msg: "Insucesso na inserção do tabela de seleção\n" + err,
+            });
+            throw errors;
+          }
         }
+      } catch (e) {
+        errors[0].errors.push({
+          msg: e.msg,
+          id: e.id,
+        });
       }
+
+      if (errors[0].errors.length > 0) throw errors;
       await State.loadLegislacao(code.codigo.split("tsRada_")[1]);
       return { codigo: code.codigo, stats };
     }

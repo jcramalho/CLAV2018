@@ -1,0 +1,43 @@
+summary: Cria um pedido de importação de um auto de eliminação a partir de um ficheiro JSON
+description: |
+  Cria um pedido de importação de um auto de eliminação a partir de um ficheiro JSON
+
+  **Acesso permitido a:** Utilizadores com nível 1, 3, 3.5, 4, 5, 6 e 7
+tags:
+  - Autos de Eliminação
+security:
+  - userQuery: []
+  - userAuth: []
+parameters:
+  - name: tipo
+    in: query
+    description: 'Tipo do auto de eliminação'
+    schema:
+      type: string
+      enum: [PGD, RADA, PGD/LC, TS/LC, RADA/CLAV]
+    required: true
+requestBody:
+  description: 'Auto de eliminação'
+  required: true
+  content:
+    multipart/form-data:
+      schema:
+        type: object
+        properties:
+          file:
+            type: string
+            format: binary
+      encoding:
+        file:
+          contentType: application/json; charset=utf-8
+responses:
+  200:
+    description: Criado um pedido para a importação de uma auto de eliminação
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
+  404:
+    description: Erro
