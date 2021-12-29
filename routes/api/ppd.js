@@ -20,17 +20,17 @@ router.post("/registar", function (req, res) {
         .catch(erro => res.status(500).jsonp("Erro na adição do PPD "+req.body.geral.nomePPD+": " + erro))
 });
 
-router.get("/:nomePPD", function (req, res) {
-    PPD.get(req.params.nomePPD)
+router.get("/:id", function (req, res) {
+    PPD.getPPD(req.params.id)
         .then(dados => {
 
             if (!!dados) {
-                res.status(200).jsonp({ valor: dados.valor });
+                res.status(200).jsonp({ dados });
             } else {
-                res.status(404).send(`PPD ${req.params.nomePPD} não existe`)
+                res.status(404).send(`PPD ${req.params.id} não existe`)
             }
         })
-        .catch(err => res.status(500).send(`PPD ${req.params.nomePPD} não existe: ${err}`));
+        .catch(err => res.status(500).send(`PPD ${req.params.id} não existe: ${err}`));
 });
 
 module.exports = router;

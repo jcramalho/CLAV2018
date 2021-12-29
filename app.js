@@ -121,13 +121,13 @@ mongoose.connect(dataBases.userDB, {
             mongoose.connection.on('error', console.error.bind(console, 'MongoDB: erro na conexão: '));
 
             console.log('MongoDB: pronto. Status: ' + Mstate)
-            try{
-                var data = await ontologia.data()
-                console.log('GraphDB: pronto. Data da ontologia: ' + data)
-            }catch(e){
-                console.error("GraphDB: não foi possível aceder.")
-                process.exit(1)
-            }
+            //try{
+            //    var data = await ontologia.data()
+            //    console.log('GraphDB: pronto. Data da ontologia: ' + data)
+            //}catch(e){
+            //    console.error("GraphDB: não foi possível aceder.")
+            //    process.exit(1)
+            //}
 
             //loads APP State
             var State = require('./controllers/state.js')

@@ -1,0 +1,334 @@
+type: object
+properties:
+  dados:
+    type: object
+    properties:
+      geral:
+      type: object
+      properties:
+        nomePPD:
+          type: string
+        entSel:
+          type: array
+          items:
+            type: object
+            properties:
+              sigla:
+                type: string
+              identificacao:
+                type: string
+              id:
+                type: string
+              label:
+                type: string
+            required:
+              - sigla
+              - identificacao
+              - id
+              - label
+        mencaoResp:
+          type: string
+        tipoFonteL:
+          type: string
+        fonteLegitimacao:
+          type: object
+          properties:
+            id:
+              type: string
+            titulo:
+              type: string
+          required:
+            - id
+            - titulo
+      required:
+        - nomePPD
+        - entSel
+        - mencaoResp
+        - tipoFonteL
+        - fonteLegitimacao
+      sistemasInfo:
+        type: array
+        items:
+          type: object
+          properties:
+            visto:
+              type: string
+            numeroSI:
+              type: string
+            nomeSI:
+              type: string
+            identificacao:
+              type: object
+              properties:
+                adminSistema:
+                  type: string
+                adminDados:
+                  type: string
+                propSistemaPublico:
+                  type: string
+                propSistemaPrivado:
+                  type: string
+                propDados:
+                  type: string
+                localDadosPublico:
+                  type: string
+                localDadosPrivado:
+                  type: string
+                defResponsavel:
+                  type: string
+                insourcing:
+                  type: string
+                outsourcing:
+                  type: string
+                notas:
+                  type: string
+              required:
+                - adminSistema
+                - adminDados
+                - propSistemaPublico
+                - propSistemaPrivado
+                - propDados
+                - localDadosPublico
+                - localDadosPrivado
+                - defResponsavel
+                - insourcing
+                - outsourcing
+                - notas
+            avaliacao:
+              type: object
+              properties:
+                descricao:
+                  type: string
+                pcaSI:
+                  type: string
+                destinoSI:
+                  type: string
+                decomposicao:
+                  type: string
+                checkedAti:
+                  type: string
+                checkedGrau:
+                  type: string
+                checkedCriticidade:
+                  type: string
+                objetoPreservacao:
+                  type: string
+                codClasse:
+                  type: string
+                numeroClasse:
+                  type: string
+                tituloClasse:
+                  type: string
+                pcaClasse:
+                  type: string
+                destinoFinalClasse:
+                  type: string
+                formaContagemPrazos:
+                  type: string
+                siRelacionado:
+                  type: string
+                siRelacionadoRelacao:
+                  type: string
+                selecionadosTabelaFL:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      classe:
+                        type: string
+                      codigo:
+                        type: string
+                      df:
+                        type: string
+                      classePai:
+                        type: string
+                      titulo:
+                        type: string
+                      nivel:
+                        type: string
+                      referencia:
+                        type: string
+                      descricao:
+                        type: string
+                      pca:
+                        type: string
+                    required:
+                      - classe
+                      - codigo
+                      - df
+                      - classePai
+                      - titulo
+                      - nivel
+                      - referencia
+                      - descricao
+                      - pca
+              required:
+                - descricao
+                - pcaSI
+                - destinoSI
+                - decomposicao
+                - checkedAti
+                - checkedGrau
+                - checkedCriticidade
+                - objetoPreservacao
+                - codClasse
+                - numeroClasse
+                - tituloClasse
+                - pcaClasse
+                - destinoFinalClasse
+                - formaContagemPrazos
+                - siRelacionado
+                - siRelacionadoRelacao
+                - selecionadosTabelaFL
+            caracterizacao:
+              type: object
+              properties:
+                dependenciaSoft:
+                  type: string
+                categoriaDados:
+                  type: string
+                formatosUtilizados:
+                  type: string
+                modeloCres:
+                  type: string
+                dimensao:
+                  type: string
+                crescimento:
+                  type: string
+                localSistema:
+                  type: string
+                salaTec:
+                  type: string
+                acessoSalaTec:
+                  type: string
+                energiaRed:
+                  type: string
+                energiaSoc:
+                  type: string
+                alarme:
+                  type: string
+                climatizacao:
+                  type: string
+                seguranca:
+                  type: string
+                comunicacaoEx:
+                  type: string
+                planoContingencia:
+                  type: string
+                planoMudEvolucao:
+                  type: string
+                privAcesso:
+                  type: string
+                catSegDados:
+                  type: string
+                rotinaAuditoria:
+                  type: string
+                logsRotinas:
+                  type: string
+                integridadeInfo:
+                  type: string
+                armazenamento:
+                  type: string
+                replicacaoDados:
+                  type: string
+                backupsRegular:
+                  type: string
+                modeloBackup:
+                  type: string
+                qualidadeBackup:
+                  type: string
+                inventarioSoft:
+                  type: string
+                inventarioHard:
+                  type: string
+                documentacaoSis:
+                  type: string
+                documentacaoProc:
+                  type: string
+                controlVersaoDProc:
+                  type: string
+                contratoAtivos:
+                  type: string
+                planoRecuperacao:
+                  type: string
+                notas:
+                  type: string
+              required:
+                - dependenciaSoft
+                - categoriaDados
+                - formatosUtilizados
+                - modeloCres
+                - dimensao
+                - crescimento
+                - localSistema
+                - salaTec
+                - acessoSalaTec
+                - energiaRed
+                - energiaSoc
+                - alarme
+                - climatizacao
+                - seguranca
+                - comunicacaoEx
+                - planoContingencia
+                - planoMudEvolucao
+                - privAcesso
+                - catSegDados
+                - rotinaAuditoria
+                - logsRotinas
+                - integridadeInfo
+                - armazenamento
+                - replicacaoDados
+                - backupsRegular
+                - modeloBackup
+                - qualidadeBackup
+                - inventarioSoft
+                - inventarioHard
+                - documentacaoSis
+                - documentacaoProc
+                - controlVersaoDProc
+                - contratoAtivos
+                - planoRecuperacao
+                - notas
+            estrategia:
+              type: object
+              properties:
+                utilizacaoOperacional:
+                  type: object
+                  properties:
+                    idMetodoPreservacao:
+                      type: string
+                    fundMetodoPreservacao:
+                      type: string
+                    lacunas:
+                      type: string
+                  required:
+                    - idMetodoPreservacao
+                    - fundMetodoPreservacao
+                    - lacunas
+                utilizacaoMemoria:
+                  type: object
+                  properties:
+                    idMetodoPreservacao:
+                      type: string
+                    fundMetodoPreservacao:
+                      type: string
+                    lacunas:
+                      type: string
+                  required:
+                    - idMetodoPreservacao
+                    - fundMetodoPreservacao
+                    - lacunas
+              required:
+                - utilizacaoOperacional
+                - utilizacaoMemoria
+          required:
+            - visto
+            - numeroSI
+            - nomeSI
+            - identificacao
+            - avaliacao
+            - caracterizacao
+            - estrategia
+    required:
+      - geral
+      - sistemasInfo
