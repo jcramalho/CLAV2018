@@ -17,6 +17,7 @@ Classes.listar = async (nivel) => {
                     clav:classeStatus ?status;
                     clav:codigo ?codigo ;
                     clav:titulo ?titulo .
+            filter (?status = "A") .
         }
         Order by ?id
     `;
