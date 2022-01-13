@@ -1,0 +1,29 @@
+summary: Inserção de um PPD
+security:
+  - userQuery: []
+  - userAuth: []
+tags:
+  - PPD
+description: |
+  Inserção de um PPD
+
+  **Acesso permitido a:** Utilizadores com nível 5, 6 e 7
+requestBody:
+  description: Dados necessários para criar um PPD
+  required: true
+  content:
+    application/json:
+      schema:
+        properties:
+
+responses:
+  200:
+    description: PPD inserido com sucesso
+  401:
+    $ref: '#/components/responses/UnauthorizedKey'
+  403:
+    $ref: '#/components/responses/PermissionsKey'
+  422:
+    $ref: '#/components/responses/ValidationParameters'
+  500:
+    description: Erro
