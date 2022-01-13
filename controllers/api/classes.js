@@ -388,6 +388,7 @@ Classes.descendencia = async (id) => {
                     clav:classeStatus ?status;
                     clav:codigo ?codigo ;
                     clav:titulo ?titulo .
+                filter (?status = "A").
             }
             ORDER BY ?codigo
             `;
