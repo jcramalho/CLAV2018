@@ -2075,17 +2075,20 @@ async function getClasseInfo(codigos) {
         statements += "\n###\n";
         //Processos Relacionados
         for (const proc of classe.processosRelacionados) {
-          statements +=
-            "clav:" +
-            classeId +
-            " clav:temRelProc clav:c" +
-            proc.codigo +
-            " ;\n\t clav:" +
-            proc.idRel +
-            " clav:c" +
-            proc.codigo +
-            " .\n";
-          statements += "\n###\n";
+          var procId = codigos.find((c) => c.codigo === proc.codigo);
+          if (procId) {
+            statements +=
+              "clav:" +
+              classeId +
+              " clav:temRelProc clav:" +
+              procId.classeId +
+              " ;\n\t clav:" +
+              proc.idRel +
+              " clav:" +
+              procId.classeId +
+              " .\n";
+            statements += "\n###\n";
+          }
         }
         //Legislação
         for (const leg of classe.legislacao) {
