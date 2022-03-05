@@ -572,7 +572,6 @@ validaSemantica = async function(req, res, next){
       mensagens.push(mensagensAnt[e])
 
     if(mensagens.length > 0) {
-      console.log(mensagens)
       res.status(500).json("Erro(s) na análise iiiiiiisemântica do(s) ficheiro(s) CSV: &&&" + mensagens);     
     } else 
       next()
