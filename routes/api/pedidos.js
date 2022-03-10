@@ -179,6 +179,7 @@ router.put('/', Auth.isLoggedInUser, Auth.checkLevel([3.5, 4, 5, 6, 7]), [
         .catch(erro => res.status(500).send(`Erro na atualização do pedido: ${erro}`));
 })
 
+
 // Adição de distribuição 
 router.post('/:codigo/distribuicao', Auth.isLoggedInUser, Auth.checkLevel([3.5, 4, 5, 6, 7]), [
     verificaPedidoCodigo('param', 'codigo'),

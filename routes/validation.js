@@ -566,14 +566,18 @@ module.exports.vcPedidoAcao = [
 ];
 module.exports.vcPedidoEstado = [
   "Submetido",
+  "Ressubmetido",
   "Distribuído",
-  "Apreciado",
   "Redistribuído",
+  "Apreciado",
   "Reapreciado",
+  "Apreciado2v",
+  "Reapreciado2v",
   "Em Despacho",
   "Devolvido para validação",
   "Validado",
   "Devolvido",
+  "Cancelado"
 ];
 
 //Pendentes
