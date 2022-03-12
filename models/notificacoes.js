@@ -31,7 +31,7 @@ const NotificacaoSchema = new mongoose.Schema({
     },
     pedido: {
         type: String,
-        required: false
+        required: true
     },
     data: {
         type: Date,
