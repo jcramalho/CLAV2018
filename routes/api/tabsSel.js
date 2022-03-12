@@ -83,6 +83,7 @@ router.post(
     var form = new formidable.IncomingForm();
 
     Users.getUserById(req.user.id, function (err, user) {
+      console.log(JSON.stringify(user) + " - Erro: " + err)
       if (err) {
         res
           .status(500)
@@ -106,7 +107,7 @@ router.post(
 
               if (!fields.multImport && !fields.entidades_ts) {
                 res
-                  .status(500)
+                  .status(501)
                   .json(
                     `Erro ao importar CSV: Não foram escolhidas entidades para a TS. Necessita de ter um array denominado entidades_ts com pelo menos uma sigla de uma entidade da TS.`
                   );
@@ -142,7 +143,7 @@ router.post(
                     if (++i == len) {
                       parsed = true;
                       res
-                        .status(500)
+                        .status(502)
                         .json(
                           `Erro ao importar CSV: Não foi possível fazer parsing do ficheiro.\nOs delimitadores podem ser: , ou ; ou \\t ou |.\nPara além disso o quote e o escape são realizados através de ".\nPor fim, o encoding do ficheiro tem de ser UTF-8.`
                         );
@@ -164,7 +165,7 @@ router.post(
                   )
                     .then((codigoPedido) => res.json(codigoPedido))
                     .catch((erro) =>
-                      res.status(500).json(`Erro ao importar CSV: ${erro}`)
+                      res.status(503).json(`Erro ao importar CSV: ${erro}`)
                     );
                 }
               } else if (
@@ -188,16 +189,16 @@ router.post(
                       .then((dados) => res.json(dados))
                       .catch((erro) => {
                         if (erro.length > 0 || erro.entidades) {
-                          res.status(500).json(erro);
+                          res.status(504).json(erro);
                         } else {
                           res
-                            .status(500)
+                            .status(505)
                             .json(`Erro ao importar Excel: ${erro}`);
                         }
                       });
                   })
                   .catch((erro) =>
-                    res.status(500).json(`Erro ao importar Excel: ${erro}`)
+                    res.status(506).json(`Erro ao importar Excel: ${erro}`)
                   );
               } else {
                 res
@@ -208,13 +209,13 @@ router.post(
               }
             } else {
               res
-                .status(500)
+                .status(507)
                 .json(
                   `Erro ao importar CSV/Excel: O FormData deve possuir quatro campos: um ficheiro em file, o tipo de TS em tipo_ts, a designação em designacao e a sigla da entidade(s) da TS entidade em entidades_ts.`
                 );
             }
           } else {
-            res.status(500).json(`Erro ao importar CSV/Excel: ${error}`);
+            res.status(508).json(`Erro ao importar CSV/Excel: ${error}`);
           }
         });
       }
