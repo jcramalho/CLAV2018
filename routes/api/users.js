@@ -393,7 +393,7 @@ router.get('/:id', Auth.isLoggedInUser, [
         Users.listarPorId(req.params.id,function(err, result){
             if(err){
                 //res.status(500).send(`Erro: ${err}`);
-                res.status(500).send("Não foi possível obter o utilizador!");
+                res.status(404).send("Não foi possível obter o utilizador!");
             }else{
                 result._doc.temPass = result._doc.local.password ? true : false
                 if(req.user.level < 7){
