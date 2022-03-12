@@ -83,6 +83,7 @@ router.post(
     var form = new formidable.IncomingForm();
 
     Users.getUserById(req.user.id, function (err, user) {
+      console.log(JSON.stringify(user) + " - Erro: " + err)
       if (err) {
         res
           .status(500)
