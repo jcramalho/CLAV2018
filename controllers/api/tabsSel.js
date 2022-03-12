@@ -1,4 +1,4 @@
-const nanoid = require("nanoid");
+const {nanoid} = require("nanoid");
 const { execQuery } = require("./utils");
 const { normalize } = require("./utils");
 const { projection } = require("./utils");
