@@ -188,7 +188,6 @@ router.post(
                       .then((dados) => res.json(dados))
                       .catch((erro) => {
                         if (erro.length > 0 || erro.entidades) {
-                          console.log("ERRO: " + JSON.stringify(erro))
                           res.status(504).json(erro);
                         } else {
                           res
