@@ -573,7 +573,7 @@ Leg.moreInfo = async (leg) => {
 //Cria legislação em triplos dado um objeto legislação
 function queryLeg(id, leg) {
   if (!id) {
-    const nanoid = require("nanoid");
+    const {nanoid} = require("nanoid");
     id = "leg_" + nanoid();
   }
 

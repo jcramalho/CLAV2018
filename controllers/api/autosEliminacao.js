@@ -367,7 +367,7 @@ AutosEliminacao.adicionar = async function (auto) {
 
 
 AutosEliminacao.adicionarPGD = async function (auto) {
-    const nanoid = require('nanoid')
+    const {nanoid} = require('nanoid')
     var currentTime = new Date()
     var queryEnt = `
         SELECT ?ent WHERE {
