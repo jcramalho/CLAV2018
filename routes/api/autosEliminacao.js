@@ -468,7 +468,7 @@ validaSemantica = async function(req, res, next){
         if(tipo != "PGD" && tipo != "RADA"){ 
           if(codref == 1) { // (evitar fazer a verificação seguinte caso o código não seja inválido)
             var a = myPGD.filter(c => c.codigo == classes[i].codigo)
-            if(a.length > 0)
+            if(a.length > 0) {
               if(a[0].df == "C") { // Só verificamos caso o destino final seja Conservação
                 if(classes[i].dono == '') // Campo vazio
                   mensagens.push("Não foi possível importar o ficheiro de classes / séries. O preenchimento do campo dono é obrigatório nas classes/séries de conservação. Deve preencher o campo da coluna dono com o(s) nome da(s) entidade(s) dona(s) do processo que consta(m) no catálogo de entidades da CLAV. Se o(s) nome(s) da(s) entidade(s) não constar(em) tem de propor a sua inclusão. Se for mais de uma entidade, deve separá-las com #. Verifique o seu preenchimento na seguinte linha: " + (i+2) + " %%%");
@@ -484,6 +484,9 @@ validaSemantica = async function(req, res, next){
                   }
                 }
               }
+            }
+            else 
+              mensagens.push("Não foi possível importar o ficheiro de classes / séries. Não foi possível verificar o(s) dono(s) porque o codigo fornecido é inválido. Verifique o seu preenchimento na seguinte linha: "+ (i+2) + " %%%");
           }
           else 
             mensagens.push("Não foi possível importar o ficheiro de classes / séries. Não foi possível verificar o(s) dono(s) porque o codigo fornecido é inválido. Verifique o seu preenchimento na seguinte linha: "+ (i+2) + " %%%");
@@ -528,17 +531,23 @@ validaSemantica = async function(req, res, next){
             if(!anoRegEx.test(agregacoes[j].dataContagem)) // Campo mal preenchido : formato de data errado
               mensagens.push("Não foi possível importar o ficheiro de agregações. O preenchimento dos campos da coluna dataInicioContagemPCA é obrigatório e deve ser preenchido com a data de início de contagem do prazo de conservação administrativo (PCA), no formato AAAA. Verifique o seu preenchimento na seguinte linha: " + (j+2) + " %%%");
             else {
-              if(codref != 0) {  
-                var a = []
-                if(codref == 1)
-                  a = myPGD.filter(c => c.codigo == agregacoes[j].codigo)
-                if(codref == 2)
-                  a = myPGD.filter(c => c.referencia == agregacoes[j].referencia)
-                if(a.length > 0)
+              var a = []
+              if(codref == 1) { // codigo
+                a = myPGD.filter(c => c.codigo == agregacoes[j].codigo)
+                if(a.length > 0) {
+                  if(Number(agregacoes[j].dataContagem) > (Number(anoAtual) - Number(a[0].pca) + 1))  // Campo mal preenchido
+                    mensagens.push("Não foi possível importar o ficheiro de agregações. O preenchimento dos campos da coluna dataInicioContagemPCA é obrigatório e deve ser preenchido com a data de início de contagem do prazo de conservação administrativo (PCA). O valor introduzido deve ser igual ou inferior à subtração do valor existente no campo PCA da respetiva classe / série ao ano corrente, mais um ano. Verifique o seu preenchimento na seguinte linha: " + (j+2) + " %%%");     
+                } else {
+                  mensagens.push("Não foi possível importar o ficheiro de agregações. Não foi possível verificar a data de início de contagem porque a referencia e/ou o codigoClasse fornecido é inválido. Verifique o seu preenchimento na seguinte linha: "+ (j+2) + " %%%");
+                }
+              } else if(codref == 2) { // referencia
+                a = myPGD.filter(c => c.referencia == agregacoes[j].referencia)
+                if(a.length > 0) {
                   if(Number(agregacoes[j].dataContagem) > (Number(anoAtual) - Number(a[0].pca) + 1)) // Campo mal preenchido
                     mensagens.push("Não foi possível importar o ficheiro de agregações. O preenchimento dos campos da coluna dataInicioContagemPCA é obrigatório e deve ser preenchido com a data de início de contagem do prazo de conservação administrativo (PCA). O valor introduzido deve ser igual ou inferior à subtração do valor existente no campo PCA da respetiva classe / série ao ano corrente, mais um ano. Verifique o seu preenchimento na seguinte linha: " + (j+2) + " %%%");     
-                else
+                } else {
                   mensagens.push("Não foi possível importar o ficheiro de agregações. Não foi possível verificar a data de início de contagem porque a referencia e/ou o codigoClasse fornecido é inválido. Verifique o seu preenchimento na seguinte linha: "+ (j+2) + " %%%");
+                }
               }
               else
                 mensagens.push("Não foi possível importar o ficheiro de agregações. Não foi possível verificar a data de início de contagem porque a referencia e/ou o codigoClasse fornecido é inválido. Verifique o seu preenchimento na seguinte linha: "+ (j+2) + " %%%");
@@ -549,7 +558,7 @@ validaSemantica = async function(req, res, next){
           if(tipo != "PGD" && tipo != "RADA"){
             if(codref == 1) {
               var a = myPGD.filter(c => c.codigo == agregacoes[j].codigo)
-              if(a.length > 0)
+              if(a.length > 0) {
                 if(a[0].df == "E") { // Só verificamos caso o destino final seja Eliminação
                   if(agregacoes[j].ni == '') // Campo vazio em classes / séries de eliminação
                     mensagens.push("Não foi possível importar o ficheiro de agregações. O preenchimento dos campos da coluna intervencao (natureza de intervenção) é obrigatório nas agregações das classes / séries de eliminação. Deve preenchê-lo com um dos valores: Dono ou Participante. Verifique o seu preenchimento na seguinte linha: " + (j+2) + " %%%");
@@ -557,11 +566,12 @@ validaSemantica = async function(req, res, next){
                     if(agregacoes[j].ni != "participante" && agregacoes[j].ni != "dono" ) //Campo mal preenchido: com outros valores que não Dono ou Participante.
                       mensagens.push("Não foi possível importar o ficheiro de agregações. O preenchimento dos campos da coluna intervencao (natureza de intervenção) é obrigatório nas agregações das classes / séries de eliminação. Deve preenchê-lo com um dos valores: Dono ou Participante. Verifique o seu preenchimento na seguinte linha: "+ (j+2) + " %%%");   
                 }
+              } 
               else
-                mensagens.push("Não foi possível importar o ficheiro de agregações. Não foi possível verificar a natureza de intervencao porque o codigoClasse fornecido é inválido. Verifique o seu preenchimento na seguinte linha: "+ (j+2) + " %%%");
+                mensagens.push("Não foi possível importar o ficheiro de agregações. Não foi possível verificar a natureza de intervencao porque o codigoClasseAA fornecido é inválido. Verifique o seu preenchimento na seguinte linha: "+ (j+2) + " %%%");
             }
             else 
-              mensagens.push("Não foi possível importar o ficheiro de agregações. Não foi possível verificar a natureza de intervencao porque o codigoClasse fornecido é inválido. Verifique o seu preenchimento na seguinte linha: "+ (j+2) + " %%%");
+              mensagens.push("Não foi possível importar o ficheiro de agregações. Não foi possível verificar a natureza de intervencao porque o codigoClasseBBB fornecido é inválido. Verifique o seu preenchimento na seguinte linha: "+ (j+2) + " %%%");
           }
         } 
         codref = 1 //reset depois do ciclo
@@ -572,7 +582,7 @@ validaSemantica = async function(req, res, next){
       mensagens.push(mensagensAnt[e])
 
     if(mensagens.length > 0) {
-      res.status(500).json("Erro(s) na análise iiiiiiisemântica do(s) ficheiro(s) CSV: &&&" + mensagens);     
+      res.status(500).json("Erro(s) na análise semântica do(s) ficheiro(s) CSV: &&&" + mensagens);     
     } else 
       next()
     
