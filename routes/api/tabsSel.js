@@ -93,6 +93,7 @@ router.post(
         form.parse(req, async (error, fields, formData) => {
           if (!error) {
             fields.multImport = fields.multImport === "true";
+            console.log(JSON.stringify(fields))
             console.log(formData.file.path)
             console.log(formData.file.type)
             console.log(fields.entidades_ts)
