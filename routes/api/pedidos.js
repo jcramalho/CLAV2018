@@ -129,6 +129,20 @@ router.post('/', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), 
         .catch(erro => res.status(500).send(`Erro na criação do pedido: ${erro}`));
 })
 
+//Inserir pedidos já existentes
+router.post('/repor', Auth.isLoggedInUser, Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]), function(req, res){
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+        return res.status(422).jsonp(errors.array())
+    }
+
+    Pedidos.repor(req.body)
+        .then(dados => {
+            res.jsonp(dados);
+        })
+        .catch(erro => res.status(500).send(`Erro na criação do pedido: ${erro}`));
+})
+
 // Atualização de um pedido: mais uma etapa na distribuição
 router.put('/', Auth.isLoggedInUser, Auth.checkLevel([3.5, 4, 5, 6, 7]), [
     existe('body', 'pedido'),

@@ -119,6 +119,15 @@ Pedidos.criar = async function (pedidoParams) {
 };
 
 /**
+ * Repõe um pedido já criado (mas apagado da BD).
+ * 
+ */
+Pedidos.repor = pedido =>  {
+  var ped = new Pedido(pedido)
+  return ped.save()
+}
+
+/**
  * Atualiza um pedido.
  *
  * @param pedidoParams novos dados para atualizar o pedido.
