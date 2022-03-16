@@ -93,28 +93,23 @@ router.post(
         form.parse(req, async (error, fields, formData) => {
           if (!error) {
             fields.multImport = fields.multImport === "true";
-            console.log(JSON.stringify(fields))
-            console.log(formData.file.path)
-            console.log(formData.file.type)
-            console.log(fields.entidades_ts)
-            console.log(fields.designacao)
-            console.log(fields.tipo_ts)
+            //console.log(JSON.stringify(fields))
             if (
               formData.file &&
               formData.file.type &&
               formData.file.path &&
-              ((fields.entidades_ts && fields.designacao) ||
+              ((fields.entidade_ts && fields.designacao) ||
                 fields.multImport) &&
               fields.tipo_ts &&
               fields.fonteL
             ) {
               var workbook = new Excel.Workbook();
 
-              if (!fields.multImport && !fields.entidades_ts) {
+              if (!fields.multImport && !fields.entidade_ts) {
                 res
                   .status(501)
                   .json(
-                    `Erro ao importar CSV: Não foram escolhidas entidades para a TS. Necessita de ter um array denominado entidades_ts com pelo menos uma sigla de uma entidade da TS.`
+                    `Erro ao importar CSV: Não foram escolhidas entidades para a TS. Necessita de ter um array denominado entidade_ts com pelo menos uma sigla de uma entidade da TS.`
                   );
               }
 
@@ -161,7 +156,7 @@ router.post(
                     workbook,
                     user.email,
                     req.user.entidade,
-                    !fields.multImport ? fields.entidades_ts : "",
+                    !fields.multImport ? fields.entidade_ts : "",
                     !fields.multImport ? fields.designacao : "",
                     fields.tipo_ts,
                     fields.fonteL,
@@ -184,7 +179,7 @@ router.post(
                       workbook,
                       user.email,
                       req.user.entidade,
-                      !fields.multImport ? fields.entidades_ts : "",
+                      !fields.multImport ? fields.entidade_ts : "",
                       !fields.multImport ? fields.designacao : "",
                       fields.tipo_ts,
                       fields.fonteL,
@@ -216,7 +211,7 @@ router.post(
               res
                 .status(507)
                 .json(
-                  `Erro ao importar CSV/Excel: O FormData deve possuir quatro campos: um ficheiro em file, o tipo de TS em tipo_ts, a designação em designacao e a sigla da entidade(s) da TS entidade em entidades_ts.`
+                  `Erro ao importar CSV/Excel: O FormData deve possuir quatro campos: um ficheiro em file, o tipo de TS em tipo_ts, a designação em designacao e a sigla da entidade(s) da TS entidade em entidade_ts.`
                 );
             }
           } else {
