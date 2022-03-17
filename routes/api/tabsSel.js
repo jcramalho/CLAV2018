@@ -6,6 +6,7 @@ const Excel = require("exceljs/modern.nodejs");
 var formidable = require("formidable");
 var express = require("express");
 var router = express.Router();
+var fs = require("fs")
 
 const { validationResult } = require("express-validator");
 const { existe, verificaTSId } = require("../validation");
