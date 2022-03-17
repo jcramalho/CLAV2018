@@ -951,6 +951,11 @@
                 "desc": "Cria um pedido de criação de uma tabela de seleção a partir de um ficheiro CSV/Excel"
             },
             {
+                "verbo": "POST",
+                "path": "/{api_version}/tabelasSelecao/importarProcessos",
+                "desc": "Importa uma lista de processos a partir de uma folha Excel para o processos de criação de uma TS"
+            },
+            {
                 "verbo": "PUT",
                 "path": "/{api_version}/pendentes",
                 "desc": "Atualiza um trabalho previamente guardado como pendente"
