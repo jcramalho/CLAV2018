@@ -76,51 +76,50 @@ router.post(
 );
 
 validaEstruturaCSV = async function(req, res, next){
-  console.log("Validação Estrutural.")
-  var form = new formidable.IncomingForm()
-  form.parse(req, async (error, fields, formData) => {
-    if (error)
-      res.status(500).send(`Erro ao importar Lista de Processos: ${error}`);
-    else if (!formData.file || !formData.file.path)
-      res.status(501).send(`Erro ao importar Lista de Processos: o ficheiro a importar tem de vir no pedido. `);
-    else if (formData.file.type == "application/vnd.ms-excel") {
-      var file = fs.readFileSync(formData.file.path, 'utf8')
-      Papa.parse(file, {
-        header: true,
-        transformHeader:function(h) {
-          return h.trim();
-        },
-        complete: async function(results) {
-          var f1 = results.data
-          var linha = results.data[0]
-          var mensagens = []
-          if(!linha.hasOwnProperty('codigo')) mensagens.push("Não foi possível importar a lista de processos. Coluna codigo inexistente. Verifique o seu preenchimento na seguinte linha: 0 %%%");
-          if(!linha.hasOwnProperty('dono')) mensagens.push("Não foi possível importar a lista de processos. Coluna dono inexistente. Verifique o seu preenchimento na seguinte linha: 0 %%%");
-          if(!linha.hasOwnProperty('participante')) mensagens.push("Não foi possível importar a lista de processos. Coluna participante inexistente. Verifique o seu preenchimento na seguinte linha: 0 %%%");
-          
-          if (mensagens.length > 0)
-            return res.status(502).jsonp(mensagens );
-          else {
-            console.log(fields)
-            console.log(JSON.stringify(f1))
-            //req.doc = []
-            //req.doc.push(fields)
-            //req.doc.push(f1)
-            next()
-          }
-        }
-      })
-    }
-  })
+  
 }
 
 router.post(
   "/importarProcessos", 
   Auth.isLoggedInUser,
   Auth.checkLevel([4, 5, 6, 7]),
-  validaEstruturaCSV,
   (req, res) => {
-    return res.status(500).jsonp(req.doc)
+    console.log("Validação Estrutural.")
+    var form = new formidable.IncomingForm()
+    form.parse(req, async (error, fields, formData) => {
+      if (error)
+        res.status(500).send(`Erro ao importar Lista de Processos: ${error}`);
+      else if (!formData.file || !formData.file.path)
+        res.status(501).send(`Erro ao importar Lista de Processos: o ficheiro a importar tem de vir no pedido. `);
+      else if (formData.file.type == "application/vnd.ms-excel") {
+        var file = fs.readFileSync(formData.file.path, 'utf8')
+        Papa.parse(file, {
+          header: true,
+          transformHeader:function(h) {
+            return h.trim();
+          },
+          complete: async function(results) {
+            var f1 = results.data
+            var linha = results.data[0]
+            var mensagens = []
+            if(!linha.hasOwnProperty('codigo')) mensagens.push("Não foi possível importar a lista de processos. Coluna codigo inexistente. Verifique o seu preenchimento na seguinte linha: 0 %%%");
+            if(!linha.hasOwnProperty('dono')) mensagens.push("Não foi possível importar a lista de processos. Coluna dono inexistente. Verifique o seu preenchimento na seguinte linha: 0 %%%");
+            if(!linha.hasOwnProperty('participante')) mensagens.push("Não foi possível importar a lista de processos. Coluna participante inexistente. Verifique o seu preenchimento na seguinte linha: 0 %%%");
+          
+            if (mensagens.length > 0)
+              return res.status(502).jsonp(mensagens );
+            else {
+              console.log(fields)
+              console.log(JSON.stringify(f1))
+            //req.doc = []
+            //req.doc.push(fields)
+            //req.doc.push(f1)
+              res.status(201).jsonp("OK")
+            }
+          }
+        })
+      }
+    })
   }
 )
 
