@@ -108,12 +108,10 @@ router.post(
             if (mensagens.length > 0)
               res.status(502).jsonp(mensagens );
             else {
-              console.log(fields)
-              console.log(JSON.stringify(f1))
             //req.doc = []
             //req.doc.push(fields)
             //req.doc.push(f1)
-              res.status(201).jsonp("OK")
+              res.status(201).jsonp(JSON.stringify(f1))
             }
           }
         })
