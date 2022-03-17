@@ -77,10 +77,6 @@ router.post(
   }
 );
 
-validaEstruturaCSV = async function(req, res, next){
-  
-}
-
 router.post(
   "/importarProcessos", 
   Auth.isLoggedInUser,
@@ -101,6 +97,7 @@ router.post(
             return h.trim();
           },
           complete: async function(results) {
+            console.log(JSON.stringify(results.data))
             var f1 = results.data
             var linha = results.data[0]
             var mensagens = []
