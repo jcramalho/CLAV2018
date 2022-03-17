@@ -117,7 +117,7 @@ router.post(
   Auth.checkLevel([4, 5, 6, 7]),
   validaEstruturaCSV,
   (req, res) => {
-    res.status(500).jsonp(req.doc)
+    return res.status(500).jsonp(req.doc)
   }
 )
 
