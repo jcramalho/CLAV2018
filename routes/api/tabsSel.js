@@ -84,10 +84,8 @@ router.post(
   Auth.isLoggedInUser,
   Auth.checkLevel([4, 5, 6, 7]),
   (req, res) => {
-    console.log("Validação Estrutural.")
     var form = new formidable.IncomingForm()
     form.parse(req, async (error, fields, formData) => {
-      console.log("Validação Estrutural::formParse::" + error)
       console.log(JSON.stringify(formData))
       if (error)
         res.status(500).send(`Erro ao importar Lista de Processos: ${error}`);
@@ -109,7 +107,7 @@ router.post(
             if(!linha.hasOwnProperty('participante')) mensagens.push("Não foi possível importar a lista de processos. Coluna participante inexistente. Verifique o seu preenchimento na seguinte linha: 0 %%%");
           
             if (mensagens.length > 0)
-              return res.status(502).jsonp(mensagens );
+              res.status(502).jsonp(mensagens );
             else {
               console.log(fields)
               console.log(JSON.stringify(f1))
@@ -120,6 +118,9 @@ router.post(
             }
           }
         })
+      }
+      else{
+        res.status(503).jsonp({"erro": "Formato do ficheiro enviado inválido."})
       }
     })
   }
