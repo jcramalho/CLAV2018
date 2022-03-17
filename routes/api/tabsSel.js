@@ -101,9 +101,11 @@ validaEstruturaCSV = async function(req, res, next){
           if (mensagens.length > 0)
             return res.status(502).send("Erro na análise estrutural do ficheiro enviado: &&&" + mensagens );
           else {
-            req.doc = []
-            req.doc.push(fields)
-            req.doc.push(f1)
+            console.log(fields)
+            console.log(JSON.stringify(f1))
+            //req.doc = []
+            //req.doc.push(fields)
+            //req.doc.push(f1)
             next()
           }
         }
