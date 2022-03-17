@@ -97,7 +97,6 @@ router.post(
             return h.trim();
           },
           complete: async function(results) {
-            console.log(JSON.stringify(results.data))
             var linha = results.data[0]
             var mensagens = []
             if(!linha.hasOwnProperty('codigo')) mensagens.push("Não foi possível importar a lista de processos. Coluna codigo inexistente. Verifique o seu preenchimento na seguinte linha: 0 %%%");
