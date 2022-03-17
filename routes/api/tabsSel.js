@@ -84,7 +84,6 @@ router.post(
   (req, res) => {
     var form = new formidable.IncomingForm()
     form.parse(req, async (error, fields, formData) => {
-      console.log(JSON.stringify(formData))
       if (error)
         res.status(500).send(`Erro ao importar Lista de Processos: ${error}`);
       else if (!formData.file || !formData.file.path)
