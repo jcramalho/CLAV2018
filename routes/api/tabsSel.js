@@ -76,6 +76,7 @@ router.post(
 );
 
 validaEstruturaCSV = async function(req, res, next){
+  console.log("Validação Estrutural.")
   var form = new formidable.IncomingForm()
   form.parse(req, async (error, fields, formData) => {
     if (error)
