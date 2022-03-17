@@ -98,7 +98,6 @@ router.post(
           },
           complete: async function(results) {
             console.log(JSON.stringify(results.data))
-            var f1 = results.data
             var linha = results.data[0]
             var mensagens = []
             if(!linha.hasOwnProperty('codigo')) mensagens.push("Não foi possível importar a lista de processos. Coluna codigo inexistente. Verifique o seu preenchimento na seguinte linha: 0 %%%");
@@ -108,10 +107,12 @@ router.post(
             if (mensagens.length > 0)
               res.status(502).jsonp(mensagens );
             else {
-            //req.doc = []
-            //req.doc.push(fields)
-            //req.doc.push(f1)
-              res.status(201).jsonp(f1)
+              results.data.forEach(pn => {
+                pn.codigo = pn.codigo.trim()
+                pn.dono = pn.dono.trim()
+                pn.participante = pn.participante.trim()
+              })
+              res.status(201).jsonp(results.data)
             }
           }
         })
