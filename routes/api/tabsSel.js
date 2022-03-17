@@ -87,6 +87,8 @@ router.post(
     console.log("Validação Estrutural.")
     var form = new formidable.IncomingForm()
     form.parse(req, async (error, fields, formData) => {
+      console.log("Validação Estrutural::formParse::" + error)
+      console.log(JSON.stringify(formData))
       if (error)
         res.status(500).send(`Erro ao importar Lista de Processos: ${error}`);
       else if (!formData.file || !formData.file.path)
