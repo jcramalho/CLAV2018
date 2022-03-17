@@ -99,7 +99,7 @@ validaEstruturaCSV = async function(req, res, next){
           if(!linha.hasOwnProperty('participante')) mensagens.push("Não foi possível importar a lista de processos. Coluna participante inexistente. Verifique o seu preenchimento na seguinte linha: 0 %%%");
           
           if (mensagens.length > 0)
-            return res.status(502).send("Erro na análise estrutural do ficheiro enviado: &&&" + mensagens );
+            return res.status(502).jsonp(mensagens );
           else {
             console.log(fields)
             console.log(JSON.stringify(f1))
