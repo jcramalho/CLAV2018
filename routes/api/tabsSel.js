@@ -7,6 +7,7 @@ var formidable = require("formidable");
 var express = require("express");
 var router = express.Router();
 var fs = require("fs")
+var Papa = require('papaparse')
 
 const { validationResult } = require("express-validator");
 const { existe, verificaTSId } = require("../validation");
