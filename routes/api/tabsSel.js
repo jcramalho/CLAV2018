@@ -111,7 +111,7 @@ router.post(
             //req.doc = []
             //req.doc.push(fields)
             //req.doc.push(f1)
-              res.status(201).jsonp(JSON.stringify(f1))
+              res.status(201).jsonp(f1)
             }
           }
         })
