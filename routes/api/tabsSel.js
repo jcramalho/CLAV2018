@@ -84,7 +84,6 @@ router.post(
   (req, res) => {
     var form = new formidable.IncomingForm()
     form.parse(req, async (error, fields, formData) => {
-      console.log(JSON.stringify(formData))
       if (error)
         res.status(500).send(`Erro ao importar Lista de Processos: ${error}`);
       else if (!formData.file || !formData.file.path)
@@ -97,7 +96,6 @@ router.post(
             return h.trim();
           },
           complete: async function(results) {
-            console.log(JSON.stringify(results.data))
             var linha = results.data[0]
             var mensagens = []
             if(!linha.hasOwnProperty('codigo')) mensagens.push("Não foi possível importar a lista de processos. Coluna codigo inexistente. Verifique o seu preenchimento na seguinte linha: 0 %%%");
