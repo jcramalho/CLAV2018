@@ -142,7 +142,7 @@ validaEstruturaCSV = async function(req, res, next){
       res.status(500).send(`Erro ao importar Auto de Eliminação: ${error} &&&`);
     else if (!formData.file || !formData.file.path)
       res.status(500).send(`Erro ao importar Auto de Eliminação: o campo file tem de vir preenchido. &&&`);
-    else if (formData.file.type == "text/csv") {//(formData.file.type == "application/vnd.ms-excel") {
+    else if (formData.file.type == "text/csv" || formData.file.type == "application/vnd.ms-excel") {
       var file = fs.readFileSync(formData.file.path, 'utf8')
       Papa.parse(file, {
         header: true,
@@ -162,7 +162,7 @@ validaEstruturaCSV = async function(req, res, next){
           if(!linha.hasOwnProperty('medicaoDigital')) mensagens.push("Não foi possível importar o ficheiro de classes / séries. Coluna medicaoDigital inexistente. Verifique o seu preenchimento na seguinte linha: 0 %%%");
           if(!linha.hasOwnProperty('medicaoOutro')) mensagens.push("Não foi possível importar o ficheiro de classes / séries. Coluna medicaoOutro inexistente. Verifique o seu preenchimento na seguinte linha: 0 %%%");
 
-          if(formData.agreg && formData.agreg.type == "application/vnd.ms-excel") { // AMBOS FICHEIROS
+          if(formData.agreg && (formData.agreg.type == "application/vnd.ms-excel" || formData.file.type == "text/csv")) { // AMBOS FICHEIROS
             var file2 = fs.readFileSync(formData.agreg.path, 'utf8')
             Papa.parse(file2, {
                 header: true,
