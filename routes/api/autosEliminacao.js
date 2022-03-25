@@ -142,7 +142,7 @@ validaEstruturaCSV = async function(req, res, next){
       res.status(500).send(`Erro ao importar Auto de Eliminação: ${error} &&&`);
     else if (!formData.file || !formData.file.path)
       res.status(500).send(`Erro ao importar Auto de Eliminação: o campo file tem de vir preenchido. &&&`);
-    else if (formData.file.type == "application/vnd.ms-excel") {
+    else if (formData.file.type == "text/csv") {//(formData.file.type == "application/vnd.ms-excel") {
       var file = fs.readFileSync(formData.file.path, 'utf8')
       Papa.parse(file, {
         header: true,
