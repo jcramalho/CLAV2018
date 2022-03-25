@@ -137,7 +137,6 @@ convFormatoIntermedio = function(req, res, next){
 validaEstruturaCSV = async function(req, res, next){
   var form = new formidable.IncomingForm()
   form.parse(req, async (error, fields, formData) => {
-    console.log("Tipo de ficheiro: " + formData.file.type)
     if (error)
       res.status(500).send(`Erro ao importar Auto de Eliminação: ${error} &&&`);
     else if (!formData.file || !formData.file.path)
@@ -564,7 +563,8 @@ validaSemantica = async function(req, res, next){
                   if(agregacoes[j].ni == '') // Campo vazio em classes / séries de eliminação
                     mensagens.push("Não foi possível importar o ficheiro de agregações. O preenchimento dos campos da coluna intervencao (natureza de intervenção) é obrigatório nas agregações das classes / séries de eliminação. Deve preenchê-lo com um dos valores: Dono ou Participante. Verifique o seu preenchimento na seguinte linha: " + (j+2) + " %%%");
                   else
-                    if(agregacoes[j].ni != "participante" && agregacoes[j].ni != "dono" ) //Campo mal preenchido: com outros valores que não Dono ou Participante.
+                    //Campo mal preenchido: com outros valores que não Dono ou Participante.
+                    if( !/participante/i.test(agregacoes[j].ni) && !/dono/i.test(agregacoes[j].ni) ) 
                       mensagens.push("Não foi possível importar o ficheiro de agregações. O preenchimento dos campos da coluna intervencao (natureza de intervenção) é obrigatório nas agregações das classes / séries de eliminação. Deve preenchê-lo com um dos valores: Dono ou Participante. Verifique o seu preenchimento na seguinte linha: "+ (j+2) + " %%%");   
                 }
               } 
