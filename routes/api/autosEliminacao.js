@@ -143,9 +143,7 @@ validaEstruturaCSV = async function(req, res, next){
       res.status(500).send(`Erro ao importar Auto de Eliminação: o campo file tem de vir preenchido. &&&`);
     else if (formData.file.type == "text/csv" || formData.file.type == "application/vnd.ms-excel") {
       var file = fs.readFileSync(formData.file.path, 'utf8')
-      // Limpar as aspas se elas vierem no CSV
-      var dadosLimpos = file.replaceAll('"', '')
-      Papa.parse(dadosLimpos, {
+      Papa.parse(file, {
         header: true,
         transformHeader:function(h) {
           return h.trim();
