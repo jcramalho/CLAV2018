@@ -91,6 +91,7 @@ router.post(
       else if (formData.file.type == "text/csv") {
         var file = fs.readFileSync(formData.file.path, 'utf8')
         Papa.parse(file, {
+          skipEmptyLines: "greedy",
           header: true,
           transformHeader:function(h) {
             return h.trim();
