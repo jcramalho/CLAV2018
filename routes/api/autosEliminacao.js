@@ -144,6 +144,7 @@ validaEstruturaCSV = async function(req, res, next){
     else if (formData.file.type == "text/csv" || formData.file.type == "application/vnd.ms-excel") {
       var file = fs.readFileSync(formData.file.path, 'utf8')
       Papa.parse(file, {
+        skipEmptyLines: "greedy",
         header: true,
         transformHeader:function(h) {
           return h.trim();
