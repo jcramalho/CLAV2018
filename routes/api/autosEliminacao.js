@@ -143,7 +143,9 @@ validaEstruturaCSV = async function(req, res, next){
       res.status(500).send(`Erro ao importar Auto de Eliminação: o campo file tem de vir preenchido. &&&`);
     else if (formData.file.type == "text/csv" || formData.file.type == "application/vnd.ms-excel") {
       var file = fs.readFileSync(formData.file.path, 'utf8')
-      Papa.parse(file, {
+      // Limpar as aspas se elas vierem no CSV
+      var dadosLimpos = file.replaceAll('"', '')
+      Papa.parse(dadosLimpos, {
         header: true,
         transformHeader:function(h) {
           return h.trim();
@@ -267,6 +269,7 @@ convCSVFormatoIntermedio = function(req, res, next){
       if(agregs != undefined) {
         var ags = agregs.filter(ag => (ag.referencia != '' && ag.referencia == c.referencia) || (ag.codigoClasse != '' && ag.codigoClasse == c.codigo))
         if(ags.length > 0) {
+          c.numAgregacoes = ags.length
           for(var j=0; j < ags.length; j++){
             var a = {}
             a.codigo = ags[j].codigoClasse
