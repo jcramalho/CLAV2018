@@ -453,6 +453,10 @@ validaSemantica = async function(req, res, next){
             if(!(/^(0|([1-9]\d*))$/.test(classes[i].numAgregacoes))) // Campo mal preenchido: outros formatos de números
               mensagens.push("Não foi possível importar o ficheiro de classes / séries. Deve preencher os campos da coluna numAgregacoes (número de agregações / unidades de instalação por classe / série) com um número natural (Ex: 234). Verifique o seu preenchimento na seguinte linha: "+ (i+2) + " %%%");
         }
+        else{
+          classes[i].numAgregacoes = classes[i].agregacoes.length
+          req.doc.classes = classes
+        }
         
         // 7 - medicaoPapel / medicaoDigital / medicaoOutro
         if(classes[i].medicaoPapel == '' && classes[i].medicaoDigital == '' && classes[i].medicaoOutro == '') // Os 3 campos da medicação vazios
