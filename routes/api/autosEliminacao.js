@@ -478,7 +478,7 @@ validaSemantica = async function(req, res, next){
             if(a.length > 0) {
               if(a[0].df == "C") { // Só verificamos caso o destino final seja Conservação
                 if(classes[i].dono == '') // Campo vazio
-                  mensagens.push("Não foi possível importar o ficheiro de classes / séries. O preenchimento do campo dono é obrigatório nas classes/séries de conservação. Deve preencher o campo da coluna dono com o(s) nome da(s) entidade(s) dona(s) do processo que consta(m) no catálogo de entidades da CLAV. Se o(s) nome(s) da(s) entidade(s) não constar(em) tem de propor a sua inclusão. Se for mais de uma entidade, deve separá-las com #. Verifique o seu preenchimento na seguinte linha: " + (i+2) + " %%%");
+                  mensagens.push("(Erro: Dono1) Não foi possível importar o ficheiro de classes / séries. O preenchimento do campo dono é obrigatório nas classes/séries de conservação. Deve preencher o campo da coluna dono com o(s) nome da(s) entidade(s) dona(s) do processo que consta(m) no catálogo de entidades da CLAV. Se o(s) nome(s) da(s) entidade(s) não constar(em) tem de propor a sua inclusão. Se for mais de uma entidade, deve separá-las com #. Verifique o seu preenchimento na seguinte linha: " + (i+2) + " %%%");
                 else{
                   var ents = classes[i].dono.split("#") 
                   for(var j=0; j < ents.length - 1; j++){
@@ -486,17 +486,17 @@ validaSemantica = async function(req, res, next){
                     if(!resu){ 
                       var resu = State.getTipologia("tip_" + ents[j]) // Tipologia
                       if(!resu) //Campo mal preenchido: valores que não constam no campo Designação do catálogo de entidades da CLAV
-                        mensagens.push("Não foi possível importar o ficheiro de classes / séries. O preenchimento do campo dono é obrigatório nas classes/séries de conservação. Deve preencher o campo da coluna dono com o(s) nome da(s) entidade(s) dona(s) do processo que consta(m) no catálogo de entidades da CLAV. Se o(s) nome(s) da(s) entidade(s)não constar(em) tem de propor a sua inclusão. Se for mais de uma entidade, deve separá-las com #. Verifique o seu preenchimento na seguinte linha: "+ (i+2) + " %%%");
+                        mensagens.push("(Erro: Dono2) Não foi possível importar o ficheiro de classes / séries. O preenchimento do campo dono é obrigatório nas classes/séries de conservação. Deve preencher o campo da coluna dono com o(s) nome da(s) entidade(s) dona(s) do processo que consta(m) no catálogo de entidades da CLAV. Se o(s) nome(s) da(s) entidade(s)não constar(em) tem de propor a sua inclusão. Se for mais de uma entidade, deve separá-las com #. Verifique o seu preenchimento na seguinte linha: "+ (i+2) + " %%%");
                     } 
                   }
                 }
               }
             }
             else 
-              mensagens.push("Não foi possível importar o ficheiro de classes / séries. Não foi possível verificar o(s) dono(s) porque o codigo fornecido é inválido. Verifique o seu preenchimento na seguinte linha: "+ (i+2) + " %%%");
+              mensagens.push("(Erro: Dono3) Não foi possível importar o ficheiro de classes / séries. Não foi possível verificar o(s) dono(s) porque o codigo fornecido é inválido. Verifique o seu preenchimento na seguinte linha: "+ (i+2) + " %%%");
           }
           else 
-            mensagens.push("Não foi possível importar o ficheiro de classes / séries. Não foi possível verificar o(s) dono(s) porque o codigo fornecido é inválido. Verifique o seu preenchimento na seguinte linha: "+ (i+2) + " %%%");
+            mensagens.push("(Erro: Dono4) Não foi possível importar o ficheiro de classes / séries. Não foi possível verificar o(s) dono(s) porque o codigo fornecido é inválido. Verifique o seu preenchimento na seguinte linha: "+ (i+2) + " %%%");
         }
       }
       codref = 1 //reset
