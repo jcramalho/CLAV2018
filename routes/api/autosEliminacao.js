@@ -380,7 +380,7 @@ validaSemantica = async function(req, res, next){
             codref = 0
           }
           else {
-            console.log(codigos.includes(classes[i].codigo))
+            console.log(!codigos.includes(classes[i].codigo))
             console.log(codigos)
             if(!codigos.includes(classes[i].codigo)) { // Campo mal preenchido
               mensagens.push("Não foi possível importar o ficheiro de classes / séries. Os campos da coluna codigo devem ser preenchidos com os valores do código de classificação existentes na respetiva tabela. Verifique o seu preenchimento na seguinte linha: " + (i+2) + " %%%");
