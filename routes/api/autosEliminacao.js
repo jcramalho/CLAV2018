@@ -505,6 +505,8 @@ validaSemantica = async function(req, res, next){
       }
       codref = 1 //reset
 
+      console.log("Fim das classes: " + mensagens)
+
       var agregacoes = classes[i].agregacoes
       var codsagreg = []
 
