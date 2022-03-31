@@ -651,7 +651,7 @@ Classes.criar = function (classe) {
   let notas = "";
   let noteRel = "";
 
-  classe.notasAp.forEach((note) => {
+  classe.notasAp.forEach(note => {
     notas += `
     clav:${note.id} a clav:NotaAplicacao;
     clav:conteudo "${note.nota.replace(/"/g, '\\"')}";
@@ -660,7 +660,7 @@ Classes.criar = function (classe) {
     `;
   });
 
-  classe.notasEx.forEach((note) => {
+  classe.notasEx.forEach(note => {
     notas += `
     clav:${note.id} a clav:NotaExclusao;
     clav:conteudo "${note.nota.replace(/"/g, '\\"')}";
@@ -681,6 +681,8 @@ Classes.criar = function (classe) {
         a owl:NamedIndividual.
     ${noteRel}
 }`;
+
+  console.log(query)
 
   return execQuery("update", query);
 };

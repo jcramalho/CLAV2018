@@ -380,6 +380,8 @@ validaSemantica = async function(req, res, next){
             codref = 0
           }
           else {
+            console.log(classes[i].codigo)
+            console.log(codigos)
             if(codigos.find(c => c == classes[i].codigo) == undefined) { // Campo mal preenchido
               mensagens.push("Não foi possível importar o ficheiro de classes / séries. Os campos da coluna codigo devem ser preenchidos com os valores do código de classificação existentes na respetiva tabela. Verifique o seu preenchimento na seguinte linha: " + (i+2) + " %%%");
               codref = 0
@@ -452,6 +454,10 @@ validaSemantica = async function(req, res, next){
           else
             if(!(/^(0|([1-9]\d*))$/.test(classes[i].numAgregacoes))) // Campo mal preenchido: outros formatos de números
               mensagens.push("Não foi possível importar o ficheiro de classes / séries. Deve preencher os campos da coluna numAgregacoes (número de agregações / unidades de instalação por classe / série) com um número natural (Ex: 234). Verifique o seu preenchimento na seguinte linha: "+ (i+2) + " %%%");
+        }
+        else{
+          classes[i].numAgregacoes = classes[i].agregacoes.length
+          req.doc.classes = classes
         }
         
         // 7 - medicaoPapel / medicaoDigital / medicaoOutro
