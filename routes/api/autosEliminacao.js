@@ -380,8 +380,6 @@ validaSemantica = async function(req, res, next){
             codref = 0
           }
           else {
-            console.log(classes[i].codigo)
-            console.log(mensagens)
             if(!codigos.includes(classes[i].codigo)) { // Campo mal preenchido
               console.log("Entrei1: " + !codigos.includes(classes[i].codigo))
               mensagens.push("Não foi possível importar o ficheiro de classes / séries. Os campos da coluna codigo devem ser preenchidos com os valores do código de classificação existentes na respetiva tabela. Verifique o seu preenchimento na seguinte linha: " + (i+2) + " %%%");
@@ -394,7 +392,7 @@ validaSemantica = async function(req, res, next){
         else { 
           // 3 - referencia 
           if(classes[i].referencia != ''){ // referencia preenchida
-            if(referencias.find(c => c == classes[i].referencia) == undefined){ // referencia preenchida inválida
+            if(!referencias.includes(classes[i].referencia)){ // referencia preenchida inválida
               mensagens.push("Não foi possível importar o ficheiro de classes / séries. Os campos da coluna referencia devem ser preenchidos com os valores do número de referência existentes na respetiva tabela. Verifique o seu preenchimento na seguinte linha: " + (i+2) + " %%%");
               codref = 0
             }
@@ -406,9 +404,7 @@ validaSemantica = async function(req, res, next){
           // 2 - codigo (II)
           else{ // referencia não preenchida -> vamos verificar codigo
             if(classes[i].codigo != ''){ // codigo preenchido
-              console.log(classes[i].codigo)
               if(!codigos.includes(classes[i].codigo)){ // codigo preenchido inválido
-                console.log("Entrei2: " + !codigos.includes(classes[i].codigo))
                 mensagens.push("Não foi possível importar o ficheiro de classes / séries. O preenchimento dos campos da coluna codigo é obrigatório, sempre que existir código de classificação na respetiva tabela. Verifique o seu preenchimento na seguinte linha: " + (i+2) + " %%%");
                 codref = 0
               }
@@ -589,9 +585,6 @@ validaSemantica = async function(req, res, next){
         codref = 1 //reset depois do ciclo
       }
     }
-
-    console.log("Fim de tudo: " + mensagens)
-    console.log("Anteriores: " + mensagensAnt)
 
     for(var e=0; e < mensagensAnt.length; e++)
       mensagens.push(mensagensAnt[e])
