@@ -505,8 +505,6 @@ validaSemantica = async function(req, res, next){
       }
       codref = 1 //reset
 
-      console.log("Fim das classes: " + mensagens)
-
       var agregacoes = classes[i].agregacoes
       var codsagreg = []
 
@@ -591,6 +589,9 @@ validaSemantica = async function(req, res, next){
         codref = 1 //reset depois do ciclo
       }
     }
+
+    console.log("Fim de tudo: " + mensagens)
+    console.log("Anteriores: " + mensagensAnt)
 
     for(var e=0; e < mensagensAnt.length; e++)
       mensagens.push(mensagensAnt[e])
