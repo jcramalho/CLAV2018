@@ -381,7 +381,6 @@ validaSemantica = async function(req, res, next){
           }
           else {
             if(!codigos.includes(classes[i].codigo)) { // Campo mal preenchido
-              console.log("Entrei1: " + !codigos.includes(classes[i].codigo))
               mensagens.push("Não foi possível importar o ficheiro de classes / séries. Os campos da coluna codigo devem ser preenchidos com os valores do código de classificação existentes na respetiva tabela. Verifique o seu preenchimento na seguinte linha: " + (i+2) + " %%%");
               codref = 0
             }
@@ -588,6 +587,8 @@ validaSemantica = async function(req, res, next){
 
     for(var e=0; e < mensagensAnt.length; e++)
       mensagens.push(mensagensAnt[e])
+
+    console.log("VSEM: " + mensagens)
 
     if(mensagens.length > 0) {
       res.status(500).json("Erro(s) na análise semântica do(s) ficheiro(s) CSV: &&&" + mensagens);     
