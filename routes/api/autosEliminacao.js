@@ -588,6 +588,8 @@ validaSemantica = async function(req, res, next){
     for(var e=0; e < mensagensAnt.length; e++)
       mensagens.push(mensagensAnt[e])
 
+    console.log("VSEM: " + mensagens)
+
     if(mensagens.length > 0) {
       res.status(500).json("Erro(s) na análise semântica do(s) ficheiro(s) CSV: &&&" + mensagens);     
     } else 
