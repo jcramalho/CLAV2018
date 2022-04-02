@@ -140,7 +140,7 @@ validaEstruturaCSV = async function(req, res, next){
     if (error)
       res.status(500).send(`Erro ao importar Auto de Eliminação: ${error} &&&`);
     else if (!formData.file || !formData.file.path)
-      res.status(500).send(`Erro ao importar Auto de Eliminação: o campo file tem de vir preenchido. &&&`);
+      res.status(501).send(`Erro ao importar Auto de Eliminação: o campo file tem de vir preenchido. &&&`);
     else if (formData.file.type == "text/csv" || formData.file.type == "application/vnd.ms-excel") {
       var file = fs.readFileSync(formData.file.path, 'utf8')
       Papa.parse(file, {
@@ -183,7 +183,7 @@ validaEstruturaCSV = async function(req, res, next){
                     let mens = []
                     if (mensagens.length > 0) mens.push(mensagens)
                     if (mensagens2.length > 0) mens.push(mensagens2)
-                    return res.status(500).send("Erro(s) na análise estrutural do(s) ficheiro(s) CSV: &&&" + mens);
+                    return res.status(502).send("Erro(s) na análise estrutural do(s) ficheiro(s) CSV: &&&" + mens);
                   } else {
                     req.doc = []
                     req.doc.push(fields)
@@ -195,7 +195,7 @@ validaEstruturaCSV = async function(req, res, next){
             });
           } else { // SÓ FICHEIRO DAS CLASSES
             if (mensagens.length > 0)
-              return res.status(500).send("Erro(s) na análise estrutural do(s) ficheiro(s) CSV: &&&" + mensagens );
+              return res.status(503).send("Erro(s) na análise estrutural do(s) ficheiro(s) CSV: &&&" + mensagens );
             else {
               req.doc = []
               req.doc.push(fields)
@@ -206,7 +206,7 @@ validaEstruturaCSV = async function(req, res, next){
         }
       })
     } else 
-        res.status(500).send(`Erro ao importar Auto de Eliminação: o ficheiro tem de ser de formato CSV. &&&`);
+        res.status(504).send(`Erro ao importar Auto de Eliminação: o ficheiro tem de ser de formato CSV. &&&`);
   })
 }
 
