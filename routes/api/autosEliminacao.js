@@ -142,8 +142,6 @@ validaEstruturaCSV = async function(req, res, next){
   form.parse(req, async (error, fields, formData) => {
     console.log("ERRO: " + error)
     console.log(fields)
-    console.log(formData.file.name)
-    console.log(formData.agreg.name)
     if (error)
       res.status(505).send(`Erro ao importar Auto de Eliminação: ${error} &&&`);
     else if (!formData.file || !formData.file.path)
