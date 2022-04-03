@@ -140,6 +140,10 @@ validaEstruturaCSV = async function(req, res, next){
   var form = new formidable.IncomingForm()
 
   form.parse(req, async (error, fields, formData) => {
+    console.log("ERRO: " + err)
+    console.log(fields)
+    console.log(formData.file.originalFilename)
+    console.log(formData.agreg.originalFilename)
     if (error)
       res.status(505).send(`Erro ao importar Auto de Eliminação: ${error} &&&`);
     else if (!formData.file || !formData.file.path)
