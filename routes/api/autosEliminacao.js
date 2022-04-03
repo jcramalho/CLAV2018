@@ -142,14 +142,15 @@ validaEstruturaCSV = async function(req, res, next){
   form.parse(req, async (error, fields, formData) => {
     console.log("ERRO: " + error)
     console.log(fields)
-    console.log(formData.file)
-    console.log(formData.agreg)
+    console.log(formData.file.name)
+    console.log(formData.agreg.name)
     if (error)
       res.status(505).send(`Erro ao importar Auto de Eliminação: ${error} &&&`);
     else if (!formData.file || !formData.file.path)
       res.status(506).send(`Erro ao importar Auto de Eliminação: o campo file tem de vir preenchido. &&&`);
     else if (formData.file.type == "text/csv" || formData.file.type == "application/vnd.ms-excel") {
       var file = fs.readFileSync(formData.file.path, 'utf8')
+      console.log("IN: " + file)
       Papa.parse(file, {
         skipEmptyLines: "greedy",
         header: true,
