@@ -66,7 +66,7 @@ router.post("/", Auth.isLoggedInUser, Auth.checkLevel([5, 6, 7]),
     }
 
     AutosEliminacao.adicionar(req.body.auto)
-      .then((dados) => res.jsonp(dados))
+      .then((dados) => res.status(201).jsonp(dados))
       .catch((err) =>
         res.status(500).send(`Erro na criação de auto de eliminação: ${err}`)
       );
@@ -140,10 +140,6 @@ validaEstruturaCSV = async function(req, res, next){
   var form = new formidable.IncomingForm()
 
   form.parse(req, async (error, fields, formData) => {
-    console.log(fields)
-    console.log(formData.file)
-    console.log(formData.agreg)
-    console.log("ERRO: " + error)
     if (error)
       res.status(505).send(`Erro ao importar Auto de Eliminação: ${error} &&&`);
     else if (!formData.file || !formData.file.path)
@@ -325,7 +321,7 @@ convCSVFormatoIntermedio = function(req, res, next){
 validaSemantica = async function(req, res, next){
   //####################################################################
   var tipo = req.doc.tipo.slice(3)
-  var numDiploma = /.*? (\d*\/\d*)/.exec(req.doc.legislacao)[1]
+  var numDiploma = /\d*\/\d*/.exec(req.doc.legislacao)[0]
   var pgds = ''
   var myPGD = ''
   var codigos = ''
