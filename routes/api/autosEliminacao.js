@@ -142,15 +142,12 @@ validaEstruturaCSV = async function(req, res, next){
   form.parse(req, async (error, fields, formData) => {
     console.log("ERRO: " + error)
     console.log(fields)
-    console.log(formData.file.name)
-    console.log(formData.agreg.name)
     if (error)
       res.status(505).send(`Erro ao importar Auto de Eliminação: ${error} &&&`);
     else if (!formData.file || !formData.file.path)
       res.status(506).send(`Erro ao importar Auto de Eliminação: o campo file tem de vir preenchido. &&&`);
     else if (formData.file.type == "text/csv" || formData.file.type == "application/vnd.ms-excel") {
       var file = fs.readFileSync(formData.file.path, 'utf8')
-      console.log("IN: " + file)
       Papa.parse(file, {
         skipEmptyLines: "greedy",
         header: true,
@@ -178,6 +175,7 @@ validaEstruturaCSV = async function(req, res, next){
                   return h.trim();
                 },
                 complete: async function(results) {
+                  console.log("IN: " + results.data)
                   var linha = results.data[0]
                   var mensagens2 = []
                   if(!linha.hasOwnProperty('codigoClasse')) mensagens2.push("Não foi possível importar o ficheiro de agregações. Coluna codigoClasse inexistente. Verifique o seu preenchimento na seguinte linha: 0 %%%");
