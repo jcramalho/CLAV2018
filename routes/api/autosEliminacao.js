@@ -136,7 +136,11 @@ convFormatoIntermedio = function(req, res, next){
 
 validaEstruturaCSV = async function(req, res, next){
   var form = new formidable.IncomingForm()
+
   form.parse(req, async (error, fields, formData) => {
+    console.log(fields)
+    console.log(formData.file)
+    console.log(formData.agreg)
     if (error)
       res.status(500).send(`Erro ao importar Auto de Eliminação: ${error} &&&`);
     else if (!formData.file || !formData.file.path)
