@@ -321,7 +321,9 @@ convCSVFormatoIntermedio = function(req, res, next){
 validaSemantica = async function(req, res, next){
   //####################################################################
   var tipo = req.doc.tipo.slice(3)
+  console.log("Leg: " + req.doc.legislacao)
   var numDiploma = /\d*\/\d*/.exec(req.doc.legislacao)[0]
+  console.log("Num: " + numDiploma)
   var pgds = ''
   var myPGD = ''
   var codigos = ''
