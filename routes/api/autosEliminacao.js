@@ -103,6 +103,8 @@ validaEstruturaJSON = function(req, res, next){
       })
 }
 
+// ---------------- IMPORTAÇÃO EM 2 FICHEIROS CSV -------------------
+
 convFormatoIntermedio = function(req, res, next){
   myAuto = req.doc
 
@@ -143,9 +145,9 @@ validaEstruturaCSV = async function(req, res, next){
     console.log(formData.agreg)
     console.log("ERRO: " + error)
     if (error)
-      res.status(500).send(`Erro ao importar Auto de Eliminação: ${error} &&&`);
+      res.status(505).send(`Erro ao importar Auto de Eliminação: ${error} &&&`);
     else if (!formData.file || !formData.file.path)
-      res.status(501).send(`Erro ao importar Auto de Eliminação: o campo file tem de vir preenchido. &&&`);
+      res.status(506).send(`Erro ao importar Auto de Eliminação: o campo file tem de vir preenchido. &&&`);
     else if (formData.file.type == "text/csv" || formData.file.type == "application/vnd.ms-excel") {
       var file = fs.readFileSync(formData.file.path, 'utf8')
       Papa.parse(file, {
@@ -188,7 +190,7 @@ validaEstruturaCSV = async function(req, res, next){
                     let mens = []
                     if (mensagens.length > 0) mens.push(mensagens)
                     if (mensagens2.length > 0) mens.push(mensagens2)
-                    return res.status(502).send("Erro(s) na análise estrutural do(s) ficheiro(s) CSV: &&&" + mens);
+                    return res.status(507).send("Erro(s) na análise estrutural do(s) ficheiro(s) CSV: &&&" + mens);
                   } else {
                     req.doc = []
                     req.doc.push(fields)
@@ -200,7 +202,7 @@ validaEstruturaCSV = async function(req, res, next){
             });
           } else { // SÓ FICHEIRO DAS CLASSES
             if (mensagens.length > 0)
-              return res.status(503).send("Erro(s) na análise estrutural do(s) ficheiro(s) CSV: &&&" + mensagens );
+              return res.status(508).send("Erro(s) na análise estrutural do(s) ficheiro(s) CSV: &&&" + mensagens );
             else {
               req.doc = []
               req.doc.push(fields)
@@ -211,7 +213,7 @@ validaEstruturaCSV = async function(req, res, next){
         }
       })
     } else 
-        res.status(504).send(`Erro ao importar Auto de Eliminação: o ficheiro tem de ser de formato CSV. &&&`);
+        res.status(509).send(`Erro ao importar Auto de Eliminação: o ficheiro tem de ser de formato CSV. &&&`);
   })
 }
 
@@ -331,23 +333,23 @@ validaSemantica = async function(req, res, next){
   
   if(tipo == "PGD_LC") {
     try { pgds = await PGD.listarLC() }
-    catch(e) { res.status(500).json(`Erro ao listar PGD_LCs &&&`) }
+    catch(e) { res.status(510).json(`Erro ao listar PGD_LCs &&&`) }
   }
   else {
     if(tipo == "PGD") {
      try { pgds = await PGD.listar() }
-     catch(e) { res.status(500).json(`Erro ao listar PGDs &&&`) }
+     catch(e) { res.status(511).json(`Erro ao listar PGDs &&&`) }
     } else {
       if(tipo == "RADA")
         try { pgds = await PGD.listarRADA() }
-        catch(e) { res.status(500).json(`Erro ao listar RADAs &&&`) }
+        catch(e) { res.status(512).json(`Erro ao listar RADAs &&&`) }
     }
   }
 
   if(tipo == "PGD" || tipo == "PGD_LC") {
     var idPGD = pgds.find(x => x.numero == numDiploma).idPGD;
     try { myPGD = await PGD.consultar(idPGD) }
-    catch(e) { res.status(500).json(`Erro a consultar PGD &&&`) }
+    catch(e) { res.status(513).json(`Erro a consultar PGD &&&`) }
     codigos = myPGD.map(classe => classe.codigo);
     if(tipo == "PGD")
       referencias = myPGD.map(classe => classe.referencia);
@@ -356,7 +358,7 @@ validaSemantica = async function(req, res, next){
     if(tipo == "RADA") {
       var idPGD = pgds.find(x => x.numero == numDiploma).idRADA;
       try { myPGD = await PGD.consultarRADA(idPGD) }
-      catch(e) { res.status(500).json(`Erro a consultar RADA &&&`) }
+      catch(e) { res.status(514).json(`Erro a consultar RADA &&&`) }
       codigos = myPGD.map(classe => classe.codigo);
       referencias = myPGD.map(classe => classe.referencia);
     }
@@ -596,7 +598,7 @@ validaSemantica = async function(req, res, next){
     console.log("VSEM: " + mensagens)
 
     if(mensagens.length > 0) {
-      res.status(500).json("Erro(s) na análise semântica do(s) ficheiro(s) CSV: &&&" + mensagens);     
+      res.status(515).json("Erro(s) na análise semântica do(s) ficheiro(s) CSV: &&&" + mensagens);     
     } else 
       next()
 }
@@ -622,7 +624,7 @@ router.post("/importarCSV",
               ae: req.doc
             });
           })
-          .catch((erro) => res.status(500).json(`Erro na criação do pedido de importação do AE: ${erro} &&&`));
+          .catch((erro) => res.status(501).json(`Erro na criação do pedido de importação do AE: ${erro} &&&`));
       }
     })
   }
