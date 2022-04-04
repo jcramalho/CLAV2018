@@ -603,12 +603,18 @@ validaSemantica = async function(req, res, next){
       mensagens.push(mensagensAnt[e])
 
     if(mensagens.length > 0) {
-      res.status(515).json("Erro(s) na análise semântica do(s) ficheiro(s) CSV: &&&" + mensagens);     
+      res.status(515).jsonp(
+        {
+          mensagem: "Erro(s) na análise semântica do(s) ficheiro(s) CSV:",
+          erros: mensagens
+        });     
     } else 
       next()
 }
 
-
+/* ----------------------------------------------------------------------------
+   IMPORTAÇÂO DE UM AE A PARTIR DE 2 FICHEIROS CSV
+   ---------------------------------------------------------------------------- */
 router.post("/importarCSV",
   Auth.isLoggedInUser,
   Auth.checkLevel([1, 3, 3.5, 4, 5, 6, 7]),
@@ -616,9 +622,12 @@ router.post("/importarCSV",
   convCSVFormatoIntermedio,
   validaSemantica,
   (req, res) => {
-    User.getUserById(req.user.id, function (err, user) {
-      if (err)
-        res.status(500).json(`Erro na consulta de utilizador para importação do AE: ${err} &&&`);
+    User.getUserById(req.user.id, function (erro, user) {
+      if (erro)
+        res.status(500).json({
+          mensagem: "E500 - Erro na consulta de utilizador para importação do AE:",
+          erros: erro
+        });
       else {
         AutosEliminacao.importar(req.doc, req.query.tipo, user)
           .then((dados) => {
@@ -629,13 +638,18 @@ router.post("/importarCSV",
               ae: req.doc
             });
           })
-          .catch((erro) => res.status(501).json(`Erro na criação do pedido de importação do AE: ${erro} &&&`));
+          .catch((erro) => res.status(501).jsonp({
+                              mensagem: "E501 - Erro na criação do pedido de importação do AE:",
+                              erros: erro
+                            }));
       }
     })
   }
 )
   
-
+/* ----------------------------------------------------------------------------
+   IMPORTAÇÂO DE UM AE EM JSON
+   ---------------------------------------------------------------------------- */
 router.post(
   "/importarJSON",
   Auth.isLoggedInUser,
