@@ -228,14 +228,16 @@ convCSVFormatoIntermedio = function(req, res, next){
   
   // legislacao
   var myLeg = /(.*?) (\d*\/\d*)/.exec(req.doc[0].legitimacao)
-  console.log("Leg1: " + myLeg)
-  myAuto.legislacao = req.doc[0].tipo + " " + myLeg[1] + " " + myLeg[2]
-
-  // id da legislação na BD
-  var leg = State.getLegislacaoByTipoNumero(myLeg[1], myLeg[2])
-  console.log("Leg2: " + leg)
-  myAuto.refLegislacao = leg.id
-
+  if(myLeg && myLeg[1] && myLeg[2]){
+    myAuto.legislacao = req.doc[0].tipo + " " + myLeg[1] + " " + myLeg[2]
+    // id da legislação na BD
+    var leg = State.getLegislacaoByTipoNumero(myLeg[1], myLeg[2])
+    myAuto.refLegislacao = leg.id
+  }
+  else{
+    mensagens.push("Erro ao recuperar a legislação: o tipo ou o número da legilsção não vieram preenchido(s).")
+  }
+  
   // entidades
   var myEntidades = []
   if(req.doc[0].entidade != '') {
