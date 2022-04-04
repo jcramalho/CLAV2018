@@ -155,7 +155,6 @@ validaEstruturaCSV = async function(req, res, next){
           return h.trim();
         },
         complete: async function(results) {
-          console.log("PapaErros: " + results.errors)
           var f1 = results.data
           var linha = results.data[0]
           var mensagens = []
@@ -192,6 +191,7 @@ validaEstruturaCSV = async function(req, res, next){
                     if (mensagens2.length > 0) mens.push(mensagens2)
                     return res.status(507).send("Erro(s) na análise estrutural do(s) ficheiro(s) CSV: &&&" + mens);
                   } else {
+                    console.log("VEstrut OK")
                     req.doc = []
                     req.doc.push(fields)
                     req.doc.push(f1)
