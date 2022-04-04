@@ -155,6 +155,7 @@ validaEstruturaCSV = async function(req, res, next){
           return h.trim();
         },
         complete: async function(results) {
+          console.log("PapaErros: " + results.errors)
           var f1 = results.data
           var linha = results.data[0]
           var mensagens = []
