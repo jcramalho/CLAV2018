@@ -222,6 +222,8 @@ convCSVFormatoIntermedio = function(req, res, next){
   myAuto.id = stripenanoid('ae', options);
   myAuto.data = new Date().toISOString().substring(0,10)
 
+  console.log("START: " + JSON.stringify(req.doc))
+
   // tipo
   myAuto.tipo = 'AE_' + req.doc[0].tipo
   
