@@ -140,8 +140,6 @@ validaEstruturaCSV = async function(req, res, next){
   var form = new formidable.IncomingForm()
 
   form.parse(req, async (error, fields, formData) => {
-    console.log("ERRO: " + error)
-    console.log(fields)
     if (error)
       res.status(505).send(`Erro ao importar Auto de Eliminação: ${error} &&&`);
     else if (!formData.file || !formData.file.path)
@@ -175,7 +173,6 @@ validaEstruturaCSV = async function(req, res, next){
                   return h.trim();
                 },
                 complete: async function(results) {
-                  console.log("IN: " + results.data)
                   var linha = results.data[0]
                   var mensagens2 = []
                   if(!linha.hasOwnProperty('codigoClasse')) mensagens2.push("Não foi possível importar o ficheiro de agregações. Coluna codigoClasse inexistente. Verifique o seu preenchimento na seguinte linha: 0 %%%");
@@ -191,7 +188,6 @@ validaEstruturaCSV = async function(req, res, next){
                     if (mensagens2.length > 0) mens.push(mensagens2)
                     return res.status(507).send("Erro(s) na análise estrutural do(s) ficheiro(s) CSV: &&&" + mens);
                   } else {
-                    console.log("VEstrut OK")
                     req.doc = []
                     req.doc.push(fields)
                     req.doc.push(f1)
@@ -204,7 +200,6 @@ validaEstruturaCSV = async function(req, res, next){
             if (mensagens.length > 0)
               return res.status(508).send("Erro(s) na análise estrutural do(s) ficheiro(s) CSV: &&&" + mensagens );
             else {
-              console.log("VEstrut OK")
               req.doc = []
               req.doc.push(fields)
               req.doc.push(f1)
@@ -233,6 +228,8 @@ convCSVFormatoIntermedio = function(req, res, next){
   // legislacao
   var myLeg = /(.*?) (\d*\/\d*)/.exec(req.doc[0].legitimacao)
   myAuto.legislacao = req.doc[0].tipo + " " + myLeg[1] + " " + myLeg[2]
+
+  console.log("IN: " + myAuto.legislacao)
 
   // id da legislação na BD
   var leg = State.getLegislacaoByTipoNumero(myLeg[1], myLeg[2])
