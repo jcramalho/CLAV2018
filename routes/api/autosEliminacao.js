@@ -315,11 +315,14 @@ convCSVFormatoIntermedio = function(req, res, next){
       }
     }
   }
-
-  myAuto.classes = myClasses
-  myAuto.mensagens = mensagens
-  req.doc = myAuto
-  next()
+  if (mensagens.length > 0)
+    return res.status(516).send("Erro(s) na informação enviada: &&&" + mensagens );
+  else {
+    myAuto.classes = myClasses
+    myAuto.mensagens = mensagens
+    req.doc = myAuto
+    next()
+  }
 }
 
 validaSemantica = async function(req, res, next){
