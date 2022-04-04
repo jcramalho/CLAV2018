@@ -222,16 +222,14 @@ convCSVFormatoIntermedio = function(req, res, next){
   myAuto.id = stripenanoid('ae', options);
   myAuto.data = new Date().toISOString().substring(0,10)
 
-  console.log("START: " + JSON.stringify(req.doc))
-
   // tipo
   myAuto.tipo = 'AE_' + req.doc[0].tipo
   
   // legislacao
-  var myLeg = /(.*?)(\d*\/\d*)/.exec(req.doc[0].legitimacao)
+  var myLeg = /(.*?) (\d*\/\d*)/.exec(req.doc[0].legitimacao)
   myAuto.legislacao = req.doc[0].tipo + " " + myLeg[1] + " " + myLeg[2]
 
-  console.log("IN: " + myAuto.legislacao)
+  console.log("IN: " + myLeg)
 
   // id da legislação na BD
   var leg = State.getLegislacaoByTipoNumero(myLeg[1], myLeg[2])
