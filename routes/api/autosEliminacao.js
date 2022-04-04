@@ -228,11 +228,12 @@ convCSVFormatoIntermedio = function(req, res, next){
   
   // legislacao
   var myLeg = /(.*?) (\d*\/\d*)/.exec(req.doc[0].legitimacao)
+  console.log("Leg1: " + myLeg)
   myAuto.legislacao = req.doc[0].tipo + " " + myLeg[1] + " " + myLeg[2]
 
   // id da legislação na BD
   var leg = State.getLegislacaoByTipoNumero(myLeg[1], myLeg[2])
-  console.log("Leg: " + leg)
+  console.log("Leg2: " + leg)
   myAuto.refLegislacao = leg.id
 
   // entidades
