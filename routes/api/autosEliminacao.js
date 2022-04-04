@@ -235,7 +235,7 @@ convCSVFormatoIntermedio = function(req, res, next){
     myAuto.refLegislacao = leg.id
   }
   else{
-    mensagens.push("Erro ao recuperar a legislação: o tipo ou o número da legilsção não vieram preenchido(s).")
+    mensagens.push("Erro ao recuperar a legislação: o tipo ou o número da legislação não vieram preenchido(s). Note: tipoLeg número")
   }
   
   // entidades
@@ -316,7 +316,11 @@ convCSVFormatoIntermedio = function(req, res, next){
     }
   }
   if (mensagens.length > 0)
-    return res.status(516).send("Erro(s) na informação enviada: &&&" + mensagens );
+    return res.status(516).jsonp(
+      {
+        mensagem: "Erro na informação enviada:",
+        erros: mensagens
+      });
   else {
     myAuto.classes = myClasses
     myAuto.mensagens = mensagens
