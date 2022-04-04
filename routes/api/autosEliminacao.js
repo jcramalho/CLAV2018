@@ -204,6 +204,7 @@ validaEstruturaCSV = async function(req, res, next){
             if (mensagens.length > 0)
               return res.status(508).send("Erro(s) na análise estrutural do(s) ficheiro(s) CSV: &&&" + mensagens );
             else {
+              console.log("VEstrut OK")
               req.doc = []
               req.doc.push(fields)
               req.doc.push(f1)
