@@ -228,7 +228,7 @@ convCSVFormatoIntermedio = function(req, res, next){
   myAuto.tipo = 'AE_' + req.doc[0].tipo
   
   // legislacao
-  var myLeg = /(.*?) (\d*\/\d*)/.exec(req.doc[0].legitimacao)
+  var myLeg = /(.*?)(\d*\/\d*)/.exec(req.doc[0].legitimacao)
   myAuto.legislacao = req.doc[0].tipo + " " + myLeg[1] + " " + myLeg[2]
 
   console.log("IN: " + myAuto.legislacao)
