@@ -214,6 +214,7 @@ validaEstruturaCSV = async function(req, res, next){
 }
 
 convCSVFormatoIntermedio = function(req, res, next){
+  var mensagens = [] // Mensagens de erro
   var classes = req.doc[1]
   var agregs = req.doc[2]
   var myAuto = {}
@@ -229,10 +230,9 @@ convCSVFormatoIntermedio = function(req, res, next){
   var myLeg = /(.*?) (\d*\/\d*)/.exec(req.doc[0].legitimacao)
   myAuto.legislacao = req.doc[0].tipo + " " + myLeg[1] + " " + myLeg[2]
 
-  console.log("IN: " + myLeg)
-
   // id da legislação na BD
   var leg = State.getLegislacaoByTipoNumero(myLeg[1], myLeg[2])
+  console.log("Leg: " + leg)
   myAuto.refLegislacao = leg.id
 
   // entidades
@@ -293,7 +293,6 @@ convCSVFormatoIntermedio = function(req, res, next){
   }
   
   var tipo = req.doc[0].tipo
-  var mensagens = []
 
   if(agregs != undefined) { // verificar agregações orfãs
     for(var g=0; g < agregs.length; g++){
@@ -323,9 +322,7 @@ convCSVFormatoIntermedio = function(req, res, next){
 validaSemantica = async function(req, res, next){
   //####################################################################
   var tipo = req.doc.tipo.slice(3)
-  console.log("Leg: " + req.doc.legislacao)
   var numDiploma = /\d*\/\d*/.exec(req.doc.legislacao)[0]
-  console.log("Num: " + numDiploma)
   var pgds = ''
   var myPGD = ''
   var codigos = ''
