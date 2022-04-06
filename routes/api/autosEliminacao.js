@@ -198,7 +198,10 @@ validaEstruturaCSV = async function(req, res, next){
             });
           } else { // SÓ FICHEIRO DAS CLASSES
             if (mensagens.length > 0)
-              return res.status(508).send("Erro(s) na análise estrutural do(s) ficheiro(s) CSV: &&&" + mensagens );
+              return res.status(508).jsonp({
+                mensagem: "Erro(s) na análise estrutural do(s) ficheiro(s) CSV:",
+                erros: mensagens
+              })
             else {
               req.doc = []
               req.doc.push(fields)
@@ -209,7 +212,10 @@ validaEstruturaCSV = async function(req, res, next){
         }
       })
     } else 
-        res.status(509).send(`Erro ao importar Auto de Eliminação: o ficheiro tem de ser de formato CSV. &&&`);
+        res.status(509).jsonp({
+          mensagem: "Erro ao importar Auto de Eliminação: o ficheiro tem de ser de formato CSV.",
+          erros: mensagens
+        })
   })
 }
 
