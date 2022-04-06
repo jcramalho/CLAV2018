@@ -490,6 +490,7 @@ validaSemantica = async function(req, res, next){
             mensagens.push("Não foi possível importar o ficheiro de classes / séries. Deve preencher o campo da coluna medicaoOutro com o valor da unidade de medida do suporte a eliminar. Pode utilizar um número natural ou decimal. Neste último caso utilize a vírgula como separador (Ex: 9876 ou 123,4546). Verifique o seu preenchimento na seguinte linha: "+ (i+2) + " %%%");
         }
 
+        mensagens.push("DATA: " + JSON.stringify(classes) + "################\n")
         // 8 - dono
         if(tipo != "PGD" && tipo != "RADA"){ 
           if(codref == 1) { // (evitar fazer a verificação seguinte caso o código não seja inválido)
