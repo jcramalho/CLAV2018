@@ -198,7 +198,10 @@ validaEstruturaCSV = async function(req, res, next){
             });
           } else { // SÓ FICHEIRO DAS CLASSES
             if (mensagens.length > 0)
-              return res.status(508).send("Erro(s) na análise estrutural do(s) ficheiro(s) CSV: &&&" + mensagens );
+              return res.status(508).jsonp({
+                mensagem: "Erro(s) na análise estrutural do(s) ficheiro(s) CSV:",
+                erros: mensagens
+              })
             else {
               req.doc = []
               req.doc.push(fields)
@@ -209,7 +212,10 @@ validaEstruturaCSV = async function(req, res, next){
         }
       })
     } else 
-        res.status(509).send(`Erro ao importar Auto de Eliminação: o ficheiro tem de ser de formato CSV. &&&`);
+        res.status(509).jsonp({
+          mensagem: "Erro ao importar Auto de Eliminação: o ficheiro tem de ser de formato CSV.",
+          erros: mensagens
+        })
   })
 }
 
@@ -484,6 +490,7 @@ validaSemantica = async function(req, res, next){
             mensagens.push("Não foi possível importar o ficheiro de classes / séries. Deve preencher o campo da coluna medicaoOutro com o valor da unidade de medida do suporte a eliminar. Pode utilizar um número natural ou decimal. Neste último caso utilize a vírgula como separador (Ex: 9876 ou 123,4546). Verifique o seu preenchimento na seguinte linha: "+ (i+2) + " %%%");
         }
 
+        mensagens.push("DATA: " + JSON.stringify(classes) + "################\n")
         // 8 - dono
         if(tipo != "PGD" && tipo != "RADA"){ 
           if(codref == 1) { // (evitar fazer a verificação seguinte caso o código não seja inválido)
