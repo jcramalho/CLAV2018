@@ -523,6 +523,8 @@ validaSemantica = async function(req, res, next){
       var agregacoes = classes[i].agregacoes
       var codsagreg = []
 
+      mensagens.push("DATA: " + JSON.stringify(agregacoes) + "###############")
+
       for(var j=0; j < agregacoes.length; j++){
 
         // Ignora linhas vazias
