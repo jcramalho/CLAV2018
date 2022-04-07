@@ -563,7 +563,7 @@ validaSemantica = async function(req, res, next){
               if(codref == 1) { // codigo
                 a = myPGD.filter(c => c.codigo == agregacoes[j].codigo)
                 if(a.length > 0) {
-                  if(Number(agregacoes[j].dataContagem) > (Number(anoAtual) - Number(a[0].pca) + 1))  // Campo mal preenchido
+                  if(Number(agregacoes[j].dataContagem) < (Number(anoAtual) - Number(a[0].pca) + 1))  // Campo mal preenchido
                     mensagens.push("Não foi possível importar o ficheiro de agregações. O preenchimento dos campos da coluna dataInicioContagemPCA é obrigatório e deve ser preenchido com a data de início de contagem do prazo de conservação administrativo (PCA). O valor introduzido deve ser igual ou inferior à subtração do valor existente no campo PCA da respetiva classe / série ao ano corrente, mais um ano. Verifique o seu preenchimento na seguinte linha: " + (j+2) + " %%%");     
                 } else {
                   mensagens.push("Não foi possível importar o ficheiro de agregações. Não foi possível verificar a data de início de contagem porque a referencia e/ou o codigoClasse fornecido é inválido. Verifique o seu preenchimento na seguinte linha: "+ (j+2) + " %%%");
