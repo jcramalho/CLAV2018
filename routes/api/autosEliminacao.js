@@ -601,10 +601,10 @@ validaSemantica = async function(req, res, next){
                 }
               } 
               else
-                mensagens.push("Não foi possível importar o ficheiro de agregações. Não foi possível verificar a natureza de intervencao porque o codigoClasseAA fornecido é inválido. Verifique o seu preenchimento na seguinte linha: "+ (j+2) + " %%%");
+                mensagens.push("Não foi possível importar o ficheiro de agregações. Não foi possível verificar a natureza de intervencao porque o codigoClasse fornecido é inválido. Verifique o seu preenchimento na seguinte linha: "+ (j+2) + " %%%");
             }
             else 
-              mensagens.push("Não foi possível importar o ficheiro de agregações. Não foi possível verificar a natureza de intervencao porque o codigoClasseBBB fornecido é inválido. Verifique o seu preenchimento na seguinte linha: "+ (j+2) + " %%%");
+              mensagens.push("Não foi possível importar o ficheiro de agregações. Não foi possível verificar a natureza de intervencao porque o codigoClasse fornecido é inválido. Verifique o seu preenchimento na seguinte linha: "+ (j+2) + " %%%");
           }
         } 
         codref = 1 //reset depois do ciclo
