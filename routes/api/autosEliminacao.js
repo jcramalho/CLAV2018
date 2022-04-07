@@ -141,9 +141,9 @@ validaEstruturaCSV = async function(req, res, next){
 
   form.parse(req, async (error, fields, formData) => {
     if (error)
-      res.status(505).send(`Erro ao importar Auto de Eliminação: ${error} &&&`);
+      res.status(505).send(`Erro ao importar Auto de Eliminação: ${error} `);
     else if (!formData.file || !formData.file.path)
-      res.status(506).send(`Erro ao importar Auto de Eliminação: o campo file tem de vir preenchido. &&&`);
+      res.status(506).send(`Erro ao importar Auto de Eliminação: o campo file tem de vir preenchido. `);
     else if (formData.file.type == "text/csv" || formData.file.type == "application/vnd.ms-excel") {
       var file = fs.readFileSync(formData.file.path, 'utf8')
       Papa.parse(file, {
@@ -186,7 +186,7 @@ validaEstruturaCSV = async function(req, res, next){
                     let mens = []
                     if (mensagens.length > 0) mens.push(mensagens)
                     if (mensagens2.length > 0) mens.push(mensagens2)
-                    return res.status(507).send("Erro(s) na análise estrutural do(s) ficheiro(s) CSV: &&&" + mens);
+                    return res.status(507).send("Erro(s) na análise estrutural do(s) ficheiro(s) CSV: " + mens);
                   } else {
                     req.doc = []
                     req.doc.push(fields)
@@ -263,6 +263,8 @@ convCSVFormatoIntermedio = function(req, res, next){
 
   // classes
   var myClasses = []
+  var maplinhas = new Map();
+
   for(var i=0; i < classes.length; i++){
       var c = {}
       c.id = myAuto.id + "_classe_" + i 
@@ -278,29 +280,30 @@ convCSVFormatoIntermedio = function(req, res, next){
 
       // agregacoes
       var myAgregs = []
-
+      var linhas = []
       if(agregs != undefined) {
-        var ags = agregs.filter(ag => (ag.referencia != '' && ag.referencia == c.referencia) || (ag.codigoClasse != '' && ag.codigoClasse == c.codigo))
-        if(ags.length > 0) {
-          c.numAgregacoes = ags.length
-          for(var j=0; j < ags.length; j++){
+        for(var x=0; x < agregs.length; x++){
+          if((agregs[x].referencia != '' && agregs[x].referencia == c.referencia) || (agregs[x].codigoClasse != '' && agregs[x].codigoClasse == c.codigo)) {
             var a = {}
-            a.codigo = ags[j].codigoClasse
-            a.referencia = ags[j].referencia
-            a.codigoAgregacao = ags[j].codigoAgregacao
-            a.titulo = ags[j].titulo
-            a.dataContagem = ags[j].dataInicioContagemPCA
-            a.ni = ags[j].intervencao
+            a.codigo = agregs[x].codigoClasse
+            a.referencia = agregs[x].referencia
+            a.codigoAgregacao = agregs[x].codigoAgregacao
+            a.titulo = agregs[x].titulo
+            a.dataContagem = agregs[x].dataInicioContagemPCA
+            a.ni = agregs[x].intervencao
             if(a.referencia != '' && a.referencia == c.referencia) agsRefjaComPai.push(a.referencia)
             if(a.codigo != '' && a.codigo == c.codigo) agsCodjaComPai.push(a.codigo)
             myAgregs.push(a)
+            linhas.push(x)
           }
-        }
+        }   
+        c.numAgregacoes = myAgregs.length   
       }
+      maplinhas.set(i,linhas) // MAP - Index da classe | Array das linhas das suas agregações
       c.agregacoes = myAgregs // caso não se tenha submetido um ficheiro de agregações, fica vazio
       myClasses.push(c)
   }
-  
+
   var tipo = req.doc[0].tipo
 
   if(agregs != undefined) { // verificar agregações orfãs
@@ -310,13 +313,13 @@ convCSVFormatoIntermedio = function(req, res, next){
           // 2 - codigoClasse (I)
           if(tipo != "PGD" && tipo != "RADA"){
             if(agregs[g].codigoClasse == '') // Campo vazio
-              mensagens.push("Não foi possível importar o ficheiro de agregações. O preenchimento dos campos da coluna codigoClasse é obrigatório, sempre que existir código de classificação na respetiva tabela. Verifique o seu preenchimento na seguinte linha: " + (g+2) + " %%%");
+              mensagens.push("Não foi possível importar o ficheiro de agregações. O preenchimento dos campos da coluna codigoClasse é obrigatório, sempre que existir código de classificação na respetiva tabela. Verifique o seu preenchimento na seguinte linha: " + (g+2) );
             else // Código não corresponde a nenhum código do ficheiro de classes
-              mensagens.push("Não foi possível importar o ficheiro de agregações. Os campos da coluna codigoClasse devem ser preenchidos com os valores do código de classificação existentes na respetiva tabela. Verifique o seu preenchimento na seguinte linha: " + (g+2) + " %%%");
+              mensagens.push("Não foi possível importar o ficheiro de agregações. Os campos da coluna codigoClasse devem ser preenchidos com os valores do código de classificação existentes na respetiva tabela. Verifique o seu preenchimento na seguinte linha: " + (g+2) );
           }
           else 
             // 2 - codigoClasse (I) e 3 - referencia 
-            mensagens.push("Não foi possível importar o ficheiro de agregações. O preenchimento dos campos da coluna codigoClasse ou da coluna referencia é obrigatório, sempre que existir código de classificação / número de referência na respetiva tabela. Verifique o seu preenchimento na seguinte linha: " + (g+2) + " %%%");
+            mensagens.push("Não foi possível importar o ficheiro de agregações. O preenchimento dos campos da coluna codigoClasse ou da coluna referencia é obrigatório, sempre que existir código de classificação / número de referência na respetiva tabela. Verifique o seu preenchimento na seguinte linha: " + (g+2) );
         }
       }
     }
@@ -330,6 +333,7 @@ convCSVFormatoIntermedio = function(req, res, next){
   else {
     myAuto.classes = myClasses
     myAuto.mensagens = mensagens
+    req.linhas = maplinhas
     req.doc = myAuto
     next()
   }
@@ -346,23 +350,23 @@ validaSemantica = async function(req, res, next){
   
   if(tipo == "PGD_LC") {
     try { pgds = await PGD.listarLC() }
-    catch(e) { res.status(510).json(`Erro ao listar PGD_LCs &&&`) }
+    catch(e) { res.status(510).json(`Erro ao listar PGD_LCs `) }
   }
   else {
     if(tipo == "PGD") {
      try { pgds = await PGD.listar() }
-     catch(e) { res.status(511).json(`Erro ao listar PGDs &&&`) }
+     catch(e) { res.status(511).json(`Erro ao listar PGDs `) }
     } else {
       if(tipo == "RADA")
         try { pgds = await PGD.listarRADA() }
-        catch(e) { res.status(512).json(`Erro ao listar RADAs &&&`) }
+        catch(e) { res.status(512).json(`Erro ao listar RADAs `) }
     }
   }
 
   if(tipo == "PGD" || tipo == "PGD_LC") {
     var idPGD = pgds.find(x => x.numero == numDiploma).idPGD;
     try { myPGD = await PGD.consultar(idPGD) }
-    catch(e) { res.status(513).json(`Erro a consultar PGD &&&`) }
+    catch(e) { res.status(513).json(`Erro a consultar PGD `) }
     codigos = myPGD.map(classe => classe.codigo);
     if(tipo == "PGD")
       referencias = myPGD.map(classe => classe.referencia);
@@ -371,7 +375,7 @@ validaSemantica = async function(req, res, next){
     if(tipo == "RADA") {
       var idPGD = pgds.find(x => x.numero == numDiploma).idRADA;
       try { myPGD = await PGD.consultarRADA(idPGD) }
-      catch(e) { res.status(514).json(`Erro a consultar RADA &&&`) }
+      catch(e) { res.status(514).json(`Erro a consultar RADA `) }
       codigos = myPGD.map(classe => classe.codigo);
       referencias = myPGD.map(classe => classe.referencia);
     }
@@ -385,6 +389,7 @@ validaSemantica = async function(req, res, next){
     var refsFicheiroClasses = []
     var codref = 1 // 0 = sem cod/ref válidos || 1 = cod válido || 2 = ref válida
 
+    var linhas = req.linhas
     var mensagens = []
     var mensagensAnt = req.doc.mensagens
     var classes = req.doc.classes
@@ -396,12 +401,12 @@ validaSemantica = async function(req, res, next){
         // 2 - codigo (I)
         if(tipo != "PGD" && tipo != "RADA"){
           if(classes[i].codigo == ''){ // Campo vazio
-            mensagens.push("Não foi possível importar o ficheiro de classes / séries. O preenchimento dos campos da coluna codigo é obrigatório, sempre que existir código de classificação na respetiva tabela. Verifique o seu preenchimento na seguinte linha: " + (i+2) + " %%%");
+            mensagens.push("Não foi possível importar o ficheiro de classes / séries. O preenchimento dos campos da coluna codigo é obrigatório, sempre que existir código de classificação na respetiva tabela. Verifique o seu preenchimento na seguinte linha: " + (i+2) );
             codref = 0
           }
           else {
             if(!codigos.includes(classes[i].codigo)) { // Campo mal preenchido
-              mensagens.push("Não foi possível importar o ficheiro de classes / séries. Os campos da coluna codigo devem ser preenchidos com os valores do código de classificação existentes na respetiva tabela. Verifique o seu preenchimento na seguinte linha: " + (i+2) + " %%%");
+              mensagens.push("Não foi possível importar o ficheiro de classes / séries. Os campos da coluna codigo devem ser preenchidos com os valores do código de classificação existentes na respetiva tabela. Verifique o seu preenchimento na seguinte linha: " + (i+2) );
               codref = 0
             }
             else 
@@ -412,7 +417,7 @@ validaSemantica = async function(req, res, next){
           // 3 - referencia 
           if(classes[i].referencia != ''){ // referencia preenchida
             if(!referencias.includes(classes[i].referencia)){ // referencia preenchida inválida
-              mensagens.push("Não foi possível importar o ficheiro de classes / séries. Os campos da coluna referencia devem ser preenchidos com os valores do número de referência existentes na respetiva tabela. Verifique o seu preenchimento na seguinte linha: " + (i+2) + " %%%");
+              mensagens.push("Não foi possível importar o ficheiro de classes / séries. Os campos da coluna referencia devem ser preenchidos com os valores do número de referência existentes na respetiva tabela. Verifique o seu preenchimento na seguinte linha: " + (i+2) );
               codref = 0
             }
             else{ // referencia preenchida válida
@@ -424,7 +429,7 @@ validaSemantica = async function(req, res, next){
           else{ // referencia não preenchida -> vamos verificar codigo
             if(classes[i].codigo != ''){ // codigo preenchido
               if(!codigos.includes(classes[i].codigo)){ // codigo preenchido inválido
-                mensagens.push("Não foi possível importar o ficheiro de classes / séries. O preenchimento dos campos da coluna codigo é obrigatório, sempre que existir código de classificação na respetiva tabela. Verifique o seu preenchimento na seguinte linha: " + (i+2) + " %%%");
+                mensagens.push("Não foi possível importar o ficheiro de classes / séries. O preenchimento dos campos da coluna codigo é obrigatório, sempre que existir código de classificação na respetiva tabela. Verifique o seu preenchimento na seguinte linha: " + (i+2) );
                 codref = 0
               }
             else{ // codigo preenchido válido
@@ -433,7 +438,7 @@ validaSemantica = async function(req, res, next){
               }
             }
             else{ //ambos campos vazios
-              mensagens.push("Não foi possível importar o ficheiro de classes / séries. Os campos da coluna codigo e da coluna referencia não pode estar ambos vazios. Verifique o seu preenchimento na seguinte linha: " + (i+2) + " %%%");
+              mensagens.push("Não foi possível importar o ficheiro de classes / séries. Os campos da coluna codigo e da coluna referencia não pode estar ambos vazios. Verifique o seu preenchimento na seguinte linha: " + (i+2) );
               codref = 0
             }
           }
@@ -441,53 +446,49 @@ validaSemantica = async function(req, res, next){
 
         // 4 - dataInicial
         if(classes[i].dataInicio == '') // Campo vazio
-          mensagens.push("Não foi possível importar o ficheiro de classes / séries. O preenchimento dos campos da coluna dataInicial é obrigatório. Deve preenchê-lo com o ano inicial da documentação proposta para eliminação, no formato AAAA. Verifique o seu preenchimento na seguinte linha: " + (i+2) + " %%%");
+          mensagens.push("Não foi possível importar o ficheiro de classes / séries. O preenchimento dos campos da coluna dataInicial é obrigatório. Deve preenchê-lo com o ano inicial da documentação proposta para eliminação, no formato AAAA. Verifique o seu preenchimento na seguinte linha: " + (i+2) );
         else{
           if(!anoRegEx.test(classes[i].dataInicio) || (classes[i].dataInicio.length != 4))  // Campo mal preenchido : formato de data errado
-            mensagens.push("Não foi possível importar o ficheiro de classes / séries. O preenchimento dos campos da coluna dataInicial é obrigatório. Deve preenchê-lo com o ano inicial da documentação proposta para eliminação, no formato AAAA. Verifique o seu preenchimento na seguinte linha: " + (i+2) + " %%%");
+            mensagens.push("Não foi possível importar o ficheiro de classes / séries. O preenchimento dos campos da coluna dataInicial é obrigatório. Deve preenchê-lo com o ano inicial da documentação proposta para eliminação, no formato AAAA. Verifique o seu preenchimento na seguinte linha: " + (i+2) );
           else
             if(Number(anoAtual) - Number(classes[i].dataInicio) > 100) //Campo mal preenchido: diferença entre o ano corrente e o valor introduzido não pode ser superior a 100 anos
-              mensagens.push("Não foi possível importar o ficheiro de classes / séries. O preenchimento dos campos da coluna dataInicial é obrigatório. A diferença entre o ano corrente e o valor introduzido não pode ser superior a 100 anos. Verifique o seu preenchimento na seguinte linha: " + (i+2) + " %%%");
+              mensagens.push("Não foi possível importar o ficheiro de classes / séries. O preenchimento dos campos da coluna dataInicial é obrigatório. A diferença entre o ano corrente e o valor introduzido não pode ser superior a 100 anos. Verifique o seu preenchimento na seguinte linha: " + (i+2) );
         }
 
         // 5 - dataFinal
         if(classes[i].dataFim == '') // Campo vazio
-          mensagens.push("Não foi possível importar o ficheiro de classes / séries. O preenchimento dos campos da coluna dataFinal é obrigatório. Deve preenchê-lo com o ano final da documentação proposta para eliminação, no formato AAAA. Verifique o seu preenchimento na seguinte linha: " + (i+2) + " %%%");
+          mensagens.push("Não foi possível importar o ficheiro de classes / séries. O preenchimento dos campos da coluna dataFinal é obrigatório. Deve preenchê-lo com o ano final da documentação proposta para eliminação, no formato AAAA. Verifique o seu preenchimento na seguinte linha: " + (i+2) );
         else{
           if(!anoRegEx.test(classes[i].dataFim) || (classes[i].dataFim.length != 4)) // Campo mal preenchido : formato de data errado
-            mensagens.push("Não foi possível importar o ficheiro de classes / séries. O preenchimento dos campos da coluna dataFinal é obrigatório. Deve preenchê-lo com o ano final da documentação proposta para eliminação, no formato AAAA. Verifique o seu preenchimento na seguinte linha: " + (i+2) + " %%%");
+            mensagens.push("Não foi possível importar o ficheiro de classes / séries. O preenchimento dos campos da coluna dataFinal é obrigatório. Deve preenchê-lo com o ano final da documentação proposta para eliminação, no formato AAAA. Verifique o seu preenchimento na seguinte linha: " + (i+2) );
           else{
             if(Number(anoAtual) - Number(classes[i].dataFim) > 100) //Campo mal preenchido: diferença entre o ano corrente e o valor introduzido não pode ser superior a 100 anos
-              mensagens.push("Não foi possível importar o ficheiro de classes / séries. O preenchimento dos campos da coluna dataFinal é obrigatório. A diferença entre o ano corrente e o valor introduzido não pode ser superior a 100 anos. Verifique o seu preenchimento na seguinte linha: " + (i+2) + " %%%");   
+              mensagens.push("Não foi possível importar o ficheiro de classes / séries. O preenchimento dos campos da coluna dataFinal é obrigatório. A diferença entre o ano corrente e o valor introduzido não pode ser superior a 100 anos. Verifique o seu preenchimento na seguinte linha: " + (i+2) );   
             else 
               if(classes[i].dataInicio != '' && Number(classes[i].dataFim) < Number(classes[i].dataInicio)) // Campo mal preenchido: ano final inferior ao ano inicial + ano inicial superior ao ano final
-                mensagens.push("Não foi possível importar o ficheiro de classes / séries. O valor introduzido nos campos da coluna dataInicial (ano inicial da documentação proposta para eliminação) não pode ser superior ao valor introduzido no campo dataFinal (data final da documentação proposta para eliminação). Verifique o seu preenchimento na seguinte linha: " + (i+2) + " %%%");
+                mensagens.push("Não foi possível importar o ficheiro de classes / séries. O valor introduzido nos campos da coluna dataInicial (ano inicial da documentação proposta para eliminação) não pode ser superior ao valor introduzido no campo dataFinal (data final da documentação proposta para eliminação). Verifique o seu preenchimento na seguinte linha: " + (i+2) );
           }
         }
 
         // 6 - numAgregacoes
         if(classes[i].agregacoes.length == 0) {// Só verificamos caso não se tenha submitido um ficheiro de agregações.
           if(classes[i].numAgregacoes == '') // Campo vazio
-            mensagens.push("Não foi possível importar o ficheiro de classes / séries. O preenchimento dos campos da coluna numAgregacoes é obrigatório, se não submeter um ficheiro com a identificação das agregações / unidades de instalação. Deve preenchê-lo com o número de agregações / unidades de instalação por classe / série, que pretende eliminar. Verifique o seu preenchimento na seguinte linha: "+ (i+2) + " %%%");
+            mensagens.push("Não foi possível importar o ficheiro de classes / séries. O preenchimento dos campos da coluna numAgregacoes é obrigatório, se não submeter um ficheiro com a identificação das agregações / unidades de instalação. Deve preenchê-lo com o número de agregações / unidades de instalação por classe / série, que pretende eliminar. Verifique o seu preenchimento na seguinte linha: "+ (i+2) );
           else
             if(!(/^(0|([1-9]\d*))$/.test(classes[i].numAgregacoes))) // Campo mal preenchido: outros formatos de números
-              mensagens.push("Não foi possível importar o ficheiro de classes / séries. Deve preencher os campos da coluna numAgregacoes (número de agregações / unidades de instalação por classe / série) com um número natural (Ex: 234). Verifique o seu preenchimento na seguinte linha: "+ (i+2) + " %%%");
-        }
-        else{
-          classes[i].numAgregacoes = classes[i].agregacoes.length
-          req.doc.classes = classes
+              mensagens.push("Não foi possível importar o ficheiro de classes / séries. Deve preencher os campos da coluna numAgregacoes (número de agregações / unidades de instalação por classe / série) com um número natural (Ex: 234). Verifique o seu preenchimento na seguinte linha: "+ (i+2) );
         }
         
         // 7 - medicaoPapel / medicaoDigital / medicaoOutro
         if(classes[i].medicaoPapel == '' && classes[i].medicaoDigital == '' && classes[i].medicaoOutro == '') // Os 3 campos da medicação vazios
-          mensagens.push("Não foi possível importar o ficheiro de classes / séries. Pelo menos um dos três campos das colunas relativas à medição devem ser preenchidos. Verifique o seu preenchimento na seguinte linha: "+ (i+2) + " %%%");
+          mensagens.push("Não foi possível importar o ficheiro de classes / séries. Pelo menos um dos três campos das colunas relativas à medição devem ser preenchidos. Verifique o seu preenchimento na seguinte linha: "+ (i+2) );
         else{
           if(classes[i].medicaoPapel != '' && !(/^[0-9]*,?[0-9]*$/.test(classes[i].medicaoPapel))) //Campo mal preenchido: outros formatos de números
-            mensagens.push("Não foi possível importar o ficheiro de classes / séries. Deve preencher o campo da coluna medicaoPapel com o número de metros lineares da informação a eliminar. Pode utilizar um número natural ou decimal. Neste último caso utilize a vírgula como separador (Ex: 9876 ou 123,4546). Verifique o seu preenchimento na seguinte linha: "+ (i+2) + " %%%");
+            mensagens.push("Não foi possível importar o ficheiro de classes / séries. Deve preencher o campo da coluna medicaoPapel com o número de metros lineares da informação a eliminar. Pode utilizar um número natural ou decimal. Neste último caso utilize a vírgula como separador (Ex: 9876 ou 123,4546). Verifique o seu preenchimento na seguinte linha: "+ (i+2) );
           if(classes[i].medicaoDigital != '' && !(/^[0-9]*,?[0-9]*$/.test(classes[i].medicaoDigital))) //Campo mal preenchido: outros formatos de números
-            mensagens.push("Não foi possível importar o ficheiro de classes / séries. Deve preencher o campo da coluna medicaoDigital com o número de gigabites da informação a eliminar. Pode utilizar um número natural ou decimal. Neste último caso utilize a vírgula como separador (Ex: 9876 ou 123,4546). Verifique o seu preenchimento na seguinte linha: "+ (i+2) + " %%%");
+            mensagens.push("Não foi possível importar o ficheiro de classes / séries. Deve preencher o campo da coluna medicaoDigital com o número de gigabites da informação a eliminar. Pode utilizar um número natural ou decimal. Neste último caso utilize a vírgula como separador (Ex: 9876 ou 123,4546). Verifique o seu preenchimento na seguinte linha: "+ (i+2) );
           if(classes[i].medicaoOutro != '' && !(/^[0-9]*,?[0-9]*$/.test(classes[i].medicaoOutro))) //Campo mal preenchido: outros formatos de números
-            mensagens.push("Não foi possível importar o ficheiro de classes / séries. Deve preencher o campo da coluna medicaoOutro com o valor da unidade de medida do suporte a eliminar. Pode utilizar um número natural ou decimal. Neste último caso utilize a vírgula como separador (Ex: 9876 ou 123,4546). Verifique o seu preenchimento na seguinte linha: "+ (i+2) + " %%%");
+            mensagens.push("Não foi possível importar o ficheiro de classes / séries. Deve preencher o campo da coluna medicaoOutro com o valor da unidade de medida do suporte a eliminar. Pode utilizar um número natural ou decimal. Neste último caso utilize a vírgula como separador (Ex: 9876 ou 123,4546). Verifique o seu preenchimento na seguinte linha: "+ (i+2) );
         }
 
         // 8 - dono
@@ -497,7 +498,7 @@ validaSemantica = async function(req, res, next){
             if(a.length > 0) {
               if(a[0].df == "C") { // Só verificamos caso o destino final seja Conservação
                 if(classes[i].dono == '') // Campo vazio
-                  mensagens.push("(Erro: Dono1) Não foi possível importar o ficheiro de classes / séries. O preenchimento do campo dono é obrigatório nas classes/séries de conservação. Deve preencher o campo da coluna dono com o(s) nome da(s) entidade(s) dona(s) do processo que consta(m) no catálogo de entidades da CLAV. Se o(s) nome(s) da(s) entidade(s) não constar(em) tem de propor a sua inclusão. Se for mais de uma entidade, deve separá-las com #. Verifique o seu preenchimento na seguinte linha: " + (i+2) + " %%%");
+                  mensagens.push("(Erro: Dono1) Não foi possível importar o ficheiro de classes / séries. O preenchimento do campo dono é obrigatório nas classes/séries de conservação. Deve preencher o campo da coluna dono com o(s) nome da(s) entidade(s) dona(s) do processo que consta(m) no catálogo de entidades da CLAV. Se o(s) nome(s) da(s) entidade(s) não constar(em) tem de propor a sua inclusão. Se for mais de uma entidade, deve separá-las com #. Verifique o seu preenchimento na seguinte linha: " + (i+2) );
                 else{
                   var ents = classes[i].dono.split("#") 
                   for(var j=0; j < ents.length - 1; j++){
@@ -505,17 +506,17 @@ validaSemantica = async function(req, res, next){
                     if(!resu){ 
                       var resu = State.getTipologia("tip_" + ents[j]) // Tipologia
                       if(!resu) //Campo mal preenchido: valores que não constam no campo Designação do catálogo de entidades da CLAV
-                        mensagens.push("(Erro: Dono2) Não foi possível importar o ficheiro de classes / séries. O preenchimento do campo dono é obrigatório nas classes/séries de conservação. Deve preencher o campo da coluna dono com o(s) nome da(s) entidade(s) dona(s) do processo que consta(m) no catálogo de entidades da CLAV. Se o(s) nome(s) da(s) entidade(s)não constar(em) tem de propor a sua inclusão. Se for mais de uma entidade, deve separá-las com #. Verifique o seu preenchimento na seguinte linha: "+ (i+2) + " %%%");
+                        mensagens.push("(Erro: Dono2) Não foi possível importar o ficheiro de classes / séries. O preenchimento do campo dono é obrigatório nas classes/séries de conservação. Deve preencher o campo da coluna dono com o(s) nome da(s) entidade(s) dona(s) do processo que consta(m) no catálogo de entidades da CLAV. Se o(s) nome(s) da(s) entidade(s)não constar(em) tem de propor a sua inclusão. Se for mais de uma entidade, deve separá-las com #. Verifique o seu preenchimento na seguinte linha: "+ (i+2) );
                     } 
                   }
                 }
               }
             }
             else 
-              mensagens.push("(Erro: Dono3) Não foi possível importar o ficheiro de classes / séries. Não foi possível verificar o(s) dono(s) porque o codigo fornecido é inválido. Verifique o seu preenchimento na seguinte linha: "+ (i+2) + " %%%");
+              mensagens.push("(Erro: Dono3) Não foi possível importar o ficheiro de classes / séries. Não foi possível verificar o(s) dono(s) porque o codigo fornecido é inválido. Verifique o seu preenchimento na seguinte linha: "+ (i+2) );
           }
           else 
-            mensagens.push("(Erro: Dono4) Não foi possível importar o ficheiro de classes / séries. Não foi possível verificar o(s) dono(s) porque o codigo fornecido é inválido. Verifique o seu preenchimento na seguinte linha: "+ (i+2) + " %%%");
+            mensagens.push("(Erro: Dono4) Não foi possível importar o ficheiro de classes / séries. Não foi possível verificar o(s) dono(s) porque o codigo fornecido é inválido. Verifique o seu preenchimento na seguinte linha: "+ (i+2) );
         }
       }
       codref = 1 //reset
@@ -523,8 +524,7 @@ validaSemantica = async function(req, res, next){
       var agregacoes = classes[i].agregacoes
       var codsagreg = []
 
-      mensagens.push("DATA: " + JSON.stringify(agregacoes) + "###############")
-
+      var lin = linhas.get(i)
       for(var j=0; j < agregacoes.length; j++){
 
         // Ignora linhas vazias
@@ -537,52 +537,48 @@ validaSemantica = async function(req, res, next){
 
           // 4 - codigoAgregacao
           if(agregacoes[j].codigoAgregacao == '') // Campo vazio
-            mensagens.push("Não foi possível importar o ficheiro de agregações. O preenchimento dos campos da coluna codigoAgregacao é obrigatório e deve ser preenchido com o código da agregação / unidade de instalação a eliminar. Verifique o seu preenchimento na seguinte linha: " + (j+2) + " %%%");
+            mensagens.push("Não foi possível importar o ficheiro de agregações. O preenchimento dos campos da coluna codigoAgregacao é obrigatório e deve ser preenchido com o código da agregação / unidade de instalação a eliminar. Verifique o seu preenchimento na seguinte linha: " + (lin[j]+2) );
           else{
             if(codsagreg.length == 0) // (primeiro código)
               codsagreg[0] = agregacoes[j].codigoAgregacao
             else
               if(codsagreg.includes(agregacoes[j].codigoAgregacao)) //Campo mal preenchido: agregações com o mesmo código da agregação / UI na mesma classe / série
-                mensagens.push("Não foi possível importar o ficheiro de agregações. Na mesma classe/série não podem existir agregações com o mesmo codigoAgregacao. Verifique o seu preenchimento na seguinte linha: " + (j+2) + " %%%");
+                mensagens.push("Não foi possível importar o ficheiro de agregações. Na mesma classe/série não podem existir agregações com o mesmo codigoAgregacao. Verifique o seu preenchimento na seguinte linha: " + (lin[j]+2) );
               else 
                 codsagreg.push(agregacoes[j].codigoAgregacao)
           }
 
           // 5 - titulo
           if(agregacoes[j].titulo == '') // Campo vazio
-            mensagens.push("Não foi possível importar o ficheiro de agregações. O preenchimento dos campos da coluna titulo é obrigatório e deve ser preenchido com o título da agregação / unidade de instalação a eliminar. Verifique o seu preenchimento na seguinte linha: " + (j+2) + " %%%");
+            mensagens.push("Não foi possível importar o ficheiro de agregações. O preenchimento dos campos da coluna titulo é obrigatório e deve ser preenchido com o título da agregação / unidade de instalação a eliminar. Verifique o seu preenchimento na seguinte linha: " + (lin[j]+2) );
 
           // 6 - dataInicioContagemPCA
-          mensagens.push("infile0: " + agregacoes[j].dataContagem)
           if(agregacoes[j].dataContagem == '') // Campo vazio
-            mensagens.push("Não foi possível importar o ficheiro de agregações. O preenchimento dos campos da coluna dataInicioContagemPCA é obrigatório e deve ser preenchido com a data de início de contagem do prazo de conservação administrativo (PCA). O valor introduzido deve ser igual ou inferior à subtração do valor existente no campo PCA da respetiva classe / série ao ano corrente, mais um ano. Verifique o seu preenchimento na seguinte linha: " + (j+2) + " %%%");
+            mensagens.push("Não foi possível importar o ficheiro de agregações. O preenchimento dos campos da coluna dataInicioContagemPCA é obrigatório e deve ser preenchido com a data de início de contagem do prazo de conservação administrativo (PCA). O valor introduzido deve ser igual ou inferior à subtração do valor existente no campo PCA da respetiva classe / série ao ano corrente, mais um ano. Verifique o seu preenchimento na seguinte linha: " + (lin[j]+2) );
           else{
             if(!anoRegEx.test(agregacoes[j].dataContagem)) // Campo mal preenchido : formato de data errado
-              mensagens.push("Não foi possível importar o ficheiro de agregações. O preenchimento dos campos da coluna dataInicioContagemPCA é obrigatório e deve ser preenchido com a data de início de contagem do prazo de conservação administrativo (PCA), no formato AAAA. Verifique o seu preenchimento na seguinte linha: " + (j+2) + " %%%");
+              mensagens.push("Não foi possível importar o ficheiro de agregações. O preenchimento dos campos da coluna dataInicioContagemPCA é obrigatório e deve ser preenchido com a data de início de contagem do prazo de conservação administrativo (PCA), no formato AAAA. Verifique o seu preenchimento na seguinte linha: " + (lin[j]+2) );
             else {
               var a = []
               if(codref == 1) { // codigo
                 a = myPGD.filter(c => c.codigo == agregacoes[j].codigo)
-                if(a.length > 0) {
-                  console.log("infile: " + agregacoes[j].dataContagem)
-                  console.log("Atual: " + anoAtual)
-                  console.log("PCA: " + a[0].pca)
-                  if(Number(agregacoes[j].dataContagem) < (Number(anoAtual) - Number(a[0].pca) + 1))  // Campo mal preenchido
-                    mensagens.push("Não foi possível importar o ficheiro de agregações. O preenchimento dos campos da coluna dataInicioContagemPCA é obrigatório e deve ser preenchido com a data de início de contagem do prazo de conservação administrativo (PCA). O valor introduzido deve ser igual ou inferior à subtração do valor existente no campo PCA da respetiva classe / série ao ano corrente, mais um ano. Verifique o seu preenchimento na seguinte linha: " + (j+2) + " %%%");     
+                if(a[0].pca != undefined) {
+                  if(Number(agregacoes[j].dataContagem) > (Number(anoAtual) - (Number(a[0].pca) + 1)))  // Campo mal preenchido
+                    mensagens.push("Não foi possível importar o ficheiro de agregações. O preenchimento dos campos da coluna dataInicioContagemPCA é obrigatório e deve ser preenchido com a data de início de contagem do prazo de conservação administrativo (PCA). O valor introduzido deve ser igual ou inferior à subtração do valor existente no campo PCA da respetiva classe / série ao ano corrente, mais um ano. Verifique o seu preenchimento na seguinte linha: " + (lin[j]+2) );     
                 } else {
-                  mensagens.push("Não foi possível importar o ficheiro de agregações. Não foi possível verificar a data de início de contagem porque a referencia e/ou o codigoClasse fornecido é inválido. Verifique o seu preenchimento na seguinte linha: "+ (j+2) + " %%%");
+                  mensagens.push("Não foi possível importar o ficheiro de agregações. Não foi possível verificar a data de início de contagem porque a referencia e/ou o codigoClasse fornecido é inválido. Verifique o seu preenchimento na seguinte linha: "+ (lin[j]+2) );
                 }
               } else if(codref == 2) { // referencia
                 a = myPGD.filter(c => c.referencia == agregacoes[j].referencia)
                 if(a.length > 0) {
                   if(Number(agregacoes[j].dataContagem) > (Number(anoAtual) - Number(a[0].pca) + 1)) // Campo mal preenchido
-                    mensagens.push("Não foi possível importar o ficheiro de agregações. O preenchimento dos campos da coluna dataInicioContagemPCA é obrigatório e deve ser preenchido com a data de início de contagem do prazo de conservação administrativo (PCA). O valor introduzido deve ser igual ou inferior à subtração do valor existente no campo PCA da respetiva classe / série ao ano corrente, mais um ano. Verifique o seu preenchimento na seguinte linha: " + (j+2) + " %%%");     
+                    mensagens.push("Não foi possível importar o ficheiro de agregações. O preenchimento dos campos da coluna dataInicioContagemPCA é obrigatório e deve ser preenchido com a data de início de contagem do prazo de conservação administrativo (PCA). O valor introduzido deve ser igual ou inferior à subtração do valor existente no campo PCA da respetiva classe / série ao ano corrente, mais um ano. Verifique o seu preenchimento na seguinte linha: " + (lin[j]+2) );     
                 } else {
-                  mensagens.push("Não foi possível importar o ficheiro de agregações. Não foi possível verificar a data de início de contagem porque a referencia e/ou o codigoClasse fornecido é inválido. Verifique o seu preenchimento na seguinte linha: "+ (j+2) + " %%%");
+                  mensagens.push("Não foi possível importar o ficheiro de agregações. Não foi possível verificar a data de início de contagem porque a referencia e/ou o codigoClasse fornecido é inválido. Verifique o seu preenchimento na seguinte linha: "+ (lin[j]+2) );
                 }
               }
               else
-                mensagens.push("Não foi possível importar o ficheiro de agregações. Não foi possível verificar a data de início de contagem porque a referencia e/ou o codigoClasse fornecido é inválido. Verifique o seu preenchimento na seguinte linha: "+ (j+2) + " %%%");
+                mensagens.push("Não foi possível importar o ficheiro de agregações. Não foi possível verificar a data de início de contagem porque a referencia e/ou o codigoClasse fornecido é inválido. Verifique o seu preenchimento na seguinte linha: "+ (lin[j]+2) );
             }
           }
 
@@ -593,18 +589,18 @@ validaSemantica = async function(req, res, next){
               if(a.length > 0) {
                 if(a[0].df == "E") { // Só verificamos caso o destino final seja Eliminação
                   if(agregacoes[j].ni == '') // Campo vazio em classes / séries de eliminação
-                    mensagens.push("Não foi possível importar o ficheiro de agregações. O preenchimento dos campos da coluna intervencao (natureza de intervenção) é obrigatório nas agregações das classes / séries de eliminação. Deve preenchê-lo com um dos valores: Dono ou Participante. Verifique o seu preenchimento na seguinte linha: " + (j+2) + " %%%");
+                    mensagens.push("Não foi possível importar o ficheiro de agregações. O preenchimento dos campos da coluna intervencao (natureza de intervenção) é obrigatório nas agregações das classes / séries de eliminação. Deve preenchê-lo com um dos valores: Dono ou Participante. Verifique o seu preenchimento na seguinte linha: " + (lin[j]+2) );
                   else
                     //Campo mal preenchido: com outros valores que não Dono ou Participante.
                     if( !/participante/i.test(agregacoes[j].ni) && !/dono/i.test(agregacoes[j].ni) ) 
-                      mensagens.push("Não foi possível importar o ficheiro de agregações. O preenchimento dos campos da coluna intervencao (natureza de intervenção) é obrigatório nas agregações das classes / séries de eliminação. Deve preenchê-lo com um dos valores: Dono ou Participante. Verifique o seu preenchimento na seguinte linha: "+ (j+2) + " %%%");   
+                      mensagens.push("Não foi possível importar o ficheiro de agregações. O preenchimento dos campos da coluna intervencao (natureza de intervenção) é obrigatório nas agregações das classes / séries de eliminação. Deve preenchê-lo com um dos valores: Dono ou Participante. Verifique o seu preenchimento na seguinte linha: "+ (lin[j]+2) );   
                 }
               } 
               else
-                mensagens.push("Não foi possível importar o ficheiro de agregações. Não foi possível verificar a natureza de intervencao porque o codigoClasseAA fornecido é inválido. Verifique o seu preenchimento na seguinte linha: "+ (j+2) + " %%%");
+                mensagens.push("Não foi possível importar o ficheiro de agregações. Não foi possível verificar a natureza de intervencao porque o codigoClasse fornecido é inválido. Verifique o seu preenchimento na seguinte linha: "+ (lin[j]+2) );
             }
             else 
-              mensagens.push("Não foi possível importar o ficheiro de agregações. Não foi possível verificar a natureza de intervencao porque o codigoClasseBBB fornecido é inválido. Verifique o seu preenchimento na seguinte linha: "+ (j+2) + " %%%");
+              mensagens.push("Não foi possível importar o ficheiro de agregações. Não foi possível verificar a natureza de intervencao porque o codigoClass fornecido é inválido. Verifique o seu preenchimento na seguinte linha: "+ (lin[j]+2) );
           }
         } 
         codref = 1 //reset depois do ciclo
