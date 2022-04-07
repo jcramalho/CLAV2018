@@ -553,7 +553,7 @@ validaSemantica = async function(req, res, next){
             mensagens.push("Não foi possível importar o ficheiro de agregações. O preenchimento dos campos da coluna titulo é obrigatório e deve ser preenchido com o título da agregação / unidade de instalação a eliminar. Verifique o seu preenchimento na seguinte linha: " + (j+2) + " %%%");
 
           // 6 - dataInicioContagemPCA
-          console.log("infile0: " + agregacoes[j].dataContagem)
+          mensagens.push("infile0: " + agregacoes[j].dataContagem)
           if(agregacoes[j].dataContagem == '') // Campo vazio
             mensagens.push("Não foi possível importar o ficheiro de agregações. O preenchimento dos campos da coluna dataInicioContagemPCA é obrigatório e deve ser preenchido com a data de início de contagem do prazo de conservação administrativo (PCA). O valor introduzido deve ser igual ou inferior à subtração do valor existente no campo PCA da respetiva classe / série ao ano corrente, mais um ano. Verifique o seu preenchimento na seguinte linha: " + (j+2) + " %%%");
           else{
