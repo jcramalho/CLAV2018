@@ -233,7 +233,7 @@ convCSVFormatoIntermedio = function(req, res, next){
   myAuto.tipo = 'AE_' + req.doc[0].tipo
   
   // legislacao
-  var myLeg = /(.*?) (\d*\/\d*)/.exec(req.doc[0].legitimacao)
+  var myLeg = /(.*?) (.*) ? -/.exec(req.doc[0].legitimacao)
   if(myLeg && myLeg[1] && myLeg[2]){
     myAuto.legislacao = req.doc[0].tipo + " " + myLeg[1] + " " + myLeg[2]
     // id da legislação na BD
@@ -342,7 +342,7 @@ convCSVFormatoIntermedio = function(req, res, next){
 validaSemantica = async function(req, res, next){
   //####################################################################
   var tipo = req.doc.tipo.slice(3)
-  var numDiploma = /\d*\/\d*/.exec(req.doc.legislacao)[0]
+  var numDiploma = ''
   var pgds = ''
   var myPGD = ''
   var codigos = ''
@@ -364,6 +364,7 @@ validaSemantica = async function(req, res, next){
   }
 
   if(tipo == "PGD" || tipo == "PGD_LC") {
+    numDiploma = /\d*\/\d*/.exec(req.doc.legislacao)[0]
     var idPGD = pgds.find(x => x.numero == numDiploma).idPGD;
     try { myPGD = await PGD.consultar(idPGD) }
     catch(e) { res.status(513).json(`Erro a consultar PGD `) }
@@ -373,6 +374,7 @@ validaSemantica = async function(req, res, next){
   }
   else
     if(tipo == "RADA") {
+      numDiploma = req.doc.legislacao.split(' ')[2]
       var idPGD = pgds.find(x => x.numero == numDiploma).idRADA;
       try { myPGD = await PGD.consultarRADA(idPGD) }
       catch(e) { res.status(514).json(`Erro a consultar RADA `) }
