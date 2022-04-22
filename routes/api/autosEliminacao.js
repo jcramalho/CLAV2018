@@ -141,9 +141,9 @@ validaEstruturaCSV = async function(req, res, next){
 
   form.parse(req, async (error, fields, formData) => {
     if (error)
-      res.status(505).send(`Erro ao importar Auto de Eliminação: ${error} `);
+      res.status(500).send(`Erro ao importar Auto de Eliminação: ${error} `);
     else if (!formData.file || !formData.file.path)
-      res.status(506).send(`Erro ao importar Auto de Eliminação: o campo file tem de vir preenchido. `);
+      res.status(501).send(`Erro ao importar Auto de Eliminação: o campo file tem de vir preenchido. `);
     else if (formData.file.type == "text/csv" || formData.file.type == "application/vnd.ms-excel") {
       var file = fs.readFileSync(formData.file.path, 'utf8')
       Papa.parse(file, {
@@ -186,7 +186,7 @@ validaEstruturaCSV = async function(req, res, next){
                     let mens = []
                     if (mensagens.length > 0) mens.push(mensagens)
                     if (mensagens2.length > 0) mens.push(mensagens2)
-                    return res.status(507).send("Erro(s) na análise estrutural do(s) ficheiro(s) CSV: " + mens);
+                    return res.status(502).send("Erro(s) na análise estrutural do(s) ficheiro(s) CSV: " + mens);
                   } else {
                     req.doc = []
                     req.doc.push(fields)
@@ -198,7 +198,7 @@ validaEstruturaCSV = async function(req, res, next){
             });
           } else { // SÓ FICHEIRO DAS CLASSES
             if (mensagens.length > 0)
-              return res.status(508).jsonp({
+              return res.status(502).jsonp({
                 mensagem: "Erro(s) na análise estrutural do(s) ficheiro(s) CSV:",
                 erros: mensagens
               })
@@ -212,7 +212,7 @@ validaEstruturaCSV = async function(req, res, next){
         }
       })
     } else 
-        res.status(509).jsonp({
+        res.status(503).jsonp({
           mensagem: "Erro ao importar Auto de Eliminação: o ficheiro tem de ser de formato CSV.",
           erros: mensagens
         })
@@ -325,7 +325,7 @@ convCSVFormatoIntermedio = function(req, res, next){
     }
   }
   if (mensagens.length > 0)
-    return res.status(516).jsonp(
+    return res.status(505).jsonp(
       {
         mensagem: "Erro na informação enviada:",
         erros: mensagens
@@ -350,24 +350,24 @@ validaSemantica = async function(req, res, next){
   
   if(tipo == "PGD_LC") {
     try { pgds = await PGD.listarLC() }
-    catch(e) { res.status(510).json(`Erro ao listar PGD_LCs `) }
+    catch(e) { res.status(506).json(`Erro ao listar PGD_LCs `) }
   }
   else {
     if(tipo == "PGD") {
      try { pgds = await PGD.listar() }
-     catch(e) { res.status(511).json(`Erro ao listar PGDs `) }
+     catch(e) { res.status(507).json(`Erro ao listar PGDs `) }
     } else {
       if(tipo == "RADA")
         try { pgds = await PGD.listarRADA() }
-        catch(e) { res.status(512).json(`Erro ao listar RADAs `) }
+        catch(e) { res.status(508).json(`Erro ao listar RADAs `) }
     }
-  }
+  } 
 
   if(tipo == "PGD" || tipo == "PGD_LC") {
     numDiploma = /\d*\/\d*/.exec(req.doc.legislacao)[0]
     var idPGD = pgds.find(x => x.numero == numDiploma).idPGD;
     try { myPGD = await PGD.consultar(idPGD) }
-    catch(e) { res.status(513).json(`Erro a consultar PGD `) }
+    catch(e) { res.status(509).json(`Erro a consultar PGD `) }
     codigos = myPGD.map(classe => classe.codigo);
     if(tipo == "PGD")
       referencias = myPGD.map(classe => classe.referencia);
@@ -377,7 +377,7 @@ validaSemantica = async function(req, res, next){
       numDiploma = req.doc.legislacao.split(' ')[2]
       var idPGD = pgds.find(x => x.numero == numDiploma).idRADA;
       try { myPGD = await PGD.consultarRADA(idPGD) }
-      catch(e) { res.status(514).json(`Erro a consultar RADA `) }
+      catch(e) { res.status(510).json(`Erro a consultar RADA `) }
       codigos = myPGD.map(classe => classe.codigo);
       referencias = myPGD.map(classe => classe.referencia);
     }
@@ -500,7 +500,7 @@ validaSemantica = async function(req, res, next){
             if(a.length > 0) {
               if(a[0].df == "C") { // Só verificamos caso o destino final seja Conservação
                 if(classes[i].dono == '') // Campo vazio
-                  mensagens.push("(Erro: Dono1) Não foi possível importar o ficheiro de classes / séries. O preenchimento do campo dono é obrigatório nas classes/séries de conservação. Deve preencher o campo da coluna dono com o(s) nome da(s) entidade(s) dona(s) do processo que consta(m) no catálogo de entidades da CLAV. Se o(s) nome(s) da(s) entidade(s) não constar(em) tem de propor a sua inclusão. Se for mais de uma entidade, deve separá-las com #. Verifique o seu preenchimento na seguinte linha: " + (i+2) );
+                  mensagens.push("Não foi possível importar o ficheiro de classes / séries. O preenchimento do campo dono é obrigatório nas classes/séries de conservação. Deve preencher o campo da coluna dono com o(s) nome da(s) entidade(s) dona(s) do processo que consta(m) no catálogo de entidades da CLAV. Se o(s) nome(s) da(s) entidade(s) não constar(em) tem de propor a sua inclusão. Se for mais de uma entidade, deve separá-las com #. Verifique o seu preenchimento na seguinte linha: " + (i+2) );
                 else{
                   var ents = classes[i].dono.split("#") 
                   for(var j=0; j < ents.length - 1; j++){
@@ -508,17 +508,17 @@ validaSemantica = async function(req, res, next){
                     if(!resu){ 
                       var resu = State.getTipologia("tip_" + ents[j]) // Tipologia
                       if(!resu) //Campo mal preenchido: valores que não constam no campo Designação do catálogo de entidades da CLAV
-                        mensagens.push("(Erro: Dono2) Não foi possível importar o ficheiro de classes / séries. O preenchimento do campo dono é obrigatório nas classes/séries de conservação. Deve preencher o campo da coluna dono com o(s) nome da(s) entidade(s) dona(s) do processo que consta(m) no catálogo de entidades da CLAV. Se o(s) nome(s) da(s) entidade(s)não constar(em) tem de propor a sua inclusão. Se for mais de uma entidade, deve separá-las com #. Verifique o seu preenchimento na seguinte linha: "+ (i+2) );
+                        mensagens.push("Não foi possível importar o ficheiro de classes / séries. O preenchimento do campo dono é obrigatório nas classes/séries de conservação. Deve preencher o campo da coluna dono com o(s) nome da(s) entidade(s) dona(s) do processo que consta(m) no catálogo de entidades da CLAV. Se o(s) nome(s) da(s) entidade(s)não constar(em) tem de propor a sua inclusão. Se for mais de uma entidade, deve separá-las com #. Verifique o seu preenchimento na seguinte linha: "+ (i+2) );
                     } 
                   }
                 }
               }
             }
             else 
-              mensagens.push("(Erro: Dono3) Não foi possível importar o ficheiro de classes / séries. Não foi possível verificar o(s) dono(s) porque o codigo fornecido é inválido. Verifique o seu preenchimento na seguinte linha: "+ (i+2) );
+              mensagens.push("Não foi possível importar o ficheiro de classes / séries. Não foi possível verificar o(s) dono(s) porque o codigo fornecido é inválido. Verifique o seu preenchimento na seguinte linha: "+ (i+2) );
           }
           else 
-            mensagens.push("(Erro: Dono4) Não foi possível importar o ficheiro de classes / séries. Não foi possível verificar o(s) dono(s) porque o codigo fornecido é inválido. Verifique o seu preenchimento na seguinte linha: "+ (i+2) );
+            mensagens.push("Não foi possível importar o ficheiro de classes / séries. Não foi possível verificar o(s) dono(s) porque o codigo fornecido é inválido. Verifique o seu preenchimento na seguinte linha: "+ (i+2) );
         }
       }
       codref = 1 //reset
@@ -602,7 +602,7 @@ validaSemantica = async function(req, res, next){
                 mensagens.push("Não foi possível importar o ficheiro de agregações. Não foi possível verificar a natureza de intervencao porque o codigoClasse fornecido é inválido. Verifique o seu preenchimento na seguinte linha: "+ (lin[j]+2) );
             }
             else 
-              mensagens.push("Não foi possível importar o ficheiro de agregações. Não foi possível verificar a natureza de intervencao porque o codigoClass fornecido é inválido. Verifique o seu preenchimento na seguinte linha: "+ (lin[j]+2) );
+              mensagens.push("Não foi possível importar o ficheiro de agregações. Não foi possível verificar a natureza de intervencao porque o codigoClasse fornecido é inválido. Verifique o seu preenchimento na seguinte linha: "+ (lin[j]+2) );
           }
         } 
         codref = 1 //reset depois do ciclo
