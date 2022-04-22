@@ -141,9 +141,9 @@ validaEstruturaCSV = async function(req, res, next){
 
   form.parse(req, async (error, fields, formData) => {
     if (error)
-      res.status(500).send(`Erro ao importar Auto de Eliminação: ${error} `);
+      res.status(500).jsonp({mensagem: `Erro ao importar Auto de Eliminação: ${error}`, erros: []});
     else if (!formData.file || !formData.file.path)
-      res.status(501).send(`Erro ao importar Auto de Eliminação: o campo file tem de vir preenchido. `);
+      res.status(501).jsonp({mensagem: `Erro ao importar Auto de Eliminação: o campo file tem de vir preenchido.`, erros: []});
     else if (formData.file.type == "text/csv" || formData.file.type == "application/vnd.ms-excel") {
       var file = fs.readFileSync(formData.file.path, 'utf8')
       Papa.parse(file, {
@@ -165,37 +165,47 @@ validaEstruturaCSV = async function(req, res, next){
           if(!linha.hasOwnProperty('medicaoDigital')) mensagens.push("Não foi possível importar o ficheiro de classes / séries. Coluna medicaoDigital inexistente. Verifique o seu preenchimento na seguinte linha: 0 %%%");
           if(!linha.hasOwnProperty('medicaoOutro')) mensagens.push("Não foi possível importar o ficheiro de classes / séries. Coluna medicaoOutro inexistente. Verifique o seu preenchimento na seguinte linha: 0 %%%");
 
-          if(formData.agreg && (formData.agreg.type == "application/vnd.ms-excel" || formData.file.type == "text/csv")) { // AMBOS FICHEIROS
-            var file2 = fs.readFileSync(formData.agreg.path, 'utf8')
-            Papa.parse(file2, {
-                header: true,
-                transformHeader:function(h) {
-                  return h.trim();
-                },
-                complete: async function(results) {
-                  var linha = results.data[0]
-                  var mensagens2 = []
-                  if(!linha.hasOwnProperty('codigoClasse')) mensagens2.push("Não foi possível importar o ficheiro de agregações. Coluna codigoClasse inexistente. Verifique o seu preenchimento na seguinte linha: 0 %%%");
-                  if(!linha.hasOwnProperty('referencia')) mensagens2.push("Não foi possível importar o ficheiro de agregações. Coluna referencia inexistente. Verifique o seu preenchimento na seguinte linha: 0 %%%");
-                  if(!linha.hasOwnProperty('codigoAgregacao')) mensagens2.push("Não foi possível importar o ficheiro de agregações. Coluna codigoAgregacao inexistente. Verifique o seu preenchimento na seguinte linha: 0 %%%");
-                  if(!linha.hasOwnProperty('titulo')) mensagens2.push("Não foi possível importar o ficheiro de agregações. Coluna titulo inexistente. Verifique o seu preenchimento na seguinte linha: 0 %%%");
-                  if(!linha.hasOwnProperty('dataInicioContagemPCA')) mensagens2.push("Não foi possível importar o ficheiro de agregações. Coluna dataInicioContagemPCA inexistente. Verifique o seu preenchimento na seguinte linha: 0 %%%");
-                  if(!linha.hasOwnProperty('intervencao')) mensagens2.push("Não foi possível importar o ficheiro de agregações. Coluna intervencao inexistente. Verifique o seu preenchimento na seguinte linha: 0 %%%");
-                  
-                  if (mensagens.length > 0 || mensagens2.length > 0) {
-                    let mens = []
-                    if (mensagens.length > 0) mens.push(mensagens)
-                    if (mensagens2.length > 0) mens.push(mensagens2)
-                    return res.status(502).send("Erro(s) na análise estrutural do(s) ficheiro(s) CSV: " + mens);
-                  } else {
-                    req.doc = []
-                    req.doc.push(fields)
-                    req.doc.push(f1)
-                    req.doc.push(results.data)
-                    next()
+          if(formData.agreg) { // AMBOS FICHEIROS
+            if(formData.agreg.type == "application/vnd.ms-excel" || formData.file.type == "text/csv"){
+              var file2 = fs.readFileSync(formData.agreg.path, 'utf8')
+              Papa.parse(file2, {
+                  header: true,
+                  transformHeader:function(h) {
+                    return h.trim();
+                  },
+                  complete: async function(results) {
+                    var linha = results.data[0]
+                    var mensagens2 = []
+                    if(!linha.hasOwnProperty('codigoClasse')) mensagens2.push("Não foi possível importar o ficheiro de agregações. Coluna codigoClasse inexistente. Verifique o seu preenchimento na seguinte linha: 0 %%%");
+                    if(!linha.hasOwnProperty('referencia')) mensagens2.push("Não foi possível importar o ficheiro de agregações. Coluna referencia inexistente. Verifique o seu preenchimento na seguinte linha: 0 %%%");
+                    if(!linha.hasOwnProperty('codigoAgregacao')) mensagens2.push("Não foi possível importar o ficheiro de agregações. Coluna codigoAgregacao inexistente. Verifique o seu preenchimento na seguinte linha: 0 %%%");
+                    if(!linha.hasOwnProperty('titulo')) mensagens2.push("Não foi possível importar o ficheiro de agregações. Coluna titulo inexistente. Verifique o seu preenchimento na seguinte linha: 0 %%%");
+                    if(!linha.hasOwnProperty('dataInicioContagemPCA')) mensagens2.push("Não foi possível importar o ficheiro de agregações. Coluna dataInicioContagemPCA inexistente. Verifique o seu preenchimento na seguinte linha: 0 %%%");
+                    if(!linha.hasOwnProperty('intervencao')) mensagens2.push("Não foi possível importar o ficheiro de agregações. Coluna intervencao inexistente. Verifique o seu preenchimento na seguinte linha: 0 %%%");
+                    
+                    if (mensagens.length > 0 || mensagens2.length > 0) {
+                      let mens = []
+                      if (mensagens.length > 0) mens.push(mensagens)
+                      if (mensagens2.length > 0) mens.push(mensagens2)
+                      return res.status(502).jsonp({
+                        mensagem: "Erro(s) na análise estrutural do(s) ficheiro(s) CSV:",
+                        erros: mens
+                      })
+                    } else {
+                      req.doc = []
+                      req.doc.push(fields)
+                      req.doc.push(f1)
+                      req.doc.push(results.data)
+                      next()
+                    }
                   }
-                }
-            });
+              });
+            } 
+            else
+              res.status(503).jsonp({
+                mensagem: "Erro ao importar Auto de Eliminação: o ficheiro das agregações tem de ser de formato CSV.",
+                erros: mensagens
+              })
           } else { // SÓ FICHEIRO DAS CLASSES
             if (mensagens.length > 0)
               return res.status(502).jsonp({
@@ -212,8 +222,8 @@ validaEstruturaCSV = async function(req, res, next){
         }
       })
     } else 
-        res.status(503).jsonp({
-          mensagem: "Erro ao importar Auto de Eliminação: o ficheiro tem de ser de formato CSV.",
+        res.status(504).jsonp({
+          mensagem: "Erro ao importar Auto de Eliminação: o ficheiro das classes / séries tem de ser de formato CSV.",
           erros: mensagens
         })
   })
@@ -241,7 +251,7 @@ convCSVFormatoIntermedio = function(req, res, next){
     myAuto.refLegislacao = leg.id
   }
   else{
-    mensagens.push("Erro ao recuperar a legislação: o tipo ou o número da legislação não vieram preenchido(s). Note: tipoLeg número")
+    mensagens.push("Erro ao recuperar a legislação (o tipo ou o número da legislação não vieram preenchido(s)).")
   }
   
   // entidades
@@ -350,16 +360,16 @@ validaSemantica = async function(req, res, next){
   
   if(tipo == "PGD_LC") {
     try { pgds = await PGD.listarLC() }
-    catch(e) { res.status(506).json(`Erro ao listar PGD_LCs `) }
+    catch(e) { res.status(506).jsonp({ mensagem: "Erro ao listar PGD_LCs.", erros: []}); }
   }
   else {
     if(tipo == "PGD") {
      try { pgds = await PGD.listar() }
-     catch(e) { res.status(507).json(`Erro ao listar PGDs `) }
+     catch(e) { res.status(507).jsonp({ mensagem: "Erro ao listar PGDs.", erros: []}); }
     } else {
       if(tipo == "RADA")
         try { pgds = await PGD.listarRADA() }
-        catch(e) { res.status(508).json(`Erro ao listar RADAs `) }
+        catch(e) { res.status(508).jsonp({ mensagem: "Erro ao listar RADAs.", erros: []});}
     }
   } 
 
@@ -367,7 +377,7 @@ validaSemantica = async function(req, res, next){
     numDiploma = /\d*\/\d*/.exec(req.doc.legislacao)[0]
     var idPGD = pgds.find(x => x.numero == numDiploma).idPGD;
     try { myPGD = await PGD.consultar(idPGD) }
-    catch(e) { res.status(509).json(`Erro a consultar PGD `) }
+    catch(e) { res.status(509).jsonp({ mensagem: "Erro a consultar PGD.", erros: []}); }
     codigos = myPGD.map(classe => classe.codigo);
     if(tipo == "PGD")
       referencias = myPGD.map(classe => classe.referencia);
@@ -377,7 +387,7 @@ validaSemantica = async function(req, res, next){
       numDiploma = req.doc.legislacao.split(' ')[2]
       var idPGD = pgds.find(x => x.numero == numDiploma).idRADA;
       try { myPGD = await PGD.consultarRADA(idPGD) }
-      catch(e) { res.status(510).json(`Erro a consultar RADA `) }
+      catch(e){ res.status(510).jsonp({ mensagem: "Erro a consultar RADA.", erros: []}); }
       codigos = myPGD.map(classe => classe.codigo);
       referencias = myPGD.map(classe => classe.referencia);
     }
@@ -399,15 +409,15 @@ validaSemantica = async function(req, res, next){
     for(var i=0; i < classes.length; i++){
       // Ignora linhas vazias
       if(classes[i].codigo || classes[i].referencia || classes[i].dataInicio || classes[i].dataFim || classes[i].numAgregacoes || classes[i].medicaoPapel || classes[i].medicaoDigital || classes[i].medicaoOutro ) {
-        
+
         // 2 - codigo (I)
         if(tipo != "PGD" && tipo != "RADA"){
           if(classes[i].codigo == ''){ // Campo vazio
             mensagens.push("Não foi possível importar o ficheiro de classes / séries. O preenchimento dos campos da coluna codigo é obrigatório, sempre que existir código de classificação na respetiva tabela. Verifique o seu preenchimento na seguinte linha: " + (i+2) );
             codref = 0
           }
-          else {
-            if(!codigos.includes(classes[i].codigo)) { // Campo mal preenchido
+          else{
+            if(!codigos.includes(classes[i].codigo)){ // Campo mal preenchido
               mensagens.push("Não foi possível importar o ficheiro de classes / séries. Os campos da coluna codigo devem ser preenchidos com os valores do código de classificação existentes na respetiva tabela. Verifique o seu preenchimento na seguinte linha: " + (i+2) );
               codref = 0
             }
@@ -415,7 +425,7 @@ validaSemantica = async function(req, res, next){
               codsFicheiroClasses.push(classes[i].codigo)
           }
         }
-        else { 
+        else{ 
           // 3 - referencia 
           if(classes[i].referencia != ''){ // referencia preenchida
             if(!referencias.includes(classes[i].referencia)){ // referencia preenchida inválida
@@ -434,7 +444,7 @@ validaSemantica = async function(req, res, next){
                 mensagens.push("Não foi possível importar o ficheiro de classes / séries. O preenchimento dos campos da coluna codigo é obrigatório, sempre que existir código de classificação na respetiva tabela. Verifique o seu preenchimento na seguinte linha: " + (i+2) );
                 codref = 0
               }
-            else{ // codigo preenchido válido
+              else{ // codigo preenchido válido
                 codsFicheiroClasses.push(classes[i].codigo)
                 codref = 1
               }
@@ -444,6 +454,51 @@ validaSemantica = async function(req, res, next){
               codref = 0
             }
           }
+        }
+
+        // Só se aceitam classes com PCA e DF 
+        var a = []
+        if(codref == 1)  // codigo
+          a = myPGD.filter(c => c.codigo == agregacoes[j].codigo)
+        else if(codref == 2) // referencia
+          a = myPGD.filter(c => c.referencia == agregacoes[j].referencia)
+        else
+          mensagens.push("Não foi possível importar o ficheiro de classes / séries. Não foi possível verificar o destino final nem o prazo de conservação administrativa porque a referencia e/ou o codigo fornecido é inválido. Verifique o seu preenchimento na seguinte linha: "+ (i+2) );
+        
+        if(a.length > 0){ 
+          if(!a[0].hasOwnProperty('df'))
+            res.status(511).jsonp({
+              mensagem: "Erro na análise semântica do(s) ficheiro(s) CSV:",
+              erros: ["Não foi possível importar o ficheiro de classes / séries. O pedido de eliminação é inválido porque a classe não tem destino final. Verifique o seu preenchimento na seguinte linha: "+ (i+2)]
+            }); 
+          else if(!a[0].hasOwnProperty('pca'))
+            res.status(512).jsonp({
+              mensagem: "Erro na análise semântica do(s) ficheiro(s) CSV:",
+              erros: ["Não foi possível importar o ficheiro de classes / séries. O pedido de eliminação é inválido porque a classe não tem prazo de conservação administrativa. Verifique o seu preenchimento na seguinte linha: "+ (i+2)]
+            }); 
+        } 
+        else 
+          mensagens.push("Não foi possível importar o ficheiro de classes / séries. Não foi possível verificar o destino final nem o prazo de conservação administrativa devido a um erro ao consultar a classe. Verifique o seu preenchimento na seguinte linha: "+ (i+2) );
+  
+
+        // PGDs e RADAs: se o DF for Conservação, o AE é inválido
+        if(tipo == "PGD" || tipo == "RADA"){ 
+          var a = []
+          if(codref == 1)  // codigo
+            a = myPGD.filter(c => c.codigo == agregacoes[j].codigo)
+          else if(codref == 2) // referencia
+            a = myPGD.filter(c => c.referencia == agregacoes[j].referencia)
+          else
+            mensagens.push("Não foi possível importar o ficheiro de classes / séries. Não foi possível verificar o destino final porque a referencia e/ou o codigo fornecido é inválido. Verifique o seu preenchimento na seguinte linha: "+ (i+2) );
+              
+          if(a.length > 0) 
+            if(a[0].df == "C")
+              res.status(513).jsonp({
+                mensagem: "Erro na análise semântica do(s) ficheiro(s) CSV:",
+                erros: ["Não foi possível importar o ficheiro de classes / séries. O pedido de eliminação é inválido porque o destino final da classe é conservação e a fonte de legitimação é do tipo PGD ou RADA. Verifique o seu preenchimento na seguinte linha: "+ (i+2)]
+              }); 
+          else 
+            mensagens.push("Não foi possível importar o ficheiro de classes / séries. Não foi possível verificar o destino final devido a um erro ao consultar a classe. Verifique o seu preenchimento na seguinte linha: "+ (i+2) );
         }
 
         // 4 - dataInicial
@@ -515,7 +570,7 @@ validaSemantica = async function(req, res, next){
               }
             }
             else 
-              mensagens.push("Não foi possível importar o ficheiro de classes / séries. Não foi possível verificar o(s) dono(s) porque o codigo fornecido é inválido. Verifique o seu preenchimento na seguinte linha: "+ (i+2) );
+              mensagens.push("Não foi possível importar o ficheiro de classes / séries. Não foi possível verificar o(s) dono(s) devido a um erro ao consultar a classe. Verifique o seu preenchimento na seguinte linha: "+ (i+2) );
           }
           else 
             mensagens.push("Não foi possível importar o ficheiro de classes / séries. Não foi possível verificar o(s) dono(s) porque o codigo fornecido é inválido. Verifique o seu preenchimento na seguinte linha: "+ (i+2) );
@@ -562,25 +617,18 @@ validaSemantica = async function(req, res, next){
               mensagens.push("Não foi possível importar o ficheiro de agregações. O preenchimento dos campos da coluna dataInicioContagemPCA é obrigatório e deve ser preenchido com a data de início de contagem do prazo de conservação administrativo (PCA), no formato AAAA. Verifique o seu preenchimento na seguinte linha: " + (lin[j]+2) );
             else {
               var a = []
-              if(codref == 1) { // codigo
+              if(codref == 1) // codigo
                 a = myPGD.filter(c => c.codigo == agregacoes[j].codigo)
-                if(a[0].pca != undefined) {
-                  if(Number(agregacoes[j].dataContagem) > (Number(anoAtual) - (Number(a[0].pca) + 1)))  // Campo mal preenchido
-                    mensagens.push("Não foi possível importar o ficheiro de agregações. O preenchimento dos campos da coluna dataInicioContagemPCA é obrigatório e deve ser preenchido com a data de início de contagem do prazo de conservação administrativo (PCA). O valor introduzido deve ser igual ou inferior à subtração do valor existente no campo PCA da respetiva classe / série ao ano corrente, mais um ano. Verifique o seu preenchimento na seguinte linha: " + (lin[j]+2) );     
-                } else {
-                  mensagens.push("Não foi possível importar o ficheiro de agregações. Não foi possível verificar a data de início de contagem porque a referencia e/ou o codigoClasse fornecido é inválido. Verifique o seu preenchimento na seguinte linha: "+ (lin[j]+2) );
-                }
-              } else if(codref == 2) { // referencia
+              else if(codref == 2)  // referencia
                 a = myPGD.filter(c => c.referencia == agregacoes[j].referencia)
-                if(a.length > 0) {
-                  if(Number(agregacoes[j].dataContagem) > (Number(anoAtual) - Number(a[0].pca) + 1)) // Campo mal preenchido
-                    mensagens.push("Não foi possível importar o ficheiro de agregações. O preenchimento dos campos da coluna dataInicioContagemPCA é obrigatório e deve ser preenchido com a data de início de contagem do prazo de conservação administrativo (PCA). O valor introduzido deve ser igual ou inferior à subtração do valor existente no campo PCA da respetiva classe / série ao ano corrente, mais um ano. Verifique o seu preenchimento na seguinte linha: " + (lin[j]+2) );     
-                } else {
-                  mensagens.push("Não foi possível importar o ficheiro de agregações. Não foi possível verificar a data de início de contagem porque a referencia e/ou o codigoClasse fornecido é inválido. Verifique o seu preenchimento na seguinte linha: "+ (lin[j]+2) );
-                }
-              }
               else
                 mensagens.push("Não foi possível importar o ficheiro de agregações. Não foi possível verificar a data de início de contagem porque a referencia e/ou o codigoClasse fornecido é inválido. Verifique o seu preenchimento na seguinte linha: "+ (lin[j]+2) );
+                
+              if(a.length > 0) 
+                if(Number(agregacoes[j].dataContagem) > (Number(anoAtual) - (Number(a[0].pca) + 1)))  // Campo mal preenchido
+                  mensagens.push("Não foi possível importar o ficheiro de agregações. O preenchimento dos campos da coluna dataInicioContagemPCA é obrigatório e deve ser preenchido com a data de início de contagem do prazo de conservação administrativo (PCA). O valor introduzido deve ser igual ou inferior à subtração do valor existente no campo PCA da respetiva classe / série ao ano corrente, mais um ano. Verifique o seu preenchimento na seguinte linha: " + (lin[j]+2) );     
+              else 
+                mensagens.push("Não foi possível importar o ficheiro de agregações. Não foi possível verificar a data de início de contagem devido a um erro ao consultar a classe. Verifique o seu preenchimento na seguinte linha: "+ (lin[j]+2) )
             }
           }
 
@@ -599,7 +647,7 @@ validaSemantica = async function(req, res, next){
                 }
               } 
               else
-                mensagens.push("Não foi possível importar o ficheiro de agregações. Não foi possível verificar a natureza de intervencao porque o codigoClasse fornecido é inválido. Verifique o seu preenchimento na seguinte linha: "+ (lin[j]+2) );
+                mensagens.push("Não foi possível importar o ficheiro de agregações. Não foi possível verificar a natureza de intervencao devido a um erro ao consultar a classe. Verifique o seu preenchimento na seguinte linha: "+ (lin[j]+2) );
             }
             else 
               mensagens.push("Não foi possível importar o ficheiro de agregações. Não foi possível verificar a natureza de intervencao porque o codigoClasse fornecido é inválido. Verifique o seu preenchimento na seguinte linha: "+ (lin[j]+2) );
@@ -613,7 +661,7 @@ validaSemantica = async function(req, res, next){
       mensagens.push(mensagensAnt[e])
 
     if(mensagens.length > 0) {
-      res.status(515).jsonp(
+      res.status(514).jsonp(
         {
           mensagem: "Erro(s) na análise semântica do(s) ficheiro(s) CSV:",
           erros: mensagens
