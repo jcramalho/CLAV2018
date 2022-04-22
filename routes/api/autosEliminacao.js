@@ -458,47 +458,51 @@ validaSemantica = async function(req, res, next){
 
         // Só se aceitam classes com PCA e DF 
         var a = []
-        if(codref == 1)  // codigo
-          a = myPGD.filter(c => c.codigo == agregacoes[j].codigo)
-        else if(codref == 2) // referencia
-          a = myPGD.filter(c => c.referencia == agregacoes[j].referencia)
-        else
+        if(codref == 1){  // codigo
+          a = myPGD.filter(c => c.codigo ==  classes[i].codigo)
+        } else if(codref == 2){ // referencia
+          a = myPGD.filter(c => c.referencia == classes[i].referencia)
+        } else{
           mensagens.push("Não foi possível importar o ficheiro de classes / séries. Não foi possível verificar o destino final nem o prazo de conservação administrativa porque a referencia e/ou o codigo fornecido é inválido. Verifique o seu preenchimento na seguinte linha: "+ (i+2) );
+        }
         
         if(a.length > 0){ 
-          if(!a[0].hasOwnProperty('df'))
+          if(!a[0].hasOwnProperty('df')){
             res.status(511).jsonp({
               mensagem: "Erro na análise semântica do(s) ficheiro(s) CSV:",
               erros: ["Não foi possível importar o ficheiro de classes / séries. O pedido de eliminação é inválido porque a classe não tem destino final. Verifique o seu preenchimento na seguinte linha: "+ (i+2)]
-            }); 
-          else if(!a[0].hasOwnProperty('pca'))
+            });
+          } else if(!a[0].hasOwnProperty('pca')){
             res.status(512).jsonp({
               mensagem: "Erro na análise semântica do(s) ficheiro(s) CSV:",
               erros: ["Não foi possível importar o ficheiro de classes / séries. O pedido de eliminação é inválido porque a classe não tem prazo de conservação administrativa. Verifique o seu preenchimento na seguinte linha: "+ (i+2)]
-            }); 
-        } 
-        else 
+            });
+          } 
+        } else{
           mensagens.push("Não foi possível importar o ficheiro de classes / séries. Não foi possível verificar o destino final nem o prazo de conservação administrativa devido a um erro ao consultar a classe. Verifique o seu preenchimento na seguinte linha: "+ (i+2) );
-  
+        }
 
         // PGDs e RADAs: se o DF for Conservação, o AE é inválido
         if(tipo == "PGD" || tipo == "RADA"){ 
           var a = []
-          if(codref == 1)  // codigo
-            a = myPGD.filter(c => c.codigo == agregacoes[j].codigo)
-          else if(codref == 2) // referencia
-            a = myPGD.filter(c => c.referencia == agregacoes[j].referencia)
-          else
+          if(codref == 1){  // codigo
+            a = myPGD.filter(c => c.codigo == classes[i].codigo)
+          } else if(codref == 2){ // referencia
+            a = myPGD.filter(c => c.referencia == classes[i].referencia)
+          } else{
             mensagens.push("Não foi possível importar o ficheiro de classes / séries. Não foi possível verificar o destino final porque a referencia e/ou o codigo fornecido é inválido. Verifique o seu preenchimento na seguinte linha: "+ (i+2) );
-              
-          if(a.length > 0) 
-            if(a[0].df == "C")
+          }  
+
+          if(a.length > 0){
+            if(a[0].df == "C"){
               res.status(513).jsonp({
                 mensagem: "Erro na análise semântica do(s) ficheiro(s) CSV:",
                 erros: ["Não foi possível importar o ficheiro de classes / séries. O pedido de eliminação é inválido porque o destino final da classe é conservação e a fonte de legitimação é do tipo PGD ou RADA. Verifique o seu preenchimento na seguinte linha: "+ (i+2)]
               }); 
-          else 
+            }
+          } else {
             mensagens.push("Não foi possível importar o ficheiro de classes / séries. Não foi possível verificar o destino final devido a um erro ao consultar a classe. Verifique o seu preenchimento na seguinte linha: "+ (i+2) );
+          }
         }
 
         // 4 - dataInicial
@@ -617,18 +621,20 @@ validaSemantica = async function(req, res, next){
               mensagens.push("Não foi possível importar o ficheiro de agregações. O preenchimento dos campos da coluna dataInicioContagemPCA é obrigatório e deve ser preenchido com a data de início de contagem do prazo de conservação administrativo (PCA), no formato AAAA. Verifique o seu preenchimento na seguinte linha: " + (lin[j]+2) );
             else {
               var a = []
-              if(codref == 1) // codigo
+              if(codref == 1){ // codigo
                 a = myPGD.filter(c => c.codigo == agregacoes[j].codigo)
-              else if(codref == 2)  // referencia
+              } else if(codref == 2){ // referencia
                 a = myPGD.filter(c => c.referencia == agregacoes[j].referencia)
-              else
+              } else{
                 mensagens.push("Não foi possível importar o ficheiro de agregações. Não foi possível verificar a data de início de contagem porque a referencia e/ou o codigoClasse fornecido é inválido. Verifique o seu preenchimento na seguinte linha: "+ (lin[j]+2) );
-                
-              if(a.length > 0) 
+              }
+
+              if(a.length > 0){
                 if(Number(agregacoes[j].dataContagem) > (Number(anoAtual) - (Number(a[0].pca) + 1)))  // Campo mal preenchido
                   mensagens.push("Não foi possível importar o ficheiro de agregações. O preenchimento dos campos da coluna dataInicioContagemPCA é obrigatório e deve ser preenchido com a data de início de contagem do prazo de conservação administrativo (PCA). O valor introduzido deve ser igual ou inferior à subtração do valor existente no campo PCA da respetiva classe / série ao ano corrente, mais um ano. Verifique o seu preenchimento na seguinte linha: " + (lin[j]+2) );     
-              else 
+              } else{ 
                 mensagens.push("Não foi possível importar o ficheiro de agregações. Não foi possível verificar a data de início de contagem devido a um erro ao consultar a classe. Verifique o seu preenchimento na seguinte linha: "+ (lin[j]+2) )
+              }
             }
           }
 
