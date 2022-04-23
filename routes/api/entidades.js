@@ -247,6 +247,17 @@ router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), [
     .catch(err => res.status(500).send(`Erro na inserção de uma entidade: ${err}`));
 });
 
+//Repõe entidades ja existentes
+router.post("/repor", Auth.isLoggedInUser, Auth.checkLevel(4), function(req, res){
+  Entidades.repor(req.body.query)
+    .then(dados => {
+      res.jsonp(dados)
+    })
+    .catch(err => res.status(500).send(`Erro na inserção das entidades: ${err}`));
+})
+
+
+
 // Atualiza uma entidade na BD
 router.put("/:id", Auth.isLoggedInUser, Auth.checkLevel(4), [
     verificaEntId('param', 'id'),
