@@ -1,5 +1,6 @@
 const execQuery = require('../../controllers/api/utils').execQuery
 const normalize = require('../../controllers/api/utils').normalize
+const criarHistorico = require("../../controllers/api/utils").criarHistorico
 var Pedidos = require('../../controllers/api/pedidos');
 
 var AutosEliminacao = module.exports
@@ -557,6 +558,15 @@ AutosEliminacao.importar = async (auto, tipo, user) => {
     console.log(JSON.stringify(auto))  
     auto.entidade = user.entidade
     auto.responsavel = user.email
+    
+    // Inicializar o histórico 
+    var his = []
+    his[0] = criarHistorico(auto)
+
+    // Inicializar o histórico para as classes
+    for(var i = 0; i < auto.classes.length; i++)
+        his[0].classes.dados[i] = criarHistorico(auto.classes[i])
+
     var pedido = {
         tipoPedido: "Importação",
         tipoObjeto: "Auto de Eliminação",
@@ -564,7 +574,7 @@ AutosEliminacao.importar = async (auto, tipo, user) => {
         user: {email: user.email},
         entidade: user.entidade,
         token: user.token,
-        historico: [],
+        historico: his,
         objetoOriginal: auto
     }
     var pedido = await Pedidos.criar(pedido)
