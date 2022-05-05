@@ -295,6 +295,7 @@ convCSVFormatoIntermedio = function(req, res, next){
         for(var x=0; x < agregs.length; x++){
           if((agregs[x].referencia != '' && agregs[x].referencia == c.referencia) || (agregs[x].codigoClasse != '' && agregs[x].codigoClasse == c.codigo)) {
             var a = {}
+            a.valor = true
             a.codigo = agregs[x].codigoClasse
             a.referencia = agregs[x].referencia
             a.codigoAgregacao = agregs[x].codigoAgregacao
@@ -617,7 +618,7 @@ validaSemantica = async function(req, res, next){
           if(agregacoes[j].dataContagem == '') // Campo vazio
             mensagens.push("Não foi possível importar o ficheiro de agregações. O preenchimento dos campos da coluna dataInicioContagemPCA é obrigatório e deve ser preenchido com a data de início de contagem do prazo de conservação administrativo (PCA). O valor introduzido deve ser igual ou inferior à subtração do valor existente no campo PCA da respetiva classe / série ao ano corrente, mais um ano. Verifique o seu preenchimento na seguinte linha: " + (lin[j]+2) );
           else{
-            if(!anoRegEx.test(agregacoes[j].dataContagem)) // Campo mal preenchido : formato de data errado
+            if(!anoRegEx.test(agregacoes[j].dataContagem) || (classes[i].dataFim.length != 4)) // Campo mal preenchido : formato de data errado
               mensagens.push("Não foi possível importar o ficheiro de agregações. O preenchimento dos campos da coluna dataInicioContagemPCA é obrigatório e deve ser preenchido com a data de início de contagem do prazo de conservação administrativo (PCA), no formato AAAA. Verifique o seu preenchimento na seguinte linha: " + (lin[j]+2) );
             else {
               var a = []
