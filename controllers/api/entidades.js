@@ -50,7 +50,6 @@ Entidades.listar = filtro => {
 
         FILTER (${filtro})
     } ORDER BY ?sigla`;
-
   return execQuery("query", query).then(response => normalize(response));
 };
 
@@ -286,7 +285,7 @@ Entidades.consultar = id => {
             clav:${id} clav:entDataExtincao ?dataExtincao
         }
     }`;
-
+    console.log(query)
   return execQuery("query", query).then(response => normalize(response)[0]);
 };
 
@@ -481,7 +480,6 @@ Entidades.criar = async ent => {
   queryEnt += " .\n}";
   const query = "INSERT DATA " + queryEnt;
   const ask = "ASK " + queryEnt;
-
   return execQuery("update", query).then(res =>
     execQuery("query", ask).then(result => {
       if (result.boolean) return "Sucesso na inserção da entidade";
@@ -491,12 +489,16 @@ Entidades.criar = async ent => {
 };
 
 //Repor entidade ja existente
-Entidades.repor = async (ents) => {
+Entidades.repor = async ents => {
   const query = "INSERT DATA { " + ents + ' }'
+  console.log(query)
   const ask = "ASK { " + ents +  ' }'
   return execQuery("update", query).then(res =>
     execQuery("query", ask).then(result => {
-      if (result.boolean) return "Sucesso na inserção das entidades";
+      if (result.boolean) {
+        console.log("Sucesso na inserçao")
+        return "Sucesso na inserção das entidades";
+      }
       else throw "Insucesso na inserção das entidades";
     })
   );

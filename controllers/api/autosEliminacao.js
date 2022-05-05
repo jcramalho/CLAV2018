@@ -564,8 +564,10 @@ AutosEliminacao.importar = async (auto, tipo, user) => {
     his[0] = criarHistorico(auto)
 
     // Inicializar o histórico para as classes
-    for(var i = 0; i < auto.classes.length; i++)
+    for(var i = 0; i < auto.classes.length; i++) {
         his[0].classes.dados[i] = criarHistorico(auto.classes[i])
+        his[0].classes.dados[i].agregacoes.dados = criarHistorico(auto.classes[i].agregacoes)
+    }
 
     var pedido = {
         tipoPedido: "Importação",

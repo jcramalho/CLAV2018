@@ -251,7 +251,11 @@ router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), [
 router.post("/repor", Auth.isLoggedInUser, Auth.checkLevel(4), function(req, res){
   Entidades.repor(req.body.query)
     .then(dados => {
-      res.jsonp(dados)
+      State.reloadEntidades()
+          .then(d => {
+            res.jsonp(dados)
+          })
+          .catch(err => res.status(500).send(`Erro no reload da cache das entidades. A entidade foi criada com sucesso.`))
     })
     .catch(err => res.status(500).send(`Erro na inserção das entidades: ${err}`));
 })
