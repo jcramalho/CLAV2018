@@ -156,14 +156,20 @@ validaEstruturaCSV = async function(req, res, next){
           var f1 = results.data
           var linha = results.data[0]
           var mensagens = []
-          if(!linha.hasOwnProperty('codigo')) mensagens.push("Não foi possível importar o ficheiro de classes / séries. Coluna codigo inexistente. Verifique o seu preenchimento na seguinte linha: 0 %%%");
-          if(!linha.hasOwnProperty('referencia')) mensagens.push("Não foi possível importar o ficheiro de classes / séries. Coluna referencia inexistente. Verifique o seu preenchimento na seguinte linha: 0 %%%");
-          if(!linha.hasOwnProperty('dataInicial')) mensagens.push("Não foi possível importar o ficheiro de classes / séries. Coluna dataInicial inexistente. Verifique o seu preenchimento na seguinte linha: 0 %%%");
-          if(!linha.hasOwnProperty('dataFinal')) mensagens.push("Não foi possível importar o ficheiro de classes / séries. Coluna dataFinal inexistente. Verifique o seu preenchimento na seguinte linha: 0 %%%");
-          if(!linha.hasOwnProperty('numAgregacoes')) mensagens.push("Não foi possível importar o ficheiro de classes / séries. Coluna numAgregacoes inexistente. Verifique o seu preenchimento na seguinte linha: 0 %%%");
-          if(!linha.hasOwnProperty('medicaoPapel')) mensagens.push("Não foi possível importar o ficheiro de classes / séries. Coluna medicaoPapel inexistente. Verifique o seu preenchimento na seguinte linha: 0 %%%");
-          if(!linha.hasOwnProperty('medicaoDigital')) mensagens.push("Não foi possível importar o ficheiro de classes / séries. Coluna medicaoDigital inexistente. Verifique o seu preenchimento na seguinte linha: 0 %%%");
-          if(!linha.hasOwnProperty('medicaoOutro')) mensagens.push("Não foi possível importar o ficheiro de classes / séries. Coluna medicaoOutro inexistente. Verifique o seu preenchimento na seguinte linha: 0 %%%");
+
+          if(f1.length != 0){
+            if(!linha.hasOwnProperty('codigo')) mensagens.push("Não foi possível importar o ficheiro de classes / séries. Coluna codigo inexistente.");
+            if(!linha.hasOwnProperty('referencia')) mensagens.push("Não foi possível importar o ficheiro de classes / séries. Coluna referencia inexistente.");
+            if(!linha.hasOwnProperty('dataInicial')) mensagens.push("Não foi possível importar o ficheiro de classes / séries. Coluna dataInicial inexistente.");
+            if(!linha.hasOwnProperty('dataFinal')) mensagens.push("Não foi possível importar o ficheiro de classes / séries. Coluna dataFinal inexistente.");
+            if(!linha.hasOwnProperty('numAgregacoes')) mensagens.push("Não foi possível importar o ficheiro de classes / séries. Coluna numAgregacoes inexistente.");
+            if(!linha.hasOwnProperty('medicaoPapel')) mensagens.push("Não foi possível importar o ficheiro de classes / séries. Coluna medicaoPapel inexistente.");
+            if(!linha.hasOwnProperty('medicaoDigital')) mensagens.push("Não foi possível importar o ficheiro de classes / séries. Coluna medicaoDigital inexistente.");
+            if(!linha.hasOwnProperty('medicaoOutro')) mensagens.push("Não foi possível importar o ficheiro de classes / séries. Coluna medicaoOutro inexistente.");
+            if(!linha.hasOwnProperty('dono')) mensagens.push("Não foi possível importar o ficheiro de classes / séries. Coluna dono inexistente.");
+          }
+          else
+            mensagens.push("Não foi possível importar o ficheiro de classes / séries. O ficheiro de classes / séries encontra-se vazio ou com conteúdo inválido.");
 
           if(formData.agreg) { // AMBOS FICHEIROS
             if(formData.agreg.type == "application/vnd.ms-excel" || formData.file.type == "text/csv"){
@@ -176,17 +182,24 @@ validaEstruturaCSV = async function(req, res, next){
                   complete: async function(results) {
                     var linha = results.data[0]
                     var mensagens2 = []
-                    if(!linha.hasOwnProperty('codigoClasse')) mensagens2.push("Não foi possível importar o ficheiro de agregações. Coluna codigoClasse inexistente. Verifique o seu preenchimento na seguinte linha: 0 %%%");
-                    if(!linha.hasOwnProperty('referencia')) mensagens2.push("Não foi possível importar o ficheiro de agregações. Coluna referencia inexistente. Verifique o seu preenchimento na seguinte linha: 0 %%%");
-                    if(!linha.hasOwnProperty('codigoAgregacao')) mensagens2.push("Não foi possível importar o ficheiro de agregações. Coluna codigoAgregacao inexistente. Verifique o seu preenchimento na seguinte linha: 0 %%%");
-                    if(!linha.hasOwnProperty('titulo')) mensagens2.push("Não foi possível importar o ficheiro de agregações. Coluna titulo inexistente. Verifique o seu preenchimento na seguinte linha: 0 %%%");
-                    if(!linha.hasOwnProperty('dataInicioContagemPCA')) mensagens2.push("Não foi possível importar o ficheiro de agregações. Coluna dataInicioContagemPCA inexistente. Verifique o seu preenchimento na seguinte linha: 0 %%%");
-                    if(!linha.hasOwnProperty('intervencao')) mensagens2.push("Não foi possível importar o ficheiro de agregações. Coluna intervencao inexistente. Verifique o seu preenchimento na seguinte linha: 0 %%%");
-                    
+
+                    if(results.data != 0){
+                      if(!linha.hasOwnProperty('codigoClasse')) mensagens2.push("Não foi possível importar o ficheiro de agregações. Coluna codigoClasse inexistente.");
+                      if(!linha.hasOwnProperty('referencia')) mensagens2.push("Não foi possível importar o ficheiro de agregações. Coluna referencia inexistente.");
+                      if(!linha.hasOwnProperty('codigoAgregacao')) mensagens2.push("Não foi possível importar o ficheiro de agregações. Coluna codigoAgregacao inexistente.");
+                      if(!linha.hasOwnProperty('titulo')) mensagens2.push("Não foi possível importar o ficheiro de agregações. Coluna titulo inexistente.");
+                      if(!linha.hasOwnProperty('dataInicioContagemPCA')) mensagens2.push("Não foi possível importar o ficheiro de agregações. Coluna dataInicioContagemPCA inexistente.");
+                      if(!linha.hasOwnProperty('intervencao')) mensagens2.push("Não foi possível importar o ficheiro de agregações. Coluna intervencao inexistente.");
+                    }
+                    else
+                      mensagens2.push("Não foi possível importar o ficheiro de agregações. O ficheiro de agregações encontra-se vazio ou com conteúdo inválido.");
+
                     if (mensagens.length > 0 || mensagens2.length > 0) {
                       let mens = []
-                      if (mensagens.length > 0) mens.push(mensagens)
-                      if (mensagens2.length > 0) mens.push(mensagens2)
+                      for(var i=0; i < mensagens.length; i++)
+                        mens.push(mensagens[i])
+                      for(var j=0; j < mensagens2.length; j++)
+                        mens.push(mensagens2[j])
                       return res.status(502).jsonp({
                         mensagem: "Erro(s) na análise estrutural do(s) ficheiro(s) CSV:",
                         erros: mens
@@ -563,13 +576,17 @@ validaSemantica = async function(req, res, next){
                   mensagens.push("Não foi possível importar o ficheiro de classes / séries. O preenchimento do campo dono é obrigatório nas classes/séries de conservação. Deve preencher o campo da coluna dono com o(s) nome da(s) entidade(s) dona(s) do processo que consta(m) no catálogo de entidades da CLAV. Se o(s) nome(s) da(s) entidade(s) não constar(em) tem de propor a sua inclusão. Se for mais de uma entidade, deve separá-las com #. Verifique o seu preenchimento na seguinte linha: " + (i+2) );
                 else{
                   var ents = classes[i].dono.split("#") 
-                  for(var j=0; j < ents.length - 1; j++){
-                    var resu = State.getEntidade("ent_" + ents[j]) // Entidade
-                    if(!resu){ 
-                      var resu = State.getTipologia("tip_" + ents[j]) // Tipologia
-                      if(!resu) //Campo mal preenchido: valores que não constam no campo Designação do catálogo de entidades da CLAV
-                        mensagens.push("Não foi possível importar o ficheiro de classes / séries. O preenchimento do campo dono é obrigatório nas classes/séries de conservação. Deve preencher o campo da coluna dono com o(s) nome da(s) entidade(s) dona(s) do processo que consta(m) no catálogo de entidades da CLAV. Se o(s) nome(s) da(s) entidade(s)não constar(em) tem de propor a sua inclusão. Se for mais de uma entidade, deve separá-las com #. Verifique o seu preenchimento na seguinte linha: "+ (i+2) );
-                    } 
+                  console.log(ents)
+                  for(var j=0; j < ents.length; j++){
+                    if(ents[j].length > 0){ // Ignora donos "vazios" (no caso do último caracter ser #)
+                      console.log(ents[j])
+                      var resu = State.getEntidade("ent_" + ents[j]) // Entidade
+                      if(!resu){ 
+                        var resu = State.getTipologia("tip_" + ents[j]) // Tipologia
+                        if(!resu) //Campo mal preenchido: valores que não constam no campo Designação do catálogo de entidades da CLAV
+                          mensagens.push("Não foi possível importar o ficheiro de classes / séries. O preenchimento do campo dono é obrigatório nas classes/séries de conservação. Deve preencher o campo da coluna dono com o(s) nome da(s) entidade(s) dona(s) do processo que consta(m) no catálogo de entidades da CLAV. Se o(s) nome(s) da(s) entidade(s)não constar(em) tem de propor a sua inclusão. Se for mais de uma entidade, deve separá-las com #. Verifique o seu preenchimento na seguinte linha: "+ (i+2) );
+                      } 
+                    }
                   }
                 }
               }
@@ -618,7 +635,7 @@ validaSemantica = async function(req, res, next){
           if(agregacoes[j].dataContagem == '') // Campo vazio
             mensagens.push("Não foi possível importar o ficheiro de agregações. O preenchimento dos campos da coluna dataInicioContagemPCA é obrigatório e deve ser preenchido com a data de início de contagem do prazo de conservação administrativo (PCA). O valor introduzido deve ser igual ou inferior à subtração do valor existente no campo PCA da respetiva classe / série ao ano corrente, mais um ano. Verifique o seu preenchimento na seguinte linha: " + (lin[j]+2) );
           else{
-            if(!anoRegEx.test(agregacoes[j].dataContagem) || (classes[i].dataFim.length != 4)) // Campo mal preenchido : formato de data errado
+            if(!anoRegEx.test(agregacoes[j].dataContagem) || (agregacoes[j].dataContagem.length != 4)) // Campo mal preenchido : formato de data errado
               mensagens.push("Não foi possível importar o ficheiro de agregações. O preenchimento dos campos da coluna dataInicioContagemPCA é obrigatório e deve ser preenchido com a data de início de contagem do prazo de conservação administrativo (PCA), no formato AAAA. Verifique o seu preenchimento na seguinte linha: " + (lin[j]+2) );
             else {
               var a = []
