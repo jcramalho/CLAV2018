@@ -186,7 +186,7 @@ validaEstruturaCSV = async function(req, res, next){
                     var mensagens2 = []
 
                     if(results.data != 0){
-                      if((Object.keys(results.data).length) != 6)
+                      if((Object.keys(linha).length) != 6)
                         mensagens2.push("Não foi possível importar o ficheiro de agregações. O ficheiro de agregações só pode ter 6 colunas no total.");
                       if(!linha.hasOwnProperty('codigoClasse')) mensagens2.push("Não foi possível importar o ficheiro de agregações. Coluna codigoClasse inexistente.");
                       if(!linha.hasOwnProperty('referencia')) mensagens2.push("Não foi possível importar o ficheiro de agregações. Coluna referencia inexistente.");
