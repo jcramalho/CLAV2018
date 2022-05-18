@@ -158,6 +158,8 @@ validaEstruturaCSV = async function(req, res, next){
           var mensagens = []
 
           if(f1.length != 0){
+            if((Object.keys(linha).length) != 9)
+              mensagens.push("Não foi possível importar o ficheiro de classes / séries. O ficheiro de classes / séries só pode ter 9 colunas no total.");
             if(!linha.hasOwnProperty('codigo')) mensagens.push("Não foi possível importar o ficheiro de classes / séries. Coluna codigo inexistente.");
             if(!linha.hasOwnProperty('referencia')) mensagens.push("Não foi possível importar o ficheiro de classes / séries. Coluna referencia inexistente.");
             if(!linha.hasOwnProperty('dataInicial')) mensagens.push("Não foi possível importar o ficheiro de classes / séries. Coluna dataInicial inexistente.");
@@ -184,6 +186,8 @@ validaEstruturaCSV = async function(req, res, next){
                     var mensagens2 = []
 
                     if(results.data != 0){
+                      if((Object.keys(results.data).length) != 6)
+                        mensagens2.push("Não foi possível importar o ficheiro de agregações. O ficheiro de agregações só pode ter 6 colunas no total.");
                       if(!linha.hasOwnProperty('codigoClasse')) mensagens2.push("Não foi possível importar o ficheiro de agregações. Coluna codigoClasse inexistente.");
                       if(!linha.hasOwnProperty('referencia')) mensagens2.push("Não foi possível importar o ficheiro de agregações. Coluna referencia inexistente.");
                       if(!linha.hasOwnProperty('codigoAgregacao')) mensagens2.push("Não foi possível importar o ficheiro de agregações. Coluna codigoAgregacao inexistente.");
@@ -270,12 +274,15 @@ convCSVFormatoIntermedio = function(req, res, next){
   // entidades
   var myEntidades = []
   if(req.doc[0].entidade != '') {
-    var ents = req.doc[0].entidade.split(",")
-    for(var i=0; i < ents.length; i++){
+    var ents = req.doc[0].entidade.split("###")
+    for(var i=0; i < ents.length - 1; i++){
         var e = {}
+
         var sep = ents[i].split(" - ")
-        e.entidade = sep[0]
+        if(sep[0].charAt(0) == ',') e.entidade = sep[0].substring(1); // remover vírgula a mais
+        else e.entidade = sep[0]
         e.designacao = sep[1]
+
         myEntidades.push(e)
     }
   }
@@ -576,10 +583,8 @@ validaSemantica = async function(req, res, next){
                   mensagens.push("Não foi possível importar o ficheiro de classes / séries. O preenchimento do campo dono é obrigatório nas classes/séries de conservação. Deve preencher o campo da coluna dono com o(s) nome da(s) entidade(s) dona(s) do processo que consta(m) no catálogo de entidades da CLAV. Se o(s) nome(s) da(s) entidade(s) não constar(em) tem de propor a sua inclusão. Se for mais de uma entidade, deve separá-las com #. Verifique o seu preenchimento na seguinte linha: " + (i+2) );
                 else{
                   var ents = classes[i].dono.split("#") 
-                  console.log(ents)
                   for(var j=0; j < ents.length; j++){
                     if(ents[j].length > 0){ // Ignora donos "vazios" (no caso do último caracter ser #)
-                      console.log(ents[j])
                       var resu = State.getEntidade("ent_" + ents[j]) // Entidade
                       if(!resu){ 
                         var resu = State.getTipologia("tip_" + ents[j]) // Tipologia
