@@ -200,6 +200,13 @@ router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), [
     .catch(err => res.status(500).send(`Erro na inserção de uma tipologia de entidade: ${err}`));
 });
 
+//Repõe tipologias ja existentes
+router.post("/repor", Auth.isLoggedInUser, Auth.checkLevel(4), function(req, res){
+  Tipologias.repor(req.body.query)
+      .then(dados => res.jsonp(dados))
+      .catch(err => res.status(500).send(`Erro na inserção de uma tipologia de entidade: ${err}`));
+})
+
 // Atualiza uma tipologia na BD
 router.put("/:id", Auth.isLoggedInUser, Auth.checkLevel(4), [
     verificaTipId('param', 'id')
