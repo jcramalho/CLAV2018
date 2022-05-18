@@ -623,7 +623,6 @@ Leg.criar = async (leg) => {
 //Repor legislacao ja existente
 Leg.repor = async legs => {
   const query = "INSERT DATA { " + legs + ' }'
-  console.log(query)
   const ask = "ASK { " + legs +  ' }'
   return execQuery("update", query).then(res =>
     execQuery("query", ask).then(result => {

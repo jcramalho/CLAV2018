@@ -491,7 +491,6 @@ Entidades.criar = async ent => {
 //Repor entidade ja existente
 Entidades.repor = async ents => {
   const query = "INSERT DATA { " + ents + ' }'
-  console.log(query)
   const ask = "ASK { " + ents +  ' }'
   return execQuery("update", query).then(res =>
     execQuery("query", ask).then(result => {
