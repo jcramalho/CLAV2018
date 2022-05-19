@@ -195,6 +195,19 @@ router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), [
     .catch(err => res.status(500).send(`Erro na inserção de uma legislação: ${err}`));
 });
 
+//Repõe entidades ja existentes
+router.post("/repor", Auth.isLoggedInUser, Auth.checkLevel(4), function(req, res){
+  Leg.repor(req.body.query)
+    .then(dados => {
+      State.reloadLegislacao()
+          .then(d => {
+            res.jsonp(dados)
+          })
+          .catch(err => res.status(500).send(`Erro no reload da cache das legislacoes. A legislacao foi criada com sucesso.`))
+    })
+    .catch(err => res.status(500).send(`Erro na inserção das legislacoes: ${err}`));
+})
+
 // Atualiza uma legislação na BD
 router.put("/:id", Auth.isLoggedInUser, Auth.checkLevel(4), [
     existe("body", "numero")

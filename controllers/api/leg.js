@@ -223,7 +223,7 @@ Leg.listarSemPNs = () => {
         }
         OPTIONAL {
         	?uri clav:diplomaDataRevogacao ?dataRevogacao.
-        } 
+        }
         OPTIONAL {
             ?uri clav:temEntidadeResponsavel ?ent.
             ?ent clav:entSigla ?entidades;
@@ -331,7 +331,7 @@ Leg.listarRegulados = async () => {
  * então a promessa conterá o valor `undefined`
  */
 Leg.consultar = (id) => {
-  const query = `SELECT ?tipo ?data ?dataRevogacao ?numero ?sumario ?link ?estado ?fonte ?entidades ?entidades1 WHERE { 
+  const query = `SELECT ?tipo ?data ?dataRevogacao ?numero ?sumario ?link ?estado ?fonte ?entidades ?entidades1 WHERE {
         clav:${id} a clav:Legislacao;
             clav:diplomaData ?data;
             clav:diplomaNumero ?numero;
@@ -446,10 +446,10 @@ Leg.temPNs = (legislacao) => {
 // Devolve a lista de processos regulados pelo documento: id, codigo, titulo
 Leg.regula = (id) => {
   var query = `
-        SELECT DISTINCT ?id ?codigo ?titulo WHERE { 
+        SELECT DISTINCT ?id ?codigo ?titulo WHERE {
             {
                 ?uri clav:temLegislacao clav:${id};
-            } 
+            }
             UNION {
                 ?crit clav:temLegislacao clav:${id} .
                 ?just clav:temCriterio ?crit .
@@ -457,7 +457,7 @@ Leg.regula = (id) => {
 
                 {
                     ?uri clav:temPCA ?aval ;
-                } 
+                }
                 UNION {
                     ?uri clav:temDF ?aval ;
                 }
@@ -467,7 +467,7 @@ Leg.regula = (id) => {
                 clav:classeStatus 'A'.
 
             BIND(STRAFTER(STR(?uri), 'clav#') AS ?id)
-                
+
         } ORDER BY ?codigo
     `;
   return execQuery("query", query).then((response) => normalize(response));
@@ -520,7 +520,7 @@ Leg.listarFonte = (fonte) => {
         	?uri clav:diplomaDataRevogacao ?dataRevogacao.
         }
         FILTER (?estado = "Ativo")
-        
+
         BIND(STRAFTER(STR(?uri), 'clav#') AS ?id).
     } ORDER BY DESC (?data)`;
   const campos = [
@@ -619,6 +619,21 @@ Leg.criar = async (leg) => {
     })
   );
 };
+
+//Repor legislacao ja existente
+Leg.repor = async legs => {
+  const query = "INSERT DATA { " + legs + ' }'
+  const ask = "ASK { " + legs +  ' }'
+  return execQuery("update", query).then(res =>
+    execQuery("query", ask).then(result => {
+      if (result.boolean) {
+        console.log("Sucesso na inserçao")
+        return "Sucesso na inserção das legislacoes";
+      }
+      else throw "Insucesso na inserção das legislacoes";
+    })
+  );
+}
 
 //Atualizar legislação
 Leg.atualizar = async (id, leg) => {
