@@ -614,6 +614,40 @@ Tipologias.repor = async tips => {
   );
 }
 
+//Eliminar uma tipologia
+Tipologias.remover = async tip => {
+  let query1 = `
+  PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+  DELETE {:${tip} ?p ?o .
+                    }
+                WHERE  {
+                        :${tip} ?p ?o .
+    }`
+
+    let query2 = `
+    PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+    DELETE {  ?p1 ?o1 :${tip}.
+                      }
+                  WHERE  {
+                          ?p1 ?o1 :${tip}.
+      }`
+
+
+  let ask = " PREFIX : <http://jcr.di.uminho.pt/m51-clav#> ASK { :" + tip +  ' rdf:type :TipologiaEntidade }'
+
+  await execQuery("update", query2)
+
+  return execQuery("update", query1).then(res =>
+    execQuery("query", ask).then(result => {
+      if (!result.boolean) {
+        console.log("Sucesso na eliminação")
+        return "Sucesso na eliminação da tipologia";
+      }
+      else throw "Insucesso na eliminação da tipologia";
+    })
+  );
+}
+
 //Atualizar tipologia
 Tipologias.atualizar = async (id, tip) => {
   const baseQuery = queryTip(id, tip)
