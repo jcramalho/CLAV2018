@@ -503,6 +503,40 @@ Entidades.repor = async ents => {
   );
 }
 
+//Eliminar uma entidade
+Entidades.remover = async ent => {
+  let query1 = `
+  PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+  DELETE {:${ent} ?p ?o .
+                    }
+                WHERE  {
+                        :${ent} ?p ?o .
+    }`
+
+    let query2 = `
+    PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+    DELETE {  ?p1 ?o1 :${ent}.
+                      }
+                  WHERE  {
+                          ?p1 ?o1 :${ent}.
+      }`
+
+
+  let ask = " PREFIX : <http://jcr.di.uminho.pt/m51-clav#> ASK { :" + ent +  ' rdf:type :Entidade }'
+
+  await execQuery("update", query2)
+
+  return execQuery("update", query1).then(res =>
+    execQuery("query", ask).then(result => {
+      if (!result.boolean) {
+        console.log("Sucesso na eliminação")
+        return "Sucesso na eliminação da entidade";
+      }
+      else throw "Insucesso na eliminação da entidade";
+    })
+  );
+}
+
 //Atualizar entidade
 Entidades.atualizar = async (id, ent) => {
   var queryEnt = `clav:${id} rdf:type owl:NamedIndividual, clav:Entidade ;

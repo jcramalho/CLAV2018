@@ -208,6 +208,19 @@ router.post("/repor", Auth.isLoggedInUser, Auth.checkLevel(4), function(req, res
     .catch(err => res.status(500).send(`Erro na inserção das legislacoes: ${err}`));
 })
 
+//Elimina uma legislacao
+router.delete("/:id", Auth.isLoggedInUser, Auth.checkLevel(4), function(req, res){
+  Leg.remover(req.params.id)
+    .then(dados => {
+      State.reloadLegislacao()
+          .then(d => {
+            res.jsonp(dados)
+          })
+          .catch(err => res.status(500).send(`Erro no reload da cache das legislacoes. A legislacao foi eliminada com sucesso.`))
+    })
+    .catch(err => res.status(500).send(`Erro na eliminação da legislacao: ${err}`));
+})
+
 // Atualiza uma legislação na BD
 router.put("/:id", Auth.isLoggedInUser, Auth.checkLevel(4), [
     existe("body", "numero")
