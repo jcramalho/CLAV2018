@@ -50,6 +50,8 @@ requestBody:
       schema:
         type: object
         properties:
+          multImport:
+            type: string
           file:
             type: string
             format: binary
