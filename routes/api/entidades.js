@@ -260,6 +260,18 @@ router.post("/repor", Auth.isLoggedInUser, Auth.checkLevel(4), function(req, res
     .catch(err => res.status(500).send(`Erro na inserção das entidades: ${err}`));
 })
 
+//Elimina uma entidade
+router.delete("/:id", Auth.isLoggedInUser, Auth.checkLevel(4), function(req, res){
+  Entidades.remover(req.params.id)
+    .then(dados => {
+      State.reloadEntidades()
+          .then(d => {
+            res.jsonp(dados)
+          })
+          .catch(err => res.status(500).send(`Erro no reload da cache das entidades. A entidade foi eliminada com sucesso.`))
+    })
+    .catch(err => res.status(500).send(`Erro na eliminação da entidade: ${err}`));
+})
 
 
 // Atualiza uma entidade na BD

@@ -635,6 +635,40 @@ Leg.repor = async legs => {
   );
 }
 
+//Eliminar uma legislacao
+Leg.remover = async le => {
+  let query1 = `
+  PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+  DELETE {:${le} ?p ?o .
+                    }
+                WHERE  {
+                        :${le} ?p ?o .
+    }`
+
+    let query2 = `
+    PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+    DELETE {  ?p1 ?o1 :${le}.
+                      }
+                  WHERE  {
+                          ?p1 ?o1 :${le}.
+      }`
+
+
+  let ask = " PREFIX : <http://jcr.di.uminho.pt/m51-clav#> ASK { :" + le +  ' rdf:type :Legislacao }'
+
+  await execQuery("update", query2)
+
+  return execQuery("update", query1).then(res =>
+    execQuery("query", ask).then(result => {
+      if (!result.boolean) {
+        console.log("Sucesso na eliminação")
+        return "Sucesso na eliminação da legislacao";
+      }
+      else throw "Insucesso na eliminação da legislacao";
+    })
+  );
+}
+
 //Atualizar legislação
 Leg.atualizar = async (id, leg) => {
   let baseQuery = queryLeg(id, leg);

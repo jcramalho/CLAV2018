@@ -207,6 +207,13 @@ router.post("/repor", Auth.isLoggedInUser, Auth.checkLevel(4), function(req, res
       .catch(err => res.status(500).send(`Erro na inserção de uma tipologia de entidade: ${err}`));
 })
 
+//Elimina uma tipologia
+router.delete("/:id", Auth.isLoggedInUser, Auth.checkLevel(4), function(req, res){
+  Tipologias.remover(req.params.id)
+    .then(dados => res.jsonp(dados))
+    .catch(err => res.status(500).send(`Erro na eliminação da tipologia: ${err}`))
+})
+
 // Atualiza uma tipologia na BD
 router.put("/:id", Auth.isLoggedInUser, Auth.checkLevel(4), [
     verificaTipId('param', 'id')
