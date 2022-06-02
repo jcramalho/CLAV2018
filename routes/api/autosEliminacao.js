@@ -415,6 +415,7 @@ validaSemantica = async function(req, res, next){
       codigos = myPGD.map(classe => classe.codigo);
       referencias = myPGD.map(classe => classe.referencia);
     }
+
   //####################################################################
 
     var tempoAtual = new Date()
@@ -431,6 +432,7 @@ validaSemantica = async function(req, res, next){
     var classes = req.doc.classes
 
     for(var i=0; i < classes.length; i++){
+
       // Ignora linhas vazias
       if(classes[i].codigo || classes[i].referencia || classes[i].dataInicio || classes[i].dataFim || classes[i].numAgregacoes || classes[i].medicaoPapel || classes[i].medicaoDigital || classes[i].medicaoOutro ) {
         
@@ -618,17 +620,12 @@ validaSemantica = async function(req, res, next){
       var codsagreg = []
 
       var lin = linhas.get(i)
-      
+
       if(classVal){
         for(var j=0; j < agregacoes.length; j++){
 
           // Ignora linhas vazias
           if(agregacoes[j].codigo || agregacoes[j].referencia || agregacoes[j].codigoAgregacao || agregacoes[j].titulo || agregacoes[j].dataContagem || agregacoes[j].ni) {
-            
-            codref = 1
-            if(tipo == "PGD" || tipo == "RADA")
-              if(agregacoes[j].referencia == classes[i].referencia)
-                codref = 2
 
             // 4 - codigoAgregacao
             if(agregacoes[j].codigoAgregacao == '') // Campo vazio
@@ -662,7 +659,6 @@ validaSemantica = async function(req, res, next){
                 } else{
                   mensagens.push("Não foi possível importar o ficheiro de agregações. Não foi possível verificar a data de início de contagem porque a referencia e/ou o codigoClasse fornecido é inválido. Verifique o seu preenchimento na seguinte linha: "+ (lin[j]+2) );
                 }
-
                 if(a.length > 0){
                   if(Number(agregacoes[j].dataContagem) > (Number(anoAtual) - (Number(a[0].pca) + 1)))  // Campo mal preenchido
                     mensagens.push("Não foi possível importar o ficheiro de agregações. O preenchimento dos campos da coluna dataInicioContagemPCA é obrigatório e deve ser preenchido com a data de início de contagem do prazo de conservação administrativo (PCA). O valor introduzido deve ser igual ou inferior à subtração do valor existente no campo PCA da respetiva classe / série ao ano corrente, mais um ano. Verifique o seu preenchimento na seguinte linha: " + (lin[j]+2) );     
