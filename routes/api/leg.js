@@ -199,11 +199,7 @@ router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), [
 router.post("/repor", Auth.isLoggedInUser, Auth.checkLevel(4), function(req, res){
   Leg.repor(req.body.query)
     .then(dados => {
-      State.reloadLegislacao()
-          .then(d => {
-            res.jsonp(dados)
-          })
-          .catch(err => res.status(500).send(`Erro no reload da cache das legislacoes. A legislacao foi criada com sucesso.`))
+      res.jsonp(dados)
     })
     .catch(err => res.status(500).send(`Erro na inserção das legislacoes: ${err}`));
 })
@@ -212,11 +208,7 @@ router.post("/repor", Auth.isLoggedInUser, Auth.checkLevel(4), function(req, res
 router.delete("/:id", Auth.isLoggedInUser, Auth.checkLevel(4), function(req, res){
   Leg.remover(req.params.id)
     .then(dados => {
-      State.reloadLegislacao()
-          .then(d => {
-            res.jsonp(dados)
-          })
-          .catch(err => res.status(500).send(`Erro no reload da cache das legislacoes. A legislacao foi eliminada com sucesso.`))
+      res.jsonp(dados)
     })
     .catch(err => res.status(500).send(`Erro na eliminação da legislacao: ${err}`));
 })
