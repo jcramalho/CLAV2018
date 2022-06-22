@@ -246,6 +246,25 @@ router.post("/", [
     .catch(err => res.status(500).send(`Erro na inserção de uma entidade: ${err}`));
 });
 
+//Repõe entidades ja existentes
+router.post("/repor", Auth.isLoggedInUser, Auth.checkLevel(4), function(req, res){
+  Entidades.repor(req.body.query)
+    .then(dados => {
+      res.jsonp(dados)
+    })
+    .catch(err => res.status(500).send(`Erro na inserção das entidades: ${err}`))
+})
+
+//Elimina uma entidade
+router.delete("/:id", Auth.isLoggedInUser, Auth.checkLevel(4), function(req, res){
+  Entidades.remover(req.params.id)
+    .then(dados => {
+      res.jsonp(dados)
+    })
+    .catch(err => res.status(500).send(`Erro na eliminação da entidade: ${err}`));
+})
+
+
 // Atualiza uma entidade na BD
 router.put("/:id", [
     verificaEntId('param', 'id'),

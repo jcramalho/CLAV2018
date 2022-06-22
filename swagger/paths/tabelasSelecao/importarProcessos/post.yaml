@@ -1,0 +1,49 @@
+summary: Importa uma lista de processos a partir de um ficheiro CSV/Excel
+description: |
+  Importa uma lista de processos a partir de um ficheiro CSV/Excel.
+
+  O ficheiro CSV deve respeitar o seguinte:
+    * Os delimitadores podem ser ',' ou ';';
+    * O quote e o escape são realizados através de '"';
+    * O encoding do ficheiro tem de ser UTF-8.
+
+  O ficheiro terá de possuir:
+    * Uma coluna **'codigo'** preenchida com os códigos dos processos que se pretendem importar. Estes devem constar da Lista Consolidade e estar __"Ativos"__;
+    * Uma coluna **'dono'** com 'x' ou 'X' caso a entidade seja dona do processo (esta informação, caso esteja omissa na Lista Consolidada, será adicionada no ato de criação desta TS);
+    * Uma coluna 'participante' preenchida com o tipo de participação:
+      * Apreciar
+      * Assessorar
+      * Comunicar
+      * Decidir
+      * Executar
+      * Iniciar</li>
+    para os processos em que a entidade é participante (esta informação, caso esteja omissa na Lista Consolidada, será adicionada no ato de criação desta TS).
+
+  **Acesso permitido a:** Utilizadores com nível 1, 3, 3.5, 4, 5, 6 e 7
+security:
+  - userQuery: []
+  - userAuth: []
+tags:
+  - Tabelas de Seleção
+requestBody:
+  description: 'FormData com o ficheiro (file)'
+  required: true
+  content:
+    multipart/form-data:
+      schema:
+        type: object
+        properties:
+          file:
+            type: string
+            format: binary
+responses:
+  200:
+    description: Importa uma lista de processos a partir de um ficheiro CSV/Excel
+    content:
+      application/json:
+  401:
+    $ref: '#/components/responses/UnauthorizedUser'
+  403:
+    $ref: '#/components/responses/PermissionsUser'
+  500:
+    description: Erro

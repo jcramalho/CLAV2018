@@ -26,7 +26,7 @@ module.exports.existe = function (location, field, ifF) {
 
   try {
     if (!ifF) {
-      return getLocation[location](field, msg).exists({ checkFalsy: true });
+      return getLocation[location](field, msg).exists({ checkFalsy: false });
     } else {
       return getLocation[location](field, msg)
         .if(ifF)
@@ -566,14 +566,18 @@ module.exports.vcPedidoAcao = [
 ];
 module.exports.vcPedidoEstado = [
   "Submetido",
+  "Ressubmetido",
   "Distribuído",
-  "Apreciado",
   "Redistribuído",
+  "Apreciado",
   "Reapreciado",
+  "Apreciado2v",
+  "Reapreciado2v",
   "Em Despacho",
   "Devolvido para validação",
   "Validado",
   "Devolvido",
+  "Cancelado"
 ];
 
 //Pendentes

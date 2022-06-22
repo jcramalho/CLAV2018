@@ -932,6 +932,11 @@
             },
             {
                 "verbo": "POST",
+                "path": "/{api_version}/autosEliminacao/importarCSV",
+                "desc": "Cria um pedido de importação de um auto de eliminação a partir de ficheiros CSV"
+            },
+            {
+                "verbo": "POST",
                 "path": "/{api_version}/pedidos/",
                 "desc": "Criação de um pedido"
             },
@@ -944,6 +949,11 @@
                 "verbo": "POST",
                 "path": "/{api_version}/tabelasSelecao/importar",
                 "desc": "Cria um pedido de criação de uma tabela de seleção a partir de um ficheiro CSV/Excel"
+            },
+            {
+                "verbo": "POST",
+                "path": "/{api_version}/tabelasSelecao/importarProcessos",
+                "desc": "Importa uma lista de processos a partir de uma folha Excel para o processos de criação de uma TS"
             },
             {
                 "verbo": "PUT",
@@ -1949,6 +1959,11 @@
             },
             {
                 "verbo": "POST",
+                "path": "/{api_version}/autosEliminacao/importarCSV",
+                "desc": "Cria um pedido de importação de um auto de eliminação a partir de ficheiros CSV"
+            },
+            {
+                "verbo": "POST",
                 "path": "/{api_version}/pedidos/",
                 "desc": "Criação de um pedido"
             },
@@ -2572,6 +2587,11 @@
                 "verbo": "POST",
                 "path": "/{api_version}/autosEliminacao/importar",
                 "desc": "Cria um pedido de importação de um auto de eliminação a partir de um ficheiro XML"
+            },
+            {
+                "verbo": "POST",
+                "path": "/{api_version}/autosEliminacao/importarCSV",
+                "desc": "Cria um pedido de importação de um auto de eliminação a partir de ficheiros CSV"
             },
             {
                 "verbo": "POST",
@@ -3318,6 +3338,11 @@
                 "verbo": "POST",
                 "path": "/{api_version}/autosEliminacao/importar",
                 "desc": "Cria um pedido de importação de um auto de eliminação a partir de um ficheiro XML"
+            },
+            {
+                "verbo": "POST",
+                "path": "/{api_version}/autosEliminacao/importarCSV",
+                "desc": "Cria um pedido de importação de um auto de eliminação a partir de ficheiros CSV"
             },
             {
                 "verbo": "POST",
@@ -4149,6 +4174,11 @@
                 "verbo": "POST",
                 "path": "/{api_version}/autosEliminacao/importar",
                 "desc": "Cria um pedido de importação de um auto de eliminação a partir de um ficheiro XML"
+            },
+            {
+                "verbo": "POST",
+                "path": "/{api_version}/autosEliminacao/importarCSV",
+                "desc": "Cria um pedido de importação de um auto de eliminação a partir de ficheiros CSV"
             },
             {
                 "verbo": "POST",
@@ -5030,6 +5060,11 @@
                 "verbo": "POST",
                 "path": "/{api_version}/autosEliminacao/importar",
                 "desc": "Cria um pedido de importação de um auto de eliminação a partir de um ficheiro XML"
+            },
+            {
+                "verbo": "POST",
+                "path": "/{api_version}/autosEliminacao/importarCSV",
+                "desc": "Cria um pedido de importação de um auto de eliminação a partir de ficheiros CSV"
             },
             {
                 "verbo": "POST",
@@ -5951,6 +5986,11 @@
                 "verbo": "POST",
                 "path": "/{api_version}/autosEliminacao/importar",
                 "desc": "Cria um pedido de importação de um auto de eliminação a partir de um ficheiro XML"
+            },
+            {
+                "verbo": "POST",
+                "path": "/{api_version}/autosEliminacao/importarCSV",
+                "desc": "Cria um pedido de importação de um auto de eliminação a partir de ficheiros CSV"
             },
             {
                 "verbo": "POST",

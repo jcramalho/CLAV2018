@@ -1,0 +1,11 @@
+- geral:
+  - entSel:
+      - sigla: "A3ES"
+        identificacao: "Agência de Avaliação e Acreditação do Ensino Superior"
+        id: "ent"
+        label: "A3ES - Agência de Avaliação e Acreditação do Ensino Superior"
+    mencaoResp: "Responsável x"
+    tipoFonteL: "PGD"
+    fonteLegitimacao:
+      - id: "pgd_leg_"
+        titulo: "Portaria 6/2017 - Regulamento de Gestão de Documentos da Santa Casa da Misericórdia de Lisboa e revoga a Portaria n.º 509/2004, de 14 de maio"

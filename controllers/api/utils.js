@@ -178,3 +178,56 @@ exports.projection = function(objs, fields, group) {
     }
     return Array.from(result.entries()).map(([x, y]) => Object.assign(JSON.parse(x), y))
 }
+
+/**
+ * Cria o histórico de um pedido simples.
+ * 
+ */
+exports.criarHistorico = function(objeto, objetoOriginal = null) {
+    const objSubmetido = JSON.parse(JSON.stringify(objeto));
+  
+    const historico = {};
+  
+    if (objetoOriginal !== null) {
+      const objOriginal = JSON.parse(JSON.stringify(objetoOriginal));
+  
+      for (const key in objSubmetido) {
+        if (typeof objSubmetido[key] === "string") {
+          if (objSubmetido[key] !== objOriginal[key]) {
+            historico[key] = {
+              cor: "amarelo",
+              dados: objSubmetido[key],
+              nota: null
+            };
+          }
+        } else if (objSubmetido[key] instanceof Array) {
+          if (objSubmetido[key].length !== objOriginal[key].length) {
+            historico[key] = {
+              cor: "amarelo",
+              dados: objSubmetido[key],
+              nota: notasComRemovidos(objOriginal[key], objSubmetido[key])
+            };
+          } else if (!comparaArraySel(objSubmetido[key], objOriginal[key])) {
+            historico[key] = {
+              cor: "amarelo",
+              dados: objSubmetido[key],
+              nota: notasComRemovidos(objOriginal[key], objSubmetido[key])
+            };
+          }
+        }
+      }
+    } else {
+      for (const key in objSubmetido) {
+        //if (key !== "estado" && key !== "codigo") {
+        if (key !== "estado") { // a tentar resolver o histórico do código
+          historico[key] = {
+            cor: "verde",
+            dados: objSubmetido[key],
+            nota: null
+          };
+        }
+      }
+    }
+  
+    return historico;
+  }

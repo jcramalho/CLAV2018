@@ -222,7 +222,7 @@ Leg.listarSemPNs = () => {
         }
         OPTIONAL {
         	?uri clav:diplomaDataRevogacao ?dataRevogacao.
-        } 
+        }
         OPTIONAL {
             ?uri clav:temEntidadeResponsavel ?ent.
             ?ent clav:entSigla ?entidades;
@@ -330,7 +330,7 @@ Leg.listarRegulados = async () => {
  * então a promessa conterá o valor `undefined`
  */
 Leg.consultar = (id) => {
-  const query = `SELECT ?tipo ?data ?dataRevogacao ?numero ?sumario ?link ?estado ?fonte ?entidades ?entidades1 WHERE { 
+  const query = `SELECT ?tipo ?data ?dataRevogacao ?numero ?sumario ?link ?estado ?fonte ?entidades ?entidades1 WHERE {
         clav:${id} a clav:Legislacao;
             clav:diplomaData ?data;
             clav:diplomaNumero ?numero;
@@ -445,10 +445,10 @@ Leg.temPNs = (legislacao) => {
 // Devolve a lista de processos regulados pelo documento: id, codigo, titulo
 Leg.regula = (id) => {
   var query = `
-        SELECT DISTINCT ?id ?codigo ?titulo WHERE { 
+        SELECT DISTINCT ?id ?codigo ?titulo WHERE {
             {
                 ?uri clav:temLegislacao clav:${id};
-            } 
+            }
             UNION {
                 ?crit clav:temLegislacao clav:${id} .
                 ?just clav:temCriterio ?crit .
@@ -456,7 +456,7 @@ Leg.regula = (id) => {
 
                 {
                     ?uri clav:temPCA ?aval ;
-                } 
+                }
                 UNION {
                     ?uri clav:temDF ?aval ;
                 }
@@ -466,7 +466,7 @@ Leg.regula = (id) => {
                 clav:classeStatus 'A'.
 
             BIND(STRAFTER(STR(?uri), 'clav#') AS ?id)
-                
+
         } ORDER BY ?codigo
     `;
   return execQuery("query", query).then((response) => normalize(response));
@@ -519,7 +519,7 @@ Leg.listarFonte = (fonte) => {
         	?uri clav:diplomaDataRevogacao ?dataRevogacao.
         }
         FILTER (?estado = "Ativo")
-        
+
         BIND(STRAFTER(STR(?uri), 'clav#') AS ?id).
     } ORDER BY DESC (?data)`;
   const campos = [
@@ -572,7 +572,7 @@ Leg.moreInfo = async (leg) => {
 //Cria legislação em triplos dado um objeto legislação
 function queryLeg(id, leg) {
   if (!id) {
-    const nanoid = require("nanoid");
+    const {nanoid} = require("nanoid");
     id = "leg_" + nanoid();
   }
 
@@ -618,6 +618,55 @@ Leg.criar = async (leg) => {
     })
   );
 };
+
+//Repor legislacao ja existente
+Leg.repor = async legs => {
+  const query = "INSERT DATA { " + legs + ' }'
+  const ask = "ASK { " + legs +  ' }'
+  return execQuery("update", query).then(res =>
+    execQuery("query", ask).then(result => {
+      if (result.boolean) {
+        console.log("Sucesso na inserçao")
+        return "Sucesso na inserção das legislacoes";
+      }
+      else throw "Insucesso na inserção das legislacoes";
+    })
+  );
+}
+
+//Eliminar uma legislacao
+Leg.remover = async le => {
+  let query1 = `
+  PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+  DELETE {:${le} ?p ?o .
+                    }
+                WHERE  {
+                        :${le} ?p ?o .
+    }`
+
+    let query2 = `
+    PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+    DELETE {  ?p1 ?o1 :${le}.
+                      }
+                  WHERE  {
+                          ?p1 ?o1 :${le}.
+      }`
+
+
+  let ask = " PREFIX : <http://jcr.di.uminho.pt/m51-clav#> ASK { :" + le +  ' rdf:type :Legislacao }'
+
+  await execQuery("update", query2)
+
+  return execQuery("update", query1).then(res =>
+    execQuery("query", ask).then(result => {
+      if (!result.boolean) {
+        console.log("Sucesso na eliminação")
+        return "Sucesso na eliminação da legislacao";
+      }
+      else throw "Insucesso na eliminação da legislacao";
+    })
+  );
+}
 
 //Atualizar legislação
 Leg.atualizar = async (id, leg) => {

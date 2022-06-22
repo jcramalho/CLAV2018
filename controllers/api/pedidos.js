@@ -1,5 +1,6 @@
 const Pedido = require("../../models/pedido");
 const Notificacao = require("../../models/notificacoes");
+var Mailer = require("./mailer");
 const Pedidos = module.exports;
 var Logging = require("../logging");
 
@@ -104,6 +105,7 @@ Pedidos.criar = async function (pedidoParams) {
 
     try {
       newNotificacao = await newNotificacao.save();
+      Mailer.sendEmailNovo(pedidoParams.user.email, notificacao);
     } catch (err) {
       console.log(err);
       throw "Ocorreu um erro a submeter a notificação! Tente novamente mais tarde";
@@ -115,6 +117,15 @@ Pedidos.criar = async function (pedidoParams) {
     throw "Ocorreu um erro a submeter o pedido! Tente novamente mais tarde";
   }
 };
+
+/**
+ * Repõe um pedido já criado (mas apagado da BD).
+ * 
+ */
+Pedidos.repor = pedido =>  {
+  var ped = new Pedido(pedido)
+  return ped.save()
+}
 
 /**
  * Atualiza um pedido.
@@ -164,6 +175,7 @@ Pedidos.atualizar = async function (id, pedidoParams) {
               : pedidoParams.distribuicao.responsavel,
           };
           var newNotificacao = new Notificacao(notificacao);
+          Mailer.distribuirEmail(pedidoParams, notificacao);
         }
 
         try {

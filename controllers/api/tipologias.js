@@ -215,7 +215,7 @@ Tipologias.consultar = id => {
         clav:tip_${tipologia.sigla} rdf:type owl:NamedIndividual , clav:TipologiaEntidade ;
             clav:tipDesignacao '${tipologia.designacao}' ;
             clav:tipSigla '${tipologia.sigla}' ;
-            
+
         ${tipologia.entidades.map(entidade => `clav:contemEntidade clav:${entidade} ;`).join('\n')}
         clav:tipEstado "Harmonização" .
     }`;*/
@@ -258,7 +258,7 @@ Tipologias.existeSigla = sigla => {
  */
 Tipologias.existeSiglaId = sigla => {
   const query = `select ?s where {
-    ?s clav:tipSigla '${sigla}' 
+    ?s clav:tipSigla '${sigla}'
   }`;
 
   return execQuery("query", query).then(response => {
@@ -290,7 +290,7 @@ Tipologias.existeDesignacao = designacao => {
  */
 Tipologias.existeDesignacaoId = designacao => {
   const query = `select ?s where {
-    ?s clav:tipDesignacao '${designacao}' 
+    ?s clav:tipDesignacao '${designacao}'
   }`;
 
   return execQuery("query", query).then(response => {
@@ -310,7 +310,7 @@ Tipologias.existeDesignacaoId = designacao => {
 Tipologias.elementos = id => {
   const query = `SELECT ?id ?sigla ?designacao WHERE {
         ?uri clav:pertenceTipologiaEnt clav:${id} .
-        
+
         ?uri clav:entEstado "Ativa";
             clav:entSigla ?sigla;
             clav:entDesignacao ?designacao.
@@ -358,9 +358,9 @@ Tipologias.participante = id => {
             clav:codigo ?codigo ;
             clav:pertenceLC clav:lc1 ;
             clav:classeStatus "A" .
-    
+
         BIND (STRAFTER(STR(?uri), 'clav#') AS ?id).
-        BIND (STRAFTER(STR(?tipoParURI), 'clav#') AS ?tipoPar).  
+        BIND (STRAFTER(STR(?tipoParURI), 'clav#') AS ?tipoPar).
         FILTER (?tipoParURI != clav:temParticipante && ?tipoParURI != clav:temDono)
     }`;
 
@@ -369,7 +369,7 @@ Tipologias.participante = id => {
 
 Tipologias.checkAvailability = function(name, initials) {
   var checkQuery = `
-        SELECT (count(*) as ?Count) where { 
+        SELECT (count(*) as ?Count) where {
             {
                 ?t clav:tipSigla ?s ;
                     clav:tipDesignacao ?n .
@@ -394,8 +394,8 @@ Tipologias.checkAvailability = function(name, initials) {
 };
 
 Tipologias.checkNameAvailability = function(name) {
-  var checkQuery = ` 
-        SELECT (count(*) as ?Count) where { 
+  var checkQuery = `
+        SELECT (count(*) as ?Count) where {
             {
                 ?t clav:tipDesignacao '${name}' .
             } UNION {
@@ -598,6 +598,55 @@ Tipologias.criar = async tip => {
     })
   );
 };
+
+//Repor tipologia ja existente
+Tipologias.repor = async tips => {
+  const query = "INSERT DATA { " + tips + ' }'
+  const ask = "ASK { " + tips +  ' }'
+  return execQuery("update", query).then(res =>
+    execQuery("query", ask).then(result => {
+      if (result.boolean) {
+        console.log("Sucesso na inserçao")
+        return "Sucesso na inserção das tipologias";
+      }
+      else throw "Insucesso na inserção das tipologias";
+    })
+  );
+}
+
+//Eliminar uma tipologia
+Tipologias.remover = async tip => {
+  let query1 = `
+  PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+  DELETE {:${tip} ?p ?o .
+                    }
+                WHERE  {
+                        :${tip} ?p ?o .
+    }`
+
+    let query2 = `
+    PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+    DELETE {  ?p1 ?o1 :${tip}.
+                      }
+                  WHERE  {
+                          ?p1 ?o1 :${tip}.
+      }`
+
+
+  let ask = " PREFIX : <http://jcr.di.uminho.pt/m51-clav#> ASK { :" + tip +  ' rdf:type :TipologiaEntidade }'
+
+  await execQuery("update", query2)
+
+  return execQuery("update", query1).then(res =>
+    execQuery("query", ask).then(result => {
+      if (!result.boolean) {
+        console.log("Sucesso na eliminação")
+        return "Sucesso na eliminação da tipologia";
+      }
+      else throw "Insucesso na eliminação da tipologia";
+    })
+  );
+}
 
 //Atualizar tipologia
 Tipologias.atualizar = async (id, tip) => {

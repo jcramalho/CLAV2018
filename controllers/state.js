@@ -7,6 +7,7 @@ var fs = require("fs");
 var Classes = require("./api/classes.js");
 var Legs = require("./api/leg.js");
 var Entidades = require("./api/entidades.js");
+var Tipologias = require("./api/tipologias.js");
 var NotasAp = require("./api/notasAp.js");
 var ExemplosNotasAp = require("./api/exemplosNotasAp.js");
 var TermosIndice = require("./api/termosIndice.js");
@@ -25,6 +26,7 @@ var termosInd = [];
 var legislacao = [];
 
 var entidades = [];
+var tipologias = [];
 
 // Índice de pesquisa para v-trees:
 var indicePesquisa = [];
@@ -43,6 +45,13 @@ exports.reloadEntidades = async () => {
   entidades = [];
   entidades = await loadEntidades();
   console.debug("Terminei de carregar as entidades.");
+};
+
+exports.reloadTipologias = async () => {
+  console.debug("A carregar as tipologias da BD para a cache...");
+  tipologias = [];
+  tipologias = await loadTipologias();
+  console.debug("Terminei de carregar as tipologias.");
 };
 
 exports.reloadClasses = async () => {
@@ -82,6 +91,7 @@ exports.reset = async () => {
     await exports.reloadLegislacao();
 
     await exports.reloadEntidades();
+    await exports.reloadTipologias();
 
     console.debug("A criar o índice de pesquisa...");
     indicePesquisa = await criaIndicePesquisa();
@@ -112,6 +122,7 @@ exports.reload = async () => {
     await exports.reloadLegislacao();
 
     await exports.reloadEntidades();
+    await exports.reloadTipologias();
 
     console.debug("A criar o índice de pesquisa...");
     indicePesquisa = await criaIndicePesquisa();
@@ -921,6 +932,31 @@ async function loadEntidades() {
   }
 }
 
+// tipologias
+
+exports.getTipologias = () => {
+  return JSON.parse(JSON.stringify(tipologias));
+};
+
+exports.getTipologia = (id) => {
+  let res = tipologias.filter((e) => e.id == id);
+  if (res.length > 0) {
+    return JSON.parse(JSON.stringify(res[0]));
+  } else return null;
+};
+
+// Carrega as tipologias para cache
+async function loadTipologias() {
+  try {
+    let tips = await Tipologias.listar("True");
+    return tips;
+  } catch (err) {
+    throw err;
+  }
+}
+
+// -----------------------------------------------------
+
 exports.updateClasseTreeInfo = (classe) => {
   classe.status = "A";
   classe.filhos = [];
@@ -929,6 +965,7 @@ exports.updateClasseTreeInfo = (classe) => {
   classe.id = `http://jcr.di.uminho.pt/m51-clav#c${classe.codigo}`;
 
   let pai, i;
+
   if (classe.pai.codigo) {
     let classLvl = classe.pai.codigo.split(".");
     if (classLvl.length === 1) {
@@ -944,6 +981,7 @@ exports.updateClasseTreeInfo = (classe) => {
       pai = classTreeInfo[avo].filhos.findIndex(
         (c) => classe.pai.codigo === c.codigo
       );
+
       i = classTreeInfo[avo].filhos[pai].filhos.findIndex(
         (c) => classe.codigo < c.codigo
       );

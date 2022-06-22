@@ -65,7 +65,7 @@ app.use((req, res, next) => {
             Logs.newLog(route, req.method, res.locals.id, res.locals.idType, res.statusCode)
             route = route.match(/^\/[^/]*/)[0]
             try{
-                aggLogs.newAggregateLog(route, req.method, res.locals.id, res.locals.idType)      
+                aggLogs.newAggregateLog(route, req.method, res.locals.id, res.locals.idType)
             }catch(err){
                 console.log("Erro ao adicionar Agg Log: " + err)
             }
@@ -108,13 +108,13 @@ mongoose.connect(dataBases.userDB, {
             mongoose.connection.on('error', console.error.bind(console, 'MongoDB: erro na conexão: '));
 
             console.log('MongoDB: pronto. Status: ' + Mstate)
-            try{
-                var data = await ontologia.data()
-                console.log('GraphDB: pronto. Data da ontologia: ' + data)
-            }catch(e){
-                console.error("GraphDB: não foi possível aceder.")
-                process.exit(1)
-            }
+            //try{
+            //    var data = await ontologia.data()
+            //    console.log('GraphDB: pronto. Data da ontologia: ' + data)
+            //}catch(e){
+            //    console.error("GraphDB: não foi possível aceder.")
+            //    process.exit(1)
+            //}
 
             //loads APP State
             var State = require('./controllers/state.js')
@@ -191,7 +191,7 @@ mainRouter.use('/parametros', require('./routes/api/parametros'));
 mainRouter.use('/rada', require('./routes/api/rada'));
 mainRouter.use('/contador', require('./routes/api/contador'));
 mainRouter.use('/ficheirosEstaticos', require('./routes/api/ficheirosEstaticos'));
-mainRouter.use('/ppds', require('./routes/api/ppds'));
+mainRouter.use('/ppd', require('./routes/api/ppd'));
 mainRouter.use('/notificacoes', require('./routes/api/notificacoes'));
 
 app.use('/' + dataBases.apiVersion, mainRouter);

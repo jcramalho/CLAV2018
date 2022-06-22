@@ -6,6 +6,8 @@ const Excel = require("exceljs/modern.nodejs");
 var formidable = require("formidable");
 var express = require("express");
 var router = express.Router();
+var fs = require("fs")
+var Papa = require('papaparse')
 
 const { validationResult } = require("express-validator");
 const { existe, verificaTSId } = require("../validation");
@@ -72,7 +74,55 @@ router.post(
 );
 
 router.post(
+  "/importarProcessos", 
+  Auth.isLoggedInUser,
+  Auth.checkLevel([4, 5, 6, 7]),
+  (req, res) => {
+    var form = new formidable.IncomingForm()
+    form.parse(req, async (error, fields, formData) => {
+      if (error)
+        res.status(500).send(`Erro ao importar Lista de Processos: ${error}`);
+      else if (!formData.file || !formData.file.path)
+        res.status(501).send(`Erro ao importar Lista de Processos: o ficheiro a importar tem de vir no pedido. `);
+      else if (formData.file.type == "text/csv") {
+        var file = fs.readFileSync(formData.file.path, 'utf8')
+        Papa.parse(file, {
+          skipEmptyLines: "greedy",
+          header: true,
+          transformHeader:function(h) {
+            return h.trim();
+          },
+          complete: async function(results) {
+            var linha = results.data[0]
+            var mensagens = []
+            if(!linha.hasOwnProperty('codigo')) mensagens.push("Não foi possível importar a lista de processos. Coluna codigo inexistente. Verifique o seu preenchimento na seguinte linha: 0 %%%");
+            if(!linha.hasOwnProperty('dono')) mensagens.push("Não foi possível importar a lista de processos. Coluna dono inexistente. Verifique o seu preenchimento na seguinte linha: 0 %%%");
+            if(!linha.hasOwnProperty('participante')) mensagens.push("Não foi possível importar a lista de processos. Coluna participante inexistente. Verifique o seu preenchimento na seguinte linha: 0 %%%");
+          
+            if (mensagens.length > 0)
+              res.status(502).jsonp(mensagens );
+            else {
+              results.data.forEach(pn => {
+                pn.codigo = pn.codigo.trim()
+                pn.dono = pn.dono.trim()
+                pn.participante = pn.participante.trim()
+              })
+              res.status(201).jsonp(results.data)
+            }
+          }
+        })
+      }
+      else{
+        res.status(503).jsonp({"erro": "Formato do ficheiro enviado inválido."})
+      }
+    })
+  }
+)
+
+router.post(
   "/importar",
+  Auth.isLoggedInUser,
+  Auth.checkLevel([4, 5, 6, 7]),
   async function (req, res) {
     var form = new formidable.IncomingForm();
 
@@ -91,23 +141,23 @@ router.post(
               formData.file &&
               formData.file.type &&
               formData.file.path &&
-              ((fields.entidades_ts && fields.designacao) ||
+              ((fields.entidade_ts && fields.designacao) ||
                 fields.multImport) &&
               fields.tipo_ts &&
               fields.fonteL
             ) {
               var workbook = new Excel.Workbook();
 
-              if (!fields.multImport && !fields.entidades_ts) {
+              if (!fields.multImport && !fields.entidade_ts) {
                 res
-                  .status(500)
+                  .status(501)
                   .json(
-                    `Erro ao importar CSV: Não foram escolhidas entidades para a TS. Necessita de ter um array denominado entidades_ts com pelo menos uma sigla de uma entidade da TS.`
+                    `Erro ao importar CSV: Não foram escolhidas entidades para a TS. Necessita de ter um array denominado entidade_ts com pelo menos uma sigla de uma entidade da TS.`
                   );
               }
 
               if (formData.file.type == "text/csv") {
-                var possibleDelimiters = [",", ";", "\t", "|"];
+                var possibleDelimiters = [",", ";"];
                 var i = 0;
                 var len = possibleDelimiters.length;
                 var parsed = false;
@@ -136,7 +186,7 @@ router.post(
                     if (++i == len) {
                       parsed = true;
                       res
-                        .status(500)
+                        .status(502)
                         .json(
                           `Erro ao importar CSV: Não foi possível fazer parsing do ficheiro.\nOs delimitadores podem ser: , ou ; ou \\t ou |.\nPara além disso o quote e o escape são realizados através de ".\nPor fim, o encoding do ficheiro tem de ser UTF-8.`
                         );
@@ -149,7 +199,7 @@ router.post(
                     workbook,
                     user.email,
                     req.user.entidade,
-                    !fields.multImport ? fields.entidades_ts : "",
+                    !fields.multImport ? fields.entidade_ts : "",
                     !fields.multImport ? fields.designacao : "",
                     fields.tipo_ts,
                     fields.fonteL,
@@ -158,7 +208,7 @@ router.post(
                   )
                     .then((codigoPedido) => res.json(codigoPedido))
                     .catch((erro) =>
-                      res.status(500).json(`Erro ao importar CSV: ${erro}`)
+                      res.status(503).json(`Erro ao importar CSV: ${erro}`)
                     );
                 }
               } else if (
@@ -172,7 +222,7 @@ router.post(
                       workbook,
                       user.email,
                       req.user.entidade,
-                      !fields.multImport ? fields.entidades_ts : "",
+                      !fields.multImport ? fields.entidade_ts : "",
                       !fields.multImport ? fields.designacao : "",
                       fields.tipo_ts,
                       fields.fonteL,
@@ -182,16 +232,16 @@ router.post(
                       .then((dados) => res.json(dados))
                       .catch((erro) => {
                         if (erro.length > 0 || erro.entidades) {
-                          res.status(500).json(erro);
+                          res.status(504).json(erro);
                         } else {
                           res
-                            .status(500)
+                            .status(505)
                             .json(`Erro ao importar Excel: ${erro}`);
                         }
                       });
                   })
                   .catch((erro) =>
-                    res.status(500).json(`Erro ao importar Excel: ${erro}`)
+                    res.status(506).json(`Erro ao importar Excel: ${erro}`)
                   );
               } else {
                 res
@@ -202,17 +252,34 @@ router.post(
               }
             } else {
               res
-                .status(500)
+                .status(507)
                 .json(
-                  `Erro ao importar CSV/Excel: O FormData deve possuir quatro campos: um ficheiro em file, o tipo de TS em tipo_ts, a designação em designacao e a sigla da entidade(s) da TS entidade em entidades_ts.`
+                  `Erro ao importar CSV/Excel: O FormData deve possuir quatro campos: um ficheiro em file, o tipo de TS em tipo_ts, a designação em designacao e a sigla da entidade(s) da TS entidade em entidade_ts.`
                 );
             }
           } else {
-            res.status(500).json(`Erro ao importar CSV/Excel: ${error}`);
+            res.status(508).json(`Erro ao importar CSV/Excel: ${error}`);
           }
         });
       }
     });
+  }
+);
+
+router.delete(
+  "/:id",
+  Auth.isLoggedInUser,
+  Auth.checkLevel([4, 5, 6, 7]),
+  async function (req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).jsonp(errors.array());
+    }
+    SelTabs.deleteTS(req.params.id, "leg_" + req.params.id.split("_leg_")[1])
+      .then((dados) => res.jsonp(dados))
+      .catch((err) =>
+        res.status(500).send(`Erro na criação de tabela de seleção: ${err}`)
+      );
   }
 );
 

@@ -194,6 +194,24 @@ router.post("/", [
     .catch(err => res.status(500).send(`Erro na inserção de uma legislação: ${err}`));
 });
 
+//Repõe entidades ja existentes
+router.post("/repor", Auth.isLoggedInUser, Auth.checkLevel(4), function(req, res){
+  Leg.repor(req.body.query)
+    .then(dados => {
+      res.jsonp(dados)
+    })
+    .catch(err => res.status(500).send(`Erro na inserção das legislacoes: ${err}`));
+})
+
+//Elimina uma legislacao
+router.delete("/:id", Auth.isLoggedInUser, Auth.checkLevel(4), function(req, res){
+  Leg.remover(req.params.id)
+    .then(dados => {
+      res.jsonp(dados)
+    })
+    .catch(err => res.status(500).send(`Erro na eliminação da legislacao: ${err}`));
+})
+
 // Atualiza uma legislação na BD
 router.put("/:id", [
     existe("body", "numero")

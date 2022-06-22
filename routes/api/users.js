@@ -123,7 +123,7 @@ router.post('/registar', [
             password: req.body.password
         }
     });
-    
+
     Users.createUser(newUser, function (err, user) {
         if (err) {
             //res.status(500).send(`Erro: ${err}`);
@@ -185,30 +185,15 @@ router.post("/login", [
             //Não existe nenhum utilizador registado com esse email
             return res.status(401).send('Credenciais inválidas');
         else{
-            Users.comparePassword(req.body.password, user.local.password, async function (err, isMatch) {
-                if (err)
-                    return res.status(500).send("Não foi possível proceder a autenticação!");
-                if (isMatch) {
-                    if(user.level==-1){
-                        //Utilizador desativado
-                        return res.status(401).send("Credenciais inválidas")
-                    }else{
-                        try{
-                            var token = await Auth.generateTokenUser(user);
-                        }catch(err){
-                            return res.status(500).send("Não foi possível proceder a autenticação!")
-                        }
+            req.login(user, () => {
+                var token = Auth.generateTokenUser(user);
 
-                        res.send({
-                            token: token,
-                            name : user.name,
-                            entidade: user.entidade
-                        })
-                    }
-                } else {
-                    return res.status(401).send('Credenciais inválidas');
-                }
-            });
+                res.send({
+                    token: token,
+                    name : user.name,
+                    entidade: user.entidade
+                })
+            })
         }
     });
 });
@@ -226,7 +211,7 @@ router.post('/recuperar', [
     }
 
     Users.getUserByEmail(req.body.email, function (err, user) {
-        if (err) 
+        if (err)
             //return res.status(500).send(`Erro: ${err}`);
             return res.status(500).send("Não foi possível recuperar a conta!");
         if (!user)
@@ -234,8 +219,8 @@ router.post('/recuperar', [
             //Por forma a não divulgar que emails estão já usados, será devolvido que foi enviado um email com sucesso
             res.send('Email enviado com sucesso!');
         else{
-            Users.getUserById(user._id, async function(err, user){
-                if(err) 
+            Users.getUserById(user._id, function(err, user){
+                if(err)
                     //return res.status(500).send(`Erro: ${err}`);
                     return res.status(500).send("Não foi possível recuperar a conta!");
                 if(user.local.password != undefined){
@@ -360,7 +345,7 @@ router.put('/:id/nic', [
 
     if(req.params.id != req.user.id){
         Users.atualizarNIC(req.params.id, req.body.nic, function (err, u) {
-            if (err) { 
+            if (err) {
                 //res.status(500).send(`Erro: ${err}`);
                 res.status(500).send("Não foi possível atualizar o NIC do utilizador! Verifique os valores usados.");
             } else {
@@ -391,7 +376,7 @@ router.put('/:id', [
     }
 
     Users.atualizarMultiplosCampos(req.params.id, req.body.nome, req.body.email, req.body.entidade, req.body.level, function (err, cb) {
-        if (err) { 
+        if (err) {
             //res.status(500).send(`Erro: ${err}`);
             res.status(500).send('Não foi possível atualizar o utilizador! Verifique se os valores estão corretos ou se falta algum valor.');
         } else {
@@ -412,7 +397,7 @@ router.get('/:id', [
         Users.listarPorId(req.params.id,function(err, result){
             if(err){
                 //res.status(500).send(`Erro: ${err}`);
-                res.status(500).send("Não foi possível obter o utilizador!");
+                res.status(404).send("Não foi possível obter o utilizador!");
             }else{
                 result._doc.temPass = result._doc.local.password ? true : false
                 if(req.user.level < 7){
@@ -505,7 +490,7 @@ router.post('/registarCC', [
         internal: internal,
         level: req.body.type
     });
-    
+
     Users.createUser(newUser, function (err, user) {
         Logging.logger.info('Utilizador ' + user._id + ' registado.');
         if (err) {

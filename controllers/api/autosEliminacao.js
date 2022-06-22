@@ -1,5 +1,6 @@
 const execQuery = require('../../controllers/api/utils').execQuery
 const normalize = require('../../controllers/api/utils').normalize
+const criarHistorico = require("../../controllers/api/utils").criarHistorico
 var Pedidos = require('../../controllers/api/pedidos');
 
 var AutosEliminacao = module.exports
@@ -367,7 +368,7 @@ AutosEliminacao.adicionar = async function (auto) {
 
 
 AutosEliminacao.adicionarPGD = async function (auto) {
-    const nanoid = require('nanoid')
+    const {nanoid} = require('nanoid')
     var currentTime = new Date()
     var queryEnt = `
         SELECT ?ent WHERE {
@@ -553,10 +554,20 @@ AutosEliminacao.adicionarRADA = async function (auto) {
  * @return {Promise<Pedido | Error>} promessa que quando cumprida possui o
  * pedido gerado para a criação da nova classe
  */
-AutosEliminacao.importar = async (auto, tipo, user) => {    
+AutosEliminacao.importar = async (auto, tipo, user) => { 
     auto.entidade = user.entidade
     auto.responsavel = user.email
-    //auto.tipo = tipo
+    
+    // Inicializar o histórico 
+    var his = []
+    his[0] = criarHistorico(auto)
+
+    // Inicializar o histórico para as classes
+    for(var i = 0; i < auto.classes.length; i++) {
+        his[0].classes.dados[i] = criarHistorico(auto.classes[i])
+        his[0].classes.dados[i].agregacoes.dados = criarHistorico(auto.classes[i].agregacoes)
+    }
+
     var pedido = {
         tipoPedido: "Importação",
         tipoObjeto: "Auto de Eliminação",
@@ -564,11 +575,11 @@ AutosEliminacao.importar = async (auto, tipo, user) => {
         user: {email: user.email},
         entidade: user.entidade,
         token: user.token,
-        historico: [],
+        historico: his,
         objetoOriginal: auto
     }
     var pedido = await Pedidos.criar(pedido)
-    return {codigo: pedido, tipo: auto.tipo, auto: auto }
+    return {codigo: pedido, tipo: tipo, auto: auto }
 };
 
 /**

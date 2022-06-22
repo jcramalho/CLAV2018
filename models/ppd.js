@@ -1,38 +1,17 @@
 const mongoose = require('mongoose');
 
 const PPDSchema = new mongoose.Schema({
-        nomePlano: String,
-        dataPlano: {
-          type: Date,
-          default: Date.now,
-          required: true
-        },
-        identificacao: {
-          nRefSI: {
-              type: String,
-              required: true,
+        geral: {
+          nomePPD: String,
+          mencaoResp: String,
+          entSel: Array,
+          fonteLegitimacao: {
+            id: String,
+            titulo: String
           },
-          nomeSI: String,
-          nomeAdmin: String,
-          proprietario: String
+          tipoFonteL: String
         },
-        avaliacao: {
-          nRefSI: {
-              type: String,
-              required: true,
-          },
-          codigoClass: String,
-          tituloClass : String,
-          descricao: String
-        },
-        caracterizacao: {
-          nRefSI: {
-              type: String,
-              required: true,
-          },
-          nomeSI: String,
-          nivelDependencia: String
-        }
+        sistemasInfo: Array
 })
 
-module.exports = mongoose.model('PPD', PPDSchema, 'ppds');
+module.exports = mongoose.model('PPD', PPDSchema, 'ppd');

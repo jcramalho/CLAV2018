@@ -49,7 +49,6 @@ Entidades.listar = filtro => {
 
         FILTER (${filtro})
     } ORDER BY ?sigla`;
-
   return execQuery("query", query).then(response => normalize(response));
 };
 
@@ -63,7 +62,7 @@ Entidades.listarTipsDonos = async () => {
 
         ?uri rdf:type clav:Entidade ;
             clav:entSigla ?sigla .
-		
+
     	OPTIONAL {
         	?uri clav:pertenceTipologiaEnt ?uriT .
         	?uriT clav:tipEstado "Ativa";
@@ -139,7 +138,7 @@ Entidades.listarParticipantes = async () => {
 
         ?uri rdf:type clav:Entidade ;
     		clav:entSigla ?sigla .
-    
+
     	OPTIONAL{
         	?uriP clav:temParticipante ?uri;
         	    ?tipoParURI ?uri ;
@@ -188,8 +187,8 @@ Entidades.listarParticipantes = async () => {
 
 // Lista todas as entidades com PNs associados (como Dono ou como Participante)
 Entidades.listarComPNs = filtro => {
-  const query = `SELECT ?id ?sigla ?designacao ?internacional ?sioe ?estado 
-    WHERE { 
+  const query = `SELECT ?id ?sigla ?designacao ?internacional ?sioe ?estado
+    WHERE {
             ?uri rdf:type clav:Entidade ;
                 clav:entEstado ?estado;
                 clav:entDesignacao ?designacao ;
@@ -197,11 +196,11 @@ Entidades.listarComPNs = filtro => {
                 clav:entInternacional ?internacional .
             OPTIONAL {
                 ?uri clav:entSIOE ?sioe.
-            } 
+            }
             {
         FILTER EXISTS { ?pn clav:temDono ?uri. }
         FILTER EXISTS { ?pn clav:temParticipante ?uri. }
-            
+
         } UNION {
             {
         FILTER NOT EXISTS { ?pn clav:temDono ?uri. }
@@ -285,7 +284,7 @@ Entidades.consultar = id => {
             clav:${id} clav:entDataExtincao ?dataExtincao
         }
     }`;
-
+    console.log(query)
   return execQuery("query", query).then(response => normalize(response)[0]);
 };
 
@@ -313,7 +312,7 @@ Entidades.existe = entidade => {
  */
 Entidades.existeSigla = sigla => {
   const query = `ASK {
-      ?s clav:entSigla|clav:tipSigla '${sigla}' 
+      ?s clav:entSigla|clav:tipSigla '${sigla}'
   }`;
 
   return execQuery("query", query).then(response => response.boolean);
@@ -345,7 +344,7 @@ Entidades.existeSiglaId = sigla => {
  */
 Entidades.existeDesignacao = designacao => {
   const query = `ASK {
-      ?e clav:entDesignacao|clav:tipDesignacao '${designacao}' 
+      ?e clav:entDesignacao|clav:tipDesignacao '${designacao}'
   }`;
 
   return execQuery("query", query).then(response => response.boolean);
@@ -399,7 +398,7 @@ Entidades.dono = id => {
  * participa
  */
 Entidades.participante = id => {
-  const query = `SELECT ?id ?tipoPar ?codigo ?titulo WHERE { 
+  const query = `SELECT ?id ?tipoPar ?codigo ?titulo WHERE {
         ?uri clav:temParticipante clav:${id} ;
             ?tipoParURI clav:${id} ;
             clav:titulo ?titulo ;
@@ -455,7 +454,7 @@ Entidades.moreInfo = async ent => {
 
 //Criar entidade
 Entidades.criar = async ent => {
-  var queryEnt = `{ 
+  var queryEnt = `{
     clav:ent_${ent.sigla} rdf:type owl:NamedIndividual, clav:Entidade ;
         clav:entEstado "${ent.estado}" ;
         clav:entSigla "${ent.sigla}" ;
@@ -480,7 +479,6 @@ Entidades.criar = async ent => {
   queryEnt += " .\n}";
   const query = "INSERT DATA " + queryEnt;
   const ask = "ASK " + queryEnt;
-
   return execQuery("update", query).then(res =>
     execQuery("query", ask).then(result => {
       if (result.boolean) return "Sucesso na inserção da entidade";
@@ -488,6 +486,55 @@ Entidades.criar = async ent => {
     })
   );
 };
+
+//Repor entidade ja existente
+Entidades.repor = async ents => {
+  const query = "INSERT DATA { " + ents + ' }'
+  const ask = "ASK { " + ents +  ' }'
+  return execQuery("update", query).then(res =>
+    execQuery("query", ask).then(result => {
+      if (result.boolean) {
+        console.log("Sucesso na inserçao")
+        return "Sucesso na inserção das entidades";
+      }
+      else throw "Insucesso na inserção das entidades";
+    })
+  );
+}
+
+//Eliminar uma entidade
+Entidades.remover = async ent => {
+  let query1 = `
+  PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+  DELETE {:${ent} ?p ?o .
+                    }
+                WHERE  {
+                        :${ent} ?p ?o .
+    }`
+
+    let query2 = `
+    PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+    DELETE {  ?p1 ?o1 :${ent}.
+                      }
+                  WHERE  {
+                          ?p1 ?o1 :${ent}.
+      }`
+
+
+  let ask = " PREFIX : <http://jcr.di.uminho.pt/m51-clav#> ASK { :" + ent +  ' rdf:type :Entidade }'
+
+  await execQuery("update", query2)
+
+  return execQuery("update", query1).then(res =>
+    execQuery("query", ask).then(result => {
+      if (!result.boolean) {
+        console.log("Sucesso na eliminação")
+        return "Sucesso na eliminação da entidade";
+      }
+      else throw "Insucesso na eliminação da entidade";
+    })
+  );
+}
 
 //Atualizar entidade
 Entidades.atualizar = async (id, ent) => {
@@ -535,7 +582,7 @@ Entidades.extinguir = async (id, dataExtincao) => {
   var deleteEnt = `clav:${id} clav:entEstado ?o.`;
   deleteEnt += await triplesRelSuj(id, "entDataExtincao")
 
-  var queryEnt = `{ 
+  var queryEnt = `{
         clav:${id} clav:entDataExtincao "${dataExtincao}";
             clav:entEstado "Inativa".
     }`;

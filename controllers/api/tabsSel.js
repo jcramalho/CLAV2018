@@ -1,4 +1,4 @@
-const nanoid = require("nanoid");
+const {nanoid} = require("nanoid");
 const { execQuery } = require("./utils");
 const { normalize } = require("./utils");
 const { projection } = require("./utils");
@@ -637,7 +637,7 @@ async function validateColumnsValues(
             const siglas = c[i].split("#");
             siglas[siglas.length - 1] == "" ? siglas.pop() : "";
             for (let sigla of siglas) {
-              sigla = sigla.replace(/\r?\n|\r|\s*/g, "");
+              sigla = sigla.replace(/\r?\n|\r|\s*/g, "").normalize("NFC");
               const aux = ents_tips.filter((e) => e.sigla == sigla);
 
               if (!aux.length > 0) {
@@ -666,7 +666,7 @@ async function validateColumnsValues(
             const siglas = p[i].split("#");
             siglas[siglas.length - 1] == "" ? siglas.pop() : "";
             for (let sigla of siglas) {
-              sigla = sigla.replace(/\r?\n|\r|\s*/g, "");
+              sigla = sigla.replace(/\r?\n|\r|\s*/g, "").normalize("NFC");
               const aux = ents_tips.filter((e) => e.sigla == sigla);
               if (!aux.length > 0) {
                 errors.push({
@@ -1236,7 +1236,11 @@ async function validateHeaders(
         participantes: parts,
       };
     } else if (fonteL == "PGD") {
-      let ent = file.split("_")[4].split(".")[0].replace(" ", "_");
+      let ent = file
+        .split("_")[4]
+        .split(".")[0]
+        .replace(" ", "_")
+        .normalize("NFC");
 
       if (
         ents_tips.some((e) => {
@@ -1273,7 +1277,11 @@ async function validateHeaders(
         notaDF,
       };
     } else if (fonteL == "PGD/LC") {
-      let ent = file.split("_")[4].split(".")[0].replace(" ", "_");
+      let ent = file
+        .split("_")[4]
+        .split(".")[0]
+        .replace(" ", "_")
+        .normalize("NFC");
 
       if (
         ents_tips.some((e) => {
@@ -1314,7 +1322,11 @@ async function validateHeaders(
         notaDF,
       };
     } else if (fonteL == "RADA") {
-      ent = file.split("_RADA_")[1].split(".")[0].replace(" ", "_");
+      ent = file
+        .split("_RADA_")[1]
+        .split(".")[0]
+        .replace(" ", "_")
+        .normalize("NFC");
 
       if (
         ents_tips.some((e) => {
@@ -1387,7 +1399,7 @@ async function validateHeaders(
       aux[aux.length - 1] = aux[aux.length - 1].split(".")[0];
       let ents = [];
       for (var i = aux.length - 1; !/^\d+$/.test(aux[i]); i--) {
-        ents.push(aux[i].replace(" ", "_"));
+        ents.push(aux[i].replace(" ", "_").normalize("NFC"));
       }
 
       let erro = [];
@@ -1531,7 +1543,7 @@ async function findSheet(
   return [sheetN, rowHeaderN, headersPos, ents_tips, errors];
 }
 
-function constructRADAO(
+async function constructRADAO(
   worksheet,
   file,
   stats,
@@ -1561,6 +1573,25 @@ function constructRADAO(
       : "tip_" + entidades[0];
 
     if (legislacao && entidade) {
+      try {
+        var query = await execQuery(
+          "query",
+          `ASK WHERE {?rada clav:eRepresentacaoDe clav:${legislacao.id}}`
+        );
+      } catch (err) {
+        errors.push({
+          msg:
+            "Falha na verificação de duplicação da Tabela de Seleção\n" + err,
+          codigo: "",
+        });
+        throw errors;
+      }
+      if (query.boolean === true)
+        throw {
+          msg: "Tabela de Seleção já inserida no sistema.",
+          id: "tsRada_" + legislacao.id,
+        };
+
       code.codigo = "tsRada_" + legislacao.id;
       var rada = [];
       var pais = [];
@@ -1696,7 +1727,32 @@ function constructRADAO(
   }
 }
 
-function constructPGD(
+SelTabs.deleteTS = function (tsId, legId) {
+  const delQuery = `DELETE { ?uri ?p ?o } 
+  WHERE {
+  ?uri ?p ?o
+  BIND(STRAFTER(STR(?uri), 'clav#') AS ?id1).
+  BIND(STRAFTER(STR(?o), 'clav#') AS ?id2).
+  BIND(STRAFTER(STR(?p), 'clav#') AS ?id3).
+  FILTER((CONTAINS(?id1,"${legId}") && CONTAINS(?id3,"temEntidade")) || 
+  (CONTAINS(?id1,"${legId}") && CONTAINS(?id2,"${tsId}")) || 
+  CONTAINS(?id1,"${tsId}"))
+}
+    `;
+
+  return (
+    execQuery("update", delQuery)
+      // getting the content we want
+      .then((response) => Promise.resolve(response))
+      .catch((error) => {
+        console.error(error);
+      })
+  );
+};
+
+function deleteRADA(radaId, legId) {}
+
+async function constructPGD(
   worksheet,
   file,
   stats,
@@ -1712,7 +1768,7 @@ function constructPGD(
   if (file == "lc") return;
   var ano = parseInt(file.split("_")[3]);
   if (ano < 2000) ano -= 1900;
-  var legId = file.split("_")[2] + "/" + ano;
+  var legId = file.split("_")[2].replace(/[-()]/g, "_") + "_" + ano;
   var tipoPGD = file.split("_")[1];
 
   if (tipoPGD == "PGD")
@@ -1725,6 +1781,23 @@ function constructPGD(
     )[0];
 
   if (legislacao) {
+    try {
+      var query = await execQuery(
+        "query",
+        `ASK WHERE {?pgd clav:eRepresentacaoDe clav:${legislacao.id}}`
+      );
+    } catch (err) {
+      errors.push({
+        msg: "Falha na verificação de duplicação da Tabela de Seleção\n" + err,
+      });
+      throw errors;
+    }
+    if (query.boolean === true)
+      throw {
+        msg: "Tabela de Seleção já inserida no sistema.",
+        id: "pgd_" + legislacao.id,
+      };
+
     var pais = [];
     var n = 0;
     code.codigo = "pgd_" + legislacao.id;
@@ -1742,7 +1815,10 @@ function constructPGD(
       "\tclav:eRepresentacaoDe clav:" + legislacao.id + " .\n";
 
     currentStatements += entidades
-      .map((e) => `clav:${legislacao.id} clav:temEntidade clav:${e} .\n`)
+      .map(
+        (e) =>
+          `clav:${legislacao.id} clav:temEntidade clav:${e} .\nclav:pgd_${legislacao.id} clav:temEntidade clav:${e} .\n`
+      )
       .reduce((prev, ent) => prev + ent);
 
     worksheet.eachRow((row, rowNumber) => {
@@ -1999,17 +2075,20 @@ async function getClasseInfo(codigos) {
         statements += "\n###\n";
         //Processos Relacionados
         for (const proc of classe.processosRelacionados) {
-          statements +=
-            "clav:" +
-            classeId +
-            " clav:temRelProc clav:c" +
-            proc.codigo +
-            " ;\n\t clav:" +
-            proc.idRel +
-            " clav:c" +
-            proc.codigo +
-            " .\n";
-          statements += "\n###\n";
+          var procId = codigos.find((c) => c.codigo === proc.codigo);
+          if (procId) {
+            statements +=
+              "clav:" +
+              classeId +
+              " clav:temRelProc clav:" +
+              procId.classeId +
+              " ;\n\t clav:" +
+              proc.idRel +
+              " clav:" +
+              procId.classeId +
+              " .\n";
+            statements += "\n###\n";
+          }
         }
         //Legislação
         for (const leg of classe.legislacao) {
@@ -2045,12 +2124,29 @@ async function constructPGDLCO(
 
   var ano = parseInt(file.split("_")[3]);
   if (ano < 2000) ano -= 1900;
-  var legId = file.split("_")[2] + "/" + ano;
+  var legId = file.split("_")[2].replace(/[-()]/g, "_") + "_" + ano;
 
   var legislacao = leg.filter(
     (l) => l.tipo == "Portaria" && l.numero == legId
   )[0];
   if (legislacao) {
+    try {
+      var query = await execQuery(
+        "query",
+        `ASK WHERE {?pgd clav:eRepresentacaoDe clav:${legislacao.id}}`
+      );
+    } catch (err) {
+      errors.push({
+        msg: "Falha na verificação de duplicação da Tabela de Seleção\n" + err,
+      });
+      throw errors;
+    }
+    if (query.boolean === true)
+      throw {
+        msg: "Tabela de Seleção já inserida no sistema.",
+        id: "pgd_lc_" + legislacao.id,
+      };
+
     var pais = [];
     var codigos = [];
     var n = 0;
@@ -2069,6 +2165,13 @@ async function constructPGDLCO(
 
     currentStatements +=
       "clav:" + legislacao.id + " clav:temEntidade clav:" + entidade + " .\n";
+
+    currentStatements +=
+      "clav:pgd_lc_" +
+      legislacao.id +
+      " clav:temEntidade clav:" +
+      entidade +
+      " .\n";
 
     worksheet.eachRow((row, rowNumber) => {
       if (rowNumber == 1) return;
@@ -2090,7 +2193,7 @@ async function constructPGDLCO(
       notasPCA = notasPCA.replace(/\r?\n|\r/g, " ").replace(/["]/g, '\\"');
       notasDF = notasDF.replace(/\r?\n|\r/g, " ").replace(/["]/g, '\\"');
 
-      var classeId = "classe_" + nanoid() + "_pgd_" + legislacao.id;
+      var classeId = "classe_" + nanoid() + "_pgd_lc_" + legislacao.id;
 
       currentStatements +=
         "\n###  http://jcr.di.uminho.pt/m51-clav#" + classeId + "\n";
@@ -2244,12 +2347,29 @@ async function constructPGDLCP(
 
   var ano = parseInt(file.split("_")[3]);
   if (ano < 2000) ano -= 1900;
-  var legId = file.split("_")[2] + "/" + ano;
+  var legId = file.split("_")[2].replace(/[-()]/g, "_") + "_" + ano;
 
   var legislacao = leg.filter(
     (l) => l.tipo == "Portaria" && l.numero == legId
   )[0];
   if (legislacao) {
+    try {
+      var query = await execQuery(
+        "query",
+        `ASK WHERE {?pgd clav:eRepresentacaoDe clav:${legislacao.id}}`
+      );
+    } catch (err) {
+      errors.push({
+        msg: "Falha na verificação de duplicação da Tabela de Seleção\n" + err,
+      });
+      throw errors;
+    }
+    if (query.boolean === true)
+      throw {
+        msg: "Tabela de Seleção já inserida no sistema.",
+        id: "pgd_lc_" + legislacao.id,
+      };
+
     var pais = [];
     var codigos = [];
 
@@ -2270,7 +2390,16 @@ async function constructPGDLCP(
 
     currentStatements += entidades
       .map(
-        (e) => "clav:" + legislacao.id + " clav:temEntidade clav:" + e + " .\n"
+        (e) =>
+          "clav:" +
+          legislacao.id +
+          " clav:temEntidade clav:" +
+          e +
+          " .\nclav:pgd_lc_" +
+          legislacao.id +
+          " clav:temEntidade clav:" +
+          e +
+          " .\n"
       )
       .reduce((prev, ent) => prev + ent);
 
@@ -2294,7 +2423,7 @@ async function constructPGDLCP(
       notasPCA = notasPCA.replace(/\r?\n|\r/g, " ").replace(/["]/g, '\\"');
       notasDF = notasDF.replace(/\r?\n|\r/g, " ").replace(/["]/g, '\\"');
 
-      var classeId = "classe_" + nanoid() + "_pgd_" + legislacao.id;
+      var classeId = "classe_" + nanoid() + "_pgd_lc_" + legislacao.id;
       currentStatements +=
         "\n###  http://jcr.di.uminho.pt/m51-clav#" + classeId + "\n";
       currentStatements +=
@@ -2574,6 +2703,7 @@ SelTabs.criarPedidoDoCSV = async function (
   !multImport
     ? (entidades_ts = JSON.parse(entidades_ts))
     : (entidades_ts = { entidades_ts });
+
   const aux = await findSheet(
     workbook,
     tipo_ts,
@@ -2651,29 +2781,37 @@ SelTabs.criarPedidoDoCSV = async function (
         participantes: 0,
       };
       var code = { codigo: "" };
-      let pgd = await constructPGDLCO(
-        worksheet,
-        file,
-        stats,
-        code,
-        columns,
-        entidades_ts.split(),
-        errors[0].errors
-      );
-      if (errors[0].errors.length > 0) throw errors;
+      try {
+        let pgd = await constructPGDLCO(
+          worksheet,
+          file,
+          stats,
+          code,
+          columns,
+          entidades_ts.split(),
+          errors[0].errors
+        );
 
-      let parts = partRequest(pgd, 0);
+        let parts = partRequest(pgd, 0);
 
-      for (i in parts) {
-        try {
-          await execQuery("update", `INSERT DATA {${parts[i]}}`);
-        } catch (err) {
-          errors[0].errors.push({
-            msg: "Insucesso na inserção do tabela de seleção\n" + err,
-          });
-          throw errors;
+        for (i in parts) {
+          try {
+            await execQuery("update", `INSERT DATA {${parts[i]}}`);
+          } catch (err) {
+            errors[0].errors.push({
+              msg: "Insucesso na inserção do tabela de seleção\n" + err,
+            });
+            throw errors;
+          }
         }
+      } catch (e) {
+        errors[0].errors.push({
+          msg: e.msg,
+          id: e.id,
+        });
       }
+
+      if (errors[0].errors.length > 0) throw errors;
       await State.loadLegislacao(code.codigo.split("pgd_lc_")[1]);
 
       return { codigo: code.codigo, stats };
@@ -2684,28 +2822,36 @@ SelTabs.criarPedidoDoCSV = async function (
         participantes: 0,
       };
       var code = { codigo: "" };
-      let pgd = await constructPGDLCP(
-        worksheet,
-        file,
-        stats,
-        code,
-        columns,
-        ents_tips.map((e) => e.sigla),
-        errors[0].errors
-      );
-      if (errors[0].errors.length > 0) throw errors;
+      try {
+        let pgd = await constructPGDLCP(
+          worksheet,
+          file,
+          stats,
+          code,
+          columns,
+          ents_tips.map((e) => e.sigla),
+          errors[0].errors
+        );
 
-      let parts = partRequest(pgd, 0);
-      for (i in parts) {
-        try {
-          await execQuery("update", `INSERT DATA {${parts[i]}}`);
-        } catch (err) {
-          errors[0].errors.push({
-            msg: "Insucesso na inserção do tabela de seleção\n" + err,
-          });
-          throw errors;
+        let parts = partRequest(pgd, 0);
+        for (i in parts) {
+          try {
+            await execQuery("update", `INSERT DATA {${parts[i]}}`);
+          } catch (err) {
+            errors[0].errors.push({
+              msg: "Insucesso na inserção do tabela de seleção\n" + err,
+            });
+            throw errors;
+          }
         }
+      } catch (e) {
+        errors[0].errors.push({
+          msg: e.msg,
+          id: e.id,
+        });
       }
+
+      if (errors[0].errors.length > 0) throw errors;
       await State.loadLegislacao(code.codigo.split("pgd_lc_")[1]);
 
       return { codigo: code.codigo, stats };
@@ -2715,29 +2861,36 @@ SelTabs.criarPedidoDoCSV = async function (
       processos: 0,
     };
     var code = { codigo: "" };
-    let pgd = constructPGD(
-      worksheet,
-      file,
-      stats,
-      code,
-      columns,
-      !Array.isArray(entidades_ts) ? entidades_ts.split() : entidades_ts,
-      errors[0].errors
-    );
-    if (errors[0].errors.length > 0) throw errors;
+    try {
+      let pgd = await constructPGD(
+        worksheet,
+        file,
+        stats,
+        code,
+        columns,
+        !Array.isArray(entidades_ts) ? entidades_ts.split() : entidades_ts,
+        errors[0].errors
+      );
 
-    let parts = partRequest(pgd, 0);
+      let parts = partRequest(pgd, 0);
 
-    for (i in parts) {
-      try {
-        await execQuery("update", `INSERT DATA {${parts[i]}}`);
-      } catch (err) {
-        errors[0].errors.push({
-          msg: "Insucesso na inserção do tabela de seleção\n" + err,
-        });
-        throw errors;
+      for (i in parts) {
+        try {
+          await execQuery("update", `INSERT DATA {${parts[i]}}`);
+        } catch (err) {
+          throw {
+            msg: "Insucesso na inserção do tabela de seleção\n" + err,
+          };
+        }
       }
+    } catch (e) {
+      errors[0].errors.push({
+        msg: e.msg,
+        id: e.id,
+      });
     }
+
+    if (errors[0].errors.length > 0) throw errors;
 
     await State.loadLegislacao(code.codigo.split("pgd_")[1]);
 
@@ -2748,29 +2901,37 @@ SelTabs.criarPedidoDoCSV = async function (
         processos: 0,
       };
       var code = { codigo: "" };
-      let rada = constructRADAO(
-        worksheet,
-        file,
-        stats,
-        code,
-        columns,
-        entidades_ts.split(),
-        errors[0].errors
-      );
-      if (errors[0].errors.length > 0) throw errors;
+      try {
+        let rada = await constructRADAO(
+          worksheet,
+          file,
+          stats,
+          code,
+          columns,
+          entidades_ts.split(),
+          errors[0].errors
+        );
 
-      let parts = partRequest(rada, 0);
+        let parts = partRequest(rada, 0);
 
-      for (i in parts) {
-        try {
-          await execQuery("update", `INSERT DATA {${parts[i]}}`);
-        } catch (err) {
-          errors[0].errors.push({
-            msg: "Insucesso na inserção do tabela de seleção\n" + err,
-          });
-          throw errors;
+        for (i in parts) {
+          try {
+            await execQuery("update", `INSERT DATA {${parts[i]}}`);
+          } catch (err) {
+            errors[0].errors.push({
+              msg: "Insucesso na inserção do tabela de seleção\n" + err,
+            });
+            throw errors;
+          }
         }
+      } catch (e) {
+        errors[0].errors.push({
+          msg: e.msg,
+          id: e.id,
+        });
       }
+
+      if (errors[0].errors.length > 0) throw errors;
       await State.loadLegislacao(code.codigo.split("tsRada_")[1]);
       return { codigo: code.codigo, stats };
     }
