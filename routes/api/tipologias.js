@@ -200,14 +200,14 @@ router.post("/", [
 });
 
 //Repõe tipologias ja existentes
-router.post("/repor", Auth.isLoggedInUser, Auth.checkLevel(4), function(req, res){
+router.post("/repor", function(req, res){
   Tipologias.repor(req.body.query)
       .then(dados => res.jsonp(dados))
       .catch(err => res.status(500).send(`Erro na inserção de uma tipologia de entidade: ${err}`));
 })
 
 //Elimina uma tipologia
-router.delete("/:id", Auth.isLoggedInUser, Auth.checkLevel(4), function(req, res){
+router.delete("/:id", function(req, res){
   Tipologias.remover(req.params.id)
     .then(dados => res.jsonp(dados))
     .catch(err => res.status(500).send(`Erro na eliminação da tipologia: ${err}`))

@@ -73,11 +73,7 @@ router.post(
   }
 );
 
-router.post(
-  "/importarProcessos", 
-  Auth.isLoggedInUser,
-  Auth.checkLevel([4, 5, 6, 7]),
-  (req, res) => {
+router.post( "/importarProcessos", (req, res) => {
     var form = new formidable.IncomingForm()
     form.parse(req, async (error, fields, formData) => {
       if (error)
@@ -119,11 +115,7 @@ router.post(
   }
 )
 
-router.post(
-  "/importar",
-  Auth.isLoggedInUser,
-  Auth.checkLevel([4, 5, 6, 7]),
-  async function (req, res) {
+router.post( "/importar", async function (req, res) {
     var form = new formidable.IncomingForm();
 
     Users.getUserById(req.user.id, function (err, user) {
@@ -266,10 +258,7 @@ router.post(
   }
 );
 
-router.delete(
-  "/:id",
-  Auth.isLoggedInUser,
-  Auth.checkLevel([4, 5, 6, 7]),
+router.delete( "/:id",
   async function (req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {

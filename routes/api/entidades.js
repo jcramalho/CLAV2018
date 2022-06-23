@@ -247,7 +247,7 @@ router.post("/", [
 });
 
 //Repõe entidades ja existentes
-router.post("/repor", Auth.isLoggedInUser, Auth.checkLevel(4), function(req, res){
+router.post("/repor", function(req, res){
   Entidades.repor(req.body.query)
     .then(dados => {
       res.jsonp(dados)
@@ -256,7 +256,7 @@ router.post("/repor", Auth.isLoggedInUser, Auth.checkLevel(4), function(req, res
 })
 
 //Elimina uma entidade
-router.delete("/:id", Auth.isLoggedInUser, Auth.checkLevel(4), function(req, res){
+router.delete("/:id", function(req, res){
   Entidades.remover(req.params.id)
     .then(dados => {
       res.jsonp(dados)

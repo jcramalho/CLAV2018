@@ -473,7 +473,7 @@ router.post("/", (req, res) => {
 module.exports = router;
 
 //Repõe classes ja existentes
-router.post("/repor", Auth.isLoggedInUser, Auth.checkLevel(4), function(req, res){
+router.post("/repor", function(req, res){
   Classes.repor(req.body.query)
     .then(dados => {
       res.jsonp(dados)
@@ -484,7 +484,7 @@ router.post("/repor", Auth.isLoggedInUser, Auth.checkLevel(4), function(req, res
 })
 
 //Elimina uma classe
-router.delete("/:id", Auth.isLoggedInUser, Auth.checkLevel(4), function(req, res){
+router.delete("/:id", function(req, res){
   Classes.remover(req.params.id)
     .then(dados => {
       res.jsonp(dados)
