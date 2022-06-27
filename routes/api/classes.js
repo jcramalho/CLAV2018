@@ -513,3 +513,23 @@ router.post("/", Auth.isLoggedInUser, Auth.checkLevel(4), (req, res) => {
 });
 
 module.exports = router;
+
+//Repõe classes ja existentes
+router.post("/repor", Auth.isLoggedInUser, Auth.checkLevel(4), function(req, res){
+  Classes.repor(req.body.query)
+    .then(dados => {
+      res.jsonp(dados)
+    })
+    .catch(err => {
+      res.status(500).send(`Erro na inserção das classes: ${err}`)
+    });
+})
+
+//Elimina uma classe
+router.delete("/:id", Auth.isLoggedInUser, Auth.checkLevel(4), function(req, res){
+  Classes.remover(req.params.id)
+    .then(dados => {
+      res.jsonp(dados)
+    })
+    .catch(err => res.status(500).send(`Erro na eliminação da classe: ${err}`));
+})

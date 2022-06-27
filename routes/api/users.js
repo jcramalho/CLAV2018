@@ -124,7 +124,7 @@ router.post('/registar', Auth.isLoggedInUser, Auth.checkLevel(4), [
             password: req.body.password
         }
     });
-    
+
     Users.createUser(newUser, function (err, user) {
         if (err) {
             //res.status(500).send(`Erro: ${err}`);
@@ -189,8 +189,8 @@ router.post("/login", [
                 var token = Auth.generateTokenUser(user);
 
                 res.send({
-                    token: token, 
-                    name : user.name, 
+                    token: token,
+                    name : user.name,
                     entidade: user.entidade
                 })
             })
@@ -211,7 +211,7 @@ router.post('/recuperar', [
     }
 
     Users.getUserByEmail(req.body.email, function (err, user) {
-        if (err) 
+        if (err)
             //return res.status(500).send(`Erro: ${err}`);
             return res.status(500).send("Não foi possível recuperar a conta!");
         if (!user)
@@ -220,7 +220,7 @@ router.post('/recuperar', [
             res.send('Email enviado com sucesso!');
         else{
             Users.getUserById(user._id, function(err, user){
-                if(err) 
+                if(err)
                     //return res.status(500).send(`Erro: ${err}`);
                     return res.status(500).send("Não foi possível recuperar a conta!");
                 if(user.local.password != undefined){
@@ -341,7 +341,7 @@ router.put('/:id/nic', Auth.isLoggedInUser, Auth.checkLevel(7), [
 
     if(req.params.id != req.user.id){
         Users.atualizarNIC(req.params.id, req.body.nic, function (err, u) {
-            if (err) { 
+            if (err) {
                 //res.status(500).send(`Erro: ${err}`);
                 res.status(500).send("Não foi possível atualizar o NIC do utilizador! Verifique os valores usados.");
             } else {
@@ -372,7 +372,7 @@ router.put('/:id', Auth.isLoggedInUser, Auth.checkLevel(4), [
     }
 
     Users.atualizarMultiplosCampos(req.params.id, req.body.nome, req.body.email, req.body.entidade, req.body.level, function (err, cb) {
-        if (err) { 
+        if (err) {
             //res.status(500).send(`Erro: ${err}`);
             res.status(500).send('Não foi possível atualizar o utilizador! Verifique se os valores estão corretos ou se falta algum valor.');
         } else {
@@ -479,7 +479,7 @@ router.post('/registarCC', Auth.isLoggedInUser, Auth.checkLevel(4), [
         internal: internal,
         level: req.body.type
     });
-    
+
     Users.createUser(newUser, function (err, user) {
         Logging.logger.info('Utilizador ' + user._id + ' registado.');
         if (err) {

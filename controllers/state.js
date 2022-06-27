@@ -965,6 +965,7 @@ exports.updateClasseTreeInfo = (classe) => {
   classe.id = `http://jcr.di.uminho.pt/m51-clav#c${classe.codigo}`;
 
   let pai, i;
+
   if (classe.pai.codigo) {
     let classLvl = classe.pai.codigo.split(".");
     if (classLvl.length === 1) {
@@ -980,6 +981,7 @@ exports.updateClasseTreeInfo = (classe) => {
       pai = classTreeInfo[avo].filhos.findIndex(
         (c) => classe.pai.codigo === c.codigo
       );
+
       i = classTreeInfo[avo].filhos[pai].filhos.findIndex(
         (c) => classe.codigo < c.codigo
       );

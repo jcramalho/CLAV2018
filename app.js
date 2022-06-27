@@ -70,7 +70,7 @@ app.use((req, res, next) => {
             Logs.newLog(route, req.method, res.locals.id, res.locals.idType, res.statusCode)
             route = route.match(/^\/[^/]*/)[0]
             try{
-                aggLogs.newAggregateLog(route, req.method, res.locals.id, res.locals.idType)      
+                aggLogs.newAggregateLog(route, req.method, res.locals.id, res.locals.idType)
             }catch(err){
                 console.log("Erro ao adicionar Agg Log: " + err)
             }
@@ -230,4 +230,4 @@ app.use(function (err, req, res, next) {
     res.status(err.status || 500).send(`${err.message}`);
 });
 
-module.exports = app; 
+module.exports = app;

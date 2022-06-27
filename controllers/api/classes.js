@@ -686,3 +686,53 @@ Classes.criar = function (classe) {
 
   return execQuery("update", query);
 };
+
+//Repor classe ja existente
+Classes.repor = async cl => {
+  const query = "INSERT DATA { " + cl + ' }'
+  const ask = "ASK { " + cl +  ' }'
+  return execQuery("update", query).then(res =>
+    execQuery("query", ask).then(result => {
+      if (result.boolean) {
+        console.log("Sucesso na inserçao")
+        return "Sucesso na inserção das classes";
+      }
+      else throw "Insucesso na inserção das classes";
+    })
+  );
+}
+
+//Eliminar uma classe
+Classes.remover = async cl => {
+  let query1 = `
+  PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+  DELETE {:${cl} ?p ?o .
+                    }
+                WHERE  {
+                        :${cl} ?p ?o .
+    }`
+
+    let query2 = `
+    PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+    DELETE {  ?p1 ?o1 :${cl}.
+                      }
+                  WHERE  {
+                          ?p1 ?o1 :${cl}.
+      }`
+
+  let nivel = cl.split(".").length
+
+  let ask = " PREFIX : <http://jcr.di.uminho.pt/m51-clav#> ASK { :" + cl +  ' rdf:type :Classe_N' + nivel + '}'
+
+  await execQuery("update", query2)
+
+  return execQuery("update", query1).then(res =>
+    execQuery("query", ask).then(result => {
+      if (!result.boolean) {
+        console.log("Sucesso na eliminação")
+        return "Sucesso na eliminação da classe";
+      }
+      else throw "Insucesso na eliminação da classe";
+    })
+  );
+}
