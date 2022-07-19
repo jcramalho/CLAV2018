@@ -885,7 +885,7 @@ exports.getLegislacaoByTipoNumero = (t, n) => {
 };
 
 // Devolve uma legislação a do novo identificador no campo código
-exports.getLegislacaoByTipoNumero = (cod) => {
+exports.getLegislacaoByCodigo = (cod) => {
   let res = legislacao.filter((l) => l.codigo == cod);
   if (res.length > 0) {
     return JSON.parse(JSON.stringify(res[0]));
