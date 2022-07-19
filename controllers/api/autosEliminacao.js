@@ -102,8 +102,8 @@ AutosEliminacao.consultar = async function(id,userEnt) {
         select * where {
     		clav:${id} a clav:AutoEliminacao ;
                          clav:temZonaControlo ?zonaControlo .
-    		?zonaControlo clav:dataInicio ?dataInicio ;
-                    	  clav:dataFim ?dataFim ;
+    		?zonaControlo clav:dataInicial ?dataInicial ;
+                    	  clav:dataFinal ?dataFinal ;
                        	  clav:temClasseControlo ?classe .
             OPTIONAL {
         			?zonaControlo clav:nrAgregacoes ?nrAgregacoes ;
@@ -136,8 +136,8 @@ AutosEliminacao.consultar = async function(id,userEnt) {
         for(zonaControlo of zonasControlo) {
             var res2 = {
                 id: zonaControlo.zonaControlo.split("#")[1],
-                dataInicio: zonaControlo.dataInicio,
-                dataFim: zonaControlo.dataFim,
+                dataInicial: zonaControlo.dataInicial,
+                dataFinal: zonaControlo.dataFinal,
                 nrAgregacoes: zonaControlo.nrAgregacoes,
                 UIpapel: zonaControlo.UIpapel,
                 UIdigital: zonaControlo.UIdigital,
@@ -289,8 +289,8 @@ AutosEliminacao.adicionar = async function (auto) {
             }
             query += `
                 clav:${idZona} a clav:ZonaControlo ;
-                    clav:dataInicio "${zona.dataInicio}" ;
-                    clav:dataFim "${zona.dataFim}" .
+                    clav:dataInicial "${zona.dataInicial}" ;
+                    clav:dataFinal "${zona.dataFinal}" .
             `
             if(zona.agregacoes.length==0) 
                 query += `
@@ -411,8 +411,8 @@ AutosEliminacao.adicionarPGD = async function (auto) {
                     query += `
                     clav:medicaoOutros "${zona.uiOutros}" ;`
                 query += `
-                        clav:autoDataInicio "${zona.dataInicio}" ;
-                        clav:autoDataFim "${zona.dataFim}" .
+                        clav:autoDataInicio "${zona.dataInicial}" ;
+                        clav:autoDataFim "${zona.dataFinal}" .
                 `
                 for(agregacao of zona.agregacoes) {
                     var idAg = "ag_"+zona.codigo+'_'+agregacao.codigo
@@ -498,8 +498,8 @@ AutosEliminacao.adicionarRADA = async function (auto) {
                     query += `
                     clav:medicaoOutros "${zona.uiOutros}" ;`
                 query += `
-                        clav:autoDataInicio "${zona.dataInicio}" ;
-                        clav:autoDataFim "${zona.dataFim}" .
+                        clav:autoDataInicio "${zona.dataInicial}" ;
+                        clav:autoDataFim "${zona.dataFinal}" .
                 `
 
                 for(agregacao of zona.agregacoes) {
@@ -554,7 +554,7 @@ AutosEliminacao.adicionarRADA = async function (auto) {
  * @return {Promise<Pedido | Error>} promessa que quando cumprida possui o
  * pedido gerado para a criação da nova classe
  */
-AutosEliminacao.importar = async (auto, tipo, user) => { 
+AutosEliminacao.importar = async (auto, tipo, infoEtapa, user) => { 
     auto.entidade = user.entidade
     auto.responsavel = user.email
     
@@ -576,7 +576,8 @@ AutosEliminacao.importar = async (auto, tipo, user) => {
         entidade: user.entidade,
         token: user.token,
         historico: his,
-        objetoOriginal: auto
+        objetoOriginal: auto,
+        despacho: infoEtapa
     }
     var pedido = await Pedidos.criar(pedido)
     return {codigo: pedido, tipo: tipo, auto: auto }
