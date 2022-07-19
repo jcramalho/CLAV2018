@@ -4,7 +4,6 @@ const allTriplesFrom = require("../../controllers/api/utils").allTriplesFrom;
 const triplesRelObj = require("../../controllers/api/utils").triplesRelObj;
 const triplesRelSuj = require("../../controllers/api/utils").triplesRelSuj;
 const projection = require("../../controllers/api/utils").projection;
-const request = require("../../controllers/api/utils").request;
 const Leg = module.exports;
 
 /**
@@ -28,8 +27,9 @@ const Leg = module.exports;
  * lista das legislacoes existentes que respeitam o filtro dado
  */
 Leg.listar = () => {
-  const query = `SELECT ?id ?data ?dataRevogacao ?numero ?tipo ?sumario ?estado ?entidades ?entidades1 ?fonte ?link ?aprovou WHERE {
+  const query = `SELECT ?id ?codigo ?data ?dataRevogacao ?numero ?tipo ?sumario ?estado ?entidades ?entidades1 ?fonte ?link ?aprovou WHERE {
         ?uri rdf:type clav:Legislacao;
+             clav:codigo ?codigo;
              clav:diplomaData ?data;
              clav:diplomaNumero ?numero;
              clav:diplomaTipo ?tipo;
@@ -60,6 +60,7 @@ Leg.listar = () => {
     } ORDER BY DESC (?data)`;
   const campos = [
     "id",
+    "codigo",
     "data",
     "dataRevogacao",
     "numero",
@@ -108,8 +109,9 @@ Leg.listar = () => {
 
 //Lista todas as legislações consoante o estado
 Leg.listarPorEstado = (estado) => {
-  const query = `SELECT ?id ?data ?dataRevogacao ?numero ?tipo ?sumario ?entidades ?fonte ?link WHERE {
+  const query = `SELECT ?id ?codigo ?data ?dataRevogacao ?numero ?tipo ?sumario ?entidades ?fonte ?link WHERE {
         ?uri rdf:type clav:Legislacao;
+             clav:codigo ?codigo;
              clav:diplomaData ?data;
              clav:diplomaNumero ?numero;
              clav:diplomaTipo ?tipo;
@@ -131,6 +133,7 @@ Leg.listarPorEstado = (estado) => {
     } ORDER BY DESC (?data)`;
   const campos = [
     "id",
+    "codigo",
     "data",
     "dataRevogacao",
     "numero",
@@ -158,8 +161,9 @@ Leg.listarPorEstado = (estado) => {
 
 // Lista todas as legislações com PNs associados
 Leg.listarComPNs = () => {
-  const query = `SELECT ?id ?data ?dataRevogacao ?numero ?tipo ?sumario ?estado ?entidades ?fonte ?link WHERE {
+  const query = `SELECT ?id ?codigo ?data ?dataRevogacao ?numero ?tipo ?sumario ?estado ?entidades ?fonte ?link WHERE {
         ?uri rdf:type clav:Legislacao;
+             clav:codigo ?codigo;
              clav:diplomaData ?data;
              clav:diplomaNumero ?numero;
              clav:diplomaTipo ?tipo;
@@ -183,6 +187,7 @@ Leg.listarComPNs = () => {
     } ORDER BY DESC (?data)`;
   const campos = [
     "id",
+    "codigo",
     "data",
     "dataRevogacao",
     "numero",
@@ -210,8 +215,9 @@ Leg.listarComPNs = () => {
 
 // Lista todas as legislações sem PNs associados
 Leg.listarSemPNs = () => {
-  const query = `SELECT ?id ?data ?dataRevogacao ?numero ?tipo ?sumario ?estado ?entidades ?fonte ?link WHERE {
+  const query = `SELECT ?id ?codigo ?data ?dataRevogacao ?numero ?tipo ?sumario ?estado ?entidades ?fonte ?link WHERE {
         ?uri rdf:type clav:Legislacao;
+             clav:codigo ?codigo;
              clav:diplomaData ?data;
              clav:diplomaNumero ?numero;
              clav:diplomaTipo ?tipo;
@@ -235,6 +241,7 @@ Leg.listarSemPNs = () => {
     } ORDER BY DESC (?data)`;
   const campos = [
     "id",
+    "codigo",
     "data",
     "dataRevogacao",
     "numero",
@@ -331,8 +338,9 @@ Leg.listarRegulados = async () => {
  * então a promessa conterá o valor `undefined`
  */
 Leg.consultar = (id) => {
-  const query = `SELECT ?tipo ?data ?dataRevogacao ?numero ?sumario ?link ?estado ?fonte ?entidades ?entidades1 WHERE {
+  const query = `SELECT ?tipo ?codigo ?data ?dataRevogacao ?numero ?sumario ?link ?estado ?fonte ?entidades ?entidades1 WHERE {
         clav:${id} a clav:Legislacao;
+            clav:codigo ?codigo;
             clav:diplomaData ?data;
             clav:diplomaNumero ?numero;
             clav:diplomaTipo ?tipo;
@@ -356,6 +364,7 @@ Leg.consultar = (id) => {
      }`;
   const campos = [
     "id",
+    "codigo",
     "data",
     "dataRevogacao",
     "numero",
@@ -474,8 +483,6 @@ Leg.regula = (id) => {
 };
 
 /**
- * Verifica se um determinado numero de legislação existe no sistema.
- *
  * @param {Legislacao} legislacao
  * @return {Promise<[Legislacao] | Error>} promessa que quando cumprida contém a
  * lista das legislacoes que são do Tipo "Portaria"
@@ -503,8 +510,9 @@ Leg.portarias = () => {
  * lista das legislacoes existentes que respeitam a fonte dada
  */
 Leg.listarFonte = (fonte) => {
-  const query = `SELECT ?id ?data ?dataRevogacao ?numero ?tipo ?sumario ?estado ?entidades ?link WHERE {
+  const query = `SELECT ?id ?codigo ?data ?dataRevogacao ?numero ?tipo ?sumario ?estado ?entidades ?link WHERE {
         ?uri rdf:type clav:Legislacao;
+             clav:codigo ?codigo;
              clav:diplomaData ?data;
              clav:diplomaNumero ?numero;
              clav:diplomaTipo ?tipo;
@@ -525,6 +533,7 @@ Leg.listarFonte = (fonte) => {
     } ORDER BY DESC (?data)`;
   const campos = [
     "id",
+    "codigo",
     "data",
     "dataRevogacao",
     "numero",
