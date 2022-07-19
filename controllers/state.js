@@ -876,9 +876,17 @@ exports.getLegislacao = (id) => {
   } else return null;
 };
 
-// Devolve o uma legislação a partir do seu tipo e número
+// Devolve uma legislação a partir do seu tipo e número
 exports.getLegislacaoByTipoNumero = (t, n) => {
   let res = legislacao.filter((l) => l.tipo == t && l.numero == n);
+  if (res.length > 0) {
+    return JSON.parse(JSON.stringify(res[0]));
+  } else return null;
+};
+
+// Devolve uma legislação a do novo identificador no campo código
+exports.getLegislacaoByTipoNumero = (cod) => {
+  let res = legislacao.filter((l) => l.codigo == cod);
   if (res.length > 0) {
     return JSON.parse(JSON.stringify(res[0]));
   } else return null;
