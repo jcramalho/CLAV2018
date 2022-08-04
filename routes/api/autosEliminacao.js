@@ -775,7 +775,7 @@ validaSemantica = async function(req, res, next){
     }
     
     req.infoEtapa = infoEtapa
-    if(mensagens.length > 0) {
+    if(mensCodRef.length > 0 || mensagens.length > 0) {
       if(mensCodRef.length > 0) mensagens = mensCodRef
       res.status(514).jsonp(
         {
