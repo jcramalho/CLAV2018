@@ -419,7 +419,7 @@ convCSVFormatoIntermedio = function(req, res, next){
 validaSemantica = async function(req, res, next){
   //####################################################################
   var tipo = req.doc.tipo.slice(3)
-  var numDiploma = ''
+  var idTS = ''
   var pgds = ''
   var myPGD = ''
   var codigos = ''
@@ -441,9 +441,10 @@ validaSemantica = async function(req, res, next){
   } 
 
   if(tipo == "PGD" || tipo == "PGD_LC") {
-    numDiploma = /\d+_\d+/.exec(req.doc.legislacao)[0]
-    var idPGD = pgds.find(x => x.numero == numDiploma).idPGD;
-    try { myPGD = await PGD.consultar(idPGD) }
+    try { 
+      idTS = req.doc.legislacao.split(' ')[1]
+      var idPGD = pgds.find(x => x.idLeg == ('leg_' + idTS)).idPGD;
+      myPGD = await PGD.consultar(idPGD) }
     catch(e) { res.status(509).jsonp({ mensagem: errosAE.csv33_521, erros: []}); }
     codigos = myPGD.map(classe => classe.codigo);
     if(tipo == "PGD")
@@ -451,9 +452,10 @@ validaSemantica = async function(req, res, next){
   }
   else
     if(tipo == "RADA") {
-      numDiploma = req.doc.legislacao.split(' ')[2]
-      var idPGD = pgds.find(x => x.numero == numDiploma).idRADA;
-      try { myPGD = await PGD.consultarRADA(idPGD) }
+      try { 
+        idTS = req.doc.legislacao.split(' ')[1]
+        var idPGD = pgds.find(x => x.idLeg == ('leg_' + idTS)).idRADA;
+        myPGD = await PGD.consultarRADA(idPGD) }
       catch(e){ res.status(510).jsonp({ mensagem: errosAE.csv34_522, erros: []}); }
       codigos = myPGD.map(classe => classe.codigo);
       referencias = myPGD.map(classe => classe.referencia);
