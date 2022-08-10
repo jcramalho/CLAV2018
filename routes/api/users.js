@@ -219,7 +219,7 @@ router.post('/recuperar', [
             //Por forma a não divulgar que emails estão já usados, será devolvido que foi enviado um email com sucesso
             res.send('Email enviado com sucesso!');
         else{
-            Users.getUserById(user._id, function(err, user){
+            Users.getUserById(user._id, async function(err, user){
                 if(err)
                     //return res.status(500).send(`Erro: ${err}`);
                     return res.status(500).send("Não foi possível recuperar a conta!");
