@@ -1768,9 +1768,8 @@ async function constructPGD(
   if (file == "lc") return;
   var ano = parseInt(file.split("_")[3]);
   if (ano < 2000) ano -= 1900;
-  var legId = file.split("_")[2].replace(/[-()]/g, "_") + "_" + ano;
-  var tipoPGD = file.split("_")[1];
-
+  var legId = file.split("_")[2].replace(/[-()\s]/g, "_") + "_" + ano;
+  var tipoPGD = file.split("_")[1].replace(/[-()\s]/g, "_");
   if (tipoPGD == "PGD")
     var legislacao = leg.filter(
       (l) => l.tipo == "Portaria" && l.numero == legId
@@ -2124,7 +2123,7 @@ async function constructPGDLCO(
 
   var ano = parseInt(file.split("_")[3]);
   if (ano < 2000) ano -= 1900;
-  var legId = file.split("_")[2].replace(/[-()]/g, "_") + "_" + ano;
+  var legId = file.split("_")[2].replace(/[-()\s]/g, "_") + "_" + ano;
 
   var legislacao = leg.filter(
     (l) => l.tipo == "Portaria" && l.numero == legId
@@ -2347,8 +2346,8 @@ async function constructPGDLCP(
 
   var ano = parseInt(file.split("_")[3]);
   if (ano < 2000) ano -= 1900;
-  var legId = file.split("_")[2].replace(/[-()]/g, "_") + "_" + ano;
-
+  
+  var legId = file.split("_")[2].replace(/[-()\s]/g, "_") + "_" + ano;
   var legislacao = leg.filter(
     (l) => l.tipo == "Portaria" && l.numero == legId
   )[0];
