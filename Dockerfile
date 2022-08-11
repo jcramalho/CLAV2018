@@ -1,4 +1,4 @@
-FROM node:14.5
+FROM node:16.16.0
 COPY ./ /server
 WORKDIR /server
 RUN npm install
