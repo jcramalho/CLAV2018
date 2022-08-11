@@ -1,6 +1,7 @@
 var express = require('express');
 var Logging = require('../../controllers/logging');
 var router = express.Router();
+var passport = require('passport');
 var User = require('../../models/user');
 var Users = require('../../controllers/api/users');
 var AuthCalls = require('../../controllers/api/auth');
@@ -171,7 +172,7 @@ router.post("/login", [
         .isEmail()
         .withMessage("Email inválido"),
     existe('body', 'password')
-], (req, res) => {
+], (req, res, next) => {
     const errors = validationResult(req)
     if(!errors.isEmpty()){
         return res.status(422).jsonp(errors.array())
