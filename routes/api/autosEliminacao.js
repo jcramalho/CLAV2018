@@ -185,9 +185,9 @@ validaEstruturaCSV = async function(req, res, next){
 
   form.parse(req, async (error, fields, formData) => {
     if (error)
-      res.status(500).jsonp({mensagem: `${errosAE.csv1_512} ${error}`, erros: []});
+      res.status(512).jsonp({mensagem: `${errosAE.csv1_512} ${error}`, erros: []});
     else if (!formData.file || !formData.file.path)
-      res.status(501).jsonp({mensagem: `${errosAE.csv2_513}`, erros: []});
+      res.status(513).jsonp({mensagem: `${errosAE.csv2_513}`, erros: []});
     else if (formData.file.type == "text/csv" || formData.file.type == "application/vnd.ms-excel") {
       var file = fs.readFileSync(formData.file.path, 'utf8')
       Papa.parse(file, {
@@ -197,6 +197,7 @@ validaEstruturaCSV = async function(req, res, next){
           return h.trim();
         },
         complete: async function(results) {
+          var tipo = fields.tipo
           var f1 = results.data
           var linha = results.data[0]
           var mensagens = []
@@ -204,18 +205,23 @@ validaEstruturaCSV = async function(req, res, next){
           if(f1.length != 0){
             if((Object.keys(linha).length) != 9)
               mensagens.push(errosAE.csv3);
-            if(!linha.hasOwnProperty('codigo')) mensagens.push(errosAE.csv4);
-            if(!linha.hasOwnProperty('referencia')) mensagens.push(errosAE.csv5);
-            if(!linha.hasOwnProperty('dataInicial')) mensagens.push(errosAE.csv6);
-            if(!linha.hasOwnProperty('dataFinal')) mensagens.push(errosAE.csv7);
-            if(!linha.hasOwnProperty('numAgregacoes')) mensagens.push(errosAE.csv8);
-            if(!linha.hasOwnProperty('medicaoPapel')) mensagens.push(errosAE.csv9);
-            if(!linha.hasOwnProperty('medicaoDigital')) mensagens.push(errosAE.csv10);
-            if(!linha.hasOwnProperty('medicaoOutro')) mensagens.push(errosAE.csv11);
-            if(!linha.hasOwnProperty('dono')) mensagens.push(errosAE.csv12);
+            if(!linha.hasOwnProperty('codigo')){
+              if(tipo == "TS_LC" || tipo == "PGD_LC")
+                mensagens.push(errosAE.csv4);
+              else
+                mensagens.push(errosAE.csv5);
+            }
+            if(!linha.hasOwnProperty('referencia')) mensagens.push(errosAE.csv6);
+            if(!linha.hasOwnProperty('dataInicial')) mensagens.push(errosAE.csv7);
+            if(!linha.hasOwnProperty('dataFinal')) mensagens.push(errosAE.csv8);
+            if(!linha.hasOwnProperty('numAgregacoes')) mensagens.push(errosAE.csv9);
+            if(!linha.hasOwnProperty('medicaoPapel')) mensagens.push(errosAE.csv10);
+            if(!linha.hasOwnProperty('medicaoDigital')) mensagens.push(errosAE.csv11);
+            if(!linha.hasOwnProperty('medicaoOutro')) mensagens.push(errosAE.csv12);
+            if(!linha.hasOwnProperty('dono')) mensagens.push(errosAE.csv13);
           }
           else
-            mensagens.push(errosAE.csv13);
+            mensagens.push(errosAE.csv14);
 
           if(formData.agreg) { // AMBOS FICHEIROS
             if(formData.agreg.type == "application/vnd.ms-excel" || formData.file.type == "text/csv"){
@@ -233,16 +239,21 @@ validaEstruturaCSV = async function(req, res, next){
 
                     if(f2.length != 0){
                       if((Object.keys(linha).length) != 6)
-                        mensagens2.push(errosAE.csv14);
-                      if(!linha.hasOwnProperty('codigoClasse')) mensagens2.push(errosAE.csv15);
-                      if(!linha.hasOwnProperty('referencia')) mensagens2.push(errosAE.csv16);
-                      if(!linha.hasOwnProperty('codigoAgregacao')) mensagens2.push(errosAE.csv17);
-                      if(!linha.hasOwnProperty('titulo')) mensagens2.push(errosAE.csv18);
-                      if(!linha.hasOwnProperty('dataInicioContagemPCA')) mensagens2.push(errosAE.csv19);
-                      if(!linha.hasOwnProperty('intervencao')) mensagens2.push(errosAE.csv20);
+                        mensagens2.push(errosAE.csv15);
+                      if(!linha.hasOwnProperty('codigoClasse')){
+                        if(tipo == "TS_LC" || tipo == "PGD_LC")
+                          mensagens2.push(errosAE.csv16);
+                        else
+                          mensagens2.push(errosAE.csv17);
+                      }
+                      if(!linha.hasOwnProperty('referencia')) mensagens2.push(errosAE.csv18);
+                      if(!linha.hasOwnProperty('codigoAgregacao')) mensagens2.push(errosAE.csv19);
+                      if(!linha.hasOwnProperty('titulo')) mensagens2.push(errosAE.csv20);
+                      if(!linha.hasOwnProperty('dataInicioContagemPCA')) mensagens2.push(errosAE.csv21);
+                      if(!linha.hasOwnProperty('intervencao')) mensagens2.push(errosAE.csv22);
                     }
                     else
-                      mensagens2.push(errosAE.csv21);
+                      mensagens2.push(errosAE.csv23);
 
                     if (mensagens.length > 0 || mensagens2.length > 0) {
                       let mens = []
@@ -250,8 +261,8 @@ validaEstruturaCSV = async function(req, res, next){
                         mens.push(mensagens[i])
                       for(var j=0; j < mensagens2.length; j++)
                         mens.push(mensagens2[j])
-                      return res.status(502).jsonp({
-                        mensagem: errosAE.csv22_514,
+                      return res.status(514).jsonp({
+                        mensagem: errosAE.csv24_514,
                         erros: mens
                       })
                     } else {
@@ -265,14 +276,14 @@ validaEstruturaCSV = async function(req, res, next){
               });
             } 
             else
-              res.status(503).jsonp({
-                mensagem: errosAE.csv23_515,
+              res.status(515).jsonp({
+                mensagem: errosAE.csv25_515,
                 erros: mensagens
               })
           } else { // SÓ FICHEIRO DAS CLASSES
             if (mensagens.length > 0)
-              return res.status(502).jsonp({
-                mensagem: errosAE.csv22_502,
+              return res.status(514).jsonp({
+                mensagem: errosAE.csv24_514,
                 erros: mensagens
               })
             else {
@@ -285,8 +296,8 @@ validaEstruturaCSV = async function(req, res, next){
         }
       })
     } else 
-        res.status(504).jsonp({
-          mensagem: errosAE.csv24_516,
+        res.status(516).jsonp({
+          mensagem: errosAE.csv26_516,
           erros: mensagens
         })
   })
@@ -312,7 +323,7 @@ convCSVFormatoIntermedio = function(req, res, next){
     myLeg = State.getLegislacaoByCodigo(req.doc[0].legitimacao.slice(4)) 
     myAuto.legislacao = req.doc[0].tipo + " " + myLeg.codigo
     myAuto.refLegislacao = req.doc[0].legitimacao
-  } catch(e) { mensagens.push(errosAE.csv25) }
+  } catch(e) { mensagens.push(errosAE.csv27) }
 
   // entidades
   var myEntidades = []
@@ -388,21 +399,21 @@ convCSVFormatoIntermedio = function(req, res, next){
           // 2 - codigoClasse (I)
           if(tipo != "PGD" && tipo != "RADA"){
             if(agregs[g].codigoClasse == '') // codigo vazio
-              mensagens.push(errosAE.csv26 + (g+2));
+              mensagens.push(errosAE.csv28 + (g+2));
             else // código não corresponde a nenhum código do ficheiro de classes
-              mensagens.push(errosAE.csv27 + (g+2));
+              mensagens.push(errosAE.csv29 + (g+2));
           }
           else 
             // 2 - codigoClasse (I) e 3 - referencia 
-            mensagens.push(errosAE.csv28 + (g+2) );
+            mensagens.push(errosAE.csv30 + (g+2) );
         }
       }
     }
   }
   if (mensagens.length > 0)
-    return res.status(505).jsonp(
+    return res.status(517).jsonp(
       {
-        mensagem: errosAE.csv29_517,
+        mensagem: errosAE.csv31_517,
         erros: mensagens
       });
   else {
@@ -427,16 +438,16 @@ validaSemantica = async function(req, res, next){
 
   if(tipo == "PGD_LC") {
     try { pgds = await PGD.listarLC() }
-    catch(e) { res.status(506).jsonp({ mensagem: errosAE.csv30_518, erros: []}); }
+    catch(e) { res.status(518).jsonp({ mensagem: errosAE.csv32_518, erros: []}); }
   }
   else {
     if(tipo == "PGD") {
      try { pgds = await PGD.listar() }
-     catch(e) { res.status(507).jsonp({ mensagem: errosAE.csv31_519, erros: []}); }
+     catch(e) { res.status(519).jsonp({ mensagem: errosAE.csv33_519, erros: []}); }
     } else {
       if(tipo == "RADA")
         try { pgds = await PGD.listarRADA() }
-        catch(e) { res.status(508).jsonp({ mensagem: errosAE.csv32_520, erros: []});}
+        catch(e) { res.status(520).jsonp({ mensagem: errosAE.csv34_520, erros: []});}
     }
   } 
 
@@ -445,8 +456,8 @@ validaSemantica = async function(req, res, next){
       idTS = req.doc.legislacao.split(' ')[1]
       var idPGD = pgds.find(x => x.idLeg == ('leg_' + idTS)).idPGD;
       myPGD = await PGD.consultar(idPGD) }
-    catch(e) { res.status(509).jsonp({ mensagem: errosAE.csv33_521, erros: []}); }
-    codigos = myPGD.map(classe => classe.codigo);
+    catch(e) { res.status(521).jsonp({ mensagem: errosAE.csv35_521, erros: []}); }
+    codigos = myPGD.map(classe => classe.codigo)
     if(tipo == "PGD")
       referencias = myPGD.map(classe => classe.referencia);
   }
@@ -456,7 +467,7 @@ validaSemantica = async function(req, res, next){
         idTS = req.doc.legislacao.split(' ')[1]
         var idPGD = pgds.find(x => x.idLeg == ('leg_' + idTS)).idRADA;
         myPGD = await PGD.consultarRADA(idPGD) }
-      catch(e){ res.status(510).jsonp({ mensagem: errosAE.csv34_522, erros: []}); }
+      catch(e){ res.status(522).jsonp({ mensagem: errosAE.csv36_522, erros: []}); }
       codigos = myPGD.map(classe => classe.codigo);
       referencias = myPGD.map(classe => classe.referencia);
     }
@@ -489,11 +500,11 @@ validaSemantica = async function(req, res, next){
         // 2 - codigo (PGD/LC)
         if(tipo != "PGD" && tipo != "RADA"){
           if(classes[i].codigo == ''){ // codigo vazio
-            mensCodRef.push(errosAE.csv35 + (i+2));
+            mensCodRef.push(errosAE.csv37 + (i+2));
             classVal = false
           }
           else if(!codigos.includes(classes[i].codigo)){ // codigo preenchido inválido
-            mensCodRef.push(errosAE.csv36 + (i+2));
+            mensCodRef.push(errosAE.csv38 + (i+2));
             classVal = false
           }
         } else {  // 3 - codigo / referencia (PGD e RADA)
@@ -502,12 +513,12 @@ validaSemantica = async function(req, res, next){
             if(!referencias.includes(classes[i].referencia)){ // referencia preenchida inválida
               if(classes[i].codigo != ''){ 
                 if(!codigos.includes(classes[i].codigo)){ // referencia preenchida inválida + codigo preenchido inválido
-                  mensCodRef.push(errosAE.csv37 + (i+2));
+                  mensCodRef.push(errosAE.csv39 + (i+2));
                   classVal = false
                 }
               }
               else{ // referencia preenchida inválida + codigo vazio
-                mensCodRef.push(errosAE.csv38 + (i+2));
+                mensCodRef.push(errosAE.csv40 + (i+2));
                 classVal = false
               }
             }
@@ -519,12 +530,12 @@ validaSemantica = async function(req, res, next){
           else{ // referencia não preenchida -> vamos verificar codigo
             if(classes[i].codigo != ''){ 
               if(!codigos.includes(classes[i].codigo)){ // codigo preenchido inválido
-                mensCodRef.push(errosAE.csv39 + (i+2));
+                mensCodRef.push(errosAE.csv41 + (i+2));
                 classVal = false
               }
             }
             else{ // codigo e referencia vazios
-              mensCodRef.push(errosAE.csv40 + (i+2));
+              mensCodRef.push(errosAE.csv42 + (i+2));
               classVal = false
             }
           }
@@ -555,18 +566,24 @@ validaSemantica = async function(req, res, next){
             } 
 
             if(!a[0].hasOwnProperty('df')){
-              mensagens.push(errosAE.csv41 + (i+2));
+              if(tipo == "TS_LC" || tipo == "PGD_LC")
+                mensagens.push(errosAE.csv43 + (i+2));
+              else
+                mensagens.push(errosAE.csv44 + (i+2));
               classVal = false;
             } else if(!a[0].hasOwnProperty('pca')){
+              if(tipo == "TS_LC" || tipo == "PGD_LC")
+                mensagens.push(errosAE.csv45 + (i+2));
+              else
+                mensagens.push(errosAE.csv46 + (i+2));
               classVal = false;
-              mensagens.push(errosAE.csv42 + (i+2));
             } else {
               pca = a[0].pca
               df = a[0].df
             }
           } else{
             classVal = false;
-            mensagens.push(errosAE.csv43);
+            mensagens.push(errosAE.csv47 + (i+2));
           }
 
           if(classVal){ // se tiver havido erro ao consultar a classe ou o df/pca, não avança
@@ -574,7 +591,7 @@ validaSemantica = async function(req, res, next){
             // Verificação extra II (PGDs e RADAs): se o DF for Conservação, o AE é inválido
             if(tipo == "PGD" || tipo == "RADA"){ 
               if(df == "C"){
-                mensagens.push(errosAE.csv44 + (i+2));
+                mensagens.push(errosAE.csv48 + (i+2));
                 var classVal = false;
               }
             }
@@ -598,7 +615,7 @@ validaSemantica = async function(req, res, next){
                     dfNota = true
                   }
                 }
-                catch(e) { mensagens.push(errosAE.csv45); }
+                catch(e) { mensagens.push(errosAE.csv49); }
               }
 
               var pcaNE = false
@@ -607,28 +624,28 @@ validaSemantica = async function(req, res, next){
               if(pca ==  "NE"){
                 pcaNE = true
                 if(!pcaNota)
-                  mensagens.push(errosAE.csv46)
+                  mensagens.push(errosAE.csv50)
               }
               if(df == "NE")
                 if(!dfNota)
-                  mensagens.push(errosAE.csv47)
+                  mensagens.push(errosAE.csv51)
               
             //####################################################################
 
               // 4 - dataInicial
               if(classes[i].dataInicial == '') // Campo vazio
-                mensagens.push(errosAE.csv48 + (i+2));
+                mensagens.push(errosAE.csv481 + (i+2));
               else{
                 if(!anoRegEx.test(classes[i].dataInicial) || (classes[i].dataInicial.length != 4))  // Campo mal preenchido : formato de data errado
-                  mensagens.push(errosAE.csv49 + (i+2));
+                  mensagens.push(errosAE.csv491 + (i+2));
                 else
                   if(Number(anoAtual) - Number(classes[i].dataInicial) > 100) // Campo mal preenchido: diferença entre o ano corrente e o valor introduzido não pode ser superior a 100 anos
-                    mensagens.push(errosAE.csv50 + (i+2));
+                    mensagens.push(errosAE.csv501 + (i+2));
               }
 
               // 5 - dataFinal
               if(classes[i].dataFinal == '') // Campo vazio
-                mensagens.push(errosAE.csv51 + (i+2));
+                mensagens.push(errosAE.csv511 + (i+2));
               else{
                 if(!anoRegEx.test(classes[i].dataFinal) || (classes[i].dataFinal.length != 4)) // Campo mal preenchido : formato de data errado
                   mensagens.push(errosAE.csv52 + (i+2));
@@ -759,13 +776,18 @@ validaSemantica = async function(req, res, next){
 
             // 7 - intervencao
             if(tipo != "PGD" && tipo != "RADA"){
-              if(df == "E") { // Só verificamos caso o destino final seja Eliminação
-                if(agregacoes[j].ni == '') // Campo vazio em classes / séries de eliminação
-                  mensagens.push(errosAE.csv69 + (li+2));
-                else
-                  // Campo mal preenchido: com outros valores que não Dono ou Participante.
-                  if( !/participante/i.test(agregacoes[j].ni) && !/dono/i.test(agregacoes[j].ni) ) 
+              if(agregacoes[j].ni == '') // Campo vazio
+                mensagens.push(errosAE.csv69 + (li+2));
+              else {
+                if(df == "C") {
+                  // Campo mal preenchido: com outros valores que não Participante.
+                  if(!/participante/i.test(agregacoes[j].ni)) 
                     mensagens.push(errosAE.csv69 + (li+2));   
+                } else {
+                  // Campo mal preenchido: com outros valores que não Dono ou Participante.
+                  if(!/participante/i.test(agregacoes[j].ni) && !/dono/i.test(agregacoes[j].ni)) 
+                    mensagens.push(errosAE.csv69 + (li+2));   
+                }
               }
             }
           } 
