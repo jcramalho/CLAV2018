@@ -177,13 +177,12 @@ router.post("/login", [
         return res.status(422).jsonp(errors.array())
     }
 
-    Users.getUserByEmail(req.body.username, function (err, user) {
-        if (err) 
-            //return res.status(500).send(`Erro: ${err}`);
-            return res.status(500).send("Não foi possível proceder a autenticação!");
+    passport.authenticate('login', (err, user, info) => {
+        if (err)
+            //res.status(500).send(err)
+            res.status(500).send("Não foi possível proceder a autenticação!")
         if (!user)
-            //Não existe nenhum utilizador registado com esse email
-            return res.status(401).send('Credenciais inválidas');
+            res.status(401).send('Credenciais inválidas')
         else{
             req.login(user, () => {
                 var token = Auth.generateTokenUser(user);
@@ -195,7 +194,7 @@ router.post("/login", [
                 })
             })
         }
-    });
+    })(req, res, next);
 });
 
 router.post('/recuperar', [
