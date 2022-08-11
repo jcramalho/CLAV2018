@@ -1,6 +1,7 @@
 var express = require('express');
 var Logging = require('../../controllers/logging');
 var router = express.Router();
+var passport = require('passport');
 var User = require('../../models/user');
 var Users = require('../../controllers/api/users');
 var AuthCalls = require('../../controllers/api/auth');
@@ -171,19 +172,18 @@ router.post("/login", [
         .isEmail()
         .withMessage("Email inválido"),
     existe('body', 'password')
-], (req, res) => {
+], (req, res, next) => {
     const errors = validationResult(req)
     if(!errors.isEmpty()){
         return res.status(422).jsonp(errors.array())
     }
 
-    Users.getUserByEmail(req.body.username, function (err, user) {
-        if (err) 
-            //return res.status(500).send(`Erro: ${err}`);
-            return res.status(500).send("Não foi possível proceder a autenticação!");
+    passport.authenticate('login', (err, user, info) => {
+        if (err)
+            //res.status(500).send(err)
+            res.status(500).send("Não foi possível proceder a autenticação!")
         if (!user)
-            //Não existe nenhum utilizador registado com esse email
-            return res.status(401).send('Credenciais inválidas');
+            res.status(401).send('Credenciais inválidas')
         else{
             req.login(user, () => {
                 var token = Auth.generateTokenUser(user);
@@ -195,7 +195,7 @@ router.post("/login", [
                 })
             })
         }
-    });
+    })(req, res, next);
 });
 
 router.post('/recuperar', [
@@ -219,7 +219,7 @@ router.post('/recuperar', [
             //Por forma a não divulgar que emails estão já usados, será devolvido que foi enviado um email com sucesso
             res.send('Email enviado com sucesso!');
         else{
-            Users.getUserById(user._id, function(err, user){
+            Users.getUserById(user._id, async function(err, user){
                 if(err)
                     //return res.status(500).send(`Erro: ${err}`);
                     return res.status(500).send("Não foi possível recuperar a conta!");
