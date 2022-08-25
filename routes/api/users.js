@@ -1,7 +1,6 @@
 var express = require('express');
 var Logging = require('../../controllers/logging');
 var router = express.Router();
-var passport = require('passport');
 var User = require('../../models/user');
 var Users = require('../../controllers/api/users');
 var AuthCalls = require('../../controllers/api/auth');
@@ -124,7 +123,7 @@ router.post('/registar', [
             password: req.body.password
         }
     });
-
+    
     Users.createUser(newUser, function (err, user) {
         if (err) {
             //res.status(500).send(`Erro: ${err}`);
@@ -172,30 +171,46 @@ router.post("/login", [
         .isEmail()
         .withMessage("Email inválido"),
     existe('body', 'password')
-], (req, res, next) => {
+], (req, res) => {
     const errors = validationResult(req)
     if(!errors.isEmpty()){
         return res.status(422).jsonp(errors.array())
     }
 
-    passport.authenticate('login', (err, user, info) => {
-        if (err)
-            //res.status(500).send(err)
-            res.status(500).send("Não foi possível proceder a autenticação!")
+    Users.getUserByEmail(req.body.username, function (err, user) {
+        if (err) 
+            //return res.status(500).send(`Erro: ${err}`);
+            return res.status(500).send("Não foi possível proceder a autenticação!");
         if (!user)
-            res.status(401).send('Credenciais inválidas')
+            //Não existe nenhum utilizador registado com esse email
+            return res.status(401).send('Credenciais inválidas');
         else{
-            req.login(user, () => {
-                var token = Auth.generateTokenUser(user);
+            Users.comparePassword(req.body.password, user.local.password, async function (err, isMatch) {
+                if (err)
+                    return res.status(500).send("Não foi possível proceder a autenticação!");
+                if (isMatch) {
+                    if(user.level==-1){
+                        //Utilizador desativado
+                        return res.status(401).send("Credenciais inválidas")
+                    }else{
+                        try{
+                            var token = await Auth.generateTokenUser(user);
+                        }catch(err){
+                            return res.status(500).send("Não foi possível proceder a autenticação!")
+                        }
 
-                res.send({
-                    token: token,
-                    name : user.name,
-                    entidade: user.entidade
-                })
-            })
+                        res.send({
+                            token: token,
+                            name : user.name,
+                            entidade: user.entidade
+                        })
+                    }
+                } else {
+                    return res.status(401).send('Credenciais inválidas');
+                }
+            });
         }
-    })(req, res, next);
+    });
 });
 
 router.post('/recuperar', [
@@ -211,7 +226,7 @@ router.post('/recuperar', [
     }
 
     Users.getUserByEmail(req.body.email, function (err, user) {
-        if (err)
+        if (err) 
             //return res.status(500).send(`Erro: ${err}`);
             return res.status(500).send("Não foi possível recuperar a conta!");
         if (!user)
@@ -220,7 +235,7 @@ router.post('/recuperar', [
             res.send('Email enviado com sucesso!');
         else{
             Users.getUserById(user._id, async function(err, user){
-                if(err)
+                if(err) 
                     //return res.status(500).send(`Erro: ${err}`);
                     return res.status(500).send("Não foi possível recuperar a conta!");
                 if(user.local.password != undefined){
@@ -345,7 +360,7 @@ router.put('/:id/nic', [
 
     if(req.params.id != req.user.id){
         Users.atualizarNIC(req.params.id, req.body.nic, function (err, u) {
-            if (err) {
+            if (err) { 
                 //res.status(500).send(`Erro: ${err}`);
                 res.status(500).send("Não foi possível atualizar o NIC do utilizador! Verifique os valores usados.");
             } else {
@@ -376,7 +391,7 @@ router.put('/:id', [
     }
 
     Users.atualizarMultiplosCampos(req.params.id, req.body.nome, req.body.email, req.body.entidade, req.body.level, function (err, cb) {
-        if (err) {
+        if (err) { 
             //res.status(500).send(`Erro: ${err}`);
             res.status(500).send('Não foi possível atualizar o utilizador! Verifique se os valores estão corretos ou se falta algum valor.');
         } else {
@@ -397,7 +412,7 @@ router.get('/:id', [
         Users.listarPorId(req.params.id,function(err, result){
             if(err){
                 //res.status(500).send(`Erro: ${err}`);
-                res.status(404).send("Não foi possível obter o utilizador!");
+                res.status(500).send("Não foi possível obter o utilizador!");
             }else{
                 result._doc.temPass = result._doc.local.password ? true : false
                 if(req.user.level < 7){
@@ -490,7 +505,7 @@ router.post('/registarCC', [
         internal: internal,
         level: req.body.type
     });
-
+    
     Users.createUser(newUser, function (err, user) {
         Logging.logger.info('Utilizador ' + user._id + ' registado.');
         if (err) {
