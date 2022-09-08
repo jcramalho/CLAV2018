@@ -107,10 +107,10 @@ Auth.isLoggedInKey = async function (req, res, next) {
 Auth.isLoggedInUser = function (req, res, next) {
     passport.authenticate("jwt", { session: false }, function(err, user, info) {
         console.log("Entrei na verificação do JWT...")
-        if (err) { return res.status(401).send("Unauthorized") }
-        if (!user) { return res.status(401).send("Unauthorized") }
+        if (err) { return res.status(401).send("Unauthorized: " + err) }
+        if (!user) { return res.status(401).send("Unauthorized: utilizador por instanciar") }
         req.logIn(user, function(err) {
-            if (err) { return res.status(401).send("Unauthorized") }
+            if (err) { return res.status(401).send("Unauthorized: " + err) }
 
             res.locals.id = req.user.id
             res.locals.idType = "User"
