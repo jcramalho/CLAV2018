@@ -18,11 +18,10 @@ const corsOpts = {
     origin: '*',
     credentials: true,
     methods: ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Accept', 'Authorization', 'Cache-Control', 'Content-Type', 'DNT', 'If-Modified-Since', 'Keep-Alive', 'Origin', 'User-Agent', 'X-Requested-With', 'Content-Length']
+    allowedHeaders: ['Accept', 'Access-Control-Allow-Origin', 'Authorization', 'Cache-Control', 'Content-Type', 'DNT', 'If-Modified-Since', 'Keep-Alive', 'Origin', 'User-Agent', 'X-Requested-With', 'Content-Length']
 }
-// app.use(cors(corsOpts))
-// app.options('*', cors(corsOpts))
-app.use(cors())
+app.use(cors(corsOpts))
+app.options('*', cors(corsOpts))
 
 //helmet (sets various HTTP headers to help protect the app)
 var helmet = require('helmet')
