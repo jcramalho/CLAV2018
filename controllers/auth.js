@@ -106,6 +106,7 @@ Auth.isLoggedInKey = async function (req, res, next) {
 //Verifica se um utilizador (token) está autenticado
 Auth.isLoggedInUser = function (req, res, next) {
     passport.authenticate("jwt", { session: false }, function(err, user, info) {
+        console.log("Entrei na verificação do JWT...")
         if (err) { return res.status(401).send("Unauthorized") }
         if (!user) { return res.status(401).send("Unauthorized") }
         req.logIn(user, function(err) {
