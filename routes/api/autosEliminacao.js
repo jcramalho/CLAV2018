@@ -110,6 +110,8 @@ convFormatoIntermedio = function(req, res, next){
   var mensagens = [] // Mensagens de erro
   var myAuto = req.doc
 
+  console.log(JSON.stringify(req.doc))
+
   // identificador do AE
   myAuto.id = stripenanoid('ae', options);
   myAuto.data = new Date().toISOString().substring(0,10)
