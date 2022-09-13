@@ -186,6 +186,10 @@ validaEstruturaCSV = async function(req, res, next){
   var form = new formidable.IncomingForm()
 
   form.parse(req, async (error, fields, formData) => {
+
+    console.log(JSON.stringify(fields))
+    console.log(JSON.stringify(formData))
+
     if (error)
       res.status(512).jsonp({mensagem: `${errosAE.csv1_512} ${error}`, erros: []});
     else if (!formData.file || !formData.file.path)
