@@ -403,7 +403,7 @@ convCSVFormatoIntermedio = function(req, res, next){
       if(agregs[g].codigoClasse || agregs[g].referencia || agregs[g].codigoAgregacao || agregs[g].titulo || agregs[g].dataInicioContagemPCA || agregs[g].intervencao) { // linhas vazias
         if(!(agsCodjaComPai.includes(agregs[g].codigoClasse) || agsRefjaComPai.includes(agregs[g].referencia))){
           // 2 - codigoClasse (I)
-          if(tipo != "PGD" && tipo != "RADA"){
+          if(tipo != "PGD" && tipo != "RADA" && tipo != "RADA_CLAV"){
             if(agregs[g].codigoClasse == '') // codigo vazio
               mensagens.push(errosAE.csv28 + (g+2));
             else // código não corresponde a nenhum código do ficheiro de classes
@@ -504,7 +504,7 @@ validaSemantica = async function(req, res, next){
         var codref = 1 // 1 = cod válido || 2 = ref válida 
       
         // 2 - codigo (PGD/LC)
-        if(tipo != "PGD" && tipo != "RADA"){
+        if(tipo != "PGD" && tipo != "RADA" && tipo != "RADA_CLAV"){
           if(classes[i].codigo == ''){ // codigo vazio
             mensCodRef.push(errosAE.csv37 + (i+2));
             classVal = false
@@ -595,7 +595,7 @@ validaSemantica = async function(req, res, next){
           if(classVal){ // se tiver havido erro ao consultar a classe ou o df/pca, não avança
 
             // Verificação extra II (PGDs e RADAs): se o DF for Conservação, o AE é inválido
-            if(tipo == "PGD" || tipo == "RADA"){ 
+            if(tipo == "PGD" || tipo == "RADA" || tipo == "RADA_CLAV"){ 
               if(df == "C"){
                 mensagens.push(errosAE.csv48 + (i+2));
                 var classVal = false;
@@ -696,7 +696,7 @@ validaSemantica = async function(req, res, next){
               }
 
               // 8 - dono
-              if(tipo != "PGD" && tipo != "RADA"){
+              if(tipo != "PGD" && tipo != "RADA" && tipo != "RADA_CLAV"){
                 if(df == "C") { // Só verificamos caso o destino final seja Conservação
                   if(classes[i].dono == '') // Campo vazio
                     mensagens.push(errosAE.csv67 + (i+2));
@@ -785,7 +785,7 @@ validaSemantica = async function(req, res, next){
             }
 
             // 7 - intervencao
-            if(tipo != "PGD" && tipo != "RADA"){
+            if(tipo != "PGD" && tipo != "RADA" && tipo != "RADA_CLAV"){
 
               if(agregacoes[j].ni == ''){ // Campo vazio
                 if(df == "C") 
