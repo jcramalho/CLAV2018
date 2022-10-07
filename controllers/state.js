@@ -88,7 +88,13 @@ exports.reset = async () => {
       if (err) {
         console.log("Erro ao tentar ler o ficheiro classesInfo.json: " + err)
         console.log("Fazendo o reload da informação das classes.")
-        await exports.reloadClasses()
+        try{
+          exports.reloadClasses()
+        }
+        catch(e){
+          console.log("Erro no reload nas classes: " + e)
+        }
+        
       }
       else{
         classTreeInfo = JSON.parse(
