@@ -80,13 +80,23 @@ exports.reset = async () => {
     classList = [].concat.apply([], levelClasses);
     console.debug("Terminei de carregar as classes.");
 
-    console.debug(
+    console.log(
       "A carregar a informação completa das classes para a cache a partir do ficheiro..."
     );
-    classTreeInfo = JSON.parse(
-      fs.readFileSync("./public/classes/classesInfo.json")
-    );
-    console.debug("Terminei de carregar a informação completa das classes.");
+
+    fs.access("./public/classes/classesInfo.json", fs.F_OK, async (err) => {
+      if (err) {
+        console.log("Erro ao tentar ler o ficheiro classesInfo.json: " + err)
+        console.log("Fazendo o reload da informação das classes.")
+        await exports.reloadClasses()
+      }
+      else{
+        classTreeInfo = JSON.parse(
+          fs.readFileSync("./public/classes/classesInfo.json")
+        );
+        console.log("Terminei de carregar a informação completa das classes.");
+      }
+    })
 
     await exports.reloadLegislacao();
 
