@@ -89,7 +89,7 @@ exports.reset = async () => {
         console.log("Erro ao tentar ler o ficheiro classesInfo.json: " + err)
         console.log("Fazendo o reload da informação das classes.")
         try{
-          exports.reloadClasses()
+          return await exports.reloadClasses()
         }
         catch(e){
           console.log("Erro no reload nas classes: " + e)
