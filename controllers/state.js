@@ -84,25 +84,22 @@ exports.reset = async () => {
       "A carregar a informação completa das classes para a cache a partir do ficheiro..."
     );
 
-    fs.access("./public/classes/classesInfo.json", fs.F_OK, async (err) => {
-      if (err) {
-        console.log("Erro ao tentar ler o ficheiro classesInfo.json: " + err)
-        console.log("Fazendo o reload da informação das classes.")
-        try{
-          return await exports.reloadClasses()
-        }
-        catch(e){
-          console.log("Erro no reload nas classes: " + e)
-        }
+    if (fs.existsSync("./public/classes/classesInfo.json")) {
+      classTreeInfo = JSON.parse(
+        fs.readFileSync("./public/classes/classesInfo.json")
+      );
+      console.log("Terminei de carregar a informação completa das classes.");
+    } 
+    else {
+      console.log("Erro ao tentar ler o ficheiro classesInfo.json.")
+      console.log("Fazendo o reload da informação das classes.")
         
-      }
-      else{
-        classTreeInfo = JSON.parse(
-          fs.readFileSync("./public/classes/classesInfo.json")
-        );
-        console.log("Terminei de carregar a informação completa das classes.");
-      }
-    })
+      exports.reloadClasses()
+        .then(() => { console.log("Terminei de fazer o reload das classes...")})
+        .catch(e => {
+          console.log("Erro no reload nas classes: " + e)
+        })
+    }
 
     await exports.reloadLegislacao();
 
