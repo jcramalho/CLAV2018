@@ -95,25 +95,23 @@ exports.reset = async () => {
       console.log("Fazendo o reload da informação das classes.")
         
       exports.reloadClasses()
-        .then(() => { console.log("Terminei de fazer o reload das classes...")})
+        .then(async () => { 
+          console.log("Terminei de fazer o reload das classes...")
+          await exports.reloadLegislacao();
+          await exports.reloadEntidades();
+          await exports.reloadTipologias();
+          console.log("A criar o índice de pesquisa...");
+          indicePesquisa = await criaIndicePesquisa();
+          console.log(
+            "Índice de pesquisa criado com " + indicePesquisa.length + " entradas."
+          );
+          //dicionário da travessia especial
+          await TravessiaEspecial.reset();
+        })
         .catch(e => {
           console.log("Erro no reload nas classes: " + e)
         })
     }
-
-    await exports.reloadLegislacao();
-
-    await exports.reloadEntidades();
-    await exports.reloadTipologias();
-
-    console.debug("A criar o índice de pesquisa...");
-    indicePesquisa = await criaIndicePesquisa();
-    console.debug(
-      "Índice de pesquisa criado com " + indicePesquisa.length + " entradas."
-    );
-
-    //dicionário da travessia especial
-    await TravessiaEspecial.reset();
   } catch (err) {
     throw err;
   }
