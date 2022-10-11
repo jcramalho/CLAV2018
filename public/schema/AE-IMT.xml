@@ -1,36 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<autoEliminação xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<autoEliminacao xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="file:/Users/jcr/Documents/WebApps/NodeJS/docker-clav/CLAV2018/public/schema/autoEliminacao.xsd">
-    <fonteLegitimação>
-        <tipo>RADA</tipo>
-        <diploma>Portaria 381/2019</diploma>
-    </fonteLegitimação>
-    <fundos>
-        <fundo>DGLAB</fundo>
-    </fundos>
+    <tipo>RADA</tipo>
+    <legislacao>leg_Portaria_381_2019</legislacao>
+    <entidades>
+        <entidade>DGLAB</entidade>
+    </entidades>
     <classes>
         <classe>
-            <código>100.10.001</código>
-            <naturezaIntervenção>PARTICIPANTE</naturezaIntervenção>
+            <codigo>100.10.001</codigo>
             <donos>
                 <dono>AR</dono>
             </donos>
-            <anoInício>1980</anoInício>
-            <anoFim>1990</anoFim>
-            <dimensãoSuporte>
-                <papel>123</papel>
-                <digital>123</digital>
-            </dimensãoSuporte>
-            <númeroAgregações>85</númeroAgregações>
+            <dataInicial>1980</dataInicial>
+            <dataFinal>1990</dataFinal>
+            <medicaoPapel>123</medicaoPapel>
+            <medicaoDigital>123</medicaoDigital>
+            <numAgregacoes>85</numAgregacoes>
         </classe>
         <classe>
-            <código>150.10.701.01</código>
-            <anoInício>1985</anoInício>
-            <anoFim>1995</anoFim>
-            <dimensãoSuporte>
-                <digital>1000</digital>
-            </dimensãoSuporte>
-            <númeroAgregações>100</númeroAgregações>
+            <codigo>150.10.701.01</codigo>
+            <dataInicial>1985</dataInicial>
+            <dataFinal>1995</dataFinal>
+            <medicaoDigital>1000</medicaoDigital>
+            <numAgregacoes>100</numAgregacoes>
         </classe>
     </classes>
-</autoEliminação>
+</autoEliminacao>
