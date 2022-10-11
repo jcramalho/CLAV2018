@@ -34,65 +34,68 @@ var indicePesquisa = [];
 //reload/reset
 
 exports.reloadLegislacao = async () => {
-  console.debug("A carregar a legislação da BD para a cache...");
+  console.debug("Legislação: RELOAD");
   legislacao = [];
   legislacao = await loadLegs();
-  console.debug("Terminei de carregar a legislação.");
+  console.debug("Legislação: FIM-RELOAD");
 };
 
 exports.reloadEntidades = async () => {
-  console.debug("A carregar as entidades da BD para a cache...");
+  console.debug("Entidades: RELOAD");
   entidades = [];
   entidades = await loadEntidades();
-  console.debug("Terminei de carregar as entidades.");
+  console.debug("Entidades: FIM-RELOAD");
 };
 
 exports.reloadTipologias = async () => {
-  console.debug("A carregar as tipologias da BD para a cache...");
+  console.debug("Tipologias: RELOAD");
   tipologias = [];
   tipologias = await loadTipologias();
-  console.debug("Terminei de carregar as tipologias.");
+  console.debug("Tipologias: FIM-RELOAD");
 };
 
 exports.reloadClasses = async () => {
-  console.debug("A carregar as Classes da BD para a cache...");
+  console.debug("Classes: RELOAD");
   classes = [];
   classes = await loadClasses();
   classList = [].concat.apply([], levelClasses);
 
-  console.debug("Terminei de carregar as Classes.");
+  console.debug("Classes: FIM-RELOAD");
 
   //Carrega a info completa de todas as classes
-  console.debug("A obter a informação completa das classes...");
+  console.debug("Classes: INFO-COMPLETA");
   classTreeInfo = await loadClassesInfo();
-  console.debug("a guardar a informação num ficheiro...");
+  console.debug("Classes: INFO-COMPLETA-STORE");
+  var dir = './public/classes';
+  if (!fs.existsSync(dir)){
+    fs.mkdirSync(dir, { recursive: true });
+  }
   fs.writeFileSync(
     "./public/classes/classesInfo.json",
     JSON.stringify(classTreeInfo, null, 4)
   );
-  console.debug("Terminei de carregar a informação completa das classes.");
+  console.debug("Classes: FIM-INFO-COMPLETA");
 };
 
 exports.reset = async () => {
   try {
-    console.debug("A carregar as classes da BD para a cache...");
+    console.debug("Classes: LOAD");
     classTree = await loadClasses();
     classList = [].concat.apply([], levelClasses);
-    console.debug("Terminei de carregar as classes.");
+    console.debug("Classes: FIM-LOAD");
 
     console.log(
-      "A carregar a informação completa das classes para a cache a partir do ficheiro..."
+      "Classes: INFO-COMPLETA-LOAD"
     );
 
     if (fs.existsSync("./public/classes/classesInfo.json")) {
       classTreeInfo = JSON.parse(
         fs.readFileSync("./public/classes/classesInfo.json")
       );
-      console.log("Terminei de carregar a informação completa das classes.");
+      console.log("Classes: FIM-INFO-COMPLETA-LOAD");
     } 
     else {
       console.log("Erro ao tentar ler o ficheiro classesInfo.json.")
-      console.log("Fazendo o reload da informação das classes.")
         
       exports.reloadClasses()
         .then(async () => { 
