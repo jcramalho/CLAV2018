@@ -25,7 +25,7 @@
     "body-parser": "^1.18.2",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
-    "exceljs": "^2.0.1",
+    "exceljs": "^4.3.0",
     "express": "^4.16.1",
     "express-validator": "^6.6.0",
     "formidable": "^1.2.2",
