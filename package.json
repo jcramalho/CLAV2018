@@ -35,7 +35,7 @@
     "jsonwebtoken": "^8.3.0",
     "libxmljs": "^0.19.8",
     "mongodb": "^3.5.9",
-    "mongoose": "^5.9.26",
+    "mongoose": "^5.13.15",
     "morgan": "^1.10.0",
     "nanoid": "^3.1.31",
     "ncp": "^2.0.0",
