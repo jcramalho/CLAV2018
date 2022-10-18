@@ -8,6 +8,9 @@ const e = require("express")
 const Contador = require('../../controllers/api/contador')
 
 var aeConverter = function(obj,tipo) {
+
+  console.log(JSON.stringify(obj))
+
   return new Promise(async function(resolve, reject) {
 
     // Construção do objeto interno
@@ -16,7 +19,7 @@ var aeConverter = function(obj,tipo) {
     var num = cont.valor
     await Contador.incrementar('ae')
     // data do momento
-    var d = new Date().toISOString().substr(0, 4)
+    var d = new Date().toISOString().substring(0, 4)
   
     var fonteLeg = obj['fonteLegitimação'];
     var fonteLegTipo = fonteLeg[0].tipo[0]

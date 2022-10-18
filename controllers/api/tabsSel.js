@@ -488,7 +488,6 @@ async function validateColumnsValues(
     nivel = worksheet.getColumn(headers.nivel).values;
     nivel = nivel.map((e) => parseCell(e));
   }
-
   for (let i = start; i < nivel.length; i++) {
     if (!/^\s*[1-4]\s*$/g.test(nivel[i])) {
       errors.push({
@@ -497,7 +496,6 @@ async function validateColumnsValues(
       // throw `Nível inválido na linha ${i} da tabela!\n O nível da classe está compreendido entre 1 e 4`;
     }
   }
-
   // codigos
   if (fonteL == "TS/LC" || fonteL == "PGD/LC") {
     worksheet
@@ -506,7 +504,6 @@ async function validateColumnsValues(
         if (rowNumber >= start)
           cods.push(parseCell(cell.value).replace(/\s*/g, ""));
       });
-
     for (let i = 0; i < cods.length; i++) {
       if (!/^\s*\d{3}(\.\d{2}(\.\d{3}(\.\d{2})?)?)?\s*$/g.test(cods[i])) {
         errors.push({
@@ -569,7 +566,7 @@ async function validateColumnsValues(
   // titulos
   c = worksheet.getColumn(headers.titulos).values;
   c = c.map((e) => parseCell(e));
-
+  
   for (let i = start; i < c.length; i++) {
     if (c[i] == null) {
       errors.push({
@@ -629,6 +626,7 @@ async function validateColumnsValues(
 
       for (let i = start; i < c.length; i++) {
         if (c[i] != null) {
+          c[i] = c[i].replace(/(\r\n|\n|\r)/gm, "")
           if (!/^\s*\w+\s*(#\s*\w+\s*)*#*$/g.test(c[i])) {
             errors.push({
               msg: `Célula inválida na linha ${i} e coluna ${headers.donos} da tabela!\nApenas deve conter siglas de entidades/tipologias separadas por '#' ou nada (processo não selecionado).`,
@@ -658,6 +656,7 @@ async function validateColumnsValues(
 
       for (let i = start; i < p.length; i++) {
         if (p[i] != null) {
+          p[i] = p[i].replace(/(\r\n|\n|\r)/gm, "")
           if (!/^\s*\w+\s*(#\s*\w+\s*)*#*$/g.test(p[i])) {
             errors.push({
               msg: `Célula inválida na linha ${i} e coluna ${headers.participantes} da tabela!\nApenas deve conter siglas de entidades/tipologias separadas por '#' ou nada (processo não selecionado).`,
@@ -813,6 +812,7 @@ async function validateColumnsValues(
         lvl4 = cods.filter((c) => c.split(".").length == 4);
       }
       const pcas = [];
+
       worksheet
         .getColumn(headers.pca)
         .eachCell({ includeEmpty: true }, (cell, rowNumber) => {
@@ -832,7 +832,6 @@ async function validateColumnsValues(
         .eachCell({ includeEmpty: true }, (cell, rowNumber) => {
           if (rowNumber >= start) formas.push(parseCell(cell.value));
         });
-
       for (let i = 0; i < pcas.length; i++) {
         if (
           (fonteL == "PGD/LC" &&
@@ -1030,6 +1029,7 @@ async function validateHeaders(
   let errObj = { file, errors: [] };
   // typeOrg == "TS Organizacional" ou typeOrg == "TS Pluriorganizacional"
   for (let i = 1; i < headers.length; i++) {
+    headers[i] = headers[i].replace(/(\r\n|\n|\r)/gm, " ")
     if (/^\s*Código\s*$/g.test(headers[i])) {
       codigos = i;
     } else if (/^\s*Título\s*$/g.test(headers[i])) {
@@ -1046,13 +1046,13 @@ async function validateHeaders(
       nivel = i;
     } else if (/^\s*Descrição\s*$/g.test(headers[i])) {
       descricao = i;
-    } else if (/^\s*PCA\s*$/g.test(headers[i])) {
+    } else if (/^\s*PCA\s*$|\s*Prazo Conservação Administrativa\s*/g.test(headers[i])) {
       pca = i;
     } else if (
       /^\s*([Nn][Oo][Tt][Aa](\n|\r|\r\n|\s)?PCA)\s*$/g.test(headers[i])
     ) {
       notaPCA = i;
-    } else if (/^\s*DF\s*$/g.test(headers[i])) {
+    } else if (/^\s*DF\s*$|^\s*Destino Final\s*$/g.test(headers[i])) {
       df = i;
     } else if (/^\s*(Nota (ao )?DF|NOTA (AO )?DF)\s*$/g.test(headers[i])) {
       notaDF = i;
@@ -1226,7 +1226,6 @@ async function validateHeaders(
   ents_tips = ents_tips.concat(
     tips.map((t) => ({ sigla: t.sigla, designacao: t.designacao }))
   );
-
   if (typeOrg == "TS Organizacional") {
     if (fonteL == "TS/LC") {
       ret = {
@@ -1240,6 +1239,7 @@ async function validateHeaders(
         .split("_")[4]
         .split(".")[0]
         .replace(" ", "_")
+        .replace(/(\r\n|\n|\r)/gm, "")
         .normalize("NFC");
 
       if (
@@ -1281,6 +1281,7 @@ async function validateHeaders(
         .split("_")[4]
         .split(".")[0]
         .replace(" ", "_")
+        .replace(/(\r\n|\n|\r)/gm, "")
         .normalize("NFC");
 
       if (
@@ -1326,6 +1327,7 @@ async function validateHeaders(
         .split("_RADA_")[1]
         .split(".")[0]
         .replace(" ", "_")
+        .replace(/(\r\n|\n|\r)/gm, "")
         .normalize("NFC");
 
       if (
@@ -1399,7 +1401,7 @@ async function validateHeaders(
       aux[aux.length - 1] = aux[aux.length - 1].split(".")[0];
       let ents = [];
       for (var i = aux.length - 1; !/^\d+$/.test(aux[i]); i--) {
-        ents.push(aux[i].replace(" ", "_").normalize("NFC"));
+        ents.push(aux[i].replace(" ", "_").replace(/(\r\n|\n|\r)/gm, "").normalize("NFC"));
       }
 
       let erro = [];
