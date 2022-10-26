@@ -79,22 +79,41 @@ validaEstruturaJSON = function(req, res, next){
   var form = new formidable.IncomingForm();
   form.parse(req, async (error, fields, formData) => {
     if (error)
-      res.status(512).jsonp({mensagem: `${errosAE.csv1_512} ${error}`, erros: []});
+      res.status(516).jsonp({mensagem: `${errosAE.csv5_516} ${error}`, erros: []});
     else if (!formData.file || !formData.file.path)
-      res.status(513).jsonp({mensagem: `${errosAE.csv2_513}`, erros: []});
+      res.status(517).jsonp({mensagem: `${errosAE.csv6_517}`, erros: []});
     else if (formData.file.type == "application/json") {
-      
+
+      var mensagens = []
       try { 
         var docJSON = fs.readFileSync(formData.file.path);
         var doc = JSON.parse(docJSON)
-        req.doc = doc
-        next()
+
+        if (!doc.tipo) mensagens.push(json22)
+        else if (!doc.legitimacao) mensagens.push(json23)
+        else if (!doc.entidades) mensagens.push(json24)
+        else if (!doc.classes) mensagens.push(json25)
+        else if (doc.tipo != "PGD" && doc.tipo != "PGD_LC" && doc.tipo != "RADA") mensagens.push(json26)
+          
+        if(mensagens.length > 0){
+          res.status(518).jsonp({ 
+            mensagem: errosAE.json28_518, 
+            erros: mensagens})
+        } else {
+          req.doc = doc
+          next()
+        }
       }
-      catch(e) { res.status(514).jsonp({ mensagem: errosAE.json24_514, erros: []}); }
+      catch(e) { 
+        mensagens.push(errosAE.json27)
+        res.status(518).jsonp({ 
+          mensagem: errosAE.json28_518, 
+          erros: mensagens})
+      }
 
     } else 
-        res.status(516).jsonp({
-          mensagem: errosAE.json26_516,
+        res.status(519).jsonp({
+          mensagem: errosAE.json29_519,
           erros: []
         })
   }) 
@@ -114,20 +133,23 @@ convFormatoIntermedioJSON = function(req, res, next){
     myLeg = State.getLegislacaoByCodigo(myAuto.legislacao.slice(4))
     myAuto.legislacao = myAuto.tipo + " " + myLeg.codigo
     myAuto.refLegislacao = myLeg.id
-  } catch(e) { mensagens.push(errosAE.csv27) }
+  } catch(e) { mensagens.push(errosAE.csv31) }
 
   // tipo  
   myAuto.tipo = 'AE_' + myAuto.tipo
 
   // entidades
-  var myEntidades = myAuto.entidades.map(f => { 
+  var myEntidades = []
+  try {
+    myEntidades = myAuto.entidades.map(f => { 
       let ent = State.getEntidade('ent_' + f)
       return ent
-  })
-  myAuto.entidades = myEntidades.map(e => {return {
+    })
+    myAuto.entidades = myEntidades.map(e => {return {
       entidade: e.id,
       designacao: e.designacao
-  }})
+    }})
+  } catch(e) { mensagens.push(errosAE.csv32) }
 
   // classes
   for(var i=0; i < myAuto.classes.length; i++){
@@ -168,8 +190,8 @@ convFormatoIntermedioJSON = function(req, res, next){
   }
 
   if (mensagens.length > 0)
-    return res.status(517).jsonp({
-      mensagem: errosAE.csv29_517,
+    return res.status(521).jsonp({
+      mensagem: errosAE.csv36_521,
       erros: mensagens
     });
   else {
@@ -186,9 +208,9 @@ validaEstruturaXML = function(req, res, next){
   var form = new formidable.IncomingForm();
   form.parse(req, async (error, fields, formData) => {
     if (error)
-      res.status(512).jsonp({mensagem: `${errosAE.csv1_512} ${error}`, erros: []});
+      res.status(516).jsonp({mensagem: `${errosAE.csv5_516} ${error}`, erros: []});
     else if (!formData.file || !formData.file.path)
-      res.status(513).jsonp({mensagem: `${errosAE.csv2_513}`, erros: []});
+      res.status(517).jsonp({mensagem: `${errosAE.csv6_517}`, erros: []});
     else if (formData.file.type == "text/xml") {
 
       var schemaPath = __dirname + "/../../public/schema/autoEliminacao.xsd";
@@ -201,8 +223,8 @@ validaEstruturaXML = function(req, res, next){
         const parser = new xml2js.Parser();
         parser.parseString(doc, (error, result) => {
           if (error) {
-            res.status(514).jsonp({
-              mensagem: errosAE.xml24_514,
+            res.status(518).jsonp({
+              mensagem: errosAE.xml28_518,
               erros: error
             })
           } else {
@@ -213,16 +235,16 @@ validaEstruturaXML = function(req, res, next){
       } else {
         var mensagens = []
         for(var i=0; i < xmlDoc.validationErrors.length; i++) {
-          mensagens.push(errosAE.xml23 + xmlDoc.validationErrors[i].line)
+          mensagens.push(errosAE.xml27 + xmlDoc.validationErrors[i].line)
         }
-        res.status(514).jsonp({
-          mensagem: errosAE.xml24_514,
+        res.status(518).jsonp({
+          mensagem: errosAE.xml28_518,
           erros: mensagens
         })
       } 
     } else
-        res.status(516).jsonp({
-          mensagem: errosAE.xml26_516,
+        res.status(519).jsonp({
+          mensagem: errosAE.xml29_519,
           erros: []
         })
   });
@@ -242,20 +264,24 @@ convFormatoIntermedioXML = function(req, res, next){
     myLeg = State.getLegislacaoByCodigo(myAuto.legislacao[0].slice(4))
     myAuto.legislacao = myAuto.tipo[0] + " " + myLeg.codigo
     myAuto.refLegislacao = myLeg.id
-  } catch(e) { mensagens.push(errosAE.csv27) }
+  } catch(e) { mensagens.push(errosAE.csv31) }
 
   // tipo
   myAuto.tipo = 'AE_' + myAuto.tipo[0]
   
   // entidades
-  var myEntidades = myAuto.entidades[0].entidade.map(f => { 
-    let ent = State.getEntidade('ent_' + f)
-    return ent
-  })
-  myAuto.entidades = myEntidades.map(e => {return {
-      entidade: e.id,
-      designacao: e.designacao
-  }})
+  var myEntidades = []
+  try { 
+    myEntidades = myAuto.entidades[0].entidade.map(f => { 
+      let ent = State.getEntidade('ent_' + f)
+      return ent
+    })
+    myAuto.entidades = myEntidades.map(e => {return {
+        entidade: e.id,
+        designacao: e.designacao
+    }})
+  } catch(e) { mensagens.push(errosAE.csv32) }
+
 
   var todasClasses = myAuto.classes[0].classe
   myAuto.classes = []
@@ -317,8 +343,8 @@ convFormatoIntermedioXML = function(req, res, next){
   delete myAuto["$"]
 
   if (mensagens.length > 0)
-    return res.status(517).jsonp({
-      mensagem: errosAE.csv29_517,
+    return res.status(521).jsonp({
+      mensagem: errosAE.csv36_521,
       erros: mensagens
     });
   else {
@@ -335,11 +361,32 @@ validaEstruturaCSV = async function(req, res, next){
   var form = new formidable.IncomingForm()
 
   form.parse(req, async (error, fields, formData) => {
+    if (!fields.tipo)
+      res.status(512).jsonp({
+        mensagem: errosAE.csv1_512,
+        erros: []
+      })
+    else if (!fields.legitimacao)
+      res.status(513).jsonp({
+        mensagem: errosAE.csv2_513,
+        erros: []
+      })
+    else if (!fields.entidade)
+      res.status(514).jsonp({
+        mensagem: errosAE.csv3_514,
+        erros: []
+      })
+    
+    else if (fields.tipo != "PGD" && fields.tipo != "PGD_LC" && fields.tipo != "RADA")
+      res.status(515).jsonp({
+        mensagem: errosAE.csv4_515,
+        erros: []
+      })
 
-    if (error)
-      res.status(512).jsonp({mensagem: `${errosAE.csv1_512} ${error}`, erros: []});
+    else if (error)
+      res.status(516).jsonp({mensagem: `${errosAE.csv5_516} ${error}`, erros: []});
     else if (!formData.file || !formData.file.path)
-      res.status(513).jsonp({mensagem: `${errosAE.csv2_513}`, erros: []});
+      res.status(517).jsonp({mensagem: `${errosAE.csv6_517}`, erros: []});
     else if (formData.file.type == "text/csv" || formData.file.type == "application/vnd.ms-excel") {
       var file = fs.readFileSync(formData.file.path, 'utf8')
       Papa.parse(file, {
@@ -356,24 +403,24 @@ validaEstruturaCSV = async function(req, res, next){
 
           if(f1.length != 0){
             if((Object.keys(linha).length) != 9)
-              mensagens.push(errosAE.csv3);
+              mensagens.push(errosAE.csv7);
             if(!linha.hasOwnProperty('codigo')){
               if(tipo == "TS_LC" || tipo == "PGD_LC")
-                mensagens.push(errosAE.csv4);
+                mensagens.push(errosAE.csv8);
               else
-                mensagens.push(errosAE.csv5);
+                mensagens.push(errosAE.csv9);
             }
-            if(!linha.hasOwnProperty('referencia')) mensagens.push(errosAE.csv6);
-            if(!linha.hasOwnProperty('dataInicial')) mensagens.push(errosAE.csv7);
-            if(!linha.hasOwnProperty('dataFinal')) mensagens.push(errosAE.csv8);
-            if(!linha.hasOwnProperty('numAgregacoes')) mensagens.push(errosAE.csv9);
-            if(!linha.hasOwnProperty('medicaoPapel')) mensagens.push(errosAE.csv10);
-            if(!linha.hasOwnProperty('medicaoDigital')) mensagens.push(errosAE.csv11);
-            if(!linha.hasOwnProperty('medicaoOutro')) mensagens.push(errosAE.csv12);
-            if(!linha.hasOwnProperty('dono')) mensagens.push(errosAE.csv13);
+            if(!linha.hasOwnProperty('referencia')) mensagens.push(errosAE.csv10);
+            if(!linha.hasOwnProperty('dataInicial')) mensagens.push(errosAE.csv11);
+            if(!linha.hasOwnProperty('dataFinal')) mensagens.push(errosAE.csv12);
+            if(!linha.hasOwnProperty('numAgregacoes')) mensagens.push(errosAE.csv13);
+            if(!linha.hasOwnProperty('medicaoPapel')) mensagens.push(errosAE.csv14);
+            if(!linha.hasOwnProperty('medicaoDigital')) mensagens.push(errosAE.csv15);
+            if(!linha.hasOwnProperty('medicaoOutro')) mensagens.push(errosAE.csv16);
+            if(!linha.hasOwnProperty('dono')) mensagens.push(errosAE.csv17);
           }
           else
-            mensagens.push(errosAE.csv14);
+            mensagens.push(errosAE.csv18);
 
           if(formData.agreg) { // AMBOS FICHEIROS
             if(formData.agreg.type == "application/vnd.ms-excel" || formData.file.type == "text/csv"){
@@ -391,21 +438,21 @@ validaEstruturaCSV = async function(req, res, next){
 
                     if(f2.length != 0){
                       if((Object.keys(linha).length) != 6)
-                        mensagens2.push(errosAE.csv15);
+                        mensagens2.push(errosAE.csv19);
                       if(!linha.hasOwnProperty('codigoClasse')){
                         if(tipo == "TS_LC" || tipo == "PGD_LC")
-                          mensagens2.push(errosAE.csv16);
+                          mensagens2.push(errosAE.csv20);
                         else
-                          mensagens2.push(errosAE.csv17);
+                          mensagens2.push(errosAE.csv21);
                       }
-                      if(!linha.hasOwnProperty('referencia')) mensagens2.push(errosAE.csv18);
-                      if(!linha.hasOwnProperty('codigoAgregacao')) mensagens2.push(errosAE.csv19);
-                      if(!linha.hasOwnProperty('titulo')) mensagens2.push(errosAE.csv20);
-                      if(!linha.hasOwnProperty('dataInicioContagemPCA')) mensagens2.push(errosAE.csv21);
-                      if(!linha.hasOwnProperty('intervencao')) mensagens2.push(errosAE.csv22);
+                      if(!linha.hasOwnProperty('referencia')) mensagens2.push(errosAE.csv22);
+                      if(!linha.hasOwnProperty('codigoAgregacao')) mensagens2.push(errosAE.csv23);
+                      if(!linha.hasOwnProperty('titulo')) mensagens2.push(errosAE.csv24);
+                      if(!linha.hasOwnProperty('dataInicioContagemPCA')) mensagens2.push(errosAE.csv25);
+                      if(!linha.hasOwnProperty('intervencao')) mensagens2.push(errosAE.csv26);
                     }
                     else
-                      mensagens2.push(errosAE.csv23);
+                      mensagens2.push(errosAE.csv27);
 
                     if (mensagens.length > 0 || mensagens2.length > 0) {
                       let mens = []
@@ -413,8 +460,8 @@ validaEstruturaCSV = async function(req, res, next){
                         mens.push(mensagens[i])
                       for(var j=0; j < mensagens2.length; j++)
                         mens.push(mensagens2[j])
-                      return res.status(514).jsonp({
-                        mensagem: errosAE.csv24_514,
+                      return res.status(518).jsonp({
+                        mensagem: errosAE.csv28_518,
                         erros: mens
                       })
                     } else {
@@ -428,14 +475,14 @@ validaEstruturaCSV = async function(req, res, next){
               });
             } 
             else
-              res.status(515).jsonp({
-                mensagem: errosAE.csv25_515,
+              res.status(519).jsonp({
+                mensagem: errosAE.csv29_519,
                 erros: mensagens
               })
           } else { // SÓ FICHEIRO DAS CLASSES
             if (mensagens.length > 0)
-              return res.status(514).jsonp({
-                mensagem: errosAE.csv24_514,
+              return res.status(518).jsonp({
+                mensagem: errosAE.csv28_518,
                 erros: mensagens
               })
             else {
@@ -448,9 +495,9 @@ validaEstruturaCSV = async function(req, res, next){
         }
       })
     } else 
-        res.status(516).jsonp({
-          mensagem: errosAE.csv26_516,
-          erros: mensagens
+        res.status(520).jsonp({
+          mensagem: errosAE.csv30_520,
+          erros: []
         })
   })
 }
@@ -475,23 +522,30 @@ convFormatoIntermedioCSV = function(req, res, next){
     myLeg = State.getLegislacaoByCodigo(req.doc[0].legitimacao.slice(4))
     myAuto.legislacao = req.doc[0].tipo + " " + myLeg.codigo
     myAuto.refLegislacao = myLeg.id
-  } catch(e) { mensagens.push(errosAE.csv27) }
+  } catch(e) { mensagens.push(errosAE.csv31) }
 
   // entidades
   var myEntidades = []
-  if(req.doc[0].entidade != '') {
-    var ents = req.doc[0].entidade.split("###")
-    for(var i=0; i < ents.length - 1; i++){
-        var e = {}
+  try {
+    if(req.doc[0].entidade != '') {
+      var ents = req.doc[0].entidade.split("###")
+      for(var i=0; i < ents.length - 1; i++){
+          var e = {}
+          var sigla = ''
 
-        var sep = ents[i].split(" - ")
-        if(sep[0].charAt(0) == ',') e.entidade = sep[0].substring(1); // remover vírgula a mais
-        else e.entidade = sep[0]
-        e.designacao = sep[1]
+          var sep = ents[i].split(" - ")
+          if(sep[0].charAt(0) == ',') sigla = sep[0].substring(1); // remover vírgula a mais
+          else sigla = sep[0]
 
-        myEntidades.push(e)
+          let ent = State.getEntidade("ent_" + sigla)
+          e.entidade = sigla
+          e.designacao = ent.designacao
+
+          myEntidades.push(e)
+      }
     }
-  }
+  } catch(e) { mensagens.push(errosAE.csv32) }
+
   myAuto.entidades = myEntidades
 
   var agsCodjaComPai = []   
@@ -551,21 +605,21 @@ convFormatoIntermedioCSV = function(req, res, next){
           // 2 - codigoClasse (I)
           if(tipo != "PGD" && tipo != "RADA" && tipo != "RADA_CLAV"){
             if(agregs[g].codigoClasse == '') // codigo vazio
-              mensagens.push(errosAE.csv28 + (g+2));
+              mensagens.push(errosAE.csv33 + (g+2));
             else // código não corresponde a nenhum código do ficheiro de classes
-              mensagens.push(errosAE.csv29 + (g+2));
+              mensagens.push(errosAE.csv34 + (g+2));
           }
           else 
             // 2 - codigoClasse (I) e 3 - referencia 
-            mensagens.push(errosAE.csv30 + (g+2) );
+            mensagens.push(errosAE.csv35 + (g+2) );
         }
       }
     }
   }
   if (mensagens.length > 0)
-    return res.status(517).jsonp(
+    return res.status(521).jsonp(
       {
-        mensagem: errosAE.csv31_517,
+        mensagem: errosAE.csv36_521,
         erros: mensagens
       });
   else {
@@ -590,16 +644,16 @@ validaSemantica = async function(req, res, next){
 
   if(tipo == "PGD_LC") {
     try { pgds = await PGD.listarLC() }
-    catch(e) { res.status(518).jsonp({ mensagem: errosAE.csv32_518, erros: []}); }
+    catch(e) { res.status(522).jsonp({ mensagem: errosAE.csv37_522, erros: []}); }
   }
   else {
     if(tipo == "PGD") {
      try { pgds = await PGD.listar() }
-     catch(e) { res.status(519).jsonp({ mensagem: errosAE.csv33_519, erros: []}); }
+     catch(e) { res.status(523).jsonp({ mensagem: errosAE.csv38_523, erros: []}); }
     } else {
       if(tipo == "RADA")
         try { pgds = await PGD.listarRADA() }
-        catch(e) { res.status(520).jsonp({ mensagem: errosAE.csv34_520, erros: []});}
+        catch(e) { res.status(524).jsonp({ mensagem: errosAE.csv39_524, erros: []});}
     }
   } 
 
@@ -608,7 +662,7 @@ validaSemantica = async function(req, res, next){
       idTS = req.doc.legislacao.split(' ')[1]
       var idPGD = pgds.find(x => x.idLeg == ('leg_' + idTS)).idPGD;
       myPGD = await PGD.consultar(idPGD) }
-    catch(e) { res.status(521).jsonp({ mensagem: errosAE.csv35_521, erros: []}); }
+    catch(e) { res.status(525).jsonp({ mensagem: errosAE.csv40_525, erros: []}); }
     codigos = myPGD.map(classe => classe.codigo)
     if(tipo == "PGD")
       referencias = myPGD.map(classe => classe.referencia);
@@ -619,7 +673,7 @@ validaSemantica = async function(req, res, next){
         idTS = req.doc.legislacao.split(' ')[1]
         var idPGD = pgds.find(x => x.idLeg == ('leg_' + idTS)).idRADA;
         myPGD = await PGD.consultarRADA(idPGD) }
-      catch(e){ res.status(522).jsonp({ mensagem: errosAE.csv36_522, erros: []}); }
+      catch(e){ res.status(526).jsonp({ mensagem: errosAE.csv41_526, erros: []}); }
       codigos = myPGD.map(classe => classe.codigo);
       referencias = myPGD.map(classe => classe.referencia);
     }
@@ -637,6 +691,7 @@ validaSemantica = async function(req, res, next){
     var mensCodRef = [] // mensagens de erro sobre o código e referência 
     var mensagens = [] // mensagens de erro sobre o resto dos dados
 
+    var classesRep = []
     var classes = req.doc.classes
     var infoEtapa = ""
 
@@ -652,11 +707,11 @@ validaSemantica = async function(req, res, next){
         // 2 - codigo (PGD/LC)
         if(tipo != "PGD" && tipo != "RADA" && tipo != "RADA_CLAV"){
           if(classes[i].codigo == ''){ // codigo vazio
-            mensCodRef.push(req.import == "csv" ? errosAE.csv37 + (i+2) : errosAE.jsonxml37 + "em que ocorre tal erro.");
+            mensCodRef.push(req.import == "csv" ? errosAE.csv42 + (i+2) : errosAE.jsonxml42 + "em que ocorre tal erro.");
             classVal = false
           }
           else if(!codigos.includes(classes[i].codigo)){ // codigo preenchido inválido
-            mensCodRef.push(req.import == "csv" ? errosAE.csv38 + (i+2) : errosAE.jsonxml38 + "com o código inválido " + classes[i].codigo);
+            mensCodRef.push(req.import == "csv" ? errosAE.csv43 + (i+2) : errosAE.jsonxml43 + "com o código inválido " + classes[i].codigo);
             classVal = false
           }
         } else {  // 3 - codigo / referencia (PGD e RADA)
@@ -665,11 +720,11 @@ validaSemantica = async function(req, res, next){
             if(!referencias.includes(classes[i].referencia)){ // referencia preenchida inválida
               if(classes[i].codigo != ''){
                 if(!codigos.includes(classes[i].codigo)){ // referencia preenchida inválida + codigo preenchido inválido
-                  mensCodRef.push(req.import == "csv" ? errosAE.csv39 + (i+2) : errosAE.jsonxml39 + "com a referência inválida " + classes[i].referencia + " e com o código inválido " + classes[i].codigo);
+                  mensCodRef.push(req.import == "csv" ? errosAE.csv44 + (i+2) : errosAE.jsonxml44 + "com a referência inválida " + classes[i].referencia + " e com o código inválido " + classes[i].codigo);
                   classVal = false
                 }
               } else{ // referencia preenchida inválida + codigo vazio
-                mensCodRef.push(req.import == "csv" ? errosAE.csv40 + (i+2) : errosAE.jsonxml40 + "com a referência inválida " + classes[i].referencia);
+                mensCodRef.push(req.import == "csv" ? errosAE.csv45 + (i+2) : errosAE.jsonxml45 + "com a referência inválida " + classes[i].referencia);
                 classVal = false
               }
             }
@@ -680,11 +735,11 @@ validaSemantica = async function(req, res, next){
           else{ // referencia não preenchida -> vamos verificar codigo
             if(classes[i].codigo != ''){
               if(!codigos.includes(classes[i].codigo)){ // codigo preenchido inválido
-                mensCodRef.push(req.import == "csv" ? errosAE.csv41 + (i+2) : errosAE.jsonxml41 + "com o código inválido " + classes[i].codigo);
+                mensCodRef.push(req.import == "csv" ? errosAE.csv46 + (i+2) : errosAE.jsonxml46 + "com o código inválido " + classes[i].codigo);
                 classVal = false
               }
             } else{ // codigo e referencia vazios
-              mensCodRef.push(req.import == "csv" ? errosAE.csv42 + (i+2) : errosAE.jsonxml42 + "em que ocorre tal erro.");
+              mensCodRef.push(req.import == "csv" ? errosAE.csv47 + (i+2) : errosAE.jsonxml47 + "em que ocorre tal erro.");
               classVal = false
             }
           }
@@ -695,7 +750,7 @@ validaSemantica = async function(req, res, next){
         if(classVal) { // se não tiver codigo ou referencia válidos, não avança
           
           var erroJX = ""
-
+          
           // Vai buscar a classe à TS 
           var a = []
           if(codref == 1){  // codigo
@@ -720,15 +775,15 @@ validaSemantica = async function(req, res, next){
 
             if(!a[0].hasOwnProperty('df')){
               if(tipo == "TS_LC" || tipo == "PGD_LC")
-                mensagens.push(req.import == "csv" ? errosAE.csv43 + (i+2) : errosAE.jsonxml43 + erroJX);
+                mensagens.push(req.import == "csv" ? errosAE.csv48 + (i+2) : errosAE.jsonxml48 + erroJX);
               else
-                mensagens.push(req.import == "csv" ? errosAE.csv44 + (i+2) : errosAE.jsonxml44 + erroJX);
+                mensagens.push(req.import == "csv" ? errosAE.csv49 + (i+2) : errosAE.jsonxml49 + erroJX);
               classVal = false;
             } else if(!a[0].hasOwnProperty('pca')){
               if(tipo == "TS_LC" || tipo == "PGD_LC")
-                mensagens.push(req.import == "csv" ? errosAE.csv45 + (i+2) : errosAE.jsonxml45 + erroJX);
+                mensagens.push(req.import == "csv" ? errosAE.csv50 + (i+2) : errosAE.jsonxml50 + erroJX);
               else
-                mensagens.push(req.import == "csv" ? errosAE.csv46 + (i+2) : errosAE.jsonxml46 + erroJX);
+                mensagens.push(req.import == "csv" ? errosAE.csv51 + (i+2) : errosAE.jsonxml51 + erroJX);
               classVal = false;
             } else {
               pca = a[0].pca
@@ -736,7 +791,7 @@ validaSemantica = async function(req, res, next){
             }
           } else{
             classVal = false;
-            mensagens.push(req.import == "csv" ? errosAE.csv47 + (i+2) : errosAE.jsonxml47 + erroJX);
+            mensagens.push(req.import == "csv" ? errosAE.csv52 + (i+2) : errosAE.jsonxml52 + erroJX);
           }
 
           if(classVal){ // se tiver havido erro ao consultar a classe ou o df/pca, não avança
@@ -744,7 +799,7 @@ validaSemantica = async function(req, res, next){
             // Verificação extra II (PGDs e RADAs): se o DF for Conservação, o AE é inválido
             if(tipo == "PGD" || tipo == "RADA" || tipo == "RADA_CLAV"){
               if(df == "C"){
-                mensagens.push(req.import == "csv" ? errosAE.csv48 + (i+2) : errosAE.jsonxml48 + erroJX);
+                mensagens.push(req.import == "csv" ? errosAE.csv53 + (i+2) : errosAE.jsonxml53 + erroJX);
                 classVal = false;
               }
             }
@@ -769,87 +824,103 @@ validaSemantica = async function(req, res, next){
                   }
                 }
                 catch(e) {
-                  mensagens.push(req.import == "csv" ? errosAE.csv49 + (i+2) : errosAE.jsonxml49 + erroJX);
+                  mensagens.push(req.import == "csv" ? errosAE.csv54 + (i+2) : errosAE.jsonxml54 + erroJX);
                 }
               }
 
               var pcaNE = false
 
-              // Verificação extra IV: se PCA e/ou DF = NE, notas têm de estar preenchidas
+              // Verificação extra IV: não podem haver classes repetidas
+              var a = []
+              if(codref == 1){  // codigo
+                if(classesRep.includes(classes[i].codigo)) 
+                  mensagens.push(req.import == "csv" ? errosAE.csv55 + (i+2) : errosAE.jsonxml55 + erroJX);
+                else 
+                  classesRep.push(classes[i].codigo)
+              } else if(codref == 2){ // referencia
+                if(classesRep.includes(classes[i].referencia)) 
+                  mensagens.push(req.import == "csv" ? errosAE.csv56 + (i+2) : errosAE.jsonxml56 + erroJX);
+                else 
+                  classesRep.push(classes[i].referencia)
+              } 
+
+              /* [ERROS ELIMINADOS - Este erro não deve ser considerado, pois não devem existir na clav TS que não cumpram esta condição]
+
+              Verificação extra IV: se PCA e/ou DF = NE, notas têm de estar preenchidas 
               if(pca ==  "NE"){
-                pcaNE = true
+                pcaNE = true 
                 if(!pcaNota)
                   mensagens.push(req.import == "csv" ? errosAE.csv50 + (i+2) : errosAE.jsonxml50 + erroJX);
               }
               if(df == "NE"){
                 if(!dfNota)
                   mensagens.push(req.import == "csv" ? errosAE.csv51 + (i+2) : errosAE.jsonxml51 + erroJX);
-              }
+              }*/
 
             //####################################################################
 
               // 4 - dataInicial
               if(classes[i].dataInicial == '') // Campo vazio
-                mensagens.push(req.import == "csv" ? errosAE.csv52 + (i+2) : errosAE.jsonxml52 + erroJX);
+                mensagens.push(req.import == "csv" ? errosAE.csv57 + (i+2) : errosAE.jsonxml57 + erroJX);
               else{
                 if(!anoRegEx.test(classes[i].dataInicial) || (classes[i].dataInicial.length != 4)) // Campo mal preenchido : formato de data errado
-                  mensagens.push(req.import == "csv" ? errosAE.csv53 + (i+2) : errosAE.jsonxml53 + erroJX);
+                  mensagens.push(req.import == "csv" ? errosAE.csv58 + (i+2) : errosAE.jsonxml58 + erroJX);
                 else
                   if(Number(anoAtual) - Number(classes[i].dataInicial) > 100) // Campo mal preenchido: diferença entre o ano corrente e o valor introduzido não pode ser superior a 100 anos
-                    mensagens.push(req.import == "csv" ? errosAE.csv54 + (i+2) : errosAE.jsonxml54 + erroJX);
+                    mensagens.push(req.import == "csv" ? errosAE.csv59 + (i+2) : errosAE.jsonxml59 + erroJX);
               }
 
               // 5 - dataFinal
               if(classes[i].dataFinal == '') // Campo vazio
-                mensagens.push(req.import == "csv" ? errosAE.csv55 + (i+2) : errosAE.jsonxml55 + erroJX);
+                mensagens.push(req.import == "csv" ? errosAE.csv60 + (i+2) : errosAE.jsonxml60 + erroJX);
               else{
                 if(!anoRegEx.test(classes[i].dataFinal) || (classes[i].dataFinal.length != 4)) // Campo mal preenchido : formato de data errado
-                  mensagens.push(req.import == "csv" ? errosAE.csv56 + (i+2) : errosAE.jsonxml56 + erroJX);
+                  mensagens.push(req.import == "csv" ? errosAE.csv61 + (i+2) : errosAE.jsonxml61 + erroJX);
                 else{
                   if(Number(anoAtual) - Number(classes[i].dataFinal) > 100) // Campo mal preenchido: diferença entre o ano corrente e o valor introduzido não pode ser superior a 100 anos
-                    mensagens.push(req.import == "csv" ? errosAE.csv57 + (i+2) : errosAE.jsonxml57 + erroJX);
+                    mensagens.push(req.import == "csv" ? errosAE.csv62 + (i+2) : errosAE.jsonxml62 + erroJX);
                   else
                     if(classes[i].dataInicial != '' && Number(classes[i].dataFinal) < Number(classes[i].dataInicial)) // Campo mal preenchido: ano final inferior ao ano inicial + ano inicial superior ao ano final
-                      mensagens.push(req.import == "csv" ? errosAE.csv58 + (i+2) : errosAE.jsonxml58 + erroJX);
+                      mensagens.push(req.import == "csv" ? errosAE.csv63 + (i+2) : errosAE.jsonxml63 + erroJX);
                 }
               }
 
               // 6 - numAgregacoes
               if(!req.subAgreg && req.import == "csv"){ // não foi submitido um ficheiro de agregações (no caso de importação por csv)
                 if(classes[i].numAgregacoes == '') // Campo vazio
-                  mensagens.push(errosAE.csv59 + (i+2));
+                  mensagens.push(errosAE.csv64 + (i+2));
                 else
                   if(!(/^(0|([1-9]\d*))$/.test(classes[i].numAgregacoes))) // Campo mal preenchido: outros formatos de números
-                    mensagens.push(errosAE.csv60 + (i+2));
+                    mensagens.push(errosAE.csv65 + (i+2));
               }
               else{ // foi submitido um ficheiro de agregações ou foi importação por json/xml
                 if(classes[i].agregacoes.length <= 0) {
                   if(classes[i].numAgregacoes == '' || (!(/^(0|([1-9]\d*))$/.test(classes[i].numAgregacoes)))){
                     if(tipo == "TS_LC" || tipo == "PGD_LC")
-                      mensagens.push(req.import == "csv" ? errosAE.csv61 + (i+2) : errosAE.jsonxml61 + erroJX);
+                      mensagens.push(req.import == "csv" ? errosAE.csv66 + (i+2) : errosAE.jsonxml66 + erroJX);
                     else
-                      mensagens.push(req.import == "csv" ? errosAE.csv62 + (i+2) : errosAE.jsonxml62 + erroJX);
+                      mensagens.push(req.import == "csv" ? errosAE.csv67 + (i+2) : errosAE.jsonxml67 + erroJX);
                   }
                 }
               }
               
               // 7 - medicaoPapel / medicaoDigital / medicaoOutro
               if(classes[i].medicaoPapel == '' && classes[i].medicaoDigital == '' && classes[i].medicaoOutro == '')// Os 3 campos da medicação vazios
-                mensagens.push(req.import == "csv" ? errosAE.csv63 + (i+2) : errosAE.jsonxml63 + erroJX);
+                mensagens.push(req.import == "csv" ? errosAE.csv68 + (i+2) : errosAE.jsonxml68 + erroJX);
               else{
-                if(classes[i].medicaoPapel != undefined && classes[i].medicaoPapel != '' && !(/^[0-9]*,?[0-9]*$/.test(classes[i].medicaoPapel))) // Campo mal preenchido: outros formatos de números
-                  mensagens.push(req.import == "csv" ? errosAE.csv64 + (i+2) : errosAE.jsonxml64 + erroJX);
-                if(classes[i].medicaoDigital != undefined && classes[i].medicaoDigital != '' && !(/^[0-9]*,?[0-9]*$/.test(classes[i].medicaoDigital))) // Campo mal preenchido: outros formatos de números
-                  mensagens.push(req.import == "csv" ? errosAE.csv65 + (i+2) : errosAE.jsonxml65 + erroJX);
-                if(classes[i].medicaoOutro != undefined && classes[i].medicaoOutro != '' && !(/^[0-9]*,?[0-9]*$/.test(classes[i].medicaoOutro))) // Campo mal preenchido: outros formatos de números
-                  mensagens.push(req.import == "csv" ? errosAE.csv66 + (i+2) : errosAE.jsonxml66 + erroJX);
+                if(classes[i].medicaoPapel != undefined && classes[i].medicaoPapel != '' && (!(/^[0-9]*,?[0-9]*$/.test(classes[i].medicaoPapel)) || Number(req.doc.classes[i].medicaoPapel.replace(',','.') <= 0))) // Campo mal preenchido: outros formatos de números
+                  mensagens.push(req.import == "csv" ? errosAE.csv69 + (i+2) : errosAE.jsonxml69 + erroJX);
+                if(classes[i].medicaoDigital != undefined && classes[i].medicaoDigital != '' && (!(/^[0-9]*,?[0-9]*$/.test(classes[i].medicaoDigital)) || Number(req.doc.classes[i].medicaoDigital.replace(',','.') <= 0))) // Campo mal preenchido: outros formatos de números
+                  mensagens.push(req.import == "csv" ? errosAE.csv70 + (i+2) : errosAE.jsonxml70 + erroJX);
+                if(classes[i].medicaoOutro != undefined && classes[i].medicaoOutro != '' && (!(/^[0-9]*,?[0-9]*$/.test(classes[i].medicaoOutro)) || Number(req.doc.classes[i].medicaoOutro.replace(',','.') <= 0))) // Campo mal preenchido: outros formatos de números
+                  mensagens.push(req.import == "csv" ? errosAE.csv71 + (i+2) : errosAE.jsonxml71 + erroJX);
               }
 
               // 8 - dono
               if(tipo != "PGD" && tipo != "RADA" && tipo != "RADA_CLAV"){
                 if(df == "C") { // Só verificamos caso o destino final seja Conservação
                   if(classes[i].dono == '') // Campo vazio
-                    mensagens.push(req.import == "csv" ? errosAE.csv67 + (i+2) : errosAE.jsonxml67 + erroJX);
+                    mensagens.push(req.import == "csv" ? errosAE.csv72 + (i+2) : errosAE.jsonxml72 + erroJX);
                   else{
                     var ents = []
                     ents = classes[i].dono.split("#")
@@ -859,7 +930,7 @@ validaSemantica = async function(req, res, next){
                         if(!resu){ 
                           var resu = State.getTipologia("tip_" + ents[j]) // Tipologia
                           if(!resu) // Campo mal preenchido: valores que não constam no campo Designação do catálogo de entidades da CLAV
-                            mensagens.push(req.import == "csv" ? errosAE.csv68 + (i+2) : errosAE.jsonxml68 + erroJX);
+                            mensagens.push(req.import == "csv" ? errosAE.csv73 + (i+2) : errosAE.jsonxml73 + erroJX);
                         } 
                       }
                     }
@@ -904,13 +975,13 @@ validaSemantica = async function(req, res, next){
 
             // 4 - codigoAgregacao
             if(agregacoes[j].codigoAgregacao == '') // Campo vazio
-              mensagens.push(req.import == "csv" ? errosAE.csv69 + (i+2) : errosAE.jsonxml69 + erroJX);
+              mensagens.push(req.import == "csv" ? errosAE.csv74 + (i+2) : errosAE.jsonxml74 + erroJX);
             else{
               if(codsagreg.length == 0) // (primeiro código)
                 codsagreg[0] = agregacoes[j].codigoAgregacao
               else {
                 if(codsagreg.includes(agregacoes[j].codigoAgregacao)) // Campo mal preenchido: agregações com o mesmo código da agregação / UI na mesma classe / série
-                  mensagens.push(req.import == "csv" ? errosAE.csv70 + (i+2) : errosAE.jsonxml70 + erroJX);
+                  mensagens.push(req.import == "csv" ? errosAE.csv75 + (i+2) : errosAE.jsonxml75 + erroJX);
                 else
                   codsagreg.push(agregacoes[j].codigoAgregacao)
               }
@@ -918,33 +989,33 @@ validaSemantica = async function(req, res, next){
 
             // 5 - titulo
             if(agregacoes[j].titulo == '') // Campo vazio
-              mensagens.push(req.import == "csv" ? errosAE.csv71 + (i+2) : errosAE.jsonxml71 + erroJX);
+              mensagens.push(req.import == "csv" ? errosAE.csv76 + (i+2) : errosAE.jsonxml76 + erroJX);
 
             // 6 - dataInicioContagemPCA
             if(agregacoes[j].dataContagem == '') // Campo vazio
-              mensagens.push(req.import == "csv" ? errosAE.csv72 + (i+2) : errosAE.jsonxml72 + erroJX);
+              mensagens.push(req.import == "csv" ? errosAE.csv77 + (i+2) : errosAE.jsonxml77 + erroJX);
             else{
               if(!anoRegEx.test(agregacoes[j].dataContagem) || (agregacoes[j].dataContagem.length != 4)) // Campo mal preenchido : formato de data errado
-                mensagens.push(req.import == "csv" ? errosAE.csv73 + (i+2) : errosAE.jsonxml73 + erroJX);
+                mensagens.push(req.import == "csv" ? errosAE.csv78 + (i+2) : errosAE.jsonxml78 + erroJX);
               else
                 if(!pcaNE && (Number(agregacoes[j].dataContagem) > (Number(anoAtual) - (Number(pca) + 1)))) // Campo mal preenchido
-                  mensagens.push(req.import == "csv" ? errosAE.csv74 + (i+2) : errosAE.jsonxml74 + erroJX); 
+                  mensagens.push(req.import == "csv" ? errosAE.csv79 + (i+2) : errosAE.jsonxml79 + erroJX); 
             }
 
             // 7 - intervencao
             if(tipo != "PGD" && tipo != "RADA" && tipo != "RADA_CLAV"){
               if(agregacoes[j].ni == ''){ // Campo vazio
                 if(df == "C")
-                  mensagens.push(req.import == "csv" ? errosAE.csv75 + (i+2) : errosAE.jsonxml75 + erroJX); 
+                  mensagens.push(req.import == "csv" ? errosAE.csv80 + (i+2) : errosAE.jsonxml80 + erroJX); 
                 else
-                  mensagens.push(req.import == "csv" ? errosAE.csv76 + (i+2) : errosAE.jsonxml76 + erroJX); 
+                  mensagens.push(req.import == "csv" ? errosAE.csv81 + (i+2) : errosAE.jsonxml81 + erroJX); 
               } else{
                 if(df == "C")
                   if(!/participante/i.test(agregacoes[j].ni)) // Campo mal preenchido: com outros valores que não Participante.
-                    mensagens.push(req.import == "csv" ? errosAE.csv77 + (i+2) : errosAE.jsonxml77 + erroJX); 
+                    mensagens.push(req.import == "csv" ? errosAE.csv82 + (i+2) : errosAE.jsonxml82 + erroJX); 
                 else
                   if(!/participante/i.test(agregacoes[j].ni) && !/dono/i.test(agregacoes[j].ni)) // Campo mal preenchido: com outros valores que não Dono ou Participante.
-                    mensagens.push(req.import == "csv" ? errosAE.csv78 + (i+2) : errosAE.jsonxml78 + erroJX); 
+                    mensagens.push(req.import == "csv" ? errosAE.csv82 + (i+2) : errosAE.jsonxml82 + erroJX); 
               }
             }
           } 
@@ -956,11 +1027,11 @@ validaSemantica = async function(req, res, next){
     req.infoEtapa = infoEtapa
     if(mensCodRef.length > 0 || mensagens.length > 0) {
       if(mensCodRef.length > 0) mensagens = mensCodRef
-      res.status(523).jsonp(
+      res.status(527).jsonp(
         {
-          mensagem: (req.import == "csv") ? errosAE.csv79_523 
-                  : (req.import == "json") ? errosAE.json79_523 
-                  : errosAE.xml79_523,
+          mensagem: (req.import == "csv") ? errosAE.csv84_527
+                  : (req.import == "json") ? errosAE.json84_527 
+                  : errosAE.xml84_527,
           erros: mensagens
         });     
     } else 
@@ -979,8 +1050,8 @@ router.post("/importarCSV",
   (req, res) => {
     User.getUserById(req.user.id, function (erro, user) {
       if (erro) 
-        res.status(524).json({
-          mensagem: errosAE.csv80_524,
+        res.status(528).json({
+          mensagem: errosAE.csv85_528,
           erros: erro
         });
       else {
@@ -989,13 +1060,13 @@ router.post("/importarCSV",
             res.status(201).jsonp({
               tipo: dados.tipo,
               codigoPedido: dados.codigo,
-              mensagem: errosAE.csv81_201 + dados.codigo,
+              mensagem: errosAE.csv86_201 + dados.codigo,
               ae: req.doc
             });
           })
           .catch((erro) => {
-            res.status(525).jsonp({
-              mensagem: errosAE.csv82_525,
+            res.status(529).jsonp({
+              mensagem: errosAE.csv87_529,
               erros: erro
             });
           })
@@ -1017,8 +1088,8 @@ router.post(
   (req, res) => {
     User.getUserById(req.user.id, function (erro, user) {
       if(erro)
-        res.status(524).json({
-          mensagem: errosAE.csv80_524,
+        res.status(528).json({
+          mensagem: errosAE.csv85_528,
           erros: erro
         });
       else {
@@ -1027,13 +1098,13 @@ router.post(
             res.status(201).jsonp({
               tipo: dados.tipo,
               codigoPedido: dados.codigo,
-              mensagem: errosAE.csv81_201 + dados.codigo,
+              mensagem: errosAE.csv86_201 + dados.codigo,
               ae: req.doc
             });
           })
           .catch((erro) => {
-            res.status(525).jsonp({
-              mensagem: errosAE.csv82_525,
+            res.status(529).jsonp({
+              mensagem: errosAE.csv87_529,
               erros: erro
             });
           })
@@ -1055,8 +1126,8 @@ router.post( "/importarXML",
   (req, res) => {
     User.getUserById(req.user.id, function (erro, user) {
       if(erro)
-        res.status(524).json({
-          mensagem: errosAE.csv80_524,
+        res.status(528).json({
+          mensagem: errosAE.csv85_528,
           erros: erro
         });
       else {
@@ -1065,13 +1136,13 @@ router.post( "/importarXML",
             res.status(201).jsonp({
               tipo: dados.tipo,
               codigoPedido: dados.codigo,
-              mensagem: errosAE.csv81_201 + dados.codigo,
+              mensagem: errosAE.csv86_201 + dados.codigo,
               ae: req.doc
             });
           })
           .catch((erro) => {
-            res.status(525).jsonp({
-              mensagem: errosAE.csv82_525,
+            res.status(529).jsonp({
+              mensagem: errosAE.csv87_529,
               erros: erro
             });
           })
