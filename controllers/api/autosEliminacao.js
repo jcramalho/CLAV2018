@@ -2,7 +2,7 @@ const execQuery = require('../../controllers/api/utils').execQuery
 const normalize = require('../../controllers/api/utils').normalize
 const criarHistorico = require("../../controllers/api/utils").criarHistorico
 var Pedidos = require('../../controllers/api/pedidos');
-
+const Auto = require("../../models/autoEliminacao");
 var AutosEliminacao = module.exports
 
 AutosEliminacao.listar = async function() {
@@ -542,6 +542,25 @@ AutosEliminacao.adicionarRADA = async function (auto) {
 }
 
 // ============================================================================
+/**
+ * Insere um novo Auto de Eliminação na coleção dos "autos" após o aprovação do pedido.
+ */
+ AutosEliminacao.criarDespacho = async (pedidoParams) => {
+    var auto = {
+        codigoPedido: pedidoParams.pedido.codigo,
+        dataAprovacao: new Date(),
+        dados: pedidoParams.pedido.objeto.dados,
+      };
+    
+    var newAuto = new Auto(auto);
+      try {
+        newAuto = await newAuto.save();
+        return newAuto.codigoPedido;
+      } catch (err) {
+        console.log(err);
+        throw "Ocorreu um erro a criar auto! Tente novamente mais tarde";
+      }
+};
 
 /**
  * Insere um novo Auto de Eliminação no sistema, gerando um pedido apropriado.

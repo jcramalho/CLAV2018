@@ -93,7 +93,7 @@ validaEstruturaJSON = function(req, res, next){
         else if (!doc.legitimacao) mensagens.push(json23)
         else if (!doc.entidades) mensagens.push(json24)
         else if (!doc.classes) mensagens.push(json25)
-        else if (doc.tipo != "PGD" && doc.tipo != "PGD_LC" && doc.tipo != "RADA") mensagens.push(json26)
+        else if (doc.tipo != "PGD" && doc.tipo != "PGD_LC" && doc.tipo != "RADA" && doc.tipo != "RADA_CLAV" && doc.tipo != "TS_LC") mensagens.push(json26)
           
         if(mensagens.length > 0){
           res.status(518).jsonp({ 

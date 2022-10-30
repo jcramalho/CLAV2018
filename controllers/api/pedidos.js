@@ -1,5 +1,6 @@
 const Pedido = require("../../models/pedido");
 const Notificacao = require("../../models/notificacoes");
+var AutosEliminacao = require('../../controllers/api/autosEliminacao');
 var Mailer = require("./mailer");
 const Pedidos = module.exports;
 var Logging = require("../logging");
@@ -134,6 +135,10 @@ Pedidos.repor = pedido =>  {
  * @return {Pedido} Código do pedido criado.
  */
 Pedidos.atualizar = async function (id, pedidoParams) {
+  if(pedidoParams.pedido.estado == "Validado" && pedidoParams.pedido.objeto.tipo == "Auto de Eliminação") {
+    AutosEliminacao.criarDespacho(pedidoParams)
+  }
+
   return new Promise(async (resolve, reject) => {
     var pedido = await Pedido.findOne({ codigo: pedidoParams.pedido.codigo });
     Pedido.findByIdAndRemove(id, async function (error) {
