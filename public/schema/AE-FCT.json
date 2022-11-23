@@ -1,13 +1,13 @@
 {
     "tipo": "PGD",
-    "legislacao": "Portaria 194/2011",
+    "legislacao": "leg_Portaria_194_2011",
     "entidades": ["DGLAB"],
     "classes": [
         {
             "codigo": "070.01.07",
             "referencia": "55",
-            "anoInicio": 2010,
-            "anoFim": 2012,
+            "dataInicial": 2010,
+            "dataFinal": 2012,
             "dimensaoSuporte": {
                 "papel": 10,
                 "digital": 1,
@@ -19,62 +19,62 @@
             "numAgregacoes": 5,
             "agregacoes": [
                 {
-                    "codigo": "MF - DSRICT",
+                    "codigoAgregacao": "MF - DSRICT",
                     "titulo": "Departamento de Suporte à Rede de Instituições...",
-                    "ano": 2010,
-                    "naturezaIntervencao": "DONO"
+                    "dataInicioContagemPCA": 2010,
+                    "intervencao": "DONO"
                 },
                 {
-                    "codigo": "MF - DGA",
+                    "codigoAgregacao": "MF - DGA",
                     "titulo": "Departamento de Gestão e Administração",
-                    "ano": 2011,
-                    "naturezaIntervencao": "DONO"
+                    "dataInicioContagemPCA": 2011,
+                    "intervencao": "DONO"
                 },
                 {
-                    "codigo": "MF - FCCN",
+                    "codigoAgregacao": "MF - FCCN",
                     "titulo": "Fundação para a Computação Científica Nacional",
-                    "ano": 2011,
-                    "naturezaIntervencao": "DONO"
+                    "dataInicioContagemPCA": 2011,
+                    "intervencao": "DONO"
                 },
                 {
-                    "codigo": "MF - DFA",
+                    "codigoAgregacao": "MF - DFA",
                     "titulo": "Departamento de Formação Avançada",
-                    "ano": 2011,
-                    "naturezaIntervencao": "DONO"
+                    "dataInicioContagemPCA": 2011,
+                    "intervencao": "DONO"
                 },
                 {
-                    "codigo": "MF - DPP",
+                    "codigoAgregacao": "MF - DPP",
                     "titulo": "Departamento de Programas e Projetos",
-                    "ano": 2010,
-                    "naturezaIntervencao": "DONO"
+                    "dataInicioContagemPCA": 2010,
+                    "intervencao": "DONO"
                 }
             ]
         },
         {
             "codigo": "100.05.01.02",
             "referencia": "103.2",
-            "anoInicio": 1980,
-            "anoFim": 1990,
+            "dataInicial": 1980,
+            "dataFinal": 1990,
             "dimensaoSuporte": {"papel": 123},
             "numAgregacoes": 3,
             "agregacoes": [
                 {
-                    "codigo": "PNA 1",
+                    "codigoAgregacao": "PNA 1",
                     "titulo": "Prémios Não Atribuídos",
-                    "ano": 1991,
-                    "naturezaIntervencao": "DONO"
+                    "dataInicioContagemPCA": 1991,
+                    "intervencao": "DONO"
                 },
                 {
-                    "codigo": "PNA 2",
+                    "codigoAgregacao": "PNA 2",
                     "titulo": "Prémios Não Atribuídos",
-                    "ano": 1991,
-                    "naturezaIntervencao": "DONO"
+                    "dataInicioContagemPCA": 1991,
+                    "intervencao": "DONO"
                 },
                 {
-                    "codigo": "PNA 3",
+                    "codigoAgregacao": "PNA 3",
                     "titulo": "Prémios Não Atribuídos",
-                    "ano": 1991,
-                    "naturezaIntervencao": "DONO"
+                    "dataInicioContagemPCA": 1991,
+                    "intervencao": "DONO"
                 }
             ]
         }
