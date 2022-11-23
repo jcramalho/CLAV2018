@@ -925,16 +925,14 @@ validaSemantica = async function(req, res, next){
                     mensagens.push(req.import == "csv" ? errosAE.csv72 + (i+2) : errosAE.jsonxml72 + erroJX);
                   else{
                     var ents = []
-                    ents = classes[i].dono.split("#")
+                    ents = classes[i].donos
                     for(var j=0; j < ents.length; j++){
-                      if(ents[j].length > 0){ // Ignora donos "vazios" (no caso do último caracter ser #)
                         var resu = State.getEntidade("ent_" + ents[j]) // Entidade
                         if(!resu){ 
                           var resu = State.getTipologia("tip_" + ents[j]) // Tipologia
                           if(!resu) // Campo mal preenchido: valores que não constam no campo Designação do catálogo de entidades da CLAV
                             mensagens.push(req.import == "csv" ? errosAE.csv73 + (i+2) : errosAE.jsonxml73 + erroJX);
                         } 
-                      }
                     }
                   }
                 }
