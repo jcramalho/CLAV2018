@@ -88,21 +88,6 @@ validaEstruturaJSON = function(req, res, next){
       try { 
         var docJSON = fs.readFileSync(formData.file.path);
         var doc = JSON.parse(docJSON)
-
-        if (!doc.tipo) mensagens.push(json22)
-        else if (!doc.legitimacao) mensagens.push(json23)
-        else if (!doc.entidades) mensagens.push(json24)
-        else if (!doc.classes) mensagens.push(json25)
-        else if (doc.tipo != "PGD" && doc.tipo != "PGD_LC" && doc.tipo != "RADA" && doc.tipo != "RADA_CLAV" && doc.tipo != "TS_LC") mensagens.push(json26)
-          
-        if(mensagens.length > 0){
-          res.status(518).jsonp({ 
-            mensagem: errosAE.json28_518, 
-            erros: mensagens})
-        } else {
-          req.doc = doc
-          next()
-        }
       }
       catch(e) { 
         mensagens.push(errosAE.json27)
@@ -110,6 +95,27 @@ validaEstruturaJSON = function(req, res, next){
           mensagem: errosAE.json28_518, 
           erros: mensagens})
       }
+
+      if (!("tipo" in doc)) mensagens.push(json22)
+      else console.log("tipo OK")
+      if (!("legislacao" in doc)) mensagens.push(json23)
+      else console.log("legislacao OK")
+      if (!("entidades" in doc)) mensagens.push(json24)
+      else console.log("entidades OK")
+      if (!("classes" in doc)) mensagens.push(json25)
+      else console.log("classes OK")
+      if (doc.tipo != "PGD" && doc.tipo != "PGD_LC" && doc.tipo != "RADA" && doc.tipo != "RADA_CLAV" && doc.tipo != "TS_LC") mensagens.push(json26)
+      else console.log("tipo válido")
+
+      if(mensagens.length > 0){
+        res.status(518).jsonp({ 
+          mensagem: errosAE.json28_518, 
+          erros: mensagens})
+      } else {
+        req.doc = doc
+        next()
+      }
+      
 
     } else 
         res.status(519).jsonp({
