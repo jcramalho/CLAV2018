@@ -937,6 +937,11 @@
             },
             {
                 "verbo": "POST",
+                "path": "/{api_version}/autosEliminacao/importarJSON",
+                "desc": "Cria um pedido de importação de um auto de eliminação a partir de ficheiros JSON"
+            },
+            {
+                "verbo": "POST",
                 "path": "/{api_version}/pedidos/",
                 "desc": "Criação de um pedido"
             },
@@ -2595,6 +2600,11 @@
             },
             {
                 "verbo": "POST",
+                "path": "/{api_version}/autosEliminacao/importarJSON",
+                "desc": "Cria um pedido de importação de um auto de eliminação a partir de ficheiros JSON"
+            },
+            {
+                "verbo": "POST",
                 "path": "/{api_version}/colaboracoes/importar",
                 "desc": "Importação de colaboracões"
             },
@@ -3343,6 +3353,11 @@
                 "verbo": "POST",
                 "path": "/{api_version}/autosEliminacao/importarCSV",
                 "desc": "Cria um pedido de importação de um auto de eliminação a partir de ficheiros CSV"
+            },
+            {
+                "verbo": "POST",
+                "path": "/{api_version}/autosEliminacao/importarJSON",
+                "desc": "Cria um pedido de importação de um auto de eliminação a partir de ficheiros JSON"
             },
             {
                 "verbo": "POST",
@@ -4179,6 +4194,11 @@
                 "verbo": "POST",
                 "path": "/{api_version}/autosEliminacao/importarCSV",
                 "desc": "Cria um pedido de importação de um auto de eliminação a partir de ficheiros CSV"
+            },
+            {
+                "verbo": "POST",
+                "path": "/{api_version}/autosEliminacao/importarJSON",
+                "desc": "Cria um pedido de importação de um auto de eliminação a partir de ficheiros JSON"
             },
             {
                 "verbo": "POST",
@@ -5065,6 +5085,11 @@
                 "verbo": "POST",
                 "path": "/{api_version}/autosEliminacao/importarCSV",
                 "desc": "Cria um pedido de importação de um auto de eliminação a partir de ficheiros CSV"
+            },
+            {
+                "verbo": "POST",
+                "path": "/{api_version}/autosEliminacao/importarJSON",
+                "desc": "Cria um pedido de importação de um auto de eliminação a partir de ficheiros JSON"
             },
             {
                 "verbo": "POST",
@@ -5991,6 +6016,11 @@
                 "verbo": "POST",
                 "path": "/{api_version}/autosEliminacao/importarCSV",
                 "desc": "Cria um pedido de importação de um auto de eliminação a partir de ficheiros CSV"
+            },
+            {
+                "verbo": "POST",
+                "path": "/{api_version}/autosEliminacao/importarJSON",
+                "desc": "Cria um pedido de importação de um auto de eliminação a partir de ficheiros JSON"
             },
             {
                 "verbo": "POST",
