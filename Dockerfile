@@ -1,4 +1,4 @@
-FROM node:18.10
+FROM node:14
 COPY ./ /server
 WORKDIR /server
 RUN npm install

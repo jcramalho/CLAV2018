@@ -34,47 +34,71 @@ var indicePesquisa = [];
 //reload/reset
 
 exports.reloadLegislacao = async () => {
-  console.debug("Legislação: RELOAD");
-  legislacao = [];
-  legislacao = await loadLegs();
-  console.debug("Legislação: FIM-RELOAD");
+  try{
+    console.debug("Legislação: RELOAD");
+    legislacao = [];
+    legislacao = await loadLegs();
+    console.debug("Legislação: FIM-RELOAD");
+  }
+  catch(e){
+    console.log("Erro no reload da Legislação: " + e)
+  }
 };
 
 exports.reloadEntidades = async () => {
-  console.debug("Entidades: RELOAD");
-  entidades = [];
-  entidades = await loadEntidades();
-  console.debug("Entidades: FIM-RELOAD");
+  try{
+    console.debug("Entidades: RELOAD");
+    entidades = [];
+    entidades = await loadEntidades();
+    console.debug("Entidades: FIM-RELOAD");
+  }
+  catch(e){
+    console.log("Erro no reload das Entidades: " + e)
+  }
 };
 
 exports.reloadTipologias = async () => {
-  console.debug("Tipologias: RELOAD");
-  tipologias = [];
-  tipologias = await loadTipologias();
-  console.debug("Tipologias: FIM-RELOAD");
+  try{
+    console.debug("Tipologias: RELOAD");
+    tipologias = [];
+    tipologias = await loadTipologias();
+    console.debug("Tipologias: FIM-RELOAD");
+  }
+  catch(e){
+    console.log("Erro no reload das Tipologias: " + e)
+  }
 };
 
 exports.reloadClasses = async () => {
-  console.debug("Classes: RELOAD");
-  classes = [];
-  classes = await loadClasses();
-  classList = [].concat.apply([], levelClasses);
-
-  console.debug("Classes: FIM-RELOAD");
+  try{
+    console.debug("Classes: RELOAD");
+    classes = [];
+    classes = await loadClasses();
+    classList = [].concat.apply([], levelClasses);
+    console.debug("Classes: FIM-RELOAD");
+  }
+  catch(e){
+    console.log("Erro no reload das Classes: " + e)
+  }
 
   //Carrega a info completa de todas as classes
-  console.debug("Classes: INFO-COMPLETA");
-  classTreeInfo = await loadClassesInfo();
-  console.debug("Classes: INFO-COMPLETA-STORE");
-  var dir = './public/classes';
-  if (!fs.existsSync(dir)){
-    fs.mkdirSync(dir, { recursive: true });
+  try{
+    console.debug("Classes: INFO-COMPLETA");
+    classTreeInfo = await loadClassesInfo();
+    console.debug("Classes: INFO-COMPLETA-STORE");
+    var dir = './public/classes';
+    if (!fs.existsSync(dir)){
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    fs.writeFileSync(
+      "./public/classes/classesInfo.json",
+      JSON.stringify(classTreeInfo, null, 4)
+    );
+    console.debug("Classes: FIM-INFO-COMPLETA");
   }
-  fs.writeFileSync(
-    "./public/classes/classesInfo.json",
-    JSON.stringify(classTreeInfo, null, 4)
-  );
-  console.debug("Classes: FIM-INFO-COMPLETA");
+  catch(e){
+    console.log("Erro no reload das Classes, no carregamento da info completa: " + e)
+  }
 };
 
 exports.reset = async () => {
@@ -95,7 +119,7 @@ exports.reset = async () => {
       console.log("Classes: FIM-INFO-COMPLETA-LOAD");
     } 
     else {
-      console.log("Erro ao tentar ler o ficheiro classesInfo.json.")
+      console.log("Ficheiro inexistente: classesInfo.json.")
         
       exports.reloadClasses()
         .then(async () => { 
